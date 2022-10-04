@@ -1,17 +1,17 @@
 package com.leebeebeom.clothinghelper.ui.signin.signup
 
-import com.google.firebase.auth.FirebaseAuth
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.data.OutlinedTextFieldAttrFactory
-import com.leebeebeom.clothinghelper.ui.signin.GoogleSignIn
+import com.leebeebeom.clothinghelper.ui.signin.CHFirebase
+import com.leebeebeom.clothinghelper.ui.signin.CHGoogleSignIn
 import com.leebeebeom.clothinghelper.ui.signin.SignInBaseViewModel
 
-class SignUpViewModel : SignInBaseViewModel(), GoogleSignIn {
-    override val email by lazy { OutlinedTextFieldAttrFactory.email() }
-    val name by lazy { OutlinedTextFieldAttrFactory.signUpName() }
+class SignUpViewModel : SignInBaseViewModel(), CHGoogleSignIn {
+    override val emailTextFieldAttr by lazy { OutlinedTextFieldAttrFactory.email() }
+    val nameTextFieldAttr by lazy { OutlinedTextFieldAttrFactory.signUpName() }
 
     private var passwordText = ""
-    val password by lazy {
+    val passwordTextFieldAttr by lazy {
         OutlinedTextFieldAttrFactory.signUpPassword().apply {
             onValueChange = {
                 text = it
@@ -19,14 +19,14 @@ class SignUpViewModel : SignInBaseViewModel(), GoogleSignIn {
                 passwordText = it
                 if (passwordConfirmText.isNotEmpty())
                     if (it != passwordConfirmText) setPasswordNotSameError()
-                    else passwordConfirm.errorDisable()
+                    else if (isErrorEnabled) passwordConfirmTextField.errorDisable()
                 if (it.length < 6) errorEnable(R.string.error_weak_password)
             }
         }
     }
 
     private var passwordConfirmText = ""
-    val passwordConfirm by lazy {
+    val passwordConfirmTextField by lazy {
         OutlinedTextFieldAttrFactory.signUpPasswordConfirm().apply {
             onValueChange = {
                 text = it
@@ -34,23 +34,20 @@ class SignUpViewModel : SignInBaseViewModel(), GoogleSignIn {
                 passwordConfirmText = it
                 if (it.isNotEmpty())
                     if (it != passwordText) errorEnable(R.string.error_password_confirm_not_same)
-                    else errorDisable()
+                    else if (isErrorEnabled) errorDisable()
             }
         }
     }
 
-    override val isTextFieldEmpty get() = email.isEmpty || password.isEmpty || passwordConfirm.isEmpty || name.isEmpty
+    override val isTextFieldEmpty get() = emailTextFieldAttr.isEmpty || passwordTextFieldAttr.isEmpty || passwordConfirmTextField.isEmpty || nameTextFieldAttr.isEmpty
     override val isErrorEnable
-        get() = email.isErrorEnabled || password.isErrorEnabled ||
-                passwordConfirm.isErrorEnabled || name.isErrorEnabled
+        get() = emailTextFieldAttr.isErrorEnabled || passwordTextFieldAttr.isErrorEnabled ||
+                passwordConfirmTextField.isErrorEnabled || nameTextFieldAttr.isErrorEnabled
 
     private fun setPasswordNotSameError() =
-        passwordConfirm.errorEnable(R.string.error_password_confirm_not_same)
+        passwordConfirmTextField.errorEnable(R.string.error_password_confirm_not_same)
 
-    override fun firebaseTask() {
-        super.onFirebaseButtonClick
-        FirebaseAuth.getInstance()
-            .createUserWithEmailAndPassword(email.text, passwordText)
-            .addOnCompleteListener(onCompleteListener)
-    }
+    override fun firebaseTask(chFirebase: CHFirebase)=
+        chFirebase.createUserWithEmailAndPassword(emailTextFieldAttr.text, passwordText)
+
 }

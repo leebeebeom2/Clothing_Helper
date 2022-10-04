@@ -9,7 +9,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import com.leebeebeom.clothinghelper.ui.Icon
+import com.leebeebeom.clothinghelper.ui.SimpleIcon
 import com.leebeebeom.clothinghelper.R
 import kotlin.reflect.KProperty
 
@@ -58,16 +58,18 @@ object OutlinedTextFieldAttrFactory {
     )
 }
 
-const val ERROR_OFF = -1
-
 data class OutlinedTextFieldAttr(
     val labelId: Int,
     private val _visualTransformation: MutableState<VisualTransformation> =
         mutableStateOf(VisualTransformation.None),
     val placeHolderId: Int = R.string.empty,
     val keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    val visibleIconEnable: Boolean = false
+    private val visibleIconEnable: Boolean = false
 ) {
+    companion object {
+        private const val ERROR_OFF = -1
+    }
+
     private val _text = mutableStateOf("")
     var text by StateDelegator(_text)
 
@@ -78,6 +80,7 @@ data class OutlinedTextFieldAttr(
         private set
 
     var visualTransformation by StateDelegator(_visualTransformation)
+        private set
 
     private val isVisible get() = visualTransformation == VisualTransformation.None
 
@@ -99,8 +102,8 @@ data class OutlinedTextFieldAttr(
     val visibleIcon = @Composable {
         if (visibleIconEnable)
             IconButton(onClick = { visibleToggle() }) {
-                if (isVisible) Icon(drawableId = R.drawable.ic_eye_off)
-                else Icon(drawableId = R.drawable.ic_eye)
+                if (isVisible) SimpleIcon(drawableId = R.drawable.ic_eye_close)
+                else SimpleIcon(drawableId = R.drawable.ic_eye_open)
             }
     }
 

@@ -29,4 +29,12 @@
     <string name="email_send_complete">이메일이 전송되었습니다.</string>
     <string name="reset_password_text">가입하신 이메일을 입력해주세요.\n비밀번호 재설정 이메일이 발송됩니다.</string>
     <string name="check">확인</string>
+    <string name="see_all">모두 보기</string>
+    <string name="trash_can">휴지통</string>
+    <string name="top">TOP</string>
+    <string name="bottom">BOTTOM</string>
+    <string name="outer">OUTER</string>
+    <string name="etc">ETC</string>
+    <string name="folder">폴더</string>
+    <string name="favorite">즐겨찾기</string>
 </resources>

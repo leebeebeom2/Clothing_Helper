@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,14 +24,25 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.data.OutlinedTextFieldAttr
 import com.leebeebeom.clothinghelper.ui.signin.SignInBaseViewModel
+import com.leebeebeom.clothinghelper.ui.signin.SignInNavigationRoute
+import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelper.ui.theme.Disabled
 import com.leebeebeom.clothinghelper.ui.theme.DisabledDeep
-import com.leebeebeom.clothinghelper.ui.signin.GoogleSignIn as GoogleSignInInterface
+import com.leebeebeom.clothinghelper.ui.signin.CHGoogleSignIn as GoogleSignInInterface
 
+@Composable
+fun ThemeRoot(content: @Composable () -> Unit) {
+    ClothingHelperTheme {
+        SetStatusBarColor()
+        content()
+    }
+}
 
 @Composable
 fun MaxWidthTextField(attr: OutlinedTextFieldAttr) {
@@ -72,57 +84,63 @@ fun ErrorText(errorTextId: Int) =
     }
 
 @Composable
-fun Icon(drawableId: Int) =
+fun SimpleIcon(drawableId: Int) =
     Icon(painter = painterResource(id = drawableId), contentDescription = null)
+
+@Composable
+fun ClickableIcon(drawableId: Int, onClick: () -> Unit) {
+    Icon(
+        painter = painterResource(id = drawableId), contentDescription = null,
+        modifier = Modifier.clickable(onClick = onClick)
+    )
+}
 
 @Composable
 fun MaxWidthButton(
     text: String,
-    colors: ButtonColors = ButtonDefaults.buttonColors(
-        contentColor = Color.White
-    ),
+    colors: ButtonColors = ButtonDefaults.buttonColors(),
     textColor: Color = Color.Unspecified,
     enabled: Boolean = true,
     icon: @Composable (() -> Unit)? = null,
     onClick: () -> Unit
 ) {
-    SimpleSpacer(dp = 12) // TODO viewmodel 인자로 넣기
+    SimpleHeightSpacer(dp = 12)
     Button(
         modifier = Modifier
             .fillMaxWidth()
             .height(52.dp),
         onClick = onClick,
         colors = colors,
-        enabled = enabled,
-        contentPadding = PaddingValues(horizontal = 4.dp)
+        enabled = enabled
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp)
         ) {
-            icon?.let { it() }
+            icon?.invoke()
             Text(
                 text = text,
-                fontWeight = FontWeight.ExtraBold,
+                fontWeight = FontWeight.Bold,
                 color = textColor,
-                modifier = Modifier.align(Alignment.Center)
+                modifier = Modifier.align(Alignment.Center),
+                style = MaterialTheme.typography.body2,
             )
         }
     }
 }
 
 @Composable
-fun FirebaseButton(text: String, viewModel: SignInBaseViewModel) {
+fun FirebaseButton(textId: Int, viewModel: SignInBaseViewModel) {
     MaxWidthButton(
-        text = text,
+        text = stringResource(id = textId),
         enabled = viewModel.firebaseButtonEnable,
         onClick = viewModel.onFirebaseButtonClick
     )
 }
 
-
 val googleLogo = @Composable {
+    SimpleWidthSpacer(dp = 8)
     Image(
         imageVector = ImageVector.vectorResource(id = R.drawable.ic_google_icon),
         contentDescription = null,
@@ -145,9 +163,10 @@ fun CenterCircularProgressIndicator() {
 fun FinishActivity() = (LocalContext.current as ComponentActivity).finish()
 
 @Composable
-fun SimpleSpacer(dp: Int) {
-    Spacer(modifier = Modifier.height(dp.dp))
-}
+fun SimpleHeightSpacer(dp: Int) = Spacer(modifier = Modifier.height(dp.dp))
+
+@Composable
+fun SimpleWidthSpacer(dp: Int) = Spacer(modifier = Modifier.width(dp.dp))
 
 @Composable
 fun GoogleSignInBtn(googleSignInImpl: GoogleSignInInterface) {
@@ -159,7 +178,7 @@ fun GoogleSignInBtn(googleSignInImpl: GoogleSignInInterface) {
 
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
-            googleSignInImpl.signInWithCredentialExecute(it.data)
+            googleSignInImpl.signInWithCredential(it.data)
         }
 
     MaxWidthButton(
@@ -173,6 +192,25 @@ fun GoogleSignInBtn(googleSignInImpl: GoogleSignInInterface) {
 
 
 @Composable
-fun SimpleToast(resId: Int) {
+fun SimpleToast(resId: Int) =
     Toast.makeText(LocalContext.current, stringResource(id = resId), Toast.LENGTH_SHORT).show()
+
+
+@Composable
+fun SetStatusBarColor() {
+    val systemUiController = rememberSystemUiController()
+
+    SideEffect {
+        systemUiController.setStatusBarColor(color = Color.White, darkIcons = true)
+    }
+}
+
+@Composable
+fun CHDivider(modifier: Modifier = Modifier) =
+    Divider(modifier = modifier, color = Color(0xFFE8ECF4))
+
+fun navigate(navController: NavController, destination: String) {
+    navController.navigate(destination) {
+        popUpTo(SignInNavigationRoute.SIGN_IN)
+    }
 }

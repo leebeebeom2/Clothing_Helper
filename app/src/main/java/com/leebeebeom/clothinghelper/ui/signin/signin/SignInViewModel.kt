@@ -1,21 +1,20 @@
 package com.leebeebeom.clothinghelper.ui.signin.signin
 
-import com.google.firebase.auth.FirebaseAuth
 import com.leebeebeom.clothinghelper.data.OutlinedTextFieldAttrFactory
-import com.leebeebeom.clothinghelper.ui.signin.GoogleSignIn
+import com.leebeebeom.clothinghelper.ui.signin.CHGoogleSignIn
+import com.leebeebeom.clothinghelper.ui.signin.CHFirebase
 import com.leebeebeom.clothinghelper.ui.signin.SignInBaseViewModel
 
-class SignInViewModel : SignInBaseViewModel(), GoogleSignIn {
-    override val email = OutlinedTextFieldAttrFactory.email()
-    val password = OutlinedTextFieldAttrFactory.password()
+class SignInViewModel : SignInBaseViewModel(), CHGoogleSignIn {
+    override val emailTextFieldAttr = OutlinedTextFieldAttrFactory.email()
+    val passwordTextFieldAttr = OutlinedTextFieldAttrFactory.password()
 
-    override val isTextFieldEmpty get() = email.isEmpty || password.isEmpty
-    override val isErrorEnable get() = email.isErrorEnabled || password.isErrorEnabled
+    override val isTextFieldEmpty get() = emailTextFieldAttr.isEmpty || passwordTextFieldAttr.isEmpty
+    override val isErrorEnable get() = emailTextFieldAttr.isErrorEnabled || passwordTextFieldAttr.isErrorEnabled
 
-    override fun firebaseTask() {
-        super.onFirebaseButtonClick
-        FirebaseAuth.getInstance()
-            .signInWithEmailAndPassword(email.text, password.text)
-            .addOnCompleteListener(onCompleteListener)
-    }
+    override fun firebaseTask(chFirebase: CHFirebase) =
+        chFirebase.signInWithEmailAndPassword(
+            emailTextFieldAttr.text,
+            passwordTextFieldAttr.text
+        )
 }

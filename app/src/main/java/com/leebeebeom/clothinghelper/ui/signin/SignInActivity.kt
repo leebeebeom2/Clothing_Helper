@@ -7,16 +7,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.leebeebeom.clothinghelper.ui.SetStatusBarColor
 import com.leebeebeom.clothinghelper.ui.ThemeRoot
 import com.leebeebeom.clothinghelper.ui.signin.resetpassword.ResetPasswordScreen
 import com.leebeebeom.clothinghelper.ui.signin.signin.SignInScreen
 import com.leebeebeom.clothinghelper.ui.signin.signup.SignUpScreen
-import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 
 object SignInNavigationRoute {
     const val SIGN_IN = "signIn"
@@ -39,7 +36,8 @@ fun SignInNavHost() {
         Scaffold {
             NavHost(
                 navController = navController,
-                startDestination = SignInNavigationRoute.SIGN_IN
+                startDestination = SignInNavigationRoute.SIGN_IN,
+                modifier = Modifier.padding(it)
             ) {
                 composable(SignInNavigationRoute.SIGN_IN) { SignInScreen(navController) }
                 composable(SignInNavigationRoute.SIGN_UP) { SignUpScreen() }

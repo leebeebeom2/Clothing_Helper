@@ -13,51 +13,6 @@ import com.leebeebeom.clothinghelper.ui.SimpleIcon
 import com.leebeebeom.clothinghelper.R
 import kotlin.reflect.KProperty
 
-object OutlinedTextFieldAttrFactory {
-    fun email() = OutlinedTextFieldAttr(
-        labelId = R.string.email,
-        placeHolderId = R.string.example_email,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Email,
-            imeAction = ImeAction.Next
-        )
-    )
-
-    fun password() = OutlinedTextFieldAttr(
-        labelId = R.string.password,
-        _visualTransformation = mutableStateOf(PasswordVisualTransformation()),
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Password,
-            imeAction = ImeAction.Done
-        ),
-        visibleIconEnable = true
-    )
-
-    fun signUpPassword() =
-        password().copy(
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Next
-            )
-        )
-
-    fun signUpPasswordConfirm() = password().copy(labelId = R.string.password_confirm)
-
-    fun signUpName() = OutlinedTextFieldAttr(
-        labelId = R.string.name,
-        keyboardOptions = KeyboardOptions(
-            imeAction = ImeAction.Next
-        )
-    )
-
-    fun resetPasswordEmail() = email().copy(
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Email,
-            imeAction = ImeAction.Done
-        )
-    )
-}
-
 data class OutlinedTextFieldAttr(
     val labelId: Int,
     private val _visualTransformation: MutableState<VisualTransformation> =
@@ -68,6 +23,49 @@ data class OutlinedTextFieldAttr(
 ) {
     companion object {
         private const val ERROR_OFF = -1
+
+        fun email() = OutlinedTextFieldAttr(
+            labelId = R.string.email,
+            placeHolderId = R.string.example_email,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next
+            )
+        )
+
+        fun password() = OutlinedTextFieldAttr(
+            labelId = R.string.password,
+            _visualTransformation = mutableStateOf(PasswordVisualTransformation()),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done
+            ),
+            visibleIconEnable = true
+        )
+
+        fun signUpPassword() =
+            password().copy(
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Next
+                )
+            )
+
+        fun signUpName() = OutlinedTextFieldAttr(
+            labelId = R.string.name,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            )
+        )
+
+        fun signUpPasswordConfirm() = password().copy(labelId = R.string.password_confirm)
+
+        fun resetPasswordEmail() = email().copy(
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Done
+            )
+        )
     }
 
     private val _text = mutableStateOf("")

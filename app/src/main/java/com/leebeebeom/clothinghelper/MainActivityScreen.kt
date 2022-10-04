@@ -14,15 +14,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.auth.FirebaseAuth
 import com.leebeebeom.clothinghelper.ui.*
-import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelper.ui.theme.Disabled
-import com.leebeebeom.clothinghelper.ui.theme.PrimaryVariant
-import kotlinx.coroutines.CoroutineScope
+import com.leebeebeom.clothinghelper.ui.theme.Primary
 import kotlinx.coroutines.launch
 
 @Composable
@@ -32,23 +30,61 @@ fun MainActivityScreen() {
     ThemeRoot {
         Scaffold(
             scaffoldState = scaffoldState,
-            drawerContent = { DrawerContents(this) },
+            drawerContent = { DrawerContents() },
             drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
             bottomBar = { CHBottomAppBar(scaffoldState) },
-            drawerBackgroundColor = PrimaryVariant,
+            drawerBackgroundColor = Primary,
         ) {
-            Box(modifier = Modifier.padding(it)) {
-                Divider(
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .fillMaxHeight()
-                        .width(1.dp)
-                )
-                Divider(modifier = Modifier.align(Alignment.Center))
-            }
+            MainActivityContent(paddingValues = it)
         }
     }
     DrawerBackHandler(scaffoldState = scaffoldState)
+}
+
+@Composable
+fun MainActivityContent(paddingValues: PaddingValues) {
+    Box(modifier = Modifier.padding(paddingValues), contentAlignment = Alignment.Center) {
+        MainActivityDivider()
+        Column {
+            val weightModifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+
+            MainActivityContentRow(weightModifier) {
+                MainActivityTextBox(modifier = weightModifier, textId = R.string.top)
+                MainActivityTextBox(modifier = weightModifier, textId = R.string.bottom)
+            }
+            MainActivityContentRow(weightModifier) {
+                MainActivityTextBox(modifier = weightModifier, textId = R.string.outer)
+                MainActivityTextBox(modifier = weightModifier, textId = R.string.etc)
+            }
+        }
+    }
+}
+
+@Composable
+private fun MainActivityContentRow(modifier: Modifier, content: @Composable RowScope.() -> Unit) =
+    Row(modifier = modifier.fillMaxHeight(), content = content)
+
+@Composable
+private fun MainActivityTextBox(modifier: Modifier, textId: Int) {
+    Box(modifier = modifier.clickable {  }) {
+        Text(
+            text = stringResource(id = textId),
+            style = MaterialTheme.typography.h4,
+            modifier = Modifier.align(Alignment.Center)
+        )
+    }
+}
+
+@Composable
+fun MainActivityDivider() {
+    Divider(
+        modifier = Modifier
+            .fillMaxHeight()
+            .width(1.dp)
+    )
+    Divider()
 }
 
 @Composable
@@ -90,8 +126,7 @@ fun DrawerIcon(scaffoldState: ScaffoldState) {
 }
 
 @Composable
-fun DrawerContents(columnScope: ColumnScope) {
-    columnScope.let {
+fun DrawerContents() {
         SimpleHeightSpacer(dp = 28)
         DrawerContent(drawableResId = R.drawable.ic_star, stringResId = R.string.favorite)
         DrawerContent(drawableResId = R.drawable.ic_list, stringResId = R.string.see_all)
@@ -103,7 +138,9 @@ fun DrawerContents(columnScope: ColumnScope) {
         DrawerContent(drawableResId = R.drawable.ic_list, stringResId = R.string.bottom)
         DrawerContent(drawableResId = R.drawable.ic_list, stringResId = R.string.outer)
         DrawerContent(drawableResId = R.drawable.ic_list, stringResId = R.string.etc)
-    }
+        Button(onClick = {FirebaseAuth.getInstance().signOut()}) {
+            Text(text = "로그아웃")
+        }
 }
 
 @Composable
@@ -118,7 +155,10 @@ fun DrawerContent(drawableResId: Int, stringResId: Int) {
         SimpleWidthSpacer(dp = 12)
         ClickableText(
             text = AnnotatedString(text = stringResource(id = stringResId)),
-            style = MaterialTheme.typography.body1.copy(letterSpacing = 0.75.sp, color = Color.White),
+            style = MaterialTheme.typography.body1.copy(
+                letterSpacing = 0.75.sp,
+                color = Color.White
+            ),
             onClick = {}
         )
     }
@@ -141,11 +181,3 @@ fun DrawerContentRow(content: @Composable RowScope.() -> Unit) {
 fun MainActivityPreview() {
     MainActivityScreen()
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun DrawerContentPreview() {
-//    Column {
-//        DrawerContents(this)
-//    }
-//}

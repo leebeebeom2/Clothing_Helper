@@ -26,34 +26,30 @@ abstract class SignInBaseViewModel : ViewModel() {
 
     private val _progressionOn = mutableStateOf(false)
     var progressionOn by StateDelegator(_progressionOn)
+
     private val _isFirebaseTaskSuccessful = mutableStateOf(false)
-    var isFirebaseTaskSuccessful: Boolean
-        get() {
-            return if (_isFirebaseTaskSuccessful.value) {
-                _isFirebaseTaskSuccessful.value = false
-                true
-            } else false
-        }
-        set(value) {
-            _isFirebaseTaskSuccessful.value = value
-        }
+    var isFirebaseTaskSuccessful: Boolean by FirebaseTaskStateDelegate(_isFirebaseTaskSuccessful)
+
+    private val _isFirebaseTaskFailed = mutableStateOf(false)
+    var isFirebaseTaskFailed: Boolean by FirebaseTaskStateDelegate(_isFirebaseTaskFailed)
 
     val onFirebaseButtonClick = {
         progressionOn = true
         firebaseTask()
     }
 
-    val onCompleteListener = { task: Task<*> ->
+    open val onCompleteListener = { task: Task<*> ->
         if (task.isSuccessful) isFirebaseTaskSuccessful = true else taskFailed(task)
         progressionOn = false
     }
 
-    private fun taskFailed(task: Task<*>) {
+    protected fun taskFailed(task: Task<*>) {
         (task.exception as? FirebaseAuthException)?.errorCode.let {
             when (it) {
                 ERROR_INVALID_EMAIL -> emailTextFieldAttr.errorEnable(R.string.error_invalid_email)
                 ERROR_EMAIL_ALREADY_IN_USE -> emailTextFieldAttr.errorEnable(R.string.error_email_already_in_use)
                 ERROR_USER_NOT_FOUND -> emailTextFieldAttr.errorEnable(R.string.error_user_not_found)
+                else -> isFirebaseTaskFailed = true
             }
         }
     }

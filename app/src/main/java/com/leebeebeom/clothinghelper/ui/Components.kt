@@ -206,8 +206,7 @@ fun SetStatusBarColor() {
 }
 
 @Composable
-fun CHDivider(modifier: Modifier = Modifier) =
-    Divider(modifier = modifier, color = Color(0xFFE8ECF4))
+fun Weight1Divider(modifier: Modifier = Modifier) = Divider(modifier = modifier)
 
 fun navigate(navController: NavController, destination: String) {
     navController.navigate(destination) {

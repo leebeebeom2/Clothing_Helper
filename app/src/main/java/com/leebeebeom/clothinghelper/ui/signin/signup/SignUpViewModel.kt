@@ -1,18 +1,21 @@
 package com.leebeebeom.clothinghelper.ui.signin.signup
 
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.data.OutlinedTextFieldAttrFactory
+import com.leebeebeom.clothinghelper.data.OutlinedTextFieldAttr
 import com.leebeebeom.clothinghelper.ui.signin.CHFirebase
 import com.leebeebeom.clothinghelper.ui.signin.CHGoogleSignIn
 import com.leebeebeom.clothinghelper.ui.signin.SignInBaseViewModel
 
 class SignUpViewModel : SignInBaseViewModel(), CHGoogleSignIn {
-    override val emailTextFieldAttr by lazy { OutlinedTextFieldAttrFactory.email() }
-    val nameTextFieldAttr by lazy { OutlinedTextFieldAttrFactory.signUpName() }
+    override val emailTextFieldAttr by lazy { OutlinedTextFieldAttr.email() }
+    val nameTextFieldAttr by lazy { OutlinedTextFieldAttr.signUpName() }
 
     private var passwordText = ""
     val passwordTextFieldAttr by lazy {
-        OutlinedTextFieldAttrFactory.signUpPassword().apply {
+        OutlinedTextFieldAttr.signUpPassword().apply {
             onValueChange = {
                 text = it
                 if (isErrorEnabled) errorDisable()
@@ -27,7 +30,7 @@ class SignUpViewModel : SignInBaseViewModel(), CHGoogleSignIn {
 
     private var passwordConfirmText = ""
     val passwordConfirmTextField by lazy {
-        OutlinedTextFieldAttrFactory.signUpPasswordConfirm().apply {
+        OutlinedTextFieldAttr.signUpPasswordConfirm().apply {
             onValueChange = {
                 text = it
                 if (isErrorEnabled) errorDisable()
@@ -47,7 +50,18 @@ class SignUpViewModel : SignInBaseViewModel(), CHGoogleSignIn {
     private fun setPasswordNotSameError() =
         passwordConfirmTextField.errorEnable(R.string.error_password_confirm_not_same)
 
-    override fun firebaseTask(chFirebase: CHFirebase)=
+    override fun firebaseTask(chFirebase: CHFirebase) =
         chFirebase.createUserWithEmailAndPassword(emailTextFieldAttr.text, passwordText)
 
+    override val onCompleteListener: (Task<*>) -> Unit = {
+        if (it.isSuccessful) {
+            val userProfileChangeRequest =
+                userProfileChangeRequest { displayName = nameTextFieldAttr.text }
+
+            FirebaseAuth.getInstance().currentUser?.run {
+                updateProfile(userProfileChangeRequest).addOnCompleteListener(super.onCompleteListener)
+            }
+        } else taskFailed(it)
+        progressionOn = false
+    }
 }

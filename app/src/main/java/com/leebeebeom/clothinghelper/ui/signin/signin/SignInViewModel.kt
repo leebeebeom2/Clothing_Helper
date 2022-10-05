@@ -1,12 +1,11 @@
 package com.leebeebeom.clothinghelper.ui.signin.signin
 
 import com.leebeebeom.clothinghelper.data.TextFieldAttr
-import com.leebeebeom.clothinghelper.data.TextFieldManager
 import com.leebeebeom.clothinghelper.ui.signin.FirebaseExecution
-import com.leebeebeom.clothinghelper.ui.signin.CHGoogleSignIn
+import com.leebeebeom.clothinghelper.ui.signin.GoogleSignInImpl
 import com.leebeebeom.clothinghelper.ui.signin.SignInBaseViewModel
 
-class SignInViewModel : SignInBaseViewModel(), CHGoogleSignIn {
+class SignInViewModel : SignInBaseViewModel(), GoogleSignInImpl {
     override val emailTextFieldAttr = TextFieldAttr.signInEmail(textFieldManager)
     override val passwordTextFieldAttr = TextFieldAttr.signInPassword(textFieldManager)
 

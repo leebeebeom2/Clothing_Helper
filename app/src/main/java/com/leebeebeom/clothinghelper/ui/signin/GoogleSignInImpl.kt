@@ -9,7 +9,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.GoogleAuthProvider
 
-interface CHGoogleSignIn {
+interface GoogleSignInImpl {
     var isFirebaseTaskSuccessful: Boolean
     var progressionOn: Boolean
     val onCompleteListener: (Task<*>) -> Unit
@@ -27,7 +27,7 @@ interface CHGoogleSignIn {
                     .getResult(ApiException::class.java)
             val credential = GoogleAuthProvider.getCredential(account.idToken, null)
 
-            CHFirebase(onCompleteListener).signInWithCredential(credential)
+            FirebaseExecution(onCompleteListener).signInWithCredential(credential)
         }
     }
 

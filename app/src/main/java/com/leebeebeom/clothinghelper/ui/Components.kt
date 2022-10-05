@@ -28,13 +28,13 @@ import androidx.navigation.NavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.data.OutlinedTextFieldAttr
+import com.leebeebeom.clothinghelper.data.TextFieldAttr
 import com.leebeebeom.clothinghelper.ui.signin.SignInBaseViewModel
 import com.leebeebeom.clothinghelper.ui.signin.SignInNavigationRoute
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelper.ui.theme.Disabled
 import com.leebeebeom.clothinghelper.ui.theme.DisabledDeep
-import com.leebeebeom.clothinghelper.ui.signin.CHGoogleSignIn as GoogleSignInInterface
+import com.leebeebeom.clothinghelper.ui.signin.GoogleSignInImpl as GoogleSignInInterface
 
 @Composable
 fun ThemeRoot(content: @Composable () -> Unit) {
@@ -45,7 +45,7 @@ fun ThemeRoot(content: @Composable () -> Unit) {
 }
 
 @Composable
-fun MaxWidthTextField(attr: OutlinedTextFieldAttr) {
+fun MaxWidthTextField(attr: TextFieldAttr) {
     val focusManager = LocalFocusManager.current
 
     OutlinedTextField(
@@ -55,7 +55,7 @@ fun MaxWidthTextField(attr: OutlinedTextFieldAttr) {
         onValueChange = attr.onValueChange,
         label = { Text(text = stringResource(id = attr.labelId)) },
         placeholder = { Text(text = stringResource(id = attr.placeHolderId)) },
-        isError = attr.isErrorEnabled,
+        isError = attr.isErrorEnable,
         visualTransformation = attr.visualTransformation,
         keyboardOptions = attr.keyboardOptions,
         trailingIcon = attr.visibleIcon,
@@ -69,7 +69,7 @@ fun MaxWidthTextField(attr: OutlinedTextFieldAttr) {
             placeholderColor = DisabledDeep,
         )
     )
-    if (attr.isErrorEnabled) ErrorText(errorTextId = attr.errorTextId)
+    if (attr.isErrorEnable) ErrorText(errorTextId = attr.errorTextId)
 }
 
 @Composable
@@ -204,9 +204,6 @@ fun SetStatusBarColor() {
         systemUiController.setStatusBarColor(color = Color.White, darkIcons = true)
     }
 }
-
-@Composable
-fun Weight1Divider(modifier: Modifier = Modifier) = Divider(modifier = modifier)
 
 fun navigate(navController: NavController, destination: String) {
     navController.navigate(destination) {

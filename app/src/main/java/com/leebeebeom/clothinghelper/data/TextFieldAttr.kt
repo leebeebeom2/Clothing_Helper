@@ -9,18 +9,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import com.leebeebeom.clothinghelper.ui.SimpleIcon
 import com.leebeebeom.clothinghelper.R
-import kotlin.reflect.KProperty
-
-class TextFieldManager {
-    private val attrs by lazy { mutableListOf<TextFieldAttr>() }
-
-    val anyFieldEmpty get() = attrs.any { it.isEmpty }
-    val anyFieldErrorEnable get() = attrs.any { it.isErrorEnable }
-
-    fun addAttr(attr: TextFieldAttr) = attrs.add(attr)
-}
+import com.leebeebeom.clothinghelper.ui.SimpleIcon
+import com.leebeebeom.clothinghelper.util.StateDelegator
 
 data class TextFieldAttr(
     val labelId: Int,
@@ -135,12 +126,13 @@ data class TextFieldAttr(
                 textFieldManager = textFieldManager
             )
     }
-}
 
-class StateDelegator<T>(private val state: MutableState<T>) {
-    operator fun getValue(thisRef: Any, property: KProperty<*>): T = state.value
+    class TextFieldManager {
+        private val attrs by lazy { mutableListOf<TextFieldAttr>() }
 
-    operator fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
-        state.value = value
+        val anyFieldEmpty get() = attrs.any { it.isEmpty }
+        val anyFieldErrorEnable get() = attrs.any { it.isErrorEnable }
+
+        fun addAttr(attr: TextFieldAttr) = attrs.add(attr)
     }
 }

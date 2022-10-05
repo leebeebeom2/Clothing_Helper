@@ -15,17 +15,17 @@ import com.leebeebeom.clothinghelper.ui.signin.resetpassword.ResetPasswordScreen
 import com.leebeebeom.clothinghelper.ui.signin.signin.SignInScreen
 import com.leebeebeom.clothinghelper.ui.signin.signup.SignUpScreen
 
-object SignInNavigationRoute {
-    const val SIGN_IN = "signIn"
-    const val SIGN_UP = "signUp"
-    const val RESET_PASSWORD = "resetPassword"
-}
-
 class SignInActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent { SignInNavHost() }
     }
+}
+
+object SignInNavigationRoute {
+    const val SIGN_IN = "signIn"
+    const val SIGN_UP = "signUp"
+    const val RESET_PASSWORD = "resetPassword"
 }
 
 @Composable

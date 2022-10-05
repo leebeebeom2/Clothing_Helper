@@ -24,18 +24,19 @@
     <string name="sign_up_complete">회원 가입이 완료 되었습니다.</string>
     <string name="empty"></string>
     <string name="login_complete">로그인 되었습니다.</string>
-    <string name="dont_have_an_account">아직 회원이 아니신가요?</string>
+    <string name="dont_have_an_account">계정이 없으신가요?</string>
     <string name="forget_password">비밀번호를 잊으셨나요?</string>
     <string name="email_send_complete">이메일이 전송되었습니다.</string>
     <string name="reset_password_text">가입하신 이메일을 입력해주세요.\n비밀번호 재설정 이메일이 발송됩니다.</string>
     <string name="check">확인</string>
     <string name="see_all">모두 보기</string>
     <string name="trash_can">휴지통</string>
-    <string name="top">TOP</string>
-    <string name="bottom">BOTTOM</string>
-    <string name="outer">OUTER</string>
-    <string name="etc">ETC</string>
+    <string name="top">상의</string>
+    <string name="bottom">하의</string>
+    <string name="outer">외투</string>
+    <string name="etc">기타</string>
     <string name="folder">폴더</string>
     <string name="favorite">즐겨찾기</string>
     <string name="unknown_error">알 수 없는 이유로 실패하였습니다.</string>
+    <string name="error_wrong_password">비밀번호를 확인해주세요.</string>
 </resources>

@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.FirebaseAuth
@@ -24,7 +23,7 @@ import com.leebeebeom.clothinghelper.ui.theme.Primary
 import kotlinx.coroutines.launch
 
 @Composable
-fun MainActivityScreen() {
+fun MainActivityRoot(content: @Composable (PaddingValues) -> Unit) {
     val scaffoldState = rememberScaffoldState()
 
     ThemeRoot {
@@ -32,93 +31,46 @@ fun MainActivityScreen() {
             scaffoldState = scaffoldState,
             drawerContent = { DrawerContents() },
             drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
-            bottomBar = { CHBottomAppBar(scaffoldState) },
             drawerBackgroundColor = Primary,
-        ) {
-            MainActivityContent(paddingValues = it)
-        }
-    }
-    DrawerBackHandler(scaffoldState = scaffoldState)
-}
-
-@Composable
-fun MainActivityContent(paddingValues: PaddingValues) {
-    Box(modifier = Modifier.padding(paddingValues), contentAlignment = Alignment.Center) {
-        MainActivityDivider()
-        Column {
-            val weightModifier = Modifier
-                .weight(1f)
-                .fillMaxHeight()
-
-            MainActivityContentRow(weightModifier) {
-                MainActivityTextBox(modifier = weightModifier, textId = R.string.top)
-                MainActivityTextBox(modifier = weightModifier, textId = R.string.bottom)
-            }
-            MainActivityContentRow(weightModifier) {
-                MainActivityTextBox(modifier = weightModifier, textId = R.string.outer)
-                MainActivityTextBox(modifier = weightModifier, textId = R.string.etc)
-            }
-        }
-    }
-}
-
-@Composable
-private fun MainActivityContentRow(modifier: Modifier, content: @Composable RowScope.() -> Unit) =
-    Row(modifier = modifier.fillMaxHeight(), content = content)
-
-@Composable
-private fun MainActivityTextBox(modifier: Modifier, textId: Int) {
-    Box(modifier = modifier.clickable {  }) {
-        Text(
-            text = stringResource(id = textId),
-            style = MaterialTheme.typography.h4,
-            modifier = Modifier.align(Alignment.Center)
+            bottomBar = { CHBottomAppBar(drawerState = scaffoldState.drawerState) },
+            content = content
         )
+        DrawerBackHandler(scaffoldState.drawerState)
     }
 }
 
 @Composable
-fun MainActivityDivider() {
-    Divider(
-        modifier = Modifier
-            .fillMaxHeight()
-            .width(1.dp)
-    )
-    Divider()
-}
-
-@Composable
-fun DrawerBackHandler(scaffoldState: ScaffoldState) {
+fun DrawerBackHandler(drawerState: DrawerState) {
     val coroutineScope = rememberCoroutineScope()
 
-    BackHandler(enabled = scaffoldState.drawerState.isOpen) {
-        coroutineScope.launch { scaffoldState.drawerState.close() }
+    BackHandler(enabled = drawerState.isOpen) {
+        coroutineScope.launch { drawerState.close() }
     }
 }
 
 @Composable
-fun CHBottomAppBar(scaffoldState: ScaffoldState) {
-    BottomAppBar(
-        contentColor = Color.White, contentPadding = PaddingValues(horizontal = 20.dp),
-        backgroundColor = Color.Black
-    ) {
-        DrawerIcon(scaffoldState)
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
+fun CHBottomAppBar(drawerState: DrawerState) {
+        BottomAppBar(
+            contentColor = Color.White, contentPadding = PaddingValues(horizontal = 20.dp),
+            backgroundColor = Color.Black
         ) {
-            SimpleIcon(drawableId = R.drawable.ic_settings)
+            DrawerIcon(drawerState)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                SimpleIcon(drawableId = R.drawable.ic_settings)
+            }
         }
-    }
 }
 
 @Composable
-fun DrawerIcon(scaffoldState: ScaffoldState) {
+fun DrawerIcon(drawerState: DrawerState) {
     val coroutineScope = rememberCoroutineScope()
 
     ClickableIcon(drawableId = R.drawable.ic_drawer) {
         coroutineScope.launch {
-            scaffoldState.drawerState.apply {
+            drawerState.apply {
                 if (isClosed) open() else close()
             }
         }
@@ -127,20 +79,20 @@ fun DrawerIcon(scaffoldState: ScaffoldState) {
 
 @Composable
 fun DrawerContents() {
-        SimpleHeightSpacer(dp = 28)
-        DrawerContent(drawableResId = R.drawable.ic_star, stringResId = R.string.favorite)
-        DrawerContent(drawableResId = R.drawable.ic_list, stringResId = R.string.see_all)
-        DrawerContent(drawableResId = R.drawable.ic_trash, stringResId = R.string.trash_can)
-        SimpleHeightSpacer(dp = 12)
-        Divider(color = Disabled)
-        SimpleHeightSpacer(dp = 12)
-        DrawerContent(drawableResId = R.drawable.ic_list, stringResId = R.string.top)
-        DrawerContent(drawableResId = R.drawable.ic_list, stringResId = R.string.bottom)
-        DrawerContent(drawableResId = R.drawable.ic_list, stringResId = R.string.outer)
-        DrawerContent(drawableResId = R.drawable.ic_list, stringResId = R.string.etc)
-        Button(onClick = {FirebaseAuth.getInstance().signOut()}) {
-            Text(text = "로그아웃")
-        }
+    SimpleHeightSpacer(dp = 28)
+    DrawerContent(drawableResId = R.drawable.ic_star, stringResId = R.string.favorite)
+    DrawerContent(drawableResId = R.drawable.ic_list, stringResId = R.string.see_all)
+    DrawerContent(drawableResId = R.drawable.ic_trash, stringResId = R.string.trash_can)
+    SimpleHeightSpacer(dp = 12)
+    Divider(color = Disabled)
+    SimpleHeightSpacer(dp = 12)
+    DrawerContent(drawableResId = R.drawable.ic_list, stringResId = R.string.top)
+    DrawerContent(drawableResId = R.drawable.ic_list, stringResId = R.string.bottom)
+    DrawerContent(drawableResId = R.drawable.ic_list, stringResId = R.string.outer)
+    DrawerContent(drawableResId = R.drawable.ic_list, stringResId = R.string.etc)
+    Button(onClick = { FirebaseAuth.getInstance().signOut() }) {
+        Text(text = "로그아웃")
+    }
 }
 
 @Composable
@@ -174,10 +126,4 @@ fun DrawerContentRow(content: @Composable RowScope.() -> Unit) {
         content = content,
         verticalAlignment = Alignment.CenterVertically,
     )
-}
-
-@Preview
-@Composable
-fun MainActivityPreview() {
-    MainActivityScreen()
 }

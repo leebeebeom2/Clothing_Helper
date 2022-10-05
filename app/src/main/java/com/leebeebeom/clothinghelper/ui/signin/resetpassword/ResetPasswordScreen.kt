@@ -16,14 +16,14 @@ import com.leebeebeom.clothinghelper.ui.FirebaseButton
 import com.leebeebeom.clothinghelper.ui.MaxWidthTextField
 import com.leebeebeom.clothinghelper.ui.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.ui.SimpleToast
-import com.leebeebeom.clothinghelper.ui.signin.signin.SignInColumn
+import com.leebeebeom.clothinghelper.ui.signin.signin.SignInBox
 
 @Composable
 fun ResetPasswordScreen(
     navController: NavController,
     viewModel: ResetPasswordViewModel = viewModel()
 ) {
-    SignInColumn(viewModel) {
+    SignInBox(viewModel) {
         Box(
             modifier = Modifier
                 .padding(start = 4.dp, top = 356.dp)

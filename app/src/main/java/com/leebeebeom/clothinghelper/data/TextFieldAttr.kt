@@ -29,10 +29,10 @@ data class TextFieldAttr(
     val placeHolderId: Int = R.string.empty,
     val keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     private val visibleIconEnable: Boolean = false,
-    val textFieldManager: TextFieldManager
+    val textFieldManager: TextFieldManager?
 ) {
     init {
-        textFieldManager.addAttr(this)
+        textFieldManager?.addAttr(this)
     }
 
     private val _text = mutableStateOf("")
@@ -82,7 +82,7 @@ data class TextFieldAttr(
     companion object Factory {
         private const val ERROR_OFF = -1
 
-        fun signInEmail(textFieldManager: TextFieldManager) = TextFieldAttr(
+        fun signInEmail(textFieldManager: TextFieldManager?) = TextFieldAttr(
             labelId = R.string.email,
             placeHolderId = R.string.example_email,
             keyboardOptions = KeyboardOptions(
@@ -92,7 +92,7 @@ data class TextFieldAttr(
             textFieldManager = textFieldManager
         )
 
-        fun signInPassword(textFieldManager: TextFieldManager) = TextFieldAttr(
+        fun signInPassword(textFieldManager: TextFieldManager?) = TextFieldAttr(
             labelId = R.string.password,
             _visualTransformation = mutableStateOf(PasswordVisualTransformation()),
             keyboardOptions = KeyboardOptions(
@@ -103,7 +103,7 @@ data class TextFieldAttr(
             textFieldManager = textFieldManager
         )
 
-        fun signUpName(textFieldManager: TextFieldManager) = TextFieldAttr(
+        fun signUpName(textFieldManager: TextFieldManager?) = TextFieldAttr(
             labelId = R.string.name,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next
@@ -111,23 +111,28 @@ data class TextFieldAttr(
             textFieldManager = textFieldManager
         )
 
-        fun signUpPasswordConfirm(textFieldManager: TextFieldManager) =
-            signInPassword(textFieldManager).copy(labelId = R.string.password_confirm)
+        fun signUpPasswordConfirm(textFieldManager: TextFieldManager?) =
+            signInPassword(null).copy(
+                labelId = R.string.password_confirm,
+                textFieldManager = textFieldManager
+            )
 
-        fun signUpPassword(textFieldManager: TextFieldManager) =
-            signInPassword(textFieldManager).copy(
+        fun signUpPassword(textFieldManager: TextFieldManager?) =
+            signInPassword(null).copy(
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Next
-                )
+                ),
+                textFieldManager = textFieldManager
             )
 
-        fun resetPasswordEmail(textFieldManager: TextFieldManager) =
-            signInEmail(textFieldManager).copy(
+        fun resetPasswordEmail(textFieldManager: TextFieldManager?) =
+            signInEmail(null).copy(
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Done
-                )
+                ),
+                textFieldManager = textFieldManager
             )
     }
 }

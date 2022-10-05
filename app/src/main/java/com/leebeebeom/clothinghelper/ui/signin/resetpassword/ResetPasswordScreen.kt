@@ -1,6 +1,7 @@
 package com.leebeebeom.clothinghelper.ui.signin.resetpassword
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -26,7 +27,7 @@ fun ResetPasswordScreen(
     SignInBox(viewModel) {
         Box(
             modifier = Modifier
-                .padding(start = 4.dp, top = 356.dp)
+                .padding(start = 4.dp, top = 344.dp)
                 .align(Alignment.TopStart)
         ) {
             Text(
@@ -34,7 +35,9 @@ fun ResetPasswordScreen(
                 style = MaterialTheme.typography.body2
             )
         }
-        MaxWidthTextField(attr = viewModel.emailTextFieldAttr)
+        Column {
+            MaxWidthTextField(attr = viewModel.emailTextFieldAttr)
+        }
         Box(modifier = Modifier.align(Alignment.BottomCenter)) {
             FirebaseButton(R.string.check, viewModel)
             SimpleHeightSpacer(dp = 380)

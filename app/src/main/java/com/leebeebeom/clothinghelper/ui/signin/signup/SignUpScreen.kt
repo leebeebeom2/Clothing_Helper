@@ -10,7 +10,6 @@ import com.leebeebeom.clothinghelper.ui.signin.signin.SignInColumn
 @Composable
 fun SignUpScreen(viewModel: SignUpViewModel = viewModel()) {
     SignInColumn(viewModel) {
-        SimpleHeightSpacer(dp = 60)
         MaxWidthTextField(attr = viewModel.emailTextFieldAttr)
         MaxWidthTextField(attr = viewModel.nameTextFieldAttr)
         MaxWidthTextField(attr = viewModel.passwordTextFieldAttr)
@@ -20,7 +19,7 @@ fun SignUpScreen(viewModel: SignUpViewModel = viewModel()) {
         GoogleSignInBtn(viewModel)
     }
     if (viewModel.isFirebaseTaskSuccessful) {
-        SimpleToast(resId =R.string.sign_up_complete )
+        SimpleToast(resId = R.string.sign_up_complete)
         FinishActivity()
     }
 }

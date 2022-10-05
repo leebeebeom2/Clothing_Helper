@@ -5,9 +5,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.data.TextFieldAttr
-import com.leebeebeom.clothinghelper.data.TextFieldManager
-import com.leebeebeom.clothinghelper.ui.signin.FirebaseExecution
 import com.leebeebeom.clothinghelper.ui.signin.CHGoogleSignIn
+import com.leebeebeom.clothinghelper.ui.signin.FirebaseExecution
 import com.leebeebeom.clothinghelper.ui.signin.SignInBaseViewModel
 
 class SignUpViewModel : SignInBaseViewModel(), CHGoogleSignIn {

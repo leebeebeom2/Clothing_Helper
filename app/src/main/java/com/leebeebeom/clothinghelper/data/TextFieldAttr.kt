@@ -16,8 +16,8 @@ import kotlin.reflect.KProperty
 class TextFieldManager {
     private val attrs by lazy { mutableListOf<TextFieldAttr>() }
 
-    val anyFieldEmpty = attrs.any { it.isEmpty }
-    val anyFieldErrorEnable = attrs.any { it.isErrorEnable }
+    val anyFieldEmpty get() = attrs.any { it.isEmpty }
+    val anyFieldErrorEnable get() = attrs.any { it.isErrorEnable }
 
     fun addAttr(attr: TextFieldAttr) = attrs.add(attr)
 }

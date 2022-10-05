@@ -1,15 +1,13 @@
 package com.leebeebeom.clothinghelper.ui.signin.resetpassword
 
-import com.leebeebeom.clothinghelper.data.OutlinedTextFieldAttr
-import com.leebeebeom.clothinghelper.ui.signin.CHFirebase
+import com.leebeebeom.clothinghelper.data.TextFieldAttr
+import com.leebeebeom.clothinghelper.ui.signin.FirebaseExecution
 import com.leebeebeom.clothinghelper.ui.signin.SignInBaseViewModel
 
 class ResetPasswordViewModel : SignInBaseViewModel() {
-    override val emailTextFieldAttr by lazy { OutlinedTextFieldAttr.resetPasswordEmail() }
+    override val emailTextFieldAttr = TextFieldAttr.resetPasswordEmail(textFieldManager)
+    override val passwordTextFieldAttr: TextFieldAttr? = null
 
-    override val isTextFieldEmpty get() = emailTextFieldAttr.isEmpty
-    override val isErrorEnable get() = emailTextFieldAttr.isErrorEnabled
-
-    override fun firebaseTask(chFirebase: CHFirebase) =
-        chFirebase.sendResetPasswordEmail(emailTextFieldAttr.text)
+    override fun firebaseTask(firebaseExecution: FirebaseExecution) =
+        firebaseExecution.sendResetPasswordEmail(emailTextFieldAttr.text)
 }

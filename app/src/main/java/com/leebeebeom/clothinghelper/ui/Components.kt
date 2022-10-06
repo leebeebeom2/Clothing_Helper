@@ -3,6 +3,9 @@ package com.leebeebeom.clothinghelper.ui
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -75,20 +78,30 @@ fun MaxWidthTextField(
             unfocusedBorderColor = Color(0xFFDADADA),
             unfocusedLabelColor = Color(0xFF8391A1),
             backgroundColor = Color(0xFFF7F8F9),
-            placeholderColor = DisabledDeep,
+            placeholderColor = DisabledDeep
         )
     )
-    if (isError) ErrorText(textFieldError = textFieldError)
+    ErrorText(textFieldError = textFieldError, isError)
 }
 
 @Composable
-fun ErrorText(textFieldError: TextFieldState.TextFieldError) =
-    Box(modifier = Modifier.fillMaxWidth()) {
+fun ErrorText(textFieldError: TextFieldState.TextFieldError, isError: Boolean) =
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(if (isError) 20.dp else 0.dp)
+            .animateContentSize(
+                spring(
+                    Spring.DampingRatioHighBouncy,
+                    Spring.StiffnessMedium
+                )
+            )
+    ) {
         Text(
+            modifier = Modifier.padding(start = 4.dp),
             text = stringResource(id = textFieldError.resId),
             color = MaterialTheme.colors.error,
             style = MaterialTheme.typography.caption,
-            modifier = Modifier.padding(start = 4.dp)
         )
     }
 
@@ -98,13 +111,13 @@ fun SimpleIcon(drawableId: Int) =
 
 @Composable
 fun ClickableIcon(drawableId: Int, modifier: Modifier = Modifier, onClick: () -> Unit) {
-        Icon(
-            modifier = modifier
-                .clip(CircleShape)
-                .clickable(onClick = onClick)
-                .padding(8.dp),
-            painter = painterResource(id = drawableId), contentDescription = null
-        )
+    Icon(
+        modifier = modifier
+            .clip(CircleShape)
+            .clickable(onClick = onClick)
+            .padding(8.dp),
+        painter = painterResource(id = drawableId), contentDescription = null
+    )
 }
 
 @Composable

@@ -17,6 +17,7 @@ class SignUpViewModel : SignInBaseViewModel(), GoogleSignInImpl {
                     if (it != passwordConfirmTextField.text) setPasswordNotSameError()
                     else if (isErrorEnabled) passwordConfirmTextField.errorDisable()
                 if (it.length < 6) errorEnable(TextFieldState.TextFieldError.ERROR_WEAK_PASSWORD)
+                if (it.isBlank()) errorDisable()
             }
         }
 
@@ -27,6 +28,7 @@ class SignUpViewModel : SignInBaseViewModel(), GoogleSignInImpl {
                 if (it.isNotEmpty())
                     if (it != passwordTextFieldState.text) errorEnable(TextFieldState.TextFieldError.ERROR_PASSWORD_CONFIRM_NOT_SAME)
                     else if (isErrorEnabled) errorDisable()
+                if (it.isBlank()) errorDisable()
             }
         }
 

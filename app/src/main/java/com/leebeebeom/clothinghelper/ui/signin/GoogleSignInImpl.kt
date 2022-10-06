@@ -11,7 +11,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 
 interface GoogleSignInImpl {
     var isFirebaseTaskSuccessful: Boolean
-    var progressionOn: Boolean
+    var progressOn: Boolean
     val onCompleteListener: (Task<*>) -> Unit
 
     fun getGso(webClientId: String) =
@@ -27,7 +27,7 @@ interface GoogleSignInImpl {
                     .getResult(ApiException::class.java)
             val credential = GoogleAuthProvider.getCredential(account.idToken, null)
 
-            FirebaseExecution(onCompleteListener).signInWithCredential(credential)
+            FirebaseExecutor(onCompleteListener).signInWithCredential(credential)
         }
     }
 
@@ -35,8 +35,8 @@ interface GoogleSignInImpl {
         googleSignInIntent: Intent,
         launcher: ManagedActivityResultLauncher<Intent, ActivityResult>
     ) {
-        progressionOn = true
+        progressOn = true
         launcher.launch(googleSignInIntent)
-        progressionOn = false
+        progressOn = false
     }
 }

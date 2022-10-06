@@ -1,53 +1,52 @@
 package com.leebeebeom.clothinghelper.ui.signin.signup
 
 import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.userProfileChangeRequest
-import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.data.TextFieldAttr
+import com.leebeebeom.clothinghelper.data.TextFieldState
+import com.leebeebeom.clothinghelper.ui.signin.FirebaseExecutor
 import com.leebeebeom.clothinghelper.ui.signin.GoogleSignInImpl
-import com.leebeebeom.clothinghelper.ui.signin.FirebaseExecution
 import com.leebeebeom.clothinghelper.ui.signin.SignInBaseViewModel
 
 class SignUpViewModel : SignInBaseViewModel(), GoogleSignInImpl {
-    override val emailTextFieldAttr = TextFieldAttr.signInEmail(textFieldManager)
-    val nameTextFieldAttr = TextFieldAttr.signUpName(textFieldManager)
+    val nameTextFieldAttr = TextFieldState(essentialTextFields)
 
-    override val passwordTextFieldAttr =
-        TextFieldAttr.signUpPassword(textFieldManager).apply {
+    override val passwordTextFieldState =
+        TextFieldState(essentialTextFields, true).apply {
             onValueChange = {
                 onValueChange(it)
-                if (!passwordConfirmTextField.isEmpty)
+                if (!passwordConfirmTextField.isBlank)
                     if (it != passwordConfirmTextField.text) setPasswordNotSameError()
-                    else if (isErrorEnable) passwordConfirmTextField.errorDisable()
-                if (it.length < 6) errorEnable(R.string.error_weak_password)
+                    else if (isErrorEnabled) passwordConfirmTextField.errorDisable()
+                if (it.length < 6) errorEnable(TextFieldState.TextFieldError.ERROR_WEAK_PASSWORD)
             }
         }
 
-    val passwordConfirmTextField: TextFieldAttr =
-        TextFieldAttr.signUpPasswordConfirm(textFieldManager).apply {
+    val passwordConfirmTextField: TextFieldState =
+        TextFieldState(essentialTextFields, true).apply {
             onValueChange = {
                 onValueChange(it)
                 if (it.isNotEmpty())
-                    if (it != passwordTextFieldAttr.text) errorEnable(R.string.error_password_confirm_not_same)
-                    else if (isErrorEnable) errorDisable()
+                    if (it != passwordTextFieldState.text) errorEnable(TextFieldState.TextFieldError.ERROR_PASSWORD_CONFIRM_NOT_SAME)
+                    else if (isErrorEnabled) errorDisable()
             }
         }
 
     private fun setPasswordNotSameError() =
-        passwordConfirmTextField.errorEnable(R.string.error_password_confirm_not_same)
+        passwordConfirmTextField.errorEnable(TextFieldState.TextFieldError.ERROR_PASSWORD_CONFIRM_NOT_SAME)
 
-    override fun firebaseTask(firebaseExecution: FirebaseExecution) =
-        firebaseExecution.createUserWithEmailAndPassword(emailTextFieldAttr.text, passwordTextFieldAttr.text)
+    override fun firebaseTask(firebaseExecutor: FirebaseExecutor) =
+        firebaseExecutor.createUserWithEmailAndPassword(
+            emailTextFieldState.text,
+            passwordTextFieldState.text
+        )
 
     override val onCompleteListener: (Task<*>) -> Unit = {
-        if (it.isSuccessful) {
-            val userProfileChangeRequest =
-                userProfileChangeRequest { displayName = nameTextFieldAttr.text }
+        if (it.isSuccessful)
+            FirebaseExecutor.updateName(
+                nameTextFieldAttr.text,
+                super.onCompleteListener
+            )
+        else taskFailed(it)
 
-            FirebaseAuth.getInstance().currentUser?.
-                updateProfile(userProfileChangeRequest)?.addOnCompleteListener(super.onCompleteListener)
-        } else taskFailed(it)
-        progressionOn = false
+        progressOn = false
     }
 }

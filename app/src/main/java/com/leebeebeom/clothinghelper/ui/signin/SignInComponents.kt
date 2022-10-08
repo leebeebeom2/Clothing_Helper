@@ -147,8 +147,8 @@ fun VisibleIcon(visibleToggle: () -> Unit) {
         visibleToggle()
         isVisible = !isVisible
     }) {
-        if (isVisible) SimpleIcon(drawableId = R.drawable.ic_eye_close)
-        else SimpleIcon(drawableId = R.drawable.ic_eye_open)
+        if (isVisible) SimpleIcon(drawableId = R.drawable.ic_eye_close, contentDescription = "invisible icon")
+        else SimpleIcon(drawableId = R.drawable.ic_eye_open, contentDescription = "visible icon")
     }
 }
 

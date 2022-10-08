@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.main.subCategory
+package com.leebeebeom.clothinghelper.ui.maincategory.subCategory
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf

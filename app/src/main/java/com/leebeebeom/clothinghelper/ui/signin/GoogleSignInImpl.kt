@@ -27,7 +27,7 @@ interface GoogleSignInImpl {
                     .getResult(ApiException::class.java)
             val credential = GoogleAuthProvider.getCredential(account.idToken, null)
 
-            FirebaseExecutor(onCompleteListener).signInWithCredential(credential)
+            FirebaseUseCase(onCompleteListener).signInWithCredential(credential)
         }
     }
 

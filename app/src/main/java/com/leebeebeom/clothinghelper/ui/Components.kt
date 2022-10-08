@@ -106,17 +106,26 @@ fun ErrorText(textFieldError: TextFieldState.TextFieldError, isError: Boolean) =
     }
 
 @Composable
-fun SimpleIcon(drawableId: Int) =
-    Icon(painter = painterResource(id = drawableId), contentDescription = null)
+fun SimpleIcon(modifier: Modifier = Modifier, drawableId: Int, contentDescription: String? = null) =
+    Icon(
+        modifier = modifier,
+        painter = painterResource(id = drawableId),
+        contentDescription = contentDescription
+    )
 
 @Composable
-fun ClickableIcon(drawableId: Int, modifier: Modifier = Modifier, onClick: () -> Unit) {
-    Icon(
-        modifier = modifier
+fun ClickableIcon(
+    drawableId: Int,
+    contentDescription: String? = null,
+    onClick: () -> Unit
+) {
+    SimpleIcon(
+        modifier = Modifier
             .clip(CircleShape)
             .clickable(onClick = onClick)
             .padding(8.dp),
-        painter = painterResource(id = drawableId), contentDescription = null
+        drawableId = drawableId,
+        contentDescription = contentDescription
     )
 }
 

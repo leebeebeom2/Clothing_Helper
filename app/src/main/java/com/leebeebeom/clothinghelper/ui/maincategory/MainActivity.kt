@@ -1,6 +1,5 @@
-package com.leebeebeom.clothinghelper
+package com.leebeebeom.clothinghelper.ui.maincategory
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,39 +10,15 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.firebase.auth.FirebaseAuth
-import com.leebeebeom.clothinghelper.MainNavigationRoute.MAIN_CATEGORY
-import com.leebeebeom.clothinghelper.MainNavigationRoute.SETTING
-import com.leebeebeom.clothinghelper.MainNavigationRoute.SUB_CATEGORY
-import com.leebeebeom.clothinghelper.ui.main.HomeScreen
-import com.leebeebeom.clothinghelper.ui.main.setting.SettingScreen
-import com.leebeebeom.clothinghelper.ui.main.subCategory.SubCategoryScreen
-import com.leebeebeom.clothinghelper.ui.signin.FirebaseExecutor
-import com.leebeebeom.clothinghelper.ui.signin.SignInActivity
+import com.leebeebeom.clothinghelper.ui.maincategory.MainNavigationRoute.*
+import com.leebeebeom.clothinghelper.ui.maincategory.setting.SettingScreen
+import com.leebeebeom.clothinghelper.ui.maincategory.subCategory.SubCategoryScreen
 
 class MainActivity : ComponentActivity() {
-    private val authStateListener = FirebaseAuth.AuthStateListener {
-        if (it.currentUser == null) startSignInActivity()
-        else FirebaseExecutor.reLoadUser()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent { MainActivityNavHost() }
     }
-
-    override fun onStart() {
-        super.onStart()
-        FirebaseExecutor.addAuthStateListener(authStateListener)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        FirebaseExecutor.removeAuthStateListener(authStateListener)
-    }
-
-    private fun startSignInActivity() =
-        startActivity(Intent(this, SignInActivity::class.java))
 }
 
 enum class MainNavigationRoute(val route: String) {
@@ -72,9 +47,7 @@ fun MainActivityNavHost() {
                 HomeScreen(onNavigateToSubCategory = { mainNavigate(navController, SUB_CATEGORY) })
             }
             composable(SUB_CATEGORY.route) { SubCategoryScreen() }
-            composable(SETTING.route) {
-                SettingScreen(onNavigateToMain = { mainNavigate(navController, MAIN_CATEGORY) })
-            }
+            composable(SETTING.route) { SettingScreen() }
         }
     }
 }

@@ -2,7 +2,7 @@ package com.leebeebeom.clothinghelper.ui.signin.signup
 
 import com.google.android.gms.tasks.Task
 import com.leebeebeom.clothinghelper.data.TextFieldState
-import com.leebeebeom.clothinghelper.ui.signin.FirebaseExecutor
+import com.leebeebeom.clothinghelper.ui.signin.FirebaseUseCase
 import com.leebeebeom.clothinghelper.ui.signin.GoogleSignInImpl
 import com.leebeebeom.clothinghelper.ui.signin.SignInBaseViewModel
 
@@ -35,15 +35,15 @@ class SignUpViewModel : SignInBaseViewModel(), GoogleSignInImpl {
     private fun setPasswordNotSameError() =
         passwordConfirmTextField.errorEnable(TextFieldState.TextFieldError.ERROR_PASSWORD_CONFIRM_NOT_SAME)
 
-    override fun firebaseTask(firebaseExecutor: FirebaseExecutor) =
-        firebaseExecutor.createUserWithEmailAndPassword(
+    override fun firebaseTask(firebaseUseCase: FirebaseUseCase) =
+        firebaseUseCase.createUserWithEmailAndPassword(
             emailTextFieldState.text,
             passwordTextFieldState.text
         )
 
     override val onCompleteListener: (Task<*>) -> Unit = {
         if (it.isSuccessful)
-            FirebaseExecutor.updateName(
+            FirebaseUseCase.updateName(
                 nameTextFieldAttr.text,
                 super.onCompleteListener
             )

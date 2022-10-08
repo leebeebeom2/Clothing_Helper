@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.main.subCategory
+package com.leebeebeom.clothinghelper.ui.maincategory.subCategory
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -66,7 +66,7 @@ fun AddFab(fabClick: () -> Unit) {
         backgroundColor = Color(0xFF121212),
         contentColor = Color.White
     ) {
-        SimpleIcon(drawableId = R.drawable.ic_add)
+        SimpleIcon(drawableId = R.drawable.ic_add, contentDescription = "add icon")
     }
 }
 

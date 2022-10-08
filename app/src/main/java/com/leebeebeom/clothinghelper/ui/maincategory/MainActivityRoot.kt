@@ -1,5 +1,6 @@
-package com.leebeebeom.clothinghelper
+package com.leebeebeom.clothinghelper.ui.maincategory
 
+import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,27 +10,31 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.leebeebeom.clothinghelper.ui.ClickableIcon
-import com.leebeebeom.clothinghelper.ui.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.ui.SimpleWidthSpacer
-import com.leebeebeom.clothinghelper.ui.ThemeRoot
-import com.leebeebeom.clothinghelper.ui.signin.FirebaseExecutor
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.ui.*
+import com.leebeebeom.clothinghelper.ui.signin.FirebaseUseCase
+import com.leebeebeom.clothinghelper.ui.signin.SignInActivity
 import com.leebeebeom.clothinghelper.ui.theme.Disabled
 import com.leebeebeom.clothinghelper.ui.theme.Primary
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun MainActivityRoot(
     onNavigationSetting: () -> Unit,
+    viewModel: MainViewModel = viewModel(),
     content: @Composable (PaddingValues) -> Unit
 ) {
     val scaffoldState = rememberScaffoldState()
@@ -39,6 +44,8 @@ fun MainActivityRoot(
         coroutineScope.launch { drawerState.close() }
         Unit
     }
+
+    if (!viewModel.isLogin) StartSignInActivity(viewModel.isLogin)
 
     ThemeRoot {
         Scaffold(
@@ -69,6 +76,16 @@ fun MainActivityRoot(
 }
 
 @Composable
+private fun StartSignInActivity(isLogin: Boolean) {
+    val context = LocalContext.current
+
+    LaunchedEffect(isLogin) {
+        delay(500)
+        if (!isLogin) context.startActivity(Intent(context, SignInActivity::class.java))
+    }
+}
+
+@Composable
 fun DrawerBackHandler(isDrawerOpen: Boolean, onDrawerClose: () -> Unit) {
     BackHandler(enabled = isDrawerOpen, onBack = onDrawerClose)
 }
@@ -85,7 +102,11 @@ fun CHBottomAppBar(onDrawerToggle: () -> Unit) {
 
 @Composable
 fun DrawerIcon(onDrawerToggle: () -> Unit) =
-    ClickableIcon(drawableId = R.drawable.ic_drawer, onClick = onDrawerToggle)
+    ClickableIcon(
+        drawableId = R.drawable.ic_drawer,
+        onClick = onDrawerToggle,
+        contentDescription = "drawer icon"
+    )
 
 @Composable
 fun DrawerContents(onNavigationSetting: () -> Unit, onDrawerClose: () -> Unit) {
@@ -135,7 +156,7 @@ private fun DrawerHeader(onNavigationSetting: () -> Unit, onDrawerClose: () -> U
 
 @Composable
 fun UserNameText(modifier: Modifier) {
-    val nameAndEmail = "${FirebaseExecutor.userName}(${FirebaseExecutor.userEmail})"
+    val nameAndEmail = "${FirebaseUseCase.userName}(${FirebaseUseCase.userEmail})"
     Text(
         text = nameAndEmail,
         modifier = modifier,
@@ -145,7 +166,7 @@ fun UserNameText(modifier: Modifier) {
 
 @Composable
 private fun SettingIcon(onNavigationSetting: () -> Unit, onDrawerClose: () -> Unit) {
-    ClickableIcon(drawableId = R.drawable.ic_settings) {
+    ClickableIcon(drawableId = R.drawable.ic_settings, contentDescription = "setting icon") {
         onDrawerClose()
         onNavigationSetting()
     }

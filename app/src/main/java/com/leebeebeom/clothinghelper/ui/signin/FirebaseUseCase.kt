@@ -1,36 +1,23 @@
 package com.leebeebeom.clothinghelper.ui.signin
 
-import androidx.compose.runtime.mutableStateOf
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 
-class FirebaseExecutor(private val onCompleteListener: ((Task<*>) -> Unit)? = null) {
+class FirebaseUseCase(private val onCompleteListener: ((Task<*>) -> Unit)? = null) {
     companion object {
-        var user = mutableStateOf(FirebaseAuth.getInstance().currentUser)
-            private set
-
-        fun reLoadUser() {
-            user.value = FirebaseAuth.getInstance().currentUser
-        }
-
-        fun addAuthStateListener(listener: FirebaseAuth.AuthStateListener) =
-            FirebaseAuth.getInstance().addAuthStateListener(listener)
-
-        fun removeAuthStateListener(listener: FirebaseAuth.AuthStateListener) =
-            FirebaseAuth.getInstance().removeAuthStateListener(listener)
-
+        private var user = FirebaseAuth.getInstance().currentUser
 
         fun signOut() = FirebaseAuth.getInstance().signOut()
 
         fun updateName(name: String, onCompleteListener: (Task<*>) -> Unit) {
             val request = userProfileChangeRequest { displayName = name }
-            user.value?.updateProfile(request)?.addOnCompleteListener(onCompleteListener)
+            user?.updateProfile(request)?.addOnCompleteListener(onCompleteListener)
         }
 
-        val userName get() = user.value?.displayName ?: "이름 없음"
-        val userEmail get() = user.value?.email ?: "이메일 없음"
+        val userName get() = user?.displayName ?: "이름 없음"
+        val userEmail get() = user?.email ?: "이메일 없음"
     }
 
     fun signInWithCredential(credential: AuthCredential) {

@@ -59,7 +59,7 @@ abstract class SignInBaseViewModel : ViewModel() {
      * onFirebaseButtonClick 안에서 동작
      */
     protected abstract fun firebaseTask(
-        firebaseExecutor: FirebaseExecutor = FirebaseExecutor(onCompleteListener)
+        firebaseUseCase: FirebaseUseCase = FirebaseUseCase(onCompleteListener)
     )
 
     open val onCompleteListener = { task: Task<*> ->

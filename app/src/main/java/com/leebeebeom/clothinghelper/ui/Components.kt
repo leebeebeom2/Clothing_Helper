@@ -185,9 +185,6 @@ fun CenterCircularProgressIndicator() {
 }
 
 @Composable
-fun FinishActivity() = (LocalContext.current as ComponentActivity).finish()
-
-@Composable
 fun FinishActivityOnBackPressed() {
     val context = LocalContext.current
 

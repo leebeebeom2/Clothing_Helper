@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 
-class MainViewModel : ViewModel() {
+open class MainViewModel : ViewModel() {
     var isLogin by mutableStateOf(false)
         private set
 

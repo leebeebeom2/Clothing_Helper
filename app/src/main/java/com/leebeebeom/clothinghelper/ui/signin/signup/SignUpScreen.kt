@@ -6,7 +6,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.data.TextFieldState
-import com.leebeebeom.clothinghelper.ui.FinishActivity
 import com.leebeebeom.clothinghelper.ui.MaxWidthTextField
 import com.leebeebeom.clothinghelper.ui.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.ui.SimpleToast
@@ -72,7 +71,6 @@ fun SignUpScreen(viewModel: SignUpViewModel = viewModel()) {
 
     if (viewModel.isFirebaseTaskSuccessful) {
         SimpleToast(resId = R.string.sign_up_complete)
-        FinishActivity()
     }
 }
 

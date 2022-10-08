@@ -68,7 +68,6 @@ fun SignInScreen(
 
     if (viewModel.isFirebaseTaskSuccessful) {
         SimpleToast(resId = R.string.login_complete)
-        FinishActivity()
     }
 
     FinishActivityOnBackPressed()

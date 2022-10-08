@@ -1,6 +1,7 @@
 package com.leebeebeom.clothinghelper.ui.signin
 
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -23,14 +24,19 @@ import com.leebeebeom.clothinghelper.ui.theme.Disabled
 import com.leebeebeom.clothinghelper.ui.theme.DisabledDeep
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun SignInColumn(
+    viewModel: SignInViewModel = viewModel(),
     progressOn: Boolean,
     isFirebaseTaskFailed: Boolean,
     progressOff: () -> Unit,
     content: @Composable ColumnScope.() -> Unit
 ) {
+
+    if (viewModel.isLogin) (LocalContext.current as ComponentActivity).finish()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -120,7 +126,12 @@ fun GoogleSignInButton(googleSignInImpl: GoogleSignInImpl) {
             isClicked = false
         }
     }
-    val waitToast = Toast.makeText(LocalContext.current, stringResource(R.string.wait_please), Toast.LENGTH_SHORT)
+
+    val waitToast = Toast.makeText(
+        LocalContext.current,
+        stringResource(R.string.wait_please),
+        Toast.LENGTH_SHORT
+    )
 
     MaxWidthButton(
         text = stringResource(id = R.string.starts_with_google_email),
@@ -147,7 +158,10 @@ fun VisibleIcon(visibleToggle: () -> Unit) {
         visibleToggle()
         isVisible = !isVisible
     }) {
-        if (isVisible) SimpleIcon(drawableId = R.drawable.ic_eye_close, contentDescription = "invisible icon")
+        if (isVisible) SimpleIcon(
+            drawableId = R.drawable.ic_eye_close,
+            contentDescription = "invisible icon"
+        )
         else SimpleIcon(drawableId = R.drawable.ic_eye_open, contentDescription = "visible icon")
     }
 }

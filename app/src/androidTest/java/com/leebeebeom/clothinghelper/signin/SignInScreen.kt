@@ -111,7 +111,8 @@ class SignInScreen {
         emailTextField.performTextInput(EMAIL)
         passwordTextField.performTextInput(PASSWORD)
         loginBtn.performClick()
-        //TODO 액티비티 종료 테스트
+//        Thread.sleep(1000) //TODO 코드 변경
+//        assert(signInScreenTestRule.activity.isDestroyed)
     }
 
     private fun wrongPassword(

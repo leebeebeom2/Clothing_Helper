@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.maincategory.subCategory
+package com.leebeebeom.clothinghelper.ui.main.subCategory
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

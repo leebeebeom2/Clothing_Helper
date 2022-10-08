@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.maincategory
+package com.leebeebeom.clothinghelper.ui.main.maincategory
 
 import android.content.Intent
 import androidx.activity.compose.BackHandler

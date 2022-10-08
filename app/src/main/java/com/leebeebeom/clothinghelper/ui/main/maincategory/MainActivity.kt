@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.maincategory
+package com.leebeebeom.clothinghelper.ui.main.maincategory
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,9 +10,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.leebeebeom.clothinghelper.ui.maincategory.MainNavigationRoute.*
-import com.leebeebeom.clothinghelper.ui.maincategory.setting.SettingScreen
-import com.leebeebeom.clothinghelper.ui.maincategory.subCategory.SubCategoryScreen
+import com.leebeebeom.clothinghelper.ui.main.maincategory.MainNavigationRoute.*
+import com.leebeebeom.clothinghelper.ui.main.setting.SettingScreen
+import com.leebeebeom.clothinghelper.ui.main.subCategory.SubCategoryScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

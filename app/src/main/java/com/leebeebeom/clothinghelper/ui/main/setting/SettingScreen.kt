@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.maincategory.setting
+package com.leebeebeom.clothinghelper.ui.main.setting
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

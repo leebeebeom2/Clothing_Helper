@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.maincategory
+package com.leebeebeom.clothinghelper.ui.main.maincategory
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*

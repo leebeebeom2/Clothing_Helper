@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.main.maincategory
+package com.leebeebeom.clothinghelper.ui.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,7 +10,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.leebeebeom.clothinghelper.ui.main.maincategory.MainNavigationRoute.*
+import com.leebeebeom.clothinghelper.ui.main.maincategory.HomeScreen
+import com.leebeebeom.clothinghelper.ui.main.maincategory.MainActivityRoot
 import com.leebeebeom.clothinghelper.ui.main.setting.SettingScreen
 import com.leebeebeom.clothinghelper.ui.main.subCategory.SubCategoryScreen
 
@@ -21,33 +22,33 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-enum class MainNavigationRoute(val route: String) {
-    MAIN_CATEGORY("mainCategory"),
-    SUB_CATEGORY("subCategory"),
-    SETTING("setting")
+object MainDestinations {
+    const val MAIN_CATEGORY = "mainCategory"
+    const val SUB_CATEGORY = "subCategory"
+    const val SETTING = "setting"
 }
 
 @Composable
 fun MainActivityNavHost() {
-    fun mainNavigate(navController: NavController, destination: MainNavigationRoute) {
-        navController.navigate(destination.route) {
-            popUpTo(MAIN_CATEGORY.route)
+    fun mainNavigate(navController: NavController, destination: String) {
+        navController.navigate(destination) {
+            popUpTo(MainDestinations.MAIN_CATEGORY)
         }
     }
 
     val navController = rememberNavController()
 
-    MainActivityRoot(onNavigationSetting = { mainNavigate(navController, SETTING) }) {
+    MainActivityRoot(onNavigationSetting = { mainNavigate(navController, MainDestinations.SETTING) }) {
         NavHost(
             navController = navController,
-            startDestination = MAIN_CATEGORY.route,
+            startDestination = MainDestinations.MAIN_CATEGORY,
             modifier = Modifier.padding(it)
         ) {
-            composable(MAIN_CATEGORY.route) {
-                HomeScreen(onNavigateToSubCategory = { mainNavigate(navController, SUB_CATEGORY) })
+            composable(MainDestinations.MAIN_CATEGORY) {
+                HomeScreen(onNavigateToSubCategory = { mainNavigate(navController, MainDestinations.SUB_CATEGORY) })
             }
-            composable(SUB_CATEGORY.route) { SubCategoryScreen() }
-            composable(SETTING.route) { SettingScreen() }
+            composable(MainDestinations.SUB_CATEGORY) { SubCategoryScreen() }
+            composable(MainDestinations.SETTING) { SettingScreen() }
         }
     }
 }

@@ -1,52 +1,50 @@
 package com.leebeebeom.clothinghelper.ui.signin.resetpassword
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.ui.MaxWidthButton
 import com.leebeebeom.clothinghelper.ui.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.ui.SimpleToast
-import com.leebeebeom.clothinghelper.ui.signin.EmailTextField
-import com.leebeebeom.clothinghelper.ui.signin.FirebaseButton
-import com.leebeebeom.clothinghelper.ui.signin.SignInColumn
+import com.leebeebeom.clothinghelper.ui.signin.base.EmailTextField
+import com.leebeebeom.clothinghelper.ui.signin.base.SignInBaseRoot
 
 @Composable
-fun ResetPasswordScreen(viewModel: ResetPasswordViewModel = viewModel(), popBackStack: () -> Unit) {
-    SignInColumn(
-        progressOn = viewModel.progressOn,
-        isFirebaseTaskFailed = viewModel.isFirebaseTaskFailed,
-        progressOff = viewModel.progressOff
+fun ResetPasswordScreen(viewModel: ResetPasswordViewModel = viewModel()) {
+    val resetPasswordState = viewModel.resetPasswordState
+
+    if (resetPasswordState.isTaskSuccessful){
+        (LocalContext.current as ComponentActivity).onBackPressedDispatcher.onBackPressed()
+        viewModel.onBackPressed()
+    }
+
+
+    SignInBaseRoot(
+        isLoading = resetPasswordState.isLoading,
+        toastTextId = resetPasswordState.toastTextId,
+        toastShown = viewModel.toastShown
     ) {
+
         ResetPasswordHeader()
         SimpleHeightSpacer(dp = 4)
 
-        val emailTextFieldState = viewModel.emailTextFieldState
-
         EmailTextField(
-            text = emailTextFieldState.text,
-            onValueChange = emailTextFieldState.onValueChange,
-            textFieldError = emailTextFieldState.error,
-            isError = emailTextFieldState.isErrorEnabled,
-            imeAction = ImeAction.Done
+            emailState = resetPasswordState.emailState,
+            onEmailChange = viewModel.onEmailChange
         )
         SimpleHeightSpacer(dp = 12)
-        FirebaseButton(
-            textId = R.string.check,
-            firebaseButtonEnabled = viewModel.firebaseButtonEnabled,
-            onFirebaseButtonClick = viewModel.onFirebaseButtonClick
+        MaxWidthButton(
+            text = stringResource(id = R.string.check),
+            enabled = resetPasswordState.checkButtonEnable,
+            onClick = viewModel::sendResetPasswordEmail
         )
-    }
-
-    if (viewModel.isFirebaseTaskSuccessful) {
-        SimpleToast(resId = R.string.email_send_complete)
-        popBackStack()
-        viewModel.isFirebaseTaskSuccessful = false
     }
 }
 

@@ -11,70 +11,63 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.*
 import com.leebeebeom.clothinghelper.ui.signin.*
+import com.leebeebeom.clothinghelper.ui.signin.base.EmailTextField
+import com.leebeebeom.clothinghelper.ui.signin.base.PasswordTextField
+import com.leebeebeom.clothinghelper.ui.signin.base.SignInBaseRoot
 
 @Composable
 fun SignInScreen(
-    onNavigateToResetPassword: () -> Unit,
-    onNavigateToSignUp: () -> Unit,
+    onForgotPasswordClick: () -> Unit,
+    onEmailSignUpClick: () -> Unit,
     viewModel: SignInViewModel = viewModel()
 ) {
-    SignInColumn(
-        progressOn = viewModel.progressOn,
-        isFirebaseTaskFailed = viewModel.isFirebaseTaskFailed,
-        progressOff = viewModel.progressOff
+    val signInState = viewModel.signInState
+
+    SignInBaseRoot(
+        isLoading = signInState.isLoading,
+        toastTextId = signInState.toastTextId,
+        toastShown = viewModel::toastShown
     ) {
-        val emailTextFieldState = viewModel.emailTextFieldState
-
         EmailTextField(
-            text = emailTextFieldState.text,
-            onValueChange = emailTextFieldState.onValueChange,
-            textFieldError = emailTextFieldState.error,
-            isError = emailTextFieldState.isErrorEnabled,
-            imeAction = ImeAction.Next
+            emailState = signInState.emailState,
+            onEmailChange = viewModel.onEmailChange
         )
-
-        val passwordTextFieldState = viewModel.passwordTextFieldState
 
         PasswordTextField(
-            text = passwordTextFieldState.text,
-            onValueChange = passwordTextFieldState.onValueChange,
-            textFieldError = passwordTextFieldState.error,
-            isError = passwordTextFieldState.isErrorEnabled,
-            visualTransformation = passwordTextFieldState.visualTransformation,
-            imeAction = ImeAction.Done,
-            visibleToggle = passwordTextFieldState.visibleToggle
+            passwordState = signInState.passwordState,
+            onPasswordChange = viewModel.onPasswordChange,
+            visualTransformationToggle = viewModel.passwordVisualTransformationToggle
         )
-        SimpleHeightSpacer(dp = 4)
-        ForgotPasswordText(onNavigateToResetPassword = onNavigateToResetPassword)
+        ForgotPasswordText(onForgotPasswordClick = onForgotPasswordClick)
         SimpleHeightSpacer(dp = 8)
-        FirebaseButton(
-            textId = R.string.login,
-            firebaseButtonEnabled = viewModel.firebaseButtonEnabled,
-            onFirebaseButtonClick = viewModel.onFirebaseButtonClick
+        MaxWidthButton(
+            text = stringResource(id = R.string.login),
+            enabled = signInState.loginButtonEnable,
+            onClick = { viewModel.signInWithEmailAndPassword() }
         )
+
         SimpleHeightSpacer(dp = 12)
         OrDivider()
         SimpleHeightSpacer(dp = 12)
-        GoogleSignInButton(googleSignInImpl = viewModel)
+        // TODO 나중에 테스트 필요
+        GoogleSignInButton(
+            gso = viewModel.getGso(stringResource(id = R.string.default_web_client_id)),
+            googleSignIn = viewModel::googleSignIn,
+            googleSignInClick = viewModel::googleSignInLauncherLaunch
+        )
     }
-
-    SignUpText(onNavigateToSignUp)
-
-    if (viewModel.isFirebaseTaskSuccessful) {
-        SimpleToast(resId = R.string.login_complete)
-    }
+    SignUpText(onEmailSignUpClick)
 
     FinishActivityOnBackPressed()
 }
 
 @Composable
-private fun SignUpText(onNavigateToSignUp: () -> Unit) {
+private fun SignUpText(onEmailSignUpClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -91,7 +84,7 @@ private fun SignUpText(onNavigateToSignUp: () -> Unit) {
             )
             SimpleWidthSpacer(dp = 6)
             Text(
-                modifier = Modifier.clickable(onClick = onNavigateToSignUp),
+                modifier = Modifier.clickable(onClick = onEmailSignUpClick),
                 text = stringResource(id = R.string.sign_up_with_email),
                 style = MaterialTheme.typography.body2,
                 color = Color(0xFF35C2C1),
@@ -101,7 +94,7 @@ private fun SignUpText(onNavigateToSignUp: () -> Unit) {
 }
 
 @Composable
-private fun ForgotPasswordText(onNavigateToResetPassword: () -> Unit) {
+private fun ForgotPasswordText(onForgotPasswordClick: () -> Unit) {
     Box(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = stringResource(R.string.forget_password),
@@ -109,7 +102,7 @@ private fun ForgotPasswordText(onNavigateToResetPassword: () -> Unit) {
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .clip(RoundedCornerShape(12.dp))
-                .clickable(onClick = onNavigateToResetPassword)
+                .clickable(onClick = onForgotPasswordClick)
                 .padding(4.dp)
         )
     }

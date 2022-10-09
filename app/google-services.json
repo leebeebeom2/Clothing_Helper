@@ -1,41 +1,33 @@
 {
   "project_info": {
-    "project_number": "470215042460",
-    "project_id": "clohting-helper",
-    "storage_bucket": "clohting-helper.appspot.com"
+    "project_number": "930457411728",
+    "project_id": "clothing-helper-4e06d",
+    "storage_bucket": "clothing-helper-4e06d.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:470215042460:android:94964354ce68a744401459",
+        "mobilesdk_app_id": "1:930457411728:android:7a9faea6102a4fd6a27815",
         "android_client_info": {
           "package_name": "com.leebeebeom.clothinghelper"
         }
       },
       "oauth_client": [
         {
-          "client_id": "470215042460-v9f8pqhdu0sk5cpkbucbues2bupo83s6.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.leebeebeom.clothinghelper",
-            "certificate_hash": "b249c23931e5bdc40fb99d96c79bec91b9fbf266"
-          }
-        },
-        {
-          "client_id": "470215042460-ddvejbafk20ov001iupreosno842uus9.apps.googleusercontent.com",
+          "client_id": "930457411728-tgajahrfogkkh7vo049mg8bv1j25lq88.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCZqx8MOES48jhJFUbbtmN0dZeKzzVQfNg"
+          "current_key": "AIzaSyAL9ddk42nUGRTucrdphc52m5UhwimxPpI"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "470215042460-ddvejbafk20ov001iupreosno842uus9.apps.googleusercontent.com",
+              "client_id": "930457411728-tgajahrfogkkh7vo049mg8bv1j25lq88.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

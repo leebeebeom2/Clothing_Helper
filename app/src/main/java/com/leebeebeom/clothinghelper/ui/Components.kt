@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,10 +13,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,11 +28,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.data.TextFieldState
+import com.leebeebeom.clothinghelper.ui.base.TextFieldError
+import com.leebeebeom.clothinghelper.ui.base.TextFieldUIState
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelper.ui.theme.Disabled
 import com.leebeebeom.clothinghelper.ui.theme.DisabledDeep
@@ -46,32 +48,33 @@ fun ThemeRoot(content: @Composable () -> Unit) {
 }
 
 @Composable
+fun SetStatusBarColor(systemUiController: SystemUiController = rememberSystemUiController()) =
+    systemUiController.setStatusBarColor(color = Color.White, darkIcons = true)
+
+@Composable
 fun MaxWidthTextField(
     modifier: Modifier = Modifier,
-    text: String,
+    textFieldUIState: TextFieldUIState,
     onValueChange: (String) -> Unit,
     labelResId: Int,
     placeHolderResId: Int = R.string.empty,
-    isError: Boolean = false,
-    visualTransformation: VisualTransformation = VisualTransformation.None,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    visibleIcon: @Composable (() -> Unit)? = null,
-    textFieldError: TextFieldState.TextFieldError
+    trailingIcon: @Composable (() -> Unit)? = null,
 ) {
     val focusManager = LocalFocusManager.current
+    val isError = textFieldUIState.error != TextFieldError.ERROR_OFF
 
     OutlinedTextField(
         modifier = modifier.fillMaxWidth(),
-        value = text,
+        value = textFieldUIState.text,
         onValueChange = onValueChange,
         label = { Text(text = stringResource(id = labelResId)) },
         placeholder = { Text(text = stringResource(id = placeHolderResId)) },
         isError = isError,
-        visualTransformation = visualTransformation,
+        visualTransformation = textFieldUIState.visualTransformation,
         singleLine = true,
-        keyboardOptions = keyboardOptions,
-        trailingIcon = visibleIcon,
-        keyboardActions = if (keyboardOptions.imeAction == ImeAction.Done) KeyboardActions(
+        keyboardOptions = textFieldUIState.keyboardOptions,
+        trailingIcon = trailingIcon,
+        keyboardActions = if (textFieldUIState.imeAction == ImeAction.Done) KeyboardActions(
             onDone = { focusManager.clearFocus() }) else KeyboardActions.Default,
         colors =
         TextFieldDefaults.outlinedTextFieldColors(
@@ -81,29 +84,38 @@ fun MaxWidthTextField(
             placeholderColor = DisabledDeep
         )
     )
-    ErrorText(textFieldError = textFieldError, isError)
+
+    val errorTextHeight by animateDpAsState(targetValue = if (isError) 14.dp else 0.dp)
+    ErrorText(error = textFieldUIState.error, errorTextHeight)
 }
 
 @Composable
-fun ErrorText(textFieldError: TextFieldState.TextFieldError, isError: Boolean) =
+fun ErrorText(error: TextFieldError, height: Dp) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(if (isError) 20.dp else 0.dp)
-            .animateContentSize(
-                spring(
-                    Spring.DampingRatioHighBouncy,
-                    Spring.StiffnessMedium
-                )
-            )
+            .height(14.dp)
     ) {
-        Text(
-            modifier = Modifier.padding(start = 4.dp),
-            text = stringResource(id = textFieldError.resId),
-            color = MaterialTheme.colors.error,
-            style = MaterialTheme.typography.caption,
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(height)
+                .animateContentSize(
+                    spring(
+                        Spring.DampingRatioHighBouncy,
+                        Spring.StiffnessMedium
+                    )
+                )
+        ) {
+            Text(
+                modifier = Modifier.padding(start = 4.dp),
+                text = stringResource(id = error.resId),
+                color = MaterialTheme.colors.error,
+                style = MaterialTheme.typography.caption,
+            )
+        }
     }
+}
 
 @Composable
 fun SimpleIcon(modifier: Modifier = Modifier, drawableId: Int, contentDescription: String? = null) =
@@ -115,12 +127,13 @@ fun SimpleIcon(modifier: Modifier = Modifier, drawableId: Int, contentDescriptio
 
 @Composable
 fun ClickableIcon(
+    modifier: Modifier = Modifier,
     drawableId: Int,
     contentDescription: String? = null,
     onClick: () -> Unit
 ) {
     SimpleIcon(
-        modifier = Modifier
+        modifier = modifier
             .clip(CircleShape)
             .clickable(onClick = onClick)
             .padding(8.dp),
@@ -201,15 +214,7 @@ fun SimpleWidthSpacer(dp: Int) = Spacer(modifier = Modifier.width(dp.dp))
 
 
 @Composable
-fun SimpleToast(resId: Int) =
+fun SimpleToast(resId: Int, shownToast: () -> Unit) {
     Toast.makeText(LocalContext.current, stringResource(id = resId), Toast.LENGTH_SHORT).show()
-
-
-@Composable
-fun SetStatusBarColor() {
-    val systemUiController = rememberSystemUiController()
-
-    SideEffect {
-        systemUiController.setStatusBarColor(color = Color.White, darkIcons = true)
-    }
+    shownToast()
 }

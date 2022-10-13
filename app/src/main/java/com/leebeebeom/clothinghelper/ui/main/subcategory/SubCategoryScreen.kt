@@ -70,7 +70,7 @@ fun SubCategoryScreen(viewModel: SubCategoryViewModel = viewModel()) {
             onDismissDialog = viewModel.onDismissAddCategoryDialog,
             categoryTextFieldState = state.categoryName,
             onNewCategoryNameChange = viewModel.onNewCategoryNameChange,
-            positiveButtonEnabled = state.positiveButtonEnable,
+            positiveButtonEnabled = state.positiveButtonenabled,
             onCancelButtonClick = viewModel.onDismissAddCategoryDialog,
             onPositiveButtonClick = {
                 viewModel.addNewCategory()
@@ -235,7 +235,7 @@ private fun DialogTextButtons(
         DialogTextButton(
             modifier = weightModifier,
             text = R.string.check,
-            enable = positiveButtonEnabled,
+            enabled = positiveButtonEnabled,
             onClick = onPositiveButtonClick
         )
     }
@@ -246,14 +246,14 @@ private fun DialogTextButton(
     modifier: Modifier,
     @StringRes text: Int,
     textColor: Color = Color.Unspecified,
-    enable: Boolean = true,
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     Box(modifier = modifier) {
         TextButton(
             modifier = Modifier.align(Alignment.Center),
             onClick = onClick,
-            enabled = enable,
+            enabled = enabled,
             shape = RoundedCornerShape(12.dp)
         ) {
             Text(

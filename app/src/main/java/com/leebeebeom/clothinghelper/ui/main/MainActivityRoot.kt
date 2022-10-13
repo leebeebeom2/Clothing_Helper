@@ -29,7 +29,6 @@ import com.leebeebeom.clothinghelper.ui.*
 import com.leebeebeom.clothinghelper.ui.signin.SignInActivity
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelper.ui.theme.Disabled
-import com.leebeebeom.clothinghelper.ui.theme.Primary
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -74,7 +73,7 @@ fun MainActivityRoot(
                 )
             },
             drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
-            drawerBackgroundColor = Primary,
+            drawerBackgroundColor = MaterialTheme.colors.primary,
             bottomBar = {
                 CHBottomAppBar {
                     coroutineScope.launch {
@@ -228,9 +227,8 @@ private fun DrawerContent(
         SimpleIcon(modifier = Modifier.size(22.dp), drawable = drawable)
         SimpleWidthSpacer(dp = 12)
         Text(
-            text = stringResource(id = text), style = MaterialTheme.typography.body1.copy(
-                letterSpacing = 0.75.sp, color = Color.White
-            )
+            text = stringResource(id = text),
+            style = MaterialTheme.typography.body1.copy(letterSpacing = 0.75.sp)
         )
     }
 }

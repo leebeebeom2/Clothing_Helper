@@ -6,7 +6,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.leebeebeom.clothinghelper.ui.main.subcategory.AddCategoryDialog
 import com.leebeebeom.clothinghelper.ui.main.subcategory.SubCategoryViewModel
 import org.junit.Rule
 import org.junit.Test
@@ -19,19 +18,19 @@ class SubCategory {
     fun addCategoryDialog() {
         subCategoryRule.setContent {
             val viewModel: SubCategoryViewModel = viewModel()
-            val dialogState = viewModel.addDialogState
+            val dialogState = viewModel.subCategoryUIState
 
-            AddCategoryDialog(
-                onDismissDialog = viewModel.onDismissAddCategoryDialog,
-                categoryTextFieldState = dialogState.categoryTextFieldState,
-                onNewCategoryNameChange = viewModel.onNewCategoryNameChange,
-                positiveButtonEnabled = dialogState.positiveButtonEnable,
-                onCancelButtonClick = viewModel.onDismissAddCategoryDialog,
-                onPositiveButtonClick = {
-                    viewModel.addNewCategory()
-                    viewModel.onDismissAddCategoryDialog()
-                },
-            )
+//            AddCategoryDialog(
+//                onDismissDialog = viewModel.onDismissAddCategoryDialog,
+//                categoryTextFieldState = dialogState.categoryName,
+//                onNewCategoryNameChange = viewModel.onNewCategoryNameChange,
+//                positiveButtonEnabled = dialogState.positiveButtonenabled,
+//                onCancelButtonClick = viewModel.onDismissAddCategoryDialog,
+//                onPositiveButtonClick = {
+//                    viewModel.addNewCategory()
+//                    viewModel.onDismissAddCategoryDialog()
+//                },
+//            )
         }
 
         subCategoryRule.onNodeWithText("확인").assertIsNotEnabled()

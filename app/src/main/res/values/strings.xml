@@ -27,10 +27,10 @@
     <string name="check">확인</string>
     <string name="see_all">모두 보기</string>
     <string name="trash_can">휴지통</string>
-    <string name="top">상의</string>
-    <string name="bottom">하의</string>
-    <string name="outer">외투</string>
-    <string name="etc">기타</string>
+    <string name="top">TOPs</string>
+    <string name="bottom">BOTTOMs</string>
+    <string name="outer">OUTERs</string>
+    <string name="etc">ETC</string>
     <string name="favorite">즐겨찾기</string>
     <string name="unknown_error">알 수 없는 이유로 실패하였습니다.</string>
     <string name="error_wrong_password">비밀번호를 확인해주세요.</string>
@@ -40,7 +40,11 @@
     <string name="error_same_category_name">이미 존재하는 카테고리 입니다.</string>
     <string name="sign_out">로그아웃</string>
     <string name="add_category_title">카테고리 추가</string>
-    <string name="wait_please">구글 로그인 중입니다.\n잠시만 기다려주세요</string>
     <string name="google_sign_in_failed">구글 로그인에 실패하였습니다</string>
     <string name="password_confirm">비밀번호 확인</string>
+    <string name="canceled">취소되었습니다.</string>
+    <string name="main_screen">메인 화면</string>
+    <string name="average_size">평균 사이즈</string>
+    <string name="top_info">총장: 71 가슴: 50\n어깨: 53 소매: 24</string>
+    <string name="most_have_size">가장 많이 보유한 사이즈</string>
 </resources>

@@ -2,12 +2,25 @@ package com.leebeebeom.clothinghelper.ui.main
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import com.google.firebase.auth.FirebaseAuth
-import com.leebeebeom.clothinghelper.ui.LoginViewModel
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import com.leebeebeom.clothinghelper.data.UserRepository
 
-open class MainViewModel : LoginViewModel() {
-    //TODO 유저 네임 업데이트
-    val name by mutableStateOf(FirebaseAuth.getInstance().currentUser?.displayName)
-    val email by mutableStateOf(FirebaseAuth.getInstance().currentUser?.email)
-    val userNameAndEmail get() = "$name($email)"
+open class MainViewModel : ViewModel() {
+    var mainState by mutableStateOf(MainUIState())
+        private set
+
+    val loadingOn = { mainState = mainState.loadingOn() }
+    val loadingOff = { mainState = mainState.loadingOff() }
+}
+
+data class MainUIState(
+    val isLoading: Boolean = false
+) {
+    val isLogin get() = UserRepository.isLogin
+    val userName get() = UserRepository.userName
+    val userEmail get() = UserRepository.userEmail
+
+    fun loadingOn() = copy(isLoading = true)
+    fun loadingOff() = copy(isLoading = false)
 }

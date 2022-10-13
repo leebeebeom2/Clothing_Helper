@@ -20,39 +20,32 @@ import com.leebeebeom.clothinghelper.ui.signin.base.SignInBaseRoot
 fun ResetPasswordScreen(viewModel: ResetPasswordViewModel = viewModel()) {
     val resetPasswordState = viewModel.resetPasswordState
 
-    if (resetPasswordState.isTaskSuccessful){
+    if (resetPasswordState.goBack) {
         (LocalContext.current as ComponentActivity).onBackPressedDispatcher.onBackPressed()
-        viewModel.onBackPressed()
+        viewModel.wentBack()
     }
-
 
     SignInBaseRoot(
         isLoading = resetPasswordState.isLoading,
-        toastTextId = resetPasswordState.toastTextId,
+        toastText = resetPasswordState.toastText,
         toastShown = viewModel.toastShown
     ) {
-
-        ResetPasswordHeader()
-        SimpleHeightSpacer(dp = 4)
+        Text(
+            text = stringResource(id = R.string.reset_password_text),
+            style = MaterialTheme.typography.body2,
+            modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
+        )
 
         EmailTextField(
             emailState = resetPasswordState.emailState,
-            onEmailChange = viewModel.onEmailChange
+            onEmailChange = viewModel.onEmailChange,
+            showKeyboardEnabled = true
         )
         SimpleHeightSpacer(dp = 12)
         MaxWidthButton(
-            text = stringResource(id = R.string.check),
-            enabled = resetPasswordState.checkButtonEnable,
+            text = R.string.check,
+            enabled = resetPasswordState.submitButtonEnable,
             onClick = viewModel::sendResetPasswordEmail
         )
     }
-}
-
-@Composable
-private fun ResetPasswordHeader() {
-    Text(
-        text = stringResource(id = R.string.reset_password_text),
-        style = MaterialTheme.typography.body2,
-        modifier = Modifier.padding(start = 4.dp)
-    )
 }

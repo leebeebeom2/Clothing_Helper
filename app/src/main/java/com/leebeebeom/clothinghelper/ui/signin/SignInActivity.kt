@@ -3,7 +3,7 @@ package com.leebeebeom.clothinghelper.ui.signin
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -41,7 +41,7 @@ fun SignInNavHost() {
         NavHost(
             navController = navController,
             startDestination = SignInDestinations.SIGN_IN,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.padding(it)
         ) {
             composable(SignInDestinations.SIGN_IN) {
                 SignInScreen(

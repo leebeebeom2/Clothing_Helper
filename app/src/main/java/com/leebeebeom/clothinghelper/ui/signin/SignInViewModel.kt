@@ -1,5 +1,8 @@
 package com.leebeebeom.clothinghelper.ui.signin
 
-import com.leebeebeom.clothinghelper.ui.LoginViewModel
+import androidx.lifecycle.ViewModel
+import com.leebeebeom.clothinghelper.data.UserRepository
 
-class SignInViewModel : LoginViewModel()
+class SignInViewModel : ViewModel() {
+    val isLogin get() = UserRepository.isLogin
+}

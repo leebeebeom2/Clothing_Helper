@@ -8,55 +8,52 @@ import com.leebeebeom.clothinghelper.ui.base.TextFieldError
 import com.leebeebeom.clothinghelper.ui.base.TextFieldUIState
 
 class SubCategoryViewModel : ViewModel() {
-    var addDialogState by mutableStateOf(AddDialogState())
+    var subCategoryUIState by mutableStateOf(SubCategoryUIState())
+        private set
 
-    val onShowAddCategoryDialog = { update(addDialogState.copy(isDialogShowing = true)) }
+    val showAddCategoryDialog = { subCategoryUIState = subCategoryUIState.onShowAddCategoryDialog() }
 
-    val onDismissAddCategoryDialog = {
-        update(
-            addDialogState.copy(
-                isDialogShowing = false,
-                categoryTextFieldState = addDialogState.categoryTextFieldState
-                    .textInit()
-                    .errorOff()
-            )
-        )
-    }
+    val onDismissAddCategoryDialog =
+        { subCategoryUIState = subCategoryUIState.onDismissAddCategoryDialog() }
 
     val onNewCategoryNameChange = { newCategoryName: String ->
-        update(
-            addDialogState.copy(
-                categoryTextFieldState = addDialogState.categoryTextFieldState
-                    .textChangeAndErrorOff(newCategoryName)
-            )
-        )
+        subCategoryUIState = subCategoryUIState.onNewCategoryNameChange(newCategoryName)
 
-        if (addDialogState.subCategories.contains(newCategoryName))
-            update(
-                addDialogState.copy(
-                    categoryTextFieldState = addDialogState.categoryTextFieldState
-                        .errorOn(TextFieldError.ERROR_SAME_CATEGORY_NAME)
-                )
-            )
+        if (subCategoryUIState.subCategories.contains(newCategoryName))
+            subCategoryUIState =
+                subCategoryUIState.setCategoryNameError(TextFieldError.ERROR_SAME_CATEGORY_NAME)
     }
 
     fun addNewCategory() {
-        val newList = addDialogState.subCategories.toMutableList()
-        newList.add(addDialogState.categoryTextFieldState.text)
-        update(addDialogState.copy(subCategories = newList))
-    }
-
-    private fun update(newState: AddDialogState) {
-        addDialogState = newState
+        subCategoryUIState = subCategoryUIState.addNewCategory()
     }
 }
 
-data class AddDialogState(
-    val isDialogShowing: Boolean = false,
+data class SubCategoryUIState(
+    val showDialog: Boolean = false,
     val subCategories: List<String> = getInitialSubCategories(),
-    val categoryTextFieldState: TextFieldUIState = TextFieldUIState()
-){
-    val positiveButtonEnable get() = !categoryTextFieldState.isBlank && !categoryTextFieldState.isError
+    val categoryName: TextFieldUIState = TextFieldUIState()
+) {
+    val positiveButtonEnable get() = !categoryName.isBlank && !categoryName.isError
+
+    fun onShowAddCategoryDialog() = copy(showDialog = true)
+
+    fun onDismissAddCategoryDialog() = copy(
+        showDialog = false,
+        categoryName = categoryName.textInit().errorOff()
+    )
+
+    fun onNewCategoryNameChange(newCategory: String) =
+        copy(categoryName = categoryName.textChangeAndErrorOff(newCategory))
+
+    fun setCategoryNameError(error: TextFieldError) =
+        copy(categoryName = categoryName.errorOn(error))
+
+    fun addNewCategory(): SubCategoryUIState {
+        val list = subCategories.toMutableList()
+        list.add(categoryName.text)
+        return copy(subCategories = list)
+    }
 }
 
 // TODO 삭제

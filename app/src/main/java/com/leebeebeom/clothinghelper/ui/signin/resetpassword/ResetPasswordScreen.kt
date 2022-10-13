@@ -44,7 +44,7 @@ fun ResetPasswordScreen(viewModel: ResetPasswordViewModel = viewModel()) {
         SimpleHeightSpacer(dp = 12)
         MaxWidthButton(
             text = R.string.check,
-            enabled = resetPasswordState.submitButtonEnable,
+            enabled = resetPasswordState.submitButtonEnabled,
             onClick = viewModel::sendResetPasswordEmail
         )
     }

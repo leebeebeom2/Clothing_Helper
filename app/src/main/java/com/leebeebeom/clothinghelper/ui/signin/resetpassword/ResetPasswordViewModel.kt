@@ -83,7 +83,7 @@ data class ResetPasswordUIState(
     ),
     val goBack: Boolean = false
 ) {
-    val submitButtonEnable get() = !emailState.isBlank && !emailState.isError
+    val submitButtonEnabled get() = !emailState.isBlank && !emailState.isError
 
     fun onEmailChange(newEmail: String) =
         copy(emailState = emailState.textChangeAndErrorOff(newEmail))

@@ -13,14 +13,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -31,7 +32,10 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.OnClick
-import com.leebeebeom.clothinghelper.ui.*
+import com.leebeebeom.clothinghelper.ui.ClickableIcon
+import com.leebeebeom.clothinghelper.ui.MaxWidthTextField
+import com.leebeebeom.clothinghelper.ui.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.ui.SimpleIcon
 import com.leebeebeom.clothinghelper.ui.base.TextFieldUIState
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 
@@ -266,16 +270,12 @@ private fun DialogTextField(
     categoryTextFieldState: TextFieldUIState,
     onNewCategoryNameChange: (String) -> Unit,
 ) {
-    val focusRequester = remember { FocusRequester() }
-
     MaxWidthTextField(
-        modifier = Modifier.focusRequester(focusRequester),
         textFieldState = categoryTextFieldState,
         onValueChange = onNewCategoryNameChange,
         label = R.string.category,
         placeHolder = R.string.category_place_holder,
+        showKeyboardEnabled = true
     )
     SimpleHeightSpacer(dp = 12)
-
-    ShowKeyboard(focusRequester)
 }

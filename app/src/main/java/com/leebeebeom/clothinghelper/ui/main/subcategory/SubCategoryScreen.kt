@@ -1,51 +1,72 @@
 package com.leebeebeom.clothinghelper.ui.main.subcategory
 
+import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.MaxWidthTextField
-import com.leebeebeom.clothinghelper.ui.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.ui.SimpleIcon
-import com.leebeebeom.clothinghelper.ui.SimpleWidthSpacer
+import com.leebeebeom.clothinghelper.domain.OnClick
+import com.leebeebeom.clothinghelper.ui.*
 import com.leebeebeom.clothinghelper.ui.base.TextFieldUIState
-import kotlinx.coroutines.delay
+import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun SubCategoryScreenPreview() {
+    ClothingHelperTheme {
+        SubCategoryScreen()
+    }
+}
 
 @Composable
 fun SubCategoryScreen(viewModel: SubCategoryViewModel = viewModel()) {
-    val dialogState = viewModel.addDialogState
+    val state = viewModel.subCategoryUIState
 
-    Scaffold(
-        floatingActionButton = {
-            AddFab(fabClick = viewModel.onShowAddCategoryDialog)
-        }
-    ) {
-        LazyColumn(modifier = Modifier.padding(it)) {
-            items(dialogState.subCategories) { subCategory -> Text(text = subCategory) }
+    Scaffold(floatingActionButton = { AddFab(fabClick = viewModel.showAddCategoryDialog) }) { paddingValues ->
+        LazyColumn(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(state.subCategories) {
+                SubCategoryContent(it)
+            }
         }
     }
 
-    if (dialogState.isDialogShowing) {
+    if (state.showDialog) {
         AddCategoryDialog(
             onDismissDialog = viewModel.onDismissAddCategoryDialog,
-            categoryTextFieldState = dialogState.categoryTextFieldState,
+            categoryTextFieldState = state.categoryName,
             onNewCategoryNameChange = viewModel.onNewCategoryNameChange,
-            positiveButtonEnabled = dialogState.positiveButtonEnable,
+            positiveButtonEnabled = state.positiveButtonEnable,
             onCancelButtonClick = viewModel.onDismissAddCategoryDialog,
             onPositiveButtonClick = {
                 viewModel.addNewCategory()
@@ -56,18 +77,110 @@ fun SubCategoryScreen(viewModel: SubCategoryViewModel = viewModel()) {
 }
 
 @Composable
-fun AddFab(fabClick: () -> Unit) {
-    FloatingActionButton(
-        onClick = fabClick,
-        backgroundColor = Color.Black,
-        contentColor = Color.White
+private fun SubCategoryContent(title: String) {
+    var isExpanded by rememberSaveable { mutableStateOf(false) }
+
+    Card(
+        modifier = Modifier.fillMaxWidth(), elevation = 2.dp, shape = RoundedCornerShape(12.dp)
     ) {
-        SimpleIcon(drawableId = R.drawable.ic_add, contentDescription = "add icon")
+        Column {
+            SubCategoryTitle(title, isExpanded) { isExpanded = !isExpanded }
+            SubCategoryInfo(isExpanded)
+        }
     }
 }
 
 @Composable
-fun AddCategoryDialog(
+private fun SubCategoryInfo(isExpanded: Boolean) {
+    AnimatedVisibility(
+        visible = isExpanded, enter = expandVertically(), exit = shrinkVertically()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colors.background)
+                .padding(8.dp)
+        ) {
+            val weightModifier = Modifier.weight(1f)
+
+            SubCategoryInfoText(
+                modifier = weightModifier,
+                infoTitle = R.string.average_size,
+                info = R.string.top_info
+            )
+
+            SubCategoryInfoText(
+                modifier = weightModifier,
+                infoTitle = R.string.most_have_size,
+                info = R.string.top_info
+            )
+        }
+    }
+}
+
+@Composable
+private fun SubCategoryInfoText(
+    modifier: Modifier, @StringRes infoTitle: Int, @StringRes info: Int
+) {
+    ProvideTextStyle(
+        value = MaterialTheme.typography.caption.copy(
+            color = LocalContentColor.current.copy(ContentAlpha.medium), fontSize = 13.sp
+        )
+    ) {
+        Column(modifier = modifier.padding(start = 8.dp)) {
+            Text(
+                text = stringResource(id = infoTitle), fontWeight = FontWeight.Bold
+            )
+            SimpleHeightSpacer(dp = 2)
+            Text(text = stringResource(id = info))
+        }
+    }
+}
+
+
+@Composable
+private fun SubCategoryTitle(title: String, isExpanded: Boolean, onExpandIconClick: OnClick) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .clickable { }
+        .padding(start = 12.dp)
+        .padding(vertical = 4.dp)) {
+        Text(
+            modifier = Modifier.align(Alignment.CenterStart),
+            text = title,
+            style = MaterialTheme.typography.subtitle1
+        )
+        ExpandIcon(Modifier.align(Alignment.TopEnd), isExpanded, onExpandIconClick)
+    }
+}
+
+@Composable
+private fun ExpandIcon(modifier: Modifier, isExpanded: Boolean, onExpandIconClick: OnClick) {
+    val rotate by animateFloatAsState(
+        targetValue = if (!isExpanded) 0f else 180f, animationSpec = tween(durationMillis = 300)
+    )
+
+    ClickableIcon(
+        drawable = R.drawable.ic_expand_more,
+        modifier = modifier.rotate(rotate),
+        tint = LocalContentColor.current.copy(ContentAlpha.medium),
+        onClick = onExpandIconClick
+    )
+}
+
+@Composable
+fun AddFab(fabClick: () -> Unit) {
+    FloatingActionButton(
+        modifier = Modifier.size(44.dp),
+        onClick = fabClick,
+        backgroundColor = MaterialTheme.colors.primary,
+    ) {
+        SimpleIcon(drawable = R.drawable.ic_add, contentDescription = "add icon")
+    }
+}
+
+@Composable
+private fun AddCategoryDialog(
     onDismissDialog: () -> Unit,
     categoryTextFieldState: TextFieldUIState,
     onNewCategoryNameChange: (String) -> Unit,
@@ -76,91 +189,75 @@ fun AddCategoryDialog(
     onPositiveButtonClick: () -> Unit
 ) {
     Dialog(onDismissRequest = onDismissDialog) {
-        DialogRoot {
-            Column {
-                DialogTitle()
-                SimpleHeightSpacer(dp = 12)
-                DialogTextField(
-                    categoryTextFieldState = categoryTextFieldState,
-                    onNewCategoryNameChange = onNewCategoryNameChange
-                )
-                SimpleHeightSpacer(dp = 12)
-                DialogTextButtons(
-                    positiveButtonEnabled = positiveButtonEnabled,
-                    onCancelButtonClick = onCancelButtonClick,
-                    onPositiveButtonClick = onPositiveButtonClick
-                )
-                SimpleHeightSpacer(dp = 12)
-            }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(20.dp))
+                .background(MaterialTheme.colors.surface)
+                .padding(20.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.add_category_title),
+                style = MaterialTheme.typography.subtitle1,
+                modifier = Modifier.padding(start = 4.dp, bottom = 12.dp)
+            )
+            DialogTextField(
+                categoryTextFieldState = categoryTextFieldState,
+                onNewCategoryNameChange = onNewCategoryNameChange
+            )
+            DialogTextButtons(
+                positiveButtonEnabled = positiveButtonEnabled,
+                onCancelButtonClick = onCancelButtonClick,
+                onPositiveButtonClick = onPositiveButtonClick
+            )
         }
     }
 }
 
 @Composable
-private fun DialogRoot(content: @Composable BoxScope.() -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
-            .background(Color.White)
-            .padding(top = 20.dp, start = 20.dp, end = 20.dp),
-        content = content
-    )
-}
-
-@Composable
-private fun DialogTitle() =
-    Text(
-        text = stringResource(R.string.add_category_title),
-        style = MaterialTheme.typography.subtitle1,
-        modifier = Modifier.padding(start = 4.dp)
-    )
-
-@Composable
-fun DialogTextButtons(
+private fun DialogTextButtons(
     positiveButtonEnabled: Boolean,
     onCancelButtonClick: () -> Unit,
     onPositiveButtonClick: () -> Unit
 ) {
     Row {
         val weightModifier = Modifier.weight(1f)
-        SimpleWidthSpacer(dp = 20)
         DialogTextButton(
             modifier = weightModifier,
             textColor = MaterialTheme.colors.error,
-            textId = R.string.cancel,
+            text = R.string.cancel,
             onClick = onCancelButtonClick
         )
-        SimpleWidthSpacer(dp = 20)
         DialogTextButton(
             modifier = weightModifier,
-            textId = R.string.check,
+            text = R.string.check,
             enable = positiveButtonEnabled,
             onClick = onPositiveButtonClick
         )
-        SimpleWidthSpacer(dp = 20)
     }
 }
 
 @Composable
 private fun DialogTextButton(
     modifier: Modifier,
-    textId: Int,
+    @StringRes text: Int,
     textColor: Color = Color.Unspecified,
     enable: Boolean = true,
     onClick: () -> Unit
 ) {
-    TextButton(
-        modifier = modifier,
-        onClick = onClick,
-        enabled = enable,
-        shape = RoundedCornerShape(12.dp)
-    ) {
-        Text(
-            text = stringResource(id = textId),
-            style = MaterialTheme.typography.subtitle1,
-            color = textColor
-        )
+    Box(modifier = modifier) {
+        TextButton(
+            modifier = Modifier.align(Alignment.Center),
+            onClick = onClick,
+            enabled = enable,
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Text(
+                text = stringResource(id = text),
+                style = MaterialTheme.typography.subtitle1,
+                color = textColor
+            )
+        }
     }
 }
 
@@ -173,23 +270,12 @@ private fun DialogTextField(
 
     MaxWidthTextField(
         modifier = Modifier.focusRequester(focusRequester),
-        textFieldUIState = categoryTextFieldState,
+        textFieldState = categoryTextFieldState,
         onValueChange = onNewCategoryNameChange,
-        labelResId = R.string.category,
-        placeHolderResId = R.string.category_place_holder,
+        label = R.string.category,
+        placeHolder = R.string.category_place_holder,
     )
+    SimpleHeightSpacer(dp = 12)
 
     ShowKeyboard(focusRequester)
-}
-
-@Composable
-@OptIn(ExperimentalComposeUiApi::class)
-private fun ShowKeyboard(focusRequester: FocusRequester) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-        delay(100)
-        keyboardController?.show()
-    }
 }

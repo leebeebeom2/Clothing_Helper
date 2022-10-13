@@ -1,14 +1,16 @@
 package com.leebeebeom.clothinghelper.ui.signin.signup
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.MaxWidthButton
 import com.leebeebeom.clothinghelper.ui.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.ui.signin.GoogleSignInButton
 import com.leebeebeom.clothinghelper.ui.signin.OrDivider
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.leebeebeom.clothinghelper.ui.signin.base.*
+import com.leebeebeom.clothinghelper.ui.signin.base.EmailTextField
+import com.leebeebeom.clothinghelper.ui.signin.base.NameTextField
+import com.leebeebeom.clothinghelper.ui.signin.base.PasswordTextField
+import com.leebeebeom.clothinghelper.ui.signin.base.SignInBaseRoot
 
 @Composable
 fun SignUpScreen(viewModel: SignUpViewModel = viewModel()) {
@@ -16,12 +18,13 @@ fun SignUpScreen(viewModel: SignUpViewModel = viewModel()) {
 
     SignInBaseRoot(
         isLoading = signUpState.isLoading,
-        toastTextId = signUpState.toastTextId,
-        toastShown = viewModel::toastShown
+        toastText = signUpState.toastText,
+        toastShown = viewModel.toastShown
     ) {
         EmailTextField(
             emailState = signUpState.emailState,
-            onEmailChange = viewModel.onEmailChange
+            onEmailChange = viewModel.onEmailChange,
+            showKeyboardEnabled = true
         )
 
         NameTextField(
@@ -35,23 +38,26 @@ fun SignUpScreen(viewModel: SignUpViewModel = viewModel()) {
             visualTransformationToggle = viewModel.passwordVisualTransformationToggle
         )
 
-        PasswordConfirmTextField(
+        PasswordTextField(
             passwordState = signUpState.passwordConfirmState,
             onPasswordChange = viewModel.onPasswordConfirmChange,
-            visualTransformationToggle = viewModel.passwordConfirmVisualTransformationToggle
+            visualTransformationToggle = viewModel.passwordConfirmVisualTransformationToggle,
+            label = R.string.password_confirm
         )
         SimpleHeightSpacer(dp = 12)
         MaxWidthButton(
-            text = stringResource(id = R.string.sign_up),
-            enabled = signUpState.signUpButtonEnable,
+            text = R.string.sign_up,
+            enabled = signUpState.signUpButtonEnabled,
             onClick = viewModel::signUpWithEmailAndPassword
         )
-        SimpleHeightSpacer(dp = 12)
+        SimpleHeightSpacer(dp = 8)
         OrDivider()
+        SimpleHeightSpacer(dp = 8)
+        // 프리뷰 시 주석 처리
         GoogleSignInButton(
             googleSignInClick = viewModel::googleSignInLauncherLaunch,
             googleSignIn = viewModel::googleSignIn,
-            gso = viewModel.getGso(stringResource(id = R.string.default_web_client_id))
+            enabled = signUpState.googleButtonEnabled
         )
     }
 }

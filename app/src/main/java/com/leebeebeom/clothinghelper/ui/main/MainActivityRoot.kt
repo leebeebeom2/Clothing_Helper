@@ -90,7 +90,7 @@ fun MainActivityRoot(
     }
 }
 
-@Composable // 검수 완
+@Composable
 private fun StartSignInActivity(
     isLogin: Boolean,
     loadingOn: () -> Unit,

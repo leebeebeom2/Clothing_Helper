@@ -9,3 +9,4 @@ val Teal200 = Color(0xFF03DAC5)
 val Disabled = Color(0x50888888)
 val DisabledDeep = Color(0x80888888)
 val Primary = Color.Black
+val WhiteSmoke = Color(0xFFf5f5f5)

@@ -70,7 +70,7 @@ fun SubCategoryScreen(viewModel: SubCategoryViewModel = viewModel()) {
             onDismissDialog = viewModel.onDismissAddCategoryDialog,
             categoryTextFieldState = state.categoryName,
             onNewCategoryNameChange = viewModel.onNewCategoryNameChange,
-            positiveButtonEnabled = state.positiveButtonenabled,
+            positiveButtonEnabled = state.positiveButtonEnabled,
             onCancelButtonClick = viewModel.onDismissAddCategoryDialog,
             onPositiveButtonClick = {
                 viewModel.addNewCategory()

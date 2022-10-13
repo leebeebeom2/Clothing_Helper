@@ -34,7 +34,7 @@ data class SubCategoryUIState(
     val subCategories: List<String> = getInitialSubCategories(),
     val categoryName: TextFieldUIState = TextFieldUIState()
 ) {
-    val positiveButtonEnable get() = !categoryName.isBlank && !categoryName.isError
+    val positiveButtonEnabled get() = !categoryName.isBlank && !categoryName.isError
 
     fun onShowAddCategoryDialog() = copy(showDialog = true)
 

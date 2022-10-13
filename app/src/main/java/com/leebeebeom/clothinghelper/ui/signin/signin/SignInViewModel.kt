@@ -46,7 +46,10 @@ class SignInViewModel : ViewModel(), GoogleSignInImpl {
     }
 
     private fun setFirebaseError(exception: Exception?) {
-        when ((exception as FirebaseAuthException).errorCode) {
+        val firebaseException = (exception as? FirebaseAuthException)
+
+        if (firebaseException == null) showToast(R.string.unknown_error)
+        else when (firebaseException.errorCode) {
             FirebaseErrorCode.ERROR_INVALID_EMAIL -> setEmailError(TextFieldError.ERROR_INVALID_EMAIL)
             FirebaseErrorCode.ERROR_USER_NOT_FOUND -> setEmailError(TextFieldError.ERROR_USER_NOT_FOUND)
             FirebaseErrorCode.ERROR_WRONG_PASSWORD -> setWrongPasswordError()

@@ -1,49 +1,48 @@
 package com.leebeebeom.clothinghelper.ui.signin.signup
 
+import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.data.UserRepository
 import com.leebeebeom.clothinghelper.ui.base.TextFieldError
 import com.leebeebeom.clothinghelper.ui.base.TextFieldUIState
 import com.leebeebeom.clothinghelper.ui.signin.FirebaseErrorCode
 import com.leebeebeom.clothinghelper.ui.signin.GoogleSignInImpl
+import com.leebeebeom.clothinghelper.ui.signin.SignInBaseViewModel
 
-class SignUpViewModel : ViewModel(), GoogleSignInImpl {
+class SignUpViewModel : SignInBaseViewModel(), GoogleSignInImpl {
     var signUpState by mutableStateOf(SignUpUIState())
         private set
 
     val onEmailChange = { newEmail: String ->
-        emailUpdate(signUpState.emailState.textChangeAndErrorOff(newEmail))
+        signUpState = signUpState.onEmailChange(newEmail)
     }
 
     val onNameChange = { newName: String ->
-        nameUpdate(signUpState.nameState.textChangeAndErrorOff(newName))
+        signUpState = signUpState.onNameChange(newName)
     }
 
     val onPasswordChange = { newPassword: String ->
-        passwordUpdate(signUpState.passwordState.textChangeAndErrorOff(newPassword))
+        signUpState = signUpState.onPasswordChange(newPassword)
 
-        passwordSameCheck()
-        if (newPassword.length < 6) passwordUpdate(signUpState.passwordState.errorOn(TextFieldError.ERROR_WEAK_PASSWORD))
-        if (newPassword.isBlank()) passwordUpdate(signUpState.passwordState.errorOff())
+        if (newPassword.isNotBlank()) {
+            passwordSameCheck()
+            if (newPassword.length < 6) setPasswordWeakError()
+        } else passwordErrorOff()
     }
 
     val onPasswordConfirmChange = { newPasswordConfirm: String ->
-        passwordConfirmUpdate(
-            signUpState.passwordConfirmState.textChangeAndErrorOff(newPasswordConfirm)
-        )
+        signUpState = signUpState.onPasswordConfirmChange(newPasswordConfirm)
 
         passwordSameCheck()
-        if (newPasswordConfirm.isBlank()) passwordConfirmUpdate(signUpState.passwordConfirmState.errorOff())
     }
 
     private fun passwordSameCheck() {
@@ -52,21 +51,9 @@ class SignUpViewModel : ViewModel(), GoogleSignInImpl {
 
         if (!passwordConfirmState.isBlank)
             if (passwordSate.text != passwordConfirmState.text)
-                passwordConfirmUpdate(signUpState.passwordConfirmState.errorOn(TextFieldError.ERROR_PASSWORD_CONFIRM_NOT_SAME))
-            else passwordConfirmUpdate(signUpState.passwordConfirmState.errorOff())
-    }
-
-    val passwordVisualTransformationToggle = { isVisible: Boolean ->
-        passwordUpdate(
-            if (isVisible) signUpState.passwordState.setInvisible()
-            else signUpState.passwordState.setVisible()
-        )
-    }
-    val passwordConfirmVisualTransformationToggle = { isVisible: Boolean ->
-        passwordConfirmUpdate(
-            if (isVisible) signUpState.passwordConfirmState.setInvisible()
-            else signUpState.passwordConfirmState.setVisible()
-        )
+                setPasswordConfirmNotSameError()
+            else passwordConfirmErrorOff()
+        else passwordConfirmErrorOff()
     }
 
     fun signUpWithEmailAndPassword() {
@@ -81,52 +68,86 @@ class SignUpViewModel : ViewModel(), GoogleSignInImpl {
                     showToast(R.string.sign_up_complete)
                     if (it.result.user == null) showToast(R.string.name_update_failed)
                     else userNameUpdate(it.result.user!!)
-                } else setFirebaseError(it.exception)
-                loadingOff()
+                } else fireBaseErrorCheck(it.exception)
             }
     }
 
     private fun userNameUpdate(user: FirebaseUser) {
         val request = userProfileChangeRequest { displayName = signUpState.nameState.text }
+
         user.updateProfile(request).addOnCompleteListener {
-            if (it.isSuccessful) /* TODO 메인 액티비티 닉네임 업데이트 */
+            if (it.isSuccessful) UserRepository.userNameUpdate(signUpState.nameState.text)
             else showToast(R.string.name_update_failed)
+            loadingOff()
         }
     }
 
-    private fun setFirebaseError(exception: Exception?) {
-        when ((exception as FirebaseAuthException).errorCode) {
+    private fun setPasswordWeakError() {
+        signUpState = signUpState.setPasswordError(TextFieldError.ERROR_WEAK_PASSWORD)
+    }
+
+    private fun passwordErrorOff() {
+        signUpState = signUpState.passwordErrorOff()
+    }
+
+    private fun setPasswordConfirmNotSameError() {
+        signUpState =
+            signUpState.setPasswordConFirmError(TextFieldError.ERROR_PASSWORD_CONFIRM_NOT_SAME)
+    }
+
+    private fun passwordConfirmErrorOff() {
+        signUpState = signUpState.passwordConfirmErrorOff()
+    }
+
+    val passwordVisualTransformationToggle = { isVisible: Boolean ->
+        signUpState = signUpState.passwordVisualTransformationToggle(isVisible)
+    }
+    val passwordConfirmVisualTransformationToggle = { isVisible: Boolean ->
+        signUpState = signUpState.passwordConfirmVisualTransformationToggle(isVisible)
+    }
+
+    private fun setEmailError(error: TextFieldError) {
+        signUpState = signUpState.setEmailError(error)
+    }
+
+    private fun loadingOn() {
+        signUpState = signUpState.loadingOn()
+    }
+
+    private fun loadingOff() {
+        signUpState = signUpState.loadingOff()
+    }
+
+    override fun showToast(@StringRes toastText: Int) {
+        signUpState = signUpState.showToast(toastText = toastText)
+    }
+
+    override fun setError(errorCode: String) {
+        when (errorCode) {
             FirebaseErrorCode.ERROR_INVALID_EMAIL -> setEmailError(TextFieldError.ERROR_INVALID_EMAIL)
             FirebaseErrorCode.ERROR_EMAIL_ALREADY_IN_USE -> setEmailError(TextFieldError.ERROR_EMAIL_ALREADY_IN_USE)
             else -> showToast(R.string.unknown_error)
         }
+        loadingOff()
     }
 
-    private fun setEmailError(error: TextFieldError) =
-        emailUpdate(signUpState.emailState.errorOn(error))
+    val toastShown = {
+        signUpState = signUpState.toastShown()
+    }
 
-    override fun loadingOn() = update(signUpState.copy(isLoading = true))
+    override fun googleSignInTaskFinished(@StringRes toastText: Int) {
+        showToast(toastText)
+        loadingOff()
+        setGoogleButtonEnabled(true)
+    }
 
-    override fun loadingOff() = update(signUpState.copy(isLoading = false))
+    override fun googleSignInTaskStart() {
+        loadingOn()
+        setGoogleButtonEnabled(false)
+    }
 
-    override fun showToast(resId: Int) = update(signUpState.copy(toastTextId = resId))
-
-    val toastShown = update(signUpState.copy(toastTextId = null))
-
-    private fun passwordConfirmUpdate(newPasswordConfirmState: TextFieldUIState) =
-        update(signUpState.copy(passwordConfirmState = newPasswordConfirmState))
-
-    private fun passwordUpdate(newPasswordState: TextFieldUIState) =
-        update(signUpState.copy(passwordState = newPasswordState))
-
-    private fun nameUpdate(newNameState: TextFieldUIState) =
-        update(signUpState.copy(nameState = newNameState))
-
-    private fun emailUpdate(newEmailState: TextFieldUIState) =
-        update(signUpState.copy(emailState = newEmailState))
-
-    private fun update(newUIState: SignUpUIState) {
-        signUpState = newUIState
+    private fun setGoogleButtonEnabled(enabled: Boolean) {
+        signUpState = signUpState.setGoogleButtonEnabled(enabled)
     }
 }
 
@@ -147,11 +168,53 @@ data class SignUpUIState(
         visualTransformation = PasswordVisualTransformation()
     ),
     val isLoading: Boolean = false,
-    val toastTextId: Int? = null
+    @StringRes val toastText: Int? = null,
+    val googleButtonEnabled: Boolean = true,
 ) {
-    val signUpButtonEnable
+    val signUpButtonEnabled
         get() = !emailState.isBlank && !emailState.isError &&
                 !nameState.isBlank && !nameState.isError &&
                 !passwordState.isBlank && !passwordState.isError &&
                 !passwordConfirmState.isBlank && !passwordConfirmState.isError
+
+    fun onEmailChange(newEmail: String) =
+        copy(emailState = emailState.textChangeAndErrorOff(newEmail))
+
+    fun onNameChange(newName: String) =
+        copy(nameState = nameState.textChangeAndErrorOff(newName))
+
+    fun onPasswordChange(newPassword: String) =
+        copy(passwordState = passwordState.textChangeAndErrorOff(newPassword))
+
+    fun onPasswordConfirmChange(newPasswordConfirm: String) =
+        copy(passwordConfirmState = passwordConfirmState.textChangeAndErrorOff(newPasswordConfirm))
+
+    fun setEmailError(error: TextFieldError) = copy(emailState = emailState.errorOn(error))
+
+    fun setPasswordError(error: TextFieldError) = copy(passwordState = passwordState.errorOn(error))
+
+    fun setPasswordConFirmError(error: TextFieldError) =
+        copy(passwordConfirmState = passwordConfirmState.errorOn(error))
+
+    fun passwordErrorOff() = copy(passwordState = passwordState.errorOff())
+
+    fun passwordConfirmErrorOff() = copy(passwordConfirmState = passwordConfirmState.errorOff())
+
+    fun setGoogleButtonEnabled(enabled: Boolean) = copy(googleButtonEnabled = enabled)
+
+    fun passwordVisualTransformationToggle(isVisible: Boolean) =
+        if (isVisible) copy(passwordState = passwordState.setInvisible())
+        else copy(passwordState = passwordState.setVisible())
+
+    fun passwordConfirmVisualTransformationToggle(isVisible: Boolean) =
+        if (isVisible) copy(passwordConfirmState = passwordConfirmState.setInvisible())
+        else copy(passwordConfirmState = passwordConfirmState.setVisible())
+
+    fun loadingOn() = copy(isLoading = true)
+
+    fun loadingOff() = copy(isLoading = false)
+
+    fun showToast(@StringRes toastText: Int) = copy(toastText = toastText)
+
+    fun toastShown() = copy(toastText = null)
 }

@@ -48,6 +48,7 @@ fun SignInScreen(
         SimpleHeightSpacer(dp = 4)
         ForgotPasswordText(onForgotPasswordClick = onForgotPasswordClick)
         SimpleHeightSpacer(dp = 4)
+        SimpleHeightSpacer(dp = 4)
         MaxWidthButton(
             text = R.string.login,
             enabled = signInState.loginButtonenabled,

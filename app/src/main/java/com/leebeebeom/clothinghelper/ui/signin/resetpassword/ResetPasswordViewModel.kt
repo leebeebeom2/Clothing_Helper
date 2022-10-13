@@ -6,15 +6,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.base.TextFieldError
 import com.leebeebeom.clothinghelper.ui.base.TextFieldUIState
 import com.leebeebeom.clothinghelper.ui.signin.FirebaseErrorCode
+import com.leebeebeom.clothinghelper.ui.signin.SignInBaseViewModel
 
-class ResetPasswordViewModel : ViewModel() {
+class ResetPasswordViewModel : SignInBaseViewModel() {
     var resetPasswordState by mutableStateOf(ResetPasswordUIState())
         private set
 
@@ -31,19 +30,9 @@ class ResetPasswordViewModel : ViewModel() {
                 if (it.isSuccessful) {
                     showToast(R.string.email_send_complete)
                     goBack()
-                } else setFirebaseError(it.exception)
+                } else fireBaseErrorCheck(it.exception)
                 loadingOff()
             }
-    }
-
-    private fun setFirebaseError(exception: Exception?) {
-        val firebaseException = (exception as? FirebaseAuthException)
-        if (firebaseException == null) showToast(R.string.unknown_error)
-        else when (firebaseException.errorCode) {
-            FirebaseErrorCode.ERROR_INVALID_EMAIL -> setEmailError(TextFieldError.ERROR_INVALID_EMAIL)
-            FirebaseErrorCode.ERROR_USER_NOT_FOUND -> setEmailError(TextFieldError.ERROR_USER_NOT_FOUND)
-            else -> showToast(R.string.unknown_error)
-        }
     }
 
     private fun setEmailError(error: TextFieldError) {
@@ -58,8 +47,16 @@ class ResetPasswordViewModel : ViewModel() {
         resetPasswordState = resetPasswordState.loadingOff()
     }
 
-    private fun showToast(@StringRes toastText: Int) {
+    override fun showToast(@StringRes toastText: Int) {
         resetPasswordState = resetPasswordState.showToast(toastText)
+    }
+
+    override fun setError(errorCode: String) {
+        when (errorCode) {
+            FirebaseErrorCode.ERROR_INVALID_EMAIL -> setEmailError(TextFieldError.ERROR_INVALID_EMAIL)
+            FirebaseErrorCode.ERROR_USER_NOT_FOUND -> setEmailError(TextFieldError.ERROR_USER_NOT_FOUND)
+            else -> showToast(R.string.unknown_error)
+        }
     }
 
     val toastShown = {

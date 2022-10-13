@@ -3,133 +3,137 @@ package com.leebeebeom.clothinghelper.ui
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.animateContentSize
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.systemuicontroller.SystemUiController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.base.TextFieldError
 import com.leebeebeom.clothinghelper.ui.base.TextFieldUIState
-import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelper.ui.theme.Disabled
-import com.leebeebeom.clothinghelper.ui.theme.DisabledDeep
+import kotlinx.coroutines.delay
 
-@Composable
-fun ThemeRoot(content: @Composable () -> Unit) {
-    ClothingHelperTheme {
-        SetStatusBarColor()
-        content()
-    }
-}
-
-@Composable
-fun SetStatusBarColor(systemUiController: SystemUiController = rememberSystemUiController()) =
-    systemUiController.setStatusBarColor(color = Color.White, darkIcons = true)
-
-@Composable
+@Composable // TODO 보더 굵기
 fun MaxWidthTextField(
     modifier: Modifier = Modifier,
-    textFieldUIState: TextFieldUIState,
+    textFieldState: TextFieldUIState,
     onValueChange: (String) -> Unit,
-    labelResId: Int,
-    placeHolderResId: Int = R.string.empty,
+    @StringRes label: Int,
+    @StringRes placeHolder: Int = R.string.empty,
     trailingIcon: @Composable (() -> Unit)? = null,
+    showKeyboardEnabled: Boolean = false
 ) {
     val focusManager = LocalFocusManager.current
-    val isError = textFieldUIState.error != TextFieldError.ERROR_OFF
+    val focusRequester = FocusRequester()
+    val isError = textFieldState.error != TextFieldError.ERROR_OFF
 
     OutlinedTextField(
-        modifier = modifier.fillMaxWidth(),
-        value = textFieldUIState.text,
+        modifier = modifier
+            .fillMaxWidth()
+            .focusRequester(focusRequester),
+        value = textFieldState.text,
         onValueChange = onValueChange,
-        label = { Text(text = stringResource(id = labelResId)) },
-        placeholder = { Text(text = stringResource(id = placeHolderResId)) },
+        label = { Text(text = stringResource(id = label)) },
+        placeholder = { Text(text = stringResource(id = placeHolder)) },
         isError = isError,
-        visualTransformation = textFieldUIState.visualTransformation,
+        visualTransformation = textFieldState.visualTransformation,
         singleLine = true,
-        keyboardOptions = textFieldUIState.keyboardOptions,
+        maxLines = 1,
+        keyboardOptions = textFieldState.keyboardOptions,
         trailingIcon = trailingIcon,
-        keyboardActions = if (textFieldUIState.imeAction == ImeAction.Done) KeyboardActions(
-            onDone = { focusManager.clearFocus() }) else KeyboardActions.Default,
+        keyboardActions =
+        if (textFieldState.imeAction == ImeAction.Done) KeyboardActions(onDone = { focusManager.clearFocus() })
+        else KeyboardActions.Default,
         colors =
         TextFieldDefaults.outlinedTextFieldColors(
             unfocusedBorderColor = Color(0xFFDADADA),
             unfocusedLabelColor = Color(0xFF8391A1),
             backgroundColor = Color(0xFFF7F8F9),
-            placeholderColor = DisabledDeep
+            placeholderColor = MaterialTheme.colors.onSurface.copy(ContentAlpha.disabled)
         )
     )
 
-    val errorTextHeight by animateDpAsState(targetValue = if (isError) 14.dp else 0.dp)
-    ErrorText(error = textFieldUIState.error, errorTextHeight)
+    ErrorText(isError, textFieldState.error)
+    if (showKeyboardEnabled) ShowKeyboard(focusRequester)
 }
 
 @Composable
-fun ErrorText(error: TextFieldError, height: Dp) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(14.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(height)
-                .animateContentSize(
-                    spring(
-                        Spring.DampingRatioHighBouncy,
-                        Spring.StiffnessMedium
-                    )
-                )
-        ) {
-            Text(
-                modifier = Modifier.padding(start = 4.dp),
-                text = stringResource(id = error.resId),
-                color = MaterialTheme.colors.error,
-                style = MaterialTheme.typography.caption,
+private fun ErrorText(
+    isError: Boolean,
+    error: TextFieldError
+) {
+    AnimatedVisibility(
+        visible = isError,
+        enter = expandVertically(
+            animationSpec = spring(
+                dampingRatio = Spring.DampingRatioHighBouncy,
+                stiffness = Spring.StiffnessMedium
             )
-        }
+        ),
+        exit = shrinkVertically(
+            animationSpec = tween(1)
+        )
+    ) {
+        Text(
+            modifier = Modifier.padding(start = 4.dp),
+            text = stringResource(id = error.resId),
+            color = MaterialTheme.colors.error,
+            style = MaterialTheme.typography.caption,
+        )
     }
 }
 
-@Composable
-fun SimpleIcon(modifier: Modifier = Modifier, drawableId: Int, contentDescription: String? = null) =
-    Icon(
-        modifier = modifier,
-        painter = painterResource(id = drawableId),
-        contentDescription = contentDescription
-    )
+@Composable // 검수 완
+fun SimpleIcon(
+    modifier: Modifier = Modifier,
+    @DrawableRes drawable: Int,
+    contentDescription: String? = null,
+    tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
+) = Icon(
+    modifier = modifier,
+    painter = painterResource(id = drawable),
+    contentDescription = contentDescription,
+    tint = tint
+)
 
-@Composable
+@Composable // 검수 완
 fun ClickableIcon(
     modifier: Modifier = Modifier,
-    drawableId: Int,
+    @DrawableRes drawable: Int,
     contentDescription: String? = null,
+    tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current),
     onClick: () -> Unit
 ) {
     SimpleIcon(
@@ -137,37 +141,42 @@ fun ClickableIcon(
             .clip(CircleShape)
             .clickable(onClick = onClick)
             .padding(8.dp),
-        drawableId = drawableId,
-        contentDescription = contentDescription
+        drawable = drawable,
+        contentDescription = contentDescription,
+        tint = tint
     )
 }
 
-@Composable
+@Composable // 검수 완
 fun MaxWidthButton(
     modifier: Modifier = Modifier,
-    text: String,
+    @StringRes text: Int,
     colors: ButtonColors = ButtonDefaults.buttonColors(),
     textColor: Color = Color.Unspecified,
     enabled: Boolean = true,
     icon: @Composable (() -> Unit)? = null,
     onClick: () -> Unit,
 ) {
+    val focusManager = LocalFocusManager.current
+
     Button(
         modifier = modifier
             .fillMaxWidth()
             .height(52.dp),
-        onClick = onClick,
+        onClick = {
+            focusManager.clearFocus()
+            onClick()
+        },
         colors = colors,
         enabled = enabled
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp)
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.CenterStart
         ) {
             icon?.invoke()
             Text(
-                text = text,
+                text = stringResource(id = text),
                 fontWeight = FontWeight.Bold,
                 color = if (enabled) textColor else Color.Unspecified,
                 modifier = Modifier.align(Alignment.Center),
@@ -178,12 +187,13 @@ fun MaxWidthButton(
 }
 
 val googleLogo = @Composable {
-    SimpleWidthSpacer(dp = 8)
     Image(
         imageVector = ImageVector.vectorResource(id = R.drawable.ic_google_icon),
         contentDescription = null,
         alignment = Alignment.CenterStart,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 8.dp)
     )
 }
 
@@ -212,9 +222,37 @@ fun SimpleHeightSpacer(dp: Int) = Spacer(modifier = Modifier.height(dp.dp))
 @Composable
 fun SimpleWidthSpacer(dp: Int) = Spacer(modifier = Modifier.width(dp.dp))
 
+@Composable
+fun SimpleToast(@StringRes text: Int, shownToast: () -> Unit) {
+    Toast.makeText(LocalContext.current, stringResource(id = text), Toast.LENGTH_SHORT).show()
+    shownToast()
+}
 
 @Composable
-fun SimpleToast(resId: Int, shownToast: () -> Unit) {
-    Toast.makeText(LocalContext.current, stringResource(id = resId), Toast.LENGTH_SHORT).show()
-    shownToast()
+fun ClickableText(
+    modifier: Modifier = Modifier,
+    @StringRes text: Int,
+    style: TextStyle = TextStyle.Default,
+    onClick: () -> Unit
+) {
+    Text(
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .clickable(onClick = onClick)
+            .padding(vertical = 4.dp, horizontal = 8.dp),
+        text = stringResource(id = text),
+        style = style
+    )
+}
+
+@Composable
+@OptIn(ExperimentalComposeUiApi::class)
+fun ShowKeyboard(focusRequester: FocusRequester) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+        delay(100)
+        keyboardController?.show()
+    }
 }

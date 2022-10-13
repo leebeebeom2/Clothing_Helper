@@ -3,12 +3,13 @@ package com.leebeebeom.clothinghelper.ui.main
 import android.content.Context
 import android.content.Intent
 import androidx.activity.compose.BackHandler
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,6 +27,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.OnClick
 import com.leebeebeom.clothinghelper.ui.*
 import com.leebeebeom.clothinghelper.ui.signin.SignInActivity
+import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelper.ui.theme.Disabled
 import com.leebeebeom.clothinghelper.ui.theme.Primary
 import kotlinx.coroutines.CoroutineScope
@@ -46,9 +48,15 @@ fun MainActivityRoot(
     onDrawerContentClick: OnClick,
     content: @Composable (PaddingValues) -> Unit
 ) {
-    if (!viewModel.isLogin) StartSignInActivity(isLogin = viewModel.isLogin)
+    val mainState = viewModel.mainState
 
-    ThemeRoot {
+    StartSignInActivity(
+        isLogin = mainState.isLogin,
+        loadingOn = viewModel.loadingOn,
+        loadingOff = viewModel.loadingOff
+    )
+
+    ClothingHelperTheme {
         Scaffold(
             scaffoldState = scaffoldState,
             drawerContent = {
@@ -57,7 +65,8 @@ fun MainActivityRoot(
                         onSettingIconClick()
                         onDrawerClose()
                     },
-                    userNameAndEmail = viewModel.userNameAndEmail,
+                    userName = mainState.userName,
+                    userEmail = mainState.userEmail,
                     onDrawerContentClick = {
                         onDrawerContentClick()
                         onDrawerClose()
@@ -76,149 +85,150 @@ fun MainActivityRoot(
             },
             content = content
         )
-        DrawerBackHandler(
-            isDrawerOpen = drawerState.isOpen,
-            onBackPress = onDrawerClose
+        if (mainState.isLoading) CenterCircularProgressIndicator()
+        if (drawerState.isOpen) BackHandler(onBack = onDrawerClose)
+    }
+}
+
+@Composable // 검수 완
+private fun StartSignInActivity(
+    isLogin: Boolean,
+    loadingOn: () -> Unit,
+    loadingOff: () -> Unit,
+    context: Context = LocalContext.current
+) {
+    LaunchedEffect(isLogin) {
+        loadingOn()
+        delay(300)
+        if (!isLogin) context.startActivity(Intent(context, SignInActivity::class.java))
+        loadingOff()
+    }
+}
+
+@Composable
+private fun CHBottomAppBar(onDrawerIconClick: () -> Unit) {
+    BottomAppBar(contentPadding = PaddingValues(horizontal = 4.dp)) {
+        ClickableIcon(
+            drawable = R.drawable.ic_menu,
+            onClick = onDrawerIconClick,
+            contentDescription = "drawer icon"
         )
     }
 }
 
 @Composable
-private fun StartSignInActivity(isLogin: Boolean, context: Context = LocalContext.current) {
-    LaunchedEffect(isLogin) {
-        delay(500)
-        if (!isLogin) context.startActivity(Intent(context, SignInActivity::class.java))
-    }
-}
-
-@Composable
-fun DrawerBackHandler(isDrawerOpen: Boolean, onBackPress: () -> Unit) =
-    BackHandler(enabled = isDrawerOpen, onBack = onBackPress)
-
-@Composable
-fun CHBottomAppBar(onDrawerToggle: () -> Unit) {
-    BottomAppBar(
-        contentColor = Color.White,
-        contentPadding = PaddingValues(horizontal = 4.dp),
-        backgroundColor = Color.Black
-    ) {
-        DrawerIcon(onDrawerToggle)
-    }
-}
-
-@Composable
-fun DrawerIcon(onDrawerIconClick: () -> Unit) = ClickableIcon(
-    drawableId = R.drawable.ic_drawer,
-    onClick = onDrawerIconClick,
-    contentDescription = "drawer icon"
-)
-
-@Composable
-fun DrawerContents(
+private fun DrawerContents(
     onSettingIconClick: () -> Unit,
-    userNameAndEmail: String?,
+    userName: String,
+    userEmail: String,
     onDrawerContentClick: OnClick
 ) {
     Column {
         DrawerHeader(
-            onSettingIconClick = onSettingIconClick, userNameAndEmail = userNameAndEmail
+            onSettingIconClick = onSettingIconClick,
+            userName = userName,
+            userEmail = userEmail
         )
-        Column(
+        LazyColumn(
             modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .background(Color(0xFF121212))
+                .fillMaxSize()
+                .background(Color(0xFF121212)),
+            contentPadding = PaddingValues(top = 4.dp, bottom = 40.dp)
         ) {
-            SimpleHeightSpacer(dp = 4)
-            DrawerContent(
-                drawableResId = R.drawable.ic_star,
-                stringResId = R.string.favorite,
-                onDrawerContentClick = onDrawerContentClick
-            )
-            DrawerContent(
-                drawableResId = R.drawable.ic_list,
-                stringResId = R.string.see_all,
-                onDrawerContentClick = onDrawerContentClick
-            )
-            DrawerContent(
-                drawableResId = R.drawable.ic_trash,
-                stringResId = R.string.trash_can,
-                onDrawerContentClick = onDrawerContentClick
-            )
-            SimpleHeightSpacer(dp = 4)
-            Divider(color = Disabled)
-            SimpleHeightSpacer(dp = 4)
-            DrawerContent(
-                drawableResId = R.drawable.ic_list,
-                stringResId = R.string.top,
-                onDrawerContentClick = onDrawerContentClick
-            )
-            DrawerContent(
-                drawableResId = R.drawable.ic_list,
-                stringResId = R.string.bottom,
-                onDrawerContentClick = onDrawerContentClick
-            )
-            DrawerContent(
-                drawableResId = R.drawable.ic_list,
-                stringResId = R.string.outer,
-                onDrawerContentClick = onDrawerContentClick
-            )
-            for (i in 0..20) DrawerContent(
-                drawableResId = R.drawable.ic_list,
-                stringResId = R.string.etc,
-                onDrawerContentClick = onDrawerContentClick
-            )
-            SimpleHeightSpacer(dp = 40)
+            item {
+                DrawerContent(
+                    drawable = R.drawable.ic_home,
+                    text = R.string.main_screen,
+                    onDrawerContentClick = onDrawerContentClick
+                )
+                DrawerContent(
+                    drawable = R.drawable.ic_star,
+                    text = R.string.favorite,
+                    onDrawerContentClick = onDrawerContentClick
+                )
+                DrawerContent(
+                    drawable = R.drawable.ic_list,
+                    text = R.string.see_all,
+                    onDrawerContentClick = onDrawerContentClick
+                )
+                DrawerContent(
+                    drawable = R.drawable.ic_delete,
+                    text = R.string.trash_can,
+                    onDrawerContentClick = onDrawerContentClick
+                )
+                SimpleHeightSpacer(dp = 4)
+                Divider(color = Disabled)
+                SimpleHeightSpacer(dp = 4)
+                DrawerContent(
+                    drawable = R.drawable.ic_list,
+                    text = R.string.top,
+                    onDrawerContentClick = onDrawerContentClick
+                )
+                DrawerContent(
+                    drawable = R.drawable.ic_list,
+                    text = R.string.bottom,
+                    onDrawerContentClick = onDrawerContentClick
+                )
+                DrawerContent(
+                    drawable = R.drawable.ic_list,
+                    text = R.string.outer,
+                    onDrawerContentClick = onDrawerContentClick
+                )
+                DrawerContent(
+                    drawable = R.drawable.ic_list,
+                    text = R.string.etc,
+                    onDrawerContentClick = onDrawerContentClick
+                )
+            }
+            items(20) {
+                DrawerContent(
+                    drawable = R.drawable.ic_list,
+                    text = R.string.etc,
+                    onDrawerContentClick = onDrawerContentClick
+                )
+            }
         }
     }
 }
 
 @Composable
 private fun DrawerHeader(
-    onSettingIconClick: () -> Unit, userNameAndEmail: String?
+    onSettingIconClick: () -> Unit,
+    userName: String,
+    userEmail: String
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        UserNameText(
+        Text(
             modifier = Modifier
                 .align(Alignment.CenterStart)
                 .padding(start = 12.dp),
-            userNameAndEmail = userNameAndEmail
+            style = MaterialTheme.typography.body1,
+            text = "$userName($userEmail)"
         )
-        SettingIcon(
-            modifier = Modifier.align(Alignment.CenterEnd), onSettingIconClick = onSettingIconClick
-        )
-    }
-}
-
-@Composable
-fun UserNameText(modifier: Modifier, userNameAndEmail: String?) {
-    userNameAndEmail?.let {
-        Text(
-            modifier = modifier, style = MaterialTheme.typography.body1, text = it
+        ClickableIcon(
+            modifier = Modifier.align(Alignment.CenterEnd),
+            drawable = R.drawable.ic_settings,
+            contentDescription = "setting icon",
+            onClick = onSettingIconClick
         )
     }
 }
 
 @Composable
-private fun SettingIcon(modifier: Modifier, onSettingIconClick: () -> Unit) = ClickableIcon(
-    modifier = modifier,
-    drawableId = R.drawable.ic_settings,
-    contentDescription = "setting icon",
-    onClick = onSettingIconClick
-)
-
-@Composable
-fun DrawerContent(drawableResId: Int, stringResId: Int, onDrawerContentClick: OnClick) {
+private fun DrawerContent(
+    @DrawableRes drawable: Int,
+    @StringRes text: Int,
+    onDrawerContentClick: OnClick
+) {
     DrawerContentRow(onDrawerContentClick) {
-        SimpleIcon(
-            modifier = Modifier.size(20.dp), drawableId = drawableResId
-        )
+        SimpleIcon(modifier = Modifier.size(22.dp), drawable = drawable)
         SimpleWidthSpacer(dp = 12)
         Text(
-            text = stringResource(id = stringResId), style = MaterialTheme.typography.body1.copy(
+            text = stringResource(id = text), style = MaterialTheme.typography.body1.copy(
                 letterSpacing = 0.75.sp, color = Color.White
             )
         )
@@ -226,7 +236,10 @@ fun DrawerContent(drawableResId: Int, stringResId: Int, onDrawerContentClick: On
 }
 
 @Composable
-fun DrawerContentRow(onDrawerContentClick: OnClick, content: @Composable RowScope.() -> Unit) = Row(
+private fun DrawerContentRow(
+    onDrawerContentClick: OnClick,
+    content: @Composable RowScope.() -> Unit
+) = Row(
     modifier = Modifier
         .fillMaxWidth()
         .padding(horizontal = 12.dp)

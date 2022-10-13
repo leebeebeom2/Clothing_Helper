@@ -106,7 +106,7 @@ data class SignInUIState(
     @StringRes val toastText: Int? = null,
     val googleButtonEnabled: Boolean = true
 ) {
-    val loginButtonenabled
+    val loginButtonEnabled
         get() = !emailState.isBlank && !emailState.isError
                 && !passwordState.isBlank && !passwordState.isError
 

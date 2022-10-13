@@ -50,7 +50,7 @@ fun SignInScreen(
         SimpleHeightSpacer(dp = 4)
         MaxWidthButton(
             text = R.string.login,
-            enabled = signInState.loginButtonenabled,
+            enabled = signInState.loginButtonEnabled,
             onClick = viewModel::signInWithEmailAndPassword
         )
 

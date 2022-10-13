@@ -21,12 +21,12 @@ data class TextFieldUIState(
     val isBlank get() = text.isBlank()
     val isError get() = error != TextFieldError.ERROR_OFF
 
-    fun textChangeAndErrorOff(newText: String) = this.copy(text = newText).errorOff()
-    fun errorOff() = this.copy(error = TextFieldError.ERROR_OFF)
-    fun errorOn(error: TextFieldError) = this.copy(error = error)
-    fun textInit() = this.copy(text = "")
-    fun setInvisible() = this.copy(visualTransformation = PasswordVisualTransformation())
-    fun setVisible() = this.copy(visualTransformation = VisualTransformation.None)
+    fun textChangeAndErrorOff(newText: String) = copy(text = newText).errorOff()
+    fun errorOff() = copy(error = TextFieldError.ERROR_OFF)
+    fun errorOn(error: TextFieldError) = copy(error = error)
+    fun textInit() = copy(text = "")
+    fun setInvisible() = copy(visualTransformation = PasswordVisualTransformation())
+    fun setVisible() = copy(visualTransformation = VisualTransformation.None)
 }
 
 enum class TextFieldError(val resId: Int) {

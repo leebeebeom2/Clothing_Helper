@@ -7,6 +7,5 @@ val Purple500 = Color(0xFF6200EE)
 val Purple700 = Color(0xFF3700B3)
 val Teal200 = Color(0xFF03DAC5)
 val Disabled = Color(0x50888888)
-val DisabledDeep = Color(0x80888888)
-val Primary = Color.Black
+val Black = Color.Black
 val WhiteSmoke = Color(0xFFf5f5f5)

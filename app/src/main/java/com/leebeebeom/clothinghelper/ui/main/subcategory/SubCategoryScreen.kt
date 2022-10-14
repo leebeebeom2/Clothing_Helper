@@ -9,8 +9,9 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -25,6 +26,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,14 +54,16 @@ fun SubCategoryScreen(viewModel: SubCategoryViewModel = viewModel()) {
     val state = viewModel.subCategoryUIState
 
     Scaffold(floatingActionButton = { AddFab(fabClick = viewModel.showAddCategoryDialog) }) { paddingValues ->
-        LazyColumn(
+        LazyVerticalGrid(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            columns = GridCells.Fixed(1)
         ) {
-            items(state.subCategories) {
+            items(state.subCategories) { // TODO 키
                 SubCategoryContent(it)
             }
         }
@@ -84,9 +88,7 @@ fun SubCategoryScreen(viewModel: SubCategoryViewModel = viewModel()) {
 private fun SubCategoryContent(title: String) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
-    Card(
-        modifier = Modifier.fillMaxWidth(), elevation = 2.dp, shape = RoundedCornerShape(12.dp)
-    ) {
+    Card(elevation = 2.dp, shape = RoundedCornerShape(12.dp)) {
         Column {
             SubCategoryTitle(title, isExpanded) { isExpanded = !isExpanded }
             SubCategoryInfo(isExpanded)
@@ -99,25 +101,26 @@ private fun SubCategoryInfo(isExpanded: Boolean) {
     AnimatedVisibility(
         visible = isExpanded, enter = expandVertically(), exit = shrinkVertically()
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colors.background)
-                .padding(8.dp)
-        ) {
-            val weightModifier = Modifier.weight(1f)
+        Surface(color = MaterialTheme.colors.background) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                val weightModifier = Modifier.weight(1f)
 
-            SubCategoryInfoText(
-                modifier = weightModifier,
-                infoTitle = R.string.average_size,
-                info = R.string.top_info
-            )
+                SubCategoryInfoText(
+                    modifier = weightModifier,
+                    infoTitle = R.string.average_size,
+                    info = R.string.top_info
+                )
 
-            SubCategoryInfoText(
-                modifier = weightModifier,
-                infoTitle = R.string.most_have_size,
-                info = R.string.top_info
-            )
+                SubCategoryInfoText(
+                    modifier = weightModifier,
+                    infoTitle = R.string.most_have_size,
+                    info = R.string.top_info
+                )
+            }
         }
     }
 }
@@ -144,29 +147,33 @@ private fun SubCategoryInfoText(
 
 @Composable
 private fun SubCategoryTitle(title: String, isExpanded: Boolean, onExpandIconClick: OnClick) {
-    Box(modifier = Modifier
+    Row(modifier = Modifier
         .fillMaxSize()
         .clickable { }
         .padding(start = 12.dp)
         .padding(vertical = 4.dp)) {
         Text(
-            modifier = Modifier.align(Alignment.CenterStart),
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .weight(1f),
             text = title,
-            style = MaterialTheme.typography.subtitle1
+            style = MaterialTheme.typography.subtitle1,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
-        ExpandIcon(Modifier.align(Alignment.TopEnd), isExpanded, onExpandIconClick)
+        ExpandIcon(isExpanded, onExpandIconClick)
     }
 }
 
 @Composable
-private fun ExpandIcon(modifier: Modifier, isExpanded: Boolean, onExpandIconClick: OnClick) {
+private fun ExpandIcon(isExpanded: Boolean, onExpandIconClick: OnClick) {
     val rotate by animateFloatAsState(
         targetValue = if (!isExpanded) 0f else 180f, animationSpec = tween(durationMillis = 300)
     )
 
     ClickableIcon(
         drawable = R.drawable.ic_expand_more,
-        modifier = modifier.rotate(rotate),
+        modifier = Modifier.rotate(rotate),
         tint = LocalContentColor.current.copy(ContentAlpha.medium),
         onClick = onExpandIconClick
     )
@@ -175,7 +182,7 @@ private fun ExpandIcon(modifier: Modifier, isExpanded: Boolean, onExpandIconClic
 @Composable
 fun AddFab(fabClick: () -> Unit) {
     FloatingActionButton(
-        modifier = Modifier.size(44.dp),
+        modifier = Modifier.size(48.dp),
         onClick = fabClick,
         backgroundColor = MaterialTheme.colors.primary,
     ) {
@@ -193,27 +200,27 @@ private fun AddCategoryDialog(
     onPositiveButtonClick: () -> Unit
 ) {
     Dialog(onDismissRequest = onDismissDialog) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(20.dp))
-                .background(MaterialTheme.colors.surface)
-                .padding(20.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.add_category_title),
-                style = MaterialTheme.typography.subtitle1,
-                modifier = Modifier.padding(start = 4.dp, bottom = 12.dp)
-            )
-            DialogTextField(
-                categoryTextFieldState = categoryTextFieldState,
-                onNewCategoryNameChange = onNewCategoryNameChange
-            )
-            DialogTextButtons(
-                positiveButtonEnabled = positiveButtonEnabled,
-                onCancelButtonClick = onCancelButtonClick,
-                onPositiveButtonClick = onPositiveButtonClick
-            )
+        Surface(color = MaterialTheme.colors.surface, shape = RoundedCornerShape(20.dp)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.add_category_title),
+                    style = MaterialTheme.typography.subtitle1,
+                    modifier = Modifier.padding(start = 4.dp, bottom = 12.dp)
+                )
+                DialogTextField(
+                    categoryTextFieldState = categoryTextFieldState,
+                    onNewCategoryNameChange = onNewCategoryNameChange
+                )
+                DialogTextButtons(
+                    positiveButtonEnabled = positiveButtonEnabled,
+                    onCancelButtonClick = onCancelButtonClick,
+                    onPositiveButtonClick = onPositiveButtonClick
+                )
+            }
         }
     }
 }
@@ -261,6 +268,7 @@ private fun DialogTextButton(
                 style = MaterialTheme.typography.subtitle1,
                 color = textColor
             )
+            SimpleHeightSpacer(dp = 40)
         }
     }
 }

@@ -12,7 +12,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -59,41 +58,37 @@ fun MaxWidthTextField(
     val focusRequester = FocusRequester()
     val isError = textFieldState.error != TextFieldError.ERROR_OFF
 
-    OutlinedTextField(
-        modifier = modifier
-            .fillMaxWidth()
-            .focusRequester(focusRequester),
-        value = textFieldState.text,
-        onValueChange = onValueChange,
-        label = { Text(text = stringResource(id = label)) },
-        placeholder = { Text(text = stringResource(id = placeHolder)) },
-        isError = isError,
-        visualTransformation = textFieldState.visualTransformation,
-        singleLine = true,
-        maxLines = 1,
-        keyboardOptions = textFieldState.keyboardOptions,
-        trailingIcon = trailingIcon,
-        keyboardActions =
-        if (textFieldState.imeAction == ImeAction.Done) KeyboardActions(onDone = { focusManager.clearFocus() })
-        else KeyboardActions.Default,
-        colors =
-        TextFieldDefaults.outlinedTextFieldColors(
-            unfocusedBorderColor = Color(0xFFDADADA),
-            unfocusedLabelColor = Color(0xFF8391A1),
-            backgroundColor = Color(0xFFF7F8F9),
-            placeholderColor = MaterialTheme.colors.onSurface.copy(ContentAlpha.disabled)
+    Column {
+        OutlinedTextField(
+            modifier = modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester),
+            value = textFieldState.text,
+            onValueChange = onValueChange,
+            label = { Text(text = stringResource(id = label)) },
+            placeholder = { Text(text = stringResource(id = placeHolder)) },
+            isError = isError,
+            visualTransformation = textFieldState.visualTransformation,
+            singleLine = true,
+            maxLines = 1,
+            keyboardOptions = textFieldState.keyboardOptions,
+            trailingIcon = trailingIcon,
+            keyboardActions = if (textFieldState.imeAction == ImeAction.Done) KeyboardActions(onDone = { focusManager.clearFocus() })
+            else KeyboardActions.Default,
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                unfocusedBorderColor = Color(0xFFDADADA),
+                unfocusedLabelColor = Color(0xFF8391A1),
+                backgroundColor = Color(0xFFF7F8F9),
+                placeholderColor = MaterialTheme.colors.onSurface.copy(ContentAlpha.disabled)
+            )
         )
-    )
-
-    ErrorText(isError, textFieldState.error)
+        ErrorText(isError, textFieldState.error)
+    }
     if (showKeyboardEnabled) ShowKeyboard(focusRequester)
 }
 
 @Composable
-private fun ErrorText(
-    isError: Boolean,
-    error: TextFieldError
-) {
+private fun ErrorText(isError: Boolean, error: TextFieldError) {
     AnimatedVisibility(
         visible = isError,
         enter = expandVertically(
@@ -101,10 +96,7 @@ private fun ErrorText(
                 dampingRatio = Spring.DampingRatioHighBouncy,
                 stiffness = Spring.StiffnessMedium
             )
-        ),
-        exit = shrinkVertically(
-            animationSpec = tween(1)
-        )
+        ), exit = shrinkVertically(animationSpec = tween(200))
     ) {
         Text(
             modifier = Modifier.padding(start = 4.dp),
@@ -199,11 +191,12 @@ val googleLogo = @Composable {
 
 @Composable
 fun CenterCircularProgressIndicator() {
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(color = Disabled)
-        .clickable(enabled = false) { }) {
-        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+    Surface(color = Disabled) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .clickable(enabled = false) { }) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        }
     }
 }
 

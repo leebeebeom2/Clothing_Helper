@@ -5,7 +5,6 @@ import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -128,63 +128,63 @@ private fun DrawerContents(
             userName = userName,
             userEmail = userEmail
         )
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0xFF121212)),
-            contentPadding = PaddingValues(top = 4.dp, bottom = 40.dp)
-        ) {
-            item {
-                DrawerContent(
-                    drawable = R.drawable.ic_home,
-                    text = R.string.main_screen,
-                    onDrawerContentClick = onDrawerContentClick
-                )
-                DrawerContent(
-                    drawable = R.drawable.ic_star,
-                    text = R.string.favorite,
-                    onDrawerContentClick = onDrawerContentClick
-                )
-                DrawerContent(
-                    drawable = R.drawable.ic_list,
-                    text = R.string.see_all,
-                    onDrawerContentClick = onDrawerContentClick
-                )
-                DrawerContent(
-                    drawable = R.drawable.ic_delete,
-                    text = R.string.trash_can,
-                    onDrawerContentClick = onDrawerContentClick
-                )
-                SimpleHeightSpacer(dp = 4)
-                Divider(color = Disabled)
-                SimpleHeightSpacer(dp = 4)
-                DrawerContent(
-                    drawable = R.drawable.ic_list,
-                    text = R.string.top,
-                    onDrawerContentClick = onDrawerContentClick
-                )
-                DrawerContent(
-                    drawable = R.drawable.ic_list,
-                    text = R.string.bottom,
-                    onDrawerContentClick = onDrawerContentClick
-                )
-                DrawerContent(
-                    drawable = R.drawable.ic_list,
-                    text = R.string.outer,
-                    onDrawerContentClick = onDrawerContentClick
-                )
-                DrawerContent(
-                    drawable = R.drawable.ic_list,
-                    text = R.string.etc,
-                    onDrawerContentClick = onDrawerContentClick
-                )
-            }
-            items(20) {
-                DrawerContent(
-                    drawable = R.drawable.ic_list,
-                    text = R.string.etc,
-                    onDrawerContentClick = onDrawerContentClick
-                )
+        Surface(color = Color(0xFF121212)) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(top = 4.dp, bottom = 40.dp)
+            ) {
+                item {
+                    DrawerContent(
+                        drawable = R.drawable.ic_home,
+                        text = R.string.main_screen,
+                        onDrawerContentClick = onDrawerContentClick
+                    )
+                    DrawerContent(
+                        drawable = R.drawable.ic_star,
+                        text = R.string.favorite,
+                        onDrawerContentClick = onDrawerContentClick
+                    )
+                    DrawerContent(
+                        drawable = R.drawable.ic_list,
+                        text = R.string.see_all,
+                        onDrawerContentClick = onDrawerContentClick
+                    )
+                    DrawerContent(
+                        drawable = R.drawable.ic_delete,
+                        text = R.string.trash_can,
+                        onDrawerContentClick = onDrawerContentClick
+                    )
+                    SimpleHeightSpacer(dp = 4)
+                    Divider(color = Disabled)
+                    SimpleHeightSpacer(dp = 4)
+                    DrawerContent(
+                        drawable = R.drawable.ic_list,
+                        text = R.string.top,
+                        onDrawerContentClick = onDrawerContentClick
+                    )
+                    DrawerContent(
+                        drawable = R.drawable.ic_list,
+                        text = R.string.bottom,
+                        onDrawerContentClick = onDrawerContentClick
+                    )
+                    DrawerContent(
+                        drawable = R.drawable.ic_list,
+                        text = R.string.outer,
+                        onDrawerContentClick = onDrawerContentClick
+                    )
+                    DrawerContent(
+                        drawable = R.drawable.ic_list,
+                        text = R.string.etc,
+                        onDrawerContentClick = onDrawerContentClick
+                    )
+                }
+                items(20) {
+                    DrawerContent(
+                        drawable = R.drawable.ic_list,
+                        text = R.string.etc,
+                        onDrawerContentClick = onDrawerContentClick
+                    )
+                }
             }
         }
     }
@@ -228,7 +228,9 @@ private fun DrawerContent(
         SimpleWidthSpacer(dp = 12)
         Text(
             text = stringResource(id = text),
-            style = MaterialTheme.typography.body1.copy(letterSpacing = 0.75.sp)
+            style = MaterialTheme.typography.body1.copy(letterSpacing = 0.75.sp),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }

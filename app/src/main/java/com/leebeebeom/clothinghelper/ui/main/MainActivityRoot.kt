@@ -196,20 +196,20 @@ private fun DrawerHeader(
     userName: String,
     userEmail: String
 ) {
-    Box(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             modifier = Modifier
-                .align(Alignment.CenterStart)
-                .padding(start = 12.dp),
+                .padding(start = 12.dp)
+                .weight(1f),
             style = MaterialTheme.typography.body1,
             text = "$userName($userEmail)"
         )
         ClickableIcon(
-            modifier = Modifier.align(Alignment.CenterEnd),
             drawable = R.drawable.ic_settings,
             contentDescription = "setting icon",
             onClick = onSettingIconClick
@@ -244,7 +244,7 @@ private fun DrawerContentRow(
         .clip(RoundedCornerShape(12.dp))
         .clickable(onClick = onDrawerContentClick)
         .padding(start = 8.dp)
-        .height(40.dp),
+        .heightIn(40.dp),
     verticalAlignment = Alignment.CenterVertically,
     content = content
 )

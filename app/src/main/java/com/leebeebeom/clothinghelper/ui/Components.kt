@@ -45,7 +45,7 @@ import com.leebeebeom.clothinghelper.ui.base.TextFieldUIState
 import com.leebeebeom.clothinghelper.ui.theme.Disabled
 import kotlinx.coroutines.delay
 
-@Composable // TODO 보더 굵기
+@Composable
 fun MaxWidthTextField(
     modifier: Modifier = Modifier,
     textFieldState: TextFieldUIState,
@@ -162,7 +162,7 @@ fun MaxWidthButton(
     Button(
         modifier = modifier
             .fillMaxWidth()
-            .height(52.dp),
+            .heightIn(52.dp),
         onClick = {
             focusManager.clearFocus()
             onClick()

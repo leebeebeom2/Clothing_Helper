@@ -54,7 +54,7 @@ class SignInScreenTest {
     }
 
     private fun allEmpty() {
-      loginBtn.assertIsNotEnabled()
+        loginBtn.assertIsNotEnabled()
     }
 
     @Test

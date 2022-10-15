@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
@@ -33,7 +34,7 @@ import kotlinx.coroutines.delay
 fun MaxWidthTextField(
     modifier: Modifier = Modifier,
     state: TextFieldUIState,
-    onValueChange: (String) -> Unit,
+    onValueChange: (String) -> Unit = {},
     trailingIcon: @Composable (() -> Unit)? = null,
     showKeyboardEnabled: Boolean = false
 ) {
@@ -106,15 +107,21 @@ fun ShowKeyboard(focusRequester: FocusRequester) {
     }
 }
 
-data class TextFieldUIState(
+class TextFieldUIState(
     val imeAction: ImeAction = ImeAction.Done,
     val keyboardType: KeyboardType = KeyboardType.Text,
     @StringRes val label: Int,
-    @StringRes val placeHolder: Int = R.string.empty
+    @StringRes val placeHolder: Int = R.string.empty,
+    initialVisualTransformation: VisualTransformation = VisualTransformation.None
 ) {
     var text by mutableStateOf("")
     var error by mutableStateOf(TextFieldError.ERROR_OFF)
-    var visualTransformation by mutableStateOf(VisualTransformation.None)
+    var visualTransformation by mutableStateOf(initialVisualTransformation)
+
+    val visualTransformationToggle = { isVisible: Boolean ->
+        visualTransformation =
+            if (isVisible) VisualTransformation.None else PasswordVisualTransformation()
+    }
 
     val keyboardOptions: KeyboardOptions = KeyboardOptions(
         keyboardType = keyboardType,
@@ -123,6 +130,22 @@ data class TextFieldUIState(
 
     val isBlank get() = text.isBlank()
     val isError get() = error != TextFieldError.ERROR_OFF
+
+    companion object {
+        fun emailState(imeAction: ImeAction = ImeAction.Done) = TextFieldUIState(
+            imeAction = imeAction,
+            keyboardType = KeyboardType.Email,
+            label = R.string.email,
+            placeHolder = R.string.email_place_holder
+        )
+
+        fun passwordState(imeAction: ImeAction = ImeAction.Done) = TextFieldUIState(
+            imeAction = imeAction,
+            keyboardType = KeyboardType.Password,
+            label = R.string.password,
+            initialVisualTransformation = PasswordVisualTransformation()
+        )
+    }
 }
 
 enum class TextFieldError(@StringRes val errorText: Int) {

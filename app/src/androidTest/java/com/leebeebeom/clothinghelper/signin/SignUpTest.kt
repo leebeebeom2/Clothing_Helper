@@ -2,10 +2,10 @@ package com.leebeebeom.clothinghelper.signin
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.signin.SignInActivity
 import org.junit.Before
 import org.junit.Rule
-import com.leebeebeom.clothinghelper.R
 import org.junit.Test
 
 const val NAME = "이비범"

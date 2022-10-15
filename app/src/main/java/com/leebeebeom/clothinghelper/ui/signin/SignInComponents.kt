@@ -21,20 +21,19 @@ import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.ClickableIcon
 import com.leebeebeom.clothinghelper.ui.MaxWidthButton
+import com.leebeebeom.clothinghelper.ui.SimpleIcon
 import com.leebeebeom.clothinghelper.ui.googleLogo
 
 @Composable
 fun VisibleIcon(visualTransformationToggle: (Boolean) -> Unit) {
     var isVisible by rememberSaveable { mutableStateOf(false) }
 
-    ClickableIcon(
-        drawable = if (isVisible) R.drawable.ic_visibility_off else R.drawable.ic_visibility,
-        contentDescription = "visible icon"
-    ) {
+    IconButton(onClick = {
         visualTransformationToggle(isVisible)
         isVisible = !isVisible
+    }) {
+        SimpleIcon(drawable = if (isVisible) R.drawable.ic_visibility_off else R.drawable.ic_visibility)
     }
 }
 

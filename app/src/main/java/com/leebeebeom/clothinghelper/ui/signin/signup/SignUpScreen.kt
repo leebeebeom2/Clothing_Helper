@@ -5,11 +5,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.MaxWidthButton
 import com.leebeebeom.clothinghelper.ui.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.ui.base.MaxWidthTextField
 import com.leebeebeom.clothinghelper.ui.signin.GoogleSignInButton
 import com.leebeebeom.clothinghelper.ui.signin.OrDivider
-import com.leebeebeom.clothinghelper.ui.signin.base.EmailTextField
-import com.leebeebeom.clothinghelper.ui.signin.base.NameTextField
-import com.leebeebeom.clothinghelper.ui.signin.base.PasswordTextField
+import com.leebeebeom.clothinghelper.ui.signin.VisibleIcon
 import com.leebeebeom.clothinghelper.ui.signin.base.SignInBaseRoot
 
 @Composable
@@ -21,29 +20,21 @@ fun SignUpScreen(viewModel: SignUpViewModel = viewModel()) {
         toastText = signUpState.toastText,
         toastShown = viewModel.toastShown
     ) {
-        EmailTextField(
-            emailState = signUpState.emailState,
-            onEmailChange = viewModel.onEmailChange,
+        MaxWidthTextField(
+            state = signUpState.emailState,
             showKeyboardEnabled = true
         )
 
-        NameTextField(
-            nameState = signUpState.nameState,
-            onNameChange = viewModel.onNameChange
-        )
+        MaxWidthTextField(state = signUpState.nameState,)
 
-        PasswordTextField(
-            passwordState = signUpState.passwordState,
-            onPasswordChange = viewModel.onPasswordChange,
-            visualTransformationToggle = viewModel.passwordVisualTransformationToggle
-        )
+        MaxWidthTextField(state = signUpState.passwordState,
+            onValueChange = viewModel.onPasswordChange,
+            trailingIcon = { VisibleIcon(visualTransformationToggle = signUpState.passwordState.visualTransformationToggle) })
 
-        PasswordTextField(
-            passwordState = signUpState.passwordConfirmState,
-            onPasswordChange = viewModel.onPasswordConfirmChange,
-            visualTransformationToggle = viewModel.passwordConfirmVisualTransformationToggle,
-            label = R.string.password_confirm
-        )
+        MaxWidthTextField(state = signUpState.passwordConfirmState,
+            onValueChange = viewModel.onPasswordConfirmChange,
+            trailingIcon = { VisibleIcon(visualTransformationToggle = signUpState.passwordConfirmState.visualTransformationToggle) })
+
         SimpleHeightSpacer(dp = 12)
         MaxWidthButton(
             text = R.string.sign_up,

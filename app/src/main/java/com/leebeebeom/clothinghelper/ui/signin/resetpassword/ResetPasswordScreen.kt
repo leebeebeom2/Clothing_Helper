@@ -18,16 +18,16 @@ import com.leebeebeom.clothinghelper.ui.signin.base.SignInBaseRoot
 
 @Composable
 fun ResetPasswordScreen(viewModel: ResetPasswordViewModel = viewModel()) {
-    val resetPasswordState = viewModel.resetPasswordState
+    val state = viewModel.state
 
-    if (resetPasswordState.goBack) {
+    if (state.goBack) {
         (LocalContext.current as ComponentActivity).onBackPressedDispatcher.onBackPressed()
         viewModel.wentBack()
     }
 
     SignInBaseRoot(
-        isLoading = resetPasswordState.isLoading,
-        toastText = resetPasswordState.toastText,
+        isLoading = state.isLoading,
+        toastText = state.toastText,
         toastShown = viewModel.toastShown
     ) {
         Text(
@@ -37,14 +37,13 @@ fun ResetPasswordScreen(viewModel: ResetPasswordViewModel = viewModel()) {
         )
 
         MaxWidthTextField(
-            state = resetPasswordState.emailState,
-            onValueChange = viewModel.onEmailChange,
+            state = state.emailState,
             showKeyboardEnabled = true
         )
         SimpleHeightSpacer(dp = 12)
         MaxWidthButton(
             text = R.string.check,
-            enabled = resetPasswordState.submitButtonEnabled,
+            enabled = state.submitButtonEnabled,
             onClick = viewModel::sendResetPasswordEmail
         )
     }

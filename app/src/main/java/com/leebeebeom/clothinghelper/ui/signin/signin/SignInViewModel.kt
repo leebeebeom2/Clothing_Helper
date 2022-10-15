@@ -5,8 +5,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import com.google.firebase.auth.FirebaseAuth
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.base.TextFieldError
@@ -18,18 +16,6 @@ import com.leebeebeom.clothinghelper.ui.signin.SignInBaseViewModel
 class SignInViewModel : SignInBaseViewModel(), GoogleSignInImpl {
     var signInState by mutableStateOf(SignInUIState())
         private set
-
-    val onEmailChange = { newEmail: String ->
-        signInState = signInState.onEmailChange(newEmail)
-    }
-
-    val onPasswordChange = { newPassword: String ->
-        signInState = signInState.onPasswordChange(newPassword)
-    }
-
-    val passwordVisualTransformationToggle = { isVisible: Boolean ->
-        signInState = signInState.passwordVisualTransformationToggle(isVisible)
-    }
 
     fun signInWithEmailAndPassword() {
         loadingOn()
@@ -44,23 +30,18 @@ class SignInViewModel : SignInBaseViewModel(), GoogleSignInImpl {
         }
     }
 
-    private fun setWrongPasswordError() {
-        signInState = signInState.setPasswordError(TextFieldError.ERROR_WRONG_PASSWORD)
-    }
-
-    private fun setEmailError(error: TextFieldError) {
-        signInState = signInState.setEmailError(error)
-    }
-
     override fun showToast(@StringRes toastText: Int) {
         signInState = signInState.showToast(toastText)
     }
 
     override fun setError(errorCode: String) {
         when (errorCode) {
-            FirebaseErrorCode.ERROR_INVALID_EMAIL -> setEmailError(TextFieldError.ERROR_INVALID_EMAIL)
-            FirebaseErrorCode.ERROR_USER_NOT_FOUND -> setEmailError(TextFieldError.ERROR_USER_NOT_FOUND)
-            FirebaseErrorCode.ERROR_WRONG_PASSWORD -> setWrongPasswordError()
+            FirebaseErrorCode.ERROR_INVALID_EMAIL ->
+                signInState.emailState.error = TextFieldError.ERROR_INVALID_EMAIL
+            FirebaseErrorCode.ERROR_USER_NOT_FOUND ->
+                signInState.emailState.error = TextFieldError.ERROR_USER_NOT_FOUND
+            FirebaseErrorCode.ERROR_WRONG_PASSWORD ->
+                signInState.passwordState.error = TextFieldError.ERROR_WRONG_PASSWORD
             else -> showToast(R.string.unknown_error)
         }
     }
@@ -87,20 +68,13 @@ class SignInViewModel : SignInBaseViewModel(), GoogleSignInImpl {
     }
 
     private fun setGoogleButtonEnabled(enabled: Boolean) {
-        signInState = signInState.setGoogleButtonenabled(enabled)
+        signInState = signInState.setGoogleButtonEnabled(enabled)
     }
 }
 
 data class SignInUIState(
-    val emailState: TextFieldUIState = TextFieldUIState(
-        imeAction = ImeAction.Next,
-        keyboardType = KeyboardType.Email
-    ),
-    val passwordState: TextFieldUIState = TextFieldUIState(
-        imeAction = ImeAction.Done,
-        keyboardType = KeyboardType.Password,
-        visualTransformation = PasswordVisualTransformation()
-    ),
+    val emailState: TextFieldUIState = TextFieldUIState.emailState(ImeAction.Next),
+    val passwordState: TextFieldUIState = TextFieldUIState.passwordState(),
     val isLoading: Boolean = false,
     @StringRes val toastText: Int? = null,
     val googleButtonEnabled: Boolean = true
@@ -108,16 +82,6 @@ data class SignInUIState(
     val loginButtonEnabled
         get() = !emailState.isBlank && !emailState.isError
                 && !passwordState.isBlank && !passwordState.isError
-
-    fun onEmailChange(newEmail: String) =
-        copy(emailState = emailState.textChangeAndErrorOff(newEmail))
-
-    fun onPasswordChange(newPassword: String) =
-        copy(passwordState = passwordState.textChangeAndErrorOff(newPassword))
-
-    fun passwordVisualTransformationToggle(isVisible: Boolean) =
-        if (isVisible) copy(passwordState = passwordState.setInvisible())
-        else copy(passwordState = passwordState.setVisible())
 
     fun loadingOn() = copy(isLoading = true)
 
@@ -127,9 +91,5 @@ data class SignInUIState(
 
     fun toastShown() = copy(toastText = null)
 
-    fun setEmailError(error: TextFieldError) = copy(emailState = emailState.errorOn(error))
-
-    fun setPasswordError(error: TextFieldError) = copy(passwordState = passwordState.errorOn(error))
-
-    fun setGoogleButtonenabled(enabled: Boolean) = copy(googleButtonEnabled = enabled)
+    fun setGoogleButtonEnabled(enabled: Boolean) = copy(googleButtonEnabled = enabled)
 }

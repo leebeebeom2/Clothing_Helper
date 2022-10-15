@@ -13,7 +13,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.MaxWidthButton
 import com.leebeebeom.clothinghelper.ui.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.ui.signin.base.EmailTextField
+import com.leebeebeom.clothinghelper.ui.base.MaxWidthTextField
 import com.leebeebeom.clothinghelper.ui.signin.base.SignInBaseRoot
 
 @Composable
@@ -36,9 +36,9 @@ fun ResetPasswordScreen(viewModel: ResetPasswordViewModel = viewModel()) {
             modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
         )
 
-        EmailTextField(
-            emailState = resetPasswordState.emailState,
-            onEmailChange = viewModel.onEmailChange,
+        MaxWidthTextField(
+            state = resetPasswordState.emailState,
+            onValueChange = viewModel.onEmailChange,
             showKeyboardEnabled = true
         )
         SimpleHeightSpacer(dp = 12)

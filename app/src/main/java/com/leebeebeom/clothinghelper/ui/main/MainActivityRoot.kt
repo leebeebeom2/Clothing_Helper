@@ -25,7 +25,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.OnClick
-import com.leebeebeom.clothinghelper.ui.*
+import com.leebeebeom.clothinghelper.ui.CenterCircularProgressIndicator
+import com.leebeebeom.clothinghelper.ui.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.ui.SimpleIcon
+import com.leebeebeom.clothinghelper.ui.SimpleWidthSpacer
 import com.leebeebeom.clothinghelper.ui.signin.SignInActivity
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelper.ui.theme.Disabled
@@ -107,11 +110,9 @@ private fun StartSignInActivity(
 @Composable
 private fun CHBottomAppBar(onDrawerIconClick: () -> Unit) {
     BottomAppBar(contentPadding = PaddingValues(horizontal = 4.dp)) {
-        ClickableIcon(
-            drawable = R.drawable.ic_menu,
-            onClick = onDrawerIconClick,
-            contentDescription = "drawer icon"
-        )
+        IconButton(onClick = onDrawerIconClick) {
+            SimpleIcon(drawable = R.drawable.ic_menu)
+        }
     }
 }
 
@@ -197,9 +198,7 @@ private fun DrawerHeader(
     userEmail: String
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
+        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -209,11 +208,9 @@ private fun DrawerHeader(
             style = MaterialTheme.typography.body1,
             text = "$userName($userEmail)"
         )
-        ClickableIcon(
-            drawable = R.drawable.ic_settings,
-            contentDescription = "setting icon",
-            onClick = onSettingIconClick
-        )
+        IconButton(onClick = onSettingIconClick) {
+            SimpleIcon(drawable = R.drawable.ic_settings)
+        }
     }
 }
 

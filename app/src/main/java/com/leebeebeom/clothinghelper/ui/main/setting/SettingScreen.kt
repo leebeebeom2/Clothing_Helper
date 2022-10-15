@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.domain.OnClick
 import com.leebeebeom.clothinghelper.ui.MaxWidthButton
 
 @Composable
@@ -22,7 +21,7 @@ fun SettingScreen(viewModel: SettingViewModel = viewModel()) {
 }
 
 @Composable
-private fun SignOutButton(onSignOutClick: OnClick) {
+private fun SignOutButton(onSignOutClick: () -> Unit) {
     MaxWidthButton(
         modifier = Modifier.padding(horizontal = 20.dp, vertical = 20.dp),
         text = R.string.sign_out,

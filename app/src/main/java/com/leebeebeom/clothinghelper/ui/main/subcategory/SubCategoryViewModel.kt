@@ -11,7 +11,8 @@ class SubCategoryViewModel : ViewModel() {
     var subCategoryUIState by mutableStateOf(SubCategoryUIState())
         private set
 
-    val showAddCategoryDialog = { subCategoryUIState = subCategoryUIState.onShowAddCategoryDialog() }
+    val showAddCategoryDialog =
+        { subCategoryUIState = subCategoryUIState.onShowAddCategoryDialog() }
 
     val onDismissAddCategoryDialog =
         { subCategoryUIState = subCategoryUIState.onDismissAddCategoryDialog() }
@@ -51,7 +52,7 @@ data class SubCategoryUIState(
 
     fun addNewCategory(): SubCategoryUIState {
         val list = subCategories.toMutableList()
-        list.add(categoryName.text)
+        list.add(categoryName.initialText)
         return copy(subCategories = list)
     }
 }

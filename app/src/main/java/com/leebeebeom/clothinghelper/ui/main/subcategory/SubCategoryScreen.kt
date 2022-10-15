@@ -6,7 +6,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.background
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -21,7 +21,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -34,7 +33,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.OnClick
-import com.leebeebeom.clothinghelper.ui.ClickableIcon
 import com.leebeebeom.clothinghelper.ui.MaxWidthTextField
 import com.leebeebeom.clothinghelper.ui.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.ui.SimpleIcon
@@ -49,11 +47,14 @@ fun SubCategoryScreenPreview() {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SubCategoryScreen(viewModel: SubCategoryViewModel = viewModel()) {
     val state = viewModel.subCategoryUIState
 
     Scaffold(floatingActionButton = { AddFab(fabClick = viewModel.showAddCategoryDialog) }) { paddingValues ->
+        var cell by rememberSaveable { mutableStateOf(1) }
+
         LazyVerticalGrid(
             modifier = Modifier
                 .padding(paddingValues)
@@ -61,10 +62,16 @@ fun SubCategoryScreen(viewModel: SubCategoryViewModel = viewModel()) {
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            columns = GridCells.Fixed(1)
+            columns = GridCells.Fixed(cell)
         ) {
-            items(state.subCategories) { // TODO 키
-                SubCategoryContent(it)
+            items(state.subCategories, key = { it }) { // TODO 키
+                val modifier = Modifier.animateItemPlacement(animationSpec = tween(425))
+                SubCategoryContent(modifier, it)
+            }
+            item {
+                Button(onClick = { cell = if (cell == 1) 2 else 1 }) {
+
+                }
             }
         }
     }
@@ -85,10 +92,10 @@ fun SubCategoryScreen(viewModel: SubCategoryViewModel = viewModel()) {
 }
 
 @Composable
-private fun SubCategoryContent(title: String) {
+private fun SubCategoryContent(modifier: Modifier, title: String) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
-    Card(elevation = 2.dp, shape = RoundedCornerShape(12.dp)) {
+    Card(modifier = modifier, elevation = 2.dp, shape = RoundedCornerShape(12.dp)) {
         Column {
             SubCategoryTitle(title, isExpanded) { isExpanded = !isExpanded }
             SubCategoryInfo(isExpanded)
@@ -99,7 +106,9 @@ private fun SubCategoryContent(title: String) {
 @Composable
 private fun SubCategoryInfo(isExpanded: Boolean) {
     AnimatedVisibility(
-        visible = isExpanded, enter = expandVertically(), exit = shrinkVertically()
+        visible = isExpanded,
+        enter = expandVertically(animationSpec = tween(250)),
+        exit = shrinkVertically(animationSpec = tween(250))
     ) {
         Surface(color = MaterialTheme.colors.background) {
             Row(
@@ -171,12 +180,13 @@ private fun ExpandIcon(isExpanded: Boolean, onExpandIconClick: OnClick) {
         targetValue = if (!isExpanded) 0f else 180f, animationSpec = tween(durationMillis = 300)
     )
 
-    ClickableIcon(
-        drawable = R.drawable.ic_expand_more,
-        modifier = Modifier.rotate(rotate),
-        tint = LocalContentColor.current.copy(ContentAlpha.medium),
-        onClick = onExpandIconClick
-    )
+    IconButton(onClick = onExpandIconClick) {
+        SimpleIcon(
+            drawable = R.drawable.ic_expand_more,
+            modifier = Modifier.rotate(rotate),
+            tint = LocalContentColor.current.copy(ContentAlpha.medium)
+        )
+    }
 }
 
 @Composable

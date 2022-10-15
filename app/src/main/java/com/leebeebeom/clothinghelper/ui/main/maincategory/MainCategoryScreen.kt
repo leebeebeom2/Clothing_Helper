@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.domain.OnClick
 import com.leebeebeom.clothinghelper.ui.FinishActivityOnBackPressed
 import com.leebeebeom.clothinghelper.ui.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.ui.SimpleIcon
@@ -25,7 +24,7 @@ import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 
 @Preview(showSystemUi = true, showBackground = true, uiMode = UI_MODE_NIGHT_NO)
 @Composable
-fun MainScreenPreview() {
+fun MainCategoryPreview() {
     ClothingHelperTheme {
         MainCategoryScreen {}
     }
@@ -55,7 +54,7 @@ private fun MainCategoryContent(
     modifier: Modifier,
     @StringRes mainCategory: Int,
     index: Int,
-    onMainContentClick: OnClick
+    onMainContentClick: () -> Unit
 ) {
     val shape = RoundedCornerShape(20.dp)
 

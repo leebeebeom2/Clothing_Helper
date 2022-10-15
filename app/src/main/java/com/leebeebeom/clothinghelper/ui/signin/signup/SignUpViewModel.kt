@@ -38,8 +38,12 @@ class SignUpViewModel : SignInBaseViewModel(), GoogleSignInImpl {
         val passwordConfirmState = signUpState.passwordConfirmState
         val passwordSate = signUpState.passwordState
 
-        if (!passwordConfirmState.isBlank && passwordSate.text != passwordConfirmState.text)
-            signUpState.passwordConfirmState.error = TextFieldError.ERROR_PASSWORD_CONFIRM_NOT_SAME
+        if (!passwordConfirmState.isBlank) {
+            if (passwordSate.text != passwordConfirmState.text)
+                signUpState.passwordConfirmState.error =
+                    TextFieldError.ERROR_PASSWORD_CONFIRM_NOT_SAME
+            else signUpState.passwordConfirmState.error = TextFieldError.ERROR_OFF
+        }
     }
 
     fun signUpWithEmailAndPassword() {

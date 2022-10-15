@@ -41,7 +41,7 @@ fun SignInScreen(
 
         MaxWidthTextField(
             state = signInState.passwordState,
-            trailingIcon = { VisibleIcon(visualTransformationToggle = signInState.passwordState.visualTransformationToggle) }
+            trailingIcon = { VisibleIcon(signInState.passwordState) }
         )
 
         ForgotPasswordText(onForgotPasswordClick = onForgotPasswordClick)

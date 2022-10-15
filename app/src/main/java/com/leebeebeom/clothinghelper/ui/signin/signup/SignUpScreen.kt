@@ -29,11 +29,11 @@ fun SignUpScreen(viewModel: SignUpViewModel = viewModel()) {
 
         MaxWidthTextField(state = signUpState.passwordState,
             onValueChange = viewModel.onPasswordChange,
-            trailingIcon = { VisibleIcon(visualTransformationToggle = signUpState.passwordState.visualTransformationToggle) })
+            trailingIcon = { VisibleIcon(signUpState.passwordState) })
 
         MaxWidthTextField(state = signUpState.passwordConfirmState,
             onValueChange = viewModel.onPasswordConfirmChange,
-            trailingIcon = { VisibleIcon(visualTransformationToggle = signUpState.passwordConfirmState.visualTransformationToggle) })
+            trailingIcon = { VisibleIcon(signUpState.passwordConfirmState) })
 
         SimpleHeightSpacer(dp = 12)
         MaxWidthButton(

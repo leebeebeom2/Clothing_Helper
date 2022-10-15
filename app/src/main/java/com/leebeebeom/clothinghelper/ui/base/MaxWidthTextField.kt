@@ -118,9 +118,9 @@ class TextFieldUIState(
     var error by mutableStateOf(TextFieldError.ERROR_OFF)
     var visualTransformation by mutableStateOf(initialVisualTransformation)
 
-    val visualTransformationToggle = { isVisible: Boolean ->
+    val visualTransformationToggle = {
         visualTransformation =
-            if (isVisible) VisualTransformation.None else PasswordVisualTransformation()
+            if (isVisible) PasswordVisualTransformation() else VisualTransformation.None
     }
 
     val keyboardOptions: KeyboardOptions = KeyboardOptions(
@@ -130,6 +130,7 @@ class TextFieldUIState(
 
     val isBlank get() = text.isBlank()
     val isError get() = error != TextFieldError.ERROR_OFF
+    val isVisible get() = visualTransformation == VisualTransformation.None
 
     companion object {
         fun emailState(imeAction: ImeAction = ImeAction.Done) = TextFieldUIState(

@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.domain.OnClick
 import com.leebeebeom.clothinghelper.ui.CenterCircularProgressIndicator
 import com.leebeebeom.clothinghelper.ui.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.ui.SimpleIcon
@@ -47,7 +46,7 @@ fun MainActivityRoot(
         coroutineScope.launch { drawerState.close() }
         Unit
     },
-    onDrawerContentClick: OnClick,
+    onDrawerContentClick: () -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val mainState = viewModel.mainState
@@ -121,7 +120,7 @@ private fun DrawerContents(
     onSettingIconClick: () -> Unit,
     userName: String,
     userEmail: String,
-    onDrawerContentClick: OnClick
+    onDrawerContentClick: () -> Unit
 ) {
     Column {
         DrawerHeader(
@@ -218,7 +217,7 @@ private fun DrawerHeader(
 private fun DrawerContent(
     @DrawableRes drawable: Int,
     @StringRes text: Int,
-    onDrawerContentClick: OnClick
+    onDrawerContentClick: () -> Unit
 ) {
     DrawerContentRow(onDrawerContentClick) {
         SimpleIcon(modifier = Modifier.size(22.dp), drawable = drawable)
@@ -234,7 +233,7 @@ private fun DrawerContent(
 
 @Composable
 private fun DrawerContentRow(
-    onDrawerContentClick: OnClick,
+    onDrawerContentClick: () -> Unit,
     content: @Composable RowScope.() -> Unit
 ) = Row(
     modifier = Modifier

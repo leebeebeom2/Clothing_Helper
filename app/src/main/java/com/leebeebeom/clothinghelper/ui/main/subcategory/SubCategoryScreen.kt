@@ -32,10 +32,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.domain.OnClick
-import com.leebeebeom.clothinghelper.ui.MaxWidthTextField
 import com.leebeebeom.clothinghelper.ui.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.ui.SimpleIcon
+import com.leebeebeom.clothinghelper.ui.base.MaxWidthTextField
 import com.leebeebeom.clothinghelper.ui.base.TextFieldUIState
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 
@@ -84,7 +83,7 @@ fun SubCategoryScreen(viewModel: SubCategoryViewModel = viewModel()) {
             positiveButtonEnabled = state.positiveButtonEnabled,
             onCancelButtonClick = viewModel.onDismissAddCategoryDialog,
             onPositiveButtonClick = {
-                viewModel.addNewCategory()
+                state.addNewCategory()
                 viewModel.onDismissAddCategoryDialog()
             },
         )
@@ -155,7 +154,7 @@ private fun SubCategoryInfoText(
 
 
 @Composable
-private fun SubCategoryTitle(title: String, isExpanded: Boolean, onExpandIconClick: OnClick) {
+private fun SubCategoryTitle(title: String, isExpanded: Boolean, onExpandIconClick: () -> Unit) {
     Row(modifier = Modifier
         .fillMaxSize()
         .clickable { }
@@ -175,7 +174,7 @@ private fun SubCategoryTitle(title: String, isExpanded: Boolean, onExpandIconCli
 }
 
 @Composable
-private fun ExpandIcon(isExpanded: Boolean, onExpandIconClick: OnClick) {
+private fun ExpandIcon(isExpanded: Boolean, onExpandIconClick: () -> Unit) {
     val rotate by animateFloatAsState(
         targetValue = if (!isExpanded) 0f else 180f, animationSpec = tween(durationMillis = 300)
     )
@@ -289,10 +288,8 @@ private fun DialogTextField(
     onNewCategoryNameChange: (String) -> Unit,
 ) {
     MaxWidthTextField(
-        textFieldState = categoryTextFieldState,
+        state = categoryTextFieldState,
         onValueChange = onNewCategoryNameChange,
-        label = R.string.category,
-        placeHolder = R.string.category_place_holder,
         showKeyboardEnabled = true
     )
     SimpleHeightSpacer(dp = 12)

@@ -1,9 +1,12 @@
 package com.leebeebeom.clothinghelper.ui.main.subcategory
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
+import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.base.TextFieldError
 import com.leebeebeom.clothinghelper.ui.base.TextFieldUIState
 
@@ -12,51 +15,32 @@ class SubCategoryViewModel : ViewModel() {
         private set
 
     val showAddCategoryDialog =
-        { subCategoryUIState = subCategoryUIState.onShowAddCategoryDialog() }
+        { subCategoryUIState = subCategoryUIState.copy(showDialog = true) }
 
-    val onDismissAddCategoryDialog =
-        { subCategoryUIState = subCategoryUIState.onDismissAddCategoryDialog() }
-
-    val onNewCategoryNameChange = { newCategoryName: String ->
-        subCategoryUIState = subCategoryUIState.onNewCategoryNameChange(newCategoryName)
-
-        if (subCategoryUIState.subCategories.contains(newCategoryName))
-            subCategoryUIState =
-                subCategoryUIState.setCategoryNameError(TextFieldError.ERROR_SAME_CATEGORY_NAME)
+    val onDismissAddCategoryDialog = {
+        subCategoryUIState.categoryName.text = ""
+        subCategoryUIState = subCategoryUIState.copy(showDialog = false)
     }
 
-    fun addNewCategory() {
-        subCategoryUIState = subCategoryUIState.addNewCategory()
+    val onNewCategoryNameChange = { newCategoryName: String ->
+        if (subCategoryUIState.subCategories.contains(newCategoryName))
+            subCategoryUIState.categoryName.error = TextFieldError.ERROR_SAME_CATEGORY_NAME
     }
 }
 
 data class SubCategoryUIState(
     val showDialog: Boolean = false,
-    val subCategories: List<String> = getInitialSubCategories(),
-    val categoryName: TextFieldUIState = TextFieldUIState()
+    val subCategories: SnapshotStateList<String> = getInitialSubCategories(),
+    val categoryName: TextFieldUIState = TextFieldUIState(
+        label = R.string.category,
+        placeHolder = R.string.category_place_holder
+    )
 ) {
     val positiveButtonEnabled get() = !categoryName.isBlank && !categoryName.isError
 
-    fun onShowAddCategoryDialog() = copy(showDialog = true)
-
-    fun onDismissAddCategoryDialog() = copy(
-        showDialog = false,
-        categoryName = categoryName.textInit().errorOff()
-    )
-
-    fun onNewCategoryNameChange(newCategory: String) =
-        copy(categoryName = categoryName.textChangeAndErrorOff(newCategory))
-
-    fun setCategoryNameError(error: TextFieldError) =
-        copy(categoryName = categoryName.errorOn(error))
-
-    fun addNewCategory(): SubCategoryUIState {
-        val list = subCategories.toMutableList()
-        list.add(categoryName.initialText)
-        return copy(subCategories = list)
-    }
+    fun addNewCategory() = subCategories.add(categoryName.text)
 }
 
 // TODO 삭제
 fun getInitialSubCategories() =
-    mutableListOf("반팔 티셔츠", "긴팔 티셔츠", "셔츠", "반팔 셔츠", "니트", "반팔 니트", "니트 베스트")
+    mutableStateListOf("반팔 티셔츠", "긴팔 티셔츠", "셔츠", "반팔 셔츠", "니트", "반팔 니트", "니트 베스트")

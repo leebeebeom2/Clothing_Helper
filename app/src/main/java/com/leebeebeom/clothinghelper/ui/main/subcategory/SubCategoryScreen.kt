@@ -17,6 +17,8 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -35,7 +37,6 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.ui.SimpleIcon
 import com.leebeebeom.clothinghelper.ui.base.MaxWidthTextField
-import com.leebeebeom.clothinghelper.ui.base.TextFieldUIState
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 
 @Preview(showBackground = true, showSystemUi = true)
@@ -49,21 +50,19 @@ fun SubCategoryScreenPreview() {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SubCategoryScreen(viewModel: SubCategoryViewModel = viewModel()) {
-    val state = viewModel.subCategoryUIState
+    val viewModelState = viewModel.subCategoryUIState
 
-    Scaffold(floatingActionButton = { AddFab(fabClick = viewModel.showAddCategoryDialog) }) { paddingValues ->
+    Box(modifier = Modifier.fillMaxSize()) {
         var cell by rememberSaveable { mutableStateOf(1) }
 
         LazyVerticalGrid(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             columns = GridCells.Fixed(cell)
         ) {
-            items(state.subCategories, key = { it }) { // TODO 키
+            items(viewModelState.subCategories, key = { it }) {
                 val modifier = Modifier.animateItemPlacement(animationSpec = tween(425))
                 SubCategoryContent(modifier, it)
             }
@@ -73,19 +72,12 @@ fun SubCategoryScreen(viewModel: SubCategoryViewModel = viewModel()) {
                 }
             }
         }
-    }
 
-    if (state.showDialog) {
-        AddCategoryDialog(
-            onDismissDialog = viewModel.onDismissAddCategoryDialog,
-            categoryTextFieldState = state.categoryName,
-            onNewCategoryNameChange = viewModel.onNewCategoryNameChange,
-            positiveButtonEnabled = state.positiveButtonEnabled,
-            onCancelButtonClick = viewModel.onDismissAddCategoryDialog,
-            onPositiveButtonClick = {
-                state.addNewCategory()
-                viewModel.onDismissAddCategoryDialog()
-            },
+        AddCategoryDialogFab(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 16.dp, bottom = 16.dp),
+            onPositiveButtonClick = viewModelState::addNewCategory
         )
     }
 }
@@ -157,7 +149,7 @@ private fun SubCategoryInfoText(
 private fun SubCategoryTitle(title: String, isExpanded: Boolean, onExpandIconClick: () -> Unit) {
     Row(modifier = Modifier
         .fillMaxSize()
-        .clickable { }
+        .clickable { /*TODO*/ }
         .padding(start = 12.dp)
         .padding(vertical = 4.dp)) {
         Text(
@@ -189,49 +181,45 @@ private fun ExpandIcon(isExpanded: Boolean, onExpandIconClick: () -> Unit) {
 }
 
 @Composable
-fun AddFab(fabClick: () -> Unit) {
+private fun AddCategoryDialogFab(modifier: Modifier, onPositiveButtonClick: (String) -> Unit) {
+    val state = rememberAddCategoryDialogUIState()
+
     FloatingActionButton(
-        modifier = Modifier.size(48.dp),
-        onClick = fabClick,
+        modifier = modifier.size(48.dp),
+        onClick = state::showDialog,
         backgroundColor = MaterialTheme.colors.primary,
     ) {
         SimpleIcon(drawable = R.drawable.ic_add, contentDescription = "add icon")
     }
-}
 
-@Composable
-private fun AddCategoryDialog(
-    onDismissDialog: () -> Unit,
-    categoryTextFieldState: TextFieldUIState,
-    onNewCategoryNameChange: (String) -> Unit,
-    positiveButtonEnabled: Boolean,
-    onCancelButtonClick: () -> Unit,
-    onPositiveButtonClick: () -> Unit
-) {
-    Dialog(onDismissRequest = onDismissDialog) {
-        Surface(color = MaterialTheme.colors.surface, shape = RoundedCornerShape(20.dp)) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.add_category_title),
-                    style = MaterialTheme.typography.subtitle1,
-                    modifier = Modifier.padding(start = 4.dp, bottom = 12.dp)
-                )
-                DialogTextField(
-                    categoryTextFieldState = categoryTextFieldState,
-                    onNewCategoryNameChange = onNewCategoryNameChange
-                )
-                DialogTextButtons(
-                    positiveButtonEnabled = positiveButtonEnabled,
-                    onCancelButtonClick = onCancelButtonClick,
-                    onPositiveButtonClick = onPositiveButtonClick
-                )
+    if (state.showDialog)
+        Dialog(onDismissRequest = state::dismissDialog) {
+            Surface(color = MaterialTheme.colors.surface, shape = RoundedCornerShape(20.dp)) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.add_category_title),
+                        style = MaterialTheme.typography.subtitle1,
+                        modifier = Modifier.padding(start = 4.dp, bottom = 12.dp)
+                    )
+                    DialogTextField(
+                        categoryName = state.categoryName,
+                        error = state.categoryNameError,
+                        onCategoryNameChange = state::onCategoryNameChange
+                    )
+                    DialogTextButtons(
+                        positiveButtonEnabled = state.positiveButtonEnabled,
+                        onCancelButtonClick = state::dismissDialog,
+                        onPositiveButtonClick = {
+                            state.dismissDialog()
+                            onPositiveButtonClick(state.categoryName)
+                        })
+                }
             }
         }
-    }
 }
 
 @Composable
@@ -284,13 +272,72 @@ private fun DialogTextButton(
 
 @Composable
 private fun DialogTextField(
-    categoryTextFieldState: TextFieldUIState,
-    onNewCategoryNameChange: (String) -> Unit,
+    categoryName: String,
+    @StringRes error: Int?,
+    onCategoryNameChange: (String) -> Unit,
 ) {
     MaxWidthTextField(
-        state = categoryTextFieldState,
-        onValueChange = onNewCategoryNameChange,
+        label = R.string.category,
+        placeholder = R.string.category_place_holder,
+        text = categoryName,
+        onValueChange = onCategoryNameChange,
+        error = error,
         showKeyboardEnabled = true
     )
     SimpleHeightSpacer(dp = 12)
 }
+
+class AddCategoryDialogUIState(
+    initialCategoryName: String = "",
+    @StringRes initialCategoryNameError: Int? = null,
+    initialShowDialog: Boolean = false
+) {
+    var categoryName by mutableStateOf(initialCategoryName)
+        private set
+    var categoryNameError by mutableStateOf(initialCategoryNameError)
+        private set
+    var showDialog by mutableStateOf(initialShowDialog)
+        private set
+
+    fun onCategoryNameChange(categoryName: String) {
+        this.categoryName = categoryName
+        categoryNameError = null
+    }
+
+    fun enableCategoryNameError(@StringRes error: Int) {
+        categoryNameError = error
+    }
+
+    val positiveButtonEnabled get() = categoryName.isNotBlank() && categoryNameError == null
+
+    fun showDialog() {
+        showDialog = true
+    }
+
+    fun dismissDialog() {
+        showDialog = false
+        categoryName = ""
+        categoryNameError = null
+    }
+
+    companion object {
+        val Saver: Saver<AddCategoryDialogUIState, *> = listSaver(
+            save = {
+                listOf(
+                    it.categoryName,
+                    it.categoryNameError,
+                    it.showDialog
+                )
+            },
+            restore = {
+                AddCategoryDialogUIState(it[0] as String, it[1] as? Int, it[2] as Boolean)
+            }
+        )
+    }
+}
+
+@Composable
+fun rememberAddCategoryDialogUIState() =
+    rememberSaveable(saver = AddCategoryDialogUIState.Saver) {
+        AddCategoryDialogUIState()
+    }

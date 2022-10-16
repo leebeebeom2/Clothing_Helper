@@ -52,15 +52,24 @@ class SignInViewModel : SignInBaseViewModel(), GoogleSignInImpl {
     override fun googleSignInTaskFinished(@StringRes toastText: Int) {
         showToast(toastText)
         viewModelState.loadingOff()
-        viewModelState.googleButtonEnabled = true
+        viewModelState.googleButtonEnable()
     }
 
     override fun googleSignInTaskStart() {
         viewModelState.loadingOn()
-        viewModelState.googleButtonEnabled = false
+        viewModelState.googleButtonDisEnable()
     }
 }
 
 class SignInViewModelState : BaseViewModelState() {
     var googleButtonEnabled: Boolean by mutableStateOf(true)
+        private set
+
+    fun googleButtonEnable() {
+        googleButtonEnabled = true
+    }
+
+    fun googleButtonDisEnable() {
+        googleButtonEnabled = false
+    }
 }

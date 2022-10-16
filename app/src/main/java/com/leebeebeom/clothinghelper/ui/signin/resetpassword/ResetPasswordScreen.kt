@@ -58,7 +58,8 @@ fun ResetPasswordScreen(viewModel: ResetPasswordViewModel = viewModel()) {
             onClick = {
                 viewModel.sendResetPasswordEmail(
                     email = state.email,
-                    emailErrorEnabled = state::emailErrorEnabled)
+                    emailErrorEnabled = state::emailErrorEnabled
+                )
             }
         )
     }

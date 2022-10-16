@@ -21,11 +21,11 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.FinishActivityOnBackPressed
 import com.leebeebeom.clothinghelper.ui.MaxWidthButton
 import com.leebeebeom.clothinghelper.ui.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.ui.base.PasswordUIState
 import com.leebeebeom.clothinghelper.ui.signin.GoogleSignInButton
 import com.leebeebeom.clothinghelper.ui.signin.OrDivider
 import com.leebeebeom.clothinghelper.ui.signin.base.EmailTextField
 import com.leebeebeom.clothinghelper.ui.signin.base.PasswordTextField
+import com.leebeebeom.clothinghelper.ui.signin.base.PasswordUIState
 import com.leebeebeom.clothinghelper.ui.signin.base.SignInBaseRoot
 
 @Composable
@@ -42,72 +42,69 @@ fun SignInScreen(
         toastText = viewModelState.toastText,
         toastShown = viewModelState.toastShown
     ) {
-        EmailTextField(
-            email = state.email,
-            error = state.emailError,
-            onEmailChange = state::onEmailChange,
-            imeAction = ImeAction.Next
-        )
+        Column {
+            EmailTextField(
+                email = state.email,
+                error = state.emailError,
+                onEmailChange = state::onEmailChange,
+                imeAction = ImeAction.Next
+            )
 
-        PasswordTextField(
-            password = state.password,
-            onPasswordChange = state::onPasswordChange,
-            error = state.passwordError,
-            imeAction = ImeAction.Done
-        )
+            PasswordTextField(
+                password = state.password,
+                onPasswordChange = state::onPasswordChange,
+                error = state.passwordError,
+                imeAction = ImeAction.Done
+            )
 
-        ForgotPasswordText(onForgotPasswordClick = onForgotPasswordClick)
-        MaxWidthButton(
-            text = R.string.login,
-            enabled = state.signInButtonEnabled,
-            onClick = {
-                viewModel.signInWithEmailAndPassword(
-                    state.email, state.password,
-                    emailErrorEnabled = state::emailErrorEnabled,
-                    passwordErrorEnabled = state::passwordErrorEnabled
-                )
-            }
-        )
+            ForgotPasswordText(onForgotPasswordClick = onForgotPasswordClick)
 
-        SimpleHeightSpacer(dp = 8)
-        OrDivider()
-        SimpleHeightSpacer(dp = 8)
-        // 프리뷰 시 주석 처리
-        GoogleSignInButton(
-            googleSignIn = viewModel::googleSignIn,
-            googleSignInClick = viewModel::googleSignInLauncherLaunch,
-            enabled = viewModelState.googleButtonEnabled
-        )
+            MaxWidthButton(
+                text = R.string.login,
+                enabled = state.signInButtonEnabled,
+                onClick = {
+                    viewModel.signInWithEmailAndPassword(
+                        state.email, state.password,
+                        emailErrorEnabled = state::emailErrorEnabled,
+                        passwordErrorEnabled = state::passwordErrorEnabled
+                    )
+                }
+            )
+            SimpleHeightSpacer(dp = 8)
+            OrDivider()
+            SimpleHeightSpacer(dp = 8)
+            // 프리뷰 시 주석 처리
+            GoogleSignInButton(
+                googleSignIn = viewModel::googleSignIn,
+                googleSignInClick = viewModel::googleSignInLauncherLaunch,
+                enabled = viewModelState.googleButtonEnabled
+            )
+        }
+        SignUpText(Modifier.align(Alignment.BottomCenter), onEmailSignUpClick)
     }
-    SignUpText(onEmailSignUpClick)
     FinishActivityOnBackPressed()
 }
 
 @Composable
-private fun SignUpText(onEmailSignUpClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
+private fun SignUpText(modifier: Modifier, onEmailSignUpClick: () -> Unit) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
             .padding(bottom = 32.dp),
-        contentAlignment = Alignment.BottomCenter
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Text(
+            text = stringResource(R.string.dont_have_an_account),
+            style = MaterialTheme.typography.body2,
+        )
+        TextButton(onClick = onEmailSignUpClick) {
             Text(
-                text = stringResource(R.string.dont_have_an_account),
-                style = MaterialTheme.typography.body2,
-            )
-            TextButton(onClick = onEmailSignUpClick) {
-                Text(
-                    text = stringResource(id = R.string.sign_up_with_email),
-                    style = MaterialTheme.typography.body2.copy(
-                        color = Color(0xFF35C2C1), fontWeight = FontWeight.Bold
-                    )
+                text = stringResource(id = R.string.sign_up_with_email),
+                style = MaterialTheme.typography.body2.copy(
+                    color = Color(0xFF35C2C1), fontWeight = FontWeight.Bold
                 )
-            }
+            )
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.leebeebeom.clothinghelper.ui.signin.signup
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -15,7 +16,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.MaxWidthButton
 import com.leebeebeom.clothinghelper.ui.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.ui.base.MaxWidthTextField
-import com.leebeebeom.clothinghelper.ui.base.PasswordUIState
+import com.leebeebeom.clothinghelper.ui.signin.base.PasswordUIState
 import com.leebeebeom.clothinghelper.ui.signin.GoogleSignInButton
 import com.leebeebeom.clothinghelper.ui.signin.OrDivider
 import com.leebeebeom.clothinghelper.ui.signin.base.EmailTextField
@@ -32,58 +33,59 @@ fun SignUpScreen(viewModel: SignUpViewModel = viewModel()) {
         toastText = viewModelState.toastText,
         toastShown = viewModelState.toastShown
     ) {
-        EmailTextField(
-            email = state.email,
-            onEmailChange = state::onEmailChange,
-            error = state.emailError,
-            imeAction = ImeAction.Next,
-            showKeyboardEnable = true
-        )
+        Column {
+            EmailTextField(
+                email = state.email,
+                onEmailChange = state::onEmailChange,
+                error = state.emailError,
+                imeAction = ImeAction.Next,
+                showKeyboardEnable = true
+            )
 
-        MaxWidthTextField(
-            label = R.string.name,
-            text = state.name,
-            onValueChange = state::onNameChange,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
-        )
+            MaxWidthTextField(
+                label = R.string.name,
+                text = state.name,
+                onValueChange = state::onNameChange,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+            )
 
-        PasswordTextField(
-            password = state.password,
-            onPasswordChange = state::onPasswordChange,
-            error = state.passwordError,
-            imeAction = ImeAction.Next
-        )
+            PasswordTextField(
+                password = state.password,
+                onPasswordChange = state::onPasswordChange,
+                error = state.passwordError,
+                imeAction = ImeAction.Next
+            )
 
-        PasswordTextField(
-            password = state.passwordConfirm,
-            onPasswordChange = state::onPasswordConfirmChange,
-            error = state.passwordConfirmError,
-            imeAction = ImeAction.Done,
-            label = R.string.password_confirm
-        )
-
-        SimpleHeightSpacer(dp = 12)
-        MaxWidthButton(
-            text = R.string.sign_up,
-            enabled = state.submitButtonEnabled,
-            onClick = {
-                viewModel.signUpWithEmailAndPassword(
-                    state.email,
-                    state.password,
-                    state.name,
-                    state::emailErrorEnabled
-                )
-            }
-        )
-        SimpleHeightSpacer(dp = 8)
-        OrDivider()
-        SimpleHeightSpacer(dp = 8)
+            PasswordTextField(
+                password = state.passwordConfirm,
+                onPasswordChange = state::onPasswordConfirmChange,
+                error = state.passwordConfirmError,
+                imeAction = ImeAction.Done,
+                label = R.string.password_confirm
+            )
+            SimpleHeightSpacer(dp = 12)
+            MaxWidthButton(
+                text = R.string.sign_up,
+                enabled = state.submitButtonEnabled,
+                onClick = {
+                    viewModel.signUpWithEmailAndPassword(
+                        state.email,
+                        state.password,
+                        state.name,
+                        state::emailErrorEnabled
+                    )
+                }
+            )
+            SimpleHeightSpacer(dp = 8)
+            OrDivider()
+            SimpleHeightSpacer(dp = 8)
+            GoogleSignInButton(
+                googleSignInClick = viewModel::googleSignInLauncherLaunch,
+                googleSignIn = viewModel::googleSignIn,
+                enabled = viewModelState.googleButtonEnabled
+            )
+        }
         // 프리뷰 시 주석 처리
-        GoogleSignInButton(
-            googleSignInClick = viewModel::googleSignInLauncherLaunch,
-            googleSignIn = viewModel::googleSignIn,
-            enabled = viewModelState.googleButtonEnabled
-        )
     }
 }
 

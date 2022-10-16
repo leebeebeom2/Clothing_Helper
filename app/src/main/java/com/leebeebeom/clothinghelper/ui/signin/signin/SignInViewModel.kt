@@ -9,6 +9,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.signin.FirebaseErrorCode
 import com.leebeebeom.clothinghelper.ui.signin.GoogleSignInImpl
 import com.leebeebeom.clothinghelper.ui.signin.SignInBaseViewModel
+import com.leebeebeom.clothinghelper.ui.signin.base.BaseViewModelState
 
 class SignInViewModel : SignInBaseViewModel(), GoogleSignInImpl {
     var viewModelState by mutableStateOf(SignInViewModelState())
@@ -72,8 +73,6 @@ class SignInViewModel : SignInBaseViewModel(), GoogleSignInImpl {
     }
 }
 
-class SignInViewModelState {
-    var isLoading: Boolean by mutableStateOf(false)
-    var toastText: Int? by mutableStateOf(null)
+class SignInViewModelState : BaseViewModelState() {
     var googleButtonEnabled: Boolean by mutableStateOf(true)
 }

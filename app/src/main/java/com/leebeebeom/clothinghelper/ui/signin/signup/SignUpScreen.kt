@@ -115,7 +115,7 @@ class SignUpScreenUIState(
         if (password.isNotBlank()) {
             passwordSameCheck()
             if (password.length < 6)
-                passwordConfirmErrorEnabled(R.string.error_weak_password)
+                passwordErrorEnabled(R.string.error_weak_password)
         }
     }
 

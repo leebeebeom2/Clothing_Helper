@@ -50,7 +50,7 @@ fun SubCategoryScreenPreview() {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SubCategoryScreen(viewModel: SubCategoryViewModel = viewModel()) {
-    val viewModelState = viewModel.subCategoryUIState
+    val viewModelState = viewModel.viewModelState
 
     Box(modifier = Modifier.fillMaxSize()) {
         var cell by rememberSaveable { mutableStateOf(1) }
@@ -77,7 +77,8 @@ fun SubCategoryScreen(viewModel: SubCategoryViewModel = viewModel()) {
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(end = 16.dp, bottom = 16.dp),
-            onPositiveButtonClick = viewModelState::addNewCategory
+            onPositiveButtonClick = viewModelState::addNewCategory,
+            subCategories = viewModelState.subCategories
         )
     }
 }
@@ -181,7 +182,11 @@ private fun ExpandIcon(isExpanded: Boolean, onExpandIconClick: () -> Unit) {
 }
 
 @Composable
-private fun AddCategoryDialogFab(modifier: Modifier, onPositiveButtonClick: (String) -> Unit) {
+private fun AddCategoryDialogFab(
+    modifier: Modifier,
+    onPositiveButtonClick: (String) -> Unit,
+    subCategories: List<String>
+) {
     val state = rememberAddCategoryDialogUIState()
 
     FloatingActionButton(
@@ -208,7 +213,11 @@ private fun AddCategoryDialogFab(modifier: Modifier, onPositiveButtonClick: (Str
                     DialogTextField(
                         categoryName = state.categoryName,
                         error = state.categoryNameError,
-                        onCategoryNameChange = state::onCategoryNameChange
+                        onCategoryNameChange = {
+                            state.onCategoryNameChange(it)
+                            if (subCategories.contains(it))
+                                state.enableCategoryNameError(R.string.error_same_category_name)
+                        }
                     )
                     DialogTextButtons(
                         positiveButtonEnabled = state.positiveButtonEnabled,

@@ -21,11 +21,11 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.FinishActivityOnBackPressed
 import com.leebeebeom.clothinghelper.ui.MaxWidthButton
 import com.leebeebeom.clothinghelper.ui.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.ui.base.PasswordUIState
 import com.leebeebeom.clothinghelper.ui.signin.GoogleSignInButton
 import com.leebeebeom.clothinghelper.ui.signin.OrDivider
 import com.leebeebeom.clothinghelper.ui.signin.base.EmailTextField
 import com.leebeebeom.clothinghelper.ui.signin.base.PasswordTextField
-import com.leebeebeom.clothinghelper.ui.base.PasswordUIState
 import com.leebeebeom.clothinghelper.ui.signin.base.SignInBaseRoot
 
 @Composable
@@ -61,9 +61,11 @@ fun SignInScreen(
             text = R.string.login,
             enabled = state.signInButtonEnabled,
             onClick = {
-                viewModel.signInWithEmailAndPassword(state.email, state.password,
-                    emailErrorEnabled = { state.emailErrorEnabled(it) },
-                    passwordErrorEnabled = { state.passwordErrorEnabled(it) })
+                viewModel.signInWithEmailAndPassword(
+                    state.email, state.password,
+                    emailErrorEnabled = state::emailErrorEnabled,
+                    passwordErrorEnabled = state::passwordErrorEnabled
+                )
             }
         )
 

@@ -12,8 +12,7 @@ import com.leebeebeom.clothinghelper.ui.signin.SignInBaseViewModel
 import com.leebeebeom.clothinghelper.ui.signin.base.BaseViewModelState
 
 class SignInViewModel : SignInBaseViewModel(), GoogleSignInImpl {
-    var viewModelState by mutableStateOf(SignInViewModelState())
-        private set
+    val viewModelState by mutableStateOf(SignInViewModelState())
 
     fun signInWithEmailAndPassword(
         email: String,

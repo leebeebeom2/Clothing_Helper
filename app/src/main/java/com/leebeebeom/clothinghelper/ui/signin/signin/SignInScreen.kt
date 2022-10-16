@@ -35,12 +35,12 @@ fun SignInScreen(
     viewModel: SignInViewModel = viewModel()
 ) {
     val state = rememberSignInScreenUIState()
-    val signInState = viewModel.viewModelState
+    val viewModelState = viewModel.viewModelState
 
     SignInBaseRoot(
-        isLoading = signInState.isLoading,
-        toastText = signInState.toastText,
-        toastShown = viewModel.toastShown
+        isLoading = viewModelState.isLoading,
+        toastText = viewModelState.toastText,
+        toastShown = viewModelState.toastShown
     ) {
         EmailTextField(
             email = state.email,
@@ -74,7 +74,7 @@ fun SignInScreen(
         GoogleSignInButton(
             googleSignIn = viewModel::googleSignIn,
             googleSignInClick = viewModel::googleSignInLauncherLaunch,
-            enabled = signInState.googleButtonEnabled
+            enabled = viewModelState.googleButtonEnabled
         )
     }
     SignUpText(onEmailSignUpClick)

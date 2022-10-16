@@ -21,13 +21,13 @@ class SignInViewModel : SignInBaseViewModel(), GoogleSignInImpl {
         emailErrorEnabled: (Int) -> Unit,
         passwordErrorEnabled: (Int) -> Unit,
     ) {
-        loadingOn()
+        viewModelState.loadingOn()
 
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
             .addOnCompleteListener {
                 if (it.isSuccessful) showToast(R.string.login_complete)
                 else fireBaseErrorCheck(it.exception, emailErrorEnabled, passwordErrorEnabled)
-                loadingOff()
+                viewModelState.loadingOff()
             }
     }
 
@@ -47,28 +47,16 @@ class SignInViewModel : SignInBaseViewModel(), GoogleSignInImpl {
         }
     }
 
-    override fun showToast(@StringRes toastText: Int) {
-        viewModelState.toastText = toastText
-    }
-
-    val toastShown = { viewModelState.toastText = null }
-
-    private fun loadingOff() {
-        viewModelState.isLoading = false
-    }
-
-    private fun loadingOn() {
-        viewModelState.isLoading = true
-    }
+    override fun showToast(@StringRes toastText: Int) = viewModelState.showToast(toastText)
 
     override fun googleSignInTaskFinished(@StringRes toastText: Int) {
         showToast(toastText)
-        loadingOff()
+        viewModelState.loadingOff()
         viewModelState.googleButtonEnabled = true
     }
 
     override fun googleSignInTaskStart() {
-        loadingOn()
+        viewModelState.loadingOn()
         viewModelState.googleButtonEnabled = false
     }
 }

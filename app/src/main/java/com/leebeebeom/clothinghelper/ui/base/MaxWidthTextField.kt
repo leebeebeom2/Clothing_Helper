@@ -36,7 +36,7 @@ fun MaxWidthTextField(
     @StringRes placeholder: Int = R.string.empty,
     text: String,
     onValueChange: (String) -> Unit,
-    error: Int? = null,
+    @StringRes error: Int? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     showKeyboardEnabled: Boolean = false,
     visualTransformation: VisualTransformation = VisualTransformation.None,
@@ -77,7 +77,7 @@ fun MaxWidthTextField(
 
 
 @Composable
-private fun ErrorText(error: Int?) {
+private fun ErrorText(@StringRes error: Int?) {
     AnimatedVisibility(
         visible = error != null,
         enter = expandVertically(

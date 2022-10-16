@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -30,13 +31,8 @@ object MainDestinations {
 fun MainActivityNavHost() {
     val navController = rememberNavController()
 
-    fun mainNavigate(destination: String) =
-        navController.navigate(destination) {
-            popUpTo(MainDestinations.MAIN_CATEGORY)
-        }
-
     MainActivityRoot(
-        onSettingIconClick = { mainNavigate(MainDestinations.SETTING) },
+        onSettingIconClick = { navController.mainNavigate(MainDestinations.SETTING) },
         onDrawerContentClick = { /* TODO */ }
     ) {
         NavHost(
@@ -46,10 +42,16 @@ fun MainActivityNavHost() {
         ) {
             composable(MainDestinations.MAIN_CATEGORY) {
                 MainCategoryScreen(
-                    onMainCategoryClick = { mainNavigate(MainDestinations.SUB_CATEGORY) })
+                    onMainCategoryClick = { navController.mainNavigate(MainDestinations.SUB_CATEGORY) })
             }
             composable(MainDestinations.SUB_CATEGORY) { SubCategoryScreen() }
             composable(MainDestinations.SETTING) { SettingScreen() }
         }
     }
 }
+
+fun NavController.mainNavigate(destination: String) =
+    navigate(destination) {
+        launchSingleTop = true
+        popUpTo(MainDestinations.MAIN_CATEGORY)
+    }

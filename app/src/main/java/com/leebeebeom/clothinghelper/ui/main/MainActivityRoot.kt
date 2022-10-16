@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.ui.main
 
-import android.content.Context
 import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
@@ -11,7 +10,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,7 +30,6 @@ import com.leebeebeom.clothinghelper.ui.signin.SignInActivity
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelper.ui.theme.Disabled
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -51,11 +48,8 @@ fun MainActivityRoot(
 ) {
     val mainState = viewModel.mainState
 
-    StartSignInActivity(
-        isLogin = mainState.isLogin,
-        loadingOn = viewModel.loadingOn,
-        loadingOff = viewModel.loadingOff
-    )
+    val context = LocalContext.current
+    if (!mainState.isLogin) context.startActivity(Intent(context, SignInActivity::class.java))
 
     ClothingHelperTheme {
         Scaffold(
@@ -88,21 +82,6 @@ fun MainActivityRoot(
         )
         if (mainState.isLoading) CenterCircularProgressIndicator()
         if (drawerState.isOpen) BackHandler(onBack = onDrawerClose)
-    }
-}
-
-@Composable
-private fun StartSignInActivity(
-    isLogin: Boolean,
-    loadingOn: () -> Unit,
-    loadingOff: () -> Unit,
-    context: Context = LocalContext.current
-) {
-    LaunchedEffect(isLogin) {
-        loadingOn()
-        delay(300)
-        if (!isLogin) context.startActivity(Intent(context, SignInActivity::class.java))
-        loadingOff()
     }
 }
 

@@ -5,8 +5,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.leebeebeom.clothinghelper.ui.main.subcategory.SubCategoryViewModel
 import org.junit.Rule
 import org.junit.Test
 
@@ -16,23 +14,6 @@ class SubCategory {
 
     @Test
     fun addCategoryDialog() {
-        subCategoryRule.setContent {
-            val viewModel: SubCategoryViewModel = viewModel()
-            val dialogState = viewModel.subCategoryUIState
-
-//            AddCategoryDialog(
-//                onDismissDialog = viewModel.onDismissAddCategoryDialog,
-//                categoryTextFieldState = dialogState.categoryName,
-//                onNewCategoryNameChange = viewModel.onNewCategoryNameChange,
-//                positiveButtonEnabled = dialogState.positiveButtonenabled,
-//                onCancelButtonClick = viewModel.onDismissAddCategoryDialog,
-//                onPositiveButtonClick = {
-//                    viewModel.addNewCategory()
-//                    viewModel.onDismissAddCategoryDialog()
-//                },
-//            )
-        }
-
         subCategoryRule.onNodeWithText("확인").assertIsNotEnabled()
 
         val categoryTextField = getCategoryTextField()

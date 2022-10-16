@@ -7,8 +7,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
 object UserRepository {
-    var user: FirebaseUser? by mutableStateOf(null)
-        private set
+    private var user: FirebaseUser? by mutableStateOf(FirebaseAuth.getInstance().currentUser)
 
     var isLogin by mutableStateOf(false)
         private set

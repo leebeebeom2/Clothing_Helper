@@ -6,9 +6,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.google.firebase.auth.FirebaseAuth
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.signin.FirebaseErrorCode
-import com.leebeebeom.clothinghelper.ui.signin.SignInBaseViewModel
 import com.leebeebeom.clothinghelper.ui.signin.base.BaseViewModelState
+import com.leebeebeom.clothinghelper.ui.signin.base.FirebaseErrorCode
+import com.leebeebeom.clothinghelper.ui.signin.base.SignInBaseViewModel
 
 class ResetPasswordViewModel : SignInBaseViewModel() {
     val viewModelState by mutableStateOf(ResetPasswordViewModelState())

@@ -8,10 +8,10 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.data.UserRepository
-import com.leebeebeom.clothinghelper.ui.signin.FirebaseErrorCode
-import com.leebeebeom.clothinghelper.ui.signin.GoogleSignInImpl
-import com.leebeebeom.clothinghelper.ui.signin.SignInBaseViewModel
+import com.leebeebeom.clothinghelper.ui.signin.base.FirebaseErrorCode
+import com.leebeebeom.clothinghelper.ui.signin.base.GoogleSignInImpl
 import com.leebeebeom.clothinghelper.ui.signin.base.GoogleViewModelState
+import com.leebeebeom.clothinghelper.ui.signin.base.SignInBaseViewModel
 
 class SignUpViewModel : SignInBaseViewModel(), GoogleSignInImpl {
     val viewModelState by mutableStateOf(GoogleViewModelState())

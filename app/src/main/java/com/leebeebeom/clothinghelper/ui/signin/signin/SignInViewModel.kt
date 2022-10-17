@@ -5,10 +5,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import com.google.firebase.auth.FirebaseAuth
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.signin.FirebaseErrorCode
-import com.leebeebeom.clothinghelper.ui.signin.GoogleSignInImpl
-import com.leebeebeom.clothinghelper.ui.signin.SignInBaseViewModel
+import com.leebeebeom.clothinghelper.ui.signin.base.FirebaseErrorCode
+import com.leebeebeom.clothinghelper.ui.signin.base.GoogleSignInImpl
 import com.leebeebeom.clothinghelper.ui.signin.base.GoogleViewModelState
+import com.leebeebeom.clothinghelper.ui.signin.base.SignInBaseViewModel
 
 class SignInViewModel : SignInBaseViewModel(), GoogleSignInImpl {
     val viewModelState by mutableStateOf(GoogleViewModelState())

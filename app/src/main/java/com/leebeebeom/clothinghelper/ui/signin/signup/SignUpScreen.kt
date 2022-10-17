@@ -16,11 +16,11 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.MaxWidthButton
 import com.leebeebeom.clothinghelper.ui.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.ui.base.MaxWidthTextField
-import com.leebeebeom.clothinghelper.ui.signin.base.PasswordUIState
 import com.leebeebeom.clothinghelper.ui.signin.GoogleSignInButton
 import com.leebeebeom.clothinghelper.ui.signin.OrDivider
 import com.leebeebeom.clothinghelper.ui.signin.base.EmailTextField
 import com.leebeebeom.clothinghelper.ui.signin.base.PasswordTextField
+import com.leebeebeom.clothinghelper.ui.signin.base.PasswordUIState
 import com.leebeebeom.clothinghelper.ui.signin.base.SignInBaseRoot
 
 @Composable

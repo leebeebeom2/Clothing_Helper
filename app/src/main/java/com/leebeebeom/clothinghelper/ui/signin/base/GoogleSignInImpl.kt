@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.signin
+package com.leebeebeom.clothinghelper.ui.signin.base
 
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK

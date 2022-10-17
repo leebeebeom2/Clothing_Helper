@@ -31,7 +31,6 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun MaxWidthTextField(
-    modifier: Modifier = Modifier,
     @StringRes label: Int,
     @StringRes placeholder: Int = R.string.empty,
     text: String,
@@ -47,7 +46,7 @@ fun MaxWidthTextField(
 
     Column {
         OutlinedTextField(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(focusRequester),
             value = text,

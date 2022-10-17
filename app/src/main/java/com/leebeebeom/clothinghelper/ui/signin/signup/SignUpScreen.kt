@@ -1,7 +1,6 @@
 package com.leebeebeom.clothinghelper.ui.signin.signup
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,59 +32,56 @@ fun SignUpScreen(viewModel: SignUpViewModel = viewModel()) {
         toastText = viewModelState.toastText,
         toastShown = viewModelState.toastShown
     ) {
-        Column {
-            EmailTextField(
-                email = state.email,
-                onEmailChange = state::onEmailChange,
-                error = state.emailError,
-                imeAction = ImeAction.Next,
-                showKeyboardEnable = true
-            )
+        EmailTextField(
+            email = state.email,
+            onEmailChange = state::onEmailChange,
+            error = state.emailError,
+            imeAction = ImeAction.Next,
+            showKeyboardEnable = true
+        )
 
-            MaxWidthTextField(
-                label = R.string.name,
-                text = state.name,
-                onValueChange = state::onNameChange,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
-            )
+        MaxWidthTextField(
+            label = R.string.name,
+            text = state.name,
+            onValueChange = state::onNameChange,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+        )
 
-            PasswordTextField(
-                password = state.password,
-                onPasswordChange = state::onPasswordChange,
-                error = state.passwordError,
-                imeAction = ImeAction.Next
-            )
+        PasswordTextField(
+            password = state.password,
+            onPasswordChange = state::onPasswordChange,
+            error = state.passwordError,
+            imeAction = ImeAction.Next
+        )
 
-            PasswordTextField(
-                password = state.passwordConfirm,
-                onPasswordChange = state::onPasswordConfirmChange,
-                error = state.passwordConfirmError,
-                imeAction = ImeAction.Done,
-                label = R.string.password_confirm
-            )
-            SimpleHeightSpacer(dp = 12)
-            MaxWidthButton(
-                text = R.string.sign_up,
-                enabled = state.submitButtonEnabled,
-                onClick = {
-                    viewModel.signUpWithEmailAndPassword(
-                        state.email,
-                        state.password,
-                        state.name,
-                        state::emailErrorEnabled
-                    )
-                }
-            )
-            SimpleHeightSpacer(dp = 8)
-            OrDivider()
-            SimpleHeightSpacer(dp = 8)
-            GoogleSignInButton(
-                googleSignInClick = viewModel::googleSignInLauncherLaunch,
-                googleSignIn = viewModel::googleSignIn,
-                enabled = viewModelState.googleButtonEnabled
-            )
-        }
-        // 프리뷰 시 주석 처리
+        PasswordTextField(
+            password = state.passwordConfirm,
+            onPasswordChange = state::onPasswordConfirmChange,
+            error = state.passwordConfirmError,
+            imeAction = ImeAction.Done,
+            label = R.string.password_confirm
+        )
+        SimpleHeightSpacer(dp = 12)
+        MaxWidthButton(
+            text = R.string.sign_up,
+            enabled = state.submitButtonEnabled,
+            onClick = {
+                viewModel.signUpWithEmailAndPassword(
+                    state.email,
+                    state.password,
+                    state.name,
+                    state::emailErrorEnabled
+                )
+            }
+        )
+        SimpleHeightSpacer(dp = 8)
+        OrDivider()
+        SimpleHeightSpacer(dp = 8)
+        GoogleSignInButton(
+            googleSignInClick = viewModel::googleSignInLauncherLaunch,
+            googleSignIn = viewModel::googleSignIn,
+            enabled = viewModelState.googleButtonEnabled
+        )
     }
 }
 

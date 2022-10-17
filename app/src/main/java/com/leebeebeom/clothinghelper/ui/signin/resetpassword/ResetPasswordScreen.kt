@@ -2,7 +2,6 @@ package com.leebeebeom.clothinghelper.ui.signin.resetpassword
 
 import androidx.activity.ComponentActivity
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -38,33 +37,30 @@ fun ResetPasswordScreen(viewModel: ResetPasswordViewModel = viewModel()) {
         toastText = viewModelState.toastText,
         toastShown = viewModelState.toastShown
     ) {
-        Column {
-            Text(
-                text = stringResource(id = R.string.reset_password_text),
-                style = MaterialTheme.typography.body2,
-                modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
-            )
+        Text(
+            text = stringResource(id = R.string.reset_password_text),
+            style = MaterialTheme.typography.body2,
+            modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
+        )
 
-            EmailTextField(
-                email = state.email,
-                onEmailChange = state::onEmailChange,
-                showKeyboardEnable = true,
-                error = state.emailError,
-                imeAction = ImeAction.Done
-            )
-            SimpleHeightSpacer(dp = 12)
-            MaxWidthButton(
-                text = R.string.check,
-                enabled = state.submitButtonEnabled,
-                onClick = {
-                    viewModel.sendResetPasswordEmail(
-                        email = state.email,
-                        emailErrorEnabled = state::emailErrorEnabled
-                    )
-                }
-            )
-        }
-
+        EmailTextField(
+            email = state.email,
+            onEmailChange = state::onEmailChange,
+            showKeyboardEnable = true,
+            error = state.emailError,
+            imeAction = ImeAction.Done
+        )
+        SimpleHeightSpacer(dp = 12)
+        MaxWidthButton(
+            text = R.string.check,
+            enabled = state.submitButtonEnabled,
+            onClick = {
+                viewModel.sendResetPasswordEmail(
+                    email = state.email,
+                    emailErrorEnabled = state::emailErrorEnabled
+                )
+            }
+        )
     }
 }
 

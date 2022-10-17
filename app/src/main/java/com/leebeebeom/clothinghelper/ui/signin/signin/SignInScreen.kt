@@ -42,7 +42,7 @@ fun SignInScreen(
         toastText = viewModelState.toastText,
         toastShown = viewModelState.toastShown
     ) {
-        Column {
+        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
             EmailTextField(
                 email = state.email,
                 error = state.emailError,
@@ -80,17 +80,17 @@ fun SignInScreen(
                 enabled = viewModelState.googleButtonEnabled
             )
         }
-        SignUpText(Modifier.align(Alignment.BottomCenter), onEmailSignUpClick)
+        SignUpText(onEmailSignUpClick)
     }
     FinishActivityOnBackPressed()
 }
 
 @Composable
-private fun SignUpText(modifier: Modifier, onEmailSignUpClick: () -> Unit) {
+private fun SignUpText(onEmailSignUpClick: () -> Unit) {
     Row(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 32.dp),
+            .padding(bottom = 16.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {

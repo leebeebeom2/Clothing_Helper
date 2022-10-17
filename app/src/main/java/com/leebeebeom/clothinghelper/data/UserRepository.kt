@@ -9,21 +9,26 @@ import com.google.firebase.auth.FirebaseUser
 object UserRepository {
     private var user: FirebaseUser? by mutableStateOf(FirebaseAuth.getInstance().currentUser)
 
-    var isLogin by mutableStateOf(false)
+    var isLogin by mutableStateOf(user != null)
         private set
 
-    var userName by mutableStateOf("")
+    var userName: String? by mutableStateOf(user?.displayName)
         private set
-    var userEmail by mutableStateOf("")
+    var userEmail: String? by mutableStateOf(user?.email)
         private set
+
+    val userNameAndEmail
+        get() =
+            if (userName != null && userEmail != null) "$userName($userEmail)"
+            else null
 
     init {
         FirebaseAuth.getInstance().addAuthStateListener {
             user = it.currentUser
             isLogin = user != null
             user?.run {
-                userName = displayName ?: ""
-                userEmail = email ?: ""
+                userName = displayName
+                userEmail = email
             }
         }
     }

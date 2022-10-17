@@ -1,8 +1,6 @@
-package com.leebeebeom.clothinghelper.ui
+package com.leebeebeom.clothinghelper.ui.base
 
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
@@ -20,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.theme.Disabled
@@ -28,21 +27,18 @@ import com.leebeebeom.clothinghelper.ui.theme.Disabled
 fun SimpleIcon(
     modifier: Modifier = Modifier,
     @DrawableRes drawable: Int,
-    contentDescription: String? = null,
     tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
 ) = Icon(
     modifier = modifier,
     painter = painterResource(id = drawable),
-    contentDescription = contentDescription,
+    contentDescription = null,
     tint = tint
 )
 
 @Composable
 fun MaxWidthButton(
-    modifier: Modifier = Modifier,
     @StringRes text: Int,
     colors: ButtonColors = ButtonDefaults.buttonColors(),
-    textColor: Color = Color.Unspecified,
     enabled: Boolean = true,
     icon: @Composable (() -> Unit)? = null,
     onClick: () -> Unit,
@@ -50,36 +46,34 @@ fun MaxWidthButton(
     val focusManager = LocalFocusManager.current
 
     Button(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .heightIn(52.dp), onClick = {
             focusManager.clearFocus()
             onClick()
         }, colors = colors, enabled = enabled
     ) {
-        Box(
-            modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterStart
+        Row(
+            verticalAlignment = Alignment.CenterVertically
         ) {
             icon?.invoke()
             Text(
                 text = stringResource(id = text),
                 fontWeight = FontWeight.Bold,
-                color = if (enabled) textColor else Color.Unspecified,
-                modifier = Modifier.align(Alignment.Center),
+                modifier = Modifier.weight(1f),
                 style = MaterialTheme.typography.body2,
+                textAlign = TextAlign.Center
             )
+
         }
     }
 }
 
-val googleLogo = @Composable {
+val googleIcon = @Composable {
     Image(
         imageVector = ImageVector.vectorResource(id = R.drawable.ic_google_icon),
         contentDescription = null,
-        alignment = Alignment.CenterStart,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 8.dp)
+        modifier = Modifier.padding(start = 8.dp)
     )
 }
 
@@ -91,15 +85,6 @@ fun CenterCircularProgressIndicator() {
             .clickable(enabled = false) { }) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
-    }
-}
-
-@Composable
-fun FinishActivityOnBackPressed() {
-    val context = LocalContext.current
-
-    BackHandler {
-        (context as ComponentActivity).finishAffinity()
     }
 }
 

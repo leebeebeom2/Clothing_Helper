@@ -1,6 +1,5 @@
-package com.leebeebeom.clothinghelper.ui.main
+package com.leebeebeom.clothinghelper.ui.main.base
 
-import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -10,78 +9,54 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.CenterCircularProgressIndicator
 import com.leebeebeom.clothinghelper.ui.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.ui.SimpleIcon
 import com.leebeebeom.clothinghelper.ui.SimpleWidthSpacer
-import com.leebeebeom.clothinghelper.ui.signin.SignInActivity
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelper.ui.theme.Disabled
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun MainActivityRoot(
+fun MainScreenRoot(
     onSettingIconClick: () -> Unit,
-    viewModel: MainViewModel = viewModel(),
-    scaffoldState: ScaffoldState = rememberScaffoldState(),
-    drawerState: DrawerState = scaffoldState.drawerState,
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    onDrawerClose: () -> Unit = {
-        coroutineScope.launch { drawerState.close() }
-        Unit
-    },
     onDrawerContentClick: () -> Unit,
+    userNameAndEmail: String?,
     content: @Composable (PaddingValues) -> Unit
 ) {
-    val mainState = viewModel.mainState
-
-    val context = LocalContext.current
-    if (!mainState.isLogin) context.startActivity(Intent(context, SignInActivity::class.java))
+    val state = rememberMainScreenUIState()
 
     ClothingHelperTheme {
         Scaffold(
-            scaffoldState = scaffoldState,
+            scaffoldState = state.scaffoldState,
             drawerContent = {
-                DrawerContents(
-                    onSettingIconClick = {
-                        onSettingIconClick()
-                        onDrawerClose()
-                    },
-                    userName = mainState.userName,
-                    userEmail = mainState.userEmail,
-                    onDrawerContentClick = {
-                        onDrawerContentClick()
-                        onDrawerClose()
-                    }
-                )
+                DrawerContents(onSettingIconClick = {
+                    onSettingIconClick()
+                    state.onDrawerClose()
+                }, userNameAndEmail = userNameAndEmail, onDrawerContentClick = {
+                    onDrawerContentClick()
+                    state.onDrawerClose()
+                })
             },
             drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
             drawerBackgroundColor = MaterialTheme.colors.primary,
             bottomBar = {
-                CHBottomAppBar {
-                    coroutineScope.launch {
-                        if (drawerState.isOpen) drawerState.close()
-                        else drawerState.open()
-                    }
-                }
+                CHBottomAppBar(onDrawerIconClick = state::onDrawerIconClick)
             },
             content = content
         )
-        if (mainState.isLoading) CenterCircularProgressIndicator()
-        if (drawerState.isOpen) BackHandler(onBack = onDrawerClose)
+        if (state.drawerState.isOpen) BackHandler(onBack = state::onDrawerClose)
     }
 }
 
@@ -96,16 +71,11 @@ private fun CHBottomAppBar(onDrawerIconClick: () -> Unit) {
 
 @Composable
 private fun DrawerContents(
-    onSettingIconClick: () -> Unit,
-    userName: String,
-    userEmail: String,
-    onDrawerContentClick: () -> Unit
+    onSettingIconClick: () -> Unit, userNameAndEmail: String?, onDrawerContentClick: () -> Unit
 ) {
     Column {
         DrawerHeader(
-            onSettingIconClick = onSettingIconClick,
-            userName = userName,
-            userEmail = userEmail
+            onSettingIconClick = onSettingIconClick, userNameAndEmail = userNameAndEmail
         )
         Surface(color = Color(0xFF121212)) {
             LazyColumn(
@@ -171,21 +141,20 @@ private fun DrawerContents(
 
 @Composable
 private fun DrawerHeader(
-    onSettingIconClick: () -> Unit,
-    userName: String,
-    userEmail: String
+    onSettingIconClick: () -> Unit, userNameAndEmail: String?
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+        modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            modifier = Modifier
-                .padding(start = 12.dp)
-                .weight(1f),
-            style = MaterialTheme.typography.body1,
-            text = "$userName($userEmail)"
-        )
+        userNameAndEmail?.let {
+            Text(
+                modifier = Modifier
+                    .padding(start = 12.dp)
+                    .weight(1f),
+                style = MaterialTheme.typography.body1,
+                text = it
+            )
+        }
         IconButton(onClick = onSettingIconClick) {
             SimpleIcon(drawable = R.drawable.ic_settings)
         }
@@ -194,9 +163,7 @@ private fun DrawerHeader(
 
 @Composable
 private fun DrawerContent(
-    @DrawableRes drawable: Int,
-    @StringRes text: Int,
-    onDrawerContentClick: () -> Unit
+    @DrawableRes drawable: Int, @StringRes text: Int, onDrawerContentClick: () -> Unit
 ) {
     DrawerContentRow(onDrawerContentClick) {
         SimpleIcon(modifier = Modifier.size(22.dp), drawable = drawable)
@@ -212,8 +179,7 @@ private fun DrawerContent(
 
 @Composable
 private fun DrawerContentRow(
-    onDrawerContentClick: () -> Unit,
-    content: @Composable RowScope.() -> Unit
+    onDrawerContentClick: () -> Unit, content: @Composable RowScope.() -> Unit
 ) = Row(
     modifier = Modifier
         .fillMaxWidth()
@@ -225,3 +191,30 @@ private fun DrawerContentRow(
     verticalAlignment = Alignment.CenterVertically,
     content = content
 )
+
+class MainScreenUIState(
+    val scaffoldState: ScaffoldState,
+    private val coroutineScope: CoroutineScope,
+) {
+    val drawerState: DrawerState = scaffoldState.drawerState
+    fun onDrawerClose() {
+        coroutineScope.launch {
+            drawerState.close()
+        }
+    }
+
+    fun onDrawerIconClick() {
+        coroutineScope.launch {
+            if (drawerState.isOpen) drawerState.close()
+            else drawerState.open()
+        }
+    }
+}
+
+@Composable
+fun rememberMainScreenUIState(
+    scaffoldState: ScaffoldState = rememberScaffoldState(),
+    coroutineScope: CoroutineScope = rememberCoroutineScope()
+) = remember {
+    MainScreenUIState(scaffoldState, coroutineScope)
+}

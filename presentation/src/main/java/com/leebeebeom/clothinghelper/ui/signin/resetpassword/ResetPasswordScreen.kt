@@ -16,8 +16,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.MaxWidthButton
-import com.leebeebeom.clothinghelper.ui.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.ui.base.MaxWidthButton
+import com.leebeebeom.clothinghelper.ui.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.ui.signin.base.EmailTextField
 import com.leebeebeom.clothinghelper.ui.signin.base.EmailUIState
 import com.leebeebeom.clothinghelper.ui.signin.base.SignInBaseRoot
@@ -45,42 +45,35 @@ fun ResetPasswordScreen(viewModel: ResetPasswordViewModel = viewModel()) {
 
         EmailTextField(
             email = state.email,
-            onEmailChange = state::onEmailChange,
+            onEmailChange = { state.onEmailChange(email = it) { viewModelState.emailErrorOff() } },
             showKeyboardEnable = true,
-            error = state.emailError,
+            error = viewModelState.emailError,
             imeAction = ImeAction.Done
         )
         SimpleHeightSpacer(dp = 12)
         MaxWidthButton(
             text = R.string.check,
-            enabled = state.submitButtonEnabled,
-            onClick = {
-                viewModel.sendResetPasswordEmail(
-                    email = state.email,
-                    emailErrorEnabled = state::emailErrorEnabled
-                )
-            }
+            enabled = state.submitButtonEnabled(viewModelState.emailError),
+            onClick = { viewModel.sendResetPasswordEmail(email = state.email) }
         )
     }
 }
 
 class ResetPasswordScreenUIState(
-    initialEmail: String = "",
-    @StringRes initialEmailError: Int? = null
-) : EmailUIState(initialEmail, initialEmailError) {
+    initialEmail: String = ""
+) : EmailUIState(initialEmail) {
 
-    val submitButtonEnabled get() = email.isNotBlank() && emailError == null
+    fun submitButtonEnabled(@StringRes emailError: Int?) = email.isNotBlank() && emailError == null
 
     companion object {
         val Saver: Saver<ResetPasswordScreenUIState, *> = listSaver(
-            save = { listOf(it.email, it.emailError) },
-            restore = { ResetPasswordScreenUIState(it[0] as String, it[1] as? Int) }
+            save = { listOf(it.email) },
+            restore = { ResetPasswordScreenUIState(it[0]) }
         )
     }
 }
 
 @Composable
-fun rememberResetScreenUIState() =
-    rememberSaveable(saver = ResetPasswordScreenUIState.Saver) {
-        ResetPasswordScreenUIState()
-    }
+fun rememberResetScreenUIState() = rememberSaveable(saver = ResetPasswordScreenUIState.Saver) {
+    ResetPasswordScreenUIState()
+}

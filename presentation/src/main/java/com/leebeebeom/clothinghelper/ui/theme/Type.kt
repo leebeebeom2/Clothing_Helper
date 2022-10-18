@@ -21,18 +21,6 @@ val NotoSansFontFamily = FontFamily(
     Font(R.font.dotum_pro_bold, FontWeight.Black)
 )
 
-val NanumBarunGothic = FontFamily(
-    Font(R.font.nanumbarungothicultralight, FontWeight.Thin),
-    Font(R.font.nanumbarungothiclight, FontWeight.ExtraLight),
-    Font(R.font.nanumbarungothiclight, FontWeight.Light),
-    Font(R.font.nanumbarungothic, FontWeight.Normal),
-    Font(R.font.nanumbarungothic, FontWeight.Medium),
-    Font(R.font.nanumbarungothic, FontWeight.SemiBold),
-    Font(R.font.nanumbarungothicbold, FontWeight.Bold),
-    Font(R.font.nanumbarungothicbold, FontWeight.ExtraBold),
-    Font(R.font.nanumbarungothicbold, FontWeight.Black)
-)
-
 val Dotum = Typography(
     defaultFontFamily = NotoSansFontFamily,
     h1 = TextStyle(

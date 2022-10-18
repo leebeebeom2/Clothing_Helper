@@ -10,11 +10,13 @@ import com.leebeebeom.clothinghelper.domain.repository.FireBaseListeners
 import com.leebeebeom.clothinghelper.ui.TAG
 
 abstract class BaseSignInUpViewModel : ViewModel() {
-    abstract fun showToast(@StringRes toastText: Int)
-    abstract fun loadingOn()
-    abstract fun loadingOff()
-    abstract fun googleButtonDisable()
-    abstract fun googleButtonEnable()
+    abstract val viewModelState:BaseSignInUpViewModelState
+
+    fun showToast(@StringRes toastText: Int) = viewModelState.showToast(toastText)
+    fun loadingOn() = viewModelState.loadingOn()
+    fun loadingOff() = viewModelState.loadingOff()
+    fun googleButtonDisable() = viewModelState.googleButtonDisable()
+    fun googleButtonEnable() = viewModelState.googleButtonEnable()
 
     protected val googleSignInListener = object : FireBaseListeners.GoogleSignInListener {
         override fun googleSignInFailed(activityResult: ActivityResult) {

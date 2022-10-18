@@ -7,9 +7,12 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.repository.FireBaseListeners
+import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelper.ui.TAG
 
-abstract class BaseSignInUpViewModel : ViewModel() {
+abstract class BaseSignInUpViewModel(
+    private val googleSignInUseCase: GoogleSignInUseCase
+) : ViewModel() {
     abstract val viewModelState:BaseSignInUpViewModelState
 
     fun showToast(@StringRes toastText: Int) = viewModelState.showToast(toastText)
@@ -18,7 +21,10 @@ abstract class BaseSignInUpViewModel : ViewModel() {
     fun googleButtonDisable() = viewModelState.googleButtonDisable()
     fun googleButtonEnable() = viewModelState.googleButtonEnable()
 
-    protected val googleSignInListener = object : FireBaseListeners.GoogleSignInListener {
+    fun signInWithGoogleEmail(activityResult: ActivityResult) =
+        googleSignInUseCase(activityResult, googleSignInListener)
+
+    private val googleSignInListener = object : FireBaseListeners.GoogleSignInListener {
         override fun googleSignInFailed(activityResult: ActivityResult) {
             if (activityResult.data == null) {
                 showToast(R.string.unknown_error)

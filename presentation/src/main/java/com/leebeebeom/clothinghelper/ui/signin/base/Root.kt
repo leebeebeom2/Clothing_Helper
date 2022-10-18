@@ -11,8 +11,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import com.leebeebeom.clothinghelper.ui.CenterCircularProgressIndicator
-import com.leebeebeom.clothinghelper.ui.SimpleToast
+import com.leebeebeom.clothinghelper.ui.base.CenterCircularProgressIndicator
+import com.leebeebeom.clothinghelper.ui.base.SimpleToast
 
 @Composable
 fun SignInBaseRoot(
@@ -39,5 +39,6 @@ fun SignInBaseRoot(
     toastText?.let {
         SimpleToast(text = it, shownToast = toastShown)
     }
+
     if (isLoading) CenterCircularProgressIndicator()
 }

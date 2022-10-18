@@ -5,7 +5,6 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.repository.FireBaseListeners
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
-import com.leebeebeom.clothinghelper.domain.usecase.user.NameUpdateUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.SignUpUseCase
 import com.leebeebeom.clothinghelper.ui.TAG
 import com.leebeebeom.clothinghelper.ui.signin.base.BaseSignInUpViewModel
@@ -17,8 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val signUpUseCase: SignUpUseCase,
-    googleSignInUseCase: GoogleSignInUseCase,
-    private val nameUpdateUseCase: NameUpdateUseCase
+    googleSignInUseCase: GoogleSignInUseCase
 ) : BaseSignInUpViewModel(googleSignInUseCase) {
     override val viewModelState = BaseSignInUpViewModelState()
 
@@ -49,8 +47,6 @@ class SignUpViewModel @Inject constructor(
         }
 
         override fun nameUpdateFailed() = showToast(R.string.name_update_failed)
-
-        override fun taskSuccess(name: String) = nameUpdateUseCase(name)
 
         override fun taskFailed(exception: Exception?) {
             val firebaseAuthException = exception as? FirebaseAuthException

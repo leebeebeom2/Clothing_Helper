@@ -16,11 +16,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.FinishActivityOnBackPressed
-import com.leebeebeom.clothinghelper.ui.MaxWidthButton
-import com.leebeebeom.clothinghelper.ui.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.ui.base.MaxWidthButton
+import com.leebeebeom.clothinghelper.ui.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.ui.signin.GoogleSignInButton
 import com.leebeebeom.clothinghelper.ui.signin.OrDivider
 import com.leebeebeom.clothinghelper.ui.signin.base.EmailTextField
@@ -32,7 +31,7 @@ import com.leebeebeom.clothinghelper.ui.signin.base.SignInBaseRoot
 fun SignInScreen(
     onForgotPasswordClick: () -> Unit,
     onEmailSignUpClick: () -> Unit,
-    viewModel: SignInViewModel = viewModel()
+    viewModel: SignInViewModel = hiltViewModel()
 ) {
     val state = rememberSignInScreenUIState()
     val viewModelState = viewModel.viewModelState
@@ -45,44 +44,39 @@ fun SignInScreen(
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
             EmailTextField(
                 email = state.email,
-                error = state.emailError,
-                onEmailChange = state::onEmailChange,
+                error = viewModelState.emailError,
+                onEmailChange = { state.onEmailChange(email = it) { viewModelState.emailErrorOff() } },
                 imeAction = ImeAction.Next
             )
 
             PasswordTextField(
                 password = state.password,
-                onPasswordChange = state::onPasswordChange,
-                error = state.passwordError,
+                onPasswordChange = { state.onPasswordChange(password = it) { viewModelState.passwordErrorOff() } },
+                error = viewModelState.passwordError,
                 imeAction = ImeAction.Done
             )
 
             ForgotPasswordText(onForgotPasswordClick = onForgotPasswordClick)
 
-            MaxWidthButton(
-                text = R.string.login,
-                enabled = state.signInButtonEnabled,
-                onClick = {
-                    viewModel.signInWithEmailAndPassword(
-                        state.email, state.password,
-                        emailErrorEnabled = state::emailErrorEnabled,
-                        passwordErrorEnabled = state::passwordErrorEnabled
-                    )
-                }
-            )
+            MaxWidthButton(text = R.string.login, enabled = state.signInButtonEnabled(
+                emailError = viewModelState.emailError,
+                passwordError = viewModelState.passwordError
+            ), onClick = {
+                viewModel.signInWithEmailAndPassword(
+                    email = state.email, password = state.password
+                )
+            })
             SimpleHeightSpacer(dp = 8)
             OrDivider()
             SimpleHeightSpacer(dp = 8)
             // 프리뷰 시 주석 처리
             GoogleSignInButton(
-                googleSignIn = viewModel::googleSignIn,
-                googleSignInClick = viewModel::googleSignInLauncherLaunch,
+                signInWithGoogleEmail = viewModel::signInWithGoogleEmail,
                 enabled = viewModelState.googleButtonEnabled
             )
         }
         SignUpText(onEmailSignUpClick)
     }
-    FinishActivityOnBackPressed()
 }
 
 @Composable
@@ -113,8 +107,7 @@ private fun SignUpText(onEmailSignUpClick: () -> Unit) {
 private fun ForgotPasswordText(onForgotPasswordClick: () -> Unit) {
     Box(modifier = Modifier.fillMaxWidth()) {
         TextButton(
-            modifier = Modifier.align(Alignment.CenterEnd),
-            onClick = onForgotPasswordClick
+            modifier = Modifier.align(Alignment.CenterEnd), onClick = onForgotPasswordClick
         ) {
             Text(
                 text = stringResource(id = R.string.forget_password),
@@ -124,41 +117,27 @@ private fun ForgotPasswordText(onForgotPasswordClick: () -> Unit) {
     }
 }
 
+
 class SignInScreenUIState(
     initialEmail: String = "",
-    @StringRes initialEmailError: Int? = null,
     initialPassword: String = "",
-    @StringRes initialPasswordError: Int? = null
-) : PasswordUIState(initialEmail, initialEmailError, initialPassword, initialPasswordError) {
+) : PasswordUIState(initialEmail, initialPassword) {
 
-    val signInButtonEnabled
-        get() = email.isNotBlank() && emailError == null &&
-                password.isNotBlank() && passwordError == null
+    fun signInButtonEnabled(@StringRes emailError: Int?, @StringRes passwordError: Int?) =
+        email.isNotBlank() && emailError == null && password.isNotBlank() && passwordError == null
 
     companion object {
-        val Saver: Saver<SignInScreenUIState, *> = listSaver(
-            save = {
-                listOf(
-                    it.email,
-                    it.emailError,
-                    it.password,
-                    it.passwordError
-                )
-            },
-            restore = {
-                SignInScreenUIState(
-                    it[0] as String,
-                    it[1] as? Int,
-                    it[2] as String,
-                    it[3] as? Int
-                )
-            }
-        )
+        val Saver: Saver<SignInScreenUIState, *> = listSaver(save = {
+            listOf(
+                it.email, it.password
+            )
+        }, restore = {
+            SignInScreenUIState(it[0], it[1])
+        })
     }
 }
 
 @Composable
-fun rememberSignInScreenUIState() =
-    rememberSaveable(saver = SignInScreenUIState.Saver) {
-        SignInScreenUIState()
-    }
+private fun rememberSignInScreenUIState() = rememberSaveable(saver = SignInScreenUIState.Saver) {
+    SignInScreenUIState()
+}

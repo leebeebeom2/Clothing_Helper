@@ -20,17 +20,6 @@ open class BaseSignInViewModelState : BaseViewModelState() {
 }
 
 open class BaseSignInUpViewModelState : BaseSignInViewModelState() {
-    var passwordError: Int? by mutableStateOf(null)
-        private set
-
-    fun passwordErrorOn(@StringRes error: Int) {
-        passwordError = error
-    }
-
-    fun passwordErrorOff() {
-        passwordError = null
-    }
-
     var googleButtonEnabled by mutableStateOf(true)
         private set
 

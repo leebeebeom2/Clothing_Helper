@@ -1,7 +1,6 @@
 package com.leebeebeom.clothinghelper.ui.signin.signin
 
 import android.util.Log
-import androidx.activity.result.ActivityResult
 import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.repository.FireBaseListeners
@@ -17,16 +16,13 @@ import javax.inject.Inject
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val signInUseCase: SignInUseCase,
-    private val googleSignInUseCase: GoogleSignInUseCase,
-) : BaseSignInUpViewModel() {
+    googleSignInUseCase: GoogleSignInUseCase,
+) : BaseSignInUpViewModel(googleSignInUseCase) {
 
     override val viewModelState = BaseSignInUpViewModelState()
 
     fun signInWithEmailAndPassword(email: String, password: String) =
         signInUseCase(email, password, signInListener)
-
-    fun signInWithGoogleEmail(activityResult: ActivityResult) =
-        googleSignInUseCase(activityResult, googleSignInListener)
 
     private val signInListener = object : FireBaseListeners.SignInListener {
         override fun taskStart() = viewModelState.loadingOn()

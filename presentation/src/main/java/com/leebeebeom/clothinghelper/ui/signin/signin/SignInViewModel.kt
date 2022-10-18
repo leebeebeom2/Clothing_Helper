@@ -9,6 +9,7 @@ import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.SignInUseCase
 import com.leebeebeom.clothinghelper.ui.TAG
 import com.leebeebeom.clothinghelper.ui.signin.base.BaseSignInUpViewModel
+import com.leebeebeom.clothinghelper.ui.signin.base.BaseSignInUpViewModelState
 import com.leebeebeom.clothinghelper.ui.signin.base.FirebaseErrorCode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -18,6 +19,8 @@ class SignInViewModel @Inject constructor(
     private val signInUseCase: SignInUseCase,
     private val googleSignInUseCase: GoogleSignInUseCase,
 ) : BaseSignInUpViewModel() {
+
+    override val viewModelState = BaseSignInUpViewModelState()
 
     fun signInWithEmailAndPassword(email: String, password: String) =
         signInUseCase(email, password, signInListener)

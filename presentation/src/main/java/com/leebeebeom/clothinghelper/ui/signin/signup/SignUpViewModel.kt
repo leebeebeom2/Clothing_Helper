@@ -33,12 +33,12 @@ class SignUpViewModel @Inject constructor(
         override fun taskSuccess() = showToast(R.string.sign_up_complete)
 
         override fun taskFailed(exception: Exception?) {
-            val firebaseException = exception as? FirebaseAuthException
+            val firebaseAuthException = exception as? FirebaseAuthException
 
-            if (firebaseException == null) {
+            if (firebaseAuthException == null) {
                 showToast(R.string.unknown_error)
-                Log.d(TAG, "taskFailed: firebaseException = null")
-            } else setError(firebaseException.errorCode)
+                Log.d(TAG, "taskFailed: firebaseAuthException = null")
+            } else setError(firebaseAuthException.errorCode)
         }
 
         override fun taskFinish() = loadingOff()

@@ -1,6 +1,7 @@
 package com.leebeebeom.clothinghelper.domain.repository
 
 import androidx.activity.result.ActivityResult
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.StateFlow
 
@@ -34,7 +35,7 @@ interface UserRepository {
 
 interface FirebaseListener {
     fun taskStart()
-    fun taskSuccess()
+    fun taskSuccess(authResult: AuthResult?)
     fun taskFailed(exception: Exception?)
     fun taskFinish()
 }

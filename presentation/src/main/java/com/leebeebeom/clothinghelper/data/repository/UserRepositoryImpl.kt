@@ -52,7 +52,7 @@ class UserRepositoryImpl : UserRepository {
         signInListener.taskStart()
 
         firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-            if (it.isSuccessful) signInListener.taskSuccess()
+            if (it.isSuccessful) signInListener.taskSuccess(it.result)
             else signInListener.taskFailed(it.exception)
             signInListener.taskFinish()
         }
@@ -69,7 +69,7 @@ class UserRepositoryImpl : UserRepository {
 
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
-                signUpListener.taskSuccess()
+                signUpListener.taskSuccess(it.result)
                 val user = it.result.user
                 if (user == null) updateNameListener.userNull()
                 else updateName(updateNameListener, user, name)
@@ -88,7 +88,7 @@ class UserRepositoryImpl : UserRepository {
 
         user.updateProfile(request).addOnCompleteListener {
             if (it.isSuccessful) {
-                updateNameListener.taskSuccess()
+                updateNameListener.taskSuccess(null)
                 _name.value = name
             } else updateNameListener.nameUpdateFailed()
             updateNameListener.taskFinish()
@@ -116,7 +116,7 @@ class UserRepositoryImpl : UserRepository {
         getGoogleCredential(activityResult, googleSignInListener)?.let { credential ->
 
             FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener {
-                if (it.isSuccessful) googleSignInListener.taskSuccess()
+                if (it.isSuccessful) googleSignInListener.taskSuccess(it.result)
                 else googleSignInListener.taskFailed(it.exception)
                 googleSignInListener.taskFinish()
             }
@@ -142,7 +142,7 @@ class UserRepositoryImpl : UserRepository {
         resetPasswordListener.taskStart()
 
         firebaseAuth.sendPasswordResetEmail(email).addOnCompleteListener {
-            if (it.isSuccessful) resetPasswordListener.taskSuccess()
+            if (it.isSuccessful) resetPasswordListener.taskSuccess(null)
             else resetPasswordListener.taskFailed(it.exception)
             resetPasswordListener.taskFinish()
         }

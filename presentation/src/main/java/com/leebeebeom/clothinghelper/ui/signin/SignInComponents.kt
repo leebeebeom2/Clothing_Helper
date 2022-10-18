@@ -1,7 +1,6 @@
 package com.leebeebeom.clothinghelper.ui.signin
 
-import android.content.Intent
-import androidx.activity.compose.ManagedActivityResultLauncher
+import android.content.Context
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,9 +20,9 @@ import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.MaxWidthButton
-import com.leebeebeom.clothinghelper.ui.SimpleIcon
-import com.leebeebeom.clothinghelper.ui.googleLogo
+import com.leebeebeom.clothinghelper.ui.base.MaxWidthButton
+import com.leebeebeom.clothinghelper.ui.base.SimpleIcon
+import com.leebeebeom.clothinghelper.ui.base.googleIcon
 
 @Composable
 fun VisibleIcon(onIconClick: () -> Unit) {
@@ -37,47 +36,45 @@ fun VisibleIcon(onIconClick: () -> Unit) {
     }
 }
 
-@Composable
+@Composable // 검수
 fun GoogleSignInButton(
-    googleSignInClick: (Intent, ManagedActivityResultLauncher<Intent, *>) -> Unit,
-    googleSignIn: (ActivityResult) -> Unit,
+    signInWithGoogleEmail: (ActivityResult) -> Unit,
     enabled: Boolean
 ) {
-    val googleSignInIntent = GoogleSignIn.getClient(LocalContext.current, getGso()).signInIntent
-
     val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult(), onResult = googleSignIn
+        contract = ActivityResultContracts.StartActivityForResult(),
+        onResult = signInWithGoogleEmail
     )
 
-    MaxWidthButton(text = R.string.starts_with_google_email,
+    val intent = getGoogleSignInIntent(LocalContext.current, getGso())
+
+    MaxWidthButton(
+        text = R.string.starts_with_google_email,
         colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
-        icon = googleLogo,
+        icon = googleIcon,
         enabled = enabled,
-        onClick = { googleSignInClick(googleSignInIntent, launcher) })
+        onClick = { launcher.launch(intent) }
+    )
 }
+
+private fun getGoogleSignInIntent(context: Context, gso: GoogleSignInOptions) =
+    GoogleSignIn.getClient(context, gso).signInIntent
 
 @Composable
 private fun getGso() = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
     .requestIdToken(stringResource(id = R.string.default_web_client_id)).requestEmail().build()
 
-
 @Composable
 fun OrDivider() {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        val weightModifier = Modifier.weight(1f)
-
-        WeightDivider(weightModifier)
+        Divider(modifier = Modifier.weight(1f))
         Text(
             text = stringResource(id = R.string.or),
             modifier = Modifier
-                .padding(horizontal = 14.dp)
-                .align(Alignment.CenterVertically),
+                .padding(horizontal = 14.dp),
             style = MaterialTheme.typography.body2,
             color = LocalContentColor.current.copy(ContentAlpha.medium)
         )
-        WeightDivider(weightModifier)
+        Divider(modifier = Modifier.weight(1f))
     }
 }
-
-@Composable
-private fun WeightDivider(modifier: Modifier = Modifier) = Divider(modifier = modifier)

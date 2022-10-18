@@ -1,16 +1,15 @@
 package com.leebeebeom.clothinghelper.ui.signin.signin
 
-import android.app.Activity.RESULT_CANCELED
 import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.annotation.StringRes
-import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.repository.FireBaseListeners
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.SignInUseCase
 import com.leebeebeom.clothinghelper.ui.TAG
+import com.leebeebeom.clothinghelper.ui.signin.base.BaseSignInUpViewModel
 import com.leebeebeom.clothinghelper.ui.signin.base.BaseSignInUpViewModelState
 import com.leebeebeom.clothinghelper.ui.signin.base.FirebaseErrorCode
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +19,7 @@ import javax.inject.Inject
 class SignInViewModel @Inject constructor(
     private val signInUseCase: SignInUseCase,
     private val googleSignInUseCase: GoogleSignInUseCase,
-) : ViewModel() {
+) : BaseSignInUpViewModel() {
 
     val viewModelState = BaseSignInUpViewModelState()
 
@@ -30,7 +29,14 @@ class SignInViewModel @Inject constructor(
     fun signInWithGoogleEmail(activityResult: ActivityResult) =
         googleSignInUseCase(activityResult, googleSignInListener)
 
-    fun showToast(@StringRes toastText: Int) = viewModelState.showToast(toastText)
+    override fun showToast(@StringRes toastText: Int) = viewModelState.showToast(toastText)
+    override fun loadingOn() = viewModelState.loadingOn()
+
+    override fun loadingOff() = viewModelState.loadingOff()
+
+    override fun googleButtonDisable() = viewModelState.googleButtonDisable()
+
+    override fun googleButtonEnable() = viewModelState.googleButtonEnable()
 
     private val signInListener = object : FireBaseListeners.SignInListener {
         override fun taskStart() = viewModelState.loadingOn()
@@ -47,38 +53,6 @@ class SignInViewModel @Inject constructor(
         }
 
         override fun taskFinish() = viewModelState.loadingOff()
-    }
-
-    private val googleSignInListener = object : FireBaseListeners.GoogleSignInListener {
-        override fun googleSignInFailed(activityResult: ActivityResult) {
-            if (activityResult.data == null) {
-                showToast(R.string.unknown_error)
-                Log.d(TAG, "googleSignInFailed: activityResult.data = null")
-            } else
-                if (activityResult.resultCode == RESULT_CANCELED) showToast(R.string.canceled)
-                else {
-                    showToast(R.string.unknown_error)
-                    Log.d(TAG, "googleSignInFailed: $activityResult")
-                }
-        }
-
-        override fun taskStart() {
-            viewModelState.loadingOn()
-            viewModelState.googleButtonDisable()
-        }
-
-        override fun taskSuccess() = showToast(R.string.google_login_complete)
-
-        override fun taskFailed(exception: Exception?) {
-            showToast(R.string.unknown_error)
-            Log.d(TAG, "taskFailed: $exception")
-        }
-
-        override fun taskFinish() {
-            viewModelState.loadingOff()
-            viewModelState.googleButtonEnable()
-        }
-
     }
 
     private fun setError(errorCode: String) {

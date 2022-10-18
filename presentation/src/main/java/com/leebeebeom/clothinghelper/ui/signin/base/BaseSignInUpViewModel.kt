@@ -13,7 +13,7 @@ import com.leebeebeom.clothinghelper.ui.TAG
 abstract class BaseSignInUpViewModel(
     private val googleSignInUseCase: GoogleSignInUseCase
 ) : ViewModel() {
-    abstract val viewModelState:BaseSignInUpViewModelState
+    abstract val viewModelState: BaseSignInUpViewModelState
 
     fun showToast(@StringRes toastText: Int) = viewModelState.showToast(toastText)
     fun loadingOn() = viewModelState.loadingOn()

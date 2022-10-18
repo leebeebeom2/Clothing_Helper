@@ -14,7 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.base.MaxWidthButton
 import com.leebeebeom.clothinghelper.ui.base.SimpleHeightSpacer
@@ -23,7 +23,7 @@ import com.leebeebeom.clothinghelper.ui.signin.base.EmailUIState
 import com.leebeebeom.clothinghelper.ui.signin.base.SignInBaseRoot
 
 @Composable
-fun ResetPasswordScreen(viewModel: ResetPasswordViewModel = viewModel()) {
+fun ResetPasswordScreen(viewModel: ResetPasswordViewModel = hiltViewModel()) {
     val state = rememberResetScreenUIState()
     val viewModelState = viewModel.viewModelState
 

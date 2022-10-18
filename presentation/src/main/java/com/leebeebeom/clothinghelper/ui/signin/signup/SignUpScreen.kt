@@ -10,7 +10,7 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.ImeAction
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.base.MaxWidthButton
 import com.leebeebeom.clothinghelper.ui.base.MaxWidthTextField
@@ -23,7 +23,7 @@ import com.leebeebeom.clothinghelper.ui.signin.base.PasswordUIState
 import com.leebeebeom.clothinghelper.ui.signin.base.SignInBaseRoot
 
 @Composable
-fun SignUpScreen(viewModel: SignUpViewModel = viewModel()) {
+fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
     val state = rememberSignUpScreenUIState()
     val viewModelState = viewModel.viewModelState
 

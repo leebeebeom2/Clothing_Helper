@@ -1,8 +1,5 @@
 package com.leebeebeom.clothinghelper.ui.main
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -10,16 +7,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.leebeebeom.clothinghelper.ui.main.base.MainScreenRoot
 import com.leebeebeom.clothinghelper.ui.main.maincategory.MainCategoryScreen
 import com.leebeebeom.clothinghelper.ui.main.setting.SettingScreen
 import com.leebeebeom.clothinghelper.ui.main.subcategory.SubCategoryScreen
-
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent { MainActivityNavHost() }
-    }
-}
 
 object MainDestinations {
     const val MAIN_CATEGORY = "mainCategory"
@@ -28,12 +19,13 @@ object MainDestinations {
 }
 
 @Composable
-fun MainActivityNavHost() {
+fun MainNavHost(name: String, email: String) {
     val navController = rememberNavController()
 
-    MainActivityRoot(
+    MainScreenRoot(
         onSettingIconClick = { navController.mainNavigate(MainDestinations.SETTING) },
-        onDrawerContentClick = { /* TODO */ }
+        onDrawerContentClick = { clickedMenu -> },
+        name = name, email = email
     ) {
         NavHost(
             navController = navController,

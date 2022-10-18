@@ -51,14 +51,10 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
             password = state.password,
             onPasswordChange = {
                 state.onPasswordChange(
-                    password = it,
-                    passwordErrorOff = viewModelState::passwordErrorOff,
-                    passwordErrorOn = viewModelState::passwordErrorOn,
-                    passwordConfirmErrorOff = viewModelState::passwordConfirmErrorOff,
-                    passwordConfirmErrorOn = viewModelState::passwordConfirmErrorOn
+                    password = it
                 )
             },
-            error = viewModelState.passwordError,
+            error = state.passwordError,
             imeAction = ImeAction.Next
         )
 
@@ -66,12 +62,10 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
             password = state.passwordConfirm,
             onPasswordChange = {
                 state.onPasswordConfirmChange(
-                    passwordConfirm = it,
-                    passwordConfirmErrorOff = viewModelState::passwordConfirmErrorOff,
-                    passwordConfirmErrorOn = viewModelState::passwordConfirmErrorOn
+                    passwordConfirm = it
                 )
             },
-            error = viewModelState.passwordConfirmError,
+            error = state.passwordConfirmError,
             imeAction = ImeAction.Done,
             label = R.string.password_confirm
         )
@@ -79,8 +73,8 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
         MaxWidthButton(text = R.string.sign_up,
             enabled = state.submitButtonEnabled(
                 emailError = viewModelState.emailError,
-                passwordError = viewModelState.passwordError,
-                passwordConfirmError = viewModelState.passwordConfirmError
+                passwordError = state.passwordError,
+                passwordConfirmError = state.passwordConfirmError
             ),
             onClick = {
                 viewModel.signUpWithEmailAndPassword(
@@ -103,7 +97,9 @@ class SignUpScreenUIState(
     initialEmail: String = "",
     initialName: String = "",
     initialPassword: String = "",
-    initialPasswordConfirm: String = ""
+    initialPasswordConfirm: String = "",
+    @StringRes initialPasswordError: Int? = null,
+    @StringRes initialPasswordConfirmError: Int? = null
 ) : PasswordUIState(initialEmail, initialPassword) {
 
     var name: String by mutableStateOf(initialName)
@@ -111,37 +107,46 @@ class SignUpScreenUIState(
     var passwordConfirm: String by mutableStateOf(initialPasswordConfirm)
         private set
 
+    var passwordError: Int? by mutableStateOf(initialPasswordError)
+        private set
+    var passwordConfirmError: Int? by mutableStateOf(initialPasswordConfirmError)
+        private set
+
+    private fun passwordErrorOff() {
+        passwordError = null
+    }
+
+    private fun passwordErrorOn(@StringRes error: Int?) {
+        passwordError = error
+    }
+
+    private fun passwordConfirmErrorOff() {
+        passwordConfirmError = null
+    }
+
+    private fun passwordConfirmErrorOn(@StringRes error: Int?) {
+        passwordConfirmError = error
+    }
+
     fun onNameChange(name: String) {
         this.name = name
     }
 
-    fun onPasswordChange(
-        password: String,
-        passwordErrorOff: () -> Unit,
-        passwordErrorOn: (Int) -> Unit,
-        passwordConfirmErrorOff: () -> Unit,
-        passwordConfirmErrorOn: (Int) -> Unit
-    ) {
-        super.onPasswordChange(password, passwordErrorOff)
+    fun onPasswordChange(password: String) {
+        super.onPasswordChange(password, ::passwordErrorOff)
         if (password.isNotBlank()) {
-            passwordSameCheck(passwordConfirmErrorOn, passwordConfirmErrorOff)
+            passwordSameCheck()
             if (password.length < 6) passwordErrorOn(R.string.error_weak_password)
         }
     }
 
-    fun onPasswordConfirmChange(
-        passwordConfirm: String,
-        passwordConfirmErrorOff: () -> Unit,
-        passwordConfirmErrorOn: (Int) -> Unit
-    ) {
+    fun onPasswordConfirmChange(passwordConfirm: String) {
         this.passwordConfirm = passwordConfirm
         passwordConfirmErrorOff()
-        passwordSameCheck(passwordConfirmErrorOn, passwordConfirmErrorOff)
+        passwordSameCheck()
     }
 
-    private fun passwordSameCheck(
-        passwordConfirmErrorOn: (Int) -> Unit, passwordConfirmErrorOff: () -> Unit
-    ) {
+    private fun passwordSameCheck() {
         if (passwordConfirm.isNotBlank()) {
             if (password != passwordConfirm) passwordConfirmErrorOn(R.string.error_password_confirm_not_same)
             else passwordConfirmErrorOff()
@@ -163,10 +168,19 @@ class SignUpScreenUIState(
                 it.email,
                 it.name,
                 it.password,
-                it.passwordConfirm
+                it.passwordConfirm,
+                it.passwordError,
+                it.passwordConfirmError
             )
         }, restore = {
-            SignUpScreenUIState(it[0], it[1], it[2], it[3])
+            SignUpScreenUIState(
+                it[0] as String,
+                it[1] as String,
+                it[2] as String,
+                it[3] as String,
+                it[4] as? Int,
+                it[5] as? Int
+            )
         })
     }
 }

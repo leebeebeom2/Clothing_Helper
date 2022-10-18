@@ -2,7 +2,6 @@ package com.leebeebeom.clothinghelper.ui.signin.signin
 
 import android.util.Log
 import androidx.activity.result.ActivityResult
-import androidx.annotation.StringRes
 import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.repository.FireBaseListeners
@@ -10,7 +9,6 @@ import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.SignInUseCase
 import com.leebeebeom.clothinghelper.ui.TAG
 import com.leebeebeom.clothinghelper.ui.signin.base.BaseSignInUpViewModel
-import com.leebeebeom.clothinghelper.ui.signin.base.BaseSignInUpViewModelState
 import com.leebeebeom.clothinghelper.ui.signin.base.FirebaseErrorCode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -21,22 +19,11 @@ class SignInViewModel @Inject constructor(
     private val googleSignInUseCase: GoogleSignInUseCase,
 ) : BaseSignInUpViewModel() {
 
-    val viewModelState = BaseSignInUpViewModelState()
-
     fun signInWithEmailAndPassword(email: String, password: String) =
         signInUseCase(email, password, signInListener)
 
     fun signInWithGoogleEmail(activityResult: ActivityResult) =
         googleSignInUseCase(activityResult, googleSignInListener)
-
-    override fun showToast(@StringRes toastText: Int) = viewModelState.showToast(toastText)
-    override fun loadingOn() = viewModelState.loadingOn()
-
-    override fun loadingOff() = viewModelState.loadingOff()
-
-    override fun googleButtonDisable() = viewModelState.googleButtonDisable()
-
-    override fun googleButtonEnable() = viewModelState.googleButtonEnable()
 
     private val signInListener = object : FireBaseListeners.SignInListener {
         override fun taskStart() = viewModelState.loadingOn()

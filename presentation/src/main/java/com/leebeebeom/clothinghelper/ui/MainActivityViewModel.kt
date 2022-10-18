@@ -28,6 +28,9 @@ class MainActivityViewModel @Inject constructor(
         viewModelScope.launch {
             userInfoUserCase.name.collect(viewModelState::updateName)
         }
+        viewModelScope.launch {
+            userInfoUserCase.email.collect(viewModelState::updateEmail)
+        }
     }
 }
 
@@ -40,7 +43,8 @@ class MainViewModelState(
         private set
     var name by mutableStateOf(initialName)
         private set
-    val email by mutableStateOf(initialEmail)
+    var email by mutableStateOf(initialEmail)
+        private set
 
     fun isLogin(isLogin: Boolean) {
         this.isLogin = isLogin
@@ -48,5 +52,9 @@ class MainViewModelState(
 
     fun updateName(name: String) {
         this.name = name
+    }
+
+    fun updateEmail(email: String) {
+        this.email = email
     }
 }

@@ -1,6 +1,10 @@
 package com.leebeebeom.clothinghelper.ui.signin.signin
 
 import android.util.Log
+import androidx.annotation.StringRes
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.repository.FireBaseListeners
@@ -19,7 +23,7 @@ class SignInViewModel @Inject constructor(
     googleSignInUseCase: GoogleSignInUseCase,
 ) : BaseSignInUpViewModel(googleSignInUseCase) {
 
-    override val viewModelState = BaseSignInUpViewModelState()
+    override val viewModelState = SignInViewModelState()
 
     fun signInWithEmailAndPassword(email: String, password: String) =
         signInUseCase(email, password, signInListener)
@@ -54,5 +58,18 @@ class SignInViewModel @Inject constructor(
                 Log.d(TAG, "setError: $errorCode")
             }
         }
+    }
+}
+
+class SignInViewModelState : BaseSignInUpViewModelState() {
+    var passwordError: Int? by mutableStateOf(null)
+        private set
+
+    fun passwordErrorOn(@StringRes error: Int) {
+        passwordError = error
+    }
+
+    fun passwordErrorOff() {
+        passwordError = null
     }
 }

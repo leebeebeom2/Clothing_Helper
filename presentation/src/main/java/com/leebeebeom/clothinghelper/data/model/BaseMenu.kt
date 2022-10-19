@@ -10,12 +10,6 @@ data class EssentialMenu(
     @DrawableRes val drawable: Int,
 )
 
-data class MainCategory(
-    val id: Int,
-    @StringRes val name: Int,
-    @DrawableRes val drawable: Int,
-)
-
 object BaseMenu {
     const val MAIN_SCREEN = 0
     const val FAVORITE = 1
@@ -34,9 +28,9 @@ object BaseMenu {
     )
 
     val mainCategories = listOf(
-        MainCategory(TOP, R.string.top, R.drawable.ic_list),
-        MainCategory(BOTTOM, R.string.bottom, R.drawable.ic_list),
-        MainCategory(OUTER, R.string.outer, R.drawable.ic_list),
-        MainCategory(ETC, R.string.etc, R.drawable.ic_list),
+        EssentialMenu(TOP, R.string.top, R.drawable.ic_list),
+        EssentialMenu(BOTTOM, R.string.bottom, R.drawable.ic_list),
+        EssentialMenu(OUTER, R.string.outer, R.drawable.ic_list),
+        EssentialMenu(ETC, R.string.etc, R.drawable.ic_list),
     )
 }

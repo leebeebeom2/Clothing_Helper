@@ -1,6 +1,5 @@
-package com.leebeebeom.clothinghelper.di
+package com.leebeebeom.clothinghelper.di.usecase
 
-import com.leebeebeom.clothinghelper.data.datasource.ContentRemoteDataSource
 import com.leebeebeom.clothinghelper.data.repository.UserRepositoryImpl
 import com.leebeebeom.clothinghelper.domain.usecase.user.*
 import dagger.Module
@@ -8,7 +7,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -37,13 +35,4 @@ class UserUseCaseModule {
     @Provides
     fun provideUserInfoUseCase(userRepository: UserRepositoryImpl) =
         UserInfoUserCase(userRepository)
-
-    @Singleton
-    @Provides
-    fun provideContentRemoteDataSource() =
-        ContentRemoteDataSource() // TODO 삭제
-
-    @Singleton
-    @Provides
-    fun provideUserRepositoryImpl() = UserRepositoryImpl()
 }

@@ -1,15 +1,14 @@
 package com.leebeebeom.clothinghelper.ui.main.base
 
 import androidx.activity.compose.BackHandler
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,9 +21,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.data.model.BaseMenu
 import com.leebeebeom.clothinghelper.data.model.EssentialMenu
+import com.leebeebeom.clothinghelper.data.model.MainCategory
 import com.leebeebeom.clothinghelper.ui.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.ui.base.SimpleIcon
 import com.leebeebeom.clothinghelper.ui.base.SimpleWidthSpacer
+import com.leebeebeom.clothinghelper.ui.main.subcategory.ExpandIcon
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelper.ui.theme.Disabled
 import kotlinx.coroutines.CoroutineScope
@@ -87,7 +88,7 @@ private fun DrawerContents(
                 contentPadding = PaddingValues(top = 4.dp, bottom = 40.dp)
             ) {
                 items(BaseMenu.essentialMenus, key = { it.id }) {
-                    DrawerContent(
+                    EssentialMenu(
                         essentialMenu = it, onDrawerContentClick = onDrawerContentClick
                     )
                 }
@@ -98,15 +99,9 @@ private fun DrawerContents(
                 }
 
                 items(BaseMenu.mainCategories, key = { it.id }) {
-                    DrawerContent(
-                        essentialMenu = it, onDrawerContentClick = onDrawerContentClick
-                    )
-                }
-                items(20) {
-                    DrawerContent(
-                        essentialMenu = EssentialMenu(
-                            1, R.string.error_same_category_name, R.drawable.ic_list
-                        ), onDrawerContentClick = onDrawerContentClick
+                    MainCategory(
+                        mainCategory = it,
+                        onDrawerContentClick = onDrawerContentClick
                     )
                 }
             }
@@ -114,7 +109,7 @@ private fun DrawerContents(
     }
 }
 
-@Composable
+@Composable // 검수
 private fun DrawerHeader(
     name: String, email: String, onSettingIconClick: () -> Unit,
 ) {
@@ -134,33 +129,51 @@ private fun DrawerHeader(
     }
 }
 
-@Composable
-private fun DrawerContent(
-    essentialMenu: EssentialMenu, onDrawerContentClick: (Int) -> Unit
-) {
+@Composable // 검수
+private fun EssentialMenu(essentialMenu: EssentialMenu, onDrawerContentClick: (Int) -> Unit) =
     DrawerContentRow(onDrawerContentClick = { onDrawerContentClick(essentialMenu.id) }) {
         SimpleIcon(modifier = Modifier.size(22.dp), drawable = essentialMenu.drawable)
         SimpleWidthSpacer(dp = 12)
         Text(
+            modifier = Modifier.weight(1f),
             text = stringResource(id = essentialMenu.name),
             style = MaterialTheme.typography.body1.copy(letterSpacing = 0.75.sp),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
     }
-}
 
 @Composable
+private fun MainCategory(mainCategory: MainCategory, onDrawerContentClick: (Int) -> Unit) {
+    DrawerContentRow(onDrawerContentClick = { onDrawerContentClick(mainCategory.id) }) {
+        Text(
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 8.dp),
+            text = stringResource(id = mainCategory.name),
+            style = MaterialTheme.typography.subtitle1,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        if (mainCategory.child.isNotEmpty()){
+            var isExpand by remember { mutableStateOf(false) }
+            ExpandIcon(modifier = Modifier.size(22.dp), isExpanded = isExpand) { isExpand = !isExpand }
+        }
+        // TODO 차일드 노드 생성 구현
+    }
+}
+
+@Composable // 검수
 private fun DrawerContentRow(
     onDrawerContentClick: () -> Unit, content: @Composable RowScope.() -> Unit
 ) = Row(
     modifier = Modifier
         .fillMaxWidth()
-        .padding(horizontal = 8.dp)
+        .padding(start = 8.dp, end = 8.dp)
         .clip(RoundedCornerShape(12.dp))
         .clickable(onClick = onDrawerContentClick)
-        .padding(start = 8.dp)
-        .heightIn(40.dp),
+        .padding(start = 4.dp)
+        .heightIn(48.dp),
     verticalAlignment = Alignment.CenterVertically,
     content = content
 )

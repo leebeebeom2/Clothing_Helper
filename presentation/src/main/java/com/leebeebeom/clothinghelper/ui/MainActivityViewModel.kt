@@ -15,46 +15,12 @@ class MainActivityViewModel @Inject constructor(
     private val userInfoUserCase: UserInfoUserCase
 ) : ViewModel() {
 
-    var viewModelState = MainViewModelState(
-        userInfoUserCase.isLogin.value,
-        userInfoUserCase.name.value,
-        userInfoUserCase.email.value
-    )
+    var isLogin by mutableStateOf(userInfoUserCase.isLogin.value)
+        private set
 
     init {
         viewModelScope.launch {
-            userInfoUserCase.isLogin.collect(viewModelState::isLogin)
+            userInfoUserCase.isLogin.collect { isLogin = it }
         }
-        viewModelScope.launch {
-            userInfoUserCase.name.collect(viewModelState::updateName)
-        }
-        viewModelScope.launch {
-            userInfoUserCase.email.collect(viewModelState::updateEmail)
-        }
-    }
-}
-
-class MainViewModelState(
-    initialLoginState: Boolean,
-    initialName: String,
-    initialEmail: String,
-) {
-    var isLogin by mutableStateOf(initialLoginState)
-        private set
-    var name by mutableStateOf(initialName)
-        private set
-    var email by mutableStateOf(initialEmail)
-        private set
-
-    fun isLogin(isLogin: Boolean) {
-        this.isLogin = isLogin
-    }
-
-    fun updateName(name: String) {
-        this.name = name
-    }
-
-    fun updateEmail(email: String) {
-        this.email = email
     }
 }

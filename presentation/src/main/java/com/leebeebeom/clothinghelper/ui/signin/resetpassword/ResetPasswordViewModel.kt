@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.repository.FireBaseListeners
@@ -26,7 +27,7 @@ class ResetPasswordViewModel @Inject constructor(
     private val resetPasswordListener = object : FireBaseListeners.ResetPasswordListener {
         override fun taskStart() = viewModelState.loadingOn()
 
-        override fun taskSuccess() {
+        override fun taskSuccess(authResult: AuthResult?) {
             viewModelState.showToast(R.string.email_send_complete)
             viewModelState.goBack()
         }

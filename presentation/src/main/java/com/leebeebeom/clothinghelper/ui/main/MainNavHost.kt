@@ -7,6 +7,14 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.leebeebeom.clothinghelper.data.model.BaseMenu.BOTTOM
+import com.leebeebeom.clothinghelper.data.model.BaseMenu.ETC
+import com.leebeebeom.clothinghelper.data.model.BaseMenu.FAVORITE
+import com.leebeebeom.clothinghelper.data.model.BaseMenu.MAIN_SCREEN
+import com.leebeebeom.clothinghelper.data.model.BaseMenu.OUTER
+import com.leebeebeom.clothinghelper.data.model.BaseMenu.SEE_ALL
+import com.leebeebeom.clothinghelper.data.model.BaseMenu.TOP
+import com.leebeebeom.clothinghelper.data.model.BaseMenu.TRASH
 import com.leebeebeom.clothinghelper.ui.main.base.MainScreenRoot
 import com.leebeebeom.clothinghelper.ui.main.maincategory.MainCategoryScreen
 import com.leebeebeom.clothinghelper.ui.main.setting.SettingScreen
@@ -24,7 +32,7 @@ fun MainNavHost(name: String, email: String) {
 
     MainScreenRoot(
         onSettingIconClick = { navController.mainNavigate(MainDestinations.SETTING) },
-        onDrawerContentClick = { clickedMenu -> },
+        onDrawerContentClick = { id -> navController.drawerNavigate(id) },
         name = name, email = email
     ) {
         NavHost(
@@ -44,6 +52,22 @@ fun MainNavHost(name: String, email: String) {
 
 fun NavController.mainNavigate(destination: String) =
     navigate(destination) {
-        launchSingleTop = true
         popUpTo(MainDestinations.MAIN_CATEGORY)
     }
+
+fun NavController.drawerNavigate(id: Int) {
+    when (id) {
+        MAIN_SCREEN -> mainNavigate(MainDestinations.MAIN_CATEGORY)
+        FAVORITE -> {/*TODO*/
+        }
+        SEE_ALL -> { /*TODO*/
+        }
+        TRASH -> { /*TODO*/
+        }
+        TOP -> mainNavigate(MainDestinations.SUB_CATEGORY) //TODO
+        BOTTOM -> mainNavigate(MainDestinations.SUB_CATEGORY) //TODO
+        OUTER -> mainNavigate(MainDestinations.SUB_CATEGORY) //TODO
+        ETC -> mainNavigate(MainDestinations.SUB_CATEGORY) //TODO
+        else -> mainNavigate(MainDestinations.SUB_CATEGORY) //TODO
+    }
+}

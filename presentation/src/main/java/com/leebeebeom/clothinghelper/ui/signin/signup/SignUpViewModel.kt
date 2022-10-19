@@ -1,9 +1,11 @@
 package com.leebeebeom.clothinghelper.ui.signin.signup
 
 import android.util.Log
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.repository.FireBaseListeners
+import com.leebeebeom.clothinghelper.domain.usecase.subcategory.WriteInitialSubCategoryUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.SignUpUseCase
 import com.leebeebeom.clothinghelper.ui.TAG
@@ -16,8 +18,9 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val signUpUseCase: SignUpUseCase,
-    googleSignInUseCase: GoogleSignInUseCase
-) : BaseSignInUpViewModel(googleSignInUseCase) {
+    googleSignInUseCase: GoogleSignInUseCase,
+    writeInitialSubCategoryUseCase: WriteInitialSubCategoryUseCase
+) : BaseSignInUpViewModel(googleSignInUseCase, writeInitialSubCategoryUseCase) {
     override val viewModelState = BaseSignInUpViewModelState()
 
     fun signUpWithEmailAndPassword(email: String, password: String, name: String) =
@@ -26,7 +29,9 @@ class SignUpViewModel @Inject constructor(
     private val signUpListener = object : FireBaseListeners.SignUpListener {
         override fun taskStart() = loadingOn()
 
-        override fun taskSuccess() = showToast(R.string.sign_up_complete)
+        override fun taskSuccess(authResult: AuthResult?) {
+            showToast(R.string.sign_up_complete)
+        }
 
         override fun taskFailed(exception: Exception?) {
             val firebaseAuthException = exception as? FirebaseAuthException
@@ -58,11 +63,8 @@ class SignUpViewModel @Inject constructor(
         }
 
         override fun taskStart() = loadingOn()
-
-        override fun taskSuccess() {}
-
+        override fun taskSuccess(authResult: AuthResult?) {}
         override fun taskFinish() = loadingOff()
-
     }
 
     private fun setError(errorCode: String) {

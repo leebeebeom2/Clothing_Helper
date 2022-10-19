@@ -5,9 +5,11 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.repository.FireBaseListeners
+import com.leebeebeom.clothinghelper.domain.usecase.subcategory.WriteInitialSubCategoryUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.SignInUseCase
 import com.leebeebeom.clothinghelper.ui.TAG
@@ -21,7 +23,8 @@ import javax.inject.Inject
 class SignInViewModel @Inject constructor(
     private val signInUseCase: SignInUseCase,
     googleSignInUseCase: GoogleSignInUseCase,
-) : BaseSignInUpViewModel(googleSignInUseCase) {
+    writeInitialSubCategoryUseCase: WriteInitialSubCategoryUseCase
+) : BaseSignInUpViewModel(googleSignInUseCase, writeInitialSubCategoryUseCase) {
 
     override val viewModelState = SignInViewModelState()
 
@@ -31,7 +34,7 @@ class SignInViewModel @Inject constructor(
     private val signInListener = object : FireBaseListeners.SignInListener {
         override fun taskStart() = viewModelState.loadingOn()
 
-        override fun taskSuccess() = showToast(R.string.login_complete)
+        override fun taskSuccess(authResult: AuthResult?) = showToast(R.string.login_complete)
 
         override fun taskFailed(exception: Exception?) {
             val firebaseAuthException = exception as? FirebaseAuthException

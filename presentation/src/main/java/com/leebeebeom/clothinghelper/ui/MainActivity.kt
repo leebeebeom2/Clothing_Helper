@@ -11,7 +11,7 @@ import com.leebeebeom.clothinghelper.ui.signin.SignInNavHost
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 
-const val TAG = "태그"
+const val TAG = "TAG"
 
 @HiltAndroidApp
 class ClothingHelper : Application()

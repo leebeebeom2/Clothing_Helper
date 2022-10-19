@@ -5,13 +5,16 @@ import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.AuthResult
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.repository.FireBaseListeners
+import com.leebeebeom.clothinghelper.domain.usecase.subcategory.WriteInitialSubCategoryUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelper.ui.TAG
 
 abstract class BaseSignInUpViewModel(
-    private val googleSignInUseCase: GoogleSignInUseCase
+    private val googleSignInUseCase: GoogleSignInUseCase,
+    private val writeInitialSubCategoryUseCase: WriteInitialSubCategoryUseCase
 ) : ViewModel() {
     abstract val viewModelState: BaseSignInUpViewModelState
 
@@ -42,7 +45,12 @@ abstract class BaseSignInUpViewModel(
             googleButtonDisable()
         }
 
-        override fun taskSuccess() = showToast(R.string.google_login_complete)
+        override fun taskSuccess(authResult: AuthResult?) {
+            authResult?.additionalUserInfo?.run {
+                if (isNewUser) writeInitialSubCategoryUseCase()
+            }
+            showToast(R.string.google_login_complete)
+        }
 
         override fun taskFailed(exception: Exception?) {
             showToast(R.string.unknown_error)

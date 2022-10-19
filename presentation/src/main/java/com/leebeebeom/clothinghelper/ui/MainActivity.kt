@@ -27,8 +27,6 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainActivityNavHost(viewModel: MainActivityViewModel = hiltViewModel()) {
-    val viewModelState = viewModel.viewModelState
-
-    if (viewModelState.isLogin) MainNavHost(viewModelState.name, viewModelState.email)
+    if (viewModel.isLogin) MainNavHost()
     else SignInNavHost()
 }

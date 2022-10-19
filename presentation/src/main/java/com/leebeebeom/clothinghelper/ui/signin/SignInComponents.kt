@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -25,12 +26,12 @@ import com.leebeebeom.clothinghelper.ui.base.SimpleIcon
 import com.leebeebeom.clothinghelper.ui.base.googleIcon
 
 @Composable
-fun VisibleIcon(onIconClick: () -> Unit) {
-    var isVisible by rememberSaveable { mutableStateOf(false) }
+fun VisibleIcon(visualTransformation: VisualTransformation, onIconClick: (Boolean) -> Unit) {
+    var isVisible by rememberSaveable { mutableStateOf(visualTransformation == VisualTransformation.None) }
 
     IconButton(onClick = {
-        onIconClick()
         isVisible = !isVisible
+        onIconClick(isVisible)
     }) {
         SimpleIcon(drawable = if (isVisible) R.drawable.ic_visibility_off else R.drawable.ic_visibility)
     }

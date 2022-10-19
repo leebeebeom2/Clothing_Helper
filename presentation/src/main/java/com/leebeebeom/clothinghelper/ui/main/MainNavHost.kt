@@ -3,7 +3,6 @@ package com.leebeebeom.clothinghelper.ui.main
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -28,14 +27,12 @@ object MainDestinations {
 }
 
 @Composable
-fun MainNavHost(viewModel: MainNavHostViewModel = hiltViewModel()) {
-    val viewModelState = viewModel.viewModelState
+fun MainNavHost() {
     val navController = rememberNavController()
 
     MainScreenRoot(
         onSettingIconClick = { navController.mainNavigate(MainDestinations.SETTING) },
-        onDrawerContentClick = { id -> navController.drawerNavigate(id) },
-        name = viewModelState.name, email = viewModelState.email
+        onDrawerContentClick = { id -> navController.drawerNavigate(id) }
     ) {
         NavHost(
             navController = navController,

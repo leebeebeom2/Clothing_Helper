@@ -18,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.data.model.BaseMenu
 import com.leebeebeom.clothinghelper.data.model.EssentialMenu
@@ -33,10 +34,10 @@ import kotlinx.coroutines.launch
 fun MainScreenRoot(
     onSettingIconClick: () -> Unit,
     onDrawerContentClick: (Int) -> Unit,
-    name: String,
-    email: String,
+    viewModel: MainScreenRootViewModel = hiltViewModel(),
     content: @Composable (PaddingValues) -> Unit
 ) {
+    val viewModelState = viewModel.viewModelState
     val state = rememberMainScreenUIState()
 
     ClothingHelperTheme {
@@ -46,10 +47,13 @@ fun MainScreenRoot(
                 DrawerContents(onSettingIconClick = {
                     onSettingIconClick()
                     state.onDrawerClose()
-                }, name = name, email = email, onDrawerContentClick = {
-                    onDrawerContentClick(it)
-                    state.onDrawerClose()
-                })
+                },
+                    name = viewModelState.name,
+                    email = viewModelState.email,
+                    onDrawerContentClick = {
+                        onDrawerContentClick(it)
+                        state.onDrawerClose()
+                    })
             },
             drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
             drawerBackgroundColor = MaterialTheme.colors.primary,

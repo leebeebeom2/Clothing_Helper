@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.main
+package com.leebeebeom.clothinghelper.ui.main.base
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainNavHostViewModel @Inject constructor(
+class MainScreenRootViewModel @Inject constructor(
     private val userInfoUserCase: UserInfoUserCase
 ) : ViewModel() {
     val viewModelState =

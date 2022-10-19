@@ -51,6 +51,7 @@ fun MainNavHost() {
 fun NavController.mainNavigate(destination: String) =
     navigate(destination) {
         popUpTo(MainDestinations.MAIN_CATEGORY)
+        launchSingleTop = true
     }
 
 fun NavController.drawerNavigate(id: Int) {

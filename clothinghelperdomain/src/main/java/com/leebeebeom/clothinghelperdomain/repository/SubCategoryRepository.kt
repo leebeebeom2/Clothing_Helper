@@ -1,7 +1,7 @@
-package com.leebeebeom.clothinghelper.domain.repository
+package com.leebeebeom.clothinghelperdomain.repository
 
-import com.leebeebeom.clothinghelper.data.model.SubCategory
-import com.leebeebeom.clothinghelper.data.model.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.model.SubCategory
+import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import kotlinx.coroutines.flow.StateFlow
 
 interface SubCategoryRepository {

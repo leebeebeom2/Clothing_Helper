@@ -1,8 +1,8 @@
-package com.leebeebeom.clothinghelper.domain.usecase.user
+package com.leebeebeom.clothinghelperdomain.usecase.user
 
 import androidx.activity.result.ActivityResult
-import com.leebeebeom.clothinghelper.domain.repository.FireBaseListeners
-import com.leebeebeom.clothinghelper.domain.repository.UserRepository
+import com.leebeebeom.clothinghelperdomain.repository.FireBaseListeners
+import com.leebeebeom.clothinghelperdomain.repository.UserRepository
 
 class SignInUseCase(private val userRepository: UserRepository) {
     operator fun invoke(

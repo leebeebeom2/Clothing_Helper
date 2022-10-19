@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.domain.repository
+package com.leebeebeom.clothinghelperdomain.repository
 
 import androidx.activity.result.ActivityResult
 import com.google.firebase.auth.AuthResult
@@ -6,7 +6,6 @@ import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.StateFlow
 
 interface UserRepository {
-    val user: StateFlow<FirebaseUser?>
     val isLogin: StateFlow<Boolean>
     val name: StateFlow<String>
     val email: StateFlow<String>

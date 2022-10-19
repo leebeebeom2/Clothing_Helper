@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.main
+package com.leebeebeom.clothinghelper.ui.main.base
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -15,7 +15,6 @@ import com.leebeebeom.clothinghelper.data.model.BaseMenu.OUTER
 import com.leebeebeom.clothinghelper.data.model.BaseMenu.SEE_ALL
 import com.leebeebeom.clothinghelper.data.model.BaseMenu.TOP
 import com.leebeebeom.clothinghelper.data.model.BaseMenu.TRASH
-import com.leebeebeom.clothinghelper.ui.main.base.MainScreenRoot
 import com.leebeebeom.clothinghelper.ui.main.maincategory.MainCategoryScreen
 import com.leebeebeom.clothinghelper.ui.main.setting.SettingScreen
 import com.leebeebeom.clothinghelper.ui.main.subcategory.SubCategoryScreen

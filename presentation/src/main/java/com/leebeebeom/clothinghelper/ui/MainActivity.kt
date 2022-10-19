@@ -6,7 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.leebeebeom.clothinghelper.ui.main.MainNavHost
+import com.leebeebeom.clothinghelper.ui.main.base.MainNavHost
 import com.leebeebeom.clothinghelper.ui.signin.SignInNavHost
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp

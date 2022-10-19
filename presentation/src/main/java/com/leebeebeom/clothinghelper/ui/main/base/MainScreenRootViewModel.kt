@@ -26,11 +26,9 @@ class MainScreenRootViewModel @Inject constructor(
 
 class MainNavHostViewModelState(
     name: String,
-    email: String
+    val email: String
 ) {
     var name by mutableStateOf(name)
-        private set
-    var email by mutableStateOf(email)
         private set
 
     fun nameUpdate(name: String) {

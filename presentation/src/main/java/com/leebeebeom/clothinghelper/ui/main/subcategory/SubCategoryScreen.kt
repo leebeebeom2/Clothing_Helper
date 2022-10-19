@@ -167,7 +167,7 @@ private fun SubCategoryTitle(title: String, isExpanded: Boolean, onExpandIconCli
 }
 
 @Composable
-private fun ExpandIcon(isExpanded: Boolean, onExpandIconClick: () -> Unit) {
+fun ExpandIcon(isExpanded: Boolean, onExpandIconClick: () -> Unit) {
     val rotate by animateFloatAsState(
         targetValue = if (!isExpanded) 0f else 180f, animationSpec = tween(durationMillis = 300)
     )

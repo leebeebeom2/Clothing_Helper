@@ -2,19 +2,28 @@ package com.leebeebeom.clothinghelper.data.datasource
 
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.leebeebeom.clothinghelper.data.model.SubCategoryParent
 import com.leebeebeom.clothinghelper.data.model.SubCategory
+import com.leebeebeom.clothinghelper.data.model.SubCategoryParent
 import com.leebeebeom.clothinghelper.data.model.User
 import com.leebeebeom.clothinghelper.domain.usecase.user.UserInfoUserCase
 
+// https://firebase.google.com/docs/database/android/read-and-write -> 기본 쓰기 작업: 데이터 일부만 수정
+
 class SubCategoryRemoteDataSource(private val userInfoUserCase: UserInfoUserCase) {
-    private val dataBase = Firebase.database.reference
-    private val userRef = dataBase.child(userInfoUserCase.uid.value)
+    private val userRef = Firebase.database.reference.child(userInfoUserCase.uid.value)
+    private val subCategoryRef = userRef.child("subCategory")
 
     fun writeInitialData() {
         val user = User(userInfoUserCase.email.value, userInfoUserCase.name.value)
         userRef.child("user info").setValue(user)
-        userRef.child("subCategory").setValue(getInitialSubCategories())
+        subCategoryRef.setValue(getInitialSubCategories())
+    }
+
+    fun addSubCategory(name: String, parent: SubCategoryParent) {
+        val timeStamp = System.currentTimeMillis()
+        val newSubCategory = SubCategory(parent, timeStamp, name)
+
+        subCategoryRef.push().setValue(newSubCategory)
     }
 
     private fun getInitialSubCategories(): List<SubCategory> {

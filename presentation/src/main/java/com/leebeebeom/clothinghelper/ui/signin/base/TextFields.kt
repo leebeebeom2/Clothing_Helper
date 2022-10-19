@@ -43,7 +43,6 @@ fun PasswordTextField(
             PasswordVisualTransformation()
         )
     }
-    val isVisible = visualTransformation == VisualTransformation.None
 
     MaxWidthTextField(
         label = label,
@@ -51,10 +50,10 @@ fun PasswordTextField(
         onValueChange = onPasswordChange,
         error = error,
         trailingIcon = {
-            VisibleIcon {
+            VisibleIcon(visualTransformation) {
                 visualTransformation =
-                    if (isVisible) PasswordVisualTransformation()
-                    else VisualTransformation.None
+                    if (it) VisualTransformation.None
+                    else PasswordVisualTransformation()
             }
         },
         visualTransformation = visualTransformation,

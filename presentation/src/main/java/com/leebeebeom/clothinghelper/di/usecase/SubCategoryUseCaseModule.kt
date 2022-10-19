@@ -1,6 +1,8 @@
 package com.leebeebeom.clothinghelper.di.usecase
 
 import com.leebeebeom.clothinghelper.data.repository.SubCategoryRepositoryImpl
+import com.leebeebeom.clothinghelper.domain.usecase.subcategory.AddSubCategoryUseCase
+import com.leebeebeom.clothinghelper.domain.usecase.subcategory.GetAllSubCategoryUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.subcategory.WriteInitialSubCategoryUseCase
 import dagger.Module
 import dagger.Provides
@@ -15,4 +17,14 @@ class SubCategoryUseCaseModule {
     @Provides
     fun provideWriteSubCategoryUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
         WriteInitialSubCategoryUseCase(subCategoryRepository)
+
+    @Singleton
+    @Provides
+    fun provideAddSubCategoryUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
+        AddSubCategoryUseCase(subCategoryRepository)
+
+    @Singleton
+    @Provides
+    fun provideGetAllSubCategoryUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
+        GetAllSubCategoryUseCase(subCategoryRepository)
 }

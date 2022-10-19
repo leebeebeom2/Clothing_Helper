@@ -10,8 +10,8 @@ import com.leebeebeom.clothinghelper.domain.usecase.user.UserInfoUserCase
 // https://firebase.google.com/docs/database/android/read-and-write -> 기본 쓰기 작업: 데이터 일부만 수정
 
 class SubCategoryRemoteDataSource(private val userInfoUserCase: UserInfoUserCase) {
-    private val userRef = Firebase.database.reference.child(userInfoUserCase.uid.value)
-    private val subCategoryRef = userRef.child("subCategory")
+    private val userRef get() = Firebase.database.reference.child(userInfoUserCase.uid.value)
+    private val subCategoryRef get() = userRef.child("subCategory")
 
     fun writeInitialData() {
         val user = User(userInfoUserCase.email.value, userInfoUserCase.name.value)
@@ -19,7 +19,7 @@ class SubCategoryRemoteDataSource(private val userInfoUserCase: UserInfoUserCase
         subCategoryRef.setValue(getInitialSubCategories())
     }
 
-    fun addSubCategory(name: String, parent: SubCategoryParent) {
+    fun addSubCategory(parent: SubCategoryParent, name: String) {
         val timeStamp = System.currentTimeMillis()
         val newSubCategory = SubCategory(parent, timeStamp, name)
 

@@ -30,23 +30,22 @@ class UserRepositoryImpl : UserRepository {
 
     override suspend fun googleSignIn(
         googleCredential: Any?, googleSignInListener: FireBaseListeners.GoogleSignInListener
-    ): Boolean = coroutineScope {
+    ): MutableStateFlow<Boolean> = coroutineScope {
         googleSignInListener.taskStart()
 
-        var isFirstUser = false
+        val isFirstUser = MutableStateFlow(false)
 
         if (googleCredential is AuthCredential) FirebaseAuth.getInstance()
             .signInWithCredential(googleCredential).addOnCompleteListener {
                 if (it.isSuccessful) {
                     googleSignInListener.taskSuccess()
-                    it.result.additionalUserInfo?.isNewUser?.run { isFirstUser = this }
+                    it.result.additionalUserInfo?.isNewUser?.run { isFirstUser.value = this }
                 } else googleSignInListener.taskFailed(it.exception)
                 googleSignInListener.taskFinish()
             }
         else googleSignInListener.googleCredentialCastFailed()
         isFirstUser
     }
-
 
     override suspend fun signIn(
         email: String, password: String, signInListener: FireBaseListeners.SignInListener

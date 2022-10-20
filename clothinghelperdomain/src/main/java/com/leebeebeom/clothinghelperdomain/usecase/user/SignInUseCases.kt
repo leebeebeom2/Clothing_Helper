@@ -3,6 +3,7 @@ package com.leebeebeom.clothinghelperdomain.usecase.user
 import com.leebeebeom.clothinghelperdomain.repository.FireBaseListeners
 import com.leebeebeom.clothinghelperdomain.repository.UserRepository
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.WriteInitialSubCategoriesUseCase
+import kotlinx.coroutines.coroutineScope
 
 class GetSignInStateUseCase(private val userRepository: UserRepository) {
     operator fun invoke() = userRepository.isSignIn()
@@ -14,9 +15,11 @@ class GoogleSignInUseCase(
 ) {
     suspend operator fun invoke(
         googleCredential: Any?, googleSignInListener: FireBaseListeners.GoogleSignInListener
-    ) {
+    ): Nothing = coroutineScope {
         val isFirstUser = userRepository.googleSignIn(googleCredential, googleSignInListener)
-        if (isFirstUser) writeInitialSubCategoriesUseCase()
+        isFirstUser.collect {
+            if (it) writeInitialSubCategoriesUseCase()
+        }
     }
 }
 

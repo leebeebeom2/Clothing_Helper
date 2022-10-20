@@ -30,8 +30,8 @@ abstract class BaseSignInUpViewModel(
     fun showToast(@StringRes toastText: Int) = viewModelState.showToast(toastText)
     fun loadingOn() = viewModelState.loadingOn()
     fun loadingOff() = viewModelState.loadingOff()
-    fun googleButtonDisable() = viewModelState.googleButtonDisable()
-    fun googleButtonEnable() = viewModelState.googleButtonEnable()
+    fun googleButtonDisable() = viewModelState.setGoogleButtonDisable()
+    fun googleButtonEnable() = viewModelState.setGoogleButtonEnable()
 
     fun signInWithGoogleEmail(activityResult: ActivityResult) {
         when (activityResult.resultCode) {

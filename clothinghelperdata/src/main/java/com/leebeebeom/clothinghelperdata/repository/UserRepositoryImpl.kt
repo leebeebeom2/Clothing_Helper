@@ -66,15 +66,12 @@ class UserRepositoryImpl : UserRepository {
         name: String,
         signUpListener: FireBaseListeners.SignUpListener,
         updateNameListener: FireBaseListeners.UpdateNameListener
-    ): Boolean = coroutineScope {
+    ): Unit = coroutineScope {
         signUpListener.taskStart()
-
-        var isFirstUser = false
 
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
                 signUpListener.taskSuccess()
-                it.result.additionalUserInfo?.isNewUser?.run { isFirstUser = this }
                 //이름 업데이트
                 val user = it.result.user
                 if (user == null) updateNameListener.userNull()
@@ -82,7 +79,6 @@ class UserRepositoryImpl : UserRepository {
             } else signUpListener.taskFailed(it.exception)
             signUpListener.taskFinish()
         }
-        isFirstUser
     }
 
     private fun updateName(

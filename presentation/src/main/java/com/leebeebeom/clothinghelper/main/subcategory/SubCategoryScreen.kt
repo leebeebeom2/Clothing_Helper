@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.main.subcategory
+package com.leebeebeom.clothinghelper.main.subcategory
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
@@ -32,11 +32,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.base.MaxWidthTextField
-import com.leebeebeom.clothinghelper.ui.base.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.ui.base.SimpleIcon
+import com.leebeebeom.clothinghelper.base.MaxWidthTextField
+import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 
 @Preview(showBackground = true, showSystemUi = true)
@@ -49,7 +49,7 @@ fun SubCategoryScreenPreview() {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SubCategoryScreen(viewModel: SubCategoryViewModel = viewModel()) {
+fun SubCategoryScreen(viewModel: SubCategoryViewModel = hiltViewModel()) {
     val viewModelState = viewModel.viewModelState
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -77,7 +77,7 @@ fun SubCategoryScreen(viewModel: SubCategoryViewModel = viewModel()) {
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(end = 16.dp, bottom = 16.dp),
-            onPositiveButtonClick = viewModelState::addNewCategory,
+            onPositiveButtonClick = viewModel::addSubCategory,
             subCategories = viewModelState.subCategories
         )
     }
@@ -162,12 +162,12 @@ private fun SubCategoryTitle(title: String, isExpanded: Boolean, onExpandIconCli
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
-        ExpandIcon(isExpanded, onExpandIconClick)
+        ExpandIcon(isExpanded = isExpanded, onExpandIconClick = onExpandIconClick)
     }
 }
 
 @Composable
-fun ExpandIcon(isExpanded: Boolean, onExpandIconClick: () -> Unit) {
+fun ExpandIcon(modifier: Modifier = Modifier, isExpanded: Boolean, onExpandIconClick: () -> Unit) {
     val rotate by animateFloatAsState(
         targetValue = if (!isExpanded) 0f else 180f, animationSpec = tween(durationMillis = 300)
     )
@@ -175,7 +175,7 @@ fun ExpandIcon(isExpanded: Boolean, onExpandIconClick: () -> Unit) {
     IconButton(onClick = onExpandIconClick) {
         SimpleIcon(
             drawable = R.drawable.ic_expand_more,
-            modifier = Modifier.rotate(rotate),
+            modifier = modifier.rotate(rotate),
             tint = LocalContentColor.current.copy(ContentAlpha.medium)
         )
     }
@@ -183,9 +183,7 @@ fun ExpandIcon(isExpanded: Boolean, onExpandIconClick: () -> Unit) {
 
 @Composable
 private fun AddCategoryDialogFab(
-    modifier: Modifier,
-    onPositiveButtonClick: (String) -> Unit,
-    subCategories: List<String>
+    modifier: Modifier, onPositiveButtonClick: (String) -> Unit, subCategories: List<String>
 ) {
     val state = rememberAddCategoryDialogUIState()
 
@@ -197,38 +195,33 @@ private fun AddCategoryDialogFab(
         SimpleIcon(drawable = R.drawable.ic_add)
     }
 
-    if (state.showDialog)
-        Dialog(onDismissRequest = state::dismissDialog) {
-            Surface(color = MaterialTheme.colors.surface, shape = RoundedCornerShape(20.dp)) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.add_category_title),
-                        style = MaterialTheme.typography.subtitle1,
-                        modifier = Modifier.padding(start = 4.dp, bottom = 12.dp)
-                    )
-                    DialogTextField(
-                        categoryName = state.categoryName,
-                        error = state.categoryNameError,
-                        onCategoryNameChange = {
-                            state.onCategoryNameChange(it)
-                            if (subCategories.contains(it))
-                                state.enableCategoryNameError(R.string.error_same_category_name)
-                        }
-                    )
-                    DialogTextButtons(
-                        positiveButtonEnabled = state.positiveButtonEnabled,
-                        onCancelButtonClick = state::dismissDialog,
-                        onPositiveButtonClick = {
-                            state.dismissDialog()
-                            onPositiveButtonClick(state.categoryName)
-                        })
-                }
+    if (state.showDialog) Dialog(onDismissRequest = state::dismissDialog) {
+        Surface(color = MaterialTheme.colors.surface, shape = RoundedCornerShape(20.dp)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.add_category_title),
+                    style = MaterialTheme.typography.subtitle1,
+                    modifier = Modifier.padding(start = 4.dp, bottom = 12.dp)
+                )
+                DialogTextField(categoryName = state.categoryName,
+                    error = state.categoryNameError,
+                    onCategoryNameChange = {
+                        state.onCategoryNameChange(it)
+                        if (subCategories.contains(it)) state.enableCategoryNameError(R.string.error_same_category_name)
+                    })
+                DialogTextButtons(positiveButtonEnabled = state.positiveButtonEnabled,
+                    onCancelButtonClick = state::dismissDialog,
+                    onPositiveButtonClick = {
+                        onPositiveButtonClick(state.categoryName)
+                        state.dismissDialog()
+                    })
             }
         }
+    }
 }
 
 @Composable
@@ -330,23 +323,17 @@ class AddCategoryDialogUIState(
     }
 
     companion object {
-        val Saver: Saver<AddCategoryDialogUIState, *> = listSaver(
-            save = {
-                listOf(
-                    it.categoryName,
-                    it.categoryNameError,
-                    it.showDialog
-                )
-            },
-            restore = {
-                AddCategoryDialogUIState(it[0] as String, it[1] as? Int, it[2] as Boolean)
-            }
-        )
+        val Saver: Saver<AddCategoryDialogUIState, *> = listSaver(save = {
+            listOf(
+                it.categoryName, it.categoryNameError, it.showDialog
+            )
+        }, restore = {
+            AddCategoryDialogUIState(it[0] as String, it[1] as? Int, it[2] as Boolean)
+        })
     }
 }
 
 @Composable
-fun rememberAddCategoryDialogUIState() =
-    rememberSaveable(saver = AddCategoryDialogUIState.Saver) {
-        AddCategoryDialogUIState()
-    }
+fun rememberAddCategoryDialogUIState() = rememberSaveable(saver = AddCategoryDialogUIState.Saver) {
+    AddCategoryDialogUIState()
+}

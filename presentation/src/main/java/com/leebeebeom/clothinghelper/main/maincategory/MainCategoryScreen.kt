@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.main.maincategory
+package com.leebeebeom.clothinghelper.main.maincategory
 
 import android.content.res.Configuration
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
@@ -21,8 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.base.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.ui.base.SimpleIcon
+import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 
 @Preview(showSystemUi = true, showBackground = true, uiMode = UI_MODE_NIGHT_NO)

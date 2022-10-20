@@ -1,11 +1,13 @@
-package com.leebeebeom.clothinghelper.ui.main.subcategory
+package com.leebeebeom.clothinghelper.main.subcategory
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
-import com.leebeebeom.clothinghelper.data.model.SubCategoryParent
-import com.leebeebeom.clothinghelper.domain.usecase.subcategory.AddSubCategoryUseCase
+import androidx.lifecycle.viewModelScope
+import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.usecase.subcategory.AddSubCategoryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -15,9 +17,10 @@ class SubCategoryViewModel @Inject constructor(
     var viewModelState = SubCategoryViewModelState()
         private set
 
-    fun addSubCategory(name: String) {
-        addSubCategoryUseCase(SubCategoryParent.Top, name) // TODO 패런트 로직 구현
-    }
+    fun addSubCategory(name: String) =
+        viewModelScope.launch {
+            addSubCategoryUseCase(SubCategoryParent.Top, name, {}, {}) // TODO 패런트 로직 구현
+        }
 }
 
 data class SubCategoryViewModelState(

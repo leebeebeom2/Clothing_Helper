@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.main.setting
+package com.leebeebeom.clothinghelper.main.setting
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.base.MaxWidthButton
+import com.leebeebeom.clothinghelper.base.MaxWidthButton
 
 @Composable
 fun SettingScreen(viewModel: SettingViewModel = viewModel()) {

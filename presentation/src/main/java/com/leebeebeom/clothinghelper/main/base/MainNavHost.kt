@@ -7,9 +7,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.leebeebeom.clothinghelper.ui.main.maincategory.MainCategoryScreen
-import com.leebeebeom.clothinghelper.ui.main.setting.SettingScreen
-import com.leebeebeom.clothinghelper.ui.main.subcategory.SubCategoryScreen
+import com.leebeebeom.clothinghelper.main.maincategory.MainCategoryScreen
+import com.leebeebeom.clothinghelper.main.setting.SettingScreen
+import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryScreen
 import com.leebeebeom.clothinghelperdomain.model.BaseMenuIds.BOTTOM
 import com.leebeebeom.clothinghelperdomain.model.BaseMenuIds.ETC
 import com.leebeebeom.clothinghelperdomain.model.BaseMenuIds.FAVORITE

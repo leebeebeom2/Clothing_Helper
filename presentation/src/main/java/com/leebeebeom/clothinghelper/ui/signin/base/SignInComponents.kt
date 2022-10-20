@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.signin
+package com.leebeebeom.clothinghelper.ui.signin.base
 
 import android.content.Context
 import androidx.activity.compose.rememberLauncherForActivityResult

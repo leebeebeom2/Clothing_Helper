@@ -1,9 +1,9 @@
 package com.leebeebeom.clothinghelper.ui.signin.base
 
-import android.content.Context
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
@@ -14,8 +14,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -23,7 +25,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.base.MaxWidthButton
 import com.leebeebeom.clothinghelper.ui.base.SimpleIcon
-import com.leebeebeom.clothinghelper.ui.base.googleIcon
 
 @Composable
 fun VisibleIcon(visualTransformation: VisualTransformation, onIconClick: (Boolean) -> Unit) {
@@ -37,7 +38,7 @@ fun VisibleIcon(visualTransformation: VisualTransformation, onIconClick: (Boolea
     }
 }
 
-@Composable // 검수
+@Composable
 fun GoogleSignInButton(
     signInWithGoogleEmail: (ActivityResult) -> Unit,
     enabled: Boolean
@@ -47,7 +48,7 @@ fun GoogleSignInButton(
         onResult = signInWithGoogleEmail
     )
 
-    val intent = getGoogleSignInIntent(LocalContext.current, getGso())
+    val intent = GoogleSignIn.getClient(LocalContext.current, getGso()).signInIntent
 
     MaxWidthButton(
         text = R.string.starts_with_google_email,
@@ -58,8 +59,13 @@ fun GoogleSignInButton(
     )
 }
 
-private fun getGoogleSignInIntent(context: Context, gso: GoogleSignInOptions) =
-    GoogleSignIn.getClient(context, gso).signInIntent
+private val googleIcon = @Composable {
+    Image(
+        imageVector = ImageVector.vectorResource(id = R.drawable.ic_google_icon),
+        contentDescription = null,
+        modifier = Modifier.padding(start = 8.dp)
+    )
+}
 
 @Composable
 private fun getGso() = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

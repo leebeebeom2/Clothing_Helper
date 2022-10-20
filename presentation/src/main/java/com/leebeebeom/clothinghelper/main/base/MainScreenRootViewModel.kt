@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.main.base
+package com.leebeebeom.clothinghelper.main.base
 
 import android.util.Log
 import androidx.annotation.StringRes

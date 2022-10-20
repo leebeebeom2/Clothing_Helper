@@ -1,7 +1,6 @@
 package com.leebeebeom.clothinghelper.di
 
-import com.leebeebeom.clothinghelper.data.datasource.SubCategoryRemoteDataSource
-import com.leebeebeom.clothinghelper.domain.usecase.user.UserInfoUserCase
+import com.leebeebeom.clothinghelperdata.datasource.SubCategoryRemoteDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,6 +13,5 @@ class DataSourceModule {
 
     @Singleton
     @Provides
-    fun provideSubCategoryRemoteDataSource(userInfoUserCase: UserInfoUserCase) =
-        SubCategoryRemoteDataSource(userInfoUserCase)
+    fun provideSubCategoryRemoteDataSource() = SubCategoryRemoteDataSource()
 }

@@ -16,7 +16,7 @@ class GoogleSignInUseCase(
         googleCredential: Any?, googleSignInListener: FireBaseListeners.GoogleSignInListener
     ) {
         val isFirstUser = userRepository.googleSignIn(googleCredential, googleSignInListener)
-        if (isFirstUser) writeInitialSubCategoriesUseCase(userRepository.getUser().value)
+        if (isFirstUser) writeInitialSubCategoriesUseCase()
     }
 }
 
@@ -38,7 +38,7 @@ class SignUpUseCase(
         updateNameListener: FireBaseListeners.UpdateNameListener
     ) {
         userRepository.signUp(email, password, name, signUpListener, updateNameListener)
-        writeInitialSubCategoriesUseCase(userRepository.getUser().value)
+        writeInitialSubCategoriesUseCase()
     }
 }
 

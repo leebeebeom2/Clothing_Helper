@@ -10,28 +10,22 @@ import com.leebeebeom.clothinghelperdomain.repository.FireBaseListeners
 import com.leebeebeom.clothinghelperdomain.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
 class UserRepositoryImpl(private val userRemoteDataSource: UserRemoteDataSource) : UserRepository {
     private val auth = userRemoteDataSource.auth
 
-    private var user = MutableStateFlow(User())
-
-    override suspend fun getUser(): StateFlow<User> {
-        collectUser()
-        return user.asStateFlow()
-    }
+    private var _user = MutableStateFlow(User())
+    val user: StateFlow<User> get() = _user
 
     override fun updateName(name: String) {
-        user.value = user.value.copy(name = name)
+        _user.value = _user.value.copy(name = name)
     }
 
-    private suspend fun collectUser(): StateFlow<User> {
+    override suspend fun updateUser() =
         userRemoteDataSource.user.collect {
-            user.value = if (it == null) User()
+            _user.value = if (it == null) User()
             else User(isLogin = true, email = it.email ?: "", it.displayName ?: "", it.uid)
         }
-    }
 
     override fun signIn(
         email: String, password: String, signInListener: FireBaseListeners.SignInListener

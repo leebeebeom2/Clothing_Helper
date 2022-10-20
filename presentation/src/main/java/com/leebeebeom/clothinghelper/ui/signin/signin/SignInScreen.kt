@@ -53,7 +53,7 @@ fun SignInScreen(
 
             ForgotPasswordText(onForgotPasswordClick = onForgotPasswordClick)
 
-            MaxWidthButton(text = R.string.login, enabled = state.signInButtonEnabled(
+            MaxWidthButton(text = R.string.sign_in, enabled = state.signInButtonEnabled(
                 emailError = viewModelState.emailError,
                 passwordError = viewModelState.passwordError
             ), onClick = {

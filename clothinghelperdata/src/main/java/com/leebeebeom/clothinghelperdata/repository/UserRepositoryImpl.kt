@@ -13,13 +13,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class UserRepositoryImpl(private val userRemoteDataSource: UserRemoteDataSource) : UserRepository {
-    private val auth = FirebaseAuth.getInstance()
+    private val auth = userRemoteDataSource.auth
 
     private var user = MutableStateFlow(User())
 
     override suspend fun getUser(): StateFlow<User> {
         collectUser()
         return user.asStateFlow()
+    }
+
+    override fun updateName(name: String) {
+        user.value = user.value.copy(name = name)
     }
 
     private suspend fun collectUser(): StateFlow<User> {
@@ -35,7 +39,7 @@ class UserRepositoryImpl(private val userRemoteDataSource: UserRemoteDataSource)
         signInListener.taskStart()
 
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-            if (it.isSuccessful) signInListener.taskSuccess(it.result)
+            if (it.isSuccessful) signInListener.taskSuccess()
             else signInListener.taskFailed(it.exception)
             signInListener.taskFinish()
         }
@@ -52,10 +56,13 @@ class UserRepositoryImpl(private val userRemoteDataSource: UserRemoteDataSource)
 
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
-                signUpListener.taskSuccess(it.result)
+                signUpListener.taskSuccess()
+
+                //이름 업데이트
                 val user = it.result.user
                 if (user == null) updateNameListener.userNull()
                 else updateName(updateNameListener, user, name)
+
             } else signUpListener.taskFailed(it.exception)
             signUpListener.taskFinish()
         }
@@ -70,8 +77,8 @@ class UserRepositoryImpl(private val userRemoteDataSource: UserRemoteDataSource)
 
         user.updateProfile(request).addOnCompleteListener {
             if (it.isSuccessful) {
-                updateNameListener.taskSuccess(null)
-                _name.value = name
+                updateName(name)
+                updateNameListener.taskSuccess()
             } else updateNameListener.nameUpdateFailed()
             updateNameListener.taskFinish()
         }
@@ -81,25 +88,16 @@ class UserRepositoryImpl(private val userRemoteDataSource: UserRemoteDataSource)
         googleCredential: Any?, googleSignInListener: FireBaseListeners.GoogleSignInListener
     ) {
         googleSignInListener.taskStart()
-        if (googleCredential is AuthCredential) signInWithCredential(
-            googleCredential,
-            googleSignInListener
-        )
 
-    }
+        if (googleCredential is AuthCredential)
+            FirebaseAuth.getInstance().signInWithCredential(googleCredential)
+                .addOnCompleteListener {
+                    if (it.isSuccessful) googleSignInListener.taskSuccess()
+                    else googleSignInListener.taskFailed(it.exception)
+                    googleSignInListener.taskFinish()
+                }
+        else googleSignInListener.googleCredentialCastFailed()
 
-    private fun signInWithCredential(
-        googleCredential: AuthCredential?,
-        googleSignInListener: FireBaseListeners.GoogleSignInListener
-    ) {
-        googleCredential?.let { credential ->
-
-            FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener {
-                if (it.isSuccessful) googleSignInListener.taskSuccess(it.result)
-                else googleSignInListener.taskFailed(it.exception)
-                googleSignInListener.taskFinish()
-            }
-        }
     }
 
     override fun resetPasswordEmail(
@@ -108,13 +106,9 @@ class UserRepositoryImpl(private val userRemoteDataSource: UserRemoteDataSource)
         resetPasswordListener.taskStart()
 
         auth.sendPasswordResetEmail(email).addOnCompleteListener {
-            if (it.isSuccessful) resetPasswordListener.taskSuccess(null)
+            if (it.isSuccessful) resetPasswordListener.taskSuccess()
             else resetPasswordListener.taskFailed(it.exception)
             resetPasswordListener.taskFinish()
         }
-    }
-
-    override fun nameUpdate(name: String) {
-        this._name.value = name
     }
 }

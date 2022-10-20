@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class UserRemoteDataSource {
-    private val auth = FirebaseAuth.getInstance()
+    val auth = FirebaseAuth.getInstance()
     private var _user = MutableStateFlow<FirebaseUser?>(null)
     val user: StateFlow<FirebaseUser?> get() = _user
 

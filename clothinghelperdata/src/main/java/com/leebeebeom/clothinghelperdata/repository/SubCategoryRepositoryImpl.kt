@@ -37,7 +37,8 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
     override fun getBottomSubCategories(
         onCancelled: (Int, String) -> Unit
     ): StateFlow<List<SubCategory>> {
-        if (!::topSubCategories.isInitialized) {
+        if (!::bottomSubCategories.isInitialized) {
+            bottomSubCategories = MutableStateFlow(emptyList())
             root.setSingleValueListener(
                 subCategoryParent = SubCategoryParent.Bottom,
                 subCategories = bottomSubCategories,
@@ -52,8 +53,8 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
     override fun getOuterSubCategories(
         onCancelled: (Int, String) -> Unit
     ): StateFlow<List<SubCategory>> {
-        if (!::topSubCategories.isInitialized) {
-            topSubCategories = MutableStateFlow(emptyList())
+        if (!::outerSubCategories.isInitialized) {
+            outerSubCategories = MutableStateFlow(emptyList())
             root.setSingleValueListener(
                 subCategoryParent = SubCategoryParent.OUTER,
                 subCategories = outerSubCategories,
@@ -67,8 +68,8 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
     override fun getEtcSubCategories(
         onCancelled: (Int, String) -> Unit
     ): StateFlow<List<SubCategory>> {
-        if (!::topSubCategories.isInitialized) {
-            topSubCategories = MutableStateFlow(emptyList())
+        if (!::etcSubCategories.isInitialized) {
+            etcSubCategories = MutableStateFlow(emptyList())
             root.setSingleValueListener(
                 subCategoryParent = SubCategoryParent.ETC,
                 subCategories = etcSubCategories,
@@ -82,8 +83,6 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
         root.getUidRef().setValue(userRepository.getUser().value)
         root.getSubCategoriesRef().setValue(getInitialSubCategories())
     }
-
-// 여기까지 완성
 
     override suspend fun addSubCategory(
         subCategoryParent: SubCategoryParent,

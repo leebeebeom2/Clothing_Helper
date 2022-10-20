@@ -1,6 +1,7 @@
 package com.leebeebeom.clothinghelper.ui.signin.signup
 
 import android.util.Log
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.TAG
@@ -11,6 +12,7 @@ import com.leebeebeom.clothinghelperdomain.repository.FireBaseListeners
 import com.leebeebeom.clothinghelperdomain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.user.SignUpUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,7 +23,15 @@ class SignUpViewModel @Inject constructor(
     override val viewModelState = BaseSignInUpViewModelState()
 
     fun signUpWithEmailAndPassword(email: String, password: String, name: String) =
-        signUpUseCase(email, password, name, signUpListener, updateNameListener)
+        viewModelScope.launch {
+            signUpUseCase(
+                email,
+                password,
+                name,
+                signUpListener,
+                updateNameListener
+            )
+        }
 
     private val signUpListener = object : FireBaseListeners.SignUpListener {
         override fun taskStart() = loadingOn()

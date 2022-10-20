@@ -9,7 +9,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.base.MaxWidthTextField
-import com.leebeebeom.clothinghelper.ui.signin.VisibleIcon
 
 @Composable
 fun EmailTextField(

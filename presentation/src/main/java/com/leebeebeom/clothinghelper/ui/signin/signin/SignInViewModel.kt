@@ -5,6 +5,7 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.TAG
@@ -15,6 +16,7 @@ import com.leebeebeom.clothinghelperdomain.repository.FireBaseListeners
 import com.leebeebeom.clothinghelperdomain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.user.SignInUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,12 +28,12 @@ class SignInViewModel @Inject constructor(
     override val viewModelState = SignInViewModelState()
 
     fun signInWithEmailAndPassword(email: String, password: String) =
-        signInUseCase(email, password, signInListener)
+        viewModelScope.launch { signInUseCase(email, password, signInListener) }
 
     private val signInListener = object : FireBaseListeners.SignInListener {
         override fun taskStart() = viewModelState.loadingOn()
 
-        override fun taskSuccess() = showToast(R.string.login_complete)
+        override fun taskSuccess() = showToast(R.string.sign_in_complete)
 
         override fun taskFailed(exception: Exception?) {
             val firebaseAuthException = exception as? FirebaseAuthException

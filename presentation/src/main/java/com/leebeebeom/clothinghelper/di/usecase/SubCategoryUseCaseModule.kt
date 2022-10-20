@@ -2,32 +2,26 @@ package com.leebeebeom.clothinghelper.di.usecase
 
 import com.leebeebeom.clothinghelperdata.repository.SubCategoryRepositoryImpl
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.AddSubCategoryUseCase
-import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoriesUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.WriteInitialSubCategoriesUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.user.GetUserUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import dagger.hilt.android.components.ViewModelComponent
 import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ViewModelComponent::class)
 class SubCategoryUseCaseModule {
     @Singleton
     @Provides
-    fun provideWriteSubCategoryUseCase(
+    fun provideWriteSubCategoryUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
+        WriteInitialSubCategoriesUseCase(subCategoryRepository)
+
+    @Singleton
+    @Provides
+    fun provideAddSubCategoryUseCase(
         subCategoryRepository: SubCategoryRepositoryImpl,
         getUserUseCase: GetUserUseCase
-    ) = WriteInitialSubCategoriesUseCase(subCategoryRepository, getUserUseCase)
-
-    @Singleton
-    @Provides
-    fun provideAddSubCategoryUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
-        AddSubCategoryUseCase(subCategoryRepository)
-
-    @Singleton
-    @Provides
-    fun provideGetSubCategoriesUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
-        GetSubCategoriesUseCase(subCategoryRepository)
+    ) = AddSubCategoryUseCase(subCategoryRepository, getUserUseCase)
 }

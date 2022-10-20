@@ -15,12 +15,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.base.MaxWidthButton
 import com.leebeebeom.clothinghelper.ui.base.MaxWidthTextField
 import com.leebeebeom.clothinghelper.ui.base.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.ui.signin.GoogleSignInButton
-import com.leebeebeom.clothinghelper.ui.signin.OrDivider
-import com.leebeebeom.clothinghelper.ui.signin.base.EmailTextField
-import com.leebeebeom.clothinghelper.ui.signin.base.PasswordTextField
-import com.leebeebeom.clothinghelper.ui.signin.base.PasswordUIState
-import com.leebeebeom.clothinghelper.ui.signin.base.SignInBaseRoot
+import com.leebeebeom.clothinghelper.ui.signin.base.*
 
 @Composable
 fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
@@ -34,7 +29,7 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
     ) {
         EmailTextField(
             email = state.email,
-            onEmailChange = { state.onEmailChange(email = it) { viewModelState.emailErrorOff() } },
+            onEmailChange = { state.onEmailChange(email = it) { viewModelState.hideEmailError() } },
             error = viewModelState.emailError,
             imeAction = ImeAction.Next,
             showKeyboardEnable = true
@@ -49,22 +44,14 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
 
         PasswordTextField(
             password = state.password,
-            onPasswordChange = {
-                state.onPasswordChange(
-                    password = it
-                )
-            },
+            onPasswordChange = state::onPasswordChange,
             error = state.passwordError,
             imeAction = ImeAction.Next
         )
 
         PasswordTextField(
             password = state.passwordConfirm,
-            onPasswordChange = {
-                state.onPasswordConfirmChange(
-                    passwordConfirm = it
-                )
-            },
+            onPasswordChange = state::onPasswordConfirmChange,
             error = state.passwordConfirmError,
             imeAction = ImeAction.Done,
             label = R.string.password_confirm
@@ -86,6 +73,7 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
         SimpleHeightSpacer(dp = 8)
         OrDivider()
         SimpleHeightSpacer(dp = 8)
+        // 프리뷰 시 주석처리
         GoogleSignInButton(
             signInWithGoogleEmail = viewModel::signInWithGoogleEmail,
             enabled = viewModelState.googleButtonEnabled
@@ -94,38 +82,38 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
 }
 
 class SignUpScreenUIState(
-    initialEmail: String = "",
-    initialName: String = "",
-    initialPassword: String = "",
-    initialPasswordConfirm: String = "",
-    @StringRes initialPasswordError: Int? = null,
-    @StringRes initialPasswordConfirmError: Int? = null
-) : PasswordUIState(initialEmail, initialPassword) {
+    email: String = "",
+    name: String = "",
+    password: String = "",
+    passwordConfirm: String = "",
+    @StringRes passwordError: Int? = null,
+    @StringRes passwordConfirmError: Int? = null
+) : PasswordUIState(email, password) {
 
-    var name: String by mutableStateOf(initialName)
+    var name: String by mutableStateOf(name)
         private set
-    var passwordConfirm: String by mutableStateOf(initialPasswordConfirm)
-        private set
-
-    var passwordError: Int? by mutableStateOf(initialPasswordError)
-        private set
-    var passwordConfirmError: Int? by mutableStateOf(initialPasswordConfirmError)
+    var passwordConfirm: String by mutableStateOf(passwordConfirm)
         private set
 
-    private fun passwordErrorOff() {
-        passwordError = null
-    }
+    var passwordError: Int? by mutableStateOf(passwordError)
+        private set
+    var passwordConfirmError: Int? by mutableStateOf(passwordConfirmError)
+        private set
 
-    private fun passwordErrorOn(@StringRes error: Int?) {
+    private fun showPasswordError(@StringRes error: Int?) {
         passwordError = error
     }
 
-    private fun passwordConfirmErrorOff() {
-        passwordConfirmError = null
+    private fun hidePasswordError() {
+        passwordError = null
     }
 
-    private fun passwordConfirmErrorOn(@StringRes error: Int?) {
+    private fun showPasswordConfirmError(@StringRes error: Int?) {
         passwordConfirmError = error
+    }
+
+    private fun hidePasswordConfirmError() {
+        passwordConfirmError = null
     }
 
     fun onNameChange(name: String) {
@@ -133,23 +121,23 @@ class SignUpScreenUIState(
     }
 
     fun onPasswordChange(password: String) {
-        super.onPasswordChange(password, ::passwordErrorOff)
+        super.onPasswordChange(password, ::hidePasswordError)
         if (password.isNotBlank()) {
             passwordSameCheck()
-            if (password.length < 6) passwordErrorOn(R.string.error_weak_password)
+            if (password.length < 6) showPasswordError(R.string.error_weak_password)
         }
     }
 
     fun onPasswordConfirmChange(passwordConfirm: String) {
         this.passwordConfirm = passwordConfirm
-        passwordConfirmErrorOff()
+        hidePasswordConfirmError()
         passwordSameCheck()
     }
 
     private fun passwordSameCheck() {
         if (passwordConfirm.isNotBlank()) {
-            if (password != passwordConfirm) passwordConfirmErrorOn(R.string.error_password_confirm_not_same)
-            else passwordConfirmErrorOff()
+            if (password != passwordConfirm) showPasswordConfirmError(R.string.error_password_confirm_not_same)
+            else hidePasswordConfirmError()
         }
     }
 

@@ -7,6 +7,7 @@ import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.leebeebeom.clothinghelperdomain.model.User
 import com.leebeebeom.clothinghelperdomain.repository.FireBaseListeners
 import com.leebeebeom.clothinghelperdomain.repository.UserRepository
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -14,57 +15,42 @@ class UserRepositoryImpl : UserRepository {
     private val auth = FirebaseAuth.getInstance()
 
     private val isSignIn = MutableStateFlow(auth.currentUser != null)
-    override suspend fun isSignIn(): StateFlow<Boolean> {
-        auth.addAuthStateListener {
-            isSignIn.value = it.currentUser != null
-        }
+    override fun isSignIn(): StateFlow<Boolean> {
+        isSignIn.value = auth.currentUser != null
+        auth.addAuthStateListener { isSignIn.value = it.currentUser != null }
         return isSignIn
     }
 
     private val user = MutableStateFlow(User())
-    override suspend fun getUser(): StateFlow<User> {
-        auth.addAuthStateListener {
-            user.value =
-                if (it.currentUser != null) {
-                    val user = it.currentUser!!
-                    User(
-                        email = user.email!!,
-                        name = user.displayName!!,
-                        uid = user.uid
-                    )
-                } else User()
-
-        }
+    override fun getUser(): StateFlow<User> {
+        user.value = auth.currentUser.toUser()
+        auth.addAuthStateListener { user.value = it.currentUser.toUser() }
         return user
     }
 
-    override fun googleSignIn(
-        googleCredential: Any?,
-        googleSignInListener: FireBaseListeners.GoogleSignInListener
-    ): Boolean {
+    override suspend fun googleSignIn(
+        googleCredential: Any?, googleSignInListener: FireBaseListeners.GoogleSignInListener
+    ): Boolean = coroutineScope {
         googleSignInListener.taskStart()
 
         var isFirstUser = false
 
-        if (googleCredential is AuthCredential)
-            FirebaseAuth.getInstance().signInWithCredential(googleCredential)
-                .addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        googleSignInListener.taskSuccess()
-                        it.result.additionalUserInfo?.isNewUser?.run { isFirstUser = this }
-                    } else googleSignInListener.taskFailed(it.exception)
-                    googleSignInListener.taskFinish()
-                }
+        if (googleCredential is AuthCredential) FirebaseAuth.getInstance()
+            .signInWithCredential(googleCredential).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    googleSignInListener.taskSuccess()
+                    it.result.additionalUserInfo?.isNewUser?.run { isFirstUser = this }
+                } else googleSignInListener.taskFailed(it.exception)
+                googleSignInListener.taskFinish()
+            }
         else googleSignInListener.googleCredentialCastFailed()
-
-        return isFirstUser
+        isFirstUser
     }
 
-    override fun signIn(
-        email: String,
-        password: String,
-        signInListener: FireBaseListeners.SignInListener
-    ) {
+
+    override suspend fun signIn(
+        email: String, password: String, signInListener: FireBaseListeners.SignInListener
+    ): Unit = coroutineScope {
         signInListener.taskStart()
 
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
@@ -74,13 +60,13 @@ class UserRepositoryImpl : UserRepository {
         }
     }
 
-    override fun signUp(
+    override suspend fun signUp(
         email: String,
         password: String,
         name: String,
         signUpListener: FireBaseListeners.SignUpListener,
         updateNameListener: FireBaseListeners.UpdateNameListener
-    ): Boolean {
+    ): Boolean = coroutineScope {
         signUpListener.taskStart()
 
         var isFirstUser = false
@@ -93,11 +79,10 @@ class UserRepositoryImpl : UserRepository {
                 val user = it.result.user
                 if (user == null) updateNameListener.userNull()
                 else updateName(updateNameListener, user, name)
-
             } else signUpListener.taskFailed(it.exception)
             signUpListener.taskFinish()
         }
-        return isFirstUser
+        isFirstUser
     }
 
     private fun updateName(
@@ -120,9 +105,9 @@ class UserRepositoryImpl : UserRepository {
         user.value = user.value.copy(name = name)
     }
 
-    override fun resetPasswordEmail(
+    override suspend fun resetPasswordEmail(
         email: String, resetPasswordListener: FireBaseListeners.ResetPasswordListener
-    ) {
+    ): Unit = coroutineScope {
         resetPasswordListener.taskStart()
 
         auth.sendPasswordResetEmail(email).addOnCompleteListener {
@@ -132,3 +117,6 @@ class UserRepositoryImpl : UserRepository {
         }
     }
 }
+
+fun FirebaseUser?.toUser() = if (this == null) User()
+else User(email ?: "", displayName ?: "", uid)

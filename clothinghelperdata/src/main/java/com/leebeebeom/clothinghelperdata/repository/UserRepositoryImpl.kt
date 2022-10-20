@@ -4,26 +4,47 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
-import com.leebeebeom.clothinghelperdata.datasource.UserRemoteDataSource
 import com.leebeebeom.clothinghelperdomain.model.User
 import com.leebeebeom.clothinghelperdomain.repository.FireBaseListeners
 import com.leebeebeom.clothinghelperdomain.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
-class UserRepositoryImpl(userRemoteDataSource: UserRemoteDataSource) : UserRepository {
-    private val auth = userRemoteDataSource.auth
+class UserRepositoryImpl : UserRepository {
+    private val auth = FirebaseAuth.getInstance()
 
-    override val isLogin = MutableStateFlow(auth.currentUser != null)
-    override var isFirstUser = false
+    private val isSignIn = MutableStateFlow(auth.currentUser != null)
+    override suspend fun isSignIn(): StateFlow<Boolean> {
+        auth.addAuthStateListener {
+            isSignIn.value = it.currentUser != null
+        }
+        return isSignIn
+    }
 
-    init {
-        auth.addAuthStateListener { isLogin.value = it.currentUser != null }
+    private val user = MutableStateFlow(User())
+    override suspend fun getUser(): StateFlow<User> {
+        auth.addAuthStateListener {
+            user.value =
+                if (it.currentUser != null) {
+                    val user = it.currentUser!!
+                    User(
+                        email = user.email!!,
+                        name = user.displayName!!,
+                        uid = user.uid
+                    )
+                } else User()
+
+        }
+        return user
     }
 
     override fun googleSignIn(
-        googleCredential: Any?, googleSignInListener: FireBaseListeners.GoogleSignInListener
-    ) {
+        googleCredential: Any?,
+        googleSignInListener: FireBaseListeners.GoogleSignInListener
+    ): Boolean {
         googleSignInListener.taskStart()
+
+        var isFirstUser = false
 
         if (googleCredential is AuthCredential)
             FirebaseAuth.getInstance().signInWithCredential(googleCredential)
@@ -35,29 +56,20 @@ class UserRepositoryImpl(userRemoteDataSource: UserRemoteDataSource) : UserRepos
                     googleSignInListener.taskFinish()
                 }
         else googleSignInListener.googleCredentialCastFailed()
+
+        return isFirstUser
     }
 
-    override fun getUser(): User =
-        if (isLogin.value) {
-            val user = auth.currentUser!!
-            User(
-                isLogin = true,
-                email = user.email!!,
-                name = user.displayName!!,
-                uid = user.uid
-            )
-        } else User()
-
     override fun signIn(
-        email: String, password: String, signInListener: FireBaseListeners.SignInListener
+        email: String,
+        password: String,
+        signInListener: FireBaseListeners.SignInListener
     ) {
         signInListener.taskStart()
 
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-            if (it.isSuccessful) {
-                signInListener.taskSuccess()
-                it.result.additionalUserInfo?.isNewUser?.run { isFirstUser = this }
-            } else signInListener.taskFailed(it.exception)
+            if (it.isSuccessful) signInListener.taskSuccess()
+            else signInListener.taskFailed(it.exception)
             signInListener.taskFinish()
         }
     }
@@ -68,13 +80,15 @@ class UserRepositoryImpl(userRemoteDataSource: UserRemoteDataSource) : UserRepos
         name: String,
         signUpListener: FireBaseListeners.SignUpListener,
         updateNameListener: FireBaseListeners.UpdateNameListener
-    ) {
+    ): Boolean {
         signUpListener.taskStart()
+
+        var isFirstUser = false
 
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
                 signUpListener.taskSuccess()
-
+                it.result.additionalUserInfo?.isNewUser?.run { isFirstUser = this }
                 //이름 업데이트
                 val user = it.result.user
                 if (user == null) updateNameListener.userNull()
@@ -83,6 +97,7 @@ class UserRepositoryImpl(userRemoteDataSource: UserRemoteDataSource) : UserRepos
             } else signUpListener.taskFailed(it.exception)
             signUpListener.taskFinish()
         }
+        return isFirstUser
     }
 
     private fun updateName(
@@ -102,7 +117,7 @@ class UserRepositoryImpl(userRemoteDataSource: UserRemoteDataSource) : UserRepos
     }
 
     private fun updateName(name: String) {
-        //TODO
+        user.value = user.value.copy(name = name)
     }
 
     override fun resetPasswordEmail(

@@ -1,6 +1,7 @@
 package com.leebeebeom.clothinghelperdomain.repository
 
 import com.leebeebeom.clothinghelperdomain.model.User
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 interface UserRepository {
@@ -9,7 +10,7 @@ interface UserRepository {
 
     suspend fun googleSignIn(
         googleCredential: Any?, googleSignInListener: FireBaseListeners.GoogleSignInListener
-    ): Boolean
+    ): MutableStateFlow<Boolean>
 
     suspend fun signIn(
         email: String,

@@ -1,0 +1,26 @@
+plugins {
+    id 'com.android.application'
+    id "org.jetbrains.kotlin.android"
+    id 'com.google.gms.google-services'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_7
+    targetCompatibility = JavaVersion.VERSION_1_7
+}
+
+dependencies {
+    implementation project(path: ':clothinghelperdomain')
+
+    //Coroutine
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+
+    //Firebase
+    implementation platform('com.google.firebase:firebase-bom:30.5.0')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-common-ktx'
+    //Auth
+    implementation 'com.google.firebase:firebase-auth-ktx'
+    //Realtime database
+    implementation 'com.google.firebase:firebase-database-ktx'
+}

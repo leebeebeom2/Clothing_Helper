@@ -23,7 +23,7 @@ interface UserRepository {
         name: String,
         signUpListener: FireBaseListeners.SignUpListener,
         updateNameListener: FireBaseListeners.UpdateNameListener
-    ): Boolean
+    )
 
     suspend fun resetPasswordEmail(
         email: String, resetPasswordListener: FireBaseListeners.ResetPasswordListener

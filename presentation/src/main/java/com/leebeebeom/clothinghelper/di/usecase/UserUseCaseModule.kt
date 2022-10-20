@@ -47,4 +47,8 @@ class UserUseCaseModule {
     @Provides
     fun provideGetLoginStateUseCase(userRepository: UserRepositoryImpl) =
         GetLoginStateUseCase(userRepository)
+
+    @Singleton
+    @Provides
+    fun provideGetUserUseCase(userRepository: UserRepositoryImpl) = GetUserUseCase(userRepository)
 }

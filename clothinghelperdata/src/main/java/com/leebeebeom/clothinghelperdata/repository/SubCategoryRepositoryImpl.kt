@@ -9,7 +9,6 @@ import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
-import com.leebeebeom.clothinghelperdomain.model.User
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
 import com.leebeebeom.clothinghelperdomain.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -79,8 +78,8 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
         return etcSubCategories
     }
 
-    override suspend fun writeInitialSubCategory(user: User) {
-        root.getUidRef().setValue(user)
+    override suspend fun writeInitialSubCategory() {
+        root.getUidRef().setValue(userRepository.getUser().value)
         root.getSubCategoriesRef().setValue(getInitialSubCategories())
     }
 
@@ -165,7 +164,9 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
     }
 
     private fun DatabaseReference.getUidRef() = child(userRepository.getUser().value.uid)
-    private fun DatabaseReference.getSubCategoriesRef() = getUidRef().child(DatabasePath.SUB_CATEGORIES)
+    private fun DatabaseReference.getSubCategoriesRef() =
+        getUidRef().child(DatabasePath.SUB_CATEGORIES)
+
     private fun DatabaseReference.setSingleValueListener(
         subCategoryParent: SubCategoryParent,
         subCategories: MutableStateFlow<List<SubCategory>>,

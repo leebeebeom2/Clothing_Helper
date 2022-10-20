@@ -72,21 +72,17 @@ class MainNavHostViewModelState {
         this.toastText = null
     }
 
-    val mainCategories = listOf(
-        MainCategory(BaseMenuIds.TOP, R.string.top, SubCategoryParent.Top),
-        MainCategory(BaseMenuIds.BOTTOM, R.string.bottom, SubCategoryParent.Bottom),
-        MainCategory(BaseMenuIds.OUTER, R.string.outer, SubCategoryParent.OUTER),
-        MainCategory(BaseMenuIds.ETC, R.string.etc, SubCategoryParent.ETC),
-    )
+    private var topSubCategories by mutableStateOf(emptyList<SubCategory>())
+    private var bottomSubCategories by mutableStateOf(emptyList<SubCategory>())
+    private var outerSubCategories by mutableStateOf(emptyList<SubCategory>())
+    private var etcSubCategories by mutableStateOf(emptyList<SubCategory>())
 
-    var topSubCategories by mutableStateOf(emptyList<SubCategory>())
-        private set
-    var bottomSubCategories by mutableStateOf(emptyList<SubCategory>())
-        private set
-    var outerSubCategories by mutableStateOf(emptyList<SubCategory>())
-        private set
-    var etcSubCategories by mutableStateOf(emptyList<SubCategory>())
-        private set
+    val subCategories = mapOf(
+        SubCategoryParent.Top to topSubCategories,
+        SubCategoryParent.Bottom to bottomSubCategories,
+        SubCategoryParent.OUTER to outerSubCategories,
+        SubCategoryParent.ETC to etcSubCategories,
+    )
 
     fun topSubCategoriesUpdate(topSubCategories: List<SubCategory>) {
         this.topSubCategories = topSubCategories

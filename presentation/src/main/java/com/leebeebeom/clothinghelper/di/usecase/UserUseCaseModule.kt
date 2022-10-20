@@ -1,7 +1,8 @@
 package com.leebeebeom.clothinghelper.di.usecase
 
-import com.leebeebeom.clothinghelper.data.repository.UserRepositoryImpl
-import com.leebeebeom.clothinghelper.domain.usecase.user.*
+import com.leebeebeom.clothinghelperdata.repository.UserRepositoryImpl
+import com.leebeebeom.clothinghelperdomain.usecase.subcategory.WriteInitialSubCategoriesUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.user.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,8 +14,10 @@ import javax.inject.Singleton
 class UserUseCaseModule {
     @Singleton
     @Provides
-    fun provideGoogleSignInUseCase(userRepository: UserRepositoryImpl) =
-        GoogleSignInUseCase(userRepository)
+    fun provideGoogleSignInUseCase(
+        userRepository: UserRepositoryImpl,
+        writeInitialSubCategoriesUseCase: WriteInitialSubCategoriesUseCase
+    ) = GoogleSignInUseCase(userRepository, writeInitialSubCategoriesUseCase)
 
     @Singleton
     @Provides
@@ -23,16 +26,25 @@ class UserUseCaseModule {
 
     @Singleton
     @Provides
-    fun provideSignUpUseCase(userRepository: UserRepositoryImpl) =
-        SignUpUseCase(userRepository)
+    fun provideSignUpUseCase(
+        userRepository: UserRepositoryImpl,
+        writeInitialSubCategoriesUseCase: WriteInitialSubCategoriesUseCase
+    ) = SignUpUseCase(userRepository, writeInitialSubCategoriesUseCase)
 
     @Singleton
     @Provides
-    fun provideSignInUseCase(userRepository: UserRepositoryImpl) =
-        SignInUseCase(userRepository)
+    fun provideSignInUseCase(
+        userRepository: UserRepositoryImpl,
+        writeInitialSubCategoriesUseCase: WriteInitialSubCategoriesUseCase
+    ) = SignInUseCase(userRepository, writeInitialSubCategoriesUseCase)
 
     @Singleton
     @Provides
     fun provideUserInfoUseCase(userRepository: UserRepositoryImpl) =
         UserInfoUserCase(userRepository)
+
+    @Singleton
+    @Provides
+    fun provideGetLoginStateUseCase(userRepository: UserRepositoryImpl) =
+        GetLoginStateUseCase(userRepository)
 }

@@ -11,21 +11,21 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.model.User
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
+import com.leebeebeom.clothinghelperdomain.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class SubCategoryRepositoryImpl : SubCategoryRepository {
+class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
+    SubCategoryRepository {
     private val root = Firebase.database.reference
 
     private lateinit var topSubCategories: MutableStateFlow<List<SubCategory>>
     override fun getTopSubCategories(
-        uid: String,
         onCancelled: (Int, String) -> Unit
     ): StateFlow<List<SubCategory>> {
         if (!::topSubCategories.isInitialized) {
             topSubCategories = MutableStateFlow(emptyList())
             root.setSingleValueListener(
-                uid = uid,
                 subCategoryParent = SubCategoryParent.Top,
                 subCategories = topSubCategories,
                 onCancelled = onCancelled
@@ -36,12 +36,10 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
 
     private lateinit var bottomSubCategories: MutableStateFlow<List<SubCategory>>
     override fun getBottomSubCategories(
-        uid: String,
         onCancelled: (Int, String) -> Unit
     ): StateFlow<List<SubCategory>> {
         if (!::topSubCategories.isInitialized) {
             root.setSingleValueListener(
-                uid = uid,
                 subCategoryParent = SubCategoryParent.Bottom,
                 subCategories = bottomSubCategories,
                 onCancelled = onCancelled
@@ -53,13 +51,11 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
 
     private lateinit var outerSubCategories: MutableStateFlow<List<SubCategory>>
     override fun getOuterSubCategories(
-        uid: String,
         onCancelled: (Int, String) -> Unit
     ): StateFlow<List<SubCategory>> {
         if (!::topSubCategories.isInitialized) {
             topSubCategories = MutableStateFlow(emptyList())
             root.setSingleValueListener(
-                uid = uid,
                 subCategoryParent = SubCategoryParent.OUTER,
                 subCategories = outerSubCategories,
                 onCancelled = onCancelled
@@ -70,13 +66,11 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
 
     private lateinit var etcSubCategories: MutableStateFlow<List<SubCategory>>
     override fun getEtcSubCategories(
-        uid: String,
         onCancelled: (Int, String) -> Unit
     ): StateFlow<List<SubCategory>> {
         if (!::topSubCategories.isInitialized) {
             topSubCategories = MutableStateFlow(emptyList())
             root.setSingleValueListener(
-                uid = uid,
                 subCategoryParent = SubCategoryParent.ETC,
                 subCategories = etcSubCategories,
                 onCancelled = onCancelled
@@ -86,10 +80,8 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
     }
 
     override suspend fun writeInitialSubCategory(user: User) {
-        val uid = user.uid
-
-        root.getUidRef(uid).setValue(user)
-        root.getSubCategoriesRef(uid).setValue(getInitialSubCategories())
+        root.getUidRef().setValue(user)
+        root.getSubCategoriesRef().setValue(getInitialSubCategories())
     }
 
 // 여기까지 완성
@@ -97,14 +89,13 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
     override suspend fun addSubCategory(
         subCategoryParent: SubCategoryParent,
         name: String,
-        uid: String,
         onSuccess: () -> Unit,
         onFailed: () -> Unit
     ) {
         val timeStamp = System.currentTimeMillis()
         val newSubCategory = SubCategory(subCategoryParent, timeStamp, name)
 
-        root.getSubCategoriesRef(uid).push().setValue(newSubCategory).addOnCompleteListener {
+        root.getSubCategoriesRef().push().setValue(newSubCategory).addOnCompleteListener {
             if (it.isSuccessful) onSuccess() else onFailed()
         }
     }
@@ -172,31 +163,28 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
             )
         )
     }
-}
 
-fun DatabaseReference.getUidRef(uid: String) = child(uid)
-fun DatabaseReference.getSubCategoriesRef(uid: String) =
-    child(uid).child(DatabasePath.SUB_CATEGORIES)
-
-fun DatabaseReference.setSingleValueListener(
-    uid: String,
-    subCategoryParent: SubCategoryParent,
-    subCategories: MutableStateFlow<List<SubCategory>>,
-    onCancelled: (Int, String) -> Unit
-) {
-    getSubCategoriesRef(uid).orderByChild("parent").equalTo(subCategoryParent.name)
-        .addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val temp = mutableListOf<SubCategory>()
-                for (child in snapshot.children) {
-                    child.getValue<SubCategory>()?.let { temp.add(it) }
+    private fun DatabaseReference.getUidRef() = child(userRepository.getUser().value.uid)
+    private fun DatabaseReference.getSubCategoriesRef() = getUidRef().child(DatabasePath.SUB_CATEGORIES)
+    private fun DatabaseReference.setSingleValueListener(
+        subCategoryParent: SubCategoryParent,
+        subCategories: MutableStateFlow<List<SubCategory>>,
+        onCancelled: (Int, String) -> Unit
+    ) {
+        getSubCategoriesRef().orderByChild("parent").equalTo(subCategoryParent.name)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val temp = mutableListOf<SubCategory>()
+                    for (child in snapshot.children) {
+                        child.getValue<SubCategory>()?.let { temp.add(it) }
+                    }
+                    subCategories.value = temp
                 }
-                subCategories.value = temp
-            }
 
-            override fun onCancelled(error: DatabaseError) =
-                onCancelled(error.code, error.message)
-        })
+                override fun onCancelled(error: DatabaseError) =
+                    onCancelled(error.code, error.message)
+            })
+    }
 }
 
 object DatabasePath {

@@ -52,7 +52,7 @@ class SignInViewModel @Inject constructor(
             FirebaseErrorCode.ERROR_USER_NOT_FOUND ->
                 viewModelState.showEmailError(R.string.error_user_not_found)
             FirebaseErrorCode.ERROR_WRONG_PASSWORD ->
-                viewModelState.passwordErrorOn(R.string.error_wrong_password)
+                viewModelState.showPasswordError(R.string.error_wrong_password)
             else -> {
                 showToast(R.string.unknown_error)
                 Log.d(TAG, "setError: $errorCode")
@@ -65,11 +65,11 @@ class SignInViewModelState : BaseSignInUpViewModelState() {
     var passwordError: Int? by mutableStateOf(null)
         private set
 
-    fun passwordErrorOn(@StringRes error: Int) {
+    fun showPasswordError(@StringRes error: Int) {
         passwordError = error
     }
 
-    fun passwordErrorOff() {
+    fun hidePasswordError() {
         passwordError = null
     }
 }

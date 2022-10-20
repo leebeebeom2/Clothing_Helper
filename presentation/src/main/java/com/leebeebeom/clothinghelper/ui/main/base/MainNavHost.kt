@@ -10,14 +10,14 @@ import androidx.navigation.compose.rememberNavController
 import com.leebeebeom.clothinghelper.ui.main.maincategory.MainCategoryScreen
 import com.leebeebeom.clothinghelper.ui.main.setting.SettingScreen
 import com.leebeebeom.clothinghelper.ui.main.subcategory.SubCategoryScreen
-import com.leebeebeom.clothinghelperdomain.model.BaseMenu.BOTTOM
-import com.leebeebeom.clothinghelperdomain.model.BaseMenu.ETC
-import com.leebeebeom.clothinghelperdomain.model.BaseMenu.FAVORITE
-import com.leebeebeom.clothinghelperdomain.model.BaseMenu.MAIN_SCREEN
-import com.leebeebeom.clothinghelperdomain.model.BaseMenu.OUTER
-import com.leebeebeom.clothinghelperdomain.model.BaseMenu.SEE_ALL
-import com.leebeebeom.clothinghelperdomain.model.BaseMenu.TOP
-import com.leebeebeom.clothinghelperdomain.model.BaseMenu.TRASH
+import com.leebeebeom.clothinghelperdomain.model.BaseMenuIds.BOTTOM
+import com.leebeebeom.clothinghelperdomain.model.BaseMenuIds.ETC
+import com.leebeebeom.clothinghelperdomain.model.BaseMenuIds.FAVORITE
+import com.leebeebeom.clothinghelperdomain.model.BaseMenuIds.MAIN_SCREEN
+import com.leebeebeom.clothinghelperdomain.model.BaseMenuIds.OUTER
+import com.leebeebeom.clothinghelperdomain.model.BaseMenuIds.SEE_ALL
+import com.leebeebeom.clothinghelperdomain.model.BaseMenuIds.TOP
+import com.leebeebeom.clothinghelperdomain.model.BaseMenuIds.TRASH
 
 object MainDestinations {
     const val MAIN_CATEGORY = "mainCategory"

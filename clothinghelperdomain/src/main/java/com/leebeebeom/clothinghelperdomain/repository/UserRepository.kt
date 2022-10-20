@@ -1,17 +1,24 @@
 package com.leebeebeom.clothinghelperdomain.repository
 
-import androidx.activity.result.ActivityResult
-import com.google.firebase.auth.AuthResult
-import com.google.firebase.auth.FirebaseUser
-import kotlinx.coroutines.flow.StateFlow
+import com.leebeebeom.clothinghelperdomain.model.User
+import kotlinx.coroutines.flow.MutableStateFlow
 
 interface UserRepository {
-    val isLogin: StateFlow<Boolean>
-    val name: StateFlow<String>
-    val email: StateFlow<String>
-    val uid: StateFlow<String>
+    val isLogin: MutableStateFlow<Boolean>
+    var isFirstUser: Boolean
 
-    fun signIn(email: String, password: String, signInListener: FireBaseListeners.SignInListener)
+    fun googleSignIn(
+        googleCredential: Any?, googleSignInListener: FireBaseListeners.GoogleSignInListener
+    )
+
+    fun getUser(): User
+
+    fun signIn(
+        email: String,
+        password: String,
+        signInListener: FireBaseListeners.SignInListener
+    )
+
     fun signUp(
         email: String,
         password: String,
@@ -19,22 +26,14 @@ interface UserRepository {
         signUpListener: FireBaseListeners.SignUpListener,
         updateNameListener: FireBaseListeners.UpdateNameListener
     )
-
-    fun googleSignIn(
-        activityResult: ActivityResult, googleSignInListener: FireBaseListeners.GoogleSignInListener
-    )
-
     fun resetPasswordEmail(
-        email: String,
-        resetPasswordListener: FireBaseListeners.ResetPasswordListener
+        email: String, resetPasswordListener: FireBaseListeners.ResetPasswordListener
     )
-
-    fun nameUpdate(name: String)
 }
 
 interface FirebaseListener {
     fun taskStart()
-    fun taskSuccess(authResult: AuthResult?)
+    fun taskSuccess()
     fun taskFailed(exception: Exception?)
     fun taskFinish()
 }
@@ -49,6 +48,6 @@ sealed class FireBaseListeners {
 
     interface ResetPasswordListener : FirebaseListener
     interface GoogleSignInListener : FirebaseListener {
-        fun googleSignInFailed(activityResult: ActivityResult)
+        fun googleCredentialCastFailed()
     }
 }

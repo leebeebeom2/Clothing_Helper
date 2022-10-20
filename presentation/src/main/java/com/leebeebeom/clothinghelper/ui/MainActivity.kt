@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.ui.main.base.MainNavHost
 import com.leebeebeom.clothinghelper.ui.signin.SignInNavHost
-import com.leebeebeom.clothinghelperdomain.usecase.user.GetLoginStateUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.user.GetSignInStateUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,23 +36,21 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainActivityNavHost(viewModel: MainActivityViewModel = hiltViewModel()) {
-    if (viewModel.isLogin) MainNavHost()
+    if (viewModel.isSignIn) MainNavHost()
     else SignInNavHost()
 }
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
-    getLoginStateUseCase: GetLoginStateUseCase
+    getSignInStateUseCase: GetSignInStateUseCase
 ) : ViewModel() {
 
-    var isLogin by mutableStateOf(getLoginStateUseCase.isLogin.value)
+    var isSignIn by mutableStateOf(false)
         private set
 
     init {
         viewModelScope.launch {
-            getLoginStateUseCase.isLogin.collect {
-                isLogin = it
-            }
+            getSignInStateUseCase().collect { isSignIn = it }
         }
     }
 }

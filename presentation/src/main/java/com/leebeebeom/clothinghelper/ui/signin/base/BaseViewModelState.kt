@@ -10,11 +10,11 @@ open class BaseSignInViewModelState : BaseViewModelState() {
     var emailError: Int? by mutableStateOf(null)
         private set
 
-    fun emailErrorOn(@StringRes error: Int) {
+    fun showEmailError(@StringRes error: Int) {
         emailError = error
     }
 
-    fun emailErrorOff() {
+    fun hideEmailError() {
         emailError = null
     }
 }
@@ -23,11 +23,11 @@ open class BaseSignInUpViewModelState : BaseSignInViewModelState() {
     var googleButtonEnabled by mutableStateOf(true)
         private set
 
-    fun googleButtonEnable() {
+    fun setGoogleButtonEnable() {
         googleButtonEnabled = true
     }
 
-    fun googleButtonDisable() {
+    fun setGoogleButtonDisable() {
         googleButtonEnabled = false
     }
 }

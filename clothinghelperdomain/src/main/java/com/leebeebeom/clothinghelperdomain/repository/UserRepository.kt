@@ -7,17 +7,17 @@ interface UserRepository {
     suspend fun isSignIn(): StateFlow<Boolean>
     suspend fun getUser(): StateFlow<User>
 
-    fun googleSignIn(
+    suspend fun googleSignIn(
         googleCredential: Any?, googleSignInListener: FireBaseListeners.GoogleSignInListener
     ): Boolean
 
-    fun signIn(
+    suspend fun signIn(
         email: String,
         password: String,
         signInListener: FireBaseListeners.SignInListener
     )
 
-    fun signUp(
+    suspend fun signUp(
         email: String,
         password: String,
         name: String,
@@ -25,7 +25,7 @@ interface UserRepository {
         updateNameListener: FireBaseListeners.UpdateNameListener
     ): Boolean
 
-    fun resetPasswordEmail(
+    suspend fun resetPasswordEmail(
         email: String, resetPasswordListener: FireBaseListeners.ResetPasswordListener
     )
 }

@@ -1,55 +1,83 @@
 package com.leebeebeom.clothinghelper.ui.main.base
 
+import android.util.Log
+import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.leebeebeom.clothinghelper.data.model.SubCategory
-import com.leebeebeom.clothinghelper.domain.usecase.subcategory.GetSubCategoriesUseCase
-import com.leebeebeom.clothinghelper.domain.usecase.user.UserInfoUserCase
+import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.ui.TAG
+import com.leebeebeom.clothinghelperdomain.model.*
+import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoriesUserCase
+import com.leebeebeom.clothinghelperdomain.usecase.user.GetUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainScreenRootViewModel @Inject constructor(
-    private val userInfoUserCase: UserInfoUserCase,
-    private val getSubCategoriesUseCase: GetSubCategoriesUseCase
+    private val getUserUseCase: GetUserUseCase,
+    private val getSubCategoriesUseCase: GetSubCategoriesUserCase
 ) : ViewModel() {
-    val viewModelState =
-        MainNavHostViewModelState(userInfoUserCase.name.value, userInfoUserCase.email.value)
+    val viewModelState = MainNavHostViewModelState()
 
     init {
         viewModelScope.launch {
-            userInfoUserCase.name.collect { viewModelState.nameUpdate(it) }
+            getUserUseCase.getUser().collect(viewModelState::userUpdate)
         }
         viewModelScope.launch {
-            getSubCategoriesUseCase.getTopSubCategories()
+            getSubCategoriesUseCase.getTopSubCategories(viewModelState::subCategoryLoadFailed)
                 .collect(viewModelState::topSubCategoriesUpdate)
         }
         viewModelScope.launch {
-            getSubCategoriesUseCase.getBottomSubCategories()
+            getSubCategoriesUseCase.getBottomSubCategories(viewModelState::subCategoryLoadFailed)
                 .collect(viewModelState::bottomSubCategoriesUpdate)
         }
         viewModelScope.launch {
-            getSubCategoriesUseCase.getOuterSubCategories()
+            getSubCategoriesUseCase.getOuterSubCategories(viewModelState::subCategoryLoadFailed)
                 .collect(viewModelState::outerSubCategoriesUpdate)
         }
         viewModelScope.launch {
-            getSubCategoriesUseCase.getETCSubCategories()
+            getSubCategoriesUseCase.getEtcSubCategories(viewModelState::subCategoryLoadFailed)
                 .collect(viewModelState::etcSubCategoriesUpdate)
         }
     }
 }
 
-class MainNavHostViewModelState(name: String, val email: String) {
-    var name by mutableStateOf(name)
+class MainNavHostViewModelState {
+    var user by mutableStateOf(User())
         private set
 
-    fun nameUpdate(name: String) {
-        this.name = name
+    fun userUpdate(user: User) {
+        this.user = user
     }
+
+    var toastText: Int? by mutableStateOf(null)
+
+    fun subCategoryLoadFailed(errorCode: Int, message: String) {
+        showToast(R.string.data_load_failed)
+        Log.d(
+            TAG,
+            "MainScreenRootViewModel.subCategoryLoadFailed: errorCode = $errorCode, $message"
+        )
+    }
+
+    private fun showToast(@StringRes toastText: Int) {
+        this.toastText = toastText
+    }
+
+    fun toastShown() {
+        this.toastText = null
+    }
+
+    val mainCategories = listOf(
+        MainCategory(BaseMenuIds.TOP, R.string.top, SubCategoryParent.Top),
+        MainCategory(BaseMenuIds.BOTTOM, R.string.bottom, SubCategoryParent.Bottom),
+        MainCategory(BaseMenuIds.OUTER, R.string.outer, SubCategoryParent.OUTER),
+        MainCategory(BaseMenuIds.ETC, R.string.etc, SubCategoryParent.ETC),
+    )
 
     var topSubCategories by mutableStateOf(emptyList<SubCategory>())
         private set

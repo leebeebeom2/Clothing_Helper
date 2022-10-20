@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.base
+package com.leebeebeom.clothinghelper.base
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility

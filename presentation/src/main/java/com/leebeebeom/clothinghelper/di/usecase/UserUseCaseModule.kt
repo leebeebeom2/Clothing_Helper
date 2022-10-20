@@ -6,49 +6,34 @@ import com.leebeebeom.clothinghelperdomain.usecase.user.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import dagger.hilt.android.components.ViewModelComponent
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ViewModelComponent::class)
 class UserUseCaseModule {
-    @Singleton
     @Provides
     fun provideGoogleSignInUseCase(
         userRepository: UserRepositoryImpl,
         writeInitialSubCategoriesUseCase: WriteInitialSubCategoriesUseCase
     ) = GoogleSignInUseCase(userRepository, writeInitialSubCategoriesUseCase)
 
-    @Singleton
     @Provides
     fun provideResetPasswordUseCase(userRepository: UserRepositoryImpl) =
         ResetPasswordUseCase(userRepository)
 
-    @Singleton
     @Provides
     fun provideSignUpUseCase(
         userRepository: UserRepositoryImpl,
         writeInitialSubCategoriesUseCase: WriteInitialSubCategoriesUseCase
     ) = SignUpUseCase(userRepository, writeInitialSubCategoriesUseCase)
 
-    @Singleton
     @Provides
-    fun provideSignInUseCase(
-        userRepository: UserRepositoryImpl,
-        writeInitialSubCategoriesUseCase: WriteInitialSubCategoriesUseCase
-    ) = SignInUseCase(userRepository, writeInitialSubCategoriesUseCase)
+    fun provideSignInUseCase(userRepository: UserRepositoryImpl) = SignInUseCase(userRepository)
 
-    @Singleton
     @Provides
-    fun provideUserInfoUseCase(userRepository: UserRepositoryImpl) =
-        UserInfoUserCase(userRepository)
+    fun provideGetSignInStateUseCase(userRepository: UserRepositoryImpl) =
+        GetSignInStateUseCase(userRepository)
 
-    @Singleton
-    @Provides
-    fun provideGetLoginStateUseCase(userRepository: UserRepositoryImpl) =
-        GetLoginStateUseCase(userRepository)
-
-    @Singleton
     @Provides
     fun provideGetUserUseCase(userRepository: UserRepositoryImpl) = GetUserUseCase(userRepository)
 }

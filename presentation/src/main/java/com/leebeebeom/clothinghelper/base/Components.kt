@@ -1,9 +1,8 @@
-package com.leebeebeom.clothinghelper.ui.base
+package com.leebeebeom.clothinghelper.base
 
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -11,16 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.theme.Disabled
 
 @Composable
@@ -67,14 +63,6 @@ fun MaxWidthButton(
 
         }
     }
-}
-
-val googleIcon = @Composable {
-    Image(
-        imageVector = ImageVector.vectorResource(id = R.drawable.ic_google_icon),
-        contentDescription = null,
-        modifier = Modifier.padding(start = 8.dp)
-    )
 }
 
 @Composable

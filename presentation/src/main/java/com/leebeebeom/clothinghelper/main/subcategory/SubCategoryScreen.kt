@@ -37,7 +37,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.MaxWidthTextField
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleIcon
-import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
+import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable

@@ -17,7 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.leebeebeom.clothinghelper.ui.theme.Disabled
+import com.leebeebeom.clothinghelper.theme.Disabled
 
 @Composable
 fun SimpleIcon(

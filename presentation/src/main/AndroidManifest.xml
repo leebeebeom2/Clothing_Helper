@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
-        android:name=".ui.ClothingHelper"
+        android:name=".ClothingHelper"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -14,7 +14,7 @@
         android:theme="@style/Theme.ClothingHelper"
         tools:targetApi="31">
         <activity
-            android:name="com.leebeebeom.clothinghelper.ui.MainActivity"
+            android:name="com.leebeebeom.clothinghelper.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.ClothingHelper">
             <intent-filter>

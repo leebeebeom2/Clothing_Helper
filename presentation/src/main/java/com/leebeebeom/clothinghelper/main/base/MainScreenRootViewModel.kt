@@ -8,7 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.TAG
+import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelperdomain.model.*
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoriesUserCase
 import com.leebeebeom.clothinghelperdomain.usecase.user.GetUserUseCase

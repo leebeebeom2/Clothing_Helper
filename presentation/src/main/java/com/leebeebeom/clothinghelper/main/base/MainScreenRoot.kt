@@ -24,8 +24,8 @@ import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelper.base.SimpleToast
 import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
 import com.leebeebeom.clothinghelper.main.subcategory.ExpandIcon
-import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
-import com.leebeebeom.clothinghelper.ui.theme.Disabled
+import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
+import com.leebeebeom.clothinghelper.theme.Disabled
 import com.leebeebeom.clothinghelperdomain.model.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

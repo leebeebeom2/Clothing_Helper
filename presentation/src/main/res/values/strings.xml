@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Clothing Helper</string>
     <string name="title_activity_sign_in">SignInActivity</string>
-    <string name="login">로그인</string>
+    <string name="sign_in">로그인</string>
     <string name="starts_with_google_email">구글 이메일로 시작하기</string>
     <string name="sign_up_with_email">이메일로 가입하기</string>
     <string name="or">or</string>
@@ -18,8 +18,8 @@
     <string name="sign_up_complete">회원 가입이 완료 되었습니다.</string>
     <string name="name_update_failed">닉네임 업데이트를 실패하였습니다.\n닉네임을 업데이트 해주세요.</string>
     <string name="empty"></string>
-    <string name="login_complete">로그인 되었습니다.</string>
-    <string name="google_login_complete">구글 이메일로 로그인 되었습니다.</string>
+    <string name="sign_in_complete">로그인 되었습니다.</string>
+    <string name="google_sign_in_complete">구글 이메일로 로그인 되었습니다.</string>
     <string name="dont_have_an_account">계정이 없으신가요?</string>
     <string name="forget_password">비밀번호를 잊으셨나요?</string>
     <string name="email_send_complete">이메일이 전송되었습니다.</string>
@@ -47,4 +47,5 @@
     <string name="average_size">평균 사이즈</string>
     <string name="top_info">총장: 71 가슴: 50\n어깨: 53 소매: 24</string>
     <string name="most_have_size">가장 많이 보유한 사이즈</string>
+    <string name="data_load_failed">"데이터 로드에 실패했습니다."</string>
 </resources>

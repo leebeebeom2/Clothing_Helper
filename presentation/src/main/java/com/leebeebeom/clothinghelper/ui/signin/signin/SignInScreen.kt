@@ -20,12 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.base.MaxWidthButton
 import com.leebeebeom.clothinghelper.ui.base.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.ui.signin.GoogleSignInButton
-import com.leebeebeom.clothinghelper.ui.signin.OrDivider
-import com.leebeebeom.clothinghelper.ui.signin.base.EmailTextField
-import com.leebeebeom.clothinghelper.ui.signin.base.PasswordTextField
-import com.leebeebeom.clothinghelper.ui.signin.base.PasswordUIState
-import com.leebeebeom.clothinghelper.ui.signin.base.SignInBaseRoot
+import com.leebeebeom.clothinghelper.ui.signin.base.*
 
 @Composable
 fun SignInScreen(
@@ -45,13 +40,13 @@ fun SignInScreen(
             EmailTextField(
                 email = state.email,
                 error = viewModelState.emailError,
-                onEmailChange = { state.onEmailChange(email = it) { viewModelState.emailErrorOff() } },
+                onEmailChange = { state.onEmailChange(email = it) { viewModelState.hideEmailError() } },
                 imeAction = ImeAction.Next
             )
 
             PasswordTextField(
                 password = state.password,
-                onPasswordChange = { state.onPasswordChange(password = it) { viewModelState.passwordErrorOff() } },
+                onPasswordChange = { state.onPasswordChange(password = it) { viewModelState.hidePasswordError() } },
                 error = viewModelState.passwordError,
                 imeAction = ImeAction.Done
             )
@@ -119,9 +114,9 @@ private fun ForgotPasswordText(onForgotPasswordClick: () -> Unit) {
 
 
 class SignInScreenUIState(
-    initialEmail: String = "",
-    initialPassword: String = "",
-) : PasswordUIState(initialEmail, initialPassword) {
+    email: String = "",
+    password: String = "",
+) : PasswordUIState(email, password) {
 
     fun signInButtonEnabled(@StringRes emailError: Int?, @StringRes passwordError: Int?) =
         email.isNotBlank() && emailError == null && password.isNotBlank() && passwordError == null

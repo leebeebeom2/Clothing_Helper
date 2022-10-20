@@ -5,14 +5,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.domain.repository.FireBaseListeners
-import com.leebeebeom.clothinghelper.domain.usecase.user.ResetPasswordUseCase
 import com.leebeebeom.clothinghelper.ui.TAG
 import com.leebeebeom.clothinghelper.ui.signin.base.BaseSignInViewModelState
 import com.leebeebeom.clothinghelper.ui.signin.base.FirebaseErrorCode
+import com.leebeebeom.clothinghelperdomain.repository.FireBaseListeners
+import com.leebeebeom.clothinghelperdomain.usecase.user.ResetPasswordUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -27,7 +26,7 @@ class ResetPasswordViewModel @Inject constructor(
     private val resetPasswordListener = object : FireBaseListeners.ResetPasswordListener {
         override fun taskStart() = viewModelState.loadingOn()
 
-        override fun taskSuccess(authResult: AuthResult?) {
+        override fun taskSuccess() {
             viewModelState.showToast(R.string.email_send_complete)
             viewModelState.goBack()
         }
@@ -47,8 +46,8 @@ class ResetPasswordViewModel @Inject constructor(
 
     private fun setError(errorCode: String) {
         when (errorCode) {
-            FirebaseErrorCode.ERROR_INVALID_EMAIL -> viewModelState.emailErrorOn(R.string.error_invalid_email)
-            FirebaseErrorCode.ERROR_USER_NOT_FOUND -> viewModelState.emailErrorOn(R.string.error_user_not_found)
+            FirebaseErrorCode.ERROR_INVALID_EMAIL -> viewModelState.showEmailError(R.string.error_invalid_email)
+            FirebaseErrorCode.ERROR_USER_NOT_FOUND -> viewModelState.showEmailError(R.string.error_user_not_found)
             else -> {
                 viewModelState.showToast(R.string.unknown_error)
                 Log.d(TAG, "setError: $errorCode")

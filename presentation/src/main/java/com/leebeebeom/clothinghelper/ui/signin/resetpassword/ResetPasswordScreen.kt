@@ -45,7 +45,7 @@ fun ResetPasswordScreen(viewModel: ResetPasswordViewModel = hiltViewModel()) {
 
         EmailTextField(
             email = state.email,
-            onEmailChange = { state.onEmailChange(email = it) { viewModelState.emailErrorOff() } },
+            onEmailChange = { state.onEmailChange(email = it) { viewModelState.hideEmailError() } },
             showKeyboardEnable = true,
             error = viewModelState.emailError,
             imeAction = ImeAction.Done
@@ -59,9 +59,7 @@ fun ResetPasswordScreen(viewModel: ResetPasswordViewModel = hiltViewModel()) {
     }
 }
 
-class ResetPasswordScreenUIState(
-    initialEmail: String = ""
-) : EmailUIState(initialEmail) {
+class ResetPasswordScreenUIState(email: String = "") : EmailUIState(email) {
 
     fun submitButtonEnabled(@StringRes emailError: Int?) = email.isNotBlank() && emailError == null
 

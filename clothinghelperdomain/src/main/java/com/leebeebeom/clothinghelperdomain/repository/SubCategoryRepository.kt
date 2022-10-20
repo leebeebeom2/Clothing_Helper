@@ -27,5 +27,11 @@ interface SubCategoryRepository {
         onCancelled: (Int, String) -> Unit
     ): StateFlow<List<SubCategory>>
 
-    suspend fun addSubCategory(subCategoryParent: SubCategoryParent, name: String, uid: String)
+    suspend fun addSubCategory(
+        subCategoryParent: SubCategoryParent,
+        name: String,
+        uid: String,
+        onSuccess: () -> Unit,
+        onFailed: () -> Unit
+    )
 }

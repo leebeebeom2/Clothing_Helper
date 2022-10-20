@@ -4,8 +4,8 @@ import com.leebeebeom.clothinghelperdomain.model.User
 import kotlinx.coroutines.flow.StateFlow
 
 interface UserRepository {
-    suspend fun isSignIn(): StateFlow<Boolean>
-    suspend fun getUser(): StateFlow<User>
+    fun isSignIn(): StateFlow<Boolean>
+    fun getUser(): StateFlow<User>
 
     suspend fun googleSignIn(
         googleCredential: Any?, googleSignInListener: FireBaseListeners.GoogleSignInListener

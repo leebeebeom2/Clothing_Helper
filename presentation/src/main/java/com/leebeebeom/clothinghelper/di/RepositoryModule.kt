@@ -1,8 +1,9 @@
 package com.leebeebeom.clothinghelper.di
 
-import com.leebeebeom.clothinghelper.data.datasource.SubCategoryRemoteDataSource
-import com.leebeebeom.clothinghelper.data.repository.SubCategoryRepositoryImpl
-import com.leebeebeom.clothinghelper.data.repository.UserRepositoryImpl
+import com.leebeebeom.clothinghelperdata.datasource.SubCategoryRemoteDataSource
+import com.leebeebeom.clothinghelperdata.datasource.UserRemoteDataSource
+import com.leebeebeom.clothinghelperdata.repository.SubCategoryRepositoryImpl
+import com.leebeebeom.clothinghelperdata.repository.UserRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,5 +20,5 @@ class RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideUserRepository() = UserRepositoryImpl()
+    fun provideUserRepository(userRemoteDataSource: UserRemoteDataSource) = UserRepositoryImpl(userRemoteDataSource)
 }

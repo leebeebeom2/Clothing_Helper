@@ -8,7 +8,8 @@ data class EssentialMenu(
 
 data class MainCategory(
     val id: Int,
-    val name: Int
+    val name: Int,
+    val type: SubCategoryParent
 )
 
 object BaseMenuIds {

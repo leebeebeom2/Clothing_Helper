@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.TAG
@@ -13,6 +14,7 @@ import com.leebeebeom.clothinghelper.ui.signin.base.FirebaseErrorCode
 import com.leebeebeom.clothinghelperdomain.repository.FireBaseListeners
 import com.leebeebeom.clothinghelperdomain.usecase.user.ResetPasswordUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,7 +23,8 @@ class ResetPasswordViewModel @Inject constructor(
 ) : ViewModel() {
     val viewModelState = ResetPasswordViewModelState()
 
-    fun sendResetPasswordEmail(email: String) = resetPasswordUseCase(email, resetPasswordListener)
+    fun sendResetPasswordEmail(email: String) =
+        viewModelScope.launch { resetPasswordUseCase(email, resetPasswordListener) }
 
     private val resetPasswordListener = object : FireBaseListeners.ResetPasswordListener {
         override fun taskStart() = viewModelState.loadingOn()

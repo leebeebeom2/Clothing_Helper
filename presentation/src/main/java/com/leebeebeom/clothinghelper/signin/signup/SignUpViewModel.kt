@@ -1,18 +1,16 @@
 package com.leebeebeom.clothinghelper.signin.signup
 
 import android.util.Log
-import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelper.signin.base.BaseSignInUpViewModel
 import com.leebeebeom.clothinghelper.signin.base.BaseSignInUpViewModelState
 import com.leebeebeom.clothinghelper.signin.base.FirebaseErrorCode
-import com.leebeebeom.clothinghelperdomain.repository.FireBaseListeners
+import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.user.SignUpUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,20 +20,18 @@ class SignUpViewModel @Inject constructor(
 ) : BaseSignInUpViewModel(googleSignInUseCase) {
     override val viewModelState = BaseSignInUpViewModelState()
 
-    fun signUpWithEmailAndPassword(email: String, password: String, name: String) =
-        viewModelScope.launch {
-            loadingOn()
-            signUpUseCase(
-                email,
-                password,
-                name,
-                signUpListener,
-                updateNameListener
-            )
-            loadingOff()
-        }
+    fun signUpWithEmailAndPassword(email: String, password: String, name: String) {
+        loadingOn()
+        signUpUseCase(
+            email,
+            password,
+            name,
+            signUpListener,
+            updateNameListener
+        )
+    }
 
-    private val signUpListener = object : FireBaseListeners.SignUpListener {
+    private val signUpListener = object : FirebaseListener {
         override fun taskSuccess() = showToast(R.string.sign_up_complete)
         override fun taskFailed(exception: Exception?) {
             val firebaseAuthException = exception as? FirebaseAuthException
@@ -44,6 +40,7 @@ class SignUpViewModel @Inject constructor(
                 showToast(R.string.unknown_error)
                 Log.d(TAG, "SignUpViewModel.taskFailed: firebaseAuthException = null")
             } else setError(firebaseAuthException.errorCode)
+            loadingOff()
         }
     }
 
@@ -58,12 +55,7 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    private val updateNameListener = object : FireBaseListeners.UpdateNameListener {
-        override fun userNull() {
-            showToast(R.string.unknown_error)
-            Log.d(TAG, "updateName: user = null")
-        }
-
+    private val updateNameListener = object : FirebaseListener {
         override fun taskFailed(exception: Exception?) {
             showToast(R.string.name_update_failed)
         }

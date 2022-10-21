@@ -38,9 +38,11 @@ class UserRepositoryImpl : UserRepository {
         auth.signInWithCredential(authCredential).addOnCompleteListener {
             if (it.isSuccessful) {
                 val user = it.result.user.toUser()!!
-                it.result.additionalUserInfo?.isNewUser?.let {
-                    pushUser(user)
-                    writeInitialSubCategory(user.uid)
+                it.result.additionalUserInfo?.isNewUser?.let { isNewUser ->
+                    if (isNewUser) {
+                        pushUser(user)
+                        writeInitialSubCategory(user.uid)
+                    }
                 }
                 signInSuccess(user)
                 googleSignInListener.taskSuccess()

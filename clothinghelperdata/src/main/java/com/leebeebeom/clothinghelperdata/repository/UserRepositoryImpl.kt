@@ -91,7 +91,7 @@ class UserRepositoryImpl : UserRepository {
             if (it.isSuccessful) {
                 updateName(name)
                 updateNameListener.taskSuccess()
-            } else updateNameListener.nameUpdateFailed()
+            } else updateNameListener.taskFailed(null)
         }
     }
 

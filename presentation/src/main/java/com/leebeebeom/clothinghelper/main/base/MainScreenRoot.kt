@@ -60,7 +60,7 @@ fun MainScreenRoot(
                     },
                     essentialMenus = state.essentialMenus,
                     mainCategories = state.mainCategories,
-                    subCategories = viewModelState.subCategories
+                    getSubCategories = viewModelState::getSubCategories
                 )
             },
             drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
@@ -90,7 +90,7 @@ private fun DrawerContents(
     onSettingIconClick: () -> Unit,
     essentialMenus: List<EssentialMenu>,
     mainCategories: List<MainCategory>,
-    subCategories: Map<SubCategoryParent, List<SubCategory>>
+    getSubCategories:(SubCategoryParent) -> List<SubCategory>
 ) {
     Column {
         DrawerHeader(user = user, onSettingIconClick = onSettingIconClick)
@@ -114,7 +114,7 @@ private fun DrawerContents(
                 items(mainCategories, key = { it.id }) {
                     MainCategory(
                         mainCategory = it,
-                        subCategories = subCategories.getOrElse(it.type) { emptyList() },
+                        subCategories = getSubCategories(it.type),
                         onDrawerContentClick = onDrawerContentClick
                     )
                 }

@@ -4,47 +4,31 @@ import com.leebeebeom.clothinghelperdomain.model.User
 import kotlinx.coroutines.flow.StateFlow
 
 interface UserRepository {
-    suspend fun isSignIn(): StateFlow<Boolean>
-    suspend fun getUser(): StateFlow<User?>
+    fun isSignIn(): StateFlow<Boolean>
+    fun getUser(): StateFlow<User?>
 
-    /**
-     * 첫 유저 여부 반환
-     */
-    suspend fun googleSignIn(
-        googleCredential: Any?, googleSignInListener: FireBaseListeners.GoogleSignInListener
-    ): Boolean
-
-    suspend fun signIn(
-        email: String, password: String, signInListener: FireBaseListeners.SignInListener
+    fun googleSignIn(
+        googleCredential: Any?, googleSignInListener: FirebaseListener
     )
 
-    suspend fun signUp(
+    fun signIn(
+        email: String, password: String, signInListener: FirebaseListener
+    )
+
+    fun signUp(
         email: String,
         password: String,
         name: String,
-        signUpListener: FireBaseListeners.SignUpListener,
-        updateNameListener: FireBaseListeners.UpdateNameListener
+        signUpListener: FirebaseListener,
+        updateNameListener: FirebaseListener
     )
 
-    suspend fun resetPasswordEmail(
-        email: String, resetPasswordListener: FireBaseListeners.ResetPasswordListener
+    fun resetPasswordEmail(
+        email: String, resetPasswordListener: FirebaseListener
     )
 }
 
 interface FirebaseListener {
     fun taskSuccess()
     fun taskFailed(exception: Exception?)
-}
-
-sealed class FireBaseListeners {
-    interface SignUpListener : FirebaseListener
-    interface SignInListener : FirebaseListener
-    interface UpdateNameListener : FirebaseListener {
-        fun userNull()
-    }
-
-    interface ResetPasswordListener : FirebaseListener
-    interface GoogleSignInListener : FirebaseListener {
-        fun googleCredentialCastFailed()
-    }
 }

@@ -1,7 +1,6 @@
 package com.leebeebeom.clothinghelper.di.usecase
 
 import com.leebeebeom.clothinghelperdata.repository.UserRepositoryImpl
-import com.leebeebeom.clothinghelperdomain.usecase.subcategory.WriteInitialSubCategoriesUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.user.*
 import dagger.Module
 import dagger.Provides
@@ -12,20 +11,15 @@ import dagger.hilt.android.components.ViewModelComponent
 @InstallIn(ViewModelComponent::class)
 class UserUseCaseModule {
     @Provides
-    fun provideGoogleSignInUseCase(
-        userRepository: UserRepositoryImpl,
-        writeInitialSubCategoriesUseCase: WriteInitialSubCategoriesUseCase
-    ) = GoogleSignInUseCase(userRepository, writeInitialSubCategoriesUseCase)
+    fun provideGoogleSignInUseCase(userRepository: UserRepositoryImpl) =
+        GoogleSignInUseCase(userRepository)
 
     @Provides
     fun provideResetPasswordUseCase(userRepository: UserRepositoryImpl) =
         ResetPasswordUseCase(userRepository)
 
     @Provides
-    fun provideSignUpUseCase(
-        userRepository: UserRepositoryImpl,
-        writeInitialSubCategoriesUseCase: WriteInitialSubCategoriesUseCase
-    ) = SignUpUseCase(userRepository, writeInitialSubCategoriesUseCase)
+    fun provideSignUpUseCase(userRepository: UserRepositoryImpl) = SignUpUseCase(userRepository)
 
     @Provides
     fun provideSignInUseCase(userRepository: UserRepositoryImpl) = SignInUseCase(userRepository)

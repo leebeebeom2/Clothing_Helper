@@ -1,111 +1,102 @@
 package com.leebeebeom.clothinghelperdata.repository
 
+import android.util.Log
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
 import com.leebeebeom.clothinghelperdomain.model.User
-import com.leebeebeom.clothinghelperdomain.repository.FireBaseListeners
+import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.repository.UserRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.withContext
 
-class UserRepositoryImpl : UserRepository {
+class UserRepositoryImpl(val subCategoryRepositoryImpl: SubCategoryRepositoryImpl) :
+    UserRepository {
     private val auth = FirebaseAuth.getInstance()
 
     private lateinit var _isSignIn: MutableStateFlow<Boolean>
-    override suspend fun isSignIn(): StateFlow<Boolean> = withContext(Dispatchers.IO) {
-        if (!::_isSignIn.isInitialized) {
-            _isSignIn = MutableStateFlow(false)
-            auth.addAuthStateListener {
-                _isSignIn.value = it.currentUser != null
-            }
-        }
-        _isSignIn
+    override fun isSignIn(): StateFlow<Boolean> {
+        if (!::_isSignIn.isInitialized) _isSignIn = MutableStateFlow(auth.currentUser != null)
+        return _isSignIn
     }
 
     private lateinit var user: MutableStateFlow<User?>
-    override suspend fun getUser(): StateFlow<User?> = withContext(Dispatchers.IO) {
-        if (!::user.isInitialized) {
-            user = MutableStateFlow(null)
-            auth.addAuthStateListener {
-                user.value = it.currentUser.toUser()
-            }
+    override fun getUser(): StateFlow<User?> {
+        if (!::user.isInitialized) user = MutableStateFlow(auth.currentUser.toUser())
+        return user
+    }
+
+    private fun signInSuccess(user: User) {
+        _isSignIn.value = true
+        updateUser(user)
+    }
+
+    private fun updateUser(user: User) {
+        if (!::user.isInitialized) this.user = MutableStateFlow(user)
+        else this.user.value = user
+    }
+
+    private fun firstUserTask(user: User) {
+        pushUser(user)
+        subCategoryRepositoryImpl.writeInitialSubCategory(user.uid)
+    }
+
+    override fun googleSignIn(googleCredential: Any?, googleSignInListener: FirebaseListener) {
+        val authCredential = googleCredential as AuthCredential
+
+        auth.signInWithCredential(authCredential).addOnCompleteListener {
+            if (it.isSuccessful) {
+                val user = it.result.user.toUser()!!
+                it.result.additionalUserInfo?.isNewUser?.let {
+                    firstUserTask(user)
+                }
+                signInSuccess(user)
+                googleSignInListener.taskSuccess()
+                Log.d("TAG", "googleSignIn: 태스크 끝")
+            } else googleSignInListener.taskFailed(it.exception)
         }
-        user
     }
 
-    override suspend fun googleSignIn(
-        googleCredential: Any?, googleSignInListener: FireBaseListeners.GoogleSignInListener
-    ): Boolean = withContext(Dispatchers.IO) {
-        var isFirstUser = false
-
-        if (googleCredential is AuthCredential) FirebaseAuth.getInstance()
-            .signInWithCredential(googleCredential).addOnCompleteListener {
-                if (it.isSuccessful) {
-                    googleSignInListener.taskSuccess()
-                    it.result.additionalUserInfo?.isNewUser?.run { isFirstUser = this }
-                } else googleSignInListener.taskFailed(it.exception)
-            }
-        else googleSignInListener.googleCredentialCastFailed()
-        isFirstUser
-    }
-
-    override suspend fun signIn(
-        email: String, password: String, signInListener: FireBaseListeners.SignInListener
-    ): Unit = withContext(Dispatchers.IO) {
+    override fun signIn(email: String, password: String, signInListener: FirebaseListener) {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) signInListener.taskSuccess()
             else signInListener.taskFailed(it.exception)
         }
     }
 
-    override suspend fun signUp(
+    override fun signUp(
         email: String,
         password: String,
         name: String,
-        signUpListener: FireBaseListeners.SignUpListener,
-        updateNameListener: FireBaseListeners.UpdateNameListener
-    ): Unit = withContext(Dispatchers.IO) {
+        signUpListener: FirebaseListener,
+        updateNameListener: FirebaseListener
+    ) {
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
+                val user = it.result.user!!
+                firstUserTask(user.toUser()!!)
                 signUpListener.taskSuccess()
-                val user = it.result.user
-                if (user == null) updateNameListener.userNull()
-                else {
-                    user.toUser()?.run { pushUser(this) }
-                    updateName(updateNameListener, user, name)
-                }
+                updateName(updateNameListener, user, name)
             } else signUpListener.taskFailed(it.exception)
         }
     }
 
-    private fun updateName(
-        updateNameListener: FireBaseListeners.UpdateNameListener,
-        user: FirebaseUser,
-        name: String
-    ) {
+    private fun updateName(updateNameListener: FirebaseListener, user: FirebaseUser, name: String) {
         val request = userProfileChangeRequest { displayName = name }
 
         user.updateProfile(request).addOnCompleteListener {
             if (it.isSuccessful) {
-                updateName(name)
-                pushUser(user.toUser()!!.copy(name = name))
+                val newNameUser = user.toUser()!!.copy(name = name)
+                pushUser(newNameUser)
+                updateUser(newNameUser)
                 updateNameListener.taskSuccess()
             } else updateNameListener.taskFailed(null)
         }
     }
 
-    private fun updateName(name: String) {
-        user.value = user.value?.copy(name = name)
-    }
-
-    override suspend fun resetPasswordEmail(
-        email: String, resetPasswordListener: FireBaseListeners.ResetPasswordListener
-    ): Unit = withContext(Dispatchers.IO) {
+    override fun resetPasswordEmail(email: String, resetPasswordListener: FirebaseListener) {
         auth.sendPasswordResetEmail(email).addOnCompleteListener {
             if (it.isSuccessful) resetPasswordListener.taskSuccess()
             else resetPasswordListener.taskFailed(it.exception)
@@ -114,7 +105,9 @@ class UserRepositoryImpl : UserRepository {
 
     private fun pushUser(user: User) =
         FirebaseDatabase.getInstance().reference.child(user.uid).child(DatabasePath.USER_INFO)
-            .setValue(user)
+            .setValue(user).addOnCompleteListener {
+                if (!it.isSuccessful) throw Exception("pushUser 실패")
+            }
 }
 
-fun FirebaseUser?.toUser() = this?.let { User(email!!, displayName!!, uid) }
+fun FirebaseUser?.toUser() = this?.let { User(email!!, displayName ?: "", uid) }

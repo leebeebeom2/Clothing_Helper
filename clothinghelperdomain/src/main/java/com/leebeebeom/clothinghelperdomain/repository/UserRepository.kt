@@ -4,16 +4,12 @@ import com.leebeebeom.clothinghelperdomain.model.User
 import kotlinx.coroutines.flow.StateFlow
 
 interface UserRepository {
-    fun isSignIn(): StateFlow<Boolean>
-    fun getUser(): StateFlow<User?>
+    val isSignIn: StateFlow<Boolean>
+    val user: StateFlow<User?>
 
-    fun googleSignIn(
-        googleCredential: Any?, googleSignInListener: FirebaseListener
-    )
+    fun googleSignIn(googleCredential: Any?, googleSignInListener: FirebaseListener)
 
-    fun signIn(
-        email: String, password: String, signInListener: FirebaseListener
-    )
+    fun signIn(email: String, password: String, signInListener: FirebaseListener)
 
     fun signUp(
         email: String,
@@ -23,9 +19,7 @@ interface UserRepository {
         updateNameListener: FirebaseListener
     )
 
-    fun resetPasswordEmail(
-        email: String, resetPasswordListener: FirebaseListener
-    )
+    fun resetPasswordEmail(email: String, resetPasswordListener: FirebaseListener)
 
     fun signOut()
 }

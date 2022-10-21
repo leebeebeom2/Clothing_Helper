@@ -13,10 +13,10 @@ import javax.inject.Singleton
 class RepositoryModule {
     @Singleton
     @Provides
-    fun provideSubCategoryRepository(userRepository: UserRepositoryImpl) =
-        SubCategoryRepositoryImpl(userRepository)
+    fun provideSubCategoryRepository() = SubCategoryRepositoryImpl()
 
     @Singleton
     @Provides
-    fun provideUserRepository() = UserRepositoryImpl()
+    fun provideUserRepository(subCategoryRepository: SubCategoryRepositoryImpl) =
+        UserRepositoryImpl(subCategoryRepository)
 }

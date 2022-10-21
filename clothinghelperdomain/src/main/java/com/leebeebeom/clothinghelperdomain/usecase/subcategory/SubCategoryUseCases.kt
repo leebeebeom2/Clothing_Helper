@@ -7,8 +7,10 @@ import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
 class GetSubCategoriesUserCase(
     private val subCategoryRepository: SubCategoryRepository
 ) {
-    suspend fun loadSubCategories(onCancelled: (Int, String) -> Unit) =
-        subCategoryRepository.loadSubCategories(onCancelled)
+    suspend fun loadSubCategories(
+        onDone: List<() -> Unit>,
+        onCancelled: List<(Int, String) -> Unit>
+    ) = subCategoryRepository.loadSubCategories(onDone, onCancelled)
 
     fun getTopSubCategories() = subCategoryRepository.topSubCategories
     fun getBottomSubCategories() = subCategoryRepository.bottomSubCategories

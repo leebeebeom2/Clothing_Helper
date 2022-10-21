@@ -9,5 +9,5 @@ import javax.inject.Inject
 class SettingViewModel @Inject constructor(
     signOutUseCase: SignOutUseCase
 ) : ViewModel() {
-    val signOut = signOutUseCase()
+    val signOut = {signOutUseCase()}
 }

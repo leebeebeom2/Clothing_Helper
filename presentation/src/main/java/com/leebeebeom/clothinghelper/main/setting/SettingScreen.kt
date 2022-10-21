@@ -9,12 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.MaxWidthButton
 
 @Composable
-fun SettingScreen(viewModel: SettingViewModel = viewModel()) {
+fun SettingScreen(viewModel: SettingViewModel = hiltViewModel()) {
     Box(
         modifier = Modifier
             .fillMaxSize()

@@ -39,6 +39,6 @@ class GetUserUseCase(private val userRepository: UserRepository) {
     operator fun invoke() = userRepository.getUser()
 }
 
-class SignOutUseCase(private val userRepository: UserRepository){
+class SignOutUseCase(private val userRepository: UserRepository) {
     operator fun invoke() = userRepository.signOut()
 }

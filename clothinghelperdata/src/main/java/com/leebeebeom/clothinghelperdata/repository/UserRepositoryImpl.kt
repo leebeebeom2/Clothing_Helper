@@ -9,23 +9,15 @@ import com.leebeebeom.clothinghelperdomain.model.User
 import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
-class UserRepositoryImpl(val subCategoryRepositoryImpl: SubCategoryRepositoryImpl) :
-    UserRepository {
+class UserRepositoryImpl : UserRepository {
     private val auth = FirebaseAuth.getInstance()
 
-    private lateinit var _isSignIn: MutableStateFlow<Boolean>
-    override fun isSignIn(): StateFlow<Boolean> {
-        if (!::_isSignIn.isInitialized) _isSignIn = MutableStateFlow(auth.currentUser != null)
-        return _isSignIn
-    }
+    private val _isSignIn = MutableStateFlow(auth.currentUser != null)
+    override val isSignIn get() = _isSignIn
 
-    private lateinit var user: MutableStateFlow<User?>
-    override fun getUser(): StateFlow<User?> {
-        if (!::user.isInitialized) user = MutableStateFlow(auth.currentUser.toUser())
-        return user
-    }
+    private val _user = MutableStateFlow(auth.currentUser.toUser())
+    override val user get() = _user
 
     private fun signInSuccess(user: User) {
         _isSignIn.value = true
@@ -33,23 +25,17 @@ class UserRepositoryImpl(val subCategoryRepositoryImpl: SubCategoryRepositoryImp
     }
 
     private fun updateUser(user: User?) {
-        if (!::user.isInitialized) this.user = MutableStateFlow(user)
-        else this.user.value = user
+        this._user.value = user
     }
 
-    private fun firstUserTask(user: User) {
-        pushUser(user)
-        subCategoryRepositoryImpl.writeInitialSubCategory(user.uid)
-    }
-
-    override fun googleSignIn(googleCredential: Any?, googleSignInListener: FirebaseListener) {
+    override fun googleSignIn(googleCredential: Any?, googleSignInListener: FirebaseListener) { // TODO 첫 유저 확인 후 초기 데이터 쓰기
         val authCredential = googleCredential as AuthCredential
 
         auth.signInWithCredential(authCredential).addOnCompleteListener {
             if (it.isSuccessful) {
                 val user = it.result.user.toUser()!!
                 it.result.additionalUserInfo?.isNewUser?.let {
-                    firstUserTask(user)
+                    pushUser(user)
                 }
                 signInSuccess(user)
                 googleSignInListener.taskSuccess()
@@ -66,18 +52,17 @@ class UserRepositoryImpl(val subCategoryRepositoryImpl: SubCategoryRepositoryImp
         }
     }
 
-    override fun signUp(
+    override fun signUp( // TODO 초기 데이터 쓰기
         email: String,
         password: String,
         name: String,
         signUpListener: FirebaseListener,
         updateNameListener: FirebaseListener
-    ) {
-        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
+    ) { auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
                 val firebaseUser = it.result.user!!
                 val user = firebaseUser.toUser()!!
-                firstUserTask(user)
+                pushUser(user)
                 signInSuccess(user)
                 signUpListener.taskSuccess()
                 updateName(updateNameListener, firebaseUser, name)

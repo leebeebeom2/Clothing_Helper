@@ -27,37 +27,23 @@ class MainScreenRootViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getUserUseCase().collect {
-                viewModelState.userUpdate(it)
+            getUserUseCase().collect(viewModelState::userUpdate)
+        }
+        viewModelScope.launch {
+            getSubCategoriesUseCase.loadSubCategories(viewModelState::subCategoryLoadFailed)
+        }
 
-                it?.let {
-                    getSubCategoriesUseCase.getTopSubCategories(
-                        it.uid,
-                        viewModelState::subCategoryLoadFailed
-                    ).collect(viewModelState::topSubCategoriesUpdate)
-                }
-
-                it?.let {
-                    getSubCategoriesUseCase.getBottomSubCategories(
-                        it.uid,
-                        viewModelState::subCategoryLoadFailed
-                    ).collect(viewModelState::bottomSubCategoriesUpdate)
-                }
-
-                it?.let {
-                    getSubCategoriesUseCase.getOuterSubCategories(
-                        it.uid,
-                        viewModelState::subCategoryLoadFailed
-                    ).collect(viewModelState::outerSubCategoriesUpdate)
-                }
-
-                it?.let {
-                    getSubCategoriesUseCase.getEtcSubCategories(
-                        it.uid,
-                        viewModelState::subCategoryLoadFailed
-                    ).collect(viewModelState::etcSubCategoriesUpdate)
-                }
-            }
+        viewModelScope.launch {
+            getSubCategoriesUseCase.getTopSubCategories().collect(viewModelState::topSubCategoriesUpdate)
+        }
+        viewModelScope.launch {
+            getSubCategoriesUseCase.getBottomSubCategories().collect(viewModelState::bottomSubCategoriesUpdate)
+        }
+        viewModelScope.launch {
+            getSubCategoriesUseCase.getOuterSubCategories().collect(viewModelState::outerSubCategoriesUpdate)
+        }
+        viewModelScope.launch {
+            getSubCategoriesUseCase.getEtcSubCategories().collect(viewModelState::etcSubCategoriesUpdate)
         }
     }
 }
@@ -75,8 +61,7 @@ class MainNavHostViewModelState {
     fun subCategoryLoadFailed(errorCode: Int, message: String) {
         showToast(R.string.data_load_failed)
         Log.d(
-            TAG,
-            "MainScreenRootViewModel.subCategoryLoadFailed: errorCode = $errorCode, $message"
+            TAG, "MainScreenRootViewModel.subCategoryLoadFailed: errorCode = $errorCode, $message"
         )
     }
 
@@ -88,17 +73,19 @@ class MainNavHostViewModelState {
         this.toastText = null
     }
 
+    fun getSubCategories(subCategoryParent: SubCategoryParent): List<SubCategory> {
+        return when (subCategoryParent) {
+            SubCategoryParent.Top -> topSubCategories
+            SubCategoryParent.Bottom -> bottomSubCategories
+            SubCategoryParent.OUTER -> outerSubCategories
+            SubCategoryParent.ETC -> etcSubCategories
+        }
+    }
+
     private var topSubCategories by mutableStateOf(emptyList<SubCategory>())
     private var bottomSubCategories by mutableStateOf(emptyList<SubCategory>())
     private var outerSubCategories by mutableStateOf(emptyList<SubCategory>())
     private var etcSubCategories by mutableStateOf(emptyList<SubCategory>())
-
-    val subCategories = mapOf(
-        SubCategoryParent.Top to topSubCategories,
-        SubCategoryParent.Bottom to bottomSubCategories,
-        SubCategoryParent.OUTER to outerSubCategories,
-        SubCategoryParent.ETC to etcSubCategories,
-    )
 
     fun topSubCategoriesUpdate(topSubCategories: List<SubCategory>) {
         this.topSubCategories = topSubCategories

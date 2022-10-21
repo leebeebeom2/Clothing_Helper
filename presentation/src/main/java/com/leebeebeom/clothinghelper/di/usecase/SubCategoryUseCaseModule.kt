@@ -11,39 +11,10 @@ import dagger.hilt.android.components.ViewModelComponent
 @InstallIn(ViewModelComponent::class)
 class SubCategoryUseCaseModule {
     @Provides
-    fun provideWriteSubCategoryUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
-        WriteInitialSubCategoriesUseCase(subCategoryRepository)
-
-    @Provides
     fun provideAddSubCategoryUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
         AddSubCategoryUseCase(subCategoryRepository)
 
     @Provides
-    fun provideGetSubCategoriesUseCase(
-        getTopSubcategoriesUseCase: GetTopSubcategoriesUseCase,
-        getBottomSubcategoriesUseCase: GetBottomSubcategoriesUseCase,
-        getOuterSubcategoriesUseCase: GetOuterSubcategoriesUseCase,
-        getEtcSubcategoriesUseCase: GetEtcSubcategoriesUseCase
-    ) = GetSubCategoriesUserCase(
-        getTopSubcategoriesUseCase,
-        getBottomSubcategoriesUseCase,
-        getOuterSubcategoriesUseCase,
-        getEtcSubcategoriesUseCase
-    )
-
-    @Provides
-    fun provideTopGetSubCategoriesUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
-        GetTopSubcategoriesUseCase(subCategoryRepository)
-
-    @Provides
-    fun provideBottomGetSubCategoriesUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
-        GetBottomSubcategoriesUseCase(subCategoryRepository)
-
-    @Provides
-    fun provideOuterGetSubCategoriesUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
-        GetOuterSubcategoriesUseCase(subCategoryRepository)
-
-    @Provides
-    fun provideEtcGetSubCategoriesUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
-        GetEtcSubcategoriesUseCase(subCategoryRepository)
+    fun provideGetSubCategoriesUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
+        GetSubCategoriesUserCase(subCategoryRepository)
 }

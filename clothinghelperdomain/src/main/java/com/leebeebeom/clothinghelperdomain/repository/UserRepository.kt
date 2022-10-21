@@ -7,7 +7,11 @@ interface UserRepository {
     val isSignIn: StateFlow<Boolean>
     val user: StateFlow<User?>
 
-    fun googleSignIn(googleCredential: Any?, googleSignInListener: FirebaseListener)
+    fun googleSignIn(
+        googleCredential: Any?,
+        googleSignInListener: FirebaseListener,
+        writeInitialSubCategory: (String) -> Unit
+    )
 
     fun signIn(email: String, password: String, signInListener: FirebaseListener)
 
@@ -16,7 +20,8 @@ interface UserRepository {
         password: String,
         name: String,
         signUpListener: FirebaseListener,
-        updateNameListener: FirebaseListener
+        updateNameListener: FirebaseListener,
+        writeInitialSubCategory: (String) -> Unit
     )
 
     fun resetPasswordEmail(email: String, resetPasswordListener: FirebaseListener)

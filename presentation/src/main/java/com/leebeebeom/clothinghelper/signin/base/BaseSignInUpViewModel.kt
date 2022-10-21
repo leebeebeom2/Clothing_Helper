@@ -6,16 +6,14 @@ import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
-import com.leebeebeom.clothinghelperdomain.repository.FireBaseListeners
+import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.usecase.user.GoogleSignInUseCase
-import kotlinx.coroutines.launch
 
 object FirebaseErrorCode {
     const val ERROR_INVALID_EMAIL = "ERROR_INVALID_EMAIL"
@@ -32,22 +30,20 @@ abstract class BaseSignInUpViewModel(
     fun showToast(@StringRes toastText: Int) = viewModelState.showToast(toastText)
     fun loadingOn() = viewModelState.loadingOn()
     fun loadingOff() = viewModelState.loadingOff()
-    fun googleButtonDisable() = viewModelState.setGoogleButtonDisable()
-    fun googleButtonEnable() = viewModelState.setGoogleButtonEnable()
+    private fun googleButtonDisable() = viewModelState.setGoogleButtonDisable()
+    private fun googleButtonEnable() = viewModelState.setGoogleButtonEnable()
+
+    fun onGoogleSignInClick() {
+        loadingOn()
+        googleButtonDisable()
+    }
 
     fun signInWithGoogleEmail(activityResult: ActivityResult) {
-
         when (activityResult.resultCode) {
-            RESULT_OK -> viewModelScope.launch {
-                googleButtonDisable()
-                loadingOn()
-                googleSignInUseCase(
-                    getGoogleCredential(activityResult),
-                    googleSignInListener
-                )
-                loadingOff()
-                googleButtonEnable()
-            }
+            RESULT_OK -> googleSignInUseCase(
+                getGoogleCredential(activityResult),
+                googleSignInListener
+            )
             RESULT_CANCELED -> showToast(R.string.canceled)
             else -> {
                 showToast(R.string.unknown_error)
@@ -72,21 +68,13 @@ abstract class BaseSignInUpViewModel(
         }
     }
 
-    private val googleSignInListener = object : FireBaseListeners.GoogleSignInListener {
-        override fun googleCredentialCastFailed() {
-            showToast(R.string.unknown_error)
-            Log.d(
-                TAG,
-                "BaseSignInUpViewModel.googleCredentialCastFailed: AuthCredential cast failed"
-            )
-        }
-
-        override fun taskSuccess() {
-            showToast(R.string.google_sign_in_complete)
-        }
+    private val googleSignInListener = object : FirebaseListener {
+        override fun taskSuccess() = showToast(R.string.google_sign_in_complete)
 
         override fun taskFailed(exception: Exception?) {
             showToast(R.string.unknown_error)
+            googleButtonEnable()
+            loadingOff()
             Log.d(TAG, "taskFailed: $exception")
         }
     }

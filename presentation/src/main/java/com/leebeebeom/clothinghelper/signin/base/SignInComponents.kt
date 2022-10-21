@@ -41,7 +41,8 @@ fun VisibleIcon(visualTransformation: VisualTransformation, onIconClick: (Boolea
 @Composable
 fun GoogleSignInButton(
     signInWithGoogleEmail: (ActivityResult) -> Unit,
-    enabled: Boolean
+    enabled: Boolean,
+    onGoogleSignInClick: () -> Unit
 ) {
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
@@ -55,7 +56,10 @@ fun GoogleSignInButton(
         colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
         icon = googleIcon,
         enabled = enabled,
-        onClick = { launcher.launch(intent) }
+        onClick = {
+            onGoogleSignInClick()
+            launcher.launch(intent)
+        }
     )
 }
 

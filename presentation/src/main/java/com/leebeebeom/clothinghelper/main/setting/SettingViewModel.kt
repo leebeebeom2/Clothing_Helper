@@ -1,8 +1,13 @@
 package com.leebeebeom.clothinghelper.main.setting
 
 import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.FirebaseAuth
+import com.leebeebeom.clothinghelperdomain.usecase.user.SignOutUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class SettingViewModel : ViewModel() {
-    val signOut = { FirebaseAuth.getInstance().signOut() }
+@HiltViewModel
+class SettingViewModel @Inject constructor(
+    signOutUseCase: SignOutUseCase
+) : ViewModel() {
+    val signOut = signOutUseCase()
 }

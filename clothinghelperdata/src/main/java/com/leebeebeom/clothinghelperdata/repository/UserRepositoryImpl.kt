@@ -12,7 +12,8 @@ import com.leebeebeom.clothinghelperdomain.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class UserRepositoryImpl(val subCategoryRepositoryImpl: SubCategoryRepositoryImpl) : UserRepository {
+class UserRepositoryImpl(val subCategoryRepositoryImpl: SubCategoryRepositoryImpl) :
+    UserRepository {
     private val auth = FirebaseAuth.getInstance()
 
     private lateinit var _isSignIn: MutableStateFlow<Boolean>

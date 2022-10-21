@@ -5,45 +5,16 @@ import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
 
 class GetSubCategoriesUserCase(
-    private val getTopSubcategoriesUseCase: GetTopSubcategoriesUseCase,
-    private val getBottomSubcategoriesUseCase: GetBottomSubcategoriesUseCase,
-    private val getOuterSubcategoriesUseCase: GetOuterSubcategoriesUseCase,
-    private val getEtcSubcategoriesUseCase: GetEtcSubcategoriesUseCase
+    private val subCategoryRepository: SubCategoryRepository
 ) {
-    fun getTopSubCategories(uid: String, onCancelled: (Int, String) -> Unit) =
-        getTopSubcategoriesUseCase.invoke(uid, onCancelled)
+    suspend fun loadSubCategories(onCancelled: (Int, String) -> Unit) =
+        subCategoryRepository.loadSubCategories(onCancelled)
 
-    fun getBottomSubCategories(uid: String, onCancelled: (Int, String) -> Unit) =
-        getBottomSubcategoriesUseCase.invoke(uid, onCancelled)
-
-    fun getOuterSubCategories(uid: String, onCancelled: (Int, String) -> Unit) =
-        getOuterSubcategoriesUseCase.invoke(uid, onCancelled)
-
-
-    fun getEtcSubCategories(uid: String, onCancelled: (Int, String) -> Unit) =
-        getEtcSubcategoriesUseCase.invoke(uid, onCancelled)
+    fun getTopSubCategories() = subCategoryRepository.topSubCategories
+    fun getBottomSubCategories() = subCategoryRepository.bottomSubCategories
+    fun getOuterSubCategories() = subCategoryRepository.outerSubCategories
+    fun getEtcSubCategories() = subCategoryRepository.etcSubCategories
 }
-
-class GetTopSubcategoriesUseCase(private val subCategoryRepository: SubCategoryRepository) {
-    operator fun invoke(uid: String, onCancelled: (Int, String) -> Unit) =
-        subCategoryRepository.getTopSubCategories(uid, onCancelled)
-}
-
-class GetBottomSubcategoriesUseCase(private val subCategoryRepository: SubCategoryRepository) {
-    operator fun invoke(uid: String, onCancelled: (Int, String) -> Unit) =
-        subCategoryRepository.getBottomSubCategories(uid, onCancelled)
-}
-
-class GetOuterSubcategoriesUseCase(private val subCategoryRepository: SubCategoryRepository) {
-    operator fun invoke(uid: String, onCancelled: (Int, String) -> Unit) =
-        subCategoryRepository.getOuterSubCategories(uid, onCancelled)
-}
-
-class GetEtcSubcategoriesUseCase(private val subCategoryRepository: SubCategoryRepository) {
-    operator fun invoke(uid: String, onCancelled: (Int, String) -> Unit) =
-        subCategoryRepository.getEtcSubCategories(uid, onCancelled)
-}
-
 
 class AddSubCategoryUseCase(
     private val subCategoryRepository: SubCategoryRepository

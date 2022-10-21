@@ -39,10 +39,14 @@ abstract class BaseSignInUpViewModel(
 
         when (activityResult.resultCode) {
             RESULT_OK -> viewModelScope.launch {
+                googleButtonDisable()
+                loadingOn()
                 googleSignInUseCase(
                     getGoogleCredential(activityResult),
                     googleSignInListener
                 )
+                loadingOff()
+                googleButtonEnable()
             }
             RESULT_CANCELED -> showToast(R.string.canceled)
             else -> {
@@ -77,11 +81,6 @@ abstract class BaseSignInUpViewModel(
             )
         }
 
-        override fun taskStart() {
-            loadingOn()
-            googleButtonDisable()
-        }
-
         override fun taskSuccess() {
             showToast(R.string.google_sign_in_complete)
         }
@@ -89,11 +88,6 @@ abstract class BaseSignInUpViewModel(
         override fun taskFailed(exception: Exception?) {
             showToast(R.string.unknown_error)
             Log.d(TAG, "taskFailed: $exception")
-        }
-
-        override fun taskFinish() {
-            loadingOff()
-            googleButtonEnable()
         }
     }
 }

@@ -24,11 +24,13 @@ class ResetPasswordViewModel @Inject constructor(
     val viewModelState = ResetPasswordViewModelState()
 
     fun sendResetPasswordEmail(email: String) =
-        viewModelScope.launch { resetPasswordUseCase(email, resetPasswordListener) }
+        viewModelScope.launch {
+            viewModelState.loadingOn()
+            resetPasswordUseCase(email, resetPasswordListener)
+            viewModelState.loadingOff()
+        }
 
     private val resetPasswordListener = object : FireBaseListeners.ResetPasswordListener {
-        override fun taskStart() = viewModelState.loadingOn()
-
         override fun taskSuccess() {
             viewModelState.showToast(R.string.email_send_complete)
             viewModelState.goBack()
@@ -42,9 +44,6 @@ class ResetPasswordViewModel @Inject constructor(
                 Log.d(TAG, "taskFailed: firebaseAuthException = null")
             } else setError(firebaseAuthException.errorCode)
         }
-
-        override fun taskFinish() = viewModelState.loadingOff()
-
     }
 
     private fun setError(errorCode: String) {

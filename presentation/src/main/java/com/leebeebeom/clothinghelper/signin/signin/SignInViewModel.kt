@@ -28,11 +28,13 @@ class SignInViewModel @Inject constructor(
     override val viewModelState = SignInViewModelState()
 
     fun signInWithEmailAndPassword(email: String, password: String) =
-        viewModelScope.launch { signInUseCase(email, password, signInListener) }
+        viewModelScope.launch {
+            loadingOn()
+            signInUseCase(email, password, signInListener)
+            loadingOff()
+        }
 
     private val signInListener = object : FireBaseListeners.SignInListener {
-        override fun taskStart() = viewModelState.loadingOn()
-
         override fun taskSuccess() = showToast(R.string.sign_in_complete)
 
         override fun taskFailed(exception: Exception?) {
@@ -43,8 +45,6 @@ class SignInViewModel @Inject constructor(
                 Log.d(TAG, "SignInViewModel.taskFailed: firebaseAuthException = null")
             } else setError(firebaseAuthException.errorCode)
         }
-
-        override fun taskFinish() = viewModelState.loadingOff()
     }
 
     private fun setError(errorCode: String) {

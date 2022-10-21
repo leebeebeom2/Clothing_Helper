@@ -24,6 +24,7 @@ class SignUpViewModel @Inject constructor(
 
     fun signUpWithEmailAndPassword(email: String, password: String, name: String) =
         viewModelScope.launch {
+            loadingOn()
             signUpUseCase(
                 email,
                 password,
@@ -31,10 +32,10 @@ class SignUpViewModel @Inject constructor(
                 signUpListener,
                 updateNameListener
             )
+            loadingOff()
         }
 
     private val signUpListener = object : FireBaseListeners.SignUpListener {
-        override fun taskStart() = loadingOn()
         override fun taskSuccess() = showToast(R.string.sign_up_complete)
         override fun taskFailed(exception: Exception?) {
             val firebaseAuthException = exception as? FirebaseAuthException
@@ -44,8 +45,6 @@ class SignUpViewModel @Inject constructor(
                 Log.d(TAG, "SignUpViewModel.taskFailed: firebaseAuthException = null")
             } else setError(firebaseAuthException.errorCode)
         }
-
-        override fun taskFinish() = loadingOff()
     }
 
     private fun setError(errorCode: String) {
@@ -65,19 +64,10 @@ class SignUpViewModel @Inject constructor(
             Log.d(TAG, "updateName: user = null")
         }
 
-        override fun nameUpdateFailed() = showToast(R.string.name_update_failed)
-
         override fun taskFailed(exception: Exception?) {
-            val firebaseAuthException = exception as? FirebaseAuthException
-
-            if (firebaseAuthException == null)
-                Log.d(TAG, "taskFailed: firebaseAuthException = null")
-            else Log.d(TAG, "taskFailed: firebaseAuthException = $firebaseAuthException")
-            showToast(R.string.unknown_error)
+            showToast(R.string.name_update_failed)
         }
 
-        override fun taskStart() = loadingOn()
         override fun taskSuccess() {}
-        override fun taskFinish() = loadingOff()
     }
 }

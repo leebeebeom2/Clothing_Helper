@@ -85,7 +85,7 @@ private fun CHBottomAppBar(onDrawerIconClick: () -> Unit) {
 
 @Composable
 private fun DrawerContents(
-    user: User,
+    user: User?,
     onDrawerContentClick: (Int) -> Unit,
     onSettingIconClick: () -> Unit,
     essentialMenus: List<EssentialMenu>,
@@ -125,18 +125,20 @@ private fun DrawerContents(
 
 @Composable
 private fun DrawerHeader(
-    user: User, onSettingIconClick: () -> Unit,
+    user: User?, onSettingIconClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            modifier = Modifier
-                .padding(start = 12.dp)
-                .weight(1f),
-            style = MaterialTheme.typography.body1,
-            text = "${user.name}(${user.email})"
-        )
+        user?.let {
+            Text(
+                modifier = Modifier
+                    .padding(start = 12.dp)
+                    .weight(1f),
+                style = MaterialTheme.typography.body1,
+                text = "${user.name}(${user.email})"
+            )
+        }
         IconButton(onClick = onSettingIconClick) {
             SimpleIcon(drawable = R.drawable.ic_settings)
         }

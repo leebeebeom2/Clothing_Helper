@@ -5,7 +5,11 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import kotlinx.coroutines.flow.StateFlow
 
 interface SubCategoryRepository {
-    suspend fun loadSubCategories(onCancelled: (Int, String) -> Unit)
+    suspend fun loadSubCategories(
+        onDone: List<() -> Unit>,
+        onCancelled: List<(Int, String) -> Unit>
+    )
+
     fun writeInitialSubCategory(uid: String)
 
     val topSubCategories: StateFlow<List<SubCategory>>

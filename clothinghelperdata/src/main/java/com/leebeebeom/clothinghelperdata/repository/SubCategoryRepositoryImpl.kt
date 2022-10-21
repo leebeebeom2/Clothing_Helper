@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelperdata.repository
 
-import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -29,42 +28,49 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
     private val _etcSubCategories = MutableStateFlow(emptyList<SubCategory>())
     override val etcSubCategories get() = _etcSubCategories
 
-    override suspend fun loadSubCategories(onCancelled: (Int, String) -> Unit) {
+    override suspend fun loadSubCategories(
+        onDone: List<() -> Unit>,
+        onCancelled: List<(Int, String) -> Unit>
+    ) {
         userRepository.user.collect {
-            Log.d("TAG", "loadSubCategories: 콜렉트") // TODO 재 로그인 시 여러번 콜렉트 되는지 확인
             this.user.value = it
             it?.let {
-                loadSubCategories(it.uid, topSubCategories, SubCategoryParent.Top, onCancelled)
-                loadSubCategories(
-                    it.uid,
-                    bottomSubCategories,
-                    SubCategoryParent.Bottom,
-                    onCancelled
+                root.addSingleValueListener(
+                    uid = it.uid,
+                    subCategories = topSubCategories,
+                    subCategoryParent = SubCategoryParent.Top,
+                    onDone = onDone[0],
+                    onCancelled = onCancelled[0]
                 )
-                loadSubCategories(it.uid, outerSubCategories, SubCategoryParent.OUTER, onCancelled)
-                loadSubCategories(it.uid, etcSubCategories, SubCategoryParent.ETC, onCancelled)
+                root.addSingleValueListener(
+                    uid = it.uid,
+                    subCategories = bottomSubCategories,
+                    subCategoryParent = SubCategoryParent.Bottom,
+                    onDone = onDone[1],
+                    onCancelled = onCancelled[1]
+                )
+                root.addSingleValueListener(
+                    uid = it.uid,
+                    subCategories = outerSubCategories,
+                    subCategoryParent = SubCategoryParent.OUTER,
+                    onDone = onDone[2],
+                    onCancelled = onCancelled[2]
+                )
+                root.addSingleValueListener(
+                    uid = it.uid,
+                    subCategories = etcSubCategories,
+                    subCategoryParent = SubCategoryParent.ETC,
+                    onDone = onDone[3],
+                    onCancelled = onCancelled[3]
+                )
             }
         }
 
     }
 
-    private fun loadSubCategories(
-        uid: String,
-        subCategories: MutableStateFlow<List<SubCategory>>,
-        subCategoryParent: SubCategoryParent,
-        onCancelled: (Int, String) -> Unit
-    ) {
-        root.addSingleValueListener(
-            uid = uid,
-            subCategoryParent = subCategoryParent,
-            subCategories = subCategories,
-            onCancelled = onCancelled
-        )
-    }
-
     override fun writeInitialSubCategory(uid: String) {
         root.getSubCategoriesRef(uid)
-            .setValue(getInitialSubCategories()) // TODO List<String>(10000)으로 테스트 해보기
+            .setValue(getInitialSubCategories()) // TODO 10000개로 테스트 해보기
     }
 
     override fun addSubCategory(
@@ -169,6 +175,7 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
         uid: String,
         subCategoryParent: SubCategoryParent,
         subCategories: MutableStateFlow<List<SubCategory>>,
+        onDone: () -> Unit,
         onCancelled: (Int, String) -> Unit
     ) {
         getSubCategoriesRef(uid).orderByChild("parent").equalTo(subCategoryParent.name)
@@ -179,6 +186,7 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
                         child.getValue<SubCategory>()?.let { temp.add(it) }
                     }
                     subCategories.value = temp
+                    onDone()
                 }
 
                 override fun onCancelled(error: DatabaseError) =

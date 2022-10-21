@@ -195,5 +195,6 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
 }
 
 object DatabasePath {
-    const val SUB_CATEGORIES = "subCategories"
+    const val SUB_CATEGORIES = "sub categories"
+    const val USER_INFO = "user info"
 }

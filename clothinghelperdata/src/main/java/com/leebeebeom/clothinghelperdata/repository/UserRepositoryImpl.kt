@@ -4,6 +4,7 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
+import com.google.firebase.database.FirebaseDatabase
 import com.leebeebeom.clothinghelperdomain.model.User
 import com.leebeebeom.clothinghelperdomain.repository.FireBaseListeners
 import com.leebeebeom.clothinghelperdomain.repository.UserRepository
@@ -72,10 +73,12 @@ class UserRepositoryImpl : UserRepository {
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
                 signUpListener.taskSuccess()
-                // 이름 업데이트
                 val user = it.result.user
                 if (user == null) updateNameListener.userNull()
-                else updateName(updateNameListener, user, name)
+                else {
+                    user.toUser()?.run { pushUser(this) }
+                    updateName(updateNameListener, user, name)
+                }
             } else signUpListener.taskFailed(it.exception)
         }
     }
@@ -90,6 +93,7 @@ class UserRepositoryImpl : UserRepository {
         user.updateProfile(request).addOnCompleteListener {
             if (it.isSuccessful) {
                 updateName(name)
+                pushUser(user.toUser()!!.copy(name = name))
                 updateNameListener.taskSuccess()
             } else updateNameListener.taskFailed(null)
         }
@@ -107,6 +111,10 @@ class UserRepositoryImpl : UserRepository {
             else resetPasswordListener.taskFailed(it.exception)
         }
     }
+
+    private fun pushUser(user: User) =
+        FirebaseDatabase.getInstance().reference.child(user.uid).child(DatabasePath.USER_INFO)
+            .setValue(user)
 }
 
 fun FirebaseUser?.toUser() = this?.let { User(email!!, displayName!!, uid) }

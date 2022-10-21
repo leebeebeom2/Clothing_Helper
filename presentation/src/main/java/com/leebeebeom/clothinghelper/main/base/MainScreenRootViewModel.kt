@@ -9,7 +9,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
-import com.leebeebeom.clothinghelperdomain.model.*
+import com.leebeebeom.clothinghelperdomain.model.SubCategory
+import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.model.User
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoriesUserCase
 import com.leebeebeom.clothinghelperdomain.usecase.user.GetUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,32 +27,46 @@ class MainScreenRootViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getUserUseCase.getUser().collect(viewModelState::userUpdate)
-        }
-        viewModelScope.launch {
-            getSubCategoriesUseCase.getTopSubCategories(viewModelState::subCategoryLoadFailed)
-                .collect(viewModelState::topSubCategoriesUpdate)
-        }
-        viewModelScope.launch {
-            getSubCategoriesUseCase.getBottomSubCategories(viewModelState::subCategoryLoadFailed)
-                .collect(viewModelState::bottomSubCategoriesUpdate)
-        }
-        viewModelScope.launch {
-            getSubCategoriesUseCase.getOuterSubCategories(viewModelState::subCategoryLoadFailed)
-                .collect(viewModelState::outerSubCategoriesUpdate)
-        }
-        viewModelScope.launch {
-            getSubCategoriesUseCase.getEtcSubCategories(viewModelState::subCategoryLoadFailed)
-                .collect(viewModelState::etcSubCategoriesUpdate)
+            getUserUseCase().collect {
+                viewModelState.userUpdate(it)
+
+                it?.let {
+                    getSubCategoriesUseCase.getTopSubCategories(
+                        it.uid,
+                        viewModelState::subCategoryLoadFailed
+                    ).collect(viewModelState::topSubCategoriesUpdate)
+                }
+
+                it?.let {
+                    getSubCategoriesUseCase.getBottomSubCategories(
+                        it.uid,
+                        viewModelState::subCategoryLoadFailed
+                    ).collect(viewModelState::bottomSubCategoriesUpdate)
+                }
+
+                it?.let {
+                    getSubCategoriesUseCase.getOuterSubCategories(
+                        it.uid,
+                        viewModelState::subCategoryLoadFailed
+                    ).collect(viewModelState::outerSubCategoriesUpdate)
+                }
+
+                it?.let {
+                    getSubCategoriesUseCase.getEtcSubCategories(
+                        it.uid,
+                        viewModelState::subCategoryLoadFailed
+                    ).collect(viewModelState::etcSubCategoriesUpdate)
+                }
+            }
         }
     }
 }
 
 class MainNavHostViewModelState {
-    var user by mutableStateOf(User())
+    var user by mutableStateOf<User?>(null)
         private set
 
-    fun userUpdate(user: User) {
+    fun userUpdate(user: User?) {
         this.user = user
     }
 

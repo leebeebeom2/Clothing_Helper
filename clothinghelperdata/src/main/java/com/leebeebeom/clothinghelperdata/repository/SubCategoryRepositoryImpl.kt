@@ -1,5 +1,6 @@
 package com.leebeebeom.clothinghelperdata.repository
 
+import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -11,81 +12,59 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
+import com.leebeebeom.clothinghelperdomain.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
-class SubCategoryRepositoryImpl : SubCategoryRepository {
+class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
+    SubCategoryRepository {
     private val root = Firebase.database.reference
+    private val user = MutableStateFlow(userRepository.user.value)
 
-    private lateinit var topSubCategories: MutableStateFlow<List<SubCategory>>
-    override fun getTopSubCategories(
-        uid: String, onCancelled: (Int, String) -> Unit
-    ): StateFlow<List<SubCategory>> {
-        if (!::topSubCategories.isInitialized) {
-            topSubCategories = MutableStateFlow(emptyList())
-            root.addSingleValueListener(
-                uid = uid,
-                subCategoryParent = SubCategoryParent.Top,
-                subCategories = topSubCategories,
-                onCancelled = onCancelled
-            )
+    private val _topSubCategories = MutableStateFlow(emptyList<SubCategory>())
+    override val topSubCategories get() = _topSubCategories
+    private val _bottomSubCategories = MutableStateFlow(emptyList<SubCategory>())
+    override val bottomSubCategories get() = _bottomSubCategories
+    private val _outerSubCategories = MutableStateFlow(emptyList<SubCategory>())
+    override val outerSubCategories get() = _outerSubCategories
+    private val _etcSubCategories = MutableStateFlow(emptyList<SubCategory>())
+    override val etcSubCategories get() = _etcSubCategories
+
+    override suspend fun loadSubCategories(onCancelled: (Int, String) -> Unit) {
+        userRepository.user.collect {
+            Log.d("TAG", "loadSubCategories: 콜렉트") // TODO 재 로그인 시 여러번 콜렉트 되는지 확인
+            this.user.value = it
+            it?.let {
+                loadSubCategories(it.uid, topSubCategories, SubCategoryParent.Top, onCancelled)
+                loadSubCategories(
+                    it.uid,
+                    bottomSubCategories,
+                    SubCategoryParent.Bottom,
+                    onCancelled
+                )
+                loadSubCategories(it.uid, outerSubCategories, SubCategoryParent.OUTER, onCancelled)
+                loadSubCategories(it.uid, etcSubCategories, SubCategoryParent.ETC, onCancelled)
+            }
         }
-        return topSubCategories
+
     }
 
-    private lateinit var bottomSubCategories: MutableStateFlow<List<SubCategory>>
-    override fun getBottomSubCategories(
-        uid: String, onCancelled: (Int, String) -> Unit
-    ): StateFlow<List<SubCategory>> {
-        if (!::bottomSubCategories.isInitialized) {
-            bottomSubCategories = MutableStateFlow(emptyList())
-            root.addSingleValueListener(
-                uid = uid,
-                subCategoryParent = SubCategoryParent.Bottom,
-                subCategories = bottomSubCategories,
-                onCancelled = onCancelled
-            )
-        }
-        return bottomSubCategories
-    }
-
-    private lateinit var outerSubCategories: MutableStateFlow<List<SubCategory>>
-    override fun getOuterSubCategories(
-        uid: String, onCancelled: (Int, String) -> Unit
-    ): StateFlow<List<SubCategory>> {
-        if (!::outerSubCategories.isInitialized) {
-            outerSubCategories = MutableStateFlow(emptyList())
-            root.addSingleValueListener(
-                uid = uid,
-                subCategoryParent = SubCategoryParent.OUTER,
-                subCategories = outerSubCategories,
-                onCancelled = onCancelled
-            )
-        }
-        return outerSubCategories
-    }
-
-    private lateinit var etcSubCategories: MutableStateFlow<List<SubCategory>>
-    override fun getEtcSubCategories(
-        uid: String, onCancelled: (Int, String) -> Unit
-    ): StateFlow<List<SubCategory>> {
-        if (!::etcSubCategories.isInitialized) {
-            etcSubCategories = MutableStateFlow(emptyList())
-            root.addSingleValueListener(
-                uid = uid,
-                subCategoryParent = SubCategoryParent.ETC,
-                subCategories = etcSubCategories,
-                onCancelled = onCancelled
-            )
-        }
-        return etcSubCategories
+    private fun loadSubCategories(
+        uid: String,
+        subCategories: MutableStateFlow<List<SubCategory>>,
+        subCategoryParent: SubCategoryParent,
+        onCancelled: (Int, String) -> Unit
+    ) {
+        root.addSingleValueListener(
+            uid = uid,
+            subCategoryParent = subCategoryParent,
+            subCategories = subCategories,
+            onCancelled = onCancelled
+        )
     }
 
     override fun writeInitialSubCategory(uid: String) {
-        root.getSubCategoriesRef(uid).setValue(getInitialSubCategories())
-            .addOnCompleteListener {
-                if (!it.isSuccessful) throw Exception("이니셜 데이터 쓰기 실패")
-            }
+        root.getSubCategoriesRef(uid)
+            .setValue(getInitialSubCategories()) // TODO List<String>(10000)으로 테스트 해보기
     }
 
     override fun addSubCategory(
@@ -107,14 +86,14 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
 
     private fun addSubCategory(subCategoryParent: SubCategoryParent, newSubCategory: SubCategory) {
         when (subCategoryParent) {
-            SubCategoryParent.Top -> topSubCategories.value =
-                topSubCategories.value.addAndReturn(newSubCategory)
-            SubCategoryParent.Bottom -> bottomSubCategories.value =
-                bottomSubCategories.value.addAndReturn(newSubCategory)
-            SubCategoryParent.OUTER -> outerSubCategories.value =
-                outerSubCategories.value.addAndReturn(newSubCategory)
-            SubCategoryParent.ETC -> etcSubCategories.value =
-                etcSubCategories.value.addAndReturn(newSubCategory)
+            SubCategoryParent.Top -> _topSubCategories.value =
+                _topSubCategories.value.addAndReturn(newSubCategory)
+            SubCategoryParent.Bottom -> _bottomSubCategories.value =
+                _bottomSubCategories.value.addAndReturn(newSubCategory)
+            SubCategoryParent.OUTER -> _outerSubCategories.value =
+                _outerSubCategories.value.addAndReturn(newSubCategory)
+            SubCategoryParent.ETC -> _etcSubCategories.value =
+                _etcSubCategories.value.addAndReturn(newSubCategory)
         }
     }
 

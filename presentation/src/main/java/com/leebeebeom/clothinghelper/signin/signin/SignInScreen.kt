@@ -67,7 +67,8 @@ fun SignInScreen(
             // 프리뷰 시 주석 처리
             GoogleSignInButton(
                 signInWithGoogleEmail = viewModel::signInWithGoogleEmail,
-                enabled = viewModelState.googleButtonEnabled
+                enabled = viewModelState.googleButtonEnabled,
+                onGoogleSignInClick = viewModel::onGoogleSignInClick
             )
         }
         SignUpText(onEmailSignUpClick)

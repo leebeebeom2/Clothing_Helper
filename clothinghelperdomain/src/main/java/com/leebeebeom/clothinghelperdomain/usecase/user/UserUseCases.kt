@@ -38,3 +38,7 @@ class ResetPasswordUseCase(private val userRepository: UserRepository) {
 class GetUserUseCase(private val userRepository: UserRepository) {
     operator fun invoke() = userRepository.getUser()
 }
+
+class SignOutUseCase(private val userRepository: UserRepository){
+    operator fun invoke() = userRepository.signOut()
+}

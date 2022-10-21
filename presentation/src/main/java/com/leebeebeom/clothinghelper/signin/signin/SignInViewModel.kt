@@ -5,18 +5,16 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelper.signin.base.BaseSignInUpViewModel
 import com.leebeebeom.clothinghelper.signin.base.BaseSignInUpViewModelState
 import com.leebeebeom.clothinghelper.signin.base.FirebaseErrorCode
-import com.leebeebeom.clothinghelperdomain.repository.FireBaseListeners
+import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.user.SignInUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,14 +25,12 @@ class SignInViewModel @Inject constructor(
 
     override val viewModelState = SignInViewModelState()
 
-    fun signInWithEmailAndPassword(email: String, password: String) =
-        viewModelScope.launch {
-            loadingOn()
-            signInUseCase(email, password, signInListener)
-            loadingOff()
-        }
+    fun signInWithEmailAndPassword(email: String, password: String) {
+        loadingOn()
+        signInUseCase(email, password, signInListener)
+    }
 
-    private val signInListener = object : FireBaseListeners.SignInListener {
+    private val signInListener = object : FirebaseListener {
         override fun taskSuccess() = showToast(R.string.sign_in_complete)
 
         override fun taskFailed(exception: Exception?) {
@@ -44,6 +40,7 @@ class SignInViewModel @Inject constructor(
                 showToast(R.string.unknown_error)
                 Log.d(TAG, "SignInViewModel.taskFailed: firebaseAuthException = null")
             } else setError(firebaseAuthException.errorCode)
+            loadingOff()
         }
     }
 

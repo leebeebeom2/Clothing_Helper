@@ -28,7 +28,11 @@ class UserRepositoryImpl : UserRepository {
         this._user.value = user
     }
 
-    override fun googleSignIn(googleCredential: Any?, googleSignInListener: FirebaseListener) { // TODO 첫 유저 확인 후 초기 데이터 쓰기
+    override fun googleSignIn(
+        googleCredential: Any?,
+        googleSignInListener: FirebaseListener,
+        writeInitialSubCategory: (String) -> Unit
+    ) {
         val authCredential = googleCredential as AuthCredential
 
         auth.signInWithCredential(authCredential).addOnCompleteListener {
@@ -36,6 +40,7 @@ class UserRepositoryImpl : UserRepository {
                 val user = it.result.user.toUser()!!
                 it.result.additionalUserInfo?.isNewUser?.let {
                     pushUser(user)
+                    writeInitialSubCategory(user.uid)
                 }
                 signInSuccess(user)
                 googleSignInListener.taskSuccess()
@@ -52,17 +57,20 @@ class UserRepositoryImpl : UserRepository {
         }
     }
 
-    override fun signUp( // TODO 초기 데이터 쓰기
+    override fun signUp(
         email: String,
         password: String,
         name: String,
         signUpListener: FirebaseListener,
-        updateNameListener: FirebaseListener
-    ) { auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
+        updateNameListener: FirebaseListener,
+        writeInitialSubCategory: (String) -> Unit
+    ) {
+        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
                 val firebaseUser = it.result.user!!
                 val user = firebaseUser.toUser()!!
                 pushUser(user)
+                writeInitialSubCategory(user.uid)
                 signInSuccess(user)
                 signUpListener.taskSuccess()
                 updateName(updateNameListener, firebaseUser, name)

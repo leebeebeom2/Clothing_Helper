@@ -113,7 +113,7 @@ class UserRepositoryImpl(val subCategoryRepositoryImpl: SubCategoryRepositoryImp
                 if (!it.isSuccessful) throw Exception("pushUser 실패")
             }
 
-    private fun signOut() {
+    override fun signOut() {
         auth.signOut()
         _isSignIn.value = false
         updateUser(null)

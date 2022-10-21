@@ -1,21 +1,21 @@
 package com.leebeebeom.clothinghelperdomain.repository
 
 import com.leebeebeom.clothinghelperdomain.model.User
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 interface UserRepository {
-    fun isSignIn(): StateFlow<Boolean>
-    fun getUser(): StateFlow<User>
+    suspend fun isSignIn(): StateFlow<Boolean>
+    suspend fun getUser(): StateFlow<User?>
 
+    /**
+     * 첫 유저 여부 반환
+     */
     suspend fun googleSignIn(
         googleCredential: Any?, googleSignInListener: FireBaseListeners.GoogleSignInListener
-    ): MutableStateFlow<Boolean>
+    ): Boolean
 
     suspend fun signIn(
-        email: String,
-        password: String,
-        signInListener: FireBaseListeners.SignInListener
+        email: String, password: String, signInListener: FireBaseListeners.SignInListener
     )
 
     suspend fun signUp(
@@ -32,10 +32,8 @@ interface UserRepository {
 }
 
 interface FirebaseListener {
-    fun taskStart()
     fun taskSuccess()
     fun taskFailed(exception: Exception?)
-    fun taskFinish()
 }
 
 sealed class FireBaseListeners {
@@ -43,7 +41,6 @@ sealed class FireBaseListeners {
     interface SignInListener : FirebaseListener
     interface UpdateNameListener : FirebaseListener {
         fun userNull()
-        fun nameUpdateFailed()
     }
 
     interface ResetPasswordListener : FirebaseListener

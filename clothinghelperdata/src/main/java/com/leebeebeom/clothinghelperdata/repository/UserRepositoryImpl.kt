@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelperdata.repository
 
-import android.util.Log
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -54,7 +53,6 @@ class UserRepositoryImpl(val subCategoryRepositoryImpl: SubCategoryRepositoryImp
                 }
                 signInSuccess(user)
                 googleSignInListener.taskSuccess()
-                Log.d("TAG", "googleSignIn: 태스크 끝")
             } else googleSignInListener.taskFailed(it.exception)
         }
     }

@@ -18,7 +18,7 @@ class GoogleSignInUseCase(
         googleCredential: Any?, googleSignInListener: FireBaseListeners.GoogleSignInListener
     ): Unit = withContext(Dispatchers.IO) {
         val isFirstUser = userRepository.googleSignIn(googleCredential, googleSignInListener)
-        if (isFirstUser) writeInitialSubCategoriesUseCase()
+        if (isFirstUser) userRepository.getUser().value?.let { writeInitialSubCategoriesUseCase(it) }
     }
 }
 
@@ -38,9 +38,9 @@ class SignUpUseCase(
         name: String,
         signUpListener: FireBaseListeners.SignUpListener,
         updateNameListener: FireBaseListeners.UpdateNameListener
-    ) = withContext(Dispatchers.IO) {
+    ): Unit? = withContext(Dispatchers.IO) {
         userRepository.signUp(email, password, name, signUpListener, updateNameListener)
-        writeInitialSubCategoriesUseCase()
+        userRepository.getUser().value?.let { writeInitialSubCategoriesUseCase(it) }
     }
 }
 

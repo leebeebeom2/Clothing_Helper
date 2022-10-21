@@ -9,91 +9,97 @@ import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.model.User
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
-import com.leebeebeom.clothinghelperdomain.repository.UserRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.withContext
 
-class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
-    SubCategoryRepository {
+class SubCategoryRepositoryImpl : SubCategoryRepository {
     private val root = Firebase.database.reference
 
     private lateinit var topSubCategories: MutableStateFlow<List<SubCategory>>
-    override fun getTopSubCategories(
-        onCancelled: (Int, String) -> Unit
-    ): StateFlow<List<SubCategory>> {
+    override suspend fun getTopSubCategories(
+        uid: String, onCancelled: (Int, String) -> Unit
+    ): StateFlow<List<SubCategory>> = withContext(Dispatchers.IO) {
         if (!::topSubCategories.isInitialized) {
             topSubCategories = MutableStateFlow(emptyList())
             root.setSingleValueListener(
+                uid = uid,
                 subCategoryParent = SubCategoryParent.Top,
                 subCategories = topSubCategories,
                 onCancelled = onCancelled
             )
         }
-        return topSubCategories
+        topSubCategories
     }
 
     private lateinit var bottomSubCategories: MutableStateFlow<List<SubCategory>>
-    override fun getBottomSubCategories(
-        onCancelled: (Int, String) -> Unit
-    ): StateFlow<List<SubCategory>> {
+    override suspend fun getBottomSubCategories(
+        uid: String, onCancelled: (Int, String) -> Unit
+    ): StateFlow<List<SubCategory>> = withContext(Dispatchers.IO) {
         if (!::bottomSubCategories.isInitialized) {
             bottomSubCategories = MutableStateFlow(emptyList())
             root.setSingleValueListener(
+                uid = uid,
                 subCategoryParent = SubCategoryParent.Bottom,
                 subCategories = bottomSubCategories,
                 onCancelled = onCancelled
             )
-            topSubCategories = MutableStateFlow(emptyList())
         }
-        return bottomSubCategories
+        bottomSubCategories
     }
 
     private lateinit var outerSubCategories: MutableStateFlow<List<SubCategory>>
-    override fun getOuterSubCategories(
-        onCancelled: (Int, String) -> Unit
-    ): StateFlow<List<SubCategory>> {
+    override suspend fun getOuterSubCategories(
+        uid: String, onCancelled: (Int, String) -> Unit
+    ): StateFlow<List<SubCategory>> = withContext(Dispatchers.IO) {
         if (!::outerSubCategories.isInitialized) {
             outerSubCategories = MutableStateFlow(emptyList())
             root.setSingleValueListener(
+                uid = uid,
                 subCategoryParent = SubCategoryParent.OUTER,
                 subCategories = outerSubCategories,
                 onCancelled = onCancelled
             )
         }
-        return outerSubCategories
+        outerSubCategories
     }
 
     private lateinit var etcSubCategories: MutableStateFlow<List<SubCategory>>
-    override fun getEtcSubCategories(
-        onCancelled: (Int, String) -> Unit
-    ): StateFlow<List<SubCategory>> {
+    override suspend fun getEtcSubCategories(
+        uid: String, onCancelled: (Int, String) -> Unit
+    ): StateFlow<List<SubCategory>> = withContext(Dispatchers.IO) {
         if (!::etcSubCategories.isInitialized) {
             etcSubCategories = MutableStateFlow(emptyList())
             root.setSingleValueListener(
+                uid = uid,
                 subCategoryParent = SubCategoryParent.ETC,
                 subCategories = etcSubCategories,
                 onCancelled = onCancelled
             )
         }
-        return etcSubCategories
+        etcSubCategories
     }
 
-    override suspend fun writeInitialSubCategory() {
-        root.getUidRef().setValue(userRepository.getUser().value)
-        root.getSubCategoriesRef().setValue(getInitialSubCategories())
-    }
+    override suspend fun writeInitialSubCategory(user: User): Unit =
+        withContext(Dispatchers.IO) {
+            root.getUidRef(user.uid).setValue(user)
+            root.getSubCategoriesRef(user.uid).setValue(getInitialSubCategories())
+        }
 
     override suspend fun addSubCategory(
+        uid: String,
         subCategoryParent: SubCategoryParent,
         name: String,
         onSuccess: () -> Unit,
         onFailed: () -> Unit
-    ) {
+    ): Unit = withContext(Dispatchers.IO) {
         val timeStamp = System.currentTimeMillis()
         val newSubCategory = SubCategory(subCategoryParent, timeStamp, name)
 
-        root.getSubCategoriesRef().push().setValue(newSubCategory).addOnCompleteListener {
+        root.getSubCategoriesRef(uid).push().setValue(newSubCategory).addOnCompleteListener {
             if (it.isSuccessful) onSuccess() else onFailed()
         }
     }
@@ -162,16 +168,17 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
         )
     }
 
-    private fun DatabaseReference.getUidRef() = child(userRepository.getUser().value.uid)
-    private fun DatabaseReference.getSubCategoriesRef() =
-        getUidRef().child(DatabasePath.SUB_CATEGORIES)
+    private fun DatabaseReference.getUidRef(uid: String) = child(uid)
+    private fun DatabaseReference.getSubCategoriesRef(uid: String) =
+        getUidRef(uid).child(DatabasePath.SUB_CATEGORIES)
 
     private fun DatabaseReference.setSingleValueListener(
+        uid: String,
         subCategoryParent: SubCategoryParent,
         subCategories: MutableStateFlow<List<SubCategory>>,
         onCancelled: (Int, String) -> Unit
     ) {
-        getSubCategoriesRef().orderByChild("parent").equalTo(subCategoryParent.name)
+        getSubCategoriesRef(uid).orderByChild("parent").equalTo(subCategoryParent.name)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val temp = mutableListOf<SubCategory>()

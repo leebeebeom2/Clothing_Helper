@@ -33,7 +33,7 @@ class UserRepositoryImpl(val subCategoryRepositoryImpl: SubCategoryRepositoryImp
         updateUser(user)
     }
 
-    private fun updateUser(user: User) {
+    private fun updateUser(user: User?) {
         if (!::user.isInitialized) this.user = MutableStateFlow(user)
         else this.user.value = user
     }
@@ -112,6 +112,12 @@ class UserRepositoryImpl(val subCategoryRepositoryImpl: SubCategoryRepositoryImp
             .setValue(user).addOnCompleteListener {
                 if (!it.isSuccessful) throw Exception("pushUser 실패")
             }
+
+    private fun signOut() {
+        auth.signOut()
+        _isSignIn.value = false
+        updateUser(null)
+    }
 }
 
 fun FirebaseUser?.toUser() = this?.let { User(email!!, displayName ?: "", uid) }

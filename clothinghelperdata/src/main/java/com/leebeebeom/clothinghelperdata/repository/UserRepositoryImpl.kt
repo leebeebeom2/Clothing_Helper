@@ -61,8 +61,10 @@ class UserRepositoryImpl(val subCategoryRepositoryImpl: SubCategoryRepositoryImp
 
     override fun signIn(email: String, password: String, signInListener: FirebaseListener) {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-            if (it.isSuccessful) signInListener.taskSuccess()
-            else signInListener.taskFailed(it.exception)
+            if (it.isSuccessful) {
+                signInSuccess(it.result.user.toUser()!!)
+                signInListener.taskSuccess()
+            } else signInListener.taskFailed(it.exception)
         }
     }
 
@@ -75,10 +77,12 @@ class UserRepositoryImpl(val subCategoryRepositoryImpl: SubCategoryRepositoryImp
     ) {
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
-                val user = it.result.user!!
-                firstUserTask(user.toUser()!!)
+                val firebaseUser = it.result.user!!
+                val user = firebaseUser.toUser()!!
+                firstUserTask(user)
+                signInSuccess(user)
                 signUpListener.taskSuccess()
-                updateName(updateNameListener, user, name)
+                updateName(updateNameListener, firebaseUser, name)
             } else signUpListener.taskFailed(it.exception)
         }
     }

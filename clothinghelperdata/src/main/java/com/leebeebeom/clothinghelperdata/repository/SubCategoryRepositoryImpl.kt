@@ -9,98 +9,112 @@ import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
-import com.leebeebeom.clothinghelperdomain.model.User
+import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.withContext
 
 class SubCategoryRepositoryImpl : SubCategoryRepository {
     private val root = Firebase.database.reference
 
     private lateinit var topSubCategories: MutableStateFlow<List<SubCategory>>
-    override suspend fun getTopSubCategories(
+    override fun getTopSubCategories(
         uid: String, onCancelled: (Int, String) -> Unit
-    ): StateFlow<List<SubCategory>> = withContext(Dispatchers.IO) {
+    ): StateFlow<List<SubCategory>> {
         if (!::topSubCategories.isInitialized) {
             topSubCategories = MutableStateFlow(emptyList())
-            root.setSingleValueListener(
+            root.addSingleValueListener(
                 uid = uid,
                 subCategoryParent = SubCategoryParent.Top,
                 subCategories = topSubCategories,
                 onCancelled = onCancelled
             )
         }
-        topSubCategories
+        return topSubCategories
     }
 
     private lateinit var bottomSubCategories: MutableStateFlow<List<SubCategory>>
-    override suspend fun getBottomSubCategories(
+    override fun getBottomSubCategories(
         uid: String, onCancelled: (Int, String) -> Unit
-    ): StateFlow<List<SubCategory>> = withContext(Dispatchers.IO) {
+    ): StateFlow<List<SubCategory>> {
         if (!::bottomSubCategories.isInitialized) {
             bottomSubCategories = MutableStateFlow(emptyList())
-            root.setSingleValueListener(
+            root.addSingleValueListener(
                 uid = uid,
                 subCategoryParent = SubCategoryParent.Bottom,
                 subCategories = bottomSubCategories,
                 onCancelled = onCancelled
             )
         }
-        bottomSubCategories
+        return bottomSubCategories
     }
 
     private lateinit var outerSubCategories: MutableStateFlow<List<SubCategory>>
-    override suspend fun getOuterSubCategories(
+    override fun getOuterSubCategories(
         uid: String, onCancelled: (Int, String) -> Unit
-    ): StateFlow<List<SubCategory>> = withContext(Dispatchers.IO) {
+    ): StateFlow<List<SubCategory>> {
         if (!::outerSubCategories.isInitialized) {
             outerSubCategories = MutableStateFlow(emptyList())
-            root.setSingleValueListener(
+            root.addSingleValueListener(
                 uid = uid,
                 subCategoryParent = SubCategoryParent.OUTER,
                 subCategories = outerSubCategories,
                 onCancelled = onCancelled
             )
         }
-        outerSubCategories
+        return outerSubCategories
     }
 
     private lateinit var etcSubCategories: MutableStateFlow<List<SubCategory>>
-    override suspend fun getEtcSubCategories(
+    override fun getEtcSubCategories(
         uid: String, onCancelled: (Int, String) -> Unit
-    ): StateFlow<List<SubCategory>> = withContext(Dispatchers.IO) {
+    ): StateFlow<List<SubCategory>> {
         if (!::etcSubCategories.isInitialized) {
             etcSubCategories = MutableStateFlow(emptyList())
-            root.setSingleValueListener(
+            root.addSingleValueListener(
                 uid = uid,
                 subCategoryParent = SubCategoryParent.ETC,
                 subCategories = etcSubCategories,
                 onCancelled = onCancelled
             )
         }
-        etcSubCategories
+        return etcSubCategories
     }
 
-    override suspend fun writeInitialSubCategory(user: User): Unit =
-        withContext(Dispatchers.IO) {
-            root.getUidRef(user.uid).setValue(user)
-            root.getSubCategoriesRef(user.uid).setValue(getInitialSubCategories())
-        }
+    override fun writeInitialSubCategory(uid: String) {
+        root.getSubCategoriesRef(uid).setValue(getInitialSubCategories())
+            .addOnCompleteListener {
+                if (!it.isSuccessful) throw Exception("이니셜 데이터 쓰기 실패")
+            }
+    }
 
-    override suspend fun addSubCategory(
+    override fun addSubCategory(
         uid: String,
         subCategoryParent: SubCategoryParent,
         name: String,
-        onSuccess: () -> Unit,
-        onFailed: () -> Unit
-    ): Unit = withContext(Dispatchers.IO) {
+        addSubCategoryListener: FirebaseListener
+    ) {
         val timeStamp = System.currentTimeMillis()
         val newSubCategory = SubCategory(subCategoryParent, timeStamp, name)
 
         root.getSubCategoriesRef(uid).push().setValue(newSubCategory).addOnCompleteListener {
-            if (it.isSuccessful) onSuccess() else onFailed()
+            if (it.isSuccessful) {
+                addSubCategory(subCategoryParent, newSubCategory)
+                addSubCategoryListener.taskSuccess()
+            } else addSubCategoryListener.taskFailed(it.exception)
+        }
+    }
+
+    private fun addSubCategory(subCategoryParent: SubCategoryParent, newSubCategory: SubCategory) {
+        when (subCategoryParent) {
+            SubCategoryParent.Top -> topSubCategories.value =
+                topSubCategories.value.addAndReturn(newSubCategory)
+            SubCategoryParent.Bottom -> bottomSubCategories.value =
+                bottomSubCategories.value.addAndReturn(newSubCategory)
+            SubCategoryParent.OUTER -> outerSubCategories.value =
+                outerSubCategories.value.addAndReturn(newSubCategory)
+            SubCategoryParent.ETC -> etcSubCategories.value =
+                etcSubCategories.value.addAndReturn(newSubCategory)
         }
     }
 
@@ -172,7 +186,7 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
     private fun DatabaseReference.getSubCategoriesRef(uid: String) =
         getUidRef(uid).child(DatabasePath.SUB_CATEGORIES)
 
-    private fun DatabaseReference.setSingleValueListener(
+    private fun DatabaseReference.addSingleValueListener(
         uid: String,
         subCategoryParent: SubCategoryParent,
         subCategories: MutableStateFlow<List<SubCategory>>,
@@ -197,4 +211,10 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
 object DatabasePath {
     const val SUB_CATEGORIES = "sub categories"
     const val USER_INFO = "user info"
+}
+
+fun <T> List<T>.addAndReturn(value: T): List<T> {
+    val mutableList = toMutableList()
+    mutableList.add(value)
+    return mutableList
 }

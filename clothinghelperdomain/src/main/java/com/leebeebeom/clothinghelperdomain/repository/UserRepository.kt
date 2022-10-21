@@ -26,6 +26,8 @@ interface UserRepository {
     fun resetPasswordEmail(
         email: String, resetPasswordListener: FirebaseListener
     )
+
+    fun signOut()
 }
 
 interface FirebaseListener {

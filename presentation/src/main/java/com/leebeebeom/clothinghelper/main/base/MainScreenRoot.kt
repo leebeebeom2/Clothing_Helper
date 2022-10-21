@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -90,7 +91,7 @@ private fun DrawerContents(
     onSettingIconClick: () -> Unit,
     essentialMenus: List<EssentialMenu>,
     mainCategories: List<MainCategory>,
-    getSubCategories:(SubCategoryParent) -> List<SubCategory>
+    getSubCategories: (SubCategoryParent) -> List<SubCategory>
 ) {
     Column {
         DrawerHeader(user = user, onSettingIconClick = onSettingIconClick)
@@ -153,14 +154,23 @@ private fun EssentialMenu(
     DrawerContentRow(onDrawerContentClick = { onDrawerContentClick(essentialMenu.id) }) {
         SimpleIcon(modifier = Modifier.size(22.dp), drawable = essentialMenu.drawable)
         SimpleWidthSpacer(dp = 12)
-        Text(
+        DrawerContentText(
             modifier = Modifier.weight(1f),
             text = stringResource(id = essentialMenu.name),
-            style = MaterialTheme.typography.body1.copy(letterSpacing = 0.75.sp),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            style = MaterialTheme.typography.body1.copy(letterSpacing = 0.75.sp)
         )
     }
+
+@Composable
+private fun DrawerContentText(modifier: Modifier, text: String, style: TextStyle) {
+    Text(
+        modifier = modifier,
+        text = text,
+        style = style,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+    )
+}
 
 @Composable
 private fun MainCategory(
@@ -172,27 +182,36 @@ private fun MainCategory(
 
     Column {
         DrawerContentRow(onDrawerContentClick = { onDrawerContentClick(mainCategory.id) }) {
-            Text(
+            DrawerContentText(
                 modifier = Modifier
                     .weight(1f)
                     .padding(start = 8.dp),
                 text = stringResource(id = mainCategory.name),
-                style = MaterialTheme.typography.subtitle1,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                style = MaterialTheme.typography.subtitle1
             )
-            if (subCategories.isNotEmpty())
-                ExpandIcon(modifier = Modifier.size(22.dp), isExpanded = isExpand) {
-                    isExpand = !isExpand
-                }
+            ExpandIcon(modifier = Modifier.size(22.dp), isExpanded = isExpand) {
+                isExpand = !isExpand
+            }
         }
         if (isExpand)
-            for (subCategory in subCategories)
-                Text(text = subCategory.name)
+            for (subCategory in subCategories) SubCategory(subCategory) {}
     }
 }
 
-@Composable // 검수
+@Composable
+private fun SubCategory(subCategory: SubCategory, onSubCategoryClick: (id: Long) -> Unit) {
+    DrawerContentRow(onDrawerContentClick = { onSubCategoryClick(subCategory.id) }) {
+        DrawerContentText(
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 20.dp),
+            text = subCategory.name,
+            style = MaterialTheme.typography.subtitle2
+        )
+    }
+}
+
+@Composable
 private fun DrawerContentRow(
     onDrawerContentClick: () -> Unit, content: @Composable RowScope.() -> Unit
 ) = Row(
@@ -202,7 +221,7 @@ private fun DrawerContentRow(
         .clip(RoundedCornerShape(12.dp))
         .clickable(onClick = onDrawerContentClick)
         .padding(start = 4.dp)
-        .heightIn(48.dp),
+        .heightIn(44.dp),
     verticalAlignment = Alignment.CenterVertically,
     content = content
 )

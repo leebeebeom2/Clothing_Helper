@@ -81,12 +81,13 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
         val timeStamp = System.currentTimeMillis()
         val newSubCategory = SubCategory(subCategoryParent, timeStamp, name)
 
-        root.getSubCategoriesRef(user.value!!.uid).push().setValue(newSubCategory).addOnCompleteListener {
-            if (it.isSuccessful) {
-                addSubCategory(subCategoryParent, newSubCategory)
-                addSubCategoryListener.taskSuccess()
-            } else addSubCategoryListener.taskFailed(it.exception)
-        }
+        root.getSubCategoriesRef(user.value!!.uid).push().setValue(newSubCategory)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    addSubCategory(subCategoryParent, newSubCategory)
+                    addSubCategoryListener.taskSuccess()
+                } else addSubCategoryListener.taskFailed(it.exception)
+            }
     }
 
     private fun addSubCategory(subCategoryParent: SubCategoryParent, newSubCategory: SubCategory) {

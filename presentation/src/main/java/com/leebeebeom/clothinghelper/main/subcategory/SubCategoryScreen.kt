@@ -30,6 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleIcon
+import com.leebeebeom.clothinghelper.main.maincategory.HeaderText
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
@@ -44,8 +45,7 @@ fun SubCategoryScreenPreview() {
 
 @Composable
 fun SubCategoryScreen(
-    parentName: String,
-    viewModel: SubCategoryViewModel = hiltViewModel()
+    parentName: String, viewModel: SubCategoryViewModel = hiltViewModel()
 ) {
     val subCategoryParent = enumValueOf<SubCategoryParent>(parentName)
     val viewModelState = viewModel.viewModelState
@@ -58,6 +58,16 @@ fun SubCategoryScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
+            item {
+                HeaderText(R.string.sub_categories)
+                SimpleHeightSpacer(dp = 8)
+                Row {
+                    Divider(modifier = Modifier.weight(1f))
+                    // TODO 올 익스팬트, 정렬 아이콘
+                }
+                SimpleHeightSpacer(dp = 4)
+            }
+
             this.items(viewModelState.getSubCategories(subCategoryParent), key = { it.id }) {
                 SubCategoryContent(it)
             }

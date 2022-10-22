@@ -50,6 +50,8 @@ fun MainCategoryScreen(
             .padding(16.dp),
     ) {
         HeaderText(R.string.main_categories)
+        SimpleHeightSpacer(dp = 8)
+        Divider()
         SimpleHeightSpacer(dp = 12)
 
         val modifier =

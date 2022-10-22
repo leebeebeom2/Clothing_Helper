@@ -38,13 +38,18 @@ fun MainNavHost() {
         ) {
             composable(MainDestinations.MainCategory.route) {
                 MainCategoryScreen(
-                    onMainCategoryClick = { parentName -> navController.navigateToSubCategory(parentName) })
+                    onMainCategoryClick = { parentName ->
+                        navController.navigateToSubCategory(
+                            parentName
+                        )
+                    })
             }
             composable(
                 route = MainDestinations.SubCategory.routeWithArg,
                 arguments = MainDestinations.SubCategory.arguments
             ) { entry ->
-                val parentName = entry.arguments?.getString(MainDestinations.SubCategory.parentName) ?: ""
+                val parentName =
+                    entry.arguments?.getString(MainDestinations.SubCategory.parentName) ?: ""
                 SubCategoryScreen(parentName)
             }
             composable(MainDestinations.Setting.route) {

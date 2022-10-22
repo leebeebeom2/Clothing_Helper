@@ -22,13 +22,11 @@ class AddSubCategoryUseCase(
     private val subCategoryRepository: SubCategoryRepository
 ) {
     operator fun invoke(
-        uid: String,
         subCategoryParent: SubCategoryParent,
         name: String,
         addSubCategoryListener: FirebaseListener
     ) =
         subCategoryRepository.addSubCategory(
-            uid = uid,
             subCategoryParent = subCategoryParent,
             name = name,
             addSubCategoryListener

@@ -47,18 +47,18 @@ fun SubCategoryScreen(
     parentName: String,
     viewModel: SubCategoryViewModel = hiltViewModel()
 ) {
-    val parent = enumValueOf<SubCategoryParent>(parentName)
+    val subCategoryParent = enumValueOf<SubCategoryParent>(parentName)
     val viewModelState = viewModel.viewModelState
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // TODO 타이틀
-        // TODO 올 익스팬드, 정렬
+        // TODO 헤어
+        // TODO 올 익스팬드, 정렬, 삭제, 이름 수정
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            this.items(viewModelState.getSubCategories(parent), key = { it.id }) {
+            this.items(viewModelState.getSubCategories(subCategoryParent), key = { it.id }) {
                 SubCategoryContent(it)
             }
         }
@@ -67,8 +67,8 @@ fun SubCategoryScreen(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(end = 16.dp, bottom = 16.dp),
-            onPositiveButtonClick = { viewModel.addSubCategory(parent, it) },
-            subCategories = viewModelState.getSubCategories(parent)
+            onPositiveButtonClick = { viewModel.addSubCategory(subCategoryParent, it) },
+            subCategories = viewModelState.getSubCategories(subCategoryParent)
         )
     }
 }
@@ -100,7 +100,7 @@ private fun SubCategoryInfo(isExpanded: Boolean) {
             ) {
                 val weightModifier = Modifier.weight(1f)
 
-                SubCategoryInfoText(
+                SubCategoryInfoText( // TODO
                     modifier = weightModifier,
                     infoTitle = R.string.average_size,
                     info = R.string.top_info

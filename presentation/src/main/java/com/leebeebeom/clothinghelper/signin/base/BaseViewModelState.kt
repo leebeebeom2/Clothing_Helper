@@ -19,7 +19,7 @@ open class BaseSignInViewModelState : BaseViewModelState() {
     }
 }
 
-open class BaseSignInUpViewModelState : BaseSignInViewModelState() {
+open class GoogleSignInViewModelState : BaseSignInViewModelState() {
     var googleButtonEnabled by mutableStateOf(true)
         private set
 

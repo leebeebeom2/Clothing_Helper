@@ -23,7 +23,7 @@ class UserRepositoryImpl : UserRepository {
     override fun googleSignIn(
         googleCredential: Any?,
         googleSignInListener: FirebaseListener,
-        pushInitialSubCategories: (String) -> Unit
+        pushInitialSubCategories: (uid: String) -> Unit
     ) {
         val authCredential = googleCredential as AuthCredential
 
@@ -54,7 +54,7 @@ class UserRepositoryImpl : UserRepository {
         name: String,
         signUpListener: FirebaseListener,
         updateNameListener: FirebaseListener,
-        pushInitialSubCategories: (String) -> Unit
+        pushInitialSubCategories: (uid: String) -> Unit
     ) {
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {

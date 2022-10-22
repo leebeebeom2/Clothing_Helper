@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun MainScreenRoot(
     onSettingIconClick: () -> Unit,
-    onDrawerContentClick: (parentId: Int) -> Unit,
+    onDrawerContentClick: (parentName: String) -> Unit,
     viewModel: MainScreenRootViewModel = hiltViewModel(),
     content: @Composable (PaddingValues) -> Unit
 ) {
@@ -90,7 +90,7 @@ private fun BottomAppBar(onDrawerIconClick: () -> Unit) =
 @Composable
 private fun DrawerContents(
     user: User?,
-    onDrawerContentClick: (parentId: Int) -> Unit,
+    onDrawerContentClick: (parentName: String) -> Unit,
     onSettingIconClick: () -> Unit,
     essentialMenus: List<EssentialMenu>,
     mainCategories: List<MainCategory>,
@@ -103,7 +103,7 @@ private fun DrawerContents(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(top = 4.dp, bottom = 40.dp)
         ) {
-            items(essentialMenus, key = { it.id }) {
+            items(essentialMenus, key = { it.type.name }) {
                 EssentialMenu(essentialMenu = it, onDrawerContentClick = onDrawerContentClick)
             }
 
@@ -113,7 +113,7 @@ private fun DrawerContents(
                 SimpleHeightSpacer(dp = 4)
             }
 
-            items(mainCategories, key = { it.id }) {
+            items(mainCategories, key = { it.type }) {
                 MainCategory(
                     mainCategory = it,
                     subCategories = getSubCategories(it.type),
@@ -148,11 +148,10 @@ private fun DrawerHeader(user: User?, onSettingIconClick: () -> Unit) {
 @Composable
 private fun EssentialMenu(
     essentialMenu: EssentialMenu,
-    onDrawerContentClick: (parentId: Int) -> Unit
-) =
-    DrawerContentRow(
+    onDrawerContentClick: (parentName: String) -> Unit
+) = DrawerContentRow(
         modifier = Modifier.heightIn(44.dp),
-        onDrawerContentClick = { onDrawerContentClick(essentialMenu.id) }) {
+        onDrawerContentClick = { onDrawerContentClick(essentialMenu.type.name) }) {
         SimpleIcon(modifier = Modifier.size(22.dp), drawable = essentialMenu.drawable)
         SimpleWidthSpacer(dp = 12)
         DrawerContentText(
@@ -178,14 +177,14 @@ private fun MainCategory(
     mainCategory: MainCategory,
     subCategories: List<SubCategory>,
     isLoading: Boolean,
-    onDrawerContentClick: (Int) -> Unit,
+    onDrawerContentClick: (parentName: String) -> Unit,
 ) {
     var isExpand by rememberSaveable { mutableStateOf(false) }
 
     Column {
         DrawerContentRow(
             modifier = Modifier.heightIn(48.dp),
-            onDrawerContentClick = { onDrawerContentClick(mainCategory.id) }) {
+            onDrawerContentClick = { onDrawerContentClick(mainCategory.type.name) }) {
             DrawerContentText(
                 modifier = Modifier
                     .weight(1f)
@@ -283,10 +282,10 @@ class MainScreenUIState(
     }
 
     val essentialMenus = listOf(
-        EssentialMenu(BaseMenuIds.MAIN_SCREEN, R.string.main_screen, R.drawable.ic_home),
-        EssentialMenu(BaseMenuIds.FAVORITE, R.string.favorite, R.drawable.ic_star),
-        EssentialMenu(BaseMenuIds.SEE_ALL, R.string.see_all, R.drawable.ic_list),
-        EssentialMenu(BaseMenuIds.TRASH, R.string.trash, R.drawable.ic_delete)
+        EssentialMenu(R.string.main_screen, R.drawable.ic_home, EssentialMenus.MAIN_SCREEN),
+        EssentialMenu(R.string.favorite, R.drawable.ic_star, EssentialMenus.FAVORITE),
+        EssentialMenu(R.string.see_all, R.drawable.ic_list, EssentialMenus.SEE_ALL),
+        EssentialMenu(R.string.trash, R.drawable.ic_delete, EssentialMenus.TRASH)
     )
 
     val mainCategories = getMainCategories()
@@ -301,8 +300,8 @@ fun rememberMainScreenUIState(
 }
 
 fun getMainCategories() = listOf(
-    MainCategory(BaseMenuIds.TOP, R.string.top, SubCategoryParent.Top),
-    MainCategory(BaseMenuIds.BOTTOM, R.string.bottom, SubCategoryParent.Bottom),
-    MainCategory(BaseMenuIds.OUTER, R.string.outer, SubCategoryParent.OUTER),
-    MainCategory(BaseMenuIds.ETC, R.string.etc, SubCategoryParent.ETC)
+    MainCategory(R.string.top, SubCategoryParent.TOP),
+    MainCategory(R.string.bottom, SubCategoryParent.BOTTOM),
+    MainCategory(R.string.outer, SubCategoryParent.OUTER),
+    MainCategory(R.string.etc, SubCategoryParent.ETC)
 )

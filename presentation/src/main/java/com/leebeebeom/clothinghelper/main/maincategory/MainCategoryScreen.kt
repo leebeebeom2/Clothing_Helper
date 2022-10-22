@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,12 +54,14 @@ fun MainCategoryScreen(
             else Modifier.heightIn(160.dp)
 
         for (mainCategory in state.mainCategories)
-            MainCategoryContent(
-                modifier,
-                mainCategory,
-                onMainCategoryClick,
-                viewModelState::getSubCategoriesSize
-            )
+            key(mainCategory.type.name) {
+                MainCategoryContent(
+                    modifier = modifier,
+                    mainCategory = mainCategory,
+                    onMainContentClick = onMainCategoryClick,
+                    getSubCategoriesSize = viewModelState::getSubCategoriesSize
+                )
+            }
     }
 }
 
@@ -70,12 +73,10 @@ private fun MainCategoryContent(
     onMainContentClick: (parentName: String) -> Unit,
     getSubCategoriesSize: (SubCategoryParent) -> Int
 ) {
-    val shape = RoundedCornerShape(20.dp)
-
     Card(
         modifier = modifier
             .fillMaxWidth(),
-        shape = shape,
+        shape = RoundedCornerShape(20.dp),
         elevation = 2.dp,
         onClick = { onMainContentClick(mainCategory.type.name) }
     ) {
@@ -96,6 +97,7 @@ private fun MainCategoryContent(
                 tint = LocalContentColor.current.copy(ContentAlpha.medium)
             )
 
+            // TODO 로딩 구현
             Text(
                 text = stringResource(
                     id = R.string.categories,

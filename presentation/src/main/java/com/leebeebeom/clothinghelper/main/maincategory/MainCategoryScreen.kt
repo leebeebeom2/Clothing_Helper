@@ -39,7 +39,7 @@ fun MainCategoryScreen(
             .verticalScroll(rememberScrollState())
             .padding(16.dp),
     ) {
-        HeaderText(R.string.main_categories)
+        MainHeaderText(R.string.main_categories)
         SimpleHeightSpacer(dp = 8)
         Divider()
         SimpleHeightSpacer(dp = 12)
@@ -63,7 +63,7 @@ fun MainCategoryScreen(
 }
 
 @Composable
-fun HeaderText(@StringRes text: Int) {
+private fun MainHeaderText(@StringRes text: Int) {
     Text(
         modifier = Modifier.padding(start = 6.dp),
         text = stringResource(id = text),

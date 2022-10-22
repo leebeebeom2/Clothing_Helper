@@ -18,7 +18,6 @@ interface SubCategoryRepository {
     val etcSubCategories: StateFlow<List<SubCategory>>
 
     fun addSubCategory(
-        uid: String,
         subCategoryParent: SubCategoryParent,
         name: String,
         addSubCategoryListener: FirebaseListener

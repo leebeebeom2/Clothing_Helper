@@ -51,4 +51,5 @@
     <string name="bottom_sub_categories_load_failed">BOTTOM 서브카테고리 로드에 실패했습니다.</string>
     <string name="outer_sub_categories_load_failed">OUTER 서브카테고리 로드에 실패했습니다.</string>
     <string name="etc_sub_categories_load_failed">ETC 서브카테고리 로드에 실패했습니다.</string>
+    <string name="categories">%1$d categories</string>
 </resources>

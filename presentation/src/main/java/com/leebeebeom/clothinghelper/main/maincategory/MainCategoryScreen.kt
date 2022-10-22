@@ -2,16 +2,13 @@ package com.leebeebeom.clothinghelper.main.maincategory
 
 import android.content.res.Configuration
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.listSaver
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -20,10 +17,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleIcon
+import com.leebeebeom.clothinghelper.main.base.getMainCategories
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
+import com.leebeebeom.clothinghelperdomain.model.BaseMenuIds
+import com.leebeebeom.clothinghelperdomain.model.MainCategory
+import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
 @Preview(showSystemUi = true, showBackground = true, uiMode = UI_MODE_NIGHT_NO)
 @Composable
@@ -34,8 +36,12 @@ fun MainCategoryPreview() {
 }
 
 @Composable
-fun MainCategoryScreen(onMainCategoryClick: () -> Unit) {
+fun MainCategoryScreen(
+    viewModel: MainCategoryViewModel = hiltViewModel(),
+    onMainCategoryClick: (Int) -> Unit
+) {
     val state = rememberMainCategoryScreenUIState()
+    val viewModelState = viewModel.viewModelState
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -47,8 +53,13 @@ fun MainCategoryScreen(onMainCategoryClick: () -> Unit) {
                 Modifier.weight(1f)
             else Modifier.heightIn(160.dp)
 
-        for ((i, mainCategory) in state.mainCategories.withIndex())
-            MainCategoryContent(modifier, mainCategory, i, onMainCategoryClick)
+        for (mainCategory in state.mainCategories)
+            MainCategoryContent(
+                modifier,
+                mainCategory,
+                onMainCategoryClick,
+                viewModelState::getSubCategoriesSize
+            )
     }
 }
 
@@ -56,9 +67,9 @@ fun MainCategoryScreen(onMainCategoryClick: () -> Unit) {
 @Composable
 private fun MainCategoryContent(
     modifier: Modifier,
-    @StringRes mainCategory: Int,
-    index: Int,
-    onMainContentClick: () -> Unit
+    mainCategory: MainCategory,
+    onMainContentClick: (Int) -> Unit,
+    getSubCategoriesSize: (SubCategoryParent) -> Int
 ) {
     val shape = RoundedCornerShape(20.dp)
 
@@ -67,7 +78,7 @@ private fun MainCategoryContent(
             .fillMaxWidth(),
         shape = shape,
         elevation = 2.dp,
-        onClick = onMainContentClick
+        onClick = { onMainContentClick(mainCategory.id) }
     ) {
         Box(
             modifier = Modifier
@@ -75,7 +86,7 @@ private fun MainCategoryContent(
                 .padding(vertical = 16.dp)
         ) {
             Text(
-                text = stringResource(id = mainCategory),
+                text = stringResource(id = mainCategory.name),
                 style = MaterialTheme.typography.h2,
                 fontSize = 32.sp
             )
@@ -87,7 +98,10 @@ private fun MainCategoryContent(
             )
 
             Text(
-                text = "10 Categories", // TODO
+                text = stringResource(
+                    id = R.string.categories,
+                    formatArgs = arrayOf(getSubCategoriesSize(mainCategory.type))
+                ),
                 modifier = Modifier.align(Alignment.BottomStart),
                 style = MaterialTheme.typography.caption.copy(
                     fontWeight = FontWeight.Bold,
@@ -97,23 +111,15 @@ private fun MainCategoryContent(
 
         }
     }
-    if (index != 3) SimpleHeightSpacer(dp = 16)
+    if (mainCategory.id != BaseMenuIds.ETC) SimpleHeightSpacer(dp = 16)
 }
 
 class MainCategoryScreenUIState {
-    @StringRes
-    val mainCategories = listOf(R.string.top, R.string.bottom, R.string.outer, R.string.etc)
-
-    companion object {
-        val Saver: Saver<MainCategoryScreenUIState, *> = listSaver(
-            save = { listOf(0) },
-            restore = { MainCategoryScreenUIState() }
-        )
-    }
+    val mainCategories = getMainCategories()
 }
 
 @Composable
 fun rememberMainCategoryScreenUIState() =
-    rememberSaveable(saver = MainCategoryScreenUIState.Saver) {
+    remember {
         MainCategoryScreenUIState()
     }

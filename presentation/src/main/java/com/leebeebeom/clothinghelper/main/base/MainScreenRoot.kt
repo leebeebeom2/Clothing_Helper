@@ -286,12 +286,7 @@ class MainScreenUIState(
         EssentialMenu(BaseMenuIds.TRASH, R.string.trash, R.drawable.ic_delete)
     )
 
-    val mainCategories = listOf(
-        MainCategory(BaseMenuIds.TOP, R.string.top, SubCategoryParent.Top),
-        MainCategory(BaseMenuIds.BOTTOM, R.string.bottom, SubCategoryParent.Bottom),
-        MainCategory(BaseMenuIds.OUTER, R.string.outer, SubCategoryParent.OUTER),
-        MainCategory(BaseMenuIds.ETC, R.string.etc, SubCategoryParent.ETC),
-    )
+    val mainCategories = getMainCategories()
 }
 
 @Composable
@@ -301,3 +296,10 @@ fun rememberMainScreenUIState(
 ) = remember {
     MainScreenUIState(scaffoldState, coroutineScope)
 }
+
+fun getMainCategories() = listOf(
+    MainCategory(BaseMenuIds.TOP, R.string.top, SubCategoryParent.Top),
+    MainCategory(BaseMenuIds.BOTTOM, R.string.bottom, SubCategoryParent.Bottom),
+    MainCategory(BaseMenuIds.OUTER, R.string.outer, SubCategoryParent.OUTER),
+    MainCategory(BaseMenuIds.ETC, R.string.etc, SubCategoryParent.ETC)
+)

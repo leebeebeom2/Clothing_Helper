@@ -11,6 +11,7 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,7 +26,7 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
 @Composable
 fun AddCategoryDialogFab(
-    modifier: Modifier, onPositiveButtonClick: (String) -> Unit, subCategories: List<SubCategory>
+    modifier: Modifier, onPositiveButtonClick: (String) -> Unit, subCategories: SnapshotStateList<SubCategory>
 ) {
     val state = rememberAddCategoryDialogUIState()
 
@@ -139,7 +140,7 @@ class AddCategoryDialogUIState(
     var showDialog by mutableStateOf(initialShowDialog)
         private set
 
-    fun onCategoryNameChange(newName: String, subCategories: List<SubCategory>) {
+    fun onCategoryNameChange(newName: String, subCategories: SnapshotStateList<SubCategory>) {
         this.categoryName = newName
         categoryNameError = null
         if (subCategories.map { it.name }.contains(newName))

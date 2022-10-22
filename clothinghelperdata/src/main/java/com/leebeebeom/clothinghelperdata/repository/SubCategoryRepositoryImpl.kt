@@ -38,14 +38,14 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
                 root.addSingleValueListener(
                     uid = it.uid,
                     subCategories = topSubCategories,
-                    subCategoryParent = SubCategoryParent.Top,
+                    subCategoryParent = SubCategoryParent.TOP,
                     onDone = onDone[0],
                     onCancelled = onCancelled[0]
                 )
                 root.addSingleValueListener(
                     uid = it.uid,
                     subCategories = bottomSubCategories,
-                    subCategoryParent = SubCategoryParent.Bottom,
+                    subCategoryParent = SubCategoryParent.BOTTOM,
                     onDone = onDone[1],
                     onCancelled = onCancelled[1]
                 )
@@ -91,9 +91,9 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
 
     private fun addSubCategory(subCategoryParent: SubCategoryParent, newSubCategory: SubCategory) {
         when (subCategoryParent) {
-            SubCategoryParent.Top -> _topSubCategories.value =
+            SubCategoryParent.TOP -> _topSubCategories.value =
                 _topSubCategories.value.addAndReturn(newSubCategory)
-            SubCategoryParent.Bottom -> _bottomSubCategories.value =
+            SubCategoryParent.BOTTOM -> _bottomSubCategories.value =
                 _bottomSubCategories.value.addAndReturn(newSubCategory)
             SubCategoryParent.OUTER -> _outerSubCategories.value =
                 _outerSubCategories.value.addAndReturn(newSubCategory)
@@ -107,31 +107,31 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
 
         return listOf(
             SubCategory(
-                SubCategoryParent.Top, timeStamp++, "반팔"
+                SubCategoryParent.TOP, timeStamp++, "반팔"
             ), SubCategory(
-                SubCategoryParent.Top, timeStamp++, "긴팔"
+                SubCategoryParent.TOP, timeStamp++, "긴팔"
             ), SubCategory(
-                SubCategoryParent.Top, timeStamp++, "셔츠"
+                SubCategoryParent.TOP, timeStamp++, "셔츠"
             ), SubCategory(
-                SubCategoryParent.Top, timeStamp++, "반팔 셔츠"
+                SubCategoryParent.TOP, timeStamp++, "반팔 셔츠"
             ), SubCategory(
-                SubCategoryParent.Top, timeStamp++, "니트"
+                SubCategoryParent.TOP, timeStamp++, "니트"
             ), SubCategory(
-                SubCategoryParent.Top, timeStamp++, "반팔 니트"
+                SubCategoryParent.TOP, timeStamp++, "반팔 니트"
             ), SubCategory(
-                SubCategoryParent.Top, timeStamp++, "니트 베스트"
+                SubCategoryParent.TOP, timeStamp++, "니트 베스트"
             ), SubCategory(
-                SubCategoryParent.Bottom, timeStamp++, "데님"
+                SubCategoryParent.BOTTOM, timeStamp++, "데님"
             ), SubCategory(
-                SubCategoryParent.Bottom, timeStamp++, "반바지"
+                SubCategoryParent.BOTTOM, timeStamp++, "반바지"
             ), SubCategory(
-                SubCategoryParent.Bottom, timeStamp++, "슬랙스"
+                SubCategoryParent.BOTTOM, timeStamp++, "슬랙스"
             ), SubCategory(
-                SubCategoryParent.Bottom, timeStamp++, "스웻"
+                SubCategoryParent.BOTTOM, timeStamp++, "스웻"
             ), SubCategory(
-                SubCategoryParent.Bottom, timeStamp++, "나일론"
+                SubCategoryParent.BOTTOM, timeStamp++, "나일론"
             ), SubCategory(
-                SubCategoryParent.Bottom, timeStamp++, "치노"
+                SubCategoryParent.BOTTOM, timeStamp++, "치노"
             ), SubCategory(
                 SubCategoryParent.OUTER, timeStamp++, "코트"
             ), SubCategory(

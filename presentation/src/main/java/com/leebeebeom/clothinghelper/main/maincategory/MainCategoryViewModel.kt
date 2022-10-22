@@ -68,13 +68,12 @@ class MainCategoryViewModelState {
         etcCategoriesSize = size
     }
 
-    fun getSubCategoriesSize(subCategoryParent: Int): Int {
+    fun getSubCategoriesSize(subCategoryParent: SubCategoryParent): Int {
         return when (subCategoryParent) {
             SubCategoryParent.TOP -> topCategoriesSize
             SubCategoryParent.BOTTOM -> bottomCategoriesSize
             SubCategoryParent.OUTER -> outerCategoriesSize
             SubCategoryParent.ETC -> etcCategoriesSize
-            else -> -1
         }
     }
 }

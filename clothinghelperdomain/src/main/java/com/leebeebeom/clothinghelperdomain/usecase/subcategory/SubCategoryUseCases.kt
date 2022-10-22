@@ -25,10 +25,9 @@ class AddSubCategoryUseCase(
         subCategoryParent: SubCategoryParent,
         name: String,
         addSubCategoryListener: FirebaseListener
-    ) =
-        subCategoryRepository.addSubCategory(
-            subCategoryParent = subCategoryParent,
-            name = name,
-            addSubCategoryListener
-        )
+    ) = subCategoryRepository.addSubCategory(
+        subCategoryParent = subCategoryParent,
+        name = name,
+        addSubCategoryListener
+    )
 }

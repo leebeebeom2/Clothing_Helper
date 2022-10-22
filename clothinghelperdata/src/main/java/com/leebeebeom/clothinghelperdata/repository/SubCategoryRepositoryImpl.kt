@@ -50,8 +50,8 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
         get() = allMutableSubCategories[ETC]
 
     override suspend fun loadSubCategories(
-        onDone: List<() -> Unit>,
-        onCancelled: List<(errorCode: Int, message: String) -> Unit>
+        onSubCategoriesLoadingDone: List<() -> Unit>,
+        onSubCategoriesLoadingCancelled: List<(errorCode: Int, message: String) -> Unit>
     ) {
         userRepository.user.collect {
             this.user.value = it
@@ -60,8 +60,8 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
                     uid = it.uid,
                     mutableSubCategories = subCategories,
                     subCategoryParent = subCategoryParent[index],
-                    onDone = onDone[index],
-                    onCancelled = onCancelled[index]
+                    onSubCategoriesLoadingDone = onSubCategoriesLoadingDone[index],
+                    onSubCategoriesLoadingCancelled = onSubCategoriesLoadingCancelled[index]
                 )
             }
         }
@@ -168,8 +168,8 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
         uid: String,
         subCategoryParent: SubCategoryParent,
         mutableSubCategories: MutableStateFlow<List<SubCategory>>,
-        onDone: () -> Unit,
-        onCancelled: (Int, String) -> Unit
+        onSubCategoriesLoadingDone: () -> Unit,
+        onSubCategoriesLoadingCancelled: (Int, String) -> Unit
     ) {
         getSubCategoriesRef(uid).orderByChild("parent").equalTo(subCategoryParent.name)
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -179,11 +179,11 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
                         child.getValue<SubCategory>()?.let { temp.add(it) }
                     }
                     mutableSubCategories.value = temp
-                    onDone()
+                    onSubCategoriesLoadingDone()
                 }
 
                 override fun onCancelled(error: DatabaseError) =
-                    onCancelled(error.code, error.message)
+                    onSubCategoriesLoadingCancelled(error.code, error.message)
             })
     }
 }

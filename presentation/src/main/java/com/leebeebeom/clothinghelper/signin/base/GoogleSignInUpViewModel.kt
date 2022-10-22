@@ -38,7 +38,7 @@ abstract class GoogleSignInUpViewModel(
         googleButtonDisable()
     }
 
-    private fun taskFinish() {
+    fun taskFinish() {
         loadingOff()
         googleButtonEnable()
     }
@@ -59,9 +59,9 @@ abstract class GoogleSignInUpViewModel(
                     TAG,
                     "BaseSignInUpViewModel.signInWithGoogleEmail: resultCode = ${activityResult.resultCode}"
                 )
+                taskFinish()
             }
         }
-        taskFinish()
     }
 
     private fun getGoogleCredential(activityResult: ActivityResult): AuthCredential? {
@@ -82,6 +82,7 @@ abstract class GoogleSignInUpViewModel(
 
         override fun taskFailed(exception: Exception?) {
             showToast(R.string.unknown_error)
+            taskFinish()
             Log.d(TAG, "taskFailed: $exception")
         }
     }

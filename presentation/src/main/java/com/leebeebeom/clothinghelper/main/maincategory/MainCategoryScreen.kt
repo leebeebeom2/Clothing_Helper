@@ -2,6 +2,7 @@ package com.leebeebeom.clothinghelper.main.maincategory
 
 import android.content.res.Configuration
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -48,7 +49,7 @@ fun MainCategoryScreen(
             .verticalScroll(rememberScrollState())
             .padding(16.dp),
     ) {
-        HeaderText()
+        HeaderText(R.string.main_categories)
         SimpleHeightSpacer(dp = 12)
 
         val modifier =
@@ -69,10 +70,10 @@ fun MainCategoryScreen(
 }
 
 @Composable
-private fun HeaderText() {
+fun HeaderText(@StringRes text: Int) {
     Text(
         modifier = Modifier.padding(start = 6.dp),
-        text = "MAIN CATEGORIES",
+        text = stringResource(id = text),
         style = MaterialTheme.typography.h4.copy(letterSpacing = 0.75.sp),
         fontWeight = FontWeight.Bold,
         fontSize = 24.sp,

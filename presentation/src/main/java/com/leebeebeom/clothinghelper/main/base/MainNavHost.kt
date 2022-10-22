@@ -12,17 +12,14 @@ import androidx.navigation.navArgument
 import com.leebeebeom.clothinghelper.main.maincategory.MainCategoryScreen
 import com.leebeebeom.clothinghelper.main.setting.SettingScreen
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryScreen
-import com.leebeebeom.clothinghelperdomain.model.BaseMenuIds.FAVORITE
-import com.leebeebeom.clothinghelperdomain.model.BaseMenuIds.MAIN_SCREEN
-import com.leebeebeom.clothinghelperdomain.model.BaseMenuIds.SEE_ALL
-import com.leebeebeom.clothinghelperdomain.model.BaseMenuIds.TRASH
+import com.leebeebeom.clothinghelperdomain.model.EssentialMenus
 
 sealed class MainDestinations(val route: String) {
     object MainCategory : MainDestinations("mainCategory")
     object SubCategory : MainDestinations("subCategory") {
-        const val parentId: String = "id"
-        val routeWithArg = "$route/{$parentId}"
-        val arguments = listOf(navArgument(parentId) { type = NavType.IntType })
+        const val parentName: String = "parentName"
+        val routeWithArg = "$route/{$parentName}"
+        val arguments = listOf(navArgument(parentName) { type = NavType.IntType })
     }
 
     object Setting : MainDestinations("setting")
@@ -33,7 +30,7 @@ fun MainNavHost() {
     val navController = rememberNavController()
 
     MainScreenRoot(onSettingIconClick = { navController.mainNavigate(MainDestinations.Setting.route) },
-        onDrawerContentClick = { id -> navController.drawerNavigate(id) }) {
+        onDrawerContentClick = { parentName -> navController.drawerNavigate(parentName) }) {
         NavHost(
             navController = navController,
             startDestination = MainDestinations.MainCategory.route,
@@ -41,14 +38,14 @@ fun MainNavHost() {
         ) {
             composable(MainDestinations.MainCategory.route) {
                 MainCategoryScreen(
-                    onMainCategoryClick = { id -> navController.navigateToSubCategory(id) })
+                    onMainCategoryClick = { parentName -> navController.navigateToSubCategory(parentName) })
             }
             composable(
                 route = MainDestinations.SubCategory.routeWithArg,
                 arguments = MainDestinations.SubCategory.arguments
             ) { entry ->
-                val parentId = entry.arguments?.getInt(MainDestinations.SubCategory.parentId) ?: -1
-                SubCategoryScreen(parentId)
+                val parentName = entry.arguments?.getString(MainDestinations.SubCategory.parentName) ?: ""
+                SubCategoryScreen(parentName)
             }
             composable(MainDestinations.Setting.route) {
                 SettingScreen()
@@ -62,19 +59,19 @@ fun NavController.mainNavigate(destination: String) = navigate(destination) {
     launchSingleTop = true
 }
 
-fun NavController.navigateToSubCategory(argument: Int) {
-    mainNavigate("${MainDestinations.SubCategory.route}/$argument")
+fun NavController.navigateToSubCategory(parentName: String) {
+    mainNavigate("${MainDestinations.SubCategory.route}/$parentName")
 }
 
-fun NavController.drawerNavigate(id: Int) {
-    when (id) {
-        MAIN_SCREEN -> mainNavigate(MainDestinations.MainCategory.route)
-        FAVORITE -> {/*TODO*/
+fun NavController.drawerNavigate(parentName: String) {
+    when (parentName) {
+        EssentialMenus.MAIN_SCREEN.name -> mainNavigate(MainDestinations.MainCategory.route)
+        EssentialMenus.FAVORITE.name -> {/*TODO*/
         }
-        SEE_ALL -> { /*TODO*/
+        EssentialMenus.SEE_ALL.name -> { /*TODO*/
         }
-        TRASH -> { /*TODO*/
+        EssentialMenus.TRASH.name -> { /*TODO*/
         }
-        else -> navigateToSubCategory(id)
+        else -> navigateToSubCategory(parentName)
     }
 }

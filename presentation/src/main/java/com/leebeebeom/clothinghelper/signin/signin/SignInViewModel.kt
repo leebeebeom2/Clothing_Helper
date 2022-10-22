@@ -8,7 +8,7 @@ import androidx.compose.runtime.setValue
 import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
-import com.leebeebeom.clothinghelper.signin.base.BaseSignInUpViewModel
+import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
 import com.leebeebeom.clothinghelper.signin.base.BaseSignInUpViewModelState
 import com.leebeebeom.clothinghelper.signin.base.FirebaseErrorCode
 import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
@@ -21,7 +21,7 @@ import javax.inject.Inject
 class SignInViewModel @Inject constructor(
     private val signInUseCase: SignInUseCase,
     googleSignInUseCase: GoogleSignInUseCase
-) : BaseSignInUpViewModel(googleSignInUseCase) {
+) : GoogleSignInUpViewModel(googleSignInUseCase) {
 
     override val viewModelState = SignInViewModelState()
 

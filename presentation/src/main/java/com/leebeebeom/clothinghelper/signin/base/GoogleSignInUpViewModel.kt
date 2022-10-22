@@ -22,7 +22,7 @@ object FirebaseErrorCode {
     const val ERROR_WRONG_PASSWORD = "ERROR_WRONG_PASSWORD"
 }
 
-abstract class BaseSignInUpViewModel(
+abstract class GoogleSignInUpViewModel(
     private val googleSignInUseCase: GoogleSignInUseCase
 ) : ViewModel() {
     abstract val viewModelState: BaseSignInUpViewModelState
@@ -33,9 +33,14 @@ abstract class BaseSignInUpViewModel(
     private fun googleButtonDisable() = viewModelState.setGoogleButtonDisable()
     private fun googleButtonEnable() = viewModelState.setGoogleButtonEnable()
 
-    fun onGoogleSignInClick() {
+    fun taskStart() {
         loadingOn()
         googleButtonDisable()
+    }
+
+    fun taskFinish() {
+        loadingOff()
+        googleButtonEnable()
     }
 
     fun signInWithGoogleEmail(activityResult: ActivityResult) {
@@ -44,13 +49,17 @@ abstract class BaseSignInUpViewModel(
                 getGoogleCredential(activityResult),
                 googleSignInListener
             )
-            RESULT_CANCELED -> showToast(R.string.canceled)
+            RESULT_CANCELED -> {
+                showToast(R.string.canceled)
+                taskFinish()
+            }
             else -> {
                 showToast(R.string.unknown_error)
                 Log.d(
                     TAG,
                     "BaseSignInUpViewModel.signInWithGoogleEmail: resultCode = ${activityResult.resultCode}"
                 )
+                taskFinish()
             }
         }
     }
@@ -73,8 +82,7 @@ abstract class BaseSignInUpViewModel(
 
         override fun taskFailed(exception: Exception?) {
             showToast(R.string.unknown_error)
-            googleButtonEnable()
-            loadingOff()
+            taskFinish()
             Log.d(TAG, "taskFailed: $exception")
         }
     }

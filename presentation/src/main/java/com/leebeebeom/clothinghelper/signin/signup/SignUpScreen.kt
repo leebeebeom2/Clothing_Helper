@@ -77,7 +77,7 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
         GoogleSignInButton(
             signInWithGoogleEmail = viewModel::signInWithGoogleEmail,
             enabled = viewModelState.googleButtonEnabled,
-            onGoogleSignInClick = viewModel::onGoogleSignInClick
+            onGoogleSignInClick = viewModel::taskStart
         )
     }
 }

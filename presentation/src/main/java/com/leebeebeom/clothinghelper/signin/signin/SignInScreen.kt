@@ -68,7 +68,7 @@ fun SignInScreen(
             GoogleSignInButton(
                 signInWithGoogleEmail = viewModel::signInWithGoogleEmail,
                 enabled = viewModelState.googleButtonEnabled,
-                onGoogleSignInClick = viewModel::onGoogleSignInClick
+                onGoogleSignInClick = viewModel::taskStart
             )
         }
         SignUpText(onEmailSignUpClick)

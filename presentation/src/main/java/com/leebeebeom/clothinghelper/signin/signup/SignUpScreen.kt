@@ -58,11 +58,7 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
         )
         SimpleHeightSpacer(dp = 12)
         MaxWidthButton(text = R.string.sign_up,
-            enabled = state.submitButtonEnabled(
-                emailError = viewModelState.emailError,
-                passwordError = state.passwordError,
-                passwordConfirmError = state.passwordConfirmError
-            ),
+            enabled = state.submitButtonEnabled(emailError = viewModelState.emailError),
             onClick = {
                 viewModel.signUpWithEmailAndPassword(
                     state.email,
@@ -142,14 +138,11 @@ class SignUpScreenUIState(
         }
     }
 
-    fun submitButtonEnabled(
-        @StringRes emailError: Int?,
-        @StringRes passwordError: Int?,
-        @StringRes passwordConfirmError: Int?
-    ) = email.isNotBlank() && emailError == null &&
-            name.isNotBlank() &&
-            password.isNotBlank() && passwordError == null &&
-            passwordConfirm.isNotBlank() && passwordConfirmError == null
+    fun submitButtonEnabled(@StringRes emailError: Int?) =
+        email.isNotBlank() && emailError == null &&
+                name.isNotBlank() &&
+                password.isNotBlank() && passwordError == null &&
+                passwordConfirm.isNotBlank() && passwordConfirmError == null
 
     companion object {
         val Saver: Saver<SignUpScreenUIState, *> = listSaver(save = {

@@ -10,14 +10,13 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -35,37 +34,38 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
 @Composable
 fun SubCategoryScreen(
-    parentName: String, viewModel: SubCategoryViewModel = hiltViewModel(),
+    parentName: String,
+    viewModel: SubCategoryViewModel = hiltViewModel(),
     getIsSubCategoriesLoading: (SubCategoryParent) -> Boolean
 ) {
-    val subCategoryParent = enumValueOf<SubCategoryParent>(parentName)
     val viewModelState = viewModel.viewModelState
+    val state = rememberSubCategoryScreenUIState(parentName = parentName)
 
     Box(modifier = Modifier.fillMaxSize()) {
-        if (getIsSubCategoriesLoading(subCategoryParent))
-            CircularProgressIndicator(
-                modifier = Modifier.align(Alignment.Center),
-                color = LocalContentColor.current.copy(ContentAlpha.medium)
-            )
-        // TODO 헤어
+        if (getIsSubCategoriesLoading(state.subCategoryParent)) CircularProgressIndicator(
+            modifier = Modifier.align(Alignment.Center),
+            color = LocalContentColor.current.copy(ContentAlpha.medium)
+        )
         // TODO 삭제, 이름 수정
         else LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
+            contentPadding = PaddingValues(
+                start = 16.dp, end = 16.dp, top = 16.dp, bottom = 120.dp
+            ),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             item {
-                SubCategoryHeaderText(getHeaderTextRes(subCategoryParent))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Divider(modifier = Modifier.weight(1f))
-                    HeaderIcon(R.drawable.ic_all_expand)
-                    HeaderIcon(R.drawable.ic_sort)
-                }
-                // TODO 올 익스탠트, 정렬 아이콘
+                Header(
+                    subCategoryParent = state.subCategoryParent,
+                    allExpandToggle = state::allExpandToggle,
+                    isAllExpand = state.isAllExpand
+                )
             }
-
-            this.items(viewModelState.getSubCategories(subCategoryParent), key = { it.id }) {
-                SubCategoryContent(it)
+            itemsIndexed(items = viewModelState.getSubCategories(state.subCategoryParent),
+                key = { _, subCategory -> subCategory.id }) { index, subCategory ->
+                SubCategoryContent(
+                    subCategory = subCategory, state.getExpandState(index)
+                ) { state.expandToggle(index) }
             }
         }
 
@@ -73,17 +73,43 @@ fun SubCategoryScreen(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(end = 16.dp, bottom = 16.dp),
-            onPositiveButtonClick = { viewModel.addSubCategory(subCategoryParent, it) },
-            subCategories = viewModelState.getSubCategories(subCategoryParent)
+            onPositiveButtonClick = {
+                state.addExpandState()
+                viewModel.addSubCategory(state.subCategoryParent, it)
+            },
+            subCategories = viewModelState.getSubCategories(state.subCategoryParent)
         )
     }
 }
 
 @Composable
-private fun HeaderIcon(@DrawableRes drawable: Int) {
-    IconButton(onClick = { /*TODO*/ }, modifier = Modifier.size(22.dp)) {
+private fun Header(
+    subCategoryParent: SubCategoryParent, allExpandToggle: () -> Unit, isAllExpand: Boolean
+) {
+    SubCategoryHeaderText(getHeaderTextRes(subCategoryParent))
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Divider(modifier = Modifier.weight(1f))
+        AllExpandIcon(onClick = allExpandToggle, isAllExpand)
+        HeaderIcon(R.drawable.ic_sort) {}
+    }
+}
+
+@Composable
+private fun HeaderIcon(@DrawableRes drawable: Int, onClick: () -> Unit) {
+    IconButton(onClick = onClick, modifier = Modifier.size(22.dp)) {
         SimpleIcon(
-            drawable = drawable,
+            drawable = drawable, tint = LocalContentColor.current.copy(0.5f)
+        )
+    }
+}
+
+@Composable
+fun AllExpandIcon(onClick: () -> Unit, isAllExpand: Boolean) {
+    IconButton(
+        onClick = onClick, modifier = Modifier.size(22.dp)
+    ) {
+        SimpleIcon(
+            drawable = if (isAllExpand) R.drawable.ic_unfold_less else R.drawable.ic_all_expand,
             tint = LocalContentColor.current.copy(0.5f)
         )
     }
@@ -100,12 +126,12 @@ fun SubCategoryHeaderText(headerTextRes: Int) {
 }
 
 @Composable
-private fun SubCategoryContent(subCategory: SubCategory) {
-    var isExpanded by rememberSaveable { mutableStateOf(false) }
-
+private fun SubCategoryContent(
+    subCategory: SubCategory, isExpanded: Boolean, expandToggle: () -> Unit
+) {
     Card(elevation = 2.dp, shape = RoundedCornerShape(12.dp)) {
         Column {
-            SubCategoryTitle(subCategory.name, isExpanded) { isExpanded = !isExpanded }
+            SubCategoryTitle(subCategory.name, isExpanded, onExpandIconClick = expandToggle)
             SubCategoryInfo(isExpanded)
         }
     }
@@ -163,7 +189,9 @@ private fun SubCategoryInfoText(
 
 
 @Composable
-private fun SubCategoryTitle(title: String, isExpanded: Boolean, onExpandIconClick: () -> Unit) {
+private fun SubCategoryTitle(
+    title: String, isExpanded: Boolean, onExpandIconClick: () -> Unit
+) {
     Row(modifier = Modifier
         .fillMaxSize()
         .clickable { /*TODO*/ }
@@ -178,12 +206,16 @@ private fun SubCategoryTitle(title: String, isExpanded: Boolean, onExpandIconCli
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
-        ExpandIcon(isExpanded = isExpanded, onExpandIconClick = onExpandIconClick)
+        ExpandIcon(
+            isExpanded = isExpanded, onExpandIconClick = onExpandIconClick
+        )
     }
 }
 
 @Composable
-fun ExpandIcon(modifier: Modifier = Modifier, isExpanded: Boolean, onExpandIconClick: () -> Unit) {
+fun ExpandIcon(
+    modifier: Modifier = Modifier, isExpanded: Boolean, onExpandIconClick: () -> Unit
+) {
     val rotate by animateFloatAsState(
         targetValue = if (!isExpanded) 0f else 180f, animationSpec = tween(durationMillis = 300)
     )
@@ -205,3 +237,54 @@ fun getHeaderTextRes(subCategoryParent: SubCategoryParent): Int {
         SubCategoryParent.ETC -> R.string.etc
     }
 }
+
+class SubCategoryScreenUIState(
+    parentName: String, isAllExpand: Boolean = false, vararg expands: Boolean = BooleanArray(0)
+) {
+    val subCategoryParent by mutableStateOf(enumValueOf<SubCategoryParent>(parentName))
+    val expandStates = mutableListOf<MutableState<Boolean>>().apply {
+        addAll(expands.map { mutableStateOf(it) })
+    }
+    var isAllExpand by mutableStateOf(isAllExpand) // TODO 설정으로
+        private set
+
+
+    fun allExpandToggle() {
+        isAllExpand = !isAllExpand
+        for (isExpand in expandStates) isExpand.value = isAllExpand
+    }
+
+    fun getExpandState(index: Int): Boolean {
+        if (expandStates.getOrNull(index) == null) expandStates.add(mutableStateOf(isAllExpand))
+        return expandStates[index].value
+    }
+
+    fun expandToggle(index: Int) {
+        expandStates[index].value = !expandStates[index].value
+    }
+
+    fun addExpandState() = expandStates.add(mutableStateOf(isAllExpand))
+
+    companion object {
+        val Saver: Saver<SubCategoryScreenUIState, *> = listSaver(save = {
+            listOf(
+                it.subCategoryParent.name,
+                it.isAllExpand,
+                it.expandStates.map { state -> state.value }
+            )
+        }, restore = {
+            val expands = it[2] as List<*>
+            val booleanArray = BooleanArray(expands.size)
+            for ((index, expand) in expands.withIndex()) {
+                booleanArray[index] = expand as Boolean
+            }
+            SubCategoryScreenUIState(it[0] as String, it[1] as Boolean, *booleanArray)
+        })
+    }
+}
+
+@Composable
+private fun rememberSubCategoryScreenUIState(parentName: String) =
+    rememberSaveable(saver = SubCategoryScreenUIState.Saver) {
+        SubCategoryScreenUIState(parentName)
+    }

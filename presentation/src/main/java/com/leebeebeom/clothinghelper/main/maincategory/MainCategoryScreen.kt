@@ -40,7 +40,7 @@ fun MainCategoryScreen(
             .padding(16.dp),
     ) {
         MainHeaderText(R.string.main_categories)
-        SimpleHeightSpacer(dp = 4)
+        SimpleHeightSpacer(dp = 8)
         Divider()
         SimpleHeightSpacer(dp = 16)
 

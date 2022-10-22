@@ -9,7 +9,7 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
-import com.leebeebeom.clothinghelper.signin.base.BaseSignInUpViewModelState
+import com.leebeebeom.clothinghelper.signin.base.GoogleSignInViewModelState
 import com.leebeebeom.clothinghelper.signin.base.FirebaseErrorCode
 import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.usecase.user.GoogleSignInUseCase
@@ -60,7 +60,7 @@ class SignInViewModel @Inject constructor(
     }
 }
 
-class SignInViewModelState : BaseSignInUpViewModelState() {
+class SignInViewModelState : GoogleSignInViewModelState() {
     var passwordError: Int? by mutableStateOf(null)
         private set
 

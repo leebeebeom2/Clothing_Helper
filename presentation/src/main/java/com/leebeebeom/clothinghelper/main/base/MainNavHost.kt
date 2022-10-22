@@ -1,9 +1,11 @@
 package com.leebeebeom.clothinghelper.main.base
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,6 +15,7 @@ import com.leebeebeom.clothinghelper.main.maincategory.MainCategoryScreen
 import com.leebeebeom.clothinghelper.main.setting.SettingScreen
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryScreen
 import com.leebeebeom.clothinghelperdomain.model.EssentialMenus
+import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
 sealed class MainDestinations(val route: String) {
     object MainCategory : MainDestinations("mainCategory")
@@ -30,32 +33,12 @@ fun MainNavHost() {
     val navController = rememberNavController()
 
     MainScreenRoot(onSettingIconClick = { navController.mainNavigate(MainDestinations.Setting.route) },
-        onDrawerContentClick = { parentName -> navController.drawerNavigate(parentName) }) {
-        NavHost(
+        onDrawerContentClick = { parentName -> navController.drawerNavigate(parentName) }) { padding, getIsSubCategoriesLoading ->
+        MainNavHostWithArg(
             navController = navController,
-            startDestination = MainDestinations.MainCategory.route,
-            modifier = Modifier.padding(it)
-        ) {
-            composable(MainDestinations.MainCategory.route) {
-                MainCategoryScreen(
-                    onMainCategoryClick = { parentName ->
-                        navController.navigateToSubCategory(
-                            parentName
-                        )
-                    })
-            }
-            composable(
-                route = MainDestinations.SubCategory.routeWithArg,
-                arguments = MainDestinations.SubCategory.arguments
-            ) { entry ->
-                val parentName =
-                    entry.arguments?.getString(MainDestinations.SubCategory.parentNameArg)!!
-                SubCategoryScreen(parentName)
-            }
-            composable(MainDestinations.Setting.route) {
-                SettingScreen()
-            }
-        }
+            paddingValues = padding,
+            getIsSubCategoriesLoading = getIsSubCategoriesLoading
+        )
     }
 }
 
@@ -78,5 +61,37 @@ fun NavController.drawerNavigate(parentName: String) {
         EssentialMenus.TRASH.name -> { /*TODO*/
         }
         else -> navigateToSubCategory(parentName)
+    }
+}
+
+@Composable
+fun MainNavHostWithArg(
+    navController: NavHostController,
+    paddingValues: PaddingValues,
+    getIsSubCategoriesLoading: (SubCategoryParent) -> Boolean
+) {
+    NavHost(
+        navController = navController,
+        startDestination = MainDestinations.MainCategory.route,
+        modifier = Modifier.padding(paddingValues)
+    ) {
+        composable(MainDestinations.MainCategory.route) {
+            MainCategoryScreen(onMainCategoryClick = { parentName ->
+                navController.navigateToSubCategory(
+                    parentName
+                )
+            }, getIsSubCategoriesLoading = getIsSubCategoriesLoading)
+        }
+        composable(
+            route = MainDestinations.SubCategory.routeWithArg,
+            arguments = MainDestinations.SubCategory.arguments
+        ) { entry ->
+            val parentName =
+                entry.arguments?.getString(MainDestinations.SubCategory.parentNameArg)!!
+            SubCategoryScreen(parentName)
+        }
+        composable(MainDestinations.Setting.route) {
+            SettingScreen()
+        }
     }
 }

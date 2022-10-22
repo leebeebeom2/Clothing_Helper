@@ -1,7 +1,6 @@
 package com.leebeebeom.clothinghelper.main.maincategory
 
 import android.content.res.Configuration
-import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -16,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -24,22 +22,14 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelper.main.base.getMainCategories
-import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelperdomain.model.MainCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
-
-@Preview(showSystemUi = true, showBackground = true, uiMode = UI_MODE_NIGHT_NO)
-@Composable
-fun MainCategoryPreview() {
-    ClothingHelperTheme {
-        MainCategoryScreen {}
-    }
-}
 
 @Composable
 fun MainCategoryScreen(
     viewModel: MainCategoryViewModel = hiltViewModel(),
-    onMainCategoryClick: (parentName: String) -> Unit
+    onMainCategoryClick: (parentName: String) -> Unit,
+    getIsSubCategoriesLoading: (SubCategoryParent) -> Boolean
 ) {
     val state = rememberMainCategoryScreenUIState()
     val viewModelState = viewModel.viewModelState
@@ -65,7 +55,8 @@ fun MainCategoryScreen(
                     modifier = modifier,
                     mainCategory = mainCategory,
                     onMainContentClick = onMainCategoryClick,
-                    getSubCategoriesSize = viewModelState::getSubCategoriesSize
+                    getSubCategoriesSize = viewModelState::getSubCategoriesSize,
+                    isSubCategoriesLoading = getIsSubCategoriesLoading(mainCategory.type)
                 )
             }
     }
@@ -89,7 +80,8 @@ private fun MainCategoryContent(
     modifier: Modifier,
     mainCategory: MainCategory,
     onMainContentClick: (parentName: String) -> Unit,
-    getSubCategoriesSize: (SubCategoryParent) -> Int
+    getSubCategoriesSize: (SubCategoryParent) -> Int,
+    isSubCategoriesLoading: Boolean
 ) {
     Card(
         modifier = modifier
@@ -115,8 +107,8 @@ private fun MainCategoryContent(
                 tint = LocalContentColor.current.copy(ContentAlpha.medium)
             )
 
-            // TODO 로딩 구현
-            Text(
+            if (isSubCategoriesLoading) LoadingIcon(Modifier.align(Alignment.BottomStart))
+            else Text(
                 text = stringResource(
                     id = R.string.categories,
                     formatArgs = arrayOf(getSubCategoriesSize(mainCategory.type))
@@ -131,6 +123,15 @@ private fun MainCategoryContent(
         }
     }
     if (mainCategory.type != SubCategoryParent.ETC) SimpleHeightSpacer(dp = 16)
+}
+
+@Composable
+private fun LoadingIcon(modifier: Modifier) {
+    CircularProgressIndicator(
+        modifier = modifier.size(16.dp),
+        strokeWidth = 1.dp,
+        color = LocalContentColor.current.copy(ContentAlpha.medium)
+    )
 }
 
 class MainCategoryScreenUIState {

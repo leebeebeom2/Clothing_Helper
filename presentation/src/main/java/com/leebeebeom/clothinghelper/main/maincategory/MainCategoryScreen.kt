@@ -40,9 +40,9 @@ fun MainCategoryScreen(
             .padding(16.dp),
     ) {
         MainHeaderText(R.string.main_categories)
-        SimpleHeightSpacer(dp = 8)
+        SimpleHeightSpacer(dp = 4)
         Divider()
-        SimpleHeightSpacer(dp = 12)
+        SimpleHeightSpacer(dp = 16)
 
         val modifier =
             if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT)

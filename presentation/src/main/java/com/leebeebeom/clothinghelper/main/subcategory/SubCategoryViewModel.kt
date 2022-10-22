@@ -41,9 +41,8 @@ class SubCategoryViewModel @Inject constructor(
         }
     }
 
-    fun addSubCategory(parent: SubCategoryParent, name: String) {
+    fun addSubCategory(parent: SubCategoryParent, name: String) = // TODO 로딩 구현
         addSubCategoryUseCase(parent, name, addSubCategoryListener)
-    }
 
     private val addSubCategoryListener = object : FirebaseListener {
         override fun taskSuccess() {}

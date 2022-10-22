@@ -307,3 +307,5 @@ fun getMainCategories() = listOf(
     MainCategory(R.string.outer, SubCategoryParent.OUTER),
     MainCategory(R.string.etc, SubCategoryParent.ETC)
 )
+
+// TODO isSubCategoriesLaodingUIState

@@ -50,7 +50,8 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
         get() = allMutableSubCategories[ETC]
 
     override suspend fun loadSubCategories(
-        onDone: List<() -> Unit>, onCancelled: List<(Int, String) -> Unit>
+        onDone: List<() -> Unit>,
+        onCancelled: List<(errorCode: Int, message: String) -> Unit>
     ) {
         userRepository.user.collect {
             this.user.value = it

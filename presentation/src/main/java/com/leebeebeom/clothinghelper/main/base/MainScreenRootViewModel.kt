@@ -1,8 +1,9 @@
 package com.leebeebeom.clothinghelper.main.base
 
 import android.util.Log
-import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
@@ -62,28 +63,28 @@ class MainNavHostViewModelState : BaseViewModelState() {
         this.user = user
     }
 
-    private var topSubCategories = mutableStateListOf<SubCategory>()
-    private var bottomSubCategories = mutableStateListOf<SubCategory>()
-    private var outerSubCategories = mutableStateListOf<SubCategory>()
-    private var etcSubCategories = mutableStateListOf<SubCategory>()
+    private var topSubCategories by mutableStateOf(emptyList<SubCategory>())
+    private var bottomSubCategories by mutableStateOf(emptyList<SubCategory>())
+    private var outerSubCategories by mutableStateOf(emptyList<SubCategory>())
+    private var etcSubCategories by mutableStateOf(emptyList<SubCategory>())
 
     fun topSubCategoriesUpdate(topSubCategories: List<SubCategory>) {
-        this.topSubCategories = topSubCategories.toMutableStateList()
+        this.topSubCategories = topSubCategories
     }
 
     fun bottomSubCategoriesUpdate(bottomSubCategories: List<SubCategory>) {
-        this.bottomSubCategories = bottomSubCategories.toMutableStateList()
+        this.bottomSubCategories = bottomSubCategories
     }
 
     fun outerSubCategoriesUpdate(outerSubCategories: List<SubCategory>) {
-        this.outerSubCategories = outerSubCategories.toMutableStateList()
+        this.outerSubCategories = outerSubCategories
     }
 
     fun etcSubCategoriesUpdate(etcSubCategories: List<SubCategory>) {
-        this.etcSubCategories = etcSubCategories.toMutableStateList()
+        this.etcSubCategories = etcSubCategories
     }
 
-    fun getSubCategories(subCategoryParent: SubCategoryParent): SnapshotStateList<SubCategory> {
+    fun getSubCategories(subCategoryParent: SubCategoryParent): List<SubCategory> {
         return when (subCategoryParent) {
             SubCategoryParent.TOP -> topSubCategories
             SubCategoryParent.BOTTOM -> bottomSubCategories

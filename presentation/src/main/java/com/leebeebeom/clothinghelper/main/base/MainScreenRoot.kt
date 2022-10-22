@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun MainScreenRoot(
     onSettingIconClick: () -> Unit,
-    onDrawerContentClick: (Int) -> Unit,
+    onDrawerContentClick: (parentId: Int) -> Unit,
     viewModel: MainScreenRootViewModel = hiltViewModel(),
     content: @Composable (PaddingValues) -> Unit
 ) {
@@ -90,7 +90,7 @@ private fun BottomAppBar(onDrawerIconClick: () -> Unit) =
 @Composable
 private fun DrawerContents(
     user: User?,
-    onDrawerContentClick: (Int) -> Unit,
+    onDrawerContentClick: (parentId: Int) -> Unit,
     onSettingIconClick: () -> Unit,
     essentialMenus: List<EssentialMenu>,
     mainCategories: List<MainCategory>,
@@ -146,7 +146,10 @@ private fun DrawerHeader(user: User?, onSettingIconClick: () -> Unit) {
 }
 
 @Composable
-private fun EssentialMenu(essentialMenu: EssentialMenu, onDrawerContentClick: (Int) -> Unit) =
+private fun EssentialMenu(
+    essentialMenu: EssentialMenu,
+    onDrawerContentClick: (parentId: Int) -> Unit
+) =
     DrawerContentRow(
         modifier = Modifier.heightIn(44.dp),
         onDrawerContentClick = { onDrawerContentClick(essentialMenu.id) }) {

@@ -8,9 +8,9 @@ class GetSubCategoriesUserCase(
     private val subCategoryRepository: SubCategoryRepository
 ) {
     suspend fun loadSubCategories(
-        onDone: List<() -> Unit>,
-        onCancelled: List<(Int, String) -> Unit>
-    ) = subCategoryRepository.loadSubCategories(onDone, onCancelled)
+        onSubCategoriesLoadingDone: List<() -> Unit>,
+        onSubCategoriesLoadingCancelled: List<(Int, String) -> Unit>
+    ) = subCategoryRepository.loadSubCategories(onSubCategoriesLoadingDone, onSubCategoriesLoadingCancelled)
 
     fun getTopSubCategories() = subCategoryRepository.topSubCategories
     fun getBottomSubCategories() = subCategoryRepository.bottomSubCategories

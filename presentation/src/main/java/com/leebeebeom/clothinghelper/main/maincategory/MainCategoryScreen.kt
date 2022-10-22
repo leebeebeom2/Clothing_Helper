@@ -1,7 +1,6 @@
 package com.leebeebeom.clothinghelper.main.maincategory
 
 import android.content.res.Configuration
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,11 +38,6 @@ fun MainCategoryScreen(
             .verticalScroll(rememberScrollState())
             .padding(16.dp),
     ) {
-        MainHeaderText(R.string.main_categories)
-        SimpleHeightSpacer(dp = 4)
-        Divider()
-        SimpleHeightSpacer(dp = 8)
-
         val modifier =
             if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT)
                 Modifier.weight(1f)
@@ -60,18 +54,6 @@ fun MainCategoryScreen(
                 )
             }
     }
-}
-
-@Composable
-private fun MainHeaderText(@StringRes text: Int) {
-    Text(
-        modifier = Modifier.padding(start = 4.dp),
-        text = stringResource(id = text),
-        style = MaterialTheme.typography.h4.copy(letterSpacing = 0.75.sp),
-        fontWeight = FontWeight.Bold,
-        fontSize = 24.sp,
-        color = LocalContentColor.current.copy(0.8f)
-    )
 }
 
 @OptIn(ExperimentalMaterialApi::class)

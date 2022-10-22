@@ -11,8 +11,6 @@ import com.leebeebeom.clothinghelperdomain.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-// TODO 중복 코드 제거, 코드 정리
-
 class UserRepositoryImpl : UserRepository {
     private val auth = FirebaseAuth.getInstance()
 

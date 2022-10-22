@@ -9,29 +9,23 @@ import com.leebeebeom.clothinghelperdomain.model.User
 import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+
+// TODO 중복 코드 제거, 코드 정리
 
 class UserRepositoryImpl : UserRepository {
     private val auth = FirebaseAuth.getInstance()
 
     private val _isSignIn = MutableStateFlow(auth.currentUser != null)
-    override val isSignIn get() = _isSignIn
+    override val isSignIn: StateFlow<Boolean> get() = _isSignIn
 
     private val _user = MutableStateFlow(auth.currentUser.toUser())
-    override val user get() = _user
-
-    private fun signInSuccess(user: User) {
-        _isSignIn.value = true
-        updateUser(user)
-    }
-
-    private fun updateUser(user: User?) {
-        this._user.value = user
-    }
+    override val user: StateFlow<User?> get() = _user
 
     override fun googleSignIn(
         googleCredential: Any?,
         googleSignInListener: FirebaseListener,
-        writeInitialSubCategory: (String) -> Unit
+        pushInitialSubCategories: (String) -> Unit
     ) {
         val authCredential = googleCredential as AuthCredential
 
@@ -39,10 +33,7 @@ class UserRepositoryImpl : UserRepository {
             if (it.isSuccessful) {
                 val user = it.result.user.toUser()!!
                 it.result.additionalUserInfo?.isNewUser?.let { isNewUser ->
-                    if (isNewUser) {
-                        pushUser(user)
-                        writeInitialSubCategory(user.uid)
-                    }
+                    if (isNewUser) pushFirstUserData(user, pushInitialSubCategories)
                 }
                 signInSuccess(user)
                 googleSignInListener.taskSuccess()
@@ -65,14 +56,13 @@ class UserRepositoryImpl : UserRepository {
         name: String,
         signUpListener: FirebaseListener,
         updateNameListener: FirebaseListener,
-        writeInitialSubCategory: (String) -> Unit
+        pushInitialSubCategories: (String) -> Unit
     ) {
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
                 val firebaseUser = it.result.user!!
                 val user = firebaseUser.toUser()!!
-                pushUser(user)
-                writeInitialSubCategory(user.uid)
+                pushFirstUserData(user, pushInitialSubCategories)
                 signInSuccess(user)
                 signUpListener.taskSuccess()
                 updateName(updateNameListener, firebaseUser, name)
@@ -85,7 +75,7 @@ class UserRepositoryImpl : UserRepository {
 
         user.updateProfile(request).addOnCompleteListener {
             if (it.isSuccessful) {
-                val newNameUser = user.toUser()!!.copy(name = name)
+                val newNameUser = user.toUser()!!
                 pushUser(newNameUser)
                 updateUser(newNameUser)
                 updateNameListener.taskSuccess()
@@ -100,6 +90,11 @@ class UserRepositoryImpl : UserRepository {
         }
     }
 
+    private fun pushFirstUserData(user: User, writeInitialSubCategory: (String) -> Unit) {
+        pushUser(user)
+        writeInitialSubCategory(user.uid)
+    }
+
     private fun pushUser(user: User) =
         FirebaseDatabase.getInstance().reference.child(user.uid).child(DatabasePath.USER_INFO)
             .setValue(user).addOnCompleteListener {
@@ -110,6 +105,15 @@ class UserRepositoryImpl : UserRepository {
         auth.signOut()
         _isSignIn.value = false
         updateUser(null)
+    }
+
+    private fun signInSuccess(user: User) {
+        _isSignIn.value = true
+        updateUser(user)
+    }
+
+    private fun updateUser(user: User?) {
+        this._user.value = user
     }
 }
 

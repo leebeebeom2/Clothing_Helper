@@ -47,5 +47,8 @@
     <string name="average_size">평균 사이즈</string>
     <string name="top_info">총장: 71 가슴: 50\n어깨: 53 소매: 24</string>
     <string name="most_have_size">가장 많이 보유한 사이즈</string>
-    <string name="data_load_failed">"데이터 로드에 실패했습니다."</string>
+    <string name="top_sub_categories_load_failed">TOP 서브카테고리 로드에 실패했습니다.</string>
+    <string name="bottom_sub_categories_load_failed">BOTTOM 서브카테고리 로드에 실패했습니다.</string>
+    <string name="outer_sub_categories_load_failed">OUTER 서브카테고리 로드에 실패했습니다.</string>
+    <string name="etc_sub_categories_load_failed">ETC 서브카테고리 로드에 실패했습니다.</string>
 </resources>

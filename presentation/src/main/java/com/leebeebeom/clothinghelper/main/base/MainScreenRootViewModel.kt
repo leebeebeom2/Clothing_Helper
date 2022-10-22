@@ -30,7 +30,10 @@ class MainScreenRootViewModel @Inject constructor(
             getUserUseCase().collect(viewModelState::userUpdate)
         }
         viewModelScope.launch {
-            getSubCategoriesUseCase.loadSubCategories(viewModelState.onDone, viewModelState.onCancelled)
+            getSubCategoriesUseCase.loadSubCategories(
+                viewModelState.onDone,
+                viewModelState.onCancelled
+            )
         }
 
         viewModelScope.launch {
@@ -56,13 +59,13 @@ class MainNavHostViewModelState : BaseViewModelState() {
     var user by mutableStateOf<User?>(null)
         private set
 
-    var topSubCategoriesLoading by mutableStateOf(true)
+    var isTopSubCategoriesLoading by mutableStateOf(true)
         private set
-    var bottomSubCategoriesLoading by mutableStateOf(true)
+    var isBottomSubCategoriesLoading by mutableStateOf(true)
         private set
-    var outerSubCategoriesLoading by mutableStateOf(true)
+    var isOuterSubCategoriesLoading by mutableStateOf(true)
         private set
-    var etcSubCategoriesLoading by mutableStateOf(true)
+    var isEtcSubCategoriesLoading by mutableStateOf(true)
         private set
 
     fun userUpdate(user: User?) {
@@ -75,6 +78,15 @@ class MainNavHostViewModelState : BaseViewModelState() {
             SubCategoryParent.Bottom -> bottomSubCategories
             SubCategoryParent.OUTER -> outerSubCategories
             SubCategoryParent.ETC -> etcSubCategories
+        }
+    }
+
+    fun getIsLoading(subCategoryParent: SubCategoryParent): Boolean {
+        return when (subCategoryParent) {
+            SubCategoryParent.Top -> isTopSubCategoriesLoading
+            SubCategoryParent.Bottom -> isBottomSubCategoriesLoading
+            SubCategoryParent.OUTER -> isOuterSubCategoriesLoading
+            SubCategoryParent.ETC -> isEtcSubCategoriesLoading
         }
     }
 
@@ -100,10 +112,10 @@ class MainNavHostViewModelState : BaseViewModelState() {
     }
 
     val onDone = listOf(
-        { topSubCategoriesLoading = false },
-        { bottomSubCategoriesLoading = false },
-        { outerSubCategoriesLoading = false },
-        { etcSubCategoriesLoading = false }
+        { isTopSubCategoriesLoading = false },
+        { isBottomSubCategoriesLoading = false },
+        { isOuterSubCategoriesLoading = false },
+        { isEtcSubCategoriesLoading = false }
     )
 
     val onCancelled = listOf(

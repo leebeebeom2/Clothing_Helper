@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
 
 // Set of Material typography styles to start with
-val NotoSansFontFamily = FontFamily(
+val DotumFontFamily = FontFamily(
     Font(R.font.dotum_pro_light, FontWeight.Thin),
     Font(R.font.dotum_pro_light, FontWeight.ExtraLight),
     Font(R.font.dotum_pro_light, FontWeight.Light),
@@ -22,7 +22,7 @@ val NotoSansFontFamily = FontFamily(
 )
 
 val Dotum = Typography(
-    defaultFontFamily = NotoSansFontFamily,
+    defaultFontFamily = DotumFontFamily,
     h1 = TextStyle(
         fontWeight = FontWeight.Light,
         fontSize = 96.sp,

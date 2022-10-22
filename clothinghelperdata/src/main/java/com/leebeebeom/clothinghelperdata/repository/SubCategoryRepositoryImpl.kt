@@ -74,7 +74,6 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
     }
 
     override fun addSubCategory(
-        uid: String,
         subCategoryParent: SubCategoryParent,
         name: String,
         addSubCategoryListener: FirebaseListener
@@ -82,7 +81,7 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
         val timeStamp = System.currentTimeMillis()
         val newSubCategory = SubCategory(subCategoryParent, timeStamp, name)
 
-        root.getSubCategoriesRef(uid).push().setValue(newSubCategory).addOnCompleteListener {
+        root.getSubCategoriesRef(user.value!!.uid).push().setValue(newSubCategory).addOnCompleteListener {
             if (it.isSuccessful) {
                 addSubCategory(subCategoryParent, newSubCategory)
                 addSubCategoryListener.taskSuccess()

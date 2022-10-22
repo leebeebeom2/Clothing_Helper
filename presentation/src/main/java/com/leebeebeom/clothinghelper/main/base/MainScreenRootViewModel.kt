@@ -74,8 +74,8 @@ class MainNavHostViewModelState : BaseViewModelState() {
 
     fun getSubCategories(subCategoryParent: SubCategoryParent): List<SubCategory> {
         return when (subCategoryParent) {
-            SubCategoryParent.Top -> topSubCategories
-            SubCategoryParent.Bottom -> bottomSubCategories
+            SubCategoryParent.TOP -> topSubCategories
+            SubCategoryParent.BOTTOM -> bottomSubCategories
             SubCategoryParent.OUTER -> outerSubCategories
             SubCategoryParent.ETC -> etcSubCategories
         }
@@ -83,8 +83,8 @@ class MainNavHostViewModelState : BaseViewModelState() {
 
     fun getIsLoading(subCategoryParent: SubCategoryParent): Boolean {
         return when (subCategoryParent) {
-            SubCategoryParent.Top -> isTopSubCategoriesLoading
-            SubCategoryParent.Bottom -> isBottomSubCategoriesLoading
+            SubCategoryParent.TOP -> isTopSubCategoriesLoading
+            SubCategoryParent.BOTTOM -> isBottomSubCategoriesLoading
             SubCategoryParent.OUTER -> isOuterSubCategoriesLoading
             SubCategoryParent.ETC -> isEtcSubCategoriesLoading
         }

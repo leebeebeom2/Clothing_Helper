@@ -31,8 +31,8 @@ class MainScreenRootViewModel @Inject constructor(
         }
         viewModelScope.launch {
             getSubCategoriesUseCase.loadSubCategories(
-                viewModelState.onDone,
-                viewModelState.onCancelled
+                viewModelState.onSubCategoriesLoadingDone,
+                viewModelState.onSubCategoriesLoadingCancelled
             )
         }
 
@@ -107,14 +107,14 @@ class MainNavHostViewModelState : BaseViewModelState() {
         }
     }
 
-    val onDone = listOf(
+    val onSubCategoriesLoadingDone = listOf(
         { isTopSubCategoriesLoading = false },
         { isBottomSubCategoriesLoading = false },
         { isOuterSubCategoriesLoading = false },
         { isEtcSubCategoriesLoading = false }
     )
 
-    val onCancelled = listOf(
+    val onSubCategoriesLoadingCancelled = listOf(
         { errorCode: Int, message: String ->
             showToast(R.string.top_sub_categories_load_failed)
             Log.d(

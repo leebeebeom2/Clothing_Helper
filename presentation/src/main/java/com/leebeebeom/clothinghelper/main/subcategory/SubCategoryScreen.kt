@@ -6,12 +6,10 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -38,38 +36,35 @@ import com.leebeebeom.clothinghelper.base.MaxWidthTextField
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
+import com.leebeebeom.clothinghelperdomain.model.SubCategory
+import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun SubCategoryScreenPreview() {
     ClothingHelperTheme {
-        SubCategoryScreen()
+        SubCategoryScreen("")
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SubCategoryScreen(viewModel: SubCategoryViewModel = hiltViewModel()) {
+fun SubCategoryScreen(
+    parentName: String,
+    viewModel: SubCategoryViewModel = hiltViewModel()
+) {
+    val parent = enumValueOf<SubCategoryParent>(parentName)
     val viewModelState = viewModel.viewModelState
 
     Box(modifier = Modifier.fillMaxSize()) {
-        var cell by rememberSaveable { mutableStateOf(1) }
-
-        LazyVerticalGrid(
+        // TODO 타이틀
+        // TODO 올 익스팬드, 정렬
+        LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            columns = GridCells.Fixed(cell)
         ) {
-            items(viewModelState.subCategories, key = { it }) {
-                val modifier = Modifier.animateItemPlacement(animationSpec = tween(425))
-                SubCategoryContent(modifier, it)
-            }
-            item {
-                Button(onClick = { cell = if (cell == 1) 2 else 1 }) {
-
-                }
+            this.items(viewModelState.getSubCategories(parent), key = { it.id }) {
+                SubCategoryContent(it)
             }
         }
 
@@ -77,19 +72,19 @@ fun SubCategoryScreen(viewModel: SubCategoryViewModel = hiltViewModel()) {
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(end = 16.dp, bottom = 16.dp),
-            onPositiveButtonClick = viewModel::addSubCategory,
-            subCategories = viewModelState.subCategories
+            onPositiveButtonClick = { viewModel.addSubCategory(parent, it) },
+            subCategories = viewModelState.getSubCategories(parent)
         )
     }
 }
 
 @Composable
-private fun SubCategoryContent(modifier: Modifier, title: String) {
+private fun SubCategoryContent(subCategory: SubCategory) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
-    Card(modifier = modifier, elevation = 2.dp, shape = RoundedCornerShape(12.dp)) {
+    Card(elevation = 2.dp, shape = RoundedCornerShape(12.dp)) {
         Column {
-            SubCategoryTitle(title, isExpanded) { isExpanded = !isExpanded }
+            SubCategoryTitle(subCategory.name, isExpanded) { isExpanded = !isExpanded }
             SubCategoryInfo(isExpanded)
         }
     }
@@ -183,7 +178,7 @@ fun ExpandIcon(modifier: Modifier = Modifier, isExpanded: Boolean, onExpandIconC
 
 @Composable
 private fun AddCategoryDialogFab(
-    modifier: Modifier, onPositiveButtonClick: (String) -> Unit, subCategories: List<String>
+    modifier: Modifier, onPositiveButtonClick: (String) -> Unit, subCategories: List<SubCategory>
 ) {
     val state = rememberAddCategoryDialogUIState()
 
@@ -209,9 +204,10 @@ private fun AddCategoryDialogFab(
                 )
                 DialogTextField(categoryName = state.categoryName,
                     error = state.categoryNameError,
-                    onCategoryNameChange = {
-                        state.onCategoryNameChange(it)
-                        if (subCategories.contains(it)) state.enableCategoryNameError(R.string.error_same_category_name)
+                    onCategoryNameChange = { newName ->
+                        state.onCategoryNameChange(newName)
+                        if (subCategories.map { it.name }
+                                .contains(newName)) state.enableCategoryNameError(R.string.error_same_category_name)
                     })
                 DialogTextButtons(positiveButtonEnabled = state.positiveButtonEnabled,
                     onCancelButtonClick = state::dismissDialog,

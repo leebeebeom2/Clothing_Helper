@@ -113,7 +113,7 @@ private fun DrawerContents(
                 SimpleHeightSpacer(dp = 4)
             }
 
-            items(mainCategories, key = { it.type }) {
+            items(mainCategories, key = { it.type.name }) {
                 MainCategory(
                     mainCategory = it,
                     subCategories = getSubCategories(it.type),
@@ -127,18 +127,15 @@ private fun DrawerContents(
 
 @Composable
 private fun DrawerHeader(user: User?, onSettingIconClick: () -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
-    ) {
-        user?.let {
-            Text(
-                modifier = Modifier
-                    .padding(start = 12.dp)
-                    .weight(1f),
-                style = MaterialTheme.typography.body1,
-                text = "${user.name}(${user.email})"
-            )
-        }
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            modifier = Modifier
+                .padding(start = 12.dp)
+                .weight(1f),
+            style = MaterialTheme.typography.body1,
+            text = "${user?.name}(${user?.email})"
+        )
+
         IconButton(onClick = onSettingIconClick) {
             SimpleIcon(drawable = R.drawable.ic_settings)
         }
@@ -150,16 +147,16 @@ private fun EssentialMenu(
     essentialMenu: EssentialMenu,
     onDrawerContentClick: (parentName: String) -> Unit
 ) = DrawerContentRow(
-        modifier = Modifier.heightIn(44.dp),
-        onDrawerContentClick = { onDrawerContentClick(essentialMenu.type.name) }) {
-        SimpleIcon(modifier = Modifier.size(22.dp), drawable = essentialMenu.drawable)
-        SimpleWidthSpacer(dp = 12)
-        DrawerContentText(
-            modifier = Modifier.weight(1f),
-            text = stringResource(id = essentialMenu.name),
-            style = MaterialTheme.typography.body1.copy(letterSpacing = 0.75.sp)
-        )
-    }
+    modifier = Modifier.heightIn(44.dp),
+    onDrawerContentClick = { onDrawerContentClick(essentialMenu.type.name) }) {
+    SimpleIcon(modifier = Modifier.size(22.dp), drawable = essentialMenu.drawable)
+    SimpleWidthSpacer(dp = 12)
+    DrawerContentText(
+        modifier = Modifier.weight(1f),
+        text = stringResource(id = essentialMenu.name),
+        style = MaterialTheme.typography.body1.copy(letterSpacing = 0.75.sp)
+    )
+}
 
 @Composable
 private fun DrawerContentText(modifier: Modifier, text: String, style: TextStyle) {
@@ -214,7 +211,10 @@ private fun ColumnScope.SubCategories(
     ) {
         Surface(color = MaterialTheme.colors.primary) {
             Column {
-                for (subCategory in subCategories) SubCategory(subCategory) {}
+                for (subCategory in subCategories)
+                    key(subCategory.id) {
+                        SubCategory(subCategory) {/*TODO*/}
+                    }
             }
         }
     }
@@ -234,12 +234,12 @@ private fun LoadingIcon() {
 @Composable
 private fun SubCategory(subCategory: SubCategory, onSubCategoryClick: (id: Long) -> Unit) {
     DrawerContentRow(
-        modifier = Modifier.heightIn(40.dp),
+        modifier = Modifier.heightIn(40.dp).padding(horizontal = 8.dp),
         onDrawerContentClick = { onSubCategoryClick(subCategory.id) }) {
         DrawerContentText(
             modifier = Modifier
                 .weight(1f)
-                .padding(start = 20.dp),
+                .padding(start = 12.dp),
             text = subCategory.name,
             style = MaterialTheme.typography.subtitle2
         )
@@ -254,7 +254,7 @@ private fun DrawerContentRow(
 ) = Row(
     modifier = modifier
         .fillMaxWidth()
-        .padding(start = 8.dp, end = 8.dp)
+        .padding(horizontal = 8.dp)
         .clip(RoundedCornerShape(12.dp))
         .clickable(onClick = onDrawerContentClick)
         .padding(start = 4.dp),

@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface SubCategoryRepository {
     suspend fun loadSubCategories(
-        onDone: List<() -> Unit>,
-        onCancelled: List<(errorCode: Int, message: String) -> Unit>
+        onSubCategoriesLoadingDone: List<() -> Unit>,
+        onSubCategoriesLoadingCancelled: List<(errorCode: Int, message: String) -> Unit>
     )
 
     fun pushInitialSubCategories(uid: String)

@@ -17,9 +17,9 @@ import com.leebeebeom.clothinghelperdomain.model.EssentialMenus
 sealed class MainDestinations(val route: String) {
     object MainCategory : MainDestinations("mainCategory")
     object SubCategory : MainDestinations("subCategory") {
-        const val parentName: String = "parentName"
-        val routeWithArg = "$route/{$parentName}"
-        val arguments = listOf(navArgument(parentName) { type = NavType.StringType })
+        const val parentNameArg: String = "parentName"
+        val routeWithArg = "$route/{$parentNameArg}"
+        val arguments = listOf(navArgument(parentNameArg) { type = NavType.StringType })
     }
 
     object Setting : MainDestinations("setting")
@@ -49,7 +49,7 @@ fun MainNavHost() {
                 arguments = MainDestinations.SubCategory.arguments
             ) { entry ->
                 val parentName =
-                    entry.arguments?.getString(MainDestinations.SubCategory.parentName) ?: ""
+                    entry.arguments?.getString(MainDestinations.SubCategory.parentNameArg)!!
                 SubCategoryScreen(parentName)
             }
             composable(MainDestinations.Setting.route) {

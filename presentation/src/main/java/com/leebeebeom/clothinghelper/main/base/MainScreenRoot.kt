@@ -71,7 +71,7 @@ fun MainScreenRoot(
             drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
             drawerBackgroundColor = MaterialTheme.colors.primary,
             bottomBar = {
-                CHBottomAppBar(onDrawerIconClick = state::onDrawerIconClick)
+                BottomAppBar(onDrawerIconClick = state::onDrawerIconClick)
             },
             content = content
         )
@@ -80,13 +80,12 @@ fun MainScreenRoot(
 }
 
 @Composable
-private fun CHBottomAppBar(onDrawerIconClick: () -> Unit) {
+private fun BottomAppBar(onDrawerIconClick: () -> Unit) =
     BottomAppBar(contentPadding = PaddingValues(horizontal = 4.dp)) {
         IconButton(onClick = onDrawerIconClick) {
             SimpleIcon(drawable = R.drawable.ic_menu)
         }
     }
-}
 
 @Composable
 private fun DrawerContents(
@@ -97,43 +96,37 @@ private fun DrawerContents(
     mainCategories: List<MainCategory>,
     getSubCategories: (SubCategoryParent) -> List<SubCategory>,
     getIsLoading: (SubCategoryParent) -> Boolean
-) {
-    Column {
-        DrawerHeader(user = user, onSettingIconClick = onSettingIconClick)
-        Surface(color = Color(0xFF121212)) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(top = 4.dp, bottom = 40.dp)
-            ) {
-                items(essentialMenus,
-                    key = { it.id }) {
-                    EssentialMenu(
-                        essentialMenu = it, onDrawerContentClick = onDrawerContentClick
-                    )
-                }
-                item {
-                    SimpleHeightSpacer(dp = 4)
-                    Divider(color = Disabled)
-                    SimpleHeightSpacer(dp = 4)
-                }
+) = Column {
+    DrawerHeader(user = user, onSettingIconClick = onSettingIconClick)
+    Surface(color = Color(0xFF121212)) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(top = 4.dp, bottom = 40.dp)
+        ) {
+            items(essentialMenus, key = { it.id }) {
+                EssentialMenu(essentialMenu = it, onDrawerContentClick = onDrawerContentClick)
+            }
 
-                items(mainCategories, key = { it.id }) {
-                    MainCategory(
-                        mainCategory = it,
-                        subCategories = getSubCategories(it.type),
-                        isLoading = getIsLoading(it.type),
-                        onDrawerContentClick = onDrawerContentClick
-                    )
-                }
+            item {
+                SimpleHeightSpacer(dp = 4)
+                Divider(color = Disabled)
+                SimpleHeightSpacer(dp = 4)
+            }
+
+            items(mainCategories, key = { it.id }) {
+                MainCategory(
+                    mainCategory = it,
+                    subCategories = getSubCategories(it.type),
+                    isLoading = getIsLoading(it.type),
+                    onDrawerContentClick = onDrawerContentClick
+                )
             }
         }
     }
 }
 
 @Composable
-private fun DrawerHeader(
-    user: User?, onSettingIconClick: () -> Unit,
-) {
+private fun DrawerHeader(user: User?, onSettingIconClick: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
     ) {
@@ -153,10 +146,7 @@ private fun DrawerHeader(
 }
 
 @Composable
-private fun EssentialMenu(
-    essentialMenu: EssentialMenu,
-    onDrawerContentClick: (Int) -> Unit
-) =
+private fun EssentialMenu(essentialMenu: EssentialMenu, onDrawerContentClick: (Int) -> Unit) =
     DrawerContentRow(
         modifier = Modifier.heightIn(44.dp),
         onDrawerContentClick = { onDrawerContentClick(essentialMenu.id) }) {
@@ -200,30 +190,43 @@ private fun MainCategory(
                 text = stringResource(id = mainCategory.name),
                 style = MaterialTheme.typography.subtitle1
             )
-            if (isLoading) CircularProgressIndicator(
-                modifier = Modifier
-                    .padding(end = 16.dp)
-                    .size(16.dp),
-                color = MaterialTheme.colors.surface.copy(ContentAlpha.medium),
-                strokeWidth = 2.dp
-            )
+            if (isLoading) LoadingIcon()
             else ExpandIcon(modifier = Modifier.size(22.dp), isExpanded = isExpand) {
                 isExpand = !isExpand
             }
         }
-        AnimatedVisibility(
-            visible = isExpand,
-            enter = expandVertically(),
-            exit = shrinkVertically()
-        ) {
-            Surface(color = MaterialTheme.colors.primary) {
-                Column {
-                    for (subCategory in subCategories) SubCategory(subCategory) {}
-                }
+        SubCategories(isExpand, subCategories)
+    }
+
+}
+
+@Composable
+private fun ColumnScope.SubCategories(
+    isExpand: Boolean,
+    subCategories: List<SubCategory>
+) {
+    AnimatedVisibility(
+        visible = isExpand,
+        enter = expandVertically(),
+        exit = shrinkVertically()
+    ) {
+        Surface(color = MaterialTheme.colors.primary) {
+            Column {
+                for (subCategory in subCategories) SubCategory(subCategory) {}
             }
         }
     }
+}
 
+@Composable
+private fun LoadingIcon() {
+    CircularProgressIndicator(
+        modifier = Modifier
+            .padding(end = 16.dp)
+            .size(16.dp),
+        color = MaterialTheme.colors.surface.copy(ContentAlpha.medium),
+        strokeWidth = 2.dp
+    )
 }
 
 @Composable
@@ -243,7 +246,9 @@ private fun SubCategory(subCategory: SubCategory, onSubCategoryClick: (id: Long)
 
 @Composable
 private fun DrawerContentRow(
-    modifier: Modifier, onDrawerContentClick: () -> Unit, content: @Composable RowScope.() -> Unit
+    modifier: Modifier,
+    onDrawerContentClick: () -> Unit,
+    content: @Composable RowScope.() -> Unit
 ) = Row(
     modifier = modifier
         .fillMaxWidth()

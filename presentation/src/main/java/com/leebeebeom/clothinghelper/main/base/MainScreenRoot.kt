@@ -213,7 +213,7 @@ private fun ColumnScope.SubCategories(
             Column {
                 for (subCategory in subCategories)
                     key(subCategory.id) {
-                        SubCategory(subCategory) {/*TODO*/}
+                        SubCategory(subCategory) {/*TODO*/ }
                     }
             }
         }
@@ -234,7 +234,9 @@ private fun LoadingIcon() {
 @Composable
 private fun SubCategory(subCategory: SubCategory, onSubCategoryClick: (id: Long) -> Unit) {
     DrawerContentRow(
-        modifier = Modifier.heightIn(40.dp).padding(horizontal = 8.dp),
+        modifier = Modifier
+            .heightIn(40.dp)
+            .padding(horizontal = 8.dp),
         onDrawerContentClick = { onSubCategoryClick(subCategory.id) }) {
         DrawerContentText(
             modifier = Modifier

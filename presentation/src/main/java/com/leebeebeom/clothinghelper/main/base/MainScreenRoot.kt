@@ -39,7 +39,7 @@ fun MainScreenRoot(
     onSettingIconClick: () -> Unit,
     onDrawerContentClick: (parentName: String) -> Unit,
     viewModel: MainScreenRootViewModel = hiltViewModel(),
-    content: @Composable (PaddingValues) -> Unit
+    content: @Composable (PaddingValues, getIsSubCategoriesLoading: (SubCategoryParent) -> Boolean) -> Unit
 ) {
     val viewModelState = viewModel.viewModelState
     val state = rememberMainScreenUIState()
@@ -73,7 +73,7 @@ fun MainScreenRoot(
             bottomBar = {
                 BottomAppBar(onDrawerIconClick = state::onDrawerIconClick)
             },
-            content = content
+            content = { content(it, viewModelState::getIsSubCategoriesLoading) }
         )
         if (state.drawerState.isOpen) BackHandler(onBack = state::onDrawerClose)
     }
@@ -307,5 +307,3 @@ fun getMainCategories() = listOf(
     MainCategory(R.string.outer, SubCategoryParent.OUTER),
     MainCategory(R.string.etc, SubCategoryParent.ETC)
 )
-
-// TODO isSubCategoriesLaodingUIState

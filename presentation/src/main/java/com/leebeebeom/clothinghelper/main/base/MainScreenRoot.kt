@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -94,7 +95,7 @@ private fun DrawerContents(
     onSettingIconClick: () -> Unit,
     essentialMenus: List<EssentialMenu>,
     mainCategories: List<MainCategory>,
-    getSubCategories: (SubCategoryParent) -> List<SubCategory>,
+    getSubCategories: (SubCategoryParent) -> SnapshotStateList<SubCategory>,
     getIsSubCategoriesLoading: (SubCategoryParent) -> Boolean
 ) = Column {
     DrawerHeader(user = user, onSettingIconClick = onSettingIconClick)
@@ -172,7 +173,7 @@ private fun DrawerContentText(modifier: Modifier, text: String, style: TextStyle
 @Composable
 private fun MainCategory(
     mainCategory: MainCategory,
-    subCategories: List<SubCategory>,
+    subCategories: SnapshotStateList<SubCategory>,
     isSubCategoriesLoading: Boolean,
     onDrawerContentClick: (parentName: String) -> Unit,
 ) {
@@ -202,7 +203,7 @@ private fun MainCategory(
 @Composable
 private fun ColumnScope.SubCategories(
     isExpand: Boolean,
-    subCategories: List<SubCategory>
+    subCategories: SnapshotStateList<SubCategory>
 ) {
     AnimatedVisibility(
         visible = isExpand,

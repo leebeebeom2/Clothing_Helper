@@ -56,18 +56,22 @@ class SubCategoryViewModelState {
     private var etcSubCategories = mutableStateListOf<SubCategory>()
 
     fun updateTopSubCategories(topSubCategories: List<SubCategory>) {
+        this.topSubCategories.removeAll(this.topSubCategories)
         this.topSubCategories = topSubCategories.toMutableStateList()
     }
 
     fun updateBottomSubCategories(bottomSubCategories: List<SubCategory>) {
+        this.bottomSubCategories.removeAll(this.bottomSubCategories)
         this.bottomSubCategories = bottomSubCategories.toMutableStateList()
     }
 
     fun updateOuterSubCategories(outerSubCategories: List<SubCategory>) {
+        this.outerSubCategories.removeAll(this.outerSubCategories)
         this.outerSubCategories = outerSubCategories.toMutableStateList()
     }
 
     fun updateEtcSubCategories(etcSubCategories: List<SubCategory>) {
+        this.etcSubCategories.removeAll(this.etcSubCategories)
         this.etcSubCategories = etcSubCategories.toMutableStateList()
     }
 

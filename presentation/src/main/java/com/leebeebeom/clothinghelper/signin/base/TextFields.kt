@@ -2,7 +2,11 @@ package com.leebeebeom.clothinghelper.signin.base
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -37,11 +41,7 @@ fun PasswordTextField(
     imeAction: ImeAction,
     @StringRes label: Int = R.string.password
 ) {
-    var visualTransformation: VisualTransformation by remember {
-        mutableStateOf(
-            PasswordVisualTransformation()
-        )
-    }
+    var isVisible by rememberSaveable { mutableStateOf(false) }
 
     MaxWidthTextField(
         label = label,
@@ -49,13 +49,9 @@ fun PasswordTextField(
         onValueChange = onPasswordChange,
         error = error,
         trailingIcon = {
-            VisibleIcon(visualTransformation) {
-                visualTransformation =
-                    if (it) VisualTransformation.None
-                    else PasswordVisualTransformation()
-            }
+            VisibleIcon(isVisible) { isVisible = !isVisible }
         },
-        visualTransformation = visualTransformation,
+        visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(
             imeAction = imeAction,
             keyboardType = KeyboardType.Password

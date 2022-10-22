@@ -10,15 +10,15 @@ import com.leebeebeom.clothinghelper.R
 
 // Set of Material typography styles to start with
 val DotumFontFamily = FontFamily(
-    Font(R.font.dotum_pro_light, FontWeight.Thin),
-    Font(R.font.dotum_pro_light, FontWeight.ExtraLight),
-    Font(R.font.dotum_pro_light, FontWeight.Light),
-    Font(R.font.dotum_pro_medium, FontWeight.Normal),
-    Font(R.font.dotum_pro_medium, FontWeight.Medium),
-    Font(R.font.dotum_pro_medium, FontWeight.SemiBold),
-    Font(R.font.dotum_pro_bold, FontWeight.Bold),
-    Font(R.font.dotum_pro_bold, FontWeight.ExtraBold),
-    Font(R.font.dotum_pro_bold, FontWeight.Black)
+    Font(R.font.nanumbarungothicultralight, FontWeight.Thin),
+    Font(R.font.nanumbarungothicultralight, FontWeight.ExtraLight),
+    Font(R.font.nanumbarungothiclight, FontWeight.Light),
+    Font(R.font.nanumbarungothic, FontWeight.Normal),
+    Font(R.font.nanumbarungothic, FontWeight.Medium),
+    Font(R.font.nanumbarungothic, FontWeight.SemiBold),
+    Font(R.font.nanumbarungothicbold, FontWeight.Bold),
+    Font(R.font.nanumbarungothicbold, FontWeight.ExtraBold),
+    Font(R.font.nanumbarungothicbold, FontWeight.Black)
 )
 
 val Dotum = Typography(

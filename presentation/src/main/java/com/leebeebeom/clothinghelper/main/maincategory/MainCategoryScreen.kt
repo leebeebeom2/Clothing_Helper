@@ -48,6 +48,9 @@ fun MainCategoryScreen(
             .verticalScroll(rememberScrollState())
             .padding(16.dp),
     ) {
+        HeaderText()
+        SimpleHeightSpacer(dp = 12)
+
         val modifier =
             if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT)
                 Modifier.weight(1f)
@@ -63,6 +66,18 @@ fun MainCategoryScreen(
                 )
             }
     }
+}
+
+@Composable
+private fun HeaderText() {
+    Text(
+        modifier = Modifier.padding(start = 4.dp),
+        text = "MAIN CATEGORIES",
+        style = MaterialTheme.typography.h4.copy(letterSpacing = 0.75.sp),
+        fontWeight = FontWeight.Bold,
+        fontSize = 24.sp,
+        color = LocalContentColor.current.copy(0.75f)
+    )
 }
 
 @OptIn(ExperimentalMaterialApi::class)

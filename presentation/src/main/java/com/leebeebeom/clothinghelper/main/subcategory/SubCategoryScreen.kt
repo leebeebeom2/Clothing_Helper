@@ -1,5 +1,6 @@
 package com.leebeebeom.clothinghelper.main.subcategory
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -47,7 +48,7 @@ fun SubCategoryScreen(
                 color = LocalContentColor.current.copy(ContentAlpha.medium)
             )
         // TODO 헤어
-        // TODO 올 익스팬드, 정렬, 삭제, 이름 수정
+        // TODO 삭제, 이름 수정
         else LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
@@ -55,8 +56,12 @@ fun SubCategoryScreen(
         ) {
             item {
                 SubCategoryHeaderText(getHeaderTextRes(subCategoryParent))
-                Divider()
-            // TODO 올 익스팬트, 정렬 아이콘
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Divider(modifier = Modifier.weight(1f))
+                    HeaderIcon(R.drawable.ic_all_expand)
+                    HeaderIcon(R.drawable.ic_sort)
+                }
+                // TODO 올 익스탠트, 정렬 아이콘
             }
 
             this.items(viewModelState.getSubCategories(subCategoryParent), key = { it.id }) {
@@ -70,6 +75,16 @@ fun SubCategoryScreen(
                 .padding(end = 16.dp, bottom = 16.dp),
             onPositiveButtonClick = { viewModel.addSubCategory(subCategoryParent, it) },
             subCategories = viewModelState.getSubCategories(subCategoryParent)
+        )
+    }
+}
+
+@Composable
+private fun HeaderIcon(@DrawableRes drawable: Int) {
+    IconButton(onClick = { /*TODO*/ }, modifier = Modifier.size(22.dp)) {
+        SimpleIcon(
+            drawable = drawable,
+            tint = LocalContentColor.current.copy(0.5f)
         )
     }
 }

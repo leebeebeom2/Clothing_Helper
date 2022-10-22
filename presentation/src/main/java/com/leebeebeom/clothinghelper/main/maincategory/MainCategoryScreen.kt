@@ -40,9 +40,9 @@ fun MainCategoryScreen(
             .padding(16.dp),
     ) {
         MainHeaderText(R.string.main_categories)
-        SimpleHeightSpacer(dp = 6)
+        SimpleHeightSpacer(dp = 4)
         Divider()
-        SimpleHeightSpacer(dp = 12)
+        SimpleHeightSpacer(dp = 8)
 
         val modifier =
             if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT)
@@ -65,7 +65,7 @@ fun MainCategoryScreen(
 @Composable
 private fun MainHeaderText(@StringRes text: Int) {
     Text(
-        modifier = Modifier.padding(start = 6.dp),
+        modifier = Modifier.padding(start = 4.dp),
         text = stringResource(id = text),
         style = MaterialTheme.typography.h4.copy(letterSpacing = 0.75.sp),
         fontWeight = FontWeight.Bold,

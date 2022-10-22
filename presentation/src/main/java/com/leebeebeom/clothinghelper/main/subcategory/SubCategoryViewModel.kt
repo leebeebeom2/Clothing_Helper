@@ -1,7 +1,8 @@
 package com.leebeebeom.clothinghelper.main.subcategory
 
-import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
@@ -50,32 +51,28 @@ class SubCategoryViewModel @Inject constructor(
 }
 
 class SubCategoryViewModelState {
-    private var topSubCategories = mutableStateListOf<SubCategory>()
-    private var bottomSubCategories = mutableStateListOf<SubCategory>()
-    private var outerSubCategories = mutableStateListOf<SubCategory>()
-    private var etcSubCategories = mutableStateListOf<SubCategory>()
+    private var topSubCategories by mutableStateOf(emptyList<SubCategory>())
+    private var bottomSubCategories by mutableStateOf(emptyList<SubCategory>())
+    private var outerSubCategories by mutableStateOf(emptyList<SubCategory>())
+    private var etcSubCategories by mutableStateOf(emptyList<SubCategory>())
 
     fun updateTopSubCategories(topSubCategories: List<SubCategory>) {
-        this.topSubCategories.removeAll(this.topSubCategories)
-        this.topSubCategories = topSubCategories.toMutableStateList()
+        this.topSubCategories = topSubCategories
     }
 
     fun updateBottomSubCategories(bottomSubCategories: List<SubCategory>) {
-        this.bottomSubCategories.removeAll(this.bottomSubCategories)
-        this.bottomSubCategories = bottomSubCategories.toMutableStateList()
+        this.bottomSubCategories = bottomSubCategories
     }
 
     fun updateOuterSubCategories(outerSubCategories: List<SubCategory>) {
-        this.outerSubCategories.removeAll(this.outerSubCategories)
-        this.outerSubCategories = outerSubCategories.toMutableStateList()
+        this.outerSubCategories = outerSubCategories
     }
 
     fun updateEtcSubCategories(etcSubCategories: List<SubCategory>) {
-        this.etcSubCategories.removeAll(this.etcSubCategories)
-        this.etcSubCategories = etcSubCategories.toMutableStateList()
+        this.etcSubCategories = etcSubCategories
     }
 
-    fun getSubCategories(parent: SubCategoryParent): SnapshotStateList<SubCategory> {
+    fun getSubCategories(parent: SubCategoryParent): List<SubCategory> {
         return when (parent) {
             SubCategoryParent.TOP -> topSubCategories
             SubCategoryParent.BOTTOM -> bottomSubCategories

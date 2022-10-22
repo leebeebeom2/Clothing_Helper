@@ -88,7 +88,10 @@ fun MainNavHostWithArg(
         ) { entry ->
             val parentName =
                 entry.arguments?.getString(MainDestinations.SubCategory.parentNameArg)!!
-            SubCategoryScreen(parentName)
+            SubCategoryScreen(
+                parentName = parentName,
+                getIsSubCategoriesLoading = getIsSubCategoriesLoading
+            )
         }
         composable(MainDestinations.Setting.route) {
             SettingScreen()

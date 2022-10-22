@@ -23,49 +23,40 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleIcon
-import com.leebeebeom.clothinghelper.main.maincategory.HeaderText
-import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun SubCategoryScreenPreview() {
-    ClothingHelperTheme {
-        SubCategoryScreen("")
-    }
-}
-
 @Composable
 fun SubCategoryScreen(
-    parentName: String, viewModel: SubCategoryViewModel = hiltViewModel()
+    parentName: String, viewModel: SubCategoryViewModel = hiltViewModel(),
+    getIsSubCategoriesLoading: (SubCategoryParent) -> Boolean
 ) {
     val subCategoryParent = enumValueOf<SubCategoryParent>(parentName)
     val viewModelState = viewModel.viewModelState
 
     Box(modifier = Modifier.fillMaxSize()) {
+        if (getIsSubCategoriesLoading(subCategoryParent))
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center),
+                color = LocalContentColor.current.copy(ContentAlpha.medium)
+            )
         // TODO 헤어
         // TODO 올 익스팬드, 정렬, 삭제, 이름 수정
-        LazyColumn(
+        else LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             item {
-                HeaderText(R.string.sub_categories)
-                SimpleHeightSpacer(dp = 8)
-                Row {
-                    Divider(modifier = Modifier.weight(1f))
-                    // TODO 올 익스팬트, 정렬 아이콘
-                }
-                SimpleHeightSpacer(dp = 4)
+                SubCategoryHeaderText(getHeaderTextRes(subCategoryParent))
+                Divider()
+            // TODO 올 익스팬트, 정렬 아이콘
             }
 
             this.items(viewModelState.getSubCategories(subCategoryParent), key = { it.id }) {
@@ -81,6 +72,16 @@ fun SubCategoryScreen(
             subCategories = viewModelState.getSubCategories(subCategoryParent)
         )
     }
+}
+
+@Composable
+fun SubCategoryHeaderText(headerTextRes: Int) {
+    Text(
+        modifier = Modifier.padding(4.dp),
+        text = stringResource(id = headerTextRes),
+        style = MaterialTheme.typography.h2,
+        fontSize = 32.sp
+    )
 }
 
 @Composable
@@ -178,5 +179,14 @@ fun ExpandIcon(modifier: Modifier = Modifier, isExpanded: Boolean, onExpandIconC
             modifier = modifier.rotate(rotate),
             tint = LocalContentColor.current.copy(ContentAlpha.medium)
         )
+    }
+}
+
+fun getHeaderTextRes(subCategoryParent: SubCategoryParent): Int {
+    return when (subCategoryParent) {
+        SubCategoryParent.TOP -> R.string.top
+        SubCategoryParent.BOTTOM -> R.string.bottom
+        SubCategoryParent.OUTER -> R.string.outer
+        SubCategoryParent.ETC -> R.string.etc
     }
 }

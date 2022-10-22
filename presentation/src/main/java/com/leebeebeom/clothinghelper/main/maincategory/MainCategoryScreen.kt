@@ -23,7 +23,6 @@ import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelper.main.base.getMainCategories
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
-import com.leebeebeom.clothinghelperdomain.model.BaseMenuIds
 import com.leebeebeom.clothinghelperdomain.model.MainCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
@@ -38,7 +37,7 @@ fun MainCategoryPreview() {
 @Composable
 fun MainCategoryScreen(
     viewModel: MainCategoryViewModel = hiltViewModel(),
-    onMainCategoryClick: (Int) -> Unit
+    onMainCategoryClick: (parentName: String) -> Unit
 ) {
     val state = rememberMainCategoryScreenUIState()
     val viewModelState = viewModel.viewModelState
@@ -68,7 +67,7 @@ fun MainCategoryScreen(
 private fun MainCategoryContent(
     modifier: Modifier,
     mainCategory: MainCategory,
-    onMainContentClick: (Int) -> Unit,
+    onMainContentClick: (parentName: String) -> Unit,
     getSubCategoriesSize: (SubCategoryParent) -> Int
 ) {
     val shape = RoundedCornerShape(20.dp)
@@ -78,7 +77,7 @@ private fun MainCategoryContent(
             .fillMaxWidth(),
         shape = shape,
         elevation = 2.dp,
-        onClick = { onMainContentClick(mainCategory.id) }
+        onClick = { onMainContentClick(mainCategory.type.name) }
     ) {
         Box(
             modifier = Modifier
@@ -111,7 +110,7 @@ private fun MainCategoryContent(
 
         }
     }
-    if (mainCategory.id != BaseMenuIds.ETC) SimpleHeightSpacer(dp = 16)
+    if (mainCategory.type != SubCategoryParent.ETC) SimpleHeightSpacer(dp = 16)
 }
 
 class MainCategoryScreenUIState {

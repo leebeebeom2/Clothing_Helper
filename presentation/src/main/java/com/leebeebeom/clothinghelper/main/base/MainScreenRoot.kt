@@ -1,6 +1,9 @@
 package com.leebeebeom.clothinghelper.main.base
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -42,7 +45,7 @@ fun MainScreenRoot(
     val state = rememberMainScreenUIState()
 
     viewModelState.toastText?.let {
-        SimpleToast(text = it, viewModelState::toastShown)
+        SimpleToast(text = it, viewModelState.toastShown)
     }
 
     ClothingHelperTheme {
@@ -61,7 +64,8 @@ fun MainScreenRoot(
                     },
                     essentialMenus = state.essentialMenus,
                     mainCategories = state.mainCategories,
-                    getSubCategories = viewModelState::getSubCategories
+                    getSubCategories = viewModelState::getSubCategories,
+                    getIsLoading = viewModelState::getIsLoading
                 )
             },
             drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
@@ -91,7 +95,8 @@ private fun DrawerContents(
     onSettingIconClick: () -> Unit,
     essentialMenus: List<EssentialMenu>,
     mainCategories: List<MainCategory>,
-    getSubCategories: (SubCategoryParent) -> List<SubCategory>
+    getSubCategories: (SubCategoryParent) -> List<SubCategory>,
+    getIsLoading: (SubCategoryParent) -> Boolean
 ) {
     Column {
         DrawerHeader(user = user, onSettingIconClick = onSettingIconClick)
@@ -116,6 +121,7 @@ private fun DrawerContents(
                     MainCategory(
                         mainCategory = it,
                         subCategories = getSubCategories(it.type),
+                        isLoading = getIsLoading(it.type),
                         onDrawerContentClick = onDrawerContentClick
                     )
                 }
@@ -151,7 +157,9 @@ private fun EssentialMenu(
     essentialMenu: EssentialMenu,
     onDrawerContentClick: (Int) -> Unit
 ) =
-    DrawerContentRow(onDrawerContentClick = { onDrawerContentClick(essentialMenu.id) }) {
+    DrawerContentRow(
+        modifier = Modifier.heightIn(44.dp),
+        onDrawerContentClick = { onDrawerContentClick(essentialMenu.id) }) {
         SimpleIcon(modifier = Modifier.size(22.dp), drawable = essentialMenu.drawable)
         SimpleWidthSpacer(dp = 12)
         DrawerContentText(
@@ -176,12 +184,15 @@ private fun DrawerContentText(modifier: Modifier, text: String, style: TextStyle
 private fun MainCategory(
     mainCategory: MainCategory,
     subCategories: List<SubCategory>,
-    onDrawerContentClick: (Int) -> Unit
+    isLoading: Boolean,
+    onDrawerContentClick: (Int) -> Unit,
 ) {
     var isExpand by rememberSaveable { mutableStateOf(false) }
 
     Column {
-        DrawerContentRow(onDrawerContentClick = { onDrawerContentClick(mainCategory.id) }) {
+        DrawerContentRow(
+            modifier = Modifier.heightIn(48.dp),
+            onDrawerContentClick = { onDrawerContentClick(mainCategory.id) }) {
             DrawerContentText(
                 modifier = Modifier
                     .weight(1f)
@@ -189,18 +200,37 @@ private fun MainCategory(
                 text = stringResource(id = mainCategory.name),
                 style = MaterialTheme.typography.subtitle1
             )
-            ExpandIcon(modifier = Modifier.size(22.dp), isExpanded = isExpand) {
+            if (isLoading) CircularProgressIndicator(
+                modifier = Modifier
+                    .padding(end = 16.dp)
+                    .size(16.dp),
+                color = MaterialTheme.colors.surface.copy(ContentAlpha.medium),
+                strokeWidth = 2.dp
+            )
+            else ExpandIcon(modifier = Modifier.size(22.dp), isExpanded = isExpand) {
                 isExpand = !isExpand
             }
         }
-        if (isExpand)
-            for (subCategory in subCategories) SubCategory(subCategory) {}
+        AnimatedVisibility(
+            visible = isExpand,
+            enter = expandVertically(),
+            exit = shrinkVertically()
+        ) {
+            Surface(color = MaterialTheme.colors.primary) {
+                Column {
+                    for (subCategory in subCategories) SubCategory(subCategory) {}
+                }
+            }
+        }
     }
+
 }
 
 @Composable
 private fun SubCategory(subCategory: SubCategory, onSubCategoryClick: (id: Long) -> Unit) {
-    DrawerContentRow(onDrawerContentClick = { onSubCategoryClick(subCategory.id) }) {
+    DrawerContentRow(
+        modifier = Modifier.heightIn(40.dp),
+        onDrawerContentClick = { onSubCategoryClick(subCategory.id) }) {
         DrawerContentText(
             modifier = Modifier
                 .weight(1f)
@@ -213,15 +243,14 @@ private fun SubCategory(subCategory: SubCategory, onSubCategoryClick: (id: Long)
 
 @Composable
 private fun DrawerContentRow(
-    onDrawerContentClick: () -> Unit, content: @Composable RowScope.() -> Unit
+    modifier: Modifier, onDrawerContentClick: () -> Unit, content: @Composable RowScope.() -> Unit
 ) = Row(
-    modifier = Modifier
+    modifier = modifier
         .fillMaxWidth()
         .padding(start = 8.dp, end = 8.dp)
         .clip(RoundedCornerShape(12.dp))
         .clickable(onClick = onDrawerContentClick)
-        .padding(start = 4.dp)
-        .heightIn(44.dp),
+        .padding(start = 4.dp),
     verticalAlignment = Alignment.CenterVertically,
     content = content
 )

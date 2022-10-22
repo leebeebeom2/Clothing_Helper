@@ -59,35 +59,8 @@ class MainNavHostViewModelState : BaseViewModelState() {
     var user by mutableStateOf<User?>(null)
         private set
 
-    var isTopSubCategoriesLoading by mutableStateOf(true)
-        private set
-    var isBottomSubCategoriesLoading by mutableStateOf(true)
-        private set
-    var isOuterSubCategoriesLoading by mutableStateOf(true)
-        private set
-    var isEtcSubCategoriesLoading by mutableStateOf(true)
-        private set
-
     fun userUpdate(user: User?) {
         this.user = user
-    }
-
-    fun getSubCategories(subCategoryParent: SubCategoryParent): List<SubCategory> {
-        return when (subCategoryParent) {
-            SubCategoryParent.TOP -> topSubCategories
-            SubCategoryParent.BOTTOM -> bottomSubCategories
-            SubCategoryParent.OUTER -> outerSubCategories
-            SubCategoryParent.ETC -> etcSubCategories
-        }
-    }
-
-    fun getIsSubCategoriesLoading(subCategoryParent: SubCategoryParent): Boolean {
-        return when (subCategoryParent) {
-            SubCategoryParent.TOP -> isTopSubCategoriesLoading
-            SubCategoryParent.BOTTOM -> isBottomSubCategoriesLoading
-            SubCategoryParent.OUTER -> isOuterSubCategoriesLoading
-            SubCategoryParent.ETC -> isEtcSubCategoriesLoading
-        }
     }
 
     private var topSubCategories by mutableStateOf(emptyList<SubCategory>())
@@ -109,6 +82,29 @@ class MainNavHostViewModelState : BaseViewModelState() {
 
     fun etcSubCategoriesUpdate(etcSubCategories: List<SubCategory>) {
         this.etcSubCategories = etcSubCategories
+    }
+
+    fun getSubCategories(subCategoryParent: SubCategoryParent): List<SubCategory> {
+        return when (subCategoryParent) {
+            SubCategoryParent.TOP -> topSubCategories
+            SubCategoryParent.BOTTOM -> bottomSubCategories
+            SubCategoryParent.OUTER -> outerSubCategories
+            SubCategoryParent.ETC -> etcSubCategories
+        }
+    }
+
+    private var isTopSubCategoriesLoading by mutableStateOf(true)
+    private var isBottomSubCategoriesLoading by mutableStateOf(true)
+    private var isOuterSubCategoriesLoading by mutableStateOf(true)
+    private var isEtcSubCategoriesLoading by mutableStateOf(true)
+
+    fun getIsSubCategoriesLoading(subCategoryParent: SubCategoryParent): Boolean {
+        return when (subCategoryParent) {
+            SubCategoryParent.TOP -> isTopSubCategoriesLoading
+            SubCategoryParent.BOTTOM -> isBottomSubCategoriesLoading
+            SubCategoryParent.OUTER -> isOuterSubCategoriesLoading
+            SubCategoryParent.ETC -> isEtcSubCategoriesLoading
+        }
     }
 
     val onDone = listOf(

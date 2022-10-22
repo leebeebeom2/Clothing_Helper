@@ -71,12 +71,12 @@ fun MainCategoryScreen(
 @Composable
 private fun HeaderText() {
     Text(
-        modifier = Modifier.padding(start = 4.dp),
+        modifier = Modifier.padding(start = 6.dp),
         text = "MAIN CATEGORIES",
         style = MaterialTheme.typography.h4.copy(letterSpacing = 0.75.sp),
         fontWeight = FontWeight.Bold,
         fontSize = 24.sp,
-        color = LocalContentColor.current.copy(0.75f)
+        color = LocalContentColor.current.copy(0.8f)
     )
 }
 

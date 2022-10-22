@@ -37,9 +37,7 @@ fun SignInNavHost() {
                     )
                 }
                 composable(SignInDestinations.SIGN_UP) { SignUpScreen() }
-                composable(SignInDestinations.RESET_PASSWORD) {
-                    ResetPasswordScreen()
-                }
+                composable(SignInDestinations.RESET_PASSWORD) { ResetPasswordScreen() }
             }
         }
 

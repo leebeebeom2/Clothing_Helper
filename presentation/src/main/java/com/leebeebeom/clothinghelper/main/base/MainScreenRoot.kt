@@ -65,7 +65,7 @@ fun MainScreenRoot(
                     essentialMenus = state.essentialMenus,
                     mainCategories = state.mainCategories,
                     getSubCategories = viewModelState::getSubCategories,
-                    getIsLoading = viewModelState::getIsLoading
+                    getIsSubCategoriesLoading = viewModelState::getIsSubCategoriesLoading
                 )
             },
             drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
@@ -95,7 +95,7 @@ private fun DrawerContents(
     essentialMenus: List<EssentialMenu>,
     mainCategories: List<MainCategory>,
     getSubCategories: (SubCategoryParent) -> List<SubCategory>,
-    getIsLoading: (SubCategoryParent) -> Boolean
+    getIsSubCategoriesLoading: (SubCategoryParent) -> Boolean
 ) = Column {
     DrawerHeader(user = user, onSettingIconClick = onSettingIconClick)
     Surface(color = Color(0xFF121212)) {
@@ -117,7 +117,7 @@ private fun DrawerContents(
                 MainCategory(
                     mainCategory = it,
                     subCategories = getSubCategories(it.type),
-                    isLoading = getIsLoading(it.type),
+                    isSubCategoriesLoading = getIsSubCategoriesLoading(it.type),
                     onDrawerContentClick = onDrawerContentClick
                 )
             }
@@ -176,7 +176,7 @@ private fun DrawerContentText(modifier: Modifier, text: String, style: TextStyle
 private fun MainCategory(
     mainCategory: MainCategory,
     subCategories: List<SubCategory>,
-    isLoading: Boolean,
+    isSubCategoriesLoading: Boolean,
     onDrawerContentClick: (parentName: String) -> Unit,
 ) {
     var isExpand by rememberSaveable { mutableStateOf(false) }
@@ -192,7 +192,7 @@ private fun MainCategory(
                 text = stringResource(id = mainCategory.name),
                 style = MaterialTheme.typography.subtitle1
             )
-            if (isLoading) LoadingIcon()
+            if (isSubCategoriesLoading) LoadingIcon()
             else ExpandIcon(modifier = Modifier.size(22.dp), isExpanded = isExpand) {
                 isExpand = !isExpand
             }

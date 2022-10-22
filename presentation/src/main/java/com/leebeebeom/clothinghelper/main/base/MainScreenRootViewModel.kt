@@ -81,7 +81,7 @@ class MainNavHostViewModelState : BaseViewModelState() {
         }
     }
 
-    fun getIsLoading(subCategoryParent: SubCategoryParent): Boolean {
+    fun getIsSubCategoriesLoading(subCategoryParent: SubCategoryParent): Boolean {
         return when (subCategoryParent) {
             SubCategoryParent.TOP -> isTopSubCategoriesLoading
             SubCategoryParent.BOTTOM -> isBottomSubCategoriesLoading

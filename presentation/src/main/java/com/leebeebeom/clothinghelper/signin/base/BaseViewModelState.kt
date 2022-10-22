@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.leebeebeom.clothinghelper.base.BaseViewModelState
 
-open class BaseSignInViewModelState : BaseViewModelState() {
+open class EmailViewModelState : BaseViewModelState() {
     var emailError: Int? by mutableStateOf(null)
         private set
 
@@ -19,7 +19,7 @@ open class BaseSignInViewModelState : BaseViewModelState() {
     }
 }
 
-open class GoogleSignInViewModelState : BaseSignInViewModelState() {
+open class GoogleSignInViewModelState : EmailViewModelState() {
     var googleButtonEnabled by mutableStateOf(true)
         private set
 

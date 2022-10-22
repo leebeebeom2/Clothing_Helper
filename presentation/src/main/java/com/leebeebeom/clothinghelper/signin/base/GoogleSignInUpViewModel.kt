@@ -25,7 +25,7 @@ object FirebaseErrorCode {
 abstract class GoogleSignInUpViewModel(
     private val googleSignInUseCase: GoogleSignInUseCase
 ) : ViewModel() {
-    abstract val viewModelState: BaseSignInUpViewModelState
+    abstract val viewModelState: GoogleSignInViewModelState
 
     fun showToast(@StringRes toastText: Int) = viewModelState.showToast(toastText)
     fun loadingOn() = viewModelState.loadingOn()

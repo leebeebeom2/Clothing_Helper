@@ -10,7 +10,7 @@ interface UserRepository {
     fun googleSignIn(
         googleCredential: Any?,
         googleSignInListener: FirebaseListener,
-        writeInitialSubCategory: (String) -> Unit
+        pushInitialSubCategories: (uid: String) -> Unit
     )
 
     fun signIn(email: String, password: String, signInListener: FirebaseListener)
@@ -21,7 +21,7 @@ interface UserRepository {
         name: String,
         signUpListener: FirebaseListener,
         updateNameListener: FirebaseListener,
-        writeInitialSubCategory: (String) -> Unit
+        pushInitialSubCategories: (uid: String) -> Unit
     )
 
     fun resetPasswordEmail(email: String, resetPasswordListener: FirebaseListener)

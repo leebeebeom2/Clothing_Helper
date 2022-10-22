@@ -17,7 +17,7 @@ class GoogleSignInUseCase(
     ) = userRepository.googleSignIn(
         googleCredential,
         googleSignInListener,
-        subCategoryRepository::writeInitialSubCategory
+        subCategoryRepository::pushInitialSubCategories
     )
 }
 
@@ -43,7 +43,7 @@ class SignUpUseCase(
         name,
         signUpListener,
         updateNameListener,
-        subCategoryRepository::writeInitialSubCategory
+        subCategoryRepository::pushInitialSubCategories
     )
 }
 

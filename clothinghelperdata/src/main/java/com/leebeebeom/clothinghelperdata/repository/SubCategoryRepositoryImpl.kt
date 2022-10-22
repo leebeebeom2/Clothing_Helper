@@ -68,7 +68,7 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
 
     }
 
-    override fun writeInitialSubCategory(uid: String) {
+    override fun pushInitialSubCategories(uid: String) {
         root.getSubCategoriesRef(uid).setValue(getInitialSubCategories()) // TODO 10000개로 테스트 해보기
     }
 

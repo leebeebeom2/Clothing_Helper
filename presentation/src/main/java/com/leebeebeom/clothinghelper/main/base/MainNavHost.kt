@@ -19,7 +19,7 @@ sealed class MainDestinations(val route: String) {
     object SubCategory : MainDestinations("subCategory") {
         const val parentName: String = "parentName"
         val routeWithArg = "$route/{$parentName}"
-        val arguments = listOf(navArgument(parentName) { type = NavType.IntType })
+        val arguments = listOf(navArgument(parentName) { type = NavType.StringType })
     }
 
     object Setting : MainDestinations("setting")

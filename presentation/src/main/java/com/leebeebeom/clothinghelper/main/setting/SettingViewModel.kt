@@ -6,8 +6,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class SettingViewModel @Inject constructor(
-    signOutUseCase: SignOutUseCase
-) : ViewModel() {
-    val signOut = {signOutUseCase()}
+class SettingViewModel @Inject constructor(signOutUseCase: SignOutUseCase) : ViewModel() {
+    val signOut = { signOutUseCase() }
 }

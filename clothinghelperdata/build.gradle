@@ -34,4 +34,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth-ktx'
     //Realtime database
     implementation 'com.google.firebase:firebase-database-ktx'
+
+    //Data store
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
 }

@@ -21,6 +21,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelper.main.base.getMainCategories
+import com.leebeebeom.clothinghelper.signin.base.DotProgress
 import com.leebeebeom.clothinghelperdomain.model.MainCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
@@ -88,8 +89,12 @@ private fun MainCategoryContent(
                 drawable = R.drawable.ic_navigate_next,
                 tint = LocalContentColor.current.copy(ContentAlpha.medium)
             )
-
-            if (isSubCategoriesLoading) LoadingIcon(Modifier.align(Alignment.BottomStart))
+            if (isSubCategoriesLoading)
+                DotProgress(
+                    Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(bottom = 4.dp, start = 4.dp), 4.dp
+                )
             else Text(
                 text = stringResource(
                     id = R.string.categories,
@@ -105,15 +110,6 @@ private fun MainCategoryContent(
         }
     }
     if (mainCategory.type != SubCategoryParent.ETC) SimpleHeightSpacer(dp = 16)
-}
-
-@Composable
-private fun LoadingIcon(modifier: Modifier) {
-    CircularProgressIndicator(
-        modifier = modifier.size(16.dp),
-        strokeWidth = 1.dp,
-        color = LocalContentColor.current.copy(ContentAlpha.medium)
-    )
 }
 
 class MainCategoryScreenUIState {

@@ -267,11 +267,9 @@ class SubCategoryScreenUIState(
 
     companion object {
         val Saver: Saver<SubCategoryScreenUIState, *> = listSaver(save = {
-            listOf(
-                it.subCategoryParent.name,
+            listOf(it.subCategoryParent.name,
                 it.isAllExpand,
-                it.expandStates.map { state -> state.value }
-            )
+                it.expandStates.map { state -> state.value })
         }, restore = {
             val expands = it[2] as List<*>
             val booleanArray = BooleanArray(expands.size)

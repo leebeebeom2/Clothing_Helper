@@ -28,6 +28,7 @@ import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelper.base.SimpleToast
 import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
 import com.leebeebeom.clothinghelper.main.subcategory.ExpandIcon
+import com.leebeebeom.clothinghelper.signin.base.DotProgress
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelper.theme.Disabled
 import com.leebeebeom.clothinghelperdomain.model.*
@@ -189,7 +190,11 @@ private fun MainCategory(
                 text = stringResource(id = mainCategory.name),
                 style = MaterialTheme.typography.subtitle1
             )
-            if (isSubCategoriesLoading) LoadingIcon()
+            if (isSubCategoriesLoading) DotProgress(
+                modifier = Modifier.padding(end = 12.dp),
+                dotSize = 4.dp,
+                color = MaterialTheme.colors.surface.copy(ContentAlpha.disabled)
+            )
             else ExpandIcon(modifier = Modifier.size(22.dp), isExpanded = isExpand) {
                 isExpand = !isExpand
             }
@@ -218,17 +223,6 @@ private fun ColumnScope.SubCategories(
             }
         }
     }
-}
-
-@Composable
-private fun LoadingIcon() {
-    CircularProgressIndicator(
-        modifier = Modifier
-            .padding(end = 16.dp)
-            .size(16.dp),
-        color = MaterialTheme.colors.surface.copy(ContentAlpha.medium),
-        strokeWidth = 2.dp
-    )
 }
 
 @Composable

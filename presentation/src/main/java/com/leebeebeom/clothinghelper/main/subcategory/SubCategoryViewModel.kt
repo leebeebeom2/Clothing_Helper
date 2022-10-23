@@ -1,5 +1,6 @@
 package com.leebeebeom.clothinghelper.main.subcategory
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,16 +9,19 @@ import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
+import com.leebeebeom.clothinghelperdomain.usecase.preferences.GetPreferencesAndToggleAllExpandUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.AddSubCategoryUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoriesUserCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 @HiltViewModel
 class SubCategoryViewModel @Inject constructor(
-    private val addSubCategoryUseCase: AddSubCategoryUseCase,
-    private val getSubCategoriesUserCase: GetSubCategoriesUserCase
+    private val addSubCategoryUseCase: AddSubCategoryUseCase, // 두개 결합
+    private val getSubCategoriesUserCase: GetSubCategoriesUserCase,
+    private val getPreferencesAndToggleAllExpandUseCase: GetPreferencesAndToggleAllExpandUseCase
 ) : ViewModel() {
     var viewModelState = SubCategoryViewModelState()
         private set
@@ -39,18 +43,54 @@ class SubCategoryViewModel @Inject constructor(
             getSubCategoriesUserCase.getEtcSubCategories()
                 .collect(viewModelState::updateEtcSubCategories)
         }
+        viewModelScope.launch {
+            getPreferencesAndToggleAllExpandUseCase.getPreferences(this).collect {
+                viewModelState.updateAllExpand(it.allExpand)
+                viewModelState.setAllExpandStates(it.allExpand)
+            }
+        }
     }
 
-    fun addSubCategory(parent: SubCategoryParent, name: String) = // TODO 로딩 구현
+    fun addSubCategory(parent: SubCategoryParent, name: String) {
         addSubCategoryUseCase(parent, name, addSubCategoryListener)
+        viewModelState.addExpandState()
+    }
 
     private val addSubCategoryListener = object : FirebaseListener {
         override fun taskSuccess() {}
         override fun taskFailed(exception: Exception?) {} // TODO showToast 구현
     }
+
+    fun toggleAllExpand() = viewModelScope.launch {
+        getPreferencesAndToggleAllExpandUseCase.toggleAllExpand()
+    }
 }
 
 class SubCategoryViewModelState {
+    var allExpand by mutableStateOf(false)
+        private set
+
+    fun updateAllExpand(allExpand: Boolean) {
+        this.allExpand = allExpand
+    }
+
+    val expandStates = mutableListOf<MutableState<Boolean>>()
+
+    fun setAllExpandStates(allExpand: Boolean) {
+        for (isExpand in expandStates) isExpand.value = allExpand
+    }
+
+    fun getExpandState(index: Int): Boolean {
+        if (expandStates.getOrNull(index) == null) expandStates.add(mutableStateOf(allExpand))
+        return expandStates[index].value
+    }
+
+    fun expandToggle(index: Int) {
+        expandStates[index].value = !expandStates[index].value
+    }
+
+    fun addExpandState() = expandStates.add(mutableStateOf(allExpand))
+
     private var topSubCategories by mutableStateOf(emptyList<SubCategory>())
     private var bottomSubCategories by mutableStateOf(emptyList<SubCategory>())
     private var outerSubCategories by mutableStateOf(emptyList<SubCategory>())

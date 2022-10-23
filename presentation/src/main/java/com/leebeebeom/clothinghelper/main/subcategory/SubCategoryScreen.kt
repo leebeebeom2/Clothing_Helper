@@ -13,7 +13,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -57,15 +59,15 @@ fun SubCategoryScreen(
             item {
                 Header(
                     subCategoryParent = state.subCategoryParent,
-                    allExpandToggle = state::allExpandToggle,
-                    isAllExpand = state.isAllExpand
+                    toggleAllExpand = viewModel::toggleAllExpand,
+                    allExpand = viewModelState.allExpand
                 )
             }
             itemsIndexed(items = viewModelState.getSubCategories(state.subCategoryParent),
                 key = { _, subCategory -> subCategory.id }) { index, subCategory ->
                 SubCategoryContent(
-                    subCategory = subCategory, state.getExpandState(index)
-                ) { state.expandToggle(index) }
+                    subCategory = subCategory, viewModelState.getExpandState(index)
+                ) { viewModelState.expandToggle(index) }
             }
         }
 
@@ -74,7 +76,6 @@ fun SubCategoryScreen(
                 .align(Alignment.BottomEnd)
                 .padding(end = 16.dp, bottom = 16.dp),
             onPositiveButtonClick = {
-                state.addExpandState()
                 viewModel.addSubCategory(state.subCategoryParent, it)
             },
             subCategories = viewModelState.getSubCategories(state.subCategoryParent)
@@ -84,12 +85,12 @@ fun SubCategoryScreen(
 
 @Composable
 private fun Header(
-    subCategoryParent: SubCategoryParent, allExpandToggle: () -> Unit, isAllExpand: Boolean
+    subCategoryParent: SubCategoryParent, toggleAllExpand: () -> Unit, allExpand: Boolean
 ) {
     SubCategoryHeaderText(getHeaderTextRes(subCategoryParent))
     Row(verticalAlignment = Alignment.CenterVertically) {
         Divider(modifier = Modifier.weight(1f))
-        AllExpandIcon(onClick = allExpandToggle, isAllExpand)
+        AllExpandIcon(onClick = toggleAllExpand, allExpand)
         HeaderIcon(R.drawable.ic_sort) {}
     }
 }
@@ -104,12 +105,12 @@ private fun HeaderIcon(@DrawableRes drawable: Int, onClick: () -> Unit) {
 }
 
 @Composable
-fun AllExpandIcon(onClick: () -> Unit, isAllExpand: Boolean) {
+fun AllExpandIcon(onClick: () -> Unit, allExpand: Boolean) {
     IconButton(
         onClick = onClick, modifier = Modifier.size(22.dp)
     ) {
         SimpleIcon(
-            drawable = if (isAllExpand) R.drawable.ic_unfold_less else R.drawable.ic_all_expand,
+            drawable = if (allExpand) R.drawable.ic_unfold_less else R.drawable.ic_all_expand,
             tint = LocalContentColor.current.copy(0.5f)
         )
     }
@@ -238,51 +239,18 @@ fun getHeaderTextRes(subCategoryParent: SubCategoryParent): Int {
     }
 }
 
-class SubCategoryScreenUIState(
-    parentName: String, isAllExpand: Boolean = false, vararg expands: Boolean = BooleanArray(0)
-) {
+class SubCategoryScreenUIState(parentName: String) {
     val subCategoryParent by mutableStateOf(enumValueOf<SubCategoryParent>(parentName))
-    val expandStates = mutableListOf<MutableState<Boolean>>().apply {
-        addAll(expands.map { mutableStateOf(it) })
-    }
-    var isAllExpand by mutableStateOf(isAllExpand) // TODO 설정으로
-        private set
-
-
-    fun allExpandToggle() {
-        isAllExpand = !isAllExpand
-        for (isExpand in expandStates) isExpand.value = isAllExpand
-    }
-
-    fun getExpandState(index: Int): Boolean {
-        if (expandStates.getOrNull(index) == null) expandStates.add(mutableStateOf(isAllExpand))
-        return expandStates[index].value
-    }
-
-    fun expandToggle(index: Int) {
-        expandStates[index].value = !expandStates[index].value
-    }
-
-    fun addExpandState() = expandStates.add(mutableStateOf(isAllExpand))
 
     companion object {
         val Saver: Saver<SubCategoryScreenUIState, *> = listSaver(save = {
-            listOf(it.subCategoryParent.name,
-                it.isAllExpand,
-                it.expandStates.map { state -> state.value })
+            listOf(it.subCategoryParent.name)
         }, restore = {
-            val expands = it[2] as List<*>
-            val booleanArray = BooleanArray(expands.size)
-            for ((index, expand) in expands.withIndex()) {
-                booleanArray[index] = expand as Boolean
-            }
-            SubCategoryScreenUIState(it[0] as String, it[1] as Boolean, *booleanArray)
+            SubCategoryScreenUIState(it[0])
         })
     }
 }
 
 @Composable
 private fun rememberSubCategoryScreenUIState(parentName: String) =
-    rememberSaveable(saver = SubCategoryScreenUIState.Saver) {
-        SubCategoryScreenUIState(parentName)
-    }
+    rememberSaveable(saver = SubCategoryScreenUIState.Saver) { SubCategoryScreenUIState(parentName) }

@@ -39,6 +39,8 @@ import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
+// TODO 코드 분리
+
 @Composable
 fun SubCategoryScreen(
     parentName: String,
@@ -140,7 +142,7 @@ private fun SubCategoryContent(
     subCategory: SubCategory,
     isExpanded: Boolean,
     expandToggle: () -> Unit,
-    deletedSubCategory: (key: String) -> Unit
+    deletedSubCategory: (SubCategory) -> Unit
 ) {
     var showDropDownMenu by rememberSaveable { mutableStateOf(false) }
     Box {
@@ -183,7 +185,7 @@ private fun SubCategoryContent(
                     showDropDownMenu = false
                 }
                 DropDownMenuText(text = R.string.delete) {
-                    deletedSubCategory(subCategory.key)
+                    deletedSubCategory(subCategory)
                     showDropDownMenu = false
                 }
             }

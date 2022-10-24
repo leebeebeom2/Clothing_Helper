@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
 
 // Set of Material typography styles to start with
-val DotumFontFamily = FontFamily(
+val NanumBarunGothicFontFamily = FontFamily(
     Font(R.font.nanumbarungothicultralight, FontWeight.Thin),
     Font(R.font.nanumbarungothicultralight, FontWeight.ExtraLight),
     Font(R.font.nanumbarungothiclight, FontWeight.Light),
@@ -21,8 +21,8 @@ val DotumFontFamily = FontFamily(
     Font(R.font.nanumbarungothicbold, FontWeight.Black)
 )
 
-val Dotum = Typography(
-    defaultFontFamily = DotumFontFamily,
+val NanumBarunGothic = Typography(
+    defaultFontFamily = NanumBarunGothicFontFamily,
     h1 = TextStyle(
         fontWeight = FontWeight.Light,
         fontSize = 96.sp,

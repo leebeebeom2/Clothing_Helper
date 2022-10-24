@@ -69,10 +69,13 @@ fun SubCategoryScreen(
                 )
             }
             itemsIndexed(items = viewModelState.getSubCategories(state.subCategoryParent),
-                key = { _, subCategory -> subCategory.id }) { index, subCategory ->
+                key = { _, subCategory -> subCategory.key }) { index, subCategory ->
                 SubCategoryContent(
-                    subCategory = subCategory, viewModelState.getExpandState(index)
-                ) { viewModelState.expandToggle(index) }
+                    subCategory = subCategory,
+                    isExpanded = viewModelState.getExpandState(index),
+                    expandToggle = { viewModelState.expandToggle(index) },
+                    deletedSubCategory = viewModel::deleteSubCategory
+                )
             }
         }
 
@@ -122,7 +125,7 @@ fun AllExpandIcon(onClick: () -> Unit, allExpand: Boolean) {
 }
 
 @Composable
-fun SubCategoryHeaderText(headerTextRes: Int) {
+fun SubCategoryHeaderText(@StringRes headerTextRes: Int) {
     Text(
         modifier = Modifier.padding(4.dp),
         text = stringResource(id = headerTextRes),
@@ -134,7 +137,10 @@ fun SubCategoryHeaderText(headerTextRes: Int) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SubCategoryContent(
-    subCategory: SubCategory, isExpanded: Boolean, expandToggle: () -> Unit
+    subCategory: SubCategory,
+    isExpanded: Boolean,
+    expandToggle: () -> Unit,
+    deletedSubCategory: (key: String) -> Unit
 ) {
     var showDropDownMenu by rememberSaveable { mutableStateOf(false) }
     Box {
@@ -151,7 +157,7 @@ private fun SubCategoryContent(
         }
 
         @Composable
-        fun DropDownMenuText(@StringRes text:Int, onClick: () -> Unit){
+        fun DropDownMenuText(@StringRes text: Int, onClick: () -> Unit) {
             Text(
                 text = stringResource(id = text),
                 modifier = Modifier
@@ -177,6 +183,7 @@ private fun SubCategoryContent(
                     showDropDownMenu = false
                 }
                 DropDownMenuText(text = R.string.delete) {
+                    deletedSubCategory(subCategory.key)
                     showDropDownMenu = false
                 }
             }

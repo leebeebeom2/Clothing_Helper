@@ -1,5 +1,6 @@
 package com.leebeebeom.clothinghelperdomain.usecase.subcategory
 
+import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
@@ -36,5 +37,5 @@ class AddSubCategoryUseCase(
 }
 
 class DeleteSubCategoryUseCase(private val subCategoryRepository: SubCategoryRepository) {
-    operator fun invoke(key: String) = subCategoryRepository.deleteSubCategory(key)
+    operator fun invoke(subCategory: SubCategory) = subCategoryRepository.deleteSubCategory(subCategory)
 }

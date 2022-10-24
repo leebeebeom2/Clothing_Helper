@@ -117,6 +117,7 @@ class MainNavHostViewModelState : BaseViewModelState() {
     val onSubCategoriesLoadingCancelled = listOf(
         { errorCode: Int, message: String ->
             showToast(R.string.top_sub_categories_load_failed)
+            onSubCategoriesLoadingDone[0]()
             Log.d(
                 TAG,
                 "MainScreenRootViewModel.subCategoryLoadFailed: errorCode = $errorCode, $message"
@@ -125,6 +126,7 @@ class MainNavHostViewModelState : BaseViewModelState() {
         },
         { errorCode: Int, message: String ->
             showToast(R.string.bottom_sub_categories_load_failed)
+            onSubCategoriesLoadingDone[1]()
             Log.d(
                 TAG,
                 "MainScreenRootViewModel.subCategoryLoadFailed: errorCode = $errorCode, $message"
@@ -133,6 +135,7 @@ class MainNavHostViewModelState : BaseViewModelState() {
         },
         { errorCode: Int, message: String ->
             showToast(R.string.outer_sub_categories_load_failed)
+            onSubCategoriesLoadingDone[2]()
             Log.d(
                 TAG,
                 "MainScreenRootViewModel.subCategoryLoadFailed: errorCode = $errorCode, $message"
@@ -141,6 +144,7 @@ class MainNavHostViewModelState : BaseViewModelState() {
         },
         { errorCode: Int, message: String ->
             showToast(R.string.etc_sub_categories_load_failed)
+            onSubCategoriesLoadingDone[3]()
             Log.d(
                 TAG,
                 "MainScreenRootViewModel.subCategoryLoadFailed: errorCode = $errorCode, $message"

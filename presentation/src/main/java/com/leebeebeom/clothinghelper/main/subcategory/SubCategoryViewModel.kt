@@ -11,6 +11,7 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.usecase.preferences.GetPreferencesAndToggleAllExpandUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.AddSubCategoryUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.subcategory.DeleteSubCategoryUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoriesUserCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -21,6 +22,7 @@ import javax.inject.Inject
 class SubCategoryViewModel @Inject constructor(
     private val addSubCategoryUseCase: AddSubCategoryUseCase, // 두개 결합
     private val getSubCategoriesUserCase: GetSubCategoriesUserCase,
+    private val deleteSubCategoryUseCase: DeleteSubCategoryUseCase,
     private val getPreferencesAndToggleAllExpandUseCase: GetPreferencesAndToggleAllExpandUseCase
 ) : ViewModel() {
     var viewModelState = SubCategoryViewModelState()
@@ -64,6 +66,9 @@ class SubCategoryViewModel @Inject constructor(
     fun toggleAllExpand() = viewModelScope.launch {
         getPreferencesAndToggleAllExpandUseCase.toggleAllExpand()
     }
+
+    fun deleteSubCategory(subCategory: SubCategory) = deleteSubCategoryUseCase(subCategory)
+
 }
 
 class SubCategoryViewModelState {
@@ -74,7 +79,7 @@ class SubCategoryViewModelState {
         this.allExpand = allExpand
     }
 
-    val expandStates = mutableListOf<MutableState<Boolean>>()
+    private val expandStates = mutableListOf<MutableState<Boolean>>()
 
     fun setAllExpandStates(allExpand: Boolean) {
         for (isExpand in expandStates) isExpand.value = allExpand

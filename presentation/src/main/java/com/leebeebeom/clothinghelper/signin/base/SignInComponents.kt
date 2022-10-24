@@ -71,8 +71,7 @@ fun OrDivider() {
         Divider(modifier = Modifier.weight(1f))
         Text(
             text = stringResource(id = R.string.or),
-            modifier = Modifier
-                .padding(horizontal = 14.dp),
+            modifier = Modifier.padding(horizontal = 14.dp),
             style = MaterialTheme.typography.body2,
             color = LocalContentColor.current.copy(ContentAlpha.medium)
         )

@@ -33,6 +33,7 @@ abstract class GoogleSignInUpViewModel(
     private fun googleButtonDisable() = viewModelState.setGoogleButtonDisable()
     private fun googleButtonEnable() = viewModelState.setGoogleButtonEnable()
 
+    // call from UI
     fun taskStart() {
         loadingOn()
         googleButtonDisable()

@@ -40,13 +40,23 @@ fun SignInScreen(
             EmailTextField(
                 email = state.email,
                 error = viewModelState.emailError,
-                onEmailChange = { state.onEmailChange(email = it) { viewModelState.hideEmailError() } },
+                onEmailChange = {
+                    state.onEmailChange(
+                        email = it,
+                        hideEmailError = viewModelState::hideEmailError
+                    )
+                },
                 imeAction = ImeAction.Next
             )
 
             PasswordTextField(
                 password = state.password,
-                onPasswordChange = { state.onPasswordChange(password = it) { viewModelState.hidePasswordError() } },
+                onPasswordChange = {
+                    state.onPasswordChange(
+                        password = it,
+                        hidePasswordError = viewModelState::hidePasswordError
+                    )
+                },
                 error = viewModelState.passwordError,
                 imeAction = ImeAction.Done
             )

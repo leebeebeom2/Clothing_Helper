@@ -10,7 +10,10 @@ class GetSubCategoriesUserCase(
     suspend fun loadSubCategories(
         onSubCategoriesLoadingDone: List<() -> Unit>,
         onSubCategoriesLoadingCancelled: List<(Int, String) -> Unit>
-    ) = subCategoryRepository.loadSubCategories(onSubCategoriesLoadingDone, onSubCategoriesLoadingCancelled)
+    ) = subCategoryRepository.loadSubCategories(
+        onSubCategoriesLoadingDone,
+        onSubCategoriesLoadingCancelled
+    )
 
     fun getTopSubCategories() = subCategoryRepository.topSubCategories
     fun getBottomSubCategories() = subCategoryRepository.bottomSubCategories
@@ -30,4 +33,8 @@ class AddSubCategoryUseCase(
         name = name,
         addSubCategoryListener
     )
+}
+
+class DeleteSubCategoryUseCase(private val subCategoryRepository: SubCategoryRepository) {
+    operator fun invoke(key: String) = subCategoryRepository.deleteSubCategory(key)
 }

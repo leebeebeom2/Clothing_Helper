@@ -23,5 +23,5 @@ interface SubCategoryRepository {
         addSubCategoryListener: FirebaseListener
     )
 
-    fun deleteSubCategory(subCategory: SubCategory)
+    fun deleteSubCategory(subCategory: SubCategory, deleteSubCategoryListener: FirebaseListener)
 }

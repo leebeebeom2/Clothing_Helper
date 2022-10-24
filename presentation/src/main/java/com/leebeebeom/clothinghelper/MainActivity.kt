@@ -4,6 +4,8 @@ import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,8 +38,10 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainActivityNavHost(viewModel: MainActivityViewModel = hiltViewModel()) {
-    if (viewModel.isSignIn) MainNavHost()
-    else SignInNavHost()
+    Crossfade(targetState = viewModel.isSignIn, animationSpec = tween(500)) { // TODO 테스트
+        if (it) MainNavHost()
+        else SignInNavHost()
+    }
 }
 
 @HiltViewModel

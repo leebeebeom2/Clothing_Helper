@@ -7,7 +7,9 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -19,12 +21,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -126,16 +131,59 @@ fun SubCategoryHeaderText(headerTextRes: Int) {
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SubCategoryContent(
     subCategory: SubCategory, isExpanded: Boolean, expandToggle: () -> Unit
 ) {
-    Card(elevation = 2.dp, shape = RoundedCornerShape(12.dp)) {
-        Column {
-            SubCategoryTitle(subCategory.name, isExpanded, onExpandIconClick = expandToggle)
-            SubCategoryInfo(isExpanded)
+    var showDropDownMenu by rememberSaveable { mutableStateOf(false) }
+    Box {
+        Card(elevation = 2.dp, shape = RoundedCornerShape(12.dp)) {
+            Column(modifier = Modifier
+                .clip(RoundedCornerShape(12.dp))
+                .combinedClickable(
+                    onClick = { /*TODO*/ },
+                    onLongClick = { showDropDownMenu = !showDropDownMenu }
+                )) {
+                SubCategoryTitle(subCategory.name, isExpanded, onExpandIconClick = expandToggle)
+                SubCategoryInfo(isExpanded)
+            }
         }
+
+        @Composable
+        fun DropDownMenuText(@StringRes text:Int, onClick: () -> Unit){
+            Text(
+                text = stringResource(id = text),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 6.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .clickable(onClick = onClick)
+                    .padding(start = 8.dp, end = 24.dp)
+                    .padding(vertical = 8.dp)
+            )
+        }
+
+        MaterialTheme(shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(20.dp))) {
+            DropdownMenu(
+                expanded = showDropDownMenu,
+                onDismissRequest = { showDropDownMenu = false },
+                offset = DpOffset(30.dp, (-30).dp)
+            ) {
+                DropDownMenuText(text = R.string.select_mode) {
+                    showDropDownMenu = false
+                }
+                DropDownMenuText(text = R.string.change_name) {
+                    showDropDownMenu = false
+                }
+                DropDownMenuText(text = R.string.delete) {
+                    showDropDownMenu = false
+                }
+            }
+        }
+
     }
+
 }
 
 @Composable
@@ -193,11 +241,12 @@ private fun SubCategoryInfoText(
 private fun SubCategoryTitle(
     title: String, isExpanded: Boolean, onExpandIconClick: () -> Unit
 ) {
-    Row(modifier = Modifier
-        .fillMaxSize()
-        .clickable { /*TODO*/ }
-        .padding(start = 12.dp)
-        .padding(vertical = 4.dp)) {
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(start = 12.dp)
+            .padding(vertical = 4.dp)
+    ) {
         Text(
             modifier = Modifier
                 .align(Alignment.CenterVertically)

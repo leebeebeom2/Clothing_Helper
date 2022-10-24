@@ -53,4 +53,7 @@
     <string name="etc_sub_categories_load_failed">ETC 서브카테고리 로드에 실패했습니다.</string>
     <string name="categories">%1$d categories</string>
     <string name="main_categories">MAIN CATEGORIES</string>
+    <string name="select_mode">선택 모드</string>
+    <string name="change_name">이름 변경</string>
+    <string name="delete">삭제</string>
 </resources>

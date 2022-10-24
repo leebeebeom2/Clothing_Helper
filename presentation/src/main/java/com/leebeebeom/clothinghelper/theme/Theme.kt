@@ -40,7 +40,7 @@ fun ClothingHelperTheme(
 
     MaterialTheme(
         colors = colors,
-        typography = Dotum,
+        typography = NanumBarunGothic,
         shapes = Shapes,
         content = content,
     )

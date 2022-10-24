@@ -84,7 +84,7 @@ private fun ErrorText(@StringRes error: Int?) {
                 dampingRatio = Spring.DampingRatioHighBouncy,
                 stiffness = Spring.StiffnessMedium
             )
-        ), exit = shrinkVertically(animationSpec = tween(200))
+        ), exit = shrinkVertically(animationSpec = tween(250))
     ) {
         Text(
             modifier = Modifier.padding(start = 4.dp),

@@ -25,11 +25,15 @@ class UserRepositoryImpl : UserRepository {
         googleSignInListener: FirebaseListener,
         pushInitialSubCategories: (uid: String) -> Unit
     ) {
-        val authCredential = googleCredential as AuthCredential
+        val authCredential = googleCredential as? AuthCredential
+        if (authCredential == null) {
+            googleSignInListener.taskFailed(NullPointerException("googleCredential is null"))
+            return
+        }
 
         auth.signInWithCredential(authCredential).addOnCompleteListener {
-            if (it.isSuccessful) {
-                val user = it.result.user.toUser()!!
+            val user = it.result.user.toUser()
+            if (user != null) {
                 if (it.result.additionalUserInfo!!.isNewUser)
                     pushFirstUserData(user, pushInitialSubCategories)
                 signInSuccess(user)
@@ -40,9 +44,8 @@ class UserRepositoryImpl : UserRepository {
 
     override fun signIn(email: String, password: String, signInListener: FirebaseListener) {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-            if (it.isSuccessful) {
-                val user = it.result.user.toUser()!!
-
+            val user = it.result.user.toUser()
+            if (user != null) {
                 signInSuccess(user)
                 signInListener.taskSuccess()
             } else signInListener.taskFailed(it.exception)
@@ -58,10 +61,9 @@ class UserRepositoryImpl : UserRepository {
         pushInitialSubCategories: (uid: String) -> Unit
     ) {
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
-            if (it.isSuccessful) {
-                val firebaseUser = it.result.user!!
+            val firebaseUser = it.result.user
+            if (firebaseUser != null) {
                 val user = firebaseUser.toUser()!!
-
                 pushFirstUserData(user, pushInitialSubCategories)
                 signInSuccess(user)
                 signUpListener.taskSuccess()
@@ -75,8 +77,8 @@ class UserRepositoryImpl : UserRepository {
 
         user.updateProfile(request)
             .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    val newNameUser = user.toUser()!!
+                val newNameUser = user.toUser()?.copy(name = name)
+                if (newNameUser != null) {
                     pushUser(newNameUser)
                     updateUser(newNameUser)
                     updateNameListener.taskSuccess()
@@ -98,7 +100,7 @@ class UserRepositoryImpl : UserRepository {
 
     private fun pushUser(user: User) =
         FirebaseDatabase.getInstance().reference.child(user.uid)
-            .child(DatabasePath.USER_INFO).setValue(user)
+            .child(DatabasePath.USER_INFO).setValue(user) // TODO 실패 처리
 
     override fun signOut() {
         auth.signOut()

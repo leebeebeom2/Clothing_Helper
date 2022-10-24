@@ -68,24 +68,51 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
 
     }
 
-    override fun pushInitialSubCategories(uid: String) { // TODO 실패 처리
+    private fun addSingleValueListener(
+        query: Query,
+        subCategoryParent: SubCategoryParent,
+        mutableSubCategories: MutableStateFlow<List<SubCategory>>,
+        onSubCategoriesLoadingDone: () -> Unit,
+        onSubCategoriesLoadingCancelled: (Int, String) -> Unit
+    ) {
+        query.equalTo(subCategoryParent.name)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val temp = mutableListOf<SubCategory>()
+                    for (child in snapshot.children)
+                        child.getValue<SubCategory>()?.let { temp.add(it) }
+
+                    mutableSubCategories.value = temp
+                    onSubCategoriesLoadingDone()
+                }
+
+                override fun onCancelled(error: DatabaseError) =
+                    onSubCategoriesLoadingCancelled(error.code, error.message)
+            })
+    }
+
+    override fun pushInitialSubCategories(uid: String) {
         val subCategoryRef = root.getSubCategoriesRef(uid)
 
         for (subCategory in getInitialSubCategories()) pushInitialData(subCategoryRef, subCategory)
     }
 
     private fun pushInitialData(subCategoryRef: DatabaseReference, subCategory: SubCategory) {
-        val key = subCategoryRef.push().key ?: throw Exception("key 생성 불가") // TODO 실패 처리
+        val key = subCategoryRef.push().key ?: return // 실패 처리
 
-        subCategoryRef.child(key).setValue(subCategory.copy(key = key)).addOnCompleteListener {
-            if (!it.isSuccessful) throw Exception("초기 데이터 입력 실패") // TODO 실패 처리
-        }
+        subCategoryRef.child(key).setValue(subCategory.copy(key = key))
+            .addOnFailureListener { } // TODO 실패 처리
     }
 
     override fun addSubCategory(
         subCategoryParent: SubCategoryParent, name: String, addSubCategoryListener: FirebaseListener
     ) {
-        val key = root.getSubCategoriesRef(user.value!!.uid).push().key ?: throw Exception("key 생성 불가") // TODO 실패 처리
+        val key = root.getSubCategoriesRef(user.value!!.uid).push().key
+        if (key == null) {
+            addSubCategoryListener.taskFailed(NullPointerException("키 생성 실패"))
+            return
+        }
+
         val newSubCategory = SubCategory(subCategoryParent, key, name)
 
         root.getSubCategoriesRef(user.value!!.uid).child(key).setValue(newSubCategory)
@@ -110,7 +137,10 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
             }
     }
 
-    override fun deleteSubCategory(subCategory: SubCategory) { // TODO 실패 처리
+    override fun deleteSubCategory(
+        subCategory: SubCategory,
+        deleteSubCategoryListener: FirebaseListener
+    ) {
         root.getSubCategoriesRef(user.value!!.uid).child(subCategory.key).removeValue()
             .addOnCompleteListener {
                 if (it.isSuccessful) {
@@ -128,7 +158,8 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
                             subCategory
                         )
                     }
-                } else throw Exception("삭제 실패") // TODO 실패 처리
+                    deleteSubCategoryListener.taskSuccess()
+                } else deleteSubCategoryListener.taskFailed(it.exception)
             }
     }
 
@@ -196,29 +227,6 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
 
     private fun DatabaseReference.getSubCategoriesRef(uid: String) =
         child(uid).child(DatabasePath.SUB_CATEGORIES)
-
-    private fun addSingleValueListener(
-        query: Query,
-        subCategoryParent: SubCategoryParent,
-        mutableSubCategories: MutableStateFlow<List<SubCategory>>,
-        onSubCategoriesLoadingDone: () -> Unit,
-        onSubCategoriesLoadingCancelled: (Int, String) -> Unit
-    ) {
-        query.equalTo(subCategoryParent.name)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val temp = mutableListOf<SubCategory>()
-                    for (child in snapshot.children)
-                        child.getValue<SubCategory>()?.let { temp.add(it) }
-
-                    mutableSubCategories.value = temp
-                    onSubCategoriesLoadingDone()
-                }
-
-                override fun onCancelled(error: DatabaseError) =
-                    onSubCategoriesLoadingCancelled(error.code, error.message)
-            })
-    }
 }
 
 object DatabasePath {

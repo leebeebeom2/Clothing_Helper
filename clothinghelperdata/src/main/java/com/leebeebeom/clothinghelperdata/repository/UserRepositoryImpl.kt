@@ -25,14 +25,28 @@ class UserRepositoryImpl : UserRepository {
         googleSignInListener: FirebaseListener,
         pushInitialSubCategories: (uid: String) -> Unit
     ) {
-        val authCredential = googleCredential as AuthCredential
+        val authCredential = googleCredential as? AuthCredential
+        if (authCredential == null) {
+            googleSignInListener.taskFailed(Exception("authCredential = null"))
+            return
+        }
 
         auth.signInWithCredential(authCredential).addOnCompleteListener {
             if (it.isSuccessful) {
-                val user = it.result.user.toUser()!!
-                it.result.additionalUserInfo?.isNewUser?.let { isNewUser ->
-                    if (isNewUser) pushFirstUserData(user, pushInitialSubCategories)
+                val user = it.result.user.toUser()
+                if (user == null) {
+                    googleSignInListener.taskFailed(Exception("user = null"))
+                    return@addOnCompleteListener
                 }
+
+                val additionalUserInfo = it.result.additionalUserInfo
+                if (additionalUserInfo == null) {
+                    googleSignInListener.taskFailed(Exception("additionalUserInfo = null"))
+                    return@addOnCompleteListener
+                }
+
+                if (additionalUserInfo.isNewUser) pushFirstUserData(user, pushInitialSubCategories)
+
                 signInSuccess(user)
                 googleSignInListener.taskSuccess()
             } else googleSignInListener.taskFailed(it.exception)
@@ -42,7 +56,13 @@ class UserRepositoryImpl : UserRepository {
     override fun signIn(email: String, password: String, signInListener: FirebaseListener) {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
-                signInSuccess(it.result.user.toUser()!!)
+                val user = it.result.user.toUser()
+                if (user == null) {
+                    signInListener.taskFailed(Exception("user = null"))
+                    return@addOnCompleteListener
+                }
+
+                signInSuccess(user)
                 signInListener.taskSuccess()
             } else signInListener.taskFailed(it.exception)
         }
@@ -58,8 +78,14 @@ class UserRepositoryImpl : UserRepository {
     ) {
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
-                val firebaseUser = it.result.user!!
+                val firebaseUser = it.result.user
+                if (firebaseUser == null) {
+                    signUpListener.taskFailed(Exception("user = null"))
+                    return@addOnCompleteListener
+                }
+
                 val user = firebaseUser.toUser()!!
+
                 pushFirstUserData(user, pushInitialSubCategories)
                 signInSuccess(user)
                 signUpListener.taskSuccess()
@@ -73,7 +99,15 @@ class UserRepositoryImpl : UserRepository {
 
         user.updateProfile(request).addOnCompleteListener {
             if (it.isSuccessful) {
-                val newNameUser = user.toUser()!!
+                val newNameUser = user.toUser()
+                if (newNameUser == null){
+                    updateNameListener.taskFailed(Exception("user = null"))
+                    return@addOnCompleteListener
+                }else if (newNameUser.name != name){
+                    updateNameListener.taskFailed(Exception("user name is not same"))
+                    return@addOnCompleteListener
+                }
+
                 pushUser(newNameUser)
                 updateUser(newNameUser)
                 updateNameListener.taskSuccess()
@@ -96,13 +130,13 @@ class UserRepositoryImpl : UserRepository {
     private fun pushUser(user: User) =
         FirebaseDatabase.getInstance().reference.child(user.uid).child(DatabasePath.USER_INFO)
             .setValue(user).addOnCompleteListener {
-                if (!it.isSuccessful) throw Exception("pushUser 실패")
+                if (!it.isSuccessful) throw Exception("pushUser 실패") // TODO 실패 로직
             }
 
     override fun signOut() {
         auth.signOut()
         _isSignIn.value = false
-        updateUser(null)
+        this._user.value = null
     }
 
     private fun signInSuccess(user: User) {
@@ -110,7 +144,7 @@ class UserRepositoryImpl : UserRepository {
         updateUser(user)
     }
 
-    private fun updateUser(user: User?) {
+    private fun updateUser(user: User) {
         this._user.value = user
     }
 }

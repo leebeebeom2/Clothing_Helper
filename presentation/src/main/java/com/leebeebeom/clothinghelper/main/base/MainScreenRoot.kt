@@ -217,7 +217,7 @@ private fun ColumnScope.SubCategories(
         Surface(color = MaterialTheme.colors.primary) {
             Column {
                 for (subCategory in subCategories)
-                    key(subCategory.id) {
+                    key(subCategory.key) {
                         SubCategory(subCategory) {/*TODO*/ }
                     }
             }
@@ -226,12 +226,12 @@ private fun ColumnScope.SubCategories(
 }
 
 @Composable
-private fun SubCategory(subCategory: SubCategory, onSubCategoryClick: (id: Long) -> Unit) {
+private fun SubCategory(subCategory: SubCategory, onSubCategoryClick: (key: String) -> Unit) {
     DrawerContentRow(
         modifier = Modifier
             .heightIn(40.dp)
             .padding(horizontal = 8.dp),
-        onDrawerContentClick = { onSubCategoryClick(subCategory.id) }) {
+        onDrawerContentClick = { onSubCategoryClick(subCategory.key) }) {
         DrawerContentText(
             modifier = Modifier
                 .weight(1f)

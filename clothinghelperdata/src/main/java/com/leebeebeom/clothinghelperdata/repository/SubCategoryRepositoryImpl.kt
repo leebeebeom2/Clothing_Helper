@@ -1,9 +1,6 @@
 package com.leebeebeom.clothinghelperdata.repository
 
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
@@ -56,128 +53,164 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
         userRepository.user.collect {
             this.user.value = it
             it?.let {
-                for ((index, subCategories) in allMutableSubCategories.withIndex()) root.addSingleValueListener(
-                    uid = it.uid,
-                    mutableSubCategories = subCategories,
-                    subCategoryParent = subCategoryParent[index],
-                    onSubCategoriesLoadingDone = onSubCategoriesLoadingDone[index],
-                    onSubCategoriesLoadingCancelled = onSubCategoriesLoadingCancelled[index]
-                )
+                val query = root.getSubCategoriesRef(it.uid).orderByChild("parent")
+
+                for ((index, subCategories) in allMutableSubCategories.withIndex())
+                    addSingleValueListener(
+                        query = query,
+                        subCategoryParent = subCategoryParent[index],
+                        mutableSubCategories = subCategories,
+                        onSubCategoriesLoadingDone = onSubCategoriesLoadingDone[index],
+                        onSubCategoriesLoadingCancelled = onSubCategoriesLoadingCancelled[index]
+                    )
             }
         }
 
     }
 
-    override fun pushInitialSubCategories(uid: String) {
-        root.getSubCategoriesRef(uid).setValue(getInitialSubCategories()) // TODO 10000개로 테스트 해보기
+    override fun pushInitialSubCategories(uid: String) { // TODO 실패 처리
+        val subCategoryRef = root.getSubCategoriesRef(uid)
+
+        for (subCategory in getInitialSubCategories()) pushInitialData(subCategoryRef, subCategory)
+    }
+
+    private fun pushInitialData(subCategoryRef: DatabaseReference, subCategory: SubCategory) {
+        val key = subCategoryRef.push().key ?: throw Exception("key 생성 불가") // TODO 실패 처리
+
+        subCategoryRef.child(key).setValue(subCategory.copy(key = key)).addOnCompleteListener {
+            if (!it.isSuccessful) throw Exception("초기 데이터 입력 실패") // TODO 실패 처리
+        }
     }
 
     override fun addSubCategory(
         subCategoryParent: SubCategoryParent, name: String, addSubCategoryListener: FirebaseListener
     ) {
-        val timeStamp = System.currentTimeMillis()
-        val newSubCategory = SubCategory(subCategoryParent, timeStamp, name)
+        val key = root.getSubCategoriesRef(user.value!!.uid).push().key ?: throw Exception("key 생성 불가") // TODO 실패 처리
+        val newSubCategory = SubCategory(subCategoryParent, key, name)
 
-        root.getSubCategoriesRef(user.value!!.uid).push().setValue(newSubCategory)
+        root.getSubCategoriesRef(user.value!!.uid).child(key).setValue(newSubCategory)
             .addOnCompleteListener {
                 if (it.isSuccessful) {
-                    addSubCategory(subCategoryParent, newSubCategory)
+                    when (subCategoryParent) {
+                        SubCategoryParent.TOP -> allMutableSubCategories[TOP].addAndAssign(
+                            newSubCategory
+                        )
+                        SubCategoryParent.BOTTOM -> allMutableSubCategories[BOTTOM].addAndAssign(
+                            newSubCategory
+                        )
+                        SubCategoryParent.OUTER -> allMutableSubCategories[OUTER].addAndAssign(
+                            newSubCategory
+                        )
+                        SubCategoryParent.ETC -> allMutableSubCategories[ETC].addAndAssign(
+                            newSubCategory
+                        )
+                    }
                     addSubCategoryListener.taskSuccess()
                 } else addSubCategoryListener.taskFailed(it.exception)
             }
     }
 
-    private fun addSubCategory(subCategoryParent: SubCategoryParent, newSubCategory: SubCategory) {
-        when (subCategoryParent) {
-            SubCategoryParent.TOP -> allMutableSubCategories[TOP].addAndAssign(newSubCategory)
-            SubCategoryParent.BOTTOM -> allMutableSubCategories[BOTTOM].addAndAssign(newSubCategory)
-            SubCategoryParent.OUTER -> allMutableSubCategories[OUTER].addAndAssign(newSubCategory)
-            SubCategoryParent.ETC -> allMutableSubCategories[ETC].addAndAssign(newSubCategory)
-        }
+    override fun deleteSubCategory(subCategory: SubCategory) { // TODO 실패 처리
+        root.getSubCategoriesRef(user.value!!.uid).child(subCategory.key).removeValue()
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    when (subCategory.parent) {
+                        SubCategoryParent.TOP -> allMutableSubCategories[TOP].removeAndAssign(
+                            subCategory
+                        )
+                        SubCategoryParent.BOTTOM -> allMutableSubCategories[BOTTOM].removeAndAssign(
+                            subCategory
+                        )
+                        SubCategoryParent.OUTER -> allMutableSubCategories[OUTER].removeAndAssign(
+                            subCategory
+                        )
+                        SubCategoryParent.ETC -> allMutableSubCategories[ETC].removeAndAssign(
+                            subCategory
+                        )
+                    }
+                } else throw Exception("삭제 실패") // TODO 실패 처리
+            }
     }
 
     private fun getInitialSubCategories(): List<SubCategory> {
-        var timeStamp = System.currentTimeMillis()
-
         return listOf(
             SubCategory(
-                SubCategoryParent.TOP, timeStamp++, "반팔"
+                parent = SubCategoryParent.TOP, name = "반팔"
             ), SubCategory(
-                SubCategoryParent.TOP, timeStamp++, "긴팔"
+                parent = SubCategoryParent.TOP, name = "긴팔"
             ), SubCategory(
-                SubCategoryParent.TOP, timeStamp++, "셔츠"
+                parent = SubCategoryParent.TOP, name = "셔츠"
             ), SubCategory(
-                SubCategoryParent.TOP, timeStamp++, "반팔 셔츠"
+                parent = SubCategoryParent.TOP, name = "반팔 셔츠"
             ), SubCategory(
-                SubCategoryParent.TOP, timeStamp++, "니트"
+                parent = SubCategoryParent.TOP, name = "니트"
             ), SubCategory(
-                SubCategoryParent.TOP, timeStamp++, "반팔 니트"
+                parent = SubCategoryParent.TOP, name = "반팔 니트"
             ), SubCategory(
-                SubCategoryParent.TOP, timeStamp++, "니트 베스트"
+                parent = SubCategoryParent.TOP, name = "니트 베스트"
             ), SubCategory(
-                SubCategoryParent.BOTTOM, timeStamp++, "데님"
+                parent = SubCategoryParent.BOTTOM, name = "데님"
             ), SubCategory(
-                SubCategoryParent.BOTTOM, timeStamp++, "반바지"
+                parent = SubCategoryParent.BOTTOM, name = "반바지"
             ), SubCategory(
-                SubCategoryParent.BOTTOM, timeStamp++, "슬랙스"
+                parent = SubCategoryParent.BOTTOM, name = "슬랙스"
             ), SubCategory(
-                SubCategoryParent.BOTTOM, timeStamp++, "스웻"
+                parent = SubCategoryParent.BOTTOM, name = "스웻"
             ), SubCategory(
-                SubCategoryParent.BOTTOM, timeStamp++, "나일론"
+                parent = SubCategoryParent.BOTTOM, name = "나일론"
             ), SubCategory(
-                SubCategoryParent.BOTTOM, timeStamp++, "치노"
+                parent = SubCategoryParent.BOTTOM, name = "치노"
             ), SubCategory(
-                SubCategoryParent.OUTER, timeStamp++, "코트"
+                parent = SubCategoryParent.OUTER, name = "코트"
             ), SubCategory(
-                SubCategoryParent.OUTER, timeStamp++, "자켓"
+                parent = SubCategoryParent.OUTER, name = "자켓"
             ), SubCategory(
-                SubCategoryParent.OUTER, timeStamp++, "바람막이"
+                parent = SubCategoryParent.OUTER, name = "바람막이"
             ), SubCategory(
-                SubCategoryParent.OUTER, timeStamp++, "항공점퍼"
+                parent = SubCategoryParent.OUTER, name = "항공점퍼"
             ), SubCategory(
-                SubCategoryParent.OUTER, timeStamp++, "블루종"
+                parent = SubCategoryParent.OUTER, name = "블루종"
             ), SubCategory(
-                SubCategoryParent.OUTER, timeStamp++, "점퍼"
+                parent = SubCategoryParent.OUTER, name = "점퍼"
             ), SubCategory(
-                SubCategoryParent.OUTER, timeStamp++, "야상"
+                parent = SubCategoryParent.OUTER, name = "야상"
             ), SubCategory(
-                SubCategoryParent.ETC, timeStamp++, "신발"
+                parent = SubCategoryParent.ETC, name = "신발"
             ), SubCategory(
-                SubCategoryParent.ETC, timeStamp++, "목걸이"
+                parent = SubCategoryParent.ETC, name = "목걸이"
             ), SubCategory(
-                SubCategoryParent.ETC, timeStamp++, "팔찌"
+                parent = SubCategoryParent.ETC, name = "팔찌"
             ), SubCategory(
-                SubCategoryParent.ETC, timeStamp++, "귀걸이"
+                parent = SubCategoryParent.ETC, name = "귀걸이"
             ), SubCategory(
-                SubCategoryParent.ETC, timeStamp++, "볼캡"
+                parent = SubCategoryParent.ETC, name = "볼캡"
             ), SubCategory(
-                SubCategoryParent.ETC, timeStamp++, "비니"
+                parent = SubCategoryParent.ETC, name = "비니"
             ), SubCategory(
-                SubCategoryParent.ETC, timeStamp++, "머플러"
+                parent = SubCategoryParent.ETC, name = "머플러"
             ), SubCategory(
-                SubCategoryParent.ETC, timeStamp, "장갑"
+                parent = SubCategoryParent.ETC, name = "장갑"
             )
         )
     }
 
-    private fun DatabaseReference.getUidRef(uid: String) = child(uid)
     private fun DatabaseReference.getSubCategoriesRef(uid: String) =
-        getUidRef(uid).child(DatabasePath.SUB_CATEGORIES)
+        child(uid).child(DatabasePath.SUB_CATEGORIES)
 
-    private fun DatabaseReference.addSingleValueListener(
-        uid: String,
+    private fun addSingleValueListener(
+        query: Query,
         subCategoryParent: SubCategoryParent,
         mutableSubCategories: MutableStateFlow<List<SubCategory>>,
         onSubCategoriesLoadingDone: () -> Unit,
         onSubCategoriesLoadingCancelled: (Int, String) -> Unit
     ) {
-        getSubCategoriesRef(uid).orderByChild("parent").equalTo(subCategoryParent.name)
+        query.equalTo(subCategoryParent.name)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val temp = mutableListOf<SubCategory>()
-                    for (child in snapshot.children) {
+                    for (child in snapshot.children)
                         child.getValue<SubCategory>()?.let { temp.add(it) }
-                    }
+
                     mutableSubCategories.value = temp
                     onSubCategoriesLoadingDone()
                 }
@@ -196,5 +229,11 @@ object DatabasePath {
 fun <T> MutableStateFlow<List<T>>.addAndAssign(value: T) {
     val temp = this.value.toMutableList()
     temp.add(value)
+    this.value = temp
+}
+
+fun <T> MutableStateFlow<List<T>>.removeAndAssign(value: T) {
+    val temp = this.value.toMutableList()
+    temp.remove(value)
     this.value = temp
 }

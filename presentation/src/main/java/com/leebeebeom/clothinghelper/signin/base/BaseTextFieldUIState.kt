@@ -7,9 +7,9 @@ import androidx.compose.runtime.setValue
 open class EmailUIState(email: String = "") {
     var email: String by mutableStateOf(email)
 
-    fun onEmailChange(email: String, errorOff: () -> Unit) {
+    fun onEmailChange(email: String, hideEmailError: () -> Unit) {
         this.email = email
-        errorOff()
+        hideEmailError()
     }
 }
 
@@ -17,8 +17,8 @@ open class PasswordUIState(email: String = "", password: String = "") :
     EmailUIState(email) {
     var password: String by mutableStateOf(password)
 
-    open fun onPasswordChange(password: String, errorOff: () -> Unit) {
+    open fun onPasswordChange(password: String, hidePasswordError: () -> Unit) {
         this.password = password
-        errorOff()
+        hidePasswordError()
     }
 }

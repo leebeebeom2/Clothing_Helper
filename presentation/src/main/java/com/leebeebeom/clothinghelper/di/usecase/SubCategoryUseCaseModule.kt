@@ -31,4 +31,10 @@ class SubCategoryUseCaseModule {
     @Provides
     fun provideGetSubCategoriesUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
         GetSubCategoriesUseCase(subCategoryRepository)
+
+    @Provides
+    fun provideAddAndDeleteSubCategoryUseCase(
+        addSubCategoryUseCase: AddSubCategoryUseCase,
+        deleteSubCategoryUseCase: DeleteSubCategoryUseCase
+    ) = AddAndDeleteSubCategoryUseCase(addSubCategoryUseCase, deleteSubCategoryUseCase)
 }

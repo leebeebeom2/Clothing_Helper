@@ -25,8 +25,12 @@ class SubCategoryViewModel @Inject constructor(
     private val deleteSubCategoryUseCase: DeleteSubCategoryUseCase,
     private val getPreferencesAndToggleAllExpandUseCase: GetPreferencesAndToggleAllExpandUseCase
 ) : ViewModel() {
-    var viewModelState = SubCategoryViewModelState()
-        private set
+    private val viewModelState = SubCategoryViewModelState()
+
+    fun getViewModelState(parent: String): SubCategoryViewModelState {
+        viewModelState.setSubCategoryParent(parent)
+        return viewModelState
+    }
 
     init {
         viewModelScope.launch {
@@ -49,8 +53,8 @@ class SubCategoryViewModel @Inject constructor(
         }
     }
 
-    fun addSubCategory(parent: SubCategoryParent, name: String) {
-        addSubCategoryUseCase(parent, name, addSubCategoryListener)
+    fun addSubCategory(name: String) {
+        addSubCategoryUseCase(viewModelState.subCategoryParent, name, addSubCategoryListener)
         viewModelState.addExpandState()
     }
 
@@ -123,12 +127,19 @@ class SubCategoryViewModelState {
         this.etcSubCategories = etcSubCategories
     }
 
-    fun getSubCategories(parent: SubCategoryParent): List<SubCategory> {
-        return when (parent) {
+    fun getSubCategories(): List<SubCategory> {
+        return when (subCategoryParent) {
             SubCategoryParent.TOP -> topSubCategories
             SubCategoryParent.BOTTOM -> bottomSubCategories
             SubCategoryParent.OUTER -> outerSubCategories
             SubCategoryParent.ETC -> etcSubCategories
         }
+    }
+
+    lateinit var subCategoryParent: SubCategoryParent
+        private set
+
+    fun setSubCategoryParent(parent: String) {
+        subCategoryParent = enumValueOf(parent)
     }
 }

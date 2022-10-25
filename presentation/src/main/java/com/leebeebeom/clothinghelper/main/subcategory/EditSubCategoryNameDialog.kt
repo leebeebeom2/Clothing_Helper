@@ -11,7 +11,7 @@ import com.leebeebeom.clothinghelper.base.DialogTitle
 @Composable
 fun EditSubCategoryNameDialog(
     categoryName: String,
-    @StringRes error: Int,
+    @StringRes error: Int?,
     onCategoryNameChange: (String) -> Unit,
     onPositiveButtonClick: () -> Unit,
     onDisMissDialog: () -> Unit,

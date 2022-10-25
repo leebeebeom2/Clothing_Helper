@@ -23,7 +23,8 @@ fun SubCategoryContent(
     subCategories: List<SubCategory>,
     onLongClick: () -> Unit,
     isSelectMode: Boolean,
-    onSelect: (SubCategory, isChecked: Boolean) -> Unit
+    onSelect: (SubCategory) -> Unit,
+    selectedSubCategories:Set<SubCategory>
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -45,8 +46,9 @@ fun SubCategoryContent(
                 subCategory = it,
                 onLongClick = onLongClick,
                 isSelectMode = isSelectMode,
-                onSelect = onSelect,
-                allExpand = allExpand
+                onSelect = { onSelect(it) },
+                allExpand = allExpand,
+                isChecked = selectedSubCategories.contains(it)
             )
         }
     }

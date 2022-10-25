@@ -122,22 +122,20 @@ class SubCategoryViewModelState : BaseViewModelState() {
         }
     }
 
-    lateinit var subCategoryParent: SubCategoryParent
+    var subCategoryParent = SubCategoryParent.TOP // temp
         private set
 
     fun setSubCategoryParent(parent: String) {
         subCategoryParent = enumValueOf(parent)
     }
 
-    private val _selectedSubCategories = mutableSetOf<SubCategory>()
-    val selectedSubCategories: Set<SubCategory> get() = _selectedSubCategories
+    var selectedSubCategories by mutableStateOf(setOf<SubCategory>())
+        private set
 
-    var selectedSubCategoriesSize by mutableStateOf(selectedSubCategories.size)
-
-    fun onSelect(subCategory: SubCategory, isChecked: Boolean) {
-        if (isChecked) _selectedSubCategories.add(subCategory)
-        else _selectedSubCategories.remove(subCategory)
-        selectedSubCategoriesSize = _selectedSubCategories.size
+    fun onSelect(subCategory: SubCategory) {
+        selectedSubCategories = if (selectedSubCategories.contains(subCategory))
+            selectedSubCategories.taskAndReturn { it.remove(subCategory) }
+        else selectedSubCategories.taskAndReturn { it.add(subCategory) }
     }
 
     var selectMode by mutableStateOf(false)
@@ -149,7 +147,20 @@ class SubCategoryViewModelState : BaseViewModelState() {
 
     fun selectModeOff() {
         selectMode = false
-        _selectedSubCategories.clear()
-        selectedSubCategoriesSize = 0
+        selectedSubCategories = selectedSubCategories.taskAndReturn { it.clear() }
     }
+
+    val isAllSelected get() = selectedSubCategories.size == getSubCategories().size
+
+    fun toggleAllSelect() {
+        selectedSubCategories =
+            if (isAllSelected) selectedSubCategories.taskAndReturn { it.clear() }
+            else selectedSubCategories.taskAndReturn { it.addAll(getSubCategories()) }
+    }
+}
+
+fun <T> Set<T>.taskAndReturn(task: (MutableSet<T>) -> Unit): Set<T> {
+    val temp = toMutableSet()
+    task(temp)
+    return temp
 }

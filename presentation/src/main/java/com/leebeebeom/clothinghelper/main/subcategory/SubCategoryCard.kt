@@ -4,7 +4,6 @@ import androidx.annotation.StringRes
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
@@ -25,7 +24,6 @@ import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleIcon
-import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -67,7 +65,7 @@ fun SubCategoryCard(
     }
 }
 
-@OptIn(ExperimentalAnimationGraphicsApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun SubCategoryTitle(
     title: String,
@@ -83,24 +81,30 @@ private fun SubCategoryTitle(
             .animateContentSize(animationSpec = tween(350)),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(modifier = Modifier.weight(1f)) {
+        Row(
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AnimatedVisibility(
+                visible = isSelectMode,
+                enter = scaleIn(tween(200), transformOrigin = TransformOrigin(0.4f, 0.5f)),
+                exit = scaleOut(tween(200), transformOrigin = TransformOrigin(0.4f, 0.5f))
+            ) {
+                CircleCheckBox(
+                    isChecked = isChecked,
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .size(18.dp)
+                )
+            }
             Text(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(start = 12.dp),
                 text = title,
                 style = MaterialTheme.typography.subtitle1,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-            AnimatedVisibility(
-                visible = isSelectMode,
-                enter = scaleIn(tween(200), transformOrigin = TransformOrigin(0.6f, 0.5f)),
-                exit = scaleOut(tween(200), transformOrigin = TransformOrigin(0.6f, 0.5f))
-            ) {
-                SimpleWidthSpacer(dp = 4)
-                CircleCheckBox(isChecked = isChecked)
-            }
         }
         ExpandIcon(
             isExpanded = isExpanded, onExpandIconClick = onExpandIconClick

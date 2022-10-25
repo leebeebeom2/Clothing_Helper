@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleIcon
+import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -96,7 +97,10 @@ private fun SubCategoryTitle(
                 visible = isSelectMode,
                 enter = scaleIn(tween(200), transformOrigin = TransformOrigin(0.6f, 0.5f)),
                 exit = scaleOut(tween(200), transformOrigin = TransformOrigin(0.6f, 0.5f))
-            ) { CircleCheckBox(isChecked = isChecked) }
+            ) {
+                SimpleWidthSpacer(dp = 4)
+                CircleCheckBox(isChecked = isChecked)
+            }
         }
         ExpandIcon(
             isExpanded = isExpanded, onExpandIconClick = onExpandIconClick

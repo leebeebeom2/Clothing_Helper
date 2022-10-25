@@ -40,25 +40,9 @@ fun AddCategoryDialogFab(
                 error = state.categoryNameError,
                 onCategoryNameChange = { state.onCategoryNameChange(it, subCategories) })
             DialogTextButtons(
-                positiveButton = {
-                    DialogTextButton(
-                        modifier = it,
-                        text = R.string.check,
-                        enabled = state.positiveButtonEnabled,
-                        onClick = {
-                            onPositiveButtonClick(state.categoryName)
-                            state.onDismissDialog()
-                        }
-                    )
-                },
-                negativeButton = {
-                    DialogTextButton(
-                        modifier = it,
-                        textColor = MaterialTheme.colors.error,
-                        text = R.string.cancel,
-                        onClick = state::onDismissDialog
-                    )
-                }
+                positiveButtonEnabled = state.positiveButtonEnabled,
+                onPositiveButtonClick = { onPositiveButtonClick(state.categoryName) },
+                onDismissDialog = state::onDismissDialog,
             )
             SimpleHeightSpacer(dp = 20)
         }

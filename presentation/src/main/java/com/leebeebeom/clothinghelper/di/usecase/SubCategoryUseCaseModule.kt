@@ -15,12 +15,20 @@ class SubCategoryUseCaseModule {
         AddSubCategoryUseCase(subCategoryRepository)
 
     @Provides
+    fun provideDeleteSubCategoryUseCase(subCategoryUseCase: SubCategoryRepositoryImpl) =
+        DeleteSubCategoryUseCase(subCategoryUseCase)
+
+    @Provides
     fun provideLoadAndGetSubCategoriesUseCase(
         loadSubCategoriesUseCase: LoadSubCategoriesUseCase,
         getSubCategoriesUseCase: GetSubCategoriesUseCase
     ) = LoadAndGetSubCategoriesUseCase(loadSubCategoriesUseCase, getSubCategoriesUseCase)
 
     @Provides
-    fun provideDeleteSubCategoryUseCase(subCategoryUseCase: SubCategoryRepositoryImpl) =
-        DeleteSubCategoryUseCase(subCategoryUseCase)
+    fun provideLoadSubCategoriesUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
+        LoadSubCategoriesUseCase(subCategoryRepository)
+
+    @Provides
+    fun provideGetSubCategoriesUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
+        GetSubCategoriesUseCase(subCategoryRepository)
 }

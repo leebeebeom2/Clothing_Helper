@@ -2,21 +2,24 @@ package com.leebeebeom.clothinghelper.main.subcategory
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -33,18 +36,31 @@ fun SubCategoryCard(
     subCategory: SubCategory,
     isExpanded: Boolean,
     onExpandIconClick: () -> Unit,
-    onLongClick: () -> Unit
+    onLongClick: () -> Unit,
+    isSelectMode: Boolean
 ) {
-    Box {
-        Card(elevation = 2.dp, shape = RoundedCornerShape(12.dp)) {
-            Column(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(12.dp))
-                    .combinedClickable(
-                        onClick = { /*TODO*/ },
-                        onLongClick = onLongClick
-                    )
-            ) {
+    var isSelected by rememberSaveable { mutableStateOf(false) }
+    if (!isSelectMode) isSelected = false
+
+    val surfaceColor by animateColorAsState(
+        targetValue = if (!isSelected) Color.Transparent else Color.Gray.copy(
+            0.4f
+        )
+    )
+
+    Card(elevation = 2.dp, shape = RoundedCornerShape(12.dp)) {
+        Box(modifier = Modifier.background(surfaceColor)) {
+            Column(modifier = Modifier
+                .clip(RoundedCornerShape(12.dp))
+                .combinedClickable(onClick = {
+                    if (!isSelectMode) { /*TODO 이동*/
+                    } else {
+                        isSelected = !isSelected
+                    }
+                }, onLongClick = {
+                    onLongClick()
+                    isSelected = true
+                })) {
                 SubCategoryTitle(
                     title = subCategory.name,
                     isExpanded = isExpanded,

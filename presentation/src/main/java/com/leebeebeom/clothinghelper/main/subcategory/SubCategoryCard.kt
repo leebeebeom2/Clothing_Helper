@@ -1,14 +1,14 @@
 package com.leebeebeom.clothinghelper.main.subcategory
 
 import androidx.annotation.StringRes
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
+import androidx.compose.animation.graphics.res.animatedVectorResource
+import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
+import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,7 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -39,56 +39,81 @@ fun SubCategoryCard(
     onLongClick: () -> Unit,
     isSelectMode: Boolean
 ) {
-    var isSelected by rememberSaveable { mutableStateOf(false) }
-    if (!isSelectMode) isSelected = false
-
-    val surfaceColor by animateColorAsState(
-        targetValue = if (!isSelected) Color.Transparent else Color.Gray.copy(
-            0.4f
-        )
-    )
+    var isChecked by rememberSaveable { mutableStateOf(false) }
+    if (!isSelectMode) isChecked = false
 
     Card(elevation = 2.dp, shape = RoundedCornerShape(12.dp)) {
-        Box(modifier = Modifier.background(surfaceColor)) {
-            Column(modifier = Modifier
+        Column(
+            modifier = Modifier
                 .clip(RoundedCornerShape(12.dp))
                 .combinedClickable(onClick = {
                     if (!isSelectMode) { /*TODO 이동*/
                     } else {
-                        isSelected = !isSelected
+                        isChecked = !isChecked
+                        /*TODO 체크트 리스트에 넣기*/
                     }
                 }, onLongClick = {
                     onLongClick()
-                    isSelected = true
-                })) {
-                SubCategoryTitle(
-                    title = subCategory.name,
-                    isExpanded = isExpanded,
-                    onExpandIconClick = onExpandIconClick
-                )
-                SubCategoryInfo(isExpanded)
-            }
+                    isChecked = true
+                })
+        ) {
+            SubCategoryTitle(
+                title = subCategory.name,
+                isExpanded = isExpanded,
+                onExpandIconClick = onExpandIconClick,
+                isSelectMode = isSelectMode,
+                isChecked = isChecked
+            )
+            SubCategoryInfo(isExpanded)
         }
     }
 }
 
+@OptIn(ExperimentalAnimationGraphicsApi::class, ExperimentalAnimationApi::class)
 @Composable
-private fun SubCategoryTitle(title: String, isExpanded: Boolean, onExpandIconClick: () -> Unit) {
+private fun SubCategoryTitle(
+    title: String,
+    isExpanded: Boolean,
+    onExpandIconClick: () -> Unit,
+    isSelectMode: Boolean,
+    isChecked: Boolean
+) {
     Row(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 12.dp)
             .padding(vertical = 4.dp)
+            .animateContentSize(animationSpec = tween(350)),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .weight(1f),
-            text = title,
-            style = MaterialTheme.typography.subtitle1,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
+        Row(modifier = Modifier.weight(1f)) {
+            Text(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(start = 12.dp),
+                text = title,
+                style = MaterialTheme.typography.subtitle1,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            AnimatedVisibility(
+                visible = isSelectMode,
+                enter = scaleIn(tween(200), transformOrigin = TransformOrigin(0.6f, 0.5f)),
+                exit = scaleOut(tween(200), transformOrigin = TransformOrigin(0.6f, 0.5f))
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .padding(start = 4.dp)
+                        .size(18.dp),
+                    painter = rememberAnimatedVectorPainter(
+                        animatedImageVector = AnimatedImageVector.animatedVectorResource(
+                            id = R.drawable.check_anim
+                        ), atEnd = isChecked
+                    ),
+                    contentDescription = null,
+                    tint = LocalContentColor.current.copy(0.8f)
+                )
+            }
+        }
         ExpandIcon(
             isExpanded = isExpanded, onExpandIconClick = onExpandIconClick
         )

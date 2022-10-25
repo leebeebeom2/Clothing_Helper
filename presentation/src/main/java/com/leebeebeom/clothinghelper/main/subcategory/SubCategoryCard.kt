@@ -5,9 +5,6 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
-import androidx.compose.animation.graphics.res.animatedVectorResource
-import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
-import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
@@ -99,20 +96,7 @@ private fun SubCategoryTitle(
                 visible = isSelectMode,
                 enter = scaleIn(tween(200), transformOrigin = TransformOrigin(0.6f, 0.5f)),
                 exit = scaleOut(tween(200), transformOrigin = TransformOrigin(0.6f, 0.5f))
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .padding(start = 4.dp)
-                        .size(18.dp),
-                    painter = rememberAnimatedVectorPainter(
-                        animatedImageVector = AnimatedImageVector.animatedVectorResource(
-                            id = R.drawable.check_anim
-                        ), atEnd = isChecked
-                    ),
-                    contentDescription = null,
-                    tint = LocalContentColor.current.copy(0.8f)
-                )
-            }
+            ) { CircleCheckBox(isChecked = isChecked) }
         }
         ExpandIcon(
             isExpanded = isExpanded, onExpandIconClick = onExpandIconClick

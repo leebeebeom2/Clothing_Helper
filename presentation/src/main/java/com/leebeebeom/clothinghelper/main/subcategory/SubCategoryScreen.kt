@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
@@ -40,9 +41,13 @@ fun SubCategoryScreen(
 ) {
     val viewModelState = viewModel.getViewModelState(parentName)
 
-    var isSelectMode by rememberSaveable { mutableStateOf(false) }
-
-    Scaffold(bottomBar = { SubCategoryBottomAppBar(isSelectMode) }) {
+    Scaffold(bottomBar = {
+        SubCategoryBottomAppBar(
+            isSelectMode = viewModelState.selectMode,
+            selectedSubCategoriesSize = viewModelState.selectedSubCategoriesSize,
+            allSubCategoriesSize = viewModelState.getSubCategories().size
+        )
+    }) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -59,10 +64,9 @@ fun SubCategoryScreen(
                 allExpandIconClick = viewModel::toggleAllExpand,
                 allExpand = viewModelState.allExpand,
                 subCategories = viewModelState.getSubCategories(),
-                getExpandState = viewModelState::getExpandState,
-                toggleExpand = viewModelState::expandToggle,
-                onLongClick = { isSelectMode = true },
-                isSelectMode = isSelectMode
+                onLongClick = { viewModelState.selectModeOn() },
+                isSelectMode = viewModelState.selectMode,
+                onSelect = viewModelState::onSelect
             )
 
             AddCategoryDialogFab(
@@ -75,11 +79,15 @@ fun SubCategoryScreen(
         }
     }
 
-    BackHandler(enabled = isSelectMode) { isSelectMode = false }
+    BackHandler(enabled = viewModelState.selectMode) { viewModelState.selectModeOff()}
 }
 
 @Composable
-private fun SubCategoryBottomAppBar(isSelectMode: Boolean) {
+private fun SubCategoryBottomAppBar(
+    isSelectMode: Boolean,
+    selectedSubCategoriesSize: Int,
+    allSubCategoriesSize: Int
+) {
     AnimatedVisibility(
         visible = isSelectMode,
         enter = expandVertically(expandFrom = Alignment.Top, animationSpec = tween(250)),
@@ -87,10 +95,15 @@ private fun SubCategoryBottomAppBar(isSelectMode: Boolean) {
     ) {
         BottomAppBar {
             var isChecked by rememberSaveable { mutableStateOf(false) }
+            isChecked = selectedSubCategoriesSize == allSubCategoriesSize
+
             IconButton(onClick = { isChecked = !isChecked }) {
                 CircleCheckBox(isChecked = isChecked, modifier = Modifier.size(20.dp))
             }
-            Text(text = "1개 선택됨", modifier = Modifier.offset((-8).dp, 1.dp)) //TODO
+            Text(
+                text = "${selectedSubCategoriesSize}개 선택됨",
+                modifier = Modifier.offset((-8).dp, 1.dp)
+            )
             Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.End) {
                 BottomAppBarIcon(
                     onClick = { /*TODO*/ },
@@ -112,6 +125,7 @@ fun BottomAppBarIcon(onClick: () -> Unit, @DrawableRes drawable: Int, @StringRes
     IconButton(onClick = onClick) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             SimpleIcon(drawable = drawable)
+            SimpleHeightSpacer(dp = 4)
             Text(
                 text = stringResource(id = text),
                 style = MaterialTheme.typography.caption

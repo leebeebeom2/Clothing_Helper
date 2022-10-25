@@ -2,7 +2,7 @@ package com.leebeebeom.clothinghelper.main.subcategory
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,11 +21,9 @@ fun SubCategoryContent(
     allExpandIconClick: () -> Unit,
     allExpand: Boolean,
     subCategories: List<SubCategory>,
-    getExpandState: (index: Int) -> Boolean,
-    toggleExpand: (index: Int) -> Unit,
     onLongClick: () -> Unit,
     isSelectMode: Boolean,
-    onSelect: (SubCategory, isChecked:Boolean) -> Unit
+    onSelect: (SubCategory, isChecked: Boolean) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -41,15 +39,14 @@ fun SubCategoryContent(
                 allExpand = allExpand
             )
         }
-        itemsIndexed(items = subCategories,
-            key = { _, subCategory -> subCategory.key }) { index, subCategory ->
+        this.items(items = subCategories,
+            key = { subCategory -> subCategory.key }) {
             SubCategoryCard(
-                subCategory = subCategory,
-                isExpanded = getExpandState(index),
-                onExpandIconClick = { toggleExpand(index) },
+                subCategory = it,
                 onLongClick = onLongClick,
                 isSelectMode = isSelectMode,
-                onSelect = onSelect
+                onSelect = onSelect,
+                allExpand = allExpand
             )
         }
     }

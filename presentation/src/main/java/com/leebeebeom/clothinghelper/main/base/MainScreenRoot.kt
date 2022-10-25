@@ -2,7 +2,6 @@ package com.leebeebeom.clothinghelper.main.base
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -11,7 +10,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelper.base.SimpleToast
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelperdomain.model.EssentialMenu
@@ -27,7 +25,7 @@ fun MainScreenRoot(
     onDrawerContentClick: (parentName: String) -> Unit,
     viewModel: MainScreenRootViewModel = hiltViewModel(),
     content: @Composable (
-        PaddingValues, getIsSubCategoriesLoading: (SubCategoryParent) -> Boolean, onDrawerIconClick: () -> Unit
+        PaddingValues, getIsSubCategoriesLoading: (SubCategoryParent) -> Boolean
     ) -> Unit,
 ) {
     val viewModelState = viewModel.viewModelState
@@ -58,23 +56,10 @@ fun MainScreenRoot(
             },
             drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
             drawerBackgroundColor = MaterialTheme.colors.primary,
-            content = {
-                content(
-                    it, viewModelState::getIsSubCategoriesLoading, state::onDrawerIconClick
-                )
-            })
+            content = { content(it, viewModelState::getIsSubCategoriesLoading) })
         if (state.drawerState.isOpen) BackHandler(onBack = state::onDrawerClose)
     }
 }
-
-@Composable
-fun BottomAppBar(onDrawerIconClick: () -> Unit, content: RowScope.() -> Unit) =
-    BottomAppBar(contentPadding = PaddingValues(horizontal = 4.dp)) {
-        IconButton(onClick = onDrawerIconClick) {
-            SimpleIcon(drawable = R.drawable.ic_menu)
-        }
-        content()
-    }
 
 class MainScreenUIState(
     val scaffoldState: ScaffoldState,
@@ -85,13 +70,6 @@ class MainScreenUIState(
     fun onDrawerClose() {
         coroutineScope.launch {
             drawerState.close()
-        }
-    }
-
-    fun onDrawerIconClick() {
-        coroutineScope.launch {
-            if (drawerState.isOpen) drawerState.close()
-            else drawerState.open()
         }
     }
 

@@ -28,7 +28,8 @@ fun SubCategoryBottomAppBar(
     isSelectMode: Boolean,
     selectedSubCategoriesSize: Int,
     onAllSelectCheckBoxClick: () -> Unit,
-    isAllSelected: Boolean
+    isAllSelected: Boolean,
+    onEditSubCategoryNameClick: () -> Unit
 ) {
     AnimatedVisibility(
         visible = isSelectMode,
@@ -49,7 +50,7 @@ fun SubCategoryBottomAppBar(
                 val deleteIconScale by animateFloatAsState(targetValue = if (selectedSubCategoriesSize > 0) 1f else 0f)
                 BottomAppBarIcon(
                     modifier = Modifier.scale(editIconScale),
-                    onClick = { /*TODO*/ },
+                    onClick = onEditSubCategoryNameClick,
                     drawable = R.drawable.ic_edit,
                     text = R.string.change_name
                 )

@@ -87,18 +87,19 @@ fun DialogTextButtons(
 
         DialogTextButton(
             modifier = weightModifier,
+            textColor = MaterialTheme.colors.error,
+            text = R.string.cancel,
+            onClick = onDismissDialog
+        )
+
+        DialogTextButton(
+            modifier = weightModifier,
             text = R.string.check,
             enabled = positiveButtonEnabled,
             onClick = {
                 onPositiveButtonClick()
                 onDismissDialog()
             }
-        )
-        DialogTextButton(
-            modifier = weightModifier,
-            textColor = MaterialTheme.colors.error,
-            text = R.string.cancel,
-            onClick = onDismissDialog
         )
     }
 }

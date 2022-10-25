@@ -23,7 +23,8 @@ fun SubCategoryContent(
     subCategories: List<SubCategory>,
     getExpandState: (index: Int) -> Boolean,
     toggleExpand: (index: Int) -> Unit,
-    onLongClick: () -> Unit
+    onLongClick: () -> Unit,
+    isSelectMode: Boolean
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -45,7 +46,8 @@ fun SubCategoryContent(
                 subCategory = subCategory,
                 isExpanded = getExpandState(index),
                 onExpandIconClick = { toggleExpand(index) },
-                onLongClick = onLongClick
+                onLongClick = onLongClick,
+                isSelectMode = isSelectMode
             )
         }
     }

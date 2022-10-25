@@ -51,7 +51,8 @@ fun SubCategoryCard(
                     }
                 }, onLongClick = {
                     onLongClick()
-                    isChecked = true
+                    isChecked = !isChecked
+                    onSelect(subCategory, isChecked)
                 })
         ) {
             SubCategoryTitle(

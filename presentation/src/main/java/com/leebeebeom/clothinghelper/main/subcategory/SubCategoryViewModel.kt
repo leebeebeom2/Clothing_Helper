@@ -139,4 +139,17 @@ class SubCategoryViewModelState : BaseViewModelState() {
         else _selectedSubCategories.remove(subCategory)
         selectedSubCategoriesSize = _selectedSubCategories.size
     }
+
+    var selectMode by mutableStateOf(false)
+        private set
+
+    fun selectModeOn() {
+        selectMode = true
+    }
+
+    fun selectModeOff() {
+        selectMode = false
+        _selectedSubCategories.clear()
+        selectedSubCategoriesSize = 0
+    }
 }

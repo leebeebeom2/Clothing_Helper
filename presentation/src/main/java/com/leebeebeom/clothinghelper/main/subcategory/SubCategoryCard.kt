@@ -89,8 +89,8 @@ private fun SubCategoryTitle(
         ) {
             AnimatedVisibility(
                 visible = isSelectMode,
-                enter = scaleIn(tween(200), transformOrigin = TransformOrigin(0.4f, 0.5f)),
-                exit = scaleOut(tween(200), transformOrigin = TransformOrigin(0.4f, 0.5f))
+                enter = scaleIn(tween(250), transformOrigin = TransformOrigin(0.4f, 0.5f)),
+                exit = scaleOut(tween(250), transformOrigin = TransformOrigin(0.4f, 0.5f))
             ) {
                 CircleCheckBox(
                     isChecked = isChecked,

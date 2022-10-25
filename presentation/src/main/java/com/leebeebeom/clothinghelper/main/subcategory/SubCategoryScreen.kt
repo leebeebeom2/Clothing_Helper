@@ -27,15 +27,15 @@ fun SubCategoryScreen(
                 modifier = Modifier.align(Alignment.Center),
                 color = LocalContentColor.current.copy(ContentAlpha.medium)
             )
-        // TODO 이름 수정
+        // TODO 롱 클릭 시 바텀 앱바 show, 이름 수정, 삭제
         else SubCategoryContent(
             subCategoryParent = viewModelState.subCategoryParent,
-            toggleAllExpand = viewModel::toggleAllExpand,
+            allExpandIconClick = viewModel::toggleAllExpand,
             allExpand = viewModelState.allExpand,
             subCategories = viewModelState.getSubCategories(),
             getExpandState = viewModelState::getExpandState,
             toggleExpand = viewModelState::expandToggle,
-            deleteSubCategory = viewModel::deleteSubCategory
+            onLongClick = {}
         )
 
         AddCategoryDialogFab(

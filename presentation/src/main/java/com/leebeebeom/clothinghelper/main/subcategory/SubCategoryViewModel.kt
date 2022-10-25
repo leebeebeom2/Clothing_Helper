@@ -148,4 +148,12 @@ class SubCategoryViewModelState : BaseViewModelState() {
     fun setSubCategoryParent(parent: String) {
         subCategoryParent = enumValueOf(parent)
     }
+
+    private val _selectedSubCategories = mutableSetOf<SubCategory>()
+    val selectedSubCategories: Set<SubCategory> get() = _selectedSubCategories
+
+    fun onSelect(subCategory: SubCategory, isChecked: Boolean) {
+        if (isChecked) _selectedSubCategories.add(subCategory)
+        else _selectedSubCategories.remove(subCategory)
+    }
 }

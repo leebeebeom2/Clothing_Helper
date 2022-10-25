@@ -78,12 +78,27 @@ fun DialogTextButton(
 
 @Composable
 fun DialogTextButtons(
-    positiveButton: @Composable (Modifier) -> Unit,
-    negativeButton: @Composable (Modifier) -> Unit,
+    positiveButtonEnabled: Boolean,
+    onPositiveButtonClick: () -> Unit,
+    onDismissDialog: () -> Unit
 ) {
     Row {
         val weightModifier = Modifier.weight(1f)
-        negativeButton(weightModifier)
-        positiveButton(weightModifier)
+
+        DialogTextButton(
+            modifier = weightModifier,
+            text = R.string.check,
+            enabled = positiveButtonEnabled,
+            onClick = {
+                onPositiveButtonClick()
+                onDismissDialog()
+            }
+        )
+        DialogTextButton(
+            modifier = weightModifier,
+            textColor = MaterialTheme.colors.error,
+            text = R.string.cancel,
+            onClick = onDismissDialog
+        )
     }
 }

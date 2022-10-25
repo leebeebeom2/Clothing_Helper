@@ -14,10 +14,6 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -44,8 +40,9 @@ fun SubCategoryScreen(
     Scaffold(bottomBar = {
         SubCategoryBottomAppBar(
             isSelectMode = viewModelState.selectMode,
-            selectedSubCategoriesSize = viewModelState.selectedSubCategoriesSize,
-            allSubCategoriesSize = viewModelState.getSubCategories().size
+            selectedSubCategoriesSize = viewModelState.selectedSubCategories.size,
+            onAllSelectCheckBoxClick = viewModelState::toggleAllSelect,
+            isAllSelected = viewModelState.isAllSelected
         )
     }) {
         Box(
@@ -66,7 +63,8 @@ fun SubCategoryScreen(
                 subCategories = viewModelState.getSubCategories(),
                 onLongClick = { viewModelState.selectModeOn() },
                 isSelectMode = viewModelState.selectMode,
-                onSelect = viewModelState::onSelect
+                onSelect = viewModelState::onSelect,
+                selectedSubCategories = viewModelState.selectedSubCategories
             )
 
             AddCategoryDialogFab(
@@ -79,14 +77,15 @@ fun SubCategoryScreen(
         }
     }
 
-    BackHandler(enabled = viewModelState.selectMode) { viewModelState.selectModeOff()}
+    BackHandler(enabled = viewModelState.selectMode) { viewModelState.selectModeOff() }
 }
 
 @Composable
 private fun SubCategoryBottomAppBar(
     isSelectMode: Boolean,
     selectedSubCategoriesSize: Int,
-    allSubCategoriesSize: Int
+    onAllSelectCheckBoxClick: () -> Unit,
+    isAllSelected: Boolean
 ) {
     AnimatedVisibility(
         visible = isSelectMode,
@@ -94,11 +93,9 @@ private fun SubCategoryBottomAppBar(
         exit = shrinkVertically(shrinkTowards = Alignment.Top, animationSpec = tween(250))
     ) {
         BottomAppBar {
-            var isChecked by rememberSaveable { mutableStateOf(false) }
-            isChecked = selectedSubCategoriesSize == allSubCategoriesSize
 
-            IconButton(onClick = { isChecked = !isChecked }) {
-                CircleCheckBox(isChecked = isChecked, modifier = Modifier.size(20.dp))
+            IconButton(onClick = onAllSelectCheckBoxClick) {
+                CircleCheckBox(isChecked = isAllSelected, modifier = Modifier.size(20.dp))
             }
             Text(
                 text = "${selectedSubCategoriesSize}개 선택됨",

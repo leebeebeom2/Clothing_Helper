@@ -18,12 +18,12 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 @Composable
 fun SubCategoryContent(
     subCategoryParent: SubCategoryParent,
-    toggleAllExpand: () -> Unit,
+    allExpandIconClick: () -> Unit,
     allExpand: Boolean,
     subCategories: List<SubCategory>,
-    getExpandState:(index:Int) -> Boolean,
-    toggleExpand: (index:Int) -> Unit,
-    deleteSubCategory:(SubCategory) -> Unit
+    getExpandState: (index: Int) -> Boolean,
+    toggleExpand: (index: Int) -> Unit,
+    onLongClick: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -35,7 +35,7 @@ fun SubCategoryContent(
         item {
             Header(
                 subCategoryParent = subCategoryParent,
-                toggleAllExpand = toggleAllExpand,
+                allExpandIconClick = allExpandIconClick,
                 allExpand = allExpand
             )
         }
@@ -44,8 +44,8 @@ fun SubCategoryContent(
             SubCategoryCard(
                 subCategory = subCategory,
                 isExpanded = getExpandState(index),
-                toggleExpand = { toggleExpand(index) },
-                deletedSubCategory = { deleteSubCategory(subCategory) }
+                onExpandIconClick = { toggleExpand(index) },
+                onLongClick = onLongClick
             )
         }
     }
@@ -53,7 +53,7 @@ fun SubCategoryContent(
 
 @Composable
 private fun Header(
-    subCategoryParent: SubCategoryParent, toggleAllExpand: () -> Unit, allExpand: Boolean
+    subCategoryParent: SubCategoryParent, allExpandIconClick: () -> Unit, allExpand: Boolean
 ) {
     // Header Text
     Text(
@@ -66,8 +66,8 @@ private fun Header(
     // Header Icons
     Row(verticalAlignment = Alignment.CenterVertically) {
         Divider(modifier = Modifier.weight(1f))
-        AllExpandIcon(onClick = toggleAllExpand, allExpand)
-        SortIcon {}
+        AllExpandIcon(allExpandIconClick = allExpandIconClick, allExpand)
+        SortIcon {/*TODO*/ }
     }
 }
 
@@ -81,9 +81,9 @@ private fun getHeaderTextRes(subCategoryParent: SubCategoryParent): Int {
 }
 
 @Composable
-private fun AllExpandIcon(onClick: () -> Unit, allExpand: Boolean) {
+private fun AllExpandIcon(allExpandIconClick: () -> Unit, allExpand: Boolean) {
     IconButton(
-        onClick = onClick, modifier = Modifier.size(22.dp)
+        onClick = allExpandIconClick, modifier = Modifier.size(22.dp)
     ) {
         SimpleIcon(
             drawable = if (allExpand) R.drawable.ic_unfold_less else R.drawable.ic_all_expand,
@@ -93,8 +93,8 @@ private fun AllExpandIcon(onClick: () -> Unit, allExpand: Boolean) {
 }
 
 @Composable
-private fun SortIcon(onClick: () -> Unit) {
-    IconButton(onClick = onClick, modifier = Modifier.size(22.dp)) {
+private fun SortIcon(sortIconClick: () -> Unit) {
+    IconButton(onClick = sortIconClick, modifier = Modifier.size(22.dp)) {
         SimpleIcon(
             drawable = R.drawable.ic_sort, tint = LocalContentColor.current.copy(0.5f)
         )

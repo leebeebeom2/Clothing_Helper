@@ -55,5 +55,29 @@ class AddSubCategoryUseCase(private val subCategoryRepository: SubCategoryReposi
 
 class DeleteSubCategoryUseCase(private val subCategoryRepository: SubCategoryRepository) {
     operator fun invoke(subCategory: SubCategory, deleteSubCategoryListener: FirebaseListener) =
-        subCategoryRepository.deleteSubCategory(subCategory, deleteSubCategoryListener)
+        subCategoryRepository.deleteSubCategory(
+            subCategory = subCategory,
+            deleteSubCategoryListener = deleteSubCategoryListener
+        )
+}
+
+class AddAndDeleteSubCategoryUseCase(
+    private val addSubCategoryUseCase: AddSubCategoryUseCase,
+    private val deleteSubCategoryUseCase: DeleteSubCategoryUseCase
+) {
+    fun addSubCategory(
+        subCategoryParent: SubCategoryParent,
+        name: String,
+        addSubCategoryListener: FirebaseListener
+    ) = addSubCategoryUseCase(
+        subCategoryParent = subCategoryParent,
+        name = name,
+        addSubCategoryListener = addSubCategoryListener
+    )
+
+    fun deleteSubCategory(subCategory: SubCategory, deleteSubCategoryListener: FirebaseListener) =
+        deleteSubCategoryUseCase(
+            subCategory = subCategory,
+            deleteSubCategoryListener = deleteSubCategoryListener
+        )
 }

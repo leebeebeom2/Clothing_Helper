@@ -12,7 +12,7 @@ import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.usecase.preferences.GetPreferencesAndToggleAllExpandUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.AddSubCategoryUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.DeleteSubCategoryUseCase
-import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoriesUserCase
+import com.leebeebeom.clothinghelperdomain.usecase.subcategory.LoadAndGetSubCategoriesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SubCategoryViewModel @Inject constructor(
     private val addSubCategoryUseCase: AddSubCategoryUseCase, // 두개 결합
-    private val getSubCategoriesUserCase: GetSubCategoriesUserCase,
+    private val loadAndGetSubCategoriesUseCase: LoadAndGetSubCategoriesUseCase,
     private val deleteSubCategoryUseCase: DeleteSubCategoryUseCase,
     private val getPreferencesAndToggleAllExpandUseCase: GetPreferencesAndToggleAllExpandUseCase
 ) : ViewModel() {
@@ -30,20 +30,16 @@ class SubCategoryViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getSubCategoriesUserCase.getTopSubCategories()
-                .collect(viewModelState::updateTopSubCategories)
+            loadAndGetSubCategoriesUseCase.topSubCategories.collect(viewModelState::updateTopSubCategories)
         }
         viewModelScope.launch {
-            getSubCategoriesUserCase.getBottomSubCategories()
-                .collect(viewModelState::updateBottomSubCategories)
+            loadAndGetSubCategoriesUseCase.bottomSubCategories.collect(viewModelState::updateBottomSubCategories)
         }
         viewModelScope.launch {
-            getSubCategoriesUserCase.getOuterSubCategories()
-                .collect(viewModelState::updateOuterSubCategories)
+            loadAndGetSubCategoriesUseCase.outerSubCategories.collect(viewModelState::updateOuterSubCategories)
         }
         viewModelScope.launch {
-            getSubCategoriesUserCase.getEtcSubCategories()
-                .collect(viewModelState::updateEtcSubCategories)
+            loadAndGetSubCategoriesUseCase.etcSubCategories.collect(viewModelState::updateEtcSubCategories)
         }
         viewModelScope.launch {
             getPreferencesAndToggleAllExpandUseCase.getPreferences(this).collect {
@@ -67,7 +63,17 @@ class SubCategoryViewModel @Inject constructor(
         getPreferencesAndToggleAllExpandUseCase.toggleAllExpand()
     }
 
-    fun deleteSubCategory(subCategory: SubCategory) = deleteSubCategoryUseCase(subCategory)
+    fun deleteSubCategory(subCategory: SubCategory) =
+        deleteSubCategoryUseCase(subCategory, object : FirebaseListener {
+            override fun taskSuccess() {
+                // TODO
+            }
+
+            override fun taskFailed(exception: Exception?) {
+                // TODO
+            }
+
+        })
 
 }
 

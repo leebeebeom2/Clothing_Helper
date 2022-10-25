@@ -33,12 +33,11 @@ fun MainNavHost() {
     val navController = rememberNavController()
 
     MainScreenRoot(onSettingIconClick = { navController.mainNavigate(MainDestinations.Setting.route) },
-        onDrawerContentClick = { parentName -> navController.drawerNavigate(parentName) }) { padding, getIsSubCategoriesLoading, onDrawerIconClick ->
+        onDrawerContentClick = { parentName -> navController.drawerNavigate(parentName) }) { padding, getIsSubCategoriesLoading ->
         MainNavHostWithArg(
             navController = navController,
             paddingValues = padding,
-            getIsSubCategoriesLoading = getIsSubCategoriesLoading,
-            onDrawerIconClick = onDrawerIconClick
+            getIsSubCategoriesLoading = getIsSubCategoriesLoading
         )
     }
 }
@@ -69,8 +68,7 @@ fun NavController.drawerNavigate(parentName: String) {
 fun MainNavHostWithArg(
     navController: NavHostController,
     paddingValues: PaddingValues,
-    getIsSubCategoriesLoading: (SubCategoryParent) -> Boolean,
-    onDrawerIconClick: () -> Unit // TODO
+    getIsSubCategoriesLoading: (SubCategoryParent) -> Boolean
 ) {
     NavHost(
         navController = navController,
@@ -78,11 +76,13 @@ fun MainNavHostWithArg(
         modifier = Modifier.padding(paddingValues)
     ) {
         composable(MainDestinations.MainCategory.route) {
-            MainCategoryScreen(onMainCategoryClick = { parentName ->
-                navController.navigateToSubCategory(
-                    parentName
-                )
-            }, getIsSubCategoriesLoading = getIsSubCategoriesLoading)
+            MainCategoryScreen(
+                onMainCategoryClick = { parentName ->
+                    navController.navigateToSubCategory(
+                        parentName
+                    )
+                }, getIsSubCategoriesLoading = getIsSubCategoriesLoading
+            )
         }
         composable(
             route = MainDestinations.SubCategory.routeWithArg,

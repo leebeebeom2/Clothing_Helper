@@ -33,11 +33,12 @@ fun MainNavHost() {
     val navController = rememberNavController()
 
     MainScreenRoot(onSettingIconClick = { navController.mainNavigate(MainDestinations.Setting.route) },
-        onDrawerContentClick = { parentName -> navController.drawerNavigate(parentName) }) { padding, getIsSubCategoriesLoading ->
+        onDrawerContentClick = { parentName -> navController.drawerNavigate(parentName) }) { padding, getIsSubCategoriesLoading, onDrawerIconClick ->
         MainNavHostWithArg(
             navController = navController,
             paddingValues = padding,
-            getIsSubCategoriesLoading = getIsSubCategoriesLoading
+            getIsSubCategoriesLoading = getIsSubCategoriesLoading,
+            onDrawerIconClick = onDrawerIconClick
         )
     }
 }
@@ -68,7 +69,8 @@ fun NavController.drawerNavigate(parentName: String) {
 fun MainNavHostWithArg(
     navController: NavHostController,
     paddingValues: PaddingValues,
-    getIsSubCategoriesLoading: (SubCategoryParent) -> Boolean
+    getIsSubCategoriesLoading: (SubCategoryParent) -> Boolean,
+    onDrawerIconClick: () -> Unit // TODO
 ) {
     NavHost(
         navController = navController,

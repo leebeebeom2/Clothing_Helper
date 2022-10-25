@@ -30,12 +30,14 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategory
 @Composable
 fun SubCategoryCard(
     subCategory: SubCategory,
-    isExpanded: Boolean,
-    onExpandIconClick: () -> Unit,
     onLongClick: () -> Unit,
     isSelectMode: Boolean,
-    onSelect: (SubCategory, isChecked: Boolean) -> Unit
+    onSelect: (SubCategory, isChecked: Boolean) -> Unit,
+    allExpand: Boolean
 ) {
+    var isExpanded by rememberSaveable { mutableStateOf(false) }
+    isExpanded = allExpand
+
     var isChecked by rememberSaveable { mutableStateOf(false) }
     if (!isSelectMode) isChecked = false
 
@@ -58,7 +60,7 @@ fun SubCategoryCard(
             SubCategoryTitle(
                 title = subCategory.name,
                 isExpanded = isExpanded,
-                onExpandIconClick = onExpandIconClick,
+                onExpandIconClick = { isExpanded = !isExpanded },
                 isSelectMode = isSelectMode,
                 isChecked = isChecked
             )

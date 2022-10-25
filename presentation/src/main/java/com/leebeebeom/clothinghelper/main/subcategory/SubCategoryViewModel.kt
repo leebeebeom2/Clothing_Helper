@@ -1,7 +1,6 @@
 package com.leebeebeom.clothinghelper.main.subcategory
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue

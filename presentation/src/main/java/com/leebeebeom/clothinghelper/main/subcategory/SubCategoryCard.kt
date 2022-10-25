@@ -32,14 +32,12 @@ fun SubCategoryCard(
     subCategory: SubCategory,
     onLongClick: () -> Unit,
     isSelectMode: Boolean,
-    onSelect: (SubCategory, isChecked: Boolean) -> Unit,
-    allExpand: Boolean
+    onSelect: () -> Unit,
+    allExpand: Boolean,
+    isChecked: Boolean
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     isExpanded = allExpand
-
-    var isChecked by rememberSaveable { mutableStateOf(false) }
-    if (!isSelectMode) isChecked = false
 
     Card(elevation = 2.dp, shape = RoundedCornerShape(12.dp)) {
         Column(
@@ -47,14 +45,10 @@ fun SubCategoryCard(
                 .clip(RoundedCornerShape(12.dp))
                 .combinedClickable(onClick = {
                     if (!isSelectMode) { /*TODO 이동*/
-                    } else {
-                        isChecked = !isChecked
-                        onSelect(subCategory, isChecked)
-                    }
+                    } else onSelect()
                 }, onLongClick = {
                     onLongClick()
-                    isChecked = !isChecked
-                    onSelect(subCategory, isChecked)
+                    onSelect()
                 })
         ) {
             SubCategoryTitle(

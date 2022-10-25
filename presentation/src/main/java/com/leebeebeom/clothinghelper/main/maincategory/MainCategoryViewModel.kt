@@ -6,36 +6,36 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
-import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoriesUserCase
+import com.leebeebeom.clothinghelperdomain.usecase.subcategory.LoadAndGetSubCategoriesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainCategoryViewModel @Inject constructor(
-    private val getSubCategoriesUserCase: GetSubCategoriesUserCase
+    private val loadAndGetSubCategoriesUseCase: LoadAndGetSubCategoriesUseCase
 ) : ViewModel() {
 
     val viewModelState = MainCategoryViewModelState()
 
     init {
         viewModelScope.launch {
-            getSubCategoriesUserCase.getTopSubCategories().collect {
+            loadAndGetSubCategoriesUseCase.topSubCategories.collect {
                 viewModelState.topCategoriesSizeUpdate(it.size)
             }
         }
         viewModelScope.launch {
-            getSubCategoriesUserCase.getBottomSubCategories().collect {
+            loadAndGetSubCategoriesUseCase.bottomSubCategories.collect {
                 viewModelState.bottomCategoriesSizeUpdate(it.size)
             }
         }
         viewModelScope.launch {
-            getSubCategoriesUserCase.getOuterSubCategories().collect {
+            loadAndGetSubCategoriesUseCase.outerSubCategories.collect {
                 viewModelState.outerCategoriesSizeUpdate(it.size)
             }
         }
         viewModelScope.launch {
-            getSubCategoriesUserCase.getEtcSubCategories().collect {
+            loadAndGetSubCategoriesUseCase.etcSubCategories.collect {
                 viewModelState.etcCategoriesSizeUpdate(it.size)
             }
         }
@@ -43,14 +43,10 @@ class MainCategoryViewModel @Inject constructor(
 }
 
 class MainCategoryViewModelState {
-    var topCategoriesSize by mutableStateOf(0)
-        private set
-    var bottomCategoriesSize by mutableStateOf(0)
-        private set
-    var outerCategoriesSize by mutableStateOf(0)
-        private set
-    var etcCategoriesSize by mutableStateOf(0)
-        private set
+    private var topCategoriesSize by mutableStateOf(0)
+    private var bottomCategoriesSize by mutableStateOf(0)
+    private var outerCategoriesSize by mutableStateOf(0)
+    private var etcCategoriesSize by mutableStateOf(0)
 
     fun topCategoriesSizeUpdate(size: Int) {
         topCategoriesSize = size

@@ -64,7 +64,6 @@ fun SubCategoryCard(
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun SubCategoryTitle(
     title: String,

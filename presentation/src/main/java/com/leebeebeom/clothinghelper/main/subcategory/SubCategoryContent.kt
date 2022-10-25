@@ -24,7 +24,7 @@ fun SubCategoryContent(
     onLongClick: () -> Unit,
     isSelectMode: Boolean,
     onSelect: (SubCategory) -> Unit,
-    selectedSubCategories:Set<SubCategory>
+    selectedSubCategories: Set<SubCategory>
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),

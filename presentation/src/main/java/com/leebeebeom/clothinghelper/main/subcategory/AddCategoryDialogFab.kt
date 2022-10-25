@@ -37,7 +37,7 @@ fun AddCategoryDialogFab(
         SimpleIcon(drawable = R.drawable.ic_add)
     }
 
-    if (state.showDialog) Dialog(onDismissRequest = state::dismissDialog) {
+    if (state.showDialog) Dialog(onDismissRequest = state::onDismissDialog) {
         Surface(color = MaterialTheme.colors.surface, shape = RoundedCornerShape(20.dp)) {
             Column(
                 modifier = Modifier
@@ -53,10 +53,10 @@ fun AddCategoryDialogFab(
                     error = state.categoryNameError,
                     onCategoryNameChange = { state.onCategoryNameChange(it, subCategories) })
                 DialogTextButtons(positiveButtonEnabled = state.positiveButtonEnabled,
-                    onCancelButtonClick = state::dismissDialog,
+                    onCancelButtonClick = state::onDismissDialog,
                     onPositiveButtonClick = {
                         onPositiveButtonClick(state.categoryName)
-                        state.dismissDialog()
+                        state.onDismissDialog()
                     })
                 SimpleHeightSpacer(dp = 20)
             }
@@ -128,15 +128,15 @@ private fun DialogTextField(
 }
 
 class AddCategoryDialogUIState(
-    initialCategoryName: String = "",
-    @StringRes initialCategoryNameError: Int? = null,
-    initialShowDialog: Boolean = false
+    categoryName: String = "",
+    @StringRes categoryNameError: Int? = null,
+    showDialog: Boolean = false
 ) {
-    var categoryName by mutableStateOf(initialCategoryName)
+    var categoryName by mutableStateOf(categoryName)
         private set
-    var categoryNameError by mutableStateOf(initialCategoryNameError)
+    var categoryNameError by mutableStateOf(categoryNameError)
         private set
-    var showDialog by mutableStateOf(initialShowDialog)
+    var showDialog by mutableStateOf(showDialog)
         private set
 
     fun onCategoryNameChange(newName: String, subCategories: List<SubCategory>) {
@@ -152,7 +152,7 @@ class AddCategoryDialogUIState(
         showDialog = true
     }
 
-    fun dismissDialog() {
+    fun onDismissDialog() {
         showDialog = false
         categoryName = ""
         categoryNameError = null

@@ -2,6 +2,7 @@ package com.leebeebeom.clothinghelper.main.subcategory
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.*
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -15,7 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -85,23 +86,26 @@ private fun SubCategoryTitle(
                 .padding(start = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            AnimatedVisibility(
-                visible = isSelectMode,
-                enter = scaleIn(tween(250), transformOrigin = TransformOrigin(0.4f, 0.5f)),
-                exit = scaleOut(tween(250), transformOrigin = TransformOrigin(0.4f, 0.5f))
-            ) {
-                CircleCheckBox(
-                    isChecked = isChecked,
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                        .size(18.dp)
-                )
-            }
+            val scale by animateFloatAsState(
+                targetValue = if (isSelectMode) 1f else 0f,
+                animationSpec = tween(250)
+            )
+            val size by animateDpAsState(
+                targetValue = if (isSelectMode) 18.dp else 0.dp,
+                animationSpec = tween(250)
+            )
+            CircleCheckBox(
+                isChecked = isChecked,
+                modifier = Modifier
+                    .padding(end = 8.dp)
+                    .size(size)
+                    .scale(scale)
+            )
             Text(
                 text = title,
                 style = MaterialTheme.typography.subtitle1,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
         }
         ExpandIcon(

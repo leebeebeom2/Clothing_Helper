@@ -1,17 +1,20 @@
 package com.leebeebeom.clothinghelper.main.subcategory
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.TAG
+import com.leebeebeom.clothinghelper.base.BaseViewModelState
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.usecase.preferences.GetPreferencesAndToggleAllExpandUseCase
-import com.leebeebeom.clothinghelperdomain.usecase.subcategory.AddSubCategoryUseCase
-import com.leebeebeom.clothinghelperdomain.usecase.subcategory.DeleteSubCategoryUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.subcategory.AddAndDeleteSubCategoryUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.LoadAndGetSubCategoriesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -20,9 +23,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SubCategoryViewModel @Inject constructor(
-    private val addSubCategoryUseCase: AddSubCategoryUseCase, // 두개 결합
     private val loadAndGetSubCategoriesUseCase: LoadAndGetSubCategoriesUseCase,
-    private val deleteSubCategoryUseCase: DeleteSubCategoryUseCase,
+    private val addAndDeleteSubCategoryUseCase: AddAndDeleteSubCategoryUseCase,
     private val getPreferencesAndToggleAllExpandUseCase: GetPreferencesAndToggleAllExpandUseCase
 ) : ViewModel() {
     private val viewModelState = SubCategoryViewModelState()
@@ -54,13 +56,20 @@ class SubCategoryViewModel @Inject constructor(
     }
 
     fun addSubCategory(name: String) {
-        addSubCategoryUseCase(viewModelState.subCategoryParent, name, addSubCategoryListener)
+        addAndDeleteSubCategoryUseCase.addSubCategory(
+            viewModelState.subCategoryParent,
+            name,
+            addSubCategoryListener
+        )
         viewModelState.addExpandState()
     }
 
     private val addSubCategoryListener = object : FirebaseListener {
         override fun taskSuccess() {}
-        override fun taskFailed(exception: Exception?) {} // TODO showToast 구현
+        override fun taskFailed(exception: Exception?) {
+            viewModelState.showToast(R.string.add_category_failed)
+            Log.d(TAG, "taskFailed: $exception")
+        }
     }
 
     fun toggleAllExpand() = viewModelScope.launch {
@@ -68,20 +77,17 @@ class SubCategoryViewModel @Inject constructor(
     }
 
     fun deleteSubCategory(subCategory: SubCategory) =
-        deleteSubCategoryUseCase(subCategory, object : FirebaseListener {
-            override fun taskSuccess() {
-                // TODO
-            }
-
+        addAndDeleteSubCategoryUseCase.deleteSubCategory(subCategory, object : FirebaseListener {
+            override fun taskSuccess() {}
             override fun taskFailed(exception: Exception?) {
-                // TODO
+                viewModelState.showToast(R.string.delete_category_failed)
+                Log.d(TAG, "taskFailed: $exception")
             }
-
         })
 
 }
 
-class SubCategoryViewModelState {
+class SubCategoryViewModelState : BaseViewModelState() {
     var allExpand by mutableStateOf(false)
         private set
 

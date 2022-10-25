@@ -12,7 +12,7 @@ import com.leebeebeom.clothinghelper.base.BaseViewModelState
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.model.User
-import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoriesUserCase
+import com.leebeebeom.clothinghelperdomain.usecase.subcategory.LoadAndGetSubCategoriesUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.user.GetUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -21,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainScreenRootViewModel @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
-    private val getSubCategoriesUseCase: GetSubCategoriesUserCase
+    private val loadAndGetSubCategoriesUseCase: LoadAndGetSubCategoriesUseCase
 ) : ViewModel() {
     val viewModelState = MainNavHostViewModelState()
 
@@ -30,26 +30,26 @@ class MainScreenRootViewModel @Inject constructor(
             getUserUseCase().collect(viewModelState::userUpdate)
         }
         viewModelScope.launch {
-            getSubCategoriesUseCase.loadSubCategories(
+            loadAndGetSubCategoriesUseCase.loadSubCategories(
                 viewModelState.onSubCategoriesLoadingDone,
                 viewModelState.onSubCategoriesLoadingCancelled
             )
         }
 
         viewModelScope.launch {
-            getSubCategoriesUseCase.getTopSubCategories()
+            loadAndGetSubCategoriesUseCase.topSubCategories
                 .collect(viewModelState::topSubCategoriesUpdate)
         }
         viewModelScope.launch {
-            getSubCategoriesUseCase.getBottomSubCategories()
+            loadAndGetSubCategoriesUseCase.bottomSubCategories
                 .collect(viewModelState::bottomSubCategoriesUpdate)
         }
         viewModelScope.launch {
-            getSubCategoriesUseCase.getOuterSubCategories()
+            loadAndGetSubCategoriesUseCase.outerSubCategories
                 .collect(viewModelState::outerSubCategoriesUpdate)
         }
         viewModelScope.launch {
-            getSubCategoriesUseCase.getEtcSubCategories()
+            loadAndGetSubCategoriesUseCase.etcSubCategories
                 .collect(viewModelState::etcSubCategoriesUpdate)
         }
     }

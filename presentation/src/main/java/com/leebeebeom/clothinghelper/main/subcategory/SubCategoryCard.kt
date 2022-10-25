@@ -13,9 +13,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,34 +32,32 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategory
 fun SubCategoryCard(
     subCategory: SubCategory,
     isExpanded: Boolean,
-    toggleExpand: () -> Unit,
-    deletedSubCategory: () -> Unit
+    onExpandIconClick: () -> Unit,
+    onLongClick: () -> Unit
 ) {
-    var showDropDownMenu by rememberSaveable { mutableStateOf(false) }
-
     Box {
         Card(elevation = 2.dp, shape = RoundedCornerShape(12.dp)) {
-            Column(modifier = Modifier
-                .clip(RoundedCornerShape(12.dp))
-                .combinedClickable(
-                    onClick = { /*TODO*/ },
-                    onLongClick = { showDropDownMenu = !showDropDownMenu }
-                )) {
-                SubCategoryTitle(subCategory.name, isExpanded, onExpandIconClick = toggleExpand)
+            Column(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
+                    .combinedClickable(
+                        onClick = { /*TODO*/ },
+                        onLongClick = onLongClick
+                    )
+            ) {
+                SubCategoryTitle(
+                    title = subCategory.name,
+                    isExpanded = isExpanded,
+                    onExpandIconClick = onExpandIconClick
+                )
                 SubCategoryInfo(isExpanded)
             }
         }
-        SubCategoryDropDownMenu(
-            showDropDownMenu = showDropDownMenu, onDismiss = { showDropDownMenu = false },
-            deletedSubCategory = deletedSubCategory
-        )
     }
 }
 
 @Composable
-private fun SubCategoryTitle(
-    title: String, isExpanded: Boolean, onExpandIconClick: () -> Unit
-) {
+private fun SubCategoryTitle(title: String, isExpanded: Boolean, onExpandIconClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxSize()

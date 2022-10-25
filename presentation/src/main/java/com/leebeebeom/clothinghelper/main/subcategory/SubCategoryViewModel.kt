@@ -50,7 +50,6 @@ class SubCategoryViewModel @Inject constructor(
         viewModelScope.launch {
             getPreferencesAndToggleAllExpandUseCase.getPreferences(this).collect {
                 viewModelState.updateAllExpand(it.allExpand)
-                viewModelState.setAllExpandStates(it.allExpand)
             }
         }
     }
@@ -61,7 +60,6 @@ class SubCategoryViewModel @Inject constructor(
             name,
             addSubCategoryListener
         )
-        viewModelState.addExpandState()
     }
 
     private val addSubCategoryListener = object : FirebaseListener {
@@ -94,23 +92,6 @@ class SubCategoryViewModelState : BaseViewModelState() {
     fun updateAllExpand(allExpand: Boolean) {
         this.allExpand = allExpand
     }
-
-    private val expandStates = mutableListOf<MutableState<Boolean>>()
-
-    fun setAllExpandStates(allExpand: Boolean) {
-        for (isExpand in expandStates) isExpand.value = allExpand
-    }
-
-    fun getExpandState(index: Int): Boolean {
-        if (expandStates.getOrNull(index) == null) expandStates.add(mutableStateOf(allExpand))
-        return expandStates[index].value
-    }
-
-    fun expandToggle(index: Int) {
-        expandStates[index].value = !expandStates[index].value
-    }
-
-    fun addExpandState() = expandStates.add(mutableStateOf(allExpand))
 
     private var topSubCategories by mutableStateOf(emptyList<SubCategory>())
     private var bottomSubCategories by mutableStateOf(emptyList<SubCategory>())
@@ -152,8 +133,11 @@ class SubCategoryViewModelState : BaseViewModelState() {
     private val _selectedSubCategories = mutableSetOf<SubCategory>()
     val selectedSubCategories: Set<SubCategory> get() = _selectedSubCategories
 
+    var selectedSubCategoriesSize by mutableStateOf(selectedSubCategories.size)
+
     fun onSelect(subCategory: SubCategory, isChecked: Boolean) {
         if (isChecked) _selectedSubCategories.add(subCategory)
         else _selectedSubCategories.remove(subCategory)
+        selectedSubCategoriesSize = _selectedSubCategories.size
     }
 }

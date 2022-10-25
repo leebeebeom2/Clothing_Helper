@@ -33,7 +33,8 @@ fun SubCategoryCard(
     isExpanded: Boolean,
     onExpandIconClick: () -> Unit,
     onLongClick: () -> Unit,
-    isSelectMode: Boolean
+    isSelectMode: Boolean,
+    onSelect: (isChecked:Boolean) -> Unit
 ) {
     var isChecked by rememberSaveable { mutableStateOf(false) }
     if (!isSelectMode) isChecked = false
@@ -46,7 +47,7 @@ fun SubCategoryCard(
                     if (!isSelectMode) { /*TODO 이동*/
                     } else {
                         isChecked = !isChecked
-                        /*TODO 체크트 리스트에 넣기*/
+                        onSelect(isChecked)
                     }
                 }, onLongClick = {
                     onLongClick()

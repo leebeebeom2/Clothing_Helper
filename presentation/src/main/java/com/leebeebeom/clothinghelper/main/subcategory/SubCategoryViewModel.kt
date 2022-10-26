@@ -157,6 +157,8 @@ class SubCategoryViewModelState : BaseViewModelState() {
             if (isAllSelected) selectedSubCategories.taskAndReturn { it.clear() }
             else selectedSubCategories.taskAndReturn { it.addAll(getSubCategories()) }
     }
+
+    fun getSelectedSubCategoryName()= selectedSubCategories.first().name
 }
 
 fun <T> Set<T>.taskAndReturn(task: (MutableSet<T>) -> Unit): Set<T> {

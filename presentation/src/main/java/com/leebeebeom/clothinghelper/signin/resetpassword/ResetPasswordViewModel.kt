@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
-import com.leebeebeom.clothinghelper.base.GoBackViewModelState
+import com.leebeebeom.clothinghelper.base.PopBackstackViewModelState
 import com.leebeebeom.clothinghelper.signin.base.EmailViewModelState
 import com.leebeebeom.clothinghelper.signin.base.FirebaseErrorCode
 import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
@@ -30,8 +30,8 @@ class ResetPasswordViewModel @Inject constructor(
     private val resetPasswordListener = object : FirebaseListener {
         override fun taskSuccess() {
             viewModelState.showToast(R.string.email_send_complete)
-            viewModelState.goBack()
             viewModelState.loadingOff()
+            viewModelState.popBackstack()
         }
 
         override fun taskFailed(exception: Exception?) {
@@ -57,6 +57,6 @@ class ResetPasswordViewModel @Inject constructor(
     }
 }
 
-class ResetPasswordViewModelState : EmailViewModelState(), GoBackViewModelState {
-    override var goBack by mutableStateOf(false)
+class ResetPasswordViewModelState : EmailViewModelState(), PopBackstackViewModelState {
+    override var popBackstack by mutableStateOf(false)
 }

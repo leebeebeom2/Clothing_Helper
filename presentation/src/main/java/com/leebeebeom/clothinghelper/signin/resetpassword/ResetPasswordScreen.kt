@@ -46,7 +46,6 @@ fun ResetPasswordScreen(viewModel: ResetPasswordViewModel = hiltViewModel()) {
         EmailTextField(
             email = state.email,
             onEmailChange = { state.onEmailChange(email = it) { viewModelState.hideEmailError() } },
-            showKeyboardEnable = true,
             error = viewModelState.emailError,
             imeAction = ImeAction.Done
         )

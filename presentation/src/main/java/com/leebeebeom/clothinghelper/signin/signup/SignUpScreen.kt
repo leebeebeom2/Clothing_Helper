@@ -31,8 +31,7 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
             email = state.email,
             onEmailChange = { state.onEmailChange(email = it) { viewModelState.hideEmailError() } },
             error = viewModelState.emailError,
-            imeAction = ImeAction.Next,
-            showKeyboardEnable = true
+            imeAction = ImeAction.Next
         )
 
         MaxWidthTextField(

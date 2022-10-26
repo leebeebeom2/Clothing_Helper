@@ -9,27 +9,18 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 
-@OptIn(ExperimentalAnimationApi::class)
-
 object NavigateAnime {
     private const val duration = 350
     private val easing = CubicBezierEasing(0.36f, 0f, 0.66f, -0.1f)
 
-    val slideInRight = { _: AnimatedContentScope<*> ->
-        slideInHorizontally(tween(duration)) { it }
-    }
+    val slideInRight = slideInHorizontally(tween(duration)) { it }
 
-    val slideOutRight = { _: AnimatedContentScope<*> ->
-        slideOutHorizontally(tween(duration, easing = easing)) { it }
-    }
 
-    val slideInBottom = { _: AnimatedContentScope<*> ->
-        slideInVertically(tween(duration)) { it }
-    }
+    val slideOutRight = slideOutHorizontally(tween(duration, easing = easing)) { it }
 
-    val slideOutBottom = { _: AnimatedContentScope<*> ->
-        slideOutVertically(tween(duration, easing = easing)) { it }
-    }
+    val slideInBottom = slideInVertically(tween(duration)) { it }
+
+    val slideOutBottom = slideOutVertically(tween(duration, easing = easing)) { it }
 }
 
 @OptIn(ExperimentalAnimationApi::class)

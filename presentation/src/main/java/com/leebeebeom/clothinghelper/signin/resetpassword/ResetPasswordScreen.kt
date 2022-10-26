@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.signin.resetpassword
 
-import androidx.activity.ComponentActivity
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
@@ -10,7 +9,6 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -20,6 +18,7 @@ import com.leebeebeom.clothinghelper.base.MaxWidthButton
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.signin.base.EmailTextField
 import com.leebeebeom.clothinghelper.signin.base.EmailUIState
+import com.leebeebeom.clothinghelper.signin.base.GoBack
 import com.leebeebeom.clothinghelper.signin.base.SignInBaseRoot
 
 @Composable
@@ -27,10 +26,7 @@ fun ResetPasswordScreen(viewModel: ResetPasswordViewModel = hiltViewModel()) {
     val state = rememberResetScreenUIState()
     val viewModelState = viewModel.viewModelState
 
-    if (viewModelState.goBack) {
-        (LocalContext.current as ComponentActivity).onBackPressedDispatcher.onBackPressed()
-        viewModelState.wentBack()
-    }
+    GoBack(goBack = viewModelState.goBack, wentBack = viewModelState::wentBack)
 
     SignInBaseRoot(
         isLoading = viewModelState.isLoading,

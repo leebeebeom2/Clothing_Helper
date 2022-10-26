@@ -22,6 +22,8 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
     val state = rememberSignUpScreenUIState()
     val viewModelState = viewModel.viewModelState
 
+    GoBack(goBack = viewModelState.goBack, wentBack = viewModelState::wentBack)
+
     SignInBaseRoot(
         isLoading = viewModelState.isLoading,
         toastText = viewModelState.toastText,

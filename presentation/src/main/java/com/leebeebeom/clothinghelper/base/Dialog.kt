@@ -13,17 +13,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.leebeebeom.clothinghelper.R
 
 @Composable
-fun DialogRoot(content: @Composable ColumnScope.() -> Unit) {
-    Surface(color = MaterialTheme.colors.surface, shape = RoundedCornerShape(20.dp)) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp, top = 20.dp),
-            content = content
-        )
+fun DialogRoot(content: @Composable ColumnScope.() -> Unit, onDismissDialog: () -> Unit) {
+    Dialog(onDismissRequest = onDismissDialog) {
+        Surface(color = MaterialTheme.colors.surface, shape = RoundedCornerShape(20.dp)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 20.dp, end = 20.dp, top = 20.dp),
+                content = content
+            )
+        }
     }
 }
 

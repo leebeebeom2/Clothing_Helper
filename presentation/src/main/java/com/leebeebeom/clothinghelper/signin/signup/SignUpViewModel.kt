@@ -1,9 +1,13 @@
 package com.leebeebeom.clothinghelper.signin.signup
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
+import com.leebeebeom.clothinghelper.base.GoBackViewModelState
 import com.leebeebeom.clothinghelper.signin.base.FirebaseErrorCode
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInViewModelState
@@ -15,19 +19,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val signUpUseCase: SignUpUseCase,
-    googleSignInUseCase: GoogleSignInUseCase
+    private val signUpUseCase: SignUpUseCase, googleSignInUseCase: GoogleSignInUseCase
 ) : GoogleSignInUpViewModel(googleSignInUseCase) {
-    override val viewModelState = GoogleSignInViewModelState()
+    override val viewModelState = SignUpViewModelState()
 
     fun signUpWithEmailAndPassword(email: String, password: String, name: String) {
         loadingOn()
         signUpUseCase(
-            email,
-            password,
-            name,
-            signUpListener,
-            updateNameListener
+            email, password, name, signUpListener, updateNameListener
         )
     }
 
@@ -67,4 +66,8 @@ class SignUpViewModel @Inject constructor(
 
         override fun taskSuccess() {}
     }
+}
+
+class SignUpViewModelState():GoogleSignInViewModelState(), GoBackViewModelState {
+    override var goBack by mutableStateOf(false)
 }

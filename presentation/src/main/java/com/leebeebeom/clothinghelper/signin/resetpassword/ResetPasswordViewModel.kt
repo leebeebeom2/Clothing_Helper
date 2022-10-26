@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
+import com.leebeebeom.clothinghelper.base.GoBackViewModelState
 import com.leebeebeom.clothinghelper.signin.base.EmailViewModelState
 import com.leebeebeom.clothinghelper.signin.base.FirebaseErrorCode
 import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
@@ -56,15 +57,6 @@ class ResetPasswordViewModel @Inject constructor(
     }
 }
 
-class ResetPasswordViewModelState : EmailViewModelState() {
-    var goBack: Boolean by mutableStateOf(false)
-        private set
-
-    fun goBack() {
-        goBack = true
-    }
-
-    fun wentBack() {
-        goBack = false
-    }
+class ResetPasswordViewModelState : EmailViewModelState(), GoBackViewModelState {
+    override var goBack by mutableStateOf(false)
 }

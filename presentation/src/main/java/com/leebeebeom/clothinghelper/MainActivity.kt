@@ -34,12 +34,12 @@ class ClothingHelper : Application()
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent { MainActivityNavHost() }
+        setContent { MainActivityScreen() }
     }
 }
 
 @Composable
-fun MainActivityNavHost(viewModel: MainActivityViewModel = hiltViewModel()) {
+fun MainActivityScreen(viewModel: MainActivityViewModel = hiltViewModel()) {
     Box {
         MainNavHost()
         AnimatedVisibility(

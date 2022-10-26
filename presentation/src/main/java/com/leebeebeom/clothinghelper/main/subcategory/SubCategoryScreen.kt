@@ -7,12 +7,16 @@ import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.signin.base.BaseSubCategoryTextFieldDialogUIState
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
 /*
@@ -27,13 +31,18 @@ fun SubCategoryScreen(
     getIsSubCategoriesLoading: (SubCategoryParent) -> Boolean
 ) {
     val viewModelState = viewModel.getViewModelState(parentName)
+    val editSubCategoryNameDialogUIState = rememberEditSubCategoryNameDialogUIState()
 
     Scaffold(bottomBar = {
         SubCategoryBottomAppBar(
             isSelectMode = viewModelState.selectMode,
             selectedSubCategoriesSize = viewModelState.selectedSubCategories.size,
             onAllSelectCheckBoxClick = viewModelState::toggleAllSelect,
-            isAllSelected = viewModelState.isAllSelected
+            isAllSelected = viewModelState.isAllSelected,
+            onEditSubCategoryNameClick = {
+                editSubCategoryNameDialogUIState.showDialog(viewModelState.getSelectedSubCategoryName())
+                viewModelState.selectModeOff()
+            }
         )
     }) {
         Box(
@@ -68,6 +77,21 @@ fun SubCategoryScreen(
         }
     }
 
+    if (editSubCategoryNameDialogUIState.showDialog)
+        EditSubCategoryNameDialog(
+            categoryName = editSubCategoryNameDialogUIState.text,
+            error = editSubCategoryNameDialogUIState.error,
+            onCategoryNameChange = {
+                editSubCategoryNameDialogUIState.onTextChange(
+                    it,
+                    viewModelState.getSubCategories()
+                )
+            },
+            onPositiveButtonClick = { /*TODO*/ },
+            onDismissDialog = editSubCategoryNameDialogUIState::onDismissDialog,
+            positiveButtonEnabled = editSubCategoryNameDialogUIState.positiveButtonEnabled
+        )
+
     BackHandler(enabled = viewModelState.selectMode) { viewModelState.selectModeOff() }
 }
 
@@ -85,3 +109,37 @@ fun CircleCheckBox(modifier: Modifier = Modifier, isChecked: Boolean) {
         tint = LocalContentColor.current.copy(0.7f)
     )
 }
+
+class EditSubCategoryNameDialogUIState(
+    categoryName: String = "",
+    error: Int? = null,
+    showDialog: Boolean = false
+) : BaseSubCategoryTextFieldDialogUIState(categoryName, error, showDialog) {
+    fun showDialog(categoryName: String) {
+        text = categoryName
+        showDialog = true
+    }
+
+    companion object {
+        val Saver: Saver<EditSubCategoryNameDialogUIState, *> = listSaver(
+            save = {
+                listOf(
+                    it.text,
+                    it.error,
+                    it.showDialog
+                )
+            },
+            restore = {
+                EditSubCategoryNameDialogUIState(
+                    it[0] as String, it[1] as? Int, it[2] as Boolean
+                )
+            }
+        )
+    }
+}
+
+@Composable
+fun rememberEditSubCategoryNameDialogUIState() =
+    rememberSaveable(saver = EditSubCategoryNameDialogUIState.Saver) {
+        EditSubCategoryNameDialogUIState()
+    }

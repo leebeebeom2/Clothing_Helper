@@ -23,9 +23,11 @@ fun DialogRoot(onDismissDialog: () -> Unit, content: @Composable ColumnScope.() 
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp, top = 20.dp),
-                content = content
-            )
+                    .padding(start = 20.dp, end = 20.dp, top = 20.dp)
+            ){
+                content()
+                SimpleHeightSpacer(dp = 20)
+            }
         }
     }
 }

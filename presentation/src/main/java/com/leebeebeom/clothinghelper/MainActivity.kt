@@ -4,8 +4,8 @@ import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,6 +13,8 @@ import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.leebeebeom.clothinghelper.base.navigation.NavigateAnime.slideInBottom
+import com.leebeebeom.clothinghelper.base.navigation.NavigateAnime.slideOutBottom
 import com.leebeebeom.clothinghelper.main.base.MainNavHost
 import com.leebeebeom.clothinghelper.signin.SignInNavHost
 import com.leebeebeom.clothinghelperdomain.usecase.user.GetSignInStateUseCase
@@ -38,12 +40,15 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainActivityNavHost(viewModel: MainActivityViewModel = hiltViewModel()) {
-    // TODO
-    // 사인인 스크린 밑으로 내려가게 변경
-
-    Crossfade(targetState = viewModel.isSignIn, animationSpec = tween(500)) {
-        if (it) MainNavHost()
-        else SignInNavHost()
+    Box {
+        MainNavHost()
+        AnimatedVisibility(
+            visible = !viewModel.isSignIn,
+            enter = slideInBottom,
+            exit = slideOutBottom
+        ) {
+            SignInNavHost()
+        }
     }
 }
 

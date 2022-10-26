@@ -34,7 +34,8 @@ fun BaseNavHost(
     AnimatedNavHost(
         navController = navController,
         startDestination = startDestination,
-        enterTransition = { EnterTransition.None },
+        popEnterTransition = { EnterTransition.None },
+        popExitTransition = { ExitTransition.None },
         modifier = modifier,
         builder = builder
     )

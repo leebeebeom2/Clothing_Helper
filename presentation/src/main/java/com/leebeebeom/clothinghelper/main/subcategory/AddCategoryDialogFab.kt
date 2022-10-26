@@ -10,7 +10,6 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.*
 import com.leebeebeom.clothinghelper.signin.base.BaseSubCategoryTextFieldDialogUIState
@@ -30,8 +29,8 @@ fun AddCategoryDialogFab(
         SimpleIcon(drawable = R.drawable.ic_add)
     }
 
-    if (state.showDialog) Dialog(onDismissRequest = state::onDismissDialog) {
-        DialogRoot {
+    if (state.showDialog)
+        DialogRoot(state::onDismissDialog) {
             DialogTitle(title = R.string.add_category_title)
 
             DialogTextField(categoryName = state.text,
@@ -44,7 +43,6 @@ fun AddCategoryDialogFab(
             )
             SimpleHeightSpacer(dp = 20)
         }
-    }
 }
 
 class AddCategoryDialogUIState(

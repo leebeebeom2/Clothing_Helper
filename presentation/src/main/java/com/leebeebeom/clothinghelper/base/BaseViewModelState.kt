@@ -25,3 +25,15 @@ open class BaseViewModelState {
         isLoading = true
     }
 }
+
+interface GoBackViewModelState {
+    var goBack: Boolean
+
+    fun goBack(){
+        goBack = true
+    }
+
+    fun wentBack(){
+        goBack = false
+    }
+}

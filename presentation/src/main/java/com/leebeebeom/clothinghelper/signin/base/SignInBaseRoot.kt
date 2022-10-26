@@ -6,6 +6,8 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -24,18 +26,19 @@ fun SignInBaseRoot(
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(horizontal = 20.dp)
-        .clickable(
-            interactionSource = interactionSource,
-            indication = null,
-        ) { focusManager.clearFocus() }
-        .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.Center,
-        content = content
-    )
-
+    Surface(color = MaterialTheme.colors.background) {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 20.dp)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+            ) { focusManager.clearFocus() }
+            .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.Center,
+            content = content
+        )
+    }
     toastText?.let {
         SimpleToast(text = it, shownToast = toastShown)
     }

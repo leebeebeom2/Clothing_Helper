@@ -8,9 +8,9 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
-import com.leebeebeom.clothinghelper.base.PopBackstackViewModelState
 import com.leebeebeom.clothinghelper.signin.base.EmailViewModelState
 import com.leebeebeom.clothinghelper.signin.base.FirebaseErrorCode
+import com.leebeebeom.clothinghelper.signin.base.TaskSuccessViewModelState
 import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.usecase.user.ResetPasswordUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,7 +31,7 @@ class ResetPasswordViewModel @Inject constructor(
         override fun taskSuccess() {
             viewModelState.showToast(R.string.email_send_complete)
             viewModelState.loadingOff()
-            viewModelState.popBackstack()
+            viewModelState.taskSuccess()
         }
 
         override fun taskFailed(exception: Exception?) {
@@ -57,6 +57,6 @@ class ResetPasswordViewModel @Inject constructor(
     }
 }
 
-class ResetPasswordViewModelState : EmailViewModelState(), PopBackstackViewModelState {
-    override var popBackstack by mutableStateOf(false)
+class ResetPasswordViewModelState : EmailViewModelState(), TaskSuccessViewModelState {
+    override var taskSuccess by mutableStateOf(false)
 }

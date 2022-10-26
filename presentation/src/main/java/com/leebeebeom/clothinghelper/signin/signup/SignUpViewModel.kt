@@ -7,10 +7,10 @@ import androidx.compose.runtime.setValue
 import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
-import com.leebeebeom.clothinghelper.base.PopBackstackViewModelState
 import com.leebeebeom.clothinghelper.signin.base.FirebaseErrorCode
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInViewModelState
+import com.leebeebeom.clothinghelper.signin.base.TaskSuccessViewModelState
 import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.user.SignUpUseCase
@@ -34,7 +34,7 @@ class SignUpViewModel @Inject constructor(
         override fun taskSuccess() {
             showToast(R.string.sign_up_complete)
             loadingOff()
-            viewModelState.popBackstack()
+            viewModelState.taskSuccess()
         }
 
         override fun taskFailed(exception: Exception?) {
@@ -69,6 +69,6 @@ class SignUpViewModel @Inject constructor(
     }
 }
 
-class SignUpViewModelState() : GoogleSignInViewModelState(), PopBackstackViewModelState {
-    override var popBackstack by mutableStateOf(false)
+class SignUpViewModelState : GoogleSignInViewModelState(), TaskSuccessViewModelState {
+    override var taskSuccess by mutableStateOf(false)
 }

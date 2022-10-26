@@ -1,5 +1,6 @@
 package com.leebeebeom.clothinghelper.signin.base
 
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -76,5 +77,13 @@ fun OrDivider() {
             color = LocalContentColor.current.copy(ContentAlpha.medium)
         )
         Divider(modifier = Modifier.weight(1f))
+    }
+}
+
+@Composable
+fun GoBack(goBack: Boolean, wentBack: () -> Unit) {
+    if (goBack) {
+        (LocalContext.current as ComponentActivity).onBackPressedDispatcher.onBackPressed()
+        wentBack()
     }
 }

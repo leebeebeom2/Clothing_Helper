@@ -31,3 +31,15 @@ open class GoogleSignInViewModelState : EmailViewModelState() {
         googleButtonEnabled = false
     }
 }
+
+interface TaskDoneViewModelState {
+    var taskDone: Boolean
+
+    fun taskDone() {
+        taskDone = true
+    }
+
+    fun popBackstackDone() {
+        taskDone = false
+    }
+}

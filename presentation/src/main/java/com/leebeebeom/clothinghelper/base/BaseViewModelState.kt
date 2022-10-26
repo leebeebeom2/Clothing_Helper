@@ -25,15 +25,3 @@ open class BaseViewModelState {
         isLoading = true
     }
 }
-
-interface PopBackstackViewModelState {
-    var popBackstack:Boolean
-
-    fun popBackstack(){
-        popBackstack = true
-    }
-
-    fun popBackstackDone(){
-        popBackstack = false
-    }
-}

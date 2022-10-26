@@ -18,7 +18,6 @@ import com.leebeebeom.clothinghelper.base.MaxWidthTextField
 fun EmailTextField(
     email: String,
     onEmailChange: (String) -> Unit,
-    showKeyboardEnable: Boolean = false,
     @StringRes error: Int?,
     imeAction: ImeAction
 ) {
@@ -28,7 +27,7 @@ fun EmailTextField(
         onValueChange = onEmailChange,
         placeholder = R.string.email_place_holder,
         error = error,
-        showKeyboardEnabled = showKeyboardEnable,
+        showKeyboardEnabled = false,
         keyboardOptions = KeyboardOptions(imeAction = imeAction, keyboardType = KeyboardType.Email)
     )
 }

@@ -31,7 +31,10 @@ class SignInViewModel @Inject constructor(
     }
 
     private val signInListener = object : FirebaseListener {
-        override fun taskSuccess() = showToast(R.string.sign_in_complete)
+        override fun taskSuccess() {
+            showToast(R.string.sign_in_complete)
+            loadingOff()
+        }
 
         override fun taskFailed(exception: Exception?) {
             val firebaseAuthException = exception as? FirebaseAuthException

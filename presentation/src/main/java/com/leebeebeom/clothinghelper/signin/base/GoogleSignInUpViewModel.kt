@@ -79,7 +79,10 @@ abstract class GoogleSignInUpViewModel(
     }
 
     private val googleSignInListener = object : FirebaseListener {
-        override fun taskSuccess() = showToast(R.string.google_sign_in_complete)
+        override fun taskSuccess() {
+            showToast(R.string.google_sign_in_complete)
+            loadingOff()
+        }
 
         override fun taskFailed(exception: Exception?) {
             showToast(R.string.unknown_error)

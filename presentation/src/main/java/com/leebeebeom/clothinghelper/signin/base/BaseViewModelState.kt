@@ -32,14 +32,14 @@ open class GoogleSignInViewModelState : EmailViewModelState() {
     }
 }
 
-interface TaskDoneViewModelState {
-    var taskDone: Boolean
+interface TaskSuccessViewModelState {
+    var taskSuccess: Boolean
 
-    fun taskDone() {
-        taskDone = true
+    fun taskSuccess() {
+        taskSuccess = true
     }
 
     fun popBackstackDone() {
-        taskDone = false
+        taskSuccess = false
     }
 }

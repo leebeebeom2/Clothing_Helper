@@ -38,7 +38,10 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainActivityNavHost(viewModel: MainActivityViewModel = hiltViewModel()) {
-    Crossfade(targetState = viewModel.isSignIn, animationSpec = tween(500)) { // TODO 테스트
+    // TODO
+    // 사인인 스크린 밑으로 내려가게 변경
+
+    Crossfade(targetState = viewModel.isSignIn, animationSpec = tween(500)) {
         if (it) MainNavHost()
         else SignInNavHost()
     }

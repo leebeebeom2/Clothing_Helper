@@ -41,7 +41,6 @@ fun AddCategoryDialogFab(
                 onPositiveButtonClick = { onPositiveButtonClick(state.text) },
                 onDismissDialog = state::onDismissDialog,
             )
-            SimpleHeightSpacer(dp = 20)
         }
 }
 

@@ -14,10 +14,11 @@ fun EditSubCategoryNameDialog(
     @StringRes error: Int?,
     onCategoryNameChange: (String) -> Unit,
     onPositiveButtonClick: () -> Unit,
-    onDisMissDialog: () -> Unit,
+    onDismissDialog: () -> Unit,
     positiveButtonEnabled: Boolean
 ) {
-    DialogRoot {
+    // TODO 커서 포지션, 다이얼로그 높이, 처음 다이얼로그 보일 시 확인 버튼 disable(변경되어야 enable)
+    DialogRoot(onDismissDialog = onDismissDialog) {
         DialogTitle(title = R.string.edit_category_name)
         DialogTextField(
             categoryName = categoryName,
@@ -27,7 +28,7 @@ fun EditSubCategoryNameDialog(
         DialogTextButtons(
             positiveButtonEnabled = positiveButtonEnabled,
             onPositiveButtonClick = onPositiveButtonClick,
-            onDismissDialog = onDisMissDialog
+            onDismissDialog = onDismissDialog
         )
     }
 }

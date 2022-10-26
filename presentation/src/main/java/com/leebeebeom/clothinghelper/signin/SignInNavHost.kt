@@ -44,13 +44,13 @@ fun SignInNavHost() {
                 }
                 composable(
                     route = SignInDestinations.SIGN_UP,
-                    enterTransition = slideInBottom,
-                    exitTransition = slideOutBottom
+                    enterTransition = { slideInBottom },
+                    exitTransition = { slideOutBottom }
                 ) { SignUpScreen() }
                 composable(
                     route = SignInDestinations.RESET_PASSWORD,
-                    enterTransition = slideInRight,
-                    exitTransition = slideOutRight
+                    enterTransition = { slideInRight },
+                    exitTransition = { slideOutRight }
                 ) { ResetPasswordScreen() }
             }
         }

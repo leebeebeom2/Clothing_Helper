@@ -44,7 +44,7 @@ fun SubCategoryContent(
                 subCategory = it,
                 onLongClick = { onLongClick(it) },
                 isSelectMode = isSelectMode,
-                onSubCategoryClick = onSubCategoryClick,
+                onSubCategoryClick = { onSubCategoryClick(it) },
                 allExpand = allExpand,
                 isChecked = selectedSubCategories.contains(it)
             )

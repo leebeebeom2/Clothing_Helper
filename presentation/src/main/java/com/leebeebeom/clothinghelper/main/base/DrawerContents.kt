@@ -30,7 +30,7 @@ import com.leebeebeom.clothinghelperdomain.model.User
 fun DrawerContents(
     user: User?,
     onEssentialMenuClick: (name: String) -> Unit,
-    onMainCategoryClick: (name: String) -> Unit,
+    onMainCategoryClick: (mainCategoryName: String) -> Unit,
     onSubCategoryClick: (key: String) -> Unit,
     onSettingIconClick: () -> Unit,
     getSubCategories: (SubCategoryParent) -> List<SubCategory>,

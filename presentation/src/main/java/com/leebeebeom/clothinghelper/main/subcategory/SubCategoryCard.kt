@@ -2,7 +2,6 @@ package com.leebeebeom.clothinghelper.main.subcategory
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.*
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -16,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -33,7 +31,7 @@ fun SubCategoryCard(
     subCategory: SubCategory,
     onLongClick: () -> Unit,
     isSelectMode: Boolean,
-    onSelect: () -> Unit,
+    onSubCategoryClick: () -> Unit,
     allExpand: Boolean,
     isChecked: Boolean
 ) {
@@ -44,13 +42,9 @@ fun SubCategoryCard(
         Column(
             modifier = Modifier
                 .clip(RoundedCornerShape(12.dp))
-                .combinedClickable(onClick = {
-                    if (!isSelectMode) { /*TODO 이동*/
-                    } else onSelect()
-                }, onLongClick = {
-                    onLongClick()
-                    onSelect()
-                })
+                .combinedClickable(
+                    onClick = onSubCategoryClick, onLongClick = onLongClick
+                )
         ) {
             SubCategoryTitle(
                 title = subCategory.name,
@@ -64,6 +58,7 @@ fun SubCategoryCard(
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun SubCategoryTitle(
     title: String,
@@ -75,8 +70,7 @@ private fun SubCategoryTitle(
     Row(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 4.dp)
-            .animateContentSize(animationSpec = tween(350)),
+            .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
@@ -85,21 +79,17 @@ private fun SubCategoryTitle(
                 .padding(start = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val scale by animateFloatAsState(
-                targetValue = if (isSelectMode) 1f else 0f,
-                animationSpec = tween(250)
-            )
-            val size by animateDpAsState(
-                targetValue = if (isSelectMode) 18.dp else 0.dp,
-                animationSpec = tween(250)
-            )
-            CircleCheckBox(
-                isChecked = isChecked,
-                modifier = Modifier
-                    .padding(end = 8.dp)
-                    .size(size)
-                    .scale(scale)
-            )
+            AnimatedVisibility(
+                visible = isSelectMode, // TODO 테스트
+                enter = slideInVertically() + scaleIn(),
+                exit = slideOutVertically() + scaleOut()
+            ) {
+                CircleCheckBox(
+                    isChecked = isChecked,
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+            }
+
             Text(
                 text = title,
                 style = MaterialTheme.typography.subtitle1,
@@ -132,10 +122,12 @@ fun ExpandIcon(
 
 @Composable
 private fun SubCategoryInfo(isExpanded: Boolean) {
+    val duration = 250
+
     AnimatedVisibility(
         visible = isExpanded,
-        enter = expandVertically(animationSpec = tween(250)),
-        exit = shrinkVertically(animationSpec = tween(250))
+        enter = expandVertically(animationSpec = tween(durationMillis = duration)),
+        exit = shrinkVertically(animationSpec = tween(durationMillis = duration))
     ) {
         Surface(color = MaterialTheme.colors.background) {
             Row(

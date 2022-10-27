@@ -34,7 +34,7 @@ fun DrawerContents(
     onSubCategoryClick: (key: String) -> Unit,
     onSettingIconClick: () -> Unit,
     getSubCategories: (SubCategoryParent) -> List<SubCategory>,
-    getIsSubCategoriesLoading: (SubCategoryParent) -> Boolean
+    isSubCategoriesLoading: Boolean
 ) = Column {
 
     val state = rememberDrawerContentsUIState()
@@ -60,7 +60,7 @@ fun DrawerContents(
                 DrawerMainCategory(
                     mainCategory = it,
                     subCategories = getSubCategories(it.type),
-                    isSubCategoriesLoading = getIsSubCategoriesLoading(it.type),
+                    isSubCategoriesLoading = isSubCategoriesLoading,
                     onMainCategoryClick = onMainCategoryClick,
                     onSubCategoryClick = onSubCategoryClick
                 )

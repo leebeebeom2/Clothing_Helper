@@ -13,15 +13,15 @@ import dagger.hilt.android.components.ViewModelComponent
 @InstallIn(ViewModelComponent::class)
 class PreferencesUseCaseModule {
     @Provides
-    fun provideGetPreferencesUseCase(preferencesRepository: PreferencesRepositoryImpl) =
+    fun getPreferencesUseCase(preferencesRepository: PreferencesRepositoryImpl) =
         GetPreferencesUseCase(preferencesRepository)
 
     @Provides
-    fun provideToggleAllExpandUseCase(preferencesRepository: PreferencesRepositoryImpl) =
+    fun toggleAllExpandUseCase(preferencesRepository: PreferencesRepositoryImpl) =
         ToggleAllExpandUseCase(preferencesRepository)
 
     @Provides
-    fun provideGetPreferencesAndToggleAllExpandUseCase(
+    fun getPreferencesAndToggleAllExpandUseCase(
         getPreferencesUseCase: GetPreferencesUseCase,
         toggleAllExpandUseCase: ToggleAllExpandUseCase
     ) = GetPreferencesAndToggleAllExpandUseCase(getPreferencesUseCase, toggleAllExpandUseCase)

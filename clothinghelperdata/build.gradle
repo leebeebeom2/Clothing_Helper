@@ -30,9 +30,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:30.5.0')
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-common-ktx'
-    //Auth
     implementation 'com.google.firebase:firebase-auth-ktx'
-    //Realtime database
     implementation 'com.google.firebase:firebase-database-ktx'
 
     //Data store

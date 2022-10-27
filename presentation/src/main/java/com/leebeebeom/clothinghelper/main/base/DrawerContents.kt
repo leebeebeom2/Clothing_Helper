@@ -29,7 +29,7 @@ import com.leebeebeom.clothinghelperdomain.model.User
 @Composable
 fun DrawerContents(
     user: User?,
-    onEssentialMenuClick: (name: String) -> Unit,
+    onEssentialMenuClick: (essentialMenu: EssentialMenus) -> Unit,
     onMainCategoryClick: (mainCategoryName: String) -> Unit,
     onSubCategoryClick: (key: String) -> Unit,
     onSettingIconClick: () -> Unit,
@@ -89,10 +89,10 @@ private fun DrawerHeader(user: User?, onSettingIconClick: () -> Unit) {
 @Composable
 private fun EssentialMenu(
     essentialMenu: EssentialMenu,
-    onEssentialMenuClick: (name: String) -> Unit
+    onEssentialMenuClick: (essentialMenu: EssentialMenus) -> Unit
 ) = DrawerContentRow(
     modifier = Modifier.heightIn(44.dp),
-    onDrawerContentClick = { onEssentialMenuClick(essentialMenu.type.name) }) {
+    onDrawerContentClick = { onEssentialMenuClick(essentialMenu.type) }) {
     SimpleIcon(modifier = Modifier.size(22.dp), drawable = essentialMenu.drawable)
     SimpleWidthSpacer(dp = 12)
     DrawerContentText(

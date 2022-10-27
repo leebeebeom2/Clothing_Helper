@@ -27,7 +27,7 @@ class MainScreenRootViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getUserUseCase().collect(viewModelState::userUpdate)
+            getUserUseCase().collect(viewModelState.userUpdate)
         }
         viewModelScope.launch {
             loadAndGetSubCategoriesUseCase.loadSubCategories(
@@ -38,19 +38,19 @@ class MainScreenRootViewModel @Inject constructor(
 
         viewModelScope.launch {
             loadAndGetSubCategoriesUseCase.topSubCategories
-                .collect(viewModelState::topSubCategoriesUpdate)
+                .collect(viewModelState.topSubCategoriesUpdate)
         }
         viewModelScope.launch {
             loadAndGetSubCategoriesUseCase.bottomSubCategories
-                .collect(viewModelState::bottomSubCategoriesUpdate)
+                .collect(viewModelState.bottomSubCategoriesUpdate)
         }
         viewModelScope.launch {
             loadAndGetSubCategoriesUseCase.outerSubCategories
-                .collect(viewModelState::outerSubCategoriesUpdate)
+                .collect(viewModelState.outerSubCategoriesUpdate)
         }
         viewModelScope.launch {
             loadAndGetSubCategoriesUseCase.etcSubCategories
-                .collect(viewModelState::etcSubCategoriesUpdate)
+                .collect(viewModelState.etcSubCategoriesUpdate)
         }
     }
 }
@@ -59,33 +59,24 @@ class MainNavHostViewModelState : BaseViewModelState() {
     var user by mutableStateOf<User?>(null)
         private set
 
-    fun userUpdate(user: User?) {
-        this.user = user
-    }
+    val userUpdate = { user: User? -> this.user = user }
 
     private var topSubCategories by mutableStateOf(emptyList<SubCategory>())
     private var bottomSubCategories by mutableStateOf(emptyList<SubCategory>())
     private var outerSubCategories by mutableStateOf(emptyList<SubCategory>())
     private var etcSubCategories by mutableStateOf(emptyList<SubCategory>())
 
-    fun topSubCategoriesUpdate(topSubCategories: List<SubCategory>) {
-        this.topSubCategories = topSubCategories
-    }
+    val topSubCategoriesUpdate =
+        { topSubCategories: List<SubCategory> -> this.topSubCategories = topSubCategories }
+    val bottomSubCategoriesUpdate =
+        { bottomSubCategories: List<SubCategory> -> this.bottomSubCategories = bottomSubCategories }
+    val outerSubCategoriesUpdate =
+        { outerSubCategories: List<SubCategory> -> this.outerSubCategories = outerSubCategories }
+    val etcSubCategoriesUpdate =
+        { etcSubCategories: List<SubCategory> -> this.etcSubCategories = etcSubCategories }
 
-    fun bottomSubCategoriesUpdate(bottomSubCategories: List<SubCategory>) {
-        this.bottomSubCategories = bottomSubCategories
-    }
-
-    fun outerSubCategoriesUpdate(outerSubCategories: List<SubCategory>) {
-        this.outerSubCategories = outerSubCategories
-    }
-
-    fun etcSubCategoriesUpdate(etcSubCategories: List<SubCategory>) {
-        this.etcSubCategories = etcSubCategories
-    }
-
-    fun getSubCategories(subCategoryParent: SubCategoryParent): List<SubCategory> {
-        return when (subCategoryParent) {
+    val getSubCategories = { subCategoryParent: SubCategoryParent ->
+        when (subCategoryParent) {
             SubCategoryParent.TOP -> topSubCategories
             SubCategoryParent.BOTTOM -> bottomSubCategories
             SubCategoryParent.OUTER -> outerSubCategories
@@ -98,8 +89,8 @@ class MainNavHostViewModelState : BaseViewModelState() {
     private var isOuterSubCategoriesLoading by mutableStateOf(true)
     private var isEtcSubCategoriesLoading by mutableStateOf(true)
 
-    fun getIsSubCategoriesLoading(subCategoryParent: SubCategoryParent): Boolean {
-        return when (subCategoryParent) {
+    val getIsSubCategoriesLoading = { subCategoryParent: SubCategoryParent ->
+        when (subCategoryParent) {
             SubCategoryParent.TOP -> isTopSubCategoriesLoading
             SubCategoryParent.BOTTOM -> isBottomSubCategoriesLoading
             SubCategoryParent.OUTER -> isOuterSubCategoriesLoading

@@ -23,15 +23,4 @@ object Anime {
                 easing = screenSlideEasing
             )
         ) { it }
-
-    val errorSlideInBottom = expandVertically(
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioHighBouncy,
-            stiffness = Spring.StiffnessMedium
-        ),
-        expandFrom = Alignment.Bottom,
-        clip = false // TODO 확인
-    )
-
-    val errorSlideOutBottom = shrinkVertically(animationSpec = tween(250)) { it }
 }

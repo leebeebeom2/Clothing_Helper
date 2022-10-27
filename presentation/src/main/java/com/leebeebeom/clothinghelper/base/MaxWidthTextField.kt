@@ -2,11 +2,6 @@ package com.leebeebeom.clothinghelper.base
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,19 +10,18 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
-import kotlinx.coroutines.delay
+import com.leebeebeom.clothinghelper.base.Anime.errorSlideInBottom
+import com.leebeebeom.clothinghelper.base.Anime.errorSlideOutBottom
 
 @Composable
 fun MaxWidthTextField(
@@ -77,14 +71,10 @@ fun MaxWidthTextField(
 
 @Composable
 private fun ErrorText(@StringRes error: Int?) {
-    AnimatedVisibility(
+    AnimatedVisibility( // TODO 확인
         visible = error != null,
-        enter = expandVertically(
-            animationSpec = spring(
-                dampingRatio = Spring.DampingRatioHighBouncy,
-                stiffness = Spring.StiffnessMedium
-            )
-        ), exit = shrinkVertically(animationSpec = tween(250))
+        enter = errorSlideInBottom,
+        exit = errorSlideOutBottom
     ) {
         Text(
             modifier = Modifier.padding(start = 4.dp),
@@ -96,13 +86,8 @@ private fun ErrorText(@StringRes error: Int?) {
 }
 
 @Composable
-@OptIn(ExperimentalComposeUiApi::class)
-fun ShowKeyboard(focusRequester: FocusRequester) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-
+fun ShowKeyboard(focusRequester: FocusRequester) { // TODO 확인
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
-        delay(100)
-        keyboardController?.show()
     }
 }

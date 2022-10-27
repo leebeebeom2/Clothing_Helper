@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.signin.base
 
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -69,21 +68,27 @@ private fun getGso() = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_S
 @Composable
 fun OrDivider() {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Divider(modifier = Modifier.weight(1f))
+        val weightModifier = Modifier.weight(1f)
+
+        Divider(modifier = weightModifier)
         Text(
             text = stringResource(id = R.string.or),
             modifier = Modifier.padding(horizontal = 14.dp),
             style = MaterialTheme.typography.body2,
             color = LocalContentColor.current.copy(ContentAlpha.medium)
         )
-        Divider(modifier = Modifier.weight(1f))
+        Divider(modifier = weightModifier)
     }
 }
 
 @Composable
-fun GoBack(goBack: Boolean, wentBack: () -> Unit) {
-    if (goBack) {
-        (LocalContext.current as ComponentActivity).onBackPressedDispatcher.onBackPressed()
-        wentBack()
+fun PopBackStack(
+    taskSuccess: Boolean,
+    popBackStack: () -> Unit,
+    popBackStackDone: () -> Unit
+) {
+    if (taskSuccess) {
+        popBackStack()
+        popBackStackDone()
     }
 }

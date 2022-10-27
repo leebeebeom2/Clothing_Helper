@@ -29,7 +29,7 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 fun MainCategoryScreen(
     viewModel: MainCategoryViewModel = hiltViewModel(),
     onMainCategoryClick: (mainCategoryName: String) -> Unit,
-    getIsSubCategoriesLoading: (SubCategoryParent) -> Boolean
+    isSubCategoriesLoading: Boolean
 ) {
     val state = rememberMainCategoryScreenUIState()
     val viewModelState = viewModel.viewModelState
@@ -52,7 +52,7 @@ fun MainCategoryScreen(
                     mainCategory = mainCategory,
                     onMainContentClick = { onMainCategoryClick(mainCategory.type.name) },
                     subCategoriesSize = viewModelState.getSubCategoriesSize(mainCategory.type),
-                    isSubCategoriesLoading = getIsSubCategoriesLoading(mainCategory.type)
+                    isSubCategoriesLoading = isSubCategoriesLoading
                 )
             }
     }

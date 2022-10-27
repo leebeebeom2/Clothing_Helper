@@ -1,24 +1,45 @@
 package com.leebeebeom.clothinghelper.signin.base
 
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 
-open class EmailUIState(email: String = "") {
-    var email: String by mutableStateOf(email)
-
-    fun onEmailChange(email: String, hideEmailError: () -> Unit) {
-        this.email = email
-        hideEmailError()
-    }
+private fun baseOnTextChange(_text: MutableState<String>, text: String, hideTextError: () -> Unit) {
+    _text.value = text
+    hideTextError()
 }
 
-open class PasswordUIState(email: String = "", password: String = "") :
-    EmailUIState(email) {
-    var password: String by mutableStateOf(password)
+open class OneTextFiledState(text: String = "") {
+    private val _text = mutableStateOf(text)
+    val text get() = _text.value
 
-    open fun onPasswordChange(password: String, hidePasswordError: () -> Unit) {
-        this.password = password
-        hidePasswordError()
-    }
+    fun onTextChange(newText: String, hideTextError: () -> Unit) =
+        baseOnTextChange(_text, newText, hideTextError)
+}
+
+open class TwoTextFiledState(text: String = "", text2: String = "") :
+    OneTextFiledState(text) {
+    private val _text2 = mutableStateOf(text2)
+    val text2 get() = _text2.value
+
+    open fun onText2Change(newText2: String, hideText2Error: () -> Unit) =
+        baseOnTextChange(_text2, newText2, hideText2Error)
+}
+
+open class FourTextFieldState(
+    text: String = "",
+    text2: String = "",
+    text3: String = "",
+    text4: String = ""
+) : TwoTextFiledState(text, text2) {
+    private val _text3 = mutableStateOf(text3)
+    val text3 get() = _text3.value
+
+    private val _text4 = mutableStateOf(text4)
+    val text4 get() = _text4.value
+
+    open fun onText3Change(newText3: String, hideText3Error: () -> Unit) =
+        baseOnTextChange(_text3, newText3, hideText3Error)
+
+    open fun onText4Change(newText4: String, hideText4Error: () -> Unit) =
+        baseOnTextChange(_text4, newText4, hideText4Error)
 }

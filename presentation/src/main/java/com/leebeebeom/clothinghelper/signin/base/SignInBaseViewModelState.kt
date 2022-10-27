@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.signin.base
 
-import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,26 +9,16 @@ open class EmailViewModelState : BaseViewModelState() {
     var emailError: Int? by mutableStateOf(null)
         private set
 
-    fun showEmailError(@StringRes error: Int) {
-        emailError = error
-    }
-
-    fun hideEmailError() {
-        emailError = null
-    }
+    val showEmailError = { error: Int -> emailError = error }
+    val hideEmailError = { emailError = null }
 }
 
 open class GoogleSignInViewModelState : EmailViewModelState() {
     var googleButtonEnabled by mutableStateOf(true)
         private set
 
-    fun setGoogleButtonEnable() {
-        googleButtonEnabled = true
-    }
-
-    fun setGoogleButtonDisable() {
-        googleButtonEnabled = false
-    }
+    val setGoogleButtonEnable = { googleButtonEnabled = true }
+    val setGoogleButtonDisable = { googleButtonEnabled = false }
 }
 
 interface TaskSuccessViewModelState {
@@ -39,7 +28,7 @@ interface TaskSuccessViewModelState {
         taskSuccess = true
     }
 
-    fun popBackstackDone() {
+    fun popBackStackDone() {
         taskSuccess = false
     }
 }

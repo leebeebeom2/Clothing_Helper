@@ -66,12 +66,12 @@ fun MaxWidthButton(
 }
 
 @Composable
-fun CenterCircularProgressIndicator() {
+fun CenterDotProgressIndicator() {
     Surface(color = Disabled) {
         Box(modifier = Modifier
             .fillMaxSize()
             .clickable(enabled = false) { }) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            DotProgressIndicator(modifier = Modifier.align(Alignment.Center), dotSize = 24.dp)
         }
     }
 }

@@ -101,7 +101,7 @@ fun SubCategoryScreen(
 
 @OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
-fun CircleCheckBox(modifier: Modifier = Modifier, isChecked: Boolean) {
+fun CircleCheckBox(modifier: Modifier = Modifier, isChecked: Boolean) { // TODO 느림
     Icon(
         modifier = modifier,
         painter = rememberAnimatedVectorPainter(

@@ -1,16 +1,12 @@
 package com.leebeebeom.clothinghelper.signin.signup
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelper.signin.base.FirebaseErrorCode
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInViewModelState
-import com.leebeebeom.clothinghelper.signin.base.TaskSuccessViewModelState
+import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
 import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.user.SignUpUseCase
@@ -21,54 +17,34 @@ import javax.inject.Inject
 class SignUpViewModel @Inject constructor(
     private val signUpUseCase: SignUpUseCase, googleSignInUseCase: GoogleSignInUseCase
 ) : GoogleSignInUpViewModel(googleSignInUseCase) {
-    override val viewModelState = SignUpViewModelState()
+    override val viewModelState = GoogleSignInViewModelState()
 
     fun signUpWithEmailAndPassword(email: String, password: String, name: String) {
-        loadingOn()
+        viewModelState.loadingOn()
         signUpUseCase(
             email, password, name, signUpListener, updateNameListener
-        )
+        ) { viewModelState.loadingOff }
     }
 
     private val signUpListener = object : FirebaseListener {
         override fun taskSuccess() {
-            showToast(R.string.sign_up_complete)
-            loadingOff()
-            viewModelState.taskSuccess()
+            viewModelState.showToast(R.string.sign_up_complete)
         }
 
-        override fun taskFailed(exception: Exception?) {
-            val firebaseAuthException = exception as? FirebaseAuthException
-
-            if (firebaseAuthException == null) {
-                showToast(R.string.unknown_error)
-                Log.d(TAG, "SignUpViewModel.taskFailed: firebaseAuthException = null")
-            } else setError(firebaseAuthException.errorCode)
-            loadingOff()
-        }
-    }
-
-    private fun setError(errorCode: String) {
-        when (errorCode) {
-            FirebaseErrorCode.ERROR_INVALID_EMAIL -> viewModelState.showEmailError(R.string.error_invalid_email)
-            FirebaseErrorCode.ERROR_EMAIL_ALREADY_IN_USE -> viewModelState.showEmailError(R.string.error_email_already_in_use)
-            else -> {
-                showToast(R.string.unknown_error)
-                Log.d(TAG, "setError: $errorCode")
-            }
-        }
+        override fun taskFailed(exception: Exception?) = setFireBaseError(
+            exception = exception,
+            showEmailError = viewModelState.showEmailError,
+            showPasswordError = {},
+            showToast = viewModelState.showToast
+        )
     }
 
     private val updateNameListener = object : FirebaseListener {
         override fun taskFailed(exception: Exception?) {
-            showToast(R.string.name_update_failed)
+            viewModelState.showToast(R.string.name_update_failed)
             Log.d(TAG, "taskFailed: $exception")
         }
 
         override fun taskSuccess() {}
     }
-}
-
-class SignUpViewModelState : GoogleSignInViewModelState(), TaskSuccessViewModelState {
-    override var taskSuccess by mutableStateOf(false)
 }

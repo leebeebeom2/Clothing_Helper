@@ -4,8 +4,11 @@ import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.ui.Alignment
 
 object Anime {
     private const val screenSlideDuration = 350
@@ -21,12 +24,14 @@ object Anime {
             )
         ) { it }
 
-    val errorSlideInBottom = slideInVertically(
+    val errorSlideInBottom = expandVertically(
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioHighBouncy,
             stiffness = Spring.StiffnessMedium
-        )
+        ),
+        expandFrom = Alignment.Bottom,
+        clip = false // TODO 확인
     )
 
-    val errorSlideOutBottom = slideOutVertically(tween(250)) { it }
+    val errorSlideOutBottom = shrinkVertically(animationSpec = tween(250)) { it }
 }

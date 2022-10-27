@@ -1,16 +1,15 @@
 package com.leebeebeom.clothinghelper.signin.signin
 
 import android.util.Log
-import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
+import com.leebeebeom.clothinghelper.signin.base.FirebaseErrorCode
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInViewModelState
-import com.leebeebeom.clothinghelper.signin.base.FirebaseErrorCode
 import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.user.SignInUseCase
@@ -26,24 +25,24 @@ class SignInViewModel @Inject constructor(
     override val viewModelState = SignInViewModelState()
 
     fun signInWithEmailAndPassword(email: String, password: String) {
-        loadingOn()
+        viewModelState.loadingOn()
         signInUseCase(email, password, signInListener)
     }
 
     private val signInListener = object : FirebaseListener {
         override fun taskSuccess() {
-            showToast(R.string.sign_in_complete)
-            loadingOff()
+            viewModelState.showToast(R.string.sign_in_complete)
+            viewModelState.loadingOff()
         }
 
         override fun taskFailed(exception: Exception?) {
             val firebaseAuthException = exception as? FirebaseAuthException
 
             if (firebaseAuthException == null) {
-                showToast(R.string.unknown_error)
+                viewModelState.showToast(R.string.unknown_error)
                 Log.d(TAG, "SignInViewModel.taskFailed: firebaseAuthException = null")
             } else setError(firebaseAuthException.errorCode)
-            loadingOff()
+            viewModelState.loadingOff()
         }
     }
 
@@ -56,8 +55,8 @@ class SignInViewModel @Inject constructor(
             FirebaseErrorCode.ERROR_WRONG_PASSWORD ->
                 viewModelState.showPasswordError(R.string.error_wrong_password)
             else -> {
-                showToast(R.string.unknown_error)
-                Log.d(TAG, "setError: $errorCode")
+                viewModelState.showToast(R.string.unknown_error)
+                Log.d(TAG, "SignInViewModel.setError: $errorCode")
             }
         }
     }
@@ -67,11 +66,6 @@ class SignInViewModelState : GoogleSignInViewModelState() {
     var passwordError: Int? by mutableStateOf(null)
         private set
 
-    fun showPasswordError(@StringRes error: Int) {
-        passwordError = error
-    }
-
-    fun hidePasswordError() {
-        passwordError = null
-    }
+    val showPasswordError = { error: Int -> passwordError = error }
+    val hidePasswordError = { passwordError = null }
 }

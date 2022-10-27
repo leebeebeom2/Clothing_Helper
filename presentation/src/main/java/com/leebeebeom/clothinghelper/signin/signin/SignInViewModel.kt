@@ -31,14 +31,13 @@ class SignInViewModel @Inject constructor(
             viewModelState.showToast(R.string.sign_in_complete)
         }
 
-        override fun taskFailed(exception: Exception?) {
+        override fun taskFailed(exception: Exception?) =
             setFireBaseError(
-                exception,
-                viewModelState.showEmailError,
-                viewModelState.showPasswordError,
-                viewModelState.showToast
+                exception = exception,
+                showEmailError = viewModelState.showEmailError,
+                showPasswordError = viewModelState.showPasswordError,
+                showToast = viewModelState.showToast
             )
-        }
     }
 }
 

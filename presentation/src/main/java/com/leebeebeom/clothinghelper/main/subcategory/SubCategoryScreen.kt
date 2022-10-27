@@ -16,32 +16,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.signin.base.BaseSubCategoryTextFieldDialogUIState
+import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
-/*
-* TODO
-*  네비게이션 애니메이션, 다이얼로그 애니메이션, 삭제 다이얼로그
-*  */
+
+// TODO 다이얼로그 애니메이션
 
 @Composable
 fun SubCategoryScreen(
-    parentName: String,
+    mainCategoryName: String,
     viewModel: SubCategoryViewModel = hiltViewModel(),
-    getIsSubCategoriesLoading: (SubCategoryParent) -> Boolean
+    isSubCategoriesLoading: Boolean
 ) {
-    val viewModelState = viewModel.getViewModelState(parentName)
+    val viewModelState = viewModel.viewModelState
+    val state = rememberSubCategoryScreenUIState(mainCategoryName = mainCategoryName)
     val editSubCategoryNameDialogUIState = rememberEditSubCategoryNameDialogUIState()
 
     Scaffold(bottomBar = {
         SubCategoryBottomAppBar(
-            isSelectMode = viewModelState.selectMode,
-            selectedSubCategoriesSize = viewModelState.selectedSubCategories.size,
-            onAllSelectCheckBoxClick = viewModelState::toggleAllSelect,
-            isAllSelected = viewModelState.isAllSelected,
+            isSelectMode = state.selectMode,
+            selectedSubCategoriesSize = state.selectedSubCategories.size,
+            subCategoriesSize = viewModelState.getSubCategories(state.subCategoryParent).size,
+            onAllSelectCheckBoxClick = { state.toggleAllSelect(viewModelState.getSubCategories(state.subCategoryParent)) },
             onEditSubCategoryNameClick = {
-                editSubCategoryNameDialogUIState.showDialog(viewModelState.getSelectedSubCategoryName())
-                viewModelState.selectModeOff()
+                editSubCategoryNameDialogUIState.showDialog(state.selectedSubCategories.first().name)
+                state.selectModeOff()
             }
         )
     }) {
@@ -50,29 +49,29 @@ fun SubCategoryScreen(
                 .fillMaxSize()
                 .padding(it)
         ) {
-            if (getIsSubCategoriesLoading(viewModelState.subCategoryParent))
-                CircularProgressIndicator( // TODO 닷 프로그레스 교체(사인인, 사인업, 구글 사인인, 리셋 패스워드 전부 적용)
+            if (isSubCategoriesLoading)
+                CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
                     color = LocalContentColor.current.copy(ContentAlpha.medium)
                 )
-            // TODO 이름 수정, 삭제
+            // TODO 이름 수정
             else SubCategoryContent(
-                subCategoryParent = viewModelState.subCategoryParent,
+                subCategoryParent = state.subCategoryParent,
                 allExpandIconClick = viewModel::toggleAllExpand,
                 allExpand = viewModelState.allExpand,
-                subCategories = viewModelState.getSubCategories(),
-                onLongClick = { viewModelState.selectModeOn() },
-                isSelectMode = viewModelState.selectMode,
-                onSelect = viewModelState::onSelect,
-                selectedSubCategories = viewModelState.selectedSubCategories
+                subCategories = viewModelState.getSubCategories(state.subCategoryParent),
+                onLongClick = state.selectModeOn,
+                isSelectMode = state.selectMode,
+                onSelect = state.onSelect,
+                selectedSubCategories = state.selectedSubCategories
             )
 
             AddCategoryDialogFab(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(end = 16.dp, bottom = 16.dp),
-                onPositiveButtonClick = viewModel::addSubCategory,
-                subCategories = viewModelState.getSubCategories()
+                onPositiveButtonClick = viewModel.addSubCategory,
+                subCategories = viewModelState.getSubCategories(state.subCategoryParent)
             )
         }
     }
@@ -84,7 +83,7 @@ fun SubCategoryScreen(
             onCategoryNameChange = {
                 editSubCategoryNameDialogUIState.onTextChange(
                     it,
-                    viewModelState.getSubCategories()
+                    viewModelState.getSubCategories(state.subCategoryParent)
                 )
             },
             onPositiveButtonClick = { /*TODO*/ },
@@ -92,7 +91,7 @@ fun SubCategoryScreen(
             positiveButtonEnabled = editSubCategoryNameDialogUIState.positiveButtonEnabled
         )
 
-    BackHandler(enabled = viewModelState.selectMode) { viewModelState.selectModeOff() }
+    BackHandler(enabled = state.selectMode, onBack = state.selectModeOff)
 }
 
 @OptIn(ExperimentalAnimationGraphicsApi::class)
@@ -109,6 +108,62 @@ fun CircleCheckBox(modifier: Modifier = Modifier, isChecked: Boolean) {
         tint = LocalContentColor.current.copy(0.7f)
     )
 }
+
+class SubCategoryScreenUIState(
+    mainCategoryName: String,
+    selectMode: Boolean = false,
+    vararg selectedSubCategories: SubCategory = emptyArray()
+) {
+    val subCategoryParent = enumValueOf<SubCategoryParent>(mainCategoryName)
+
+    var selectMode by mutableStateOf(selectMode)
+        private set
+
+    val selectModeOff = { this.selectMode = false }
+
+    val selectModeOn = { this.selectMode = true }
+
+    val onSelect = { subCategory: SubCategory ->
+        this.selectedSubCategories =
+            if (this.selectedSubCategories.contains(subCategory))
+                this.selectedSubCategories.taskAndReturn { it.remove(subCategory) }
+            else this.selectedSubCategories.taskAndReturn { it.add(subCategory) }
+    }
+
+    var selectedSubCategories by mutableStateOf(selectedSubCategories.toSet()) // TODO remember
+        private set
+
+    fun toggleAllSelect(subCategories: List<SubCategory>) {
+        selectedSubCategories =
+            if (selectedSubCategories.size == subCategories.size) emptySet() else subCategories.toSet()
+    }
+
+    companion object {
+        val Saver: Saver<SubCategoryScreenUIState, *> = listSaver(
+            save = { listOf(it.subCategoryParent.name, it.selectMode, it.selectedSubCategories) },
+            restore = {
+                val selectedSubCategories = it[2] as Set<*>
+                val selectedSubCategoriesArray = Array(selectedSubCategories.size) { SubCategory() }
+                selectedSubCategories.forEachIndexed { i, subCategory ->
+                    selectedSubCategoriesArray[i] = subCategory as SubCategory
+                }
+
+                SubCategoryScreenUIState(
+                    it[0] as String,
+                    it[1] as Boolean,
+                    *selectedSubCategoriesArray
+                )
+            }
+        )
+    }
+}
+
+@Composable
+fun rememberSubCategoryScreenUIState(mainCategoryName: String) =
+    rememberSaveable(saver = SubCategoryScreenUIState.Saver) {
+        SubCategoryScreenUIState(mainCategoryName)
+    }
+
 
 class EditSubCategoryNameDialogUIState(
     categoryName: String = "",
@@ -143,3 +198,9 @@ fun rememberEditSubCategoryNameDialogUIState() =
     rememberSaveable(saver = EditSubCategoryNameDialogUIState.Saver) {
         EditSubCategoryNameDialogUIState()
     }
+
+fun <T> Set<T>.taskAndReturn(task: (MutableList<T>) -> Unit): Set<T> {
+    val temp = toMutableList()
+    task(temp)
+    return temp.toSet()
+}

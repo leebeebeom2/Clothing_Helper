@@ -14,15 +14,14 @@ import androidx.navigation.navArgument
 import com.leebeebeom.clothinghelper.main.maincategory.MainCategoryScreen
 import com.leebeebeom.clothinghelper.main.setting.SettingScreen
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryScreen
-import com.leebeebeom.clothinghelperdomain.model.EssentialMenus
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
 sealed class MainDestinations(val route: String) {
     object MainCategory : MainDestinations("mainCategory")
     object SubCategory : MainDestinations("subCategory") {
-        const val parentNameArg: String = "parentName"
-        val routeWithArg = "$route/{$parentNameArg}"
-        val arguments = listOf(navArgument(parentNameArg) { type = NavType.StringType })
+        const val mainCategoryName: String = "mainCategoryName"
+        val routeWithArg = "$route/{$mainCategoryName}"
+        val arguments = listOf(navArgument(mainCategoryName) { type = NavType.StringType })
     }
 
     object Setting : MainDestinations("setting")
@@ -32,12 +31,15 @@ sealed class MainDestinations(val route: String) {
 fun MainNavHost() {
     val navController = rememberNavController()
 
-    MainScreenRoot(onSettingIconClick = { navController.mainNavigate(MainDestinations.Setting.route) },
-        onDrawerContentClick = { parentName -> navController.drawerNavigate(parentName) }) { padding, getIsSubCategoriesLoading ->
+    MainScreenRoot(
+        onEssentialMenuClick = navController::navigateToEssentialMenu,
+        onMainCategoryClick = navController::navigateToSubCategory,
+        onSubCategoryClick = { key -> /*TODO*/ },
+        onSettingIconClick = { navController.mainNavigate(MainDestinations.Setting.route) }) { padding, getIsSubCategoryLoading ->
         MainNavHostWithArg(
             navController = navController,
             paddingValues = padding,
-            getIsSubCategoriesLoading = getIsSubCategoriesLoading
+            getIsSubCategoriesLoading = getIsSubCategoryLoading
         )
     }
 }
@@ -47,20 +49,16 @@ fun NavController.mainNavigate(destination: String) = navigate(destination) {
     launchSingleTop = true
 }
 
-fun NavController.navigateToSubCategory(parentName: String) {
-    mainNavigate("${MainDestinations.SubCategory.route}/$parentName")
+fun NavController.navigateToSubCategory(mainCategoryName: String) {
+    mainNavigate("${MainDestinations.SubCategory.route}/$mainCategoryName")
 }
 
-fun NavController.drawerNavigate(parentName: String) {
-    when (parentName) {
-        EssentialMenus.MAIN_SCREEN.name -> mainNavigate(MainDestinations.MainCategory.route)
-        EssentialMenus.FAVORITE.name -> {/*TODO*/
-        }
-        EssentialMenus.SEE_ALL.name -> { /*TODO*/
-        }
-        EssentialMenus.TRASH.name -> { /*TODO*/
-        }
-        else -> navigateToSubCategory(parentName)
+fun NavController.navigateToEssentialMenu(essentialMenu: EssentialMenus) {
+    when (essentialMenu) {
+        EssentialMenus.MAIN_SCREEN -> mainNavigate(MainDestinations.MainCategory.route)
+        EssentialMenus.FAVORITE -> {} // TODO 
+        EssentialMenus.SEE_ALL -> {} // TODO
+        EssentialMenus.TRASH -> {} // TODO
     }
 }
 
@@ -77,21 +75,17 @@ fun MainNavHostWithArg(
     ) {
         composable(MainDestinations.MainCategory.route) {
             MainCategoryScreen(
-                onMainCategoryClick = { parentName ->
-                    navController.navigateToSubCategory(
-                        parentName
-                    )
-                }, getIsSubCategoriesLoading = getIsSubCategoriesLoading
+                onMainCategoryClick = navController::navigateToSubCategory,
+                getIsSubCategoriesLoading = getIsSubCategoriesLoading
             )
         }
         composable(
             route = MainDestinations.SubCategory.routeWithArg,
             arguments = MainDestinations.SubCategory.arguments
         ) { entry ->
-            val parentName =
-                entry.arguments?.getString(MainDestinations.SubCategory.parentNameArg)!!
+            val mainCategoryName = entry.arguments?.getString(MainDestinations.SubCategory.mainCategoryName)!!
             SubCategoryScreen(
-                parentName = parentName,
+                mainCategoryName = mainCategoryName,
                 getIsSubCategoriesLoading = getIsSubCategoriesLoading
             )
         }

@@ -22,13 +22,16 @@ import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
 import com.leebeebeom.clothinghelper.theme.Disabled
-import com.leebeebeom.clothinghelperdomain.model.*
+import com.leebeebeom.clothinghelperdomain.model.SubCategory
+import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.model.User
 
 @Composable
 fun DrawerContents(
     user: User?,
     onEssentialMenuClick: (name: String) -> Unit,
     onMainCategoryClick: (name: String) -> Unit,
+    onSubCategoryClick: (key: String) -> Unit,
     onSettingIconClick: () -> Unit,
     getSubCategories: (SubCategoryParent) -> List<SubCategory>,
     getIsSubCategoriesLoading: (SubCategoryParent) -> Boolean
@@ -58,7 +61,8 @@ fun DrawerContents(
                     mainCategory = it,
                     subCategories = getSubCategories(it.type),
                     isSubCategoriesLoading = getIsSubCategoriesLoading(it.type),
-                    onMainCategoryClick = onMainCategoryClick
+                    onMainCategoryClick = onMainCategoryClick,
+                    onSubCategoryClick = onSubCategoryClick
                 )
             }
         }
@@ -147,8 +151,8 @@ fun getEssentialMenus() = listOf(
     EssentialMenu(R.string.trash, R.drawable.ic_delete, EssentialMenus.TRASH)
 )
 
-enum class EssentialMenus{
-    MAIN_SCREEN, FAVORITE,SEE_ALL,TRASH
+enum class EssentialMenus {
+    MAIN_SCREEN, FAVORITE, SEE_ALL, TRASH
 }
 
 data class EssentialMenu(

@@ -31,6 +31,8 @@ class MainScreenRootViewModel @Inject constructor(
                 viewModelState.onSubCategoriesLoadingCancelled
             )
         }
+
+        collectSubCategories()
     }
 }
 

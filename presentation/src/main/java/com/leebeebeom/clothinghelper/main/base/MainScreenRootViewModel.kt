@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
@@ -19,8 +18,8 @@ import javax.inject.Inject
 class MainScreenRootViewModel @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
     private val loadAndGetSubCategoriesUseCase: LoadAndGetSubCategoriesUseCase
-) : ViewModel() {
-    val viewModelState = MainNavHostViewModelState()
+) : BaseSubCategoriesViewModel(loadAndGetSubCategoriesUseCase) {
+    override val viewModelState = MainNavHostViewModelState()
 
     init {
         viewModelScope.launch {
@@ -32,18 +31,10 @@ class MainScreenRootViewModel @Inject constructor(
                 viewModelState.onSubCategoriesLoadingCancelled
             )
         }
-
-        loadAndGetSubCategoriesUseCase.allSubCategories.forEachIndexed { i, subCategoriesFlow ->
-            viewModelScope.launch {
-                subCategoriesFlow.collect {
-                    viewModelState.subCategoriesUpdate(i, it)
-                }
-            }
-        }
     }
 }
 
-class MainNavHostViewModelState : AllSubCategoriesViewModelState() {
+class MainNavHostViewModelState : BaseSubCategoriesViewModelState() {
     var user by mutableStateOf<User?>(null)
         private set
 

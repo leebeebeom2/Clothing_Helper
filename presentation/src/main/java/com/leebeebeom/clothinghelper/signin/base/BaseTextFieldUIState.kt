@@ -10,7 +10,7 @@ private fun baseOnTextChange(_text: MutableState<String>, text: String, hideText
 
 open class OneTextFiledState(text: String = "") {
     private val _text = mutableStateOf(text)
-    val text get() = _text.value
+    open val text get() = _text.value
 
     val onTextChange = { newText: String, hideTextError: () -> Unit ->
         baseOnTextChange(_text, newText, hideTextError)
@@ -20,7 +20,7 @@ open class OneTextFiledState(text: String = "") {
 open class TwoTextFiledState(text: String = "", text2: String = "") :
     OneTextFiledState(text) {
     private val _text2 = mutableStateOf(text2)
-    val text2 get() = _text2.value
+    open val text2 get() = _text2.value
 
     val onText2Change = { newText2: String, hideText2Error: () -> Unit ->
         baseOnTextChange(_text2, newText2, hideText2Error)
@@ -34,10 +34,10 @@ open class FourTextFieldState(
     text4: String = ""
 ) : TwoTextFiledState(text, text2) {
     private val _text3 = mutableStateOf(text3)
-    val text3 get() = _text3.value
+    open val text3 get() = _text3.value
 
     private val _text4 = mutableStateOf(text4)
-    val text4 get() = _text4.value
+    open val text4 get() = _text4.value
 
     val onText3Change = { newText3: String, hideText3Error: () -> Unit ->
         baseOnTextChange(_text3, newText3, hideText3Error)

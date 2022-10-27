@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,13 +27,14 @@ import com.leebeebeom.clothinghelperdomain.model.*
 @Composable
 fun DrawerContents(
     user: User?,
-    onDrawerContentClick: (parentName: String) -> Unit,
+    onEssentialMenuClick: (name: String) -> Unit,
+    onMainCategoryClick: (name: String) -> Unit,
     onSettingIconClick: () -> Unit,
-    essentialMenus: List<EssentialMenu>,
-    mainCategories: List<MainCategory>,
     getSubCategories: (SubCategoryParent) -> List<SubCategory>,
     getIsSubCategoriesLoading: (SubCategoryParent) -> Boolean
 ) = Column {
+
+    val state = rememberDrawerContentsUIState()
 
     DrawerHeader(user = user, onSettingIconClick = onSettingIconClick)
 
@@ -41,8 +43,8 @@ fun DrawerContents(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(top = 4.dp, bottom = 40.dp)
         ) {
-            items(essentialMenus, key = { it.type.name }) {
-                EssentialMenu(essentialMenu = it, onDrawerContentClick = onDrawerContentClick)
+            this.items(state.essentialMenus, key = { it.type.name }) {
+                EssentialMenu(essentialMenu = it, onEssentialMenuClick = onEssentialMenuClick)
             }
 
             item {
@@ -51,12 +53,12 @@ fun DrawerContents(
                 SimpleHeightSpacer(dp = 4)
             }
 
-            items(mainCategories, key = { it.type.name }) {
-                DrawerMainCategory(
+            items(state.mainCategories, key = { it.type.name }) {
+                MainCategory(
                     mainCategory = it,
                     subCategories = getSubCategories(it.type),
                     isSubCategoriesLoading = getIsSubCategoriesLoading(it.type),
-                    onDrawerContentClick = onDrawerContentClick
+                    onDrawerContentClick = onMainCategoryClick
                 )
             }
         }
@@ -83,10 +85,10 @@ private fun DrawerHeader(user: User?, onSettingIconClick: () -> Unit) {
 @Composable
 private fun EssentialMenu(
     essentialMenu: EssentialMenu,
-    onDrawerContentClick: (parentName: String) -> Unit
+    onEssentialMenuClick: (name: String) -> Unit
 ) = DrawerContentRow(
     modifier = Modifier.heightIn(44.dp),
-    onDrawerContentClick = { onDrawerContentClick(essentialMenu.type.name) }) {
+    onDrawerContentClick = { onEssentialMenuClick(essentialMenu.type.name) }) {
     SimpleIcon(modifier = Modifier.size(22.dp), drawable = essentialMenu.drawable)
     SimpleWidthSpacer(dp = 12)
     DrawerContentText(
@@ -122,3 +124,25 @@ fun DrawerContentText(modifier: Modifier, text: String, style: TextStyle) {
         overflow = TextOverflow.Ellipsis,
     )
 }
+
+class DrawerContentsUIState {
+    val essentialMenus = getEssentialMenus()
+    val mainCategories = getMainCategories()
+}
+
+@Composable
+fun rememberDrawerContentsUIState() = remember { DrawerContentsUIState() }
+
+fun getMainCategories() = listOf(
+    MainCategory(R.string.top, SubCategoryParent.TOP),
+    MainCategory(R.string.bottom, SubCategoryParent.BOTTOM),
+    MainCategory(R.string.outer, SubCategoryParent.OUTER),
+    MainCategory(R.string.etc, SubCategoryParent.ETC)
+)
+
+fun getEssentialMenus() = listOf(
+    EssentialMenu(R.string.main_screen, R.drawable.ic_home, EssentialMenus.MAIN_SCREEN),
+    EssentialMenu(R.string.favorite, R.drawable.ic_star, EssentialMenus.FAVORITE),
+    EssentialMenu(R.string.see_all, R.drawable.ic_list, EssentialMenus.SEE_ALL),
+    EssentialMenu(R.string.trash, R.drawable.ic_delete, EssentialMenus.TRASH)
+)

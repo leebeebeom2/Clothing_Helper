@@ -19,7 +19,7 @@ fun SubCategoryContent(
     allExpandIconClick: () -> Unit,
     allExpand: Boolean,
     subCategories: List<SubCategory>,
-    onLongClick: () -> Unit,
+    onLongClick: (SubCategory) -> Unit,
     isSelectMode: Boolean,
     onSubCategoryClick: (SubCategory) -> Unit,
     selectedSubCategories: Set<SubCategory>

@@ -17,13 +17,15 @@ fun EditSubCategoryNameDialog(
     onDismissDialog: () -> Unit,
     positiveButtonEnabled: Boolean
 ) {
-    // TODO 커서 포지션, 다이얼로그 높이, 처음 다이얼로그 보일 시 확인 버튼 disable(변경되어야 enable)
+    // TODO 커서 포지션(텍스트 셀렉트),  처음 다이얼로그 보일 시 확인 버튼 disable(변경되어야 enable)
     DialogRoot(onDismissDialog = onDismissDialog) {
-        DialogTitle(title = R.string.edit_category_name)
+        DialogTitle(text = R.string.edit_category_name)
         DialogTextField(
-            categoryName = categoryName,
+            text = categoryName,
             error = error,
-            onCategoryNameChange = onCategoryNameChange
+            onTextChange = onCategoryNameChange,
+            label = R.string.category,
+            placeHolder = R.string.category_place_holder
         )
         DialogTextButtons(
             positiveButtonEnabled = positiveButtonEnabled,

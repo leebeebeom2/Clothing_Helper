@@ -19,7 +19,6 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
-
 // TODO 다이얼로그 애니메이션
 
 @Composable

@@ -21,7 +21,7 @@ fun DrawerMainCategory(
     mainCategory: MainCategory,
     subCategories: List<SubCategory>,
     isSubCategoriesLoading: Boolean,
-    onMainCategoryClick: (name: String) -> Unit,
+    onMainCategoryClick: (mainCategoryName: String) -> Unit,
     onSubCategoryClick: (key:String) -> Unit,
 ) {
     var isExpand by rememberSaveable { mutableStateOf(false) }

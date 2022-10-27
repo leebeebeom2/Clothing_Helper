@@ -28,7 +28,7 @@ class MainCategoryViewModel @Inject constructor(
 }
 
 class MainCategoryViewModelState {
-    private val allSubCategoriesSize = MutableList(4) { mutableStateOf(0) }
+    private val allSubCategoriesSize = List(4) { mutableStateOf(0) }
 
     fun categoriesSizeUpdate(index: Int, size: Int) {
         allSubCategoriesSize[index].value = size

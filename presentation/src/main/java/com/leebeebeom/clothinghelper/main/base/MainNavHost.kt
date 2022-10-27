@@ -14,7 +14,6 @@ import androidx.navigation.navArgument
 import com.leebeebeom.clothinghelper.main.maincategory.MainCategoryScreen
 import com.leebeebeom.clothinghelper.main.setting.SettingScreen
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryScreen
-import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
 sealed class MainDestinations(val route: String) {
     object MainCategory : MainDestinations("mainCategory")
@@ -35,11 +34,11 @@ fun MainNavHost() {
         onEssentialMenuClick = navController::navigateToEssentialMenu,
         onMainCategoryClick = navController::navigateToSubCategory,
         onSubCategoryClick = { key -> /*TODO*/ },
-        onSettingIconClick = { navController.mainNavigate(MainDestinations.Setting.route) }) { padding, getIsSubCategoryLoading ->
+        onSettingIconClick = { navController.mainNavigate(MainDestinations.Setting.route) }) { padding, isSubCategoryLoading ->
         MainNavHostWithArg(
             navController = navController,
             paddingValues = padding,
-            getIsSubCategoriesLoading = getIsSubCategoryLoading
+            isSubCategoriesLoading = isSubCategoryLoading
         )
     }
 }
@@ -66,7 +65,7 @@ fun NavController.navigateToEssentialMenu(essentialMenu: EssentialMenus) {
 fun MainNavHostWithArg(
     navController: NavHostController,
     paddingValues: PaddingValues,
-    getIsSubCategoriesLoading: (SubCategoryParent) -> Boolean
+    isSubCategoriesLoading: Boolean
 ) {
     NavHost(
         navController = navController,
@@ -76,7 +75,7 @@ fun MainNavHostWithArg(
         composable(MainDestinations.MainCategory.route) {
             MainCategoryScreen(
                 onMainCategoryClick = navController::navigateToSubCategory,
-                getIsSubCategoriesLoading = getIsSubCategoriesLoading
+                isSubCategoriesLoading = isSubCategoriesLoading
             )
         }
         composable(
@@ -86,7 +85,7 @@ fun MainNavHostWithArg(
             val mainCategoryName = entry.arguments?.getString(MainDestinations.SubCategory.mainCategoryName)!!
             SubCategoryScreen(
                 mainCategoryName = mainCategoryName,
-                getIsSubCategoriesLoading = getIsSubCategoriesLoading
+                isSubCategoriesLoading = isSubCategoriesLoading
             )
         }
         composable(MainDestinations.Setting.route) {

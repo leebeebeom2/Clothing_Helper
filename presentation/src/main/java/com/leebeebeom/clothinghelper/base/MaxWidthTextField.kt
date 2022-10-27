@@ -2,6 +2,11 @@ package com.leebeebeom.clothinghelper.base
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -10,6 +15,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -20,8 +26,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.Anime.errorSlideInBottom
-import com.leebeebeom.clothinghelper.base.Anime.errorSlideOutBottom
 
 @Composable
 fun MaxWidthTextField(
@@ -73,8 +77,15 @@ fun MaxWidthTextField(
 private fun ErrorText(@StringRes error: Int?) {
     AnimatedVisibility( // TODO 확인
         visible = error != null,
-        enter = errorSlideInBottom,
-        exit = errorSlideOutBottom
+        enter = expandVertically(
+            animationSpec = spring(
+                dampingRatio = Spring.DampingRatioHighBouncy,
+                stiffness = Spring.StiffnessMedium
+            ),
+            expandFrom = Alignment.Bottom,
+            clip = false
+        ),
+        exit = shrinkVertically(animationSpec = tween(150))
     ) {
         Text(
             modifier = Modifier.padding(start = 4.dp),

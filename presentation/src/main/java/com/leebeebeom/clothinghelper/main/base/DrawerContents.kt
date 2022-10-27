@@ -58,7 +58,7 @@ fun DrawerContents(
                     mainCategory = it,
                     subCategories = getSubCategories(it.type),
                     isSubCategoriesLoading = getIsSubCategoriesLoading(it.type),
-                    onDrawerContentClick = onMainCategoryClick
+                    onMainCategoryClick = onMainCategoryClick
                 )
             }
         }

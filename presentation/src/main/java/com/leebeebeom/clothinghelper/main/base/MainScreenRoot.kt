@@ -11,7 +11,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.base.SimpleToast
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
-import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -22,9 +21,7 @@ fun MainScreenRoot(
     onMainCategoryClick: (mainCategoryName: String) -> Unit,
     onSubCategoryClick: (key: String) -> Unit,
     viewModel: MainScreenRootViewModel = hiltViewModel(),
-    content: @Composable (
-        PaddingValues, getIsSubCategoriesLoading: (SubCategoryParent) -> Boolean
-    ) -> Unit,
+    content: @Composable (PaddingValues, getIsSubCategoriesLoading: Boolean) -> Unit,
 ) {
     val viewModelState = viewModel.viewModelState
     val state = rememberMainScreenUIState()
@@ -55,12 +52,12 @@ fun MainScreenRoot(
                         state.onDrawerClose()
                     },
                     getSubCategories = viewModelState.getSubCategories,
-                    getIsSubCategoriesLoading = viewModelState.getIsSubCategoriesLoading
+                    isSubCategoriesLoading = viewModelState.isSubCategoriesLoading
                 )
             },
             drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
             drawerBackgroundColor = MaterialTheme.colors.primary,
-            content = { content(it, viewModelState.getIsSubCategoriesLoading) })
+            content = { content(it, viewModelState.isSubCategoriesLoading) })
 
         BackHandler(enabled = state.drawerState.isOpen, onBack = state::onDrawerClose)
     }

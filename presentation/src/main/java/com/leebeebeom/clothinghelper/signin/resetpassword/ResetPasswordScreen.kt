@@ -17,16 +17,18 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.MaxWidthButton
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.signin.base.EmailTextField
-import com.leebeebeom.clothinghelper.signin.base.EmailUIState
-import com.leebeebeom.clothinghelper.signin.base.GoBack
+import com.leebeebeom.clothinghelper.signin.base.OneTextFiledState
 import com.leebeebeom.clothinghelper.signin.base.SignInBaseRoot
 
 @Composable
-fun ResetPasswordScreen(viewModel: ResetPasswordViewModel = hiltViewModel()) {
+fun ResetPasswordScreen(
+    viewModel: ResetPasswordViewModel = hiltViewModel(),
+    popBackStack: () -> Unit
+) {
     val state = rememberResetScreenUIState()
     val viewModelState = viewModel.viewModelState
 
-    GoBack(goBack = viewModelState.goBack, wentBack = viewModelState::wentBack)
+    PopBackStack(viewModelState.taskSuccess, popBackStack, viewModelState::popBackStackDone)
 
     SignInBaseRoot(
         isLoading = viewModelState.isLoading,
@@ -40,8 +42,8 @@ fun ResetPasswordScreen(viewModel: ResetPasswordViewModel = hiltViewModel()) {
         )
 
         EmailTextField(
-            email = state.email,
-            onEmailChange = { state.onEmailChange(email = it) { viewModelState.hideEmailError() } },
+            email = state.text,
+            onEmailChange = { state.onTextChange(it, viewModelState.hideEmailError) },
             error = viewModelState.emailError,
             imeAction = ImeAction.Done
         )
@@ -49,18 +51,30 @@ fun ResetPasswordScreen(viewModel: ResetPasswordViewModel = hiltViewModel()) {
         MaxWidthButton(
             text = R.string.check,
             enabled = state.submitButtonEnabled(viewModelState.emailError),
-            onClick = { viewModel.sendResetPasswordEmail(email = state.email) }
+            onClick = { viewModel.sendResetPasswordEmail(email = state.text) }
         )
     }
 }
 
-class ResetPasswordScreenUIState(email: String = "") : EmailUIState(email) {
+@Composable
+fun PopBackStack(
+    taskSuccess: Boolean,
+    popBackStack: () -> Unit,
+    popBackStackDone: () -> Unit
+) {
+    if (taskSuccess) {
+        popBackStack()
+        popBackStackDone()
+    }
+}
 
-    fun submitButtonEnabled(@StringRes emailError: Int?) = email.isNotBlank() && emailError == null
+class ResetPasswordScreenUIState(email: String = "") : OneTextFiledState(email) {
+
+    fun submitButtonEnabled(@StringRes emailError: Int?) = text.isNotBlank() && emailError == null
 
     companion object {
         val Saver: Saver<ResetPasswordScreenUIState, *> = listSaver(
-            save = { listOf(it.email) },
+            save = { listOf(it.text) },
             restore = { ResetPasswordScreenUIState(it[0]) }
         )
     }

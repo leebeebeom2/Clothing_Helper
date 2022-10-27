@@ -12,32 +12,31 @@ import dagger.hilt.android.components.ViewModelComponent
 @InstallIn(ViewModelComponent::class)
 class UserUseCaseModule {
     @Provides
-    fun provideGoogleSignInUseCase(
+    fun googleSignInUseCase(
         userRepository: UserRepositoryImpl,
         subCategoryRepository: SubCategoryRepositoryImpl
-    ) =
-        GoogleSignInUseCase(userRepository, subCategoryRepository)
+    ) = GoogleSignInUseCase(userRepository, subCategoryRepository)
 
     @Provides
-    fun provideResetPasswordUseCase(userRepository: UserRepositoryImpl) =
+    fun resetPasswordUseCase(userRepository: UserRepositoryImpl) =
         ResetPasswordUseCase(userRepository)
 
     @Provides
-    fun provideSignUpUseCase(
+    fun signUpUseCase(
         userRepository: UserRepositoryImpl,
         subCategoryRepository: SubCategoryRepositoryImpl
     ) = SignUpUseCase(userRepository, subCategoryRepository)
 
     @Provides
-    fun provideSignInUseCase(userRepository: UserRepositoryImpl) = SignInUseCase(userRepository)
+    fun signInUseCase(userRepository: UserRepositoryImpl) = SignInUseCase(userRepository)
 
     @Provides
-    fun provideGetSignInStateUseCase(userRepository: UserRepositoryImpl) =
+    fun getSignInStateUseCase(userRepository: UserRepositoryImpl) =
         GetSignInStateUseCase(userRepository)
 
     @Provides
-    fun provideGetUserUseCase(userRepository: UserRepositoryImpl) = GetUserUseCase(userRepository)
+    fun getUserUseCase(userRepository: UserRepositoryImpl) = GetUserUseCase(userRepository)
 
     @Provides
-    fun provideSignOutUserCase(userRepository: UserRepositoryImpl) = SignOutUseCase(userRepository)
+    fun signOutUserCase(userRepository: UserRepositoryImpl) = SignOutUseCase(userRepository)
 }

@@ -54,7 +54,7 @@ fun DrawerContents(
             }
 
             items(state.mainCategories, key = { it.type.name }) {
-                MainCategory(
+                DrawerMainCategory(
                     mainCategory = it,
                     subCategories = getSubCategories(it.type),
                     isSubCategoriesLoading = getIsSubCategoriesLoading(it.type),

@@ -11,29 +11,29 @@ import dagger.hilt.android.components.ViewModelComponent
 @InstallIn(ViewModelComponent::class)
 class SubCategoryUseCaseModule {
     @Provides
-    fun provideAddSubCategoryUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
+    fun addSubCategoryUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
         AddSubCategoryUseCase(subCategoryRepository)
 
     @Provides
-    fun provideDeleteSubCategoryUseCase(subCategoryUseCase: SubCategoryRepositoryImpl) =
+    fun deleteSubCategoryUseCase(subCategoryUseCase: SubCategoryRepositoryImpl) =
         DeleteSubCategoryUseCase(subCategoryUseCase)
 
     @Provides
-    fun provideLoadAndGetSubCategoriesUseCase(
+    fun loadAndGetSubCategoriesUseCase(
         loadSubCategoriesUseCase: LoadSubCategoriesUseCase,
         getSubCategoriesUseCase: GetSubCategoriesUseCase
     ) = LoadAndGetSubCategoriesUseCase(loadSubCategoriesUseCase, getSubCategoriesUseCase)
 
     @Provides
-    fun provideLoadSubCategoriesUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
+    fun loadSubCategoriesUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
         LoadSubCategoriesUseCase(subCategoryRepository)
 
     @Provides
-    fun provideGetSubCategoriesUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
+    fun getSubCategoriesUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
         GetSubCategoriesUseCase(subCategoryRepository)
 
     @Provides
-    fun provideAddAndDeleteSubCategoryUseCase(
+    fun addAndDeleteSubCategoryUseCase(
         addSubCategoryUseCase: AddSubCategoryUseCase,
         deleteSubCategoryUseCase: DeleteSubCategoryUseCase
     ) = AddAndDeleteSubCategoryUseCase(addSubCategoryUseCase, deleteSubCategoryUseCase)

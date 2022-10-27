@@ -14,13 +14,6 @@ import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.usecase.user.GoogleSignInUseCase
 
-object FirebaseErrorCode {
-    const val ERROR_INVALID_EMAIL = "ERROR_INVALID_EMAIL"
-    const val ERROR_USER_NOT_FOUND = "ERROR_USER_NOT_FOUND"
-    const val ERROR_EMAIL_ALREADY_IN_USE = "ERROR_EMAIL_ALREADY_IN_USE"
-    const val ERROR_WRONG_PASSWORD = "ERROR_WRONG_PASSWORD"
-}
-
 abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSignInUseCase) :
     ViewModel() {
     abstract val viewModelState: GoogleSignInViewModelState

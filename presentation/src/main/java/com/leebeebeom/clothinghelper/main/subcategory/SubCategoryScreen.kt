@@ -33,7 +33,7 @@ fun SubCategoryScreen(
 
     Scaffold(bottomBar = {
         SubCategoryBottomAppBar(
-            isSelectMode = state.selectMode,
+            isSelectMode = state.isSelectMode,
             selectedSubCategoriesSize = state.selectedSubCategories.size,
             subCategoriesSize = viewModelState.getSubCategories(state.subCategoryParent).size,
             onAllSelectCheckBoxClick = { state.toggleAllSelect(viewModelState.getSubCategories(state.subCategoryParent)) },
@@ -60,8 +60,11 @@ fun SubCategoryScreen(
                 allExpand = viewModelState.allExpand,
                 subCategories = viewModelState.getSubCategories(state.subCategoryParent),
                 onLongClick = state.selectModeOn,
-                isSelectMode = state.selectMode,
-                onSelect = state.onSelect,
+                isSelectMode = state.isSelectMode,
+                onSubCategoryClick =
+                if (!state.isSelectMode) {
+                    {/*TODO*/ }
+                } else state.onSelect,
                 selectedSubCategories = state.selectedSubCategories
             )
 
@@ -90,7 +93,7 @@ fun SubCategoryScreen(
             positiveButtonEnabled = editSubCategoryNameDialogUIState.positiveButtonEnabled
         )
 
-    BackHandler(enabled = state.selectMode, onBack = state.selectModeOff)
+    BackHandler(enabled = state.isSelectMode, onBack = state.selectModeOff)
 }
 
 @OptIn(ExperimentalAnimationGraphicsApi::class)
@@ -110,17 +113,17 @@ fun CircleCheckBox(modifier: Modifier = Modifier, isChecked: Boolean) {
 
 class SubCategoryScreenUIState(
     mainCategoryName: String,
-    selectMode: Boolean = false,
+    isSelectMode: Boolean = false,
     vararg selectedSubCategories: SubCategory = emptyArray()
 ) {
     val subCategoryParent = enumValueOf<SubCategoryParent>(mainCategoryName)
 
-    var selectMode by mutableStateOf(selectMode)
+    var isSelectMode by mutableStateOf(isSelectMode)
         private set
 
-    val selectModeOff = { this.selectMode = false }
+    val selectModeOff = { this.isSelectMode = false }
 
-    val selectModeOn = { this.selectMode = true }
+    val selectModeOn = { this.isSelectMode = true }
 
     val onSelect = { subCategory: SubCategory ->
         this.selectedSubCategories =
@@ -139,7 +142,7 @@ class SubCategoryScreenUIState(
 
     companion object {
         val Saver: Saver<SubCategoryScreenUIState, *> = listSaver(
-            save = { listOf(it.subCategoryParent.name, it.selectMode, it.selectedSubCategories) },
+            save = { listOf(it.subCategoryParent.name, it.isSelectMode, it.selectedSubCategories) },
             restore = {
                 val selectedSubCategories = it[2] as Set<*>
                 val selectedSubCategoriesArray = Array(selectedSubCategories.size) { SubCategory() }

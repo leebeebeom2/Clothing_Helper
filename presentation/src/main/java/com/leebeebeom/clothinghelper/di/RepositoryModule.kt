@@ -19,21 +19,21 @@ import javax.inject.Singleton
 class RepositoryModule {
     @Singleton
     @Provides
-    fun provideSubCategoryRepository(userRepository: UserRepositoryImpl) =
+    fun subCategoryRepository(userRepository: UserRepositoryImpl) =
         SubCategoryRepositoryImpl(userRepository)
 
     @Singleton
     @Provides
-    fun provideUserRepository() = UserRepositoryImpl()
+    fun userRepository() = UserRepositoryImpl()
 
     @Singleton
     @Provides
-    fun providePreferencesRepository(dataStore: DataStore<Preferences>) =
+    fun preferencesRepository(dataStore: DataStore<Preferences>) =
         PreferencesRepositoryImpl(dataStore)
 
     @Singleton
     @Provides
-    fun provideDataStore(@ApplicationContext context: Context) = context.datastore
+    fun dataStore(@ApplicationContext context: Context) = context.datastore
 }
 
 private const val PREFERENCES_NAME = "preferences"

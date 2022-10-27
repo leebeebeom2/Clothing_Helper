@@ -38,12 +38,13 @@ class SubCategoryViewModel @Inject constructor(
         }
     }
 
-    fun addSubCategory(name: String, subCategoryParent: SubCategoryParent) =
+    val addSubCategory = { name: String, subCategoryParent: SubCategoryParent ->
         addSubCategoryUseCase(
             subCategoryParent = subCategoryParent,
             name = name,
             addSubCategoryListener = addSubCategoryListener
         )
+    }
 
     private val addSubCategoryListener = object : FirebaseListener {
         override fun taskSuccess() {}

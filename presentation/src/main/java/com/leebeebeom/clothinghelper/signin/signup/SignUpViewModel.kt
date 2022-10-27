@@ -3,7 +3,6 @@ package com.leebeebeom.clothinghelper.signin.signup
 import android.util.Log
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
-import com.leebeebeom.clothinghelper.signin.base.FirebaseErrorCode
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInViewModelState
 import com.leebeebeom.clothinghelper.signin.base.setFireBaseError

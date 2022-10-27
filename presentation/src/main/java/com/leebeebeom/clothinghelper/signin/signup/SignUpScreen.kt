@@ -18,11 +18,11 @@ import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.signin.base.*
 
 @Composable
-fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
+fun SignUpScreen(
+    viewModel: SignUpViewModel = hiltViewModel(),
+) {
     val state = rememberSignUpScreenUIState()
     val viewModelState = viewModel.viewModelState
-
-    GoBack(goBack = viewModelState.goBack, wentBack = viewModelState::wentBack)
 
     SignInBaseRoot(
         isLoading = viewModelState.isLoading,
@@ -30,28 +30,28 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
         toastShown = viewModelState.toastShown
     ) {
         EmailTextField(
-            email = state.email,
-            onEmailChange = { state.onEmailChange(email = it) { viewModelState.hideEmailError() } },
+            email = state.text,
+            onEmailChange = { state.onTextChange(it, viewModelState.hideEmailError) },
             error = viewModelState.emailError,
             imeAction = ImeAction.Next
         )
 
         MaxWidthTextField(
             label = R.string.name,
-            text = state.name,
-            onValueChange = state::onNameChange,
+            text = state.text2,
+            onValueChange = { state.onText2Change(it) {} },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
         )
 
         PasswordTextField(
-            password = state.password,
+            password = state.text3,
             onPasswordChange = state::onPasswordChange,
             error = state.passwordError,
             imeAction = ImeAction.Next
         )
 
         PasswordTextField(
-            password = state.passwordConfirm,
+            password = state.text4,
             onPasswordChange = state::onPasswordConfirmChange,
             error = state.passwordConfirmError,
             imeAction = ImeAction.Done,
@@ -62,10 +62,10 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
             enabled = state.submitButtonEnabled(emailError = viewModelState.emailError),
             onClick = {
                 viewModel.signUpWithEmailAndPassword(
-                    state.email,
-                    state.password,
-                    state.name
-                )
+                    email = state.text,
+                    name = state.text2,
+                    password = state.text3
+                    )
             })
         SimpleHeightSpacer(dp = 8)
         OrDivider()
@@ -74,7 +74,7 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
         GoogleSignInButton(
             signInWithGoogleEmail = viewModel::signInWithGoogleEmail,
             enabled = viewModelState.googleButtonEnabled,
-            onGoogleSignInClick = viewModel::taskStart
+            onGoogleSignInClick = viewModel.taskStart
         )
     }
 }
@@ -86,40 +86,20 @@ class SignUpScreenUIState(
     passwordConfirm: String = "",
     @StringRes passwordError: Int? = null,
     @StringRes passwordConfirmError: Int? = null
-) : PasswordUIState(email, password) {
-
-    var name: String by mutableStateOf(name)
-        private set
-    var passwordConfirm: String by mutableStateOf(passwordConfirm)
-        private set
+) : FourTextFieldState(email, name, password, passwordConfirm) {
 
     var passwordError: Int? by mutableStateOf(passwordError)
         private set
     var passwordConfirmError: Int? by mutableStateOf(passwordConfirmError)
         private set
 
-    private fun showPasswordError(@StringRes error: Int?) {
-        passwordError = error
-    }
-
-    private fun hidePasswordError() {
-        passwordError = null
-    }
-
-    private fun showPasswordConfirmError(@StringRes error: Int?) {
-        passwordConfirmError = error
-    }
-
-    private fun hidePasswordConfirmError() {
-        passwordConfirmError = null
-    }
-
-    fun onNameChange(name: String) {
-        this.name = name
-    }
+    private val showPasswordError = { error: Int? -> this.passwordError = error }
+    private val hidePasswordError = { this.passwordError = null }
+    private val showPasswordConfirmError = { error: Int? -> this.passwordConfirmError = error }
+    private val hidePasswordConfirmError = { this.passwordConfirmError = null }
 
     fun onPasswordChange(password: String) {
-        super.onPasswordChange(password, ::hidePasswordError)
+        super.onText3Change(password, hidePasswordError)
         if (password.isNotBlank()) {
             passwordSameCheck()
             if (password.length < 6) showPasswordError(R.string.error_weak_password)
@@ -127,31 +107,30 @@ class SignUpScreenUIState(
     }
 
     fun onPasswordConfirmChange(passwordConfirm: String) {
-        this.passwordConfirm = passwordConfirm
-        hidePasswordConfirmError()
+        super.onText4Change(passwordConfirm, hidePasswordConfirmError)
         passwordSameCheck()
     }
 
     private fun passwordSameCheck() {
-        if (passwordConfirm.isNotBlank()) {
-            if (password != passwordConfirm) showPasswordConfirmError(R.string.error_password_confirm_not_same)
+        if (text4.isNotBlank()) {
+            if (text3 != text4) showPasswordConfirmError(R.string.error_password_confirm_not_same)
             else hidePasswordConfirmError()
         }
     }
 
     fun submitButtonEnabled(@StringRes emailError: Int?) =
-        email.isNotBlank() && emailError == null &&
-                name.isNotBlank() &&
-                password.isNotBlank() && passwordError == null &&
-                passwordConfirm.isNotBlank() && passwordConfirmError == null
+        text.isNotBlank() && emailError == null &&
+                text2.isNotBlank() &&
+                text3.isNotBlank() && passwordError == null &&
+                text4.isNotBlank() && passwordConfirmError == null
 
     companion object {
         val Saver: Saver<SignUpScreenUIState, *> = listSaver(save = {
             listOf(
-                it.email,
-                it.name,
-                it.password,
-                it.passwordConfirm,
+                it.text,
+                it.text2,
+                it.text3,
+                it.text4,
                 it.passwordError,
                 it.passwordConfirmError
             )

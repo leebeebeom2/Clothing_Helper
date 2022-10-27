@@ -24,7 +24,7 @@ fun DialogRoot(onDismissDialog: () -> Unit, content: @Composable ColumnScope.() 
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 20.dp, end = 20.dp, top = 20.dp)
-            ){
+            ) {
                 content()
                 SimpleHeightSpacer(dp = 20)
             }
@@ -33,9 +33,9 @@ fun DialogRoot(onDismissDialog: () -> Unit, content: @Composable ColumnScope.() 
 }
 
 @Composable
-fun DialogTitle(@StringRes title: Int) {
+fun DialogTitle(@StringRes text: Int) {
     Text(
-        text = stringResource(title),
+        text = stringResource(id = text),
         style = MaterialTheme.typography.subtitle1,
         modifier = Modifier.padding(start = 4.dp, bottom = 12.dp)
     )
@@ -43,19 +43,52 @@ fun DialogTitle(@StringRes title: Int) {
 
 @Composable
 fun DialogTextField(
-    categoryName: String,
+    @StringRes label: Int,
+    @StringRes placeHolder: Int,
+    text: String,
     @StringRes error: Int?,
-    onCategoryNameChange: (String) -> Unit,
+    onTextChange: (String) -> Unit,
 ) {
     MaxWidthTextField(
-        label = R.string.category,
-        placeholder = R.string.category_place_holder,
-        text = categoryName,
-        onValueChange = onCategoryNameChange,
+        label = label,
+        placeholder = placeHolder,
+        text = text,
+        onValueChange = onTextChange,
         error = error,
         showKeyboardEnabled = true
     )
     SimpleHeightSpacer(dp = 12)
+}
+
+@Composable
+fun DialogTextButtons(
+    positiveTextColor: Color = Color.Unspecified,
+    cancelTextColor: Color = MaterialTheme.colors.error,
+    positiveButtonEnabled: Boolean,
+    onPositiveButtonClick: () -> Unit,
+    onDismissDialog: () -> Unit
+) {
+    Row {
+        val weightModifier = Modifier.weight(weight = 1f)
+
+        DialogTextButton(
+            modifier = weightModifier,
+            textColor = cancelTextColor,
+            text = R.string.cancel,
+            onClick = onDismissDialog
+        )
+
+        DialogTextButton(
+            modifier = weightModifier,
+            textColor = positiveTextColor,
+            text = R.string.check,
+            enabled = positiveButtonEnabled,
+            onClick = {
+                onPositiveButtonClick()
+                onDismissDialog()
+            }
+        )
+    }
 }
 
 @Composable
@@ -78,33 +111,5 @@ fun DialogTextButton(
                 color = textColor
             )
         }
-    }
-}
-
-@Composable
-fun DialogTextButtons(
-    positiveButtonEnabled: Boolean,
-    onPositiveButtonClick: () -> Unit,
-    onDismissDialog: () -> Unit
-) {
-    Row {
-        val weightModifier = Modifier.weight(1f)
-
-        DialogTextButton(
-            modifier = weightModifier,
-            textColor = MaterialTheme.colors.error,
-            text = R.string.cancel,
-            onClick = onDismissDialog
-        )
-
-        DialogTextButton(
-            modifier = weightModifier,
-            text = R.string.check,
-            enabled = positiveButtonEnabled,
-            onClick = {
-                onPositiveButtonClick()
-                onDismissDialog()
-            }
-        )
     }
 }

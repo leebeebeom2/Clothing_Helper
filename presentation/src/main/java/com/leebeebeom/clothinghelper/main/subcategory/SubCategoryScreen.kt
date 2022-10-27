@@ -55,7 +55,7 @@ fun SubCategoryScreen(
                 )
             // TODO 이름 수정
             else SubCategoryContent(
-                subCategoryParent = state.subCategoryParent,
+                subCategoryParentName = state.subCategoryParent.name,
                 allExpandIconClick = viewModel::toggleAllExpand,
                 allExpand = viewModelState.allExpand,
                 subCategories = viewModelState.getSubCategories(state.subCategoryParent),

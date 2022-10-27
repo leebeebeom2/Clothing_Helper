@@ -36,21 +36,12 @@ class MainScreenRootViewModel @Inject constructor(
             )
         }
 
-        viewModelScope.launch {
-            loadAndGetSubCategoriesUseCase.topSubCategories
-                .collect(viewModelState.topSubCategoriesUpdate)
-        }
-        viewModelScope.launch {
-            loadAndGetSubCategoriesUseCase.bottomSubCategories
-                .collect(viewModelState.bottomSubCategoriesUpdate)
-        }
-        viewModelScope.launch {
-            loadAndGetSubCategoriesUseCase.outerSubCategories
-                .collect(viewModelState.outerSubCategoriesUpdate)
-        }
-        viewModelScope.launch {
-            loadAndGetSubCategoriesUseCase.etcSubCategories
-                .collect(viewModelState.etcSubCategoriesUpdate)
+        loadAndGetSubCategoriesUseCase.allSubCategories.forEachIndexed { i, subCategoriesFlow ->
+            viewModelScope.launch {
+                subCategoriesFlow.collect {
+                    viewModelState.subCategoriesUpdate(i, it)
+                }
+            }
         }
     }
 }
@@ -61,86 +52,28 @@ class MainNavHostViewModelState : BaseViewModelState() {
 
     val userUpdate = { user: User? -> this.user = user }
 
-    private var topSubCategories by mutableStateOf(emptyList<SubCategory>())
-    private var bottomSubCategories by mutableStateOf(emptyList<SubCategory>())
-    private var outerSubCategories by mutableStateOf(emptyList<SubCategory>())
-    private var etcSubCategories by mutableStateOf(emptyList<SubCategory>())
+    private val allSubCategories = List(4) { mutableStateOf(emptyList<SubCategory>()) }
 
-    val topSubCategoriesUpdate =
-        { topSubCategories: List<SubCategory> -> this.topSubCategories = topSubCategories }
-    val bottomSubCategoriesUpdate =
-        { bottomSubCategories: List<SubCategory> -> this.bottomSubCategories = bottomSubCategories }
-    val outerSubCategoriesUpdate =
-        { outerSubCategories: List<SubCategory> -> this.outerSubCategories = outerSubCategories }
-    val etcSubCategoriesUpdate =
-        { etcSubCategories: List<SubCategory> -> this.etcSubCategories = etcSubCategories }
-
-    val getSubCategories = { subCategoryParent: SubCategoryParent ->
-        when (subCategoryParent) {
-            SubCategoryParent.TOP -> topSubCategories
-            SubCategoryParent.BOTTOM -> bottomSubCategories
-            SubCategoryParent.OUTER -> outerSubCategories
-            SubCategoryParent.ETC -> etcSubCategories
-        }
+    fun subCategoriesUpdate(index: Int, subCategories: List<SubCategory>) {
+        allSubCategories[index].value = subCategories
     }
 
-    private var isTopSubCategoriesLoading by mutableStateOf(true)
-    private var isBottomSubCategoriesLoading by mutableStateOf(true)
-    private var isOuterSubCategoriesLoading by mutableStateOf(true)
-    private var isEtcSubCategoriesLoading by mutableStateOf(true)
+    val getSubCategories =
+        { subCategoryParent: SubCategoryParent -> allSubCategories[subCategoryParent.ordinal].value }
 
-    val getIsSubCategoriesLoading = { subCategoryParent: SubCategoryParent ->
-        when (subCategoryParent) {
-            SubCategoryParent.TOP -> isTopSubCategoriesLoading
-            SubCategoryParent.BOTTOM -> isBottomSubCategoriesLoading
-            SubCategoryParent.OUTER -> isOuterSubCategoriesLoading
-            SubCategoryParent.ETC -> isEtcSubCategoriesLoading
+    var isSubCategoriesLoading by mutableStateOf(true)
+        private set
+
+    val onSubCategoriesLoadingDone = { isSubCategoriesLoading = false }
+
+    val onSubCategoriesLoadingCancelled =
+        { errorCode: Int, message: String ->
+            showToast(R.string.sub_categories_load_failed)
+            onSubCategoriesLoadingDone()
+            Log.d(
+                TAG,
+                "MainScreenRootViewModel.subCategoryLoadFailed: errorCode = $errorCode, $message"
+            )
+            Unit
         }
-    }
-
-    val onSubCategoriesLoadingDone = listOf(
-        { isTopSubCategoriesLoading = false },
-        { isBottomSubCategoriesLoading = false },
-        { isOuterSubCategoriesLoading = false },
-        { isEtcSubCategoriesLoading = false }
-    )
-
-    val onSubCategoriesLoadingCancelled = listOf(
-        { errorCode: Int, message: String ->
-            showToast(R.string.top_sub_categories_load_failed)
-            onSubCategoriesLoadingDone[0]()
-            Log.d(
-                TAG,
-                "MainScreenRootViewModel.subCategoryLoadFailed: errorCode = $errorCode, $message"
-            )
-            Unit
-        },
-        { errorCode: Int, message: String ->
-            showToast(R.string.bottom_sub_categories_load_failed)
-            onSubCategoriesLoadingDone[1]()
-            Log.d(
-                TAG,
-                "MainScreenRootViewModel.subCategoryLoadFailed: errorCode = $errorCode, $message"
-            )
-            Unit
-        },
-        { errorCode: Int, message: String ->
-            showToast(R.string.outer_sub_categories_load_failed)
-            onSubCategoriesLoadingDone[2]()
-            Log.d(
-                TAG,
-                "MainScreenRootViewModel.subCategoryLoadFailed: errorCode = $errorCode, $message"
-            )
-            Unit
-        },
-        { errorCode: Int, message: String ->
-            showToast(R.string.etc_sub_categories_load_failed)
-            onSubCategoriesLoadingDone[3]()
-            Log.d(
-                TAG,
-                "MainScreenRootViewModel.subCategoryLoadFailed: errorCode = $errorCode, $message"
-            )
-            Unit
-        },
-    )
 }

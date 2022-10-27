@@ -12,15 +12,9 @@ open class BaseViewModelState {
 
     val toastShown = { toastText = null }
 
-    val showToast = { toastText: Int ->
-        this.toastText = toastText
-    }
+    val showToast = { toastText: Int -> this.toastText = toastText }
 
-    val loadingOff = {
-        isLoading = false
-    }
+    val loadingOff = { isLoading = false }
 
-    val loadingOn = {
-        isLoading = true
-    }
+    val loadingOn = { isLoading = true }
 }

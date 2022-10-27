@@ -38,27 +38,15 @@ fun SignInScreen(
     ) {
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
             EmailTextField(
-                email = state.email,
-                error = viewModelState.emailError,
-                onEmailChange = {
-                    state.onEmailChange(
-                        email = it,
-                        hideEmailError = viewModelState::hideEmailError
-                    )
-                },
-                imeAction = ImeAction.Next
+                email = state.text, error = viewModelState.emailError, onEmailChange = {
+                    state.onTextChange(it, viewModelState.hideEmailError)
+                }, imeAction = ImeAction.Next
             )
 
             PasswordTextField(
-                password = state.password,
-                onPasswordChange = {
-                    state.onPasswordChange(
-                        password = it,
-                        hidePasswordError = viewModelState::hidePasswordError
-                    )
-                },
-                error = viewModelState.passwordError,
-                imeAction = ImeAction.Done
+                password = state.text2, onPasswordChange = {
+                    state.onText2Change(it, viewModelState.hidePasswordError)
+                }, error = viewModelState.passwordError, imeAction = ImeAction.Done
             )
 
             ForgotPasswordText(onForgotPasswordClick = onForgotPasswordClick)
@@ -68,7 +56,7 @@ fun SignInScreen(
                 passwordError = viewModelState.passwordError
             ), onClick = {
                 viewModel.signInWithEmailAndPassword(
-                    email = state.email, password = state.password
+                    email = state.text, password = state.text2
                 )
             })
             SimpleHeightSpacer(dp = 8)
@@ -78,7 +66,7 @@ fun SignInScreen(
             GoogleSignInButton(
                 signInWithGoogleEmail = viewModel::signInWithGoogleEmail,
                 enabled = viewModelState.googleButtonEnabled,
-                onGoogleSignInClick = viewModel::taskStart
+                onGoogleSignInClick = viewModel.taskStart
             )
         }
         SignUpText(onEmailSignUpClick)
@@ -127,19 +115,14 @@ private fun ForgotPasswordText(onForgotPasswordClick: () -> Unit) {
 class SignInScreenUIState(
     email: String = "",
     password: String = "",
-) : PasswordUIState(email, password) {
+) : TwoTextFiledState(email, password) {
 
     fun signInButtonEnabled(@StringRes emailError: Int?, @StringRes passwordError: Int?) =
-        email.isNotBlank() && emailError == null && password.isNotBlank() && passwordError == null
+        text.isNotBlank() && emailError == null && text2.isNotBlank() && passwordError == null
 
     companion object {
-        val Saver: Saver<SignInScreenUIState, *> = listSaver(save = {
-            listOf(
-                it.email, it.password
-            )
-        }, restore = {
-            SignInScreenUIState(it[0], it[1])
-        })
+        val Saver: Saver<SignInScreenUIState, *> = listSaver(save = { listOf(it.text, it.text2) },
+            restore = { SignInScreenUIState(it[0], it[1]) })
     }
 }
 

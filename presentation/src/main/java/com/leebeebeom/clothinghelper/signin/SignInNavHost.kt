@@ -31,7 +31,7 @@ fun SignInNavHost() {
                     onEmailSignUpClick = { navController.signNavigate(SignInDestinations.SIGN_UP) }
                 )
             }
-            composable(route = SignInDestinations.SIGN_UP) { SignUpScreen { navController.popBackStack() } }
+            composable(route = SignInDestinations.SIGN_UP) { SignUpScreen() }
             composable(route = SignInDestinations.RESET_PASSWORD) { ResetPasswordScreen { navController.popBackStack() } }
         }
     }

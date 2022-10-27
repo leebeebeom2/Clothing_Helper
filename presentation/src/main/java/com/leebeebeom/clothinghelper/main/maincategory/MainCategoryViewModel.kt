@@ -17,9 +17,9 @@ class MainCategoryViewModel @Inject constructor(
     val viewModelState = MainCategoryViewModelState()
 
     init {
-        loadAndGetSubCategoriesUseCase.allSubCategories.forEachIndexed { i, subCategories ->
+        loadAndGetSubCategoriesUseCase.allSubCategories.forEachIndexed { i, subCategoriesFlow ->
             viewModelScope.launch {
-                subCategories.collect {
+                subCategoriesFlow.collect {
                     viewModelState.categoriesSizeUpdate(i, it.size)
                 }
             }

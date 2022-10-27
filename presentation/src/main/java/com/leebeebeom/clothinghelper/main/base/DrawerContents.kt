@@ -146,3 +146,15 @@ fun getEssentialMenus() = listOf(
     EssentialMenu(R.string.see_all, R.drawable.ic_list, EssentialMenus.SEE_ALL),
     EssentialMenu(R.string.trash, R.drawable.ic_delete, EssentialMenus.TRASH)
 )
+
+enum class EssentialMenus{
+    MAIN_SCREEN, FAVORITE,SEE_ALL,TRASH
+}
+
+data class EssentialMenu(
+    val name: Int,
+    val drawable: Int,
+    val type: EssentialMenus
+)
+
+data class MainCategory(val name: Int, val type: SubCategoryParent)

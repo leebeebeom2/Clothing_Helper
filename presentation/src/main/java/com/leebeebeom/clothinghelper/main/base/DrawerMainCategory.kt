@@ -12,9 +12,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.leebeebeom.clothinghelper.base.DotProgressIndicator
 import com.leebeebeom.clothinghelper.main.subcategory.ExpandIcon
-import com.leebeebeom.clothinghelper.signin.base.DotProgress
-import com.leebeebeom.clothinghelperdomain.model.MainCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
 @Composable
@@ -22,14 +21,15 @@ fun DrawerMainCategory(
     mainCategory: MainCategory,
     subCategories: List<SubCategory>,
     isSubCategoriesLoading: Boolean,
-    onDrawerContentClick: (parentName: String) -> Unit,
+    onMainCategoryClick: (name: String) -> Unit,
+    onSubCategoryClick: (key:String) -> Unit,
 ) {
     var isExpand by rememberSaveable { mutableStateOf(false) }
 
     Column {
         DrawerContentRow(
             modifier = Modifier.heightIn(48.dp),
-            onDrawerContentClick = { onDrawerContentClick(mainCategory.type.name) }) {
+            onDrawerContentClick = { onMainCategoryClick(mainCategory.type.name) }) {
             DrawerContentText(
                 modifier = Modifier
                     .weight(1f)
@@ -37,21 +37,27 @@ fun DrawerMainCategory(
                 text = stringResource(id = mainCategory.name),
                 style = MaterialTheme.typography.subtitle1
             )
-            DrawerMainCategoryIcon(isSubCategoriesLoading, isExpand) { isExpand = !isExpand }
+            DrawerMainCategoryExpandIcon(
+                isSubCategoriesLoading = isSubCategoriesLoading,
+                isExpand = isExpand
+            ) { isExpand = !isExpand }
         }
-        SubCategories(isExpand, subCategories) {/*TODO*/ }
+        SubCategories(
+            isExpand = isExpand,
+            subCategories = subCategories,
+            onSubCategoryClick = onSubCategoryClick
+        )
     }
 }
 
 @Composable
-private fun DrawerMainCategoryIcon(
+private fun DrawerMainCategoryExpandIcon(
     isSubCategoriesLoading: Boolean,
     isExpand: Boolean,
     onExpandIconClick: () -> Unit
 ) {
-
     if (isSubCategoriesLoading)
-        DotProgress(
+        DotProgressIndicator(
             modifier = Modifier.padding(end = 12.dp),
             dotSize = 4.dp,
             color = MaterialTheme.colors.surface.copy(ContentAlpha.disabled)
@@ -64,7 +70,7 @@ private fun DrawerMainCategoryIcon(
 }
 
 @Composable
-private fun ColumnScope.SubCategories(
+private fun SubCategories(
     isExpand: Boolean,
     subCategories: List<SubCategory>,
     onSubCategoryClick: (key: String) -> Unit
@@ -78,7 +84,7 @@ private fun ColumnScope.SubCategories(
             Column {
                 for (subCategory in subCategories)
                     key(subCategory.key) {
-                        SubCategory(subCategory) { onSubCategoryClick(subCategory.key) }
+                        DrawerSubCategory(subCategory = subCategory) { onSubCategoryClick(subCategory.key) }
                     }
             }
         }
@@ -86,7 +92,7 @@ private fun ColumnScope.SubCategories(
 }
 
 @Composable
-private fun SubCategory(subCategory: SubCategory, onSubCategoryClick: () -> Unit) {
+private fun DrawerSubCategory(subCategory: SubCategory, onSubCategoryClick: () -> Unit) {
     DrawerContentRow(
         modifier = Modifier
             .heightIn(40.dp)

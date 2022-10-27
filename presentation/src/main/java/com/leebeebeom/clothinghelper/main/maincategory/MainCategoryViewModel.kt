@@ -64,8 +64,8 @@ class MainCategoryViewModelState {
         etcCategoriesSize = size
     }
 
-    fun getSubCategoriesSize(subCategoryParent: SubCategoryParent): Int {
-        return when (subCategoryParent) {
+    val getSubCategoriesSize = { subCategoryParent: SubCategoryParent ->
+        when (subCategoryParent) {
             SubCategoryParent.TOP -> topCategoriesSize
             SubCategoryParent.BOTTOM -> bottomCategoriesSize
             SubCategoryParent.OUTER -> outerCategoriesSize

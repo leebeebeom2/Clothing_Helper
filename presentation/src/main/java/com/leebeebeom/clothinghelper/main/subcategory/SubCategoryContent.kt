@@ -42,7 +42,7 @@ fun SubCategoryContent(
             key = { subCategory -> subCategory.key }) {
             SubCategoryCard(
                 subCategory = it,
-                onLongClick = onLongClick,
+                onLongClick = { onLongClick(it) },
                 isSelectMode = isSelectMode,
                 onSubCategoryClick = onSubCategoryClick,
                 allExpand = allExpand,

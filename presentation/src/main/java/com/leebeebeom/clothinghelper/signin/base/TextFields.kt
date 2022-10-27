@@ -47,9 +47,7 @@ fun PasswordTextField(
         text = password,
         onValueChange = onPasswordChange,
         error = error,
-        trailingIcon = {
-            VisibleIcon(isVisible) { isVisible = !isVisible }
-        },
+        trailingIcon = { VisibleIcon(isVisible) { isVisible = !isVisible } },
         visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(
             imeAction = imeAction,

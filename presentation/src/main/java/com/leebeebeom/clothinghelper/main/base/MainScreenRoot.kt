@@ -18,8 +18,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun MainScreenRoot(
     onSettingIconClick: () -> Unit,
-    onEssentialMenuClick: (name: String) -> Unit,
-    onMainCategoryClick: (name: String) -> Unit,
+    onEssentialMenuClick: (essentialMenu: EssentialMenus) -> Unit,
+    onMainCategoryClick: (mainCategoryName: String) -> Unit,
     onSubCategoryClick: (key: String) -> Unit,
     viewModel: MainScreenRootViewModel = hiltViewModel(),
     content: @Composable (

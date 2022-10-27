@@ -9,12 +9,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.SimpleToast
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
-import com.leebeebeom.clothinghelperdomain.model.EssentialMenu
-import com.leebeebeom.clothinghelperdomain.model.EssentialMenus
-import com.leebeebeom.clothinghelperdomain.model.MainCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -22,7 +18,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun MainScreenRoot(
     onSettingIconClick: () -> Unit,
-    onDrawerContentClick: (parentName: String) -> Unit,
+    onEssentialMenuClick: (name: String) -> Unit,
+    onMainCategoryClick: (name: String) -> Unit,
+    onSubCategoryClick: (key: String) -> Unit,
     viewModel: MainScreenRootViewModel = hiltViewModel(),
     content: @Composable (
         PaddingValues, getIsSubCategoriesLoading: (SubCategoryParent) -> Boolean
@@ -40,24 +38,31 @@ fun MainScreenRoot(
             drawerContent = {
                 DrawerContents(
                     user = viewModelState.user,
-                    onDrawerContentClick = {
-                        onDrawerContentClick(it)
+                    onEssentialMenuClick = {
+                        onEssentialMenuClick(it)
+                        state.onDrawerClose()
+                    },
+                    onMainCategoryClick = {
+                        onMainCategoryClick(it)
+                        state.onDrawerClose()
+                    },
+                    onSubCategoryClick = {
+                        onSubCategoryClick(it)
                         state.onDrawerClose()
                     },
                     onSettingIconClick = {
                         onSettingIconClick()
                         state.onDrawerClose()
                     },
-                    essentialMenus = state.essentialMenus,
-                    mainCategories = state.mainCategories,
-                    getSubCategories = viewModelState::getSubCategories,
-                    getIsSubCategoriesLoading = viewModelState::getIsSubCategoriesLoading
+                    getSubCategories = viewModelState.getSubCategories,
+                    getIsSubCategoriesLoading = viewModelState.getIsSubCategoriesLoading
                 )
             },
             drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
             drawerBackgroundColor = MaterialTheme.colors.primary,
-            content = { content(it, viewModelState::getIsSubCategoriesLoading) })
-        if (state.drawerState.isOpen) BackHandler(onBack = state::onDrawerClose)
+            content = { content(it, viewModelState.getIsSubCategoriesLoading) })
+
+        BackHandler(enabled = state.drawerState.isOpen, onBack = state::onDrawerClose)
     }
 }
 
@@ -68,19 +73,8 @@ class MainScreenUIState(
     val drawerState: DrawerState = scaffoldState.drawerState
 
     fun onDrawerClose() {
-        coroutineScope.launch {
-            drawerState.close()
-        }
+        coroutineScope.launch { drawerState.close() }
     }
-
-    val essentialMenus = listOf(
-        EssentialMenu(R.string.main_screen, R.drawable.ic_home, EssentialMenus.MAIN_SCREEN),
-        EssentialMenu(R.string.favorite, R.drawable.ic_star, EssentialMenus.FAVORITE),
-        EssentialMenu(R.string.see_all, R.drawable.ic_list, EssentialMenus.SEE_ALL),
-        EssentialMenu(R.string.trash, R.drawable.ic_delete, EssentialMenus.TRASH)
-    )
-
-    val mainCategories = getMainCategories()
 }
 
 @Composable
@@ -90,10 +84,3 @@ fun rememberMainScreenUIState(
 ) = remember {
     MainScreenUIState(scaffoldState, coroutineScope)
 }
-
-fun getMainCategories() = listOf(
-    MainCategory(R.string.top, SubCategoryParent.TOP),
-    MainCategory(R.string.bottom, SubCategoryParent.BOTTOM),
-    MainCategory(R.string.outer, SubCategoryParent.OUTER),
-    MainCategory(R.string.etc, SubCategoryParent.ETC)
-)

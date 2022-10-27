@@ -46,20 +46,11 @@ class MainScreenRootViewModel @Inject constructor(
     }
 }
 
-class MainNavHostViewModelState : BaseViewModelState() {
+class MainNavHostViewModelState : AllSubCategoriesViewModelState() {
     var user by mutableStateOf<User?>(null)
         private set
 
     val userUpdate = { user: User? -> this.user = user }
-
-    private val allSubCategories = List(4) { mutableStateOf(emptyList<SubCategory>()) }
-
-    fun subCategoriesUpdate(index: Int, subCategories: List<SubCategory>) {
-        allSubCategories[index].value = subCategories
-    }
-
-    val getSubCategories =
-        { subCategoryParent: SubCategoryParent -> allSubCategories[subCategoryParent.ordinal].value }
 
     var isSubCategoriesLoading by mutableStateOf(true)
         private set

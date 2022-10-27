@@ -80,15 +80,3 @@ fun OrDivider() {
         Divider(modifier = weightModifier)
     }
 }
-
-@Composable
-fun PopBackStack(
-    taskSuccess: Boolean,
-    popBackStack: () -> Unit,
-    popBackStackDone: () -> Unit
-) {
-    if (taskSuccess) {
-        popBackStack()
-        popBackStackDone()
-    }
-}

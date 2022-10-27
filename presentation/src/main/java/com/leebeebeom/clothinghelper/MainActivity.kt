@@ -29,7 +29,6 @@ const val TAG = "TAG"
 @HiltAndroidApp
 class ClothingHelper : Application()
 
-
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,10 +52,8 @@ fun MainActivityScreen(viewModel: MainActivityViewModel = hiltViewModel()) {
 }
 
 @HiltViewModel
-class MainActivityViewModel @Inject constructor(
-    getSignInStateUseCase: GetSignInStateUseCase
-) : ViewModel() {
-
+class MainActivityViewModel @Inject constructor(getSignInStateUseCase: GetSignInStateUseCase) :
+    ViewModel() {
     var isSignIn by mutableStateOf(false)
         private set
 

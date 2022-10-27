@@ -5,12 +5,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelper.signin.base.EmailViewModelState
 import com.leebeebeom.clothinghelper.signin.base.FirebaseErrorCode
 import com.leebeebeom.clothinghelper.signin.base.TaskSuccessViewModelState
+import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
 import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.usecase.user.ResetPasswordUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,36 +24,22 @@ class ResetPasswordViewModel @Inject constructor(
 
     fun sendResetPasswordEmail(email: String) {
         viewModelState.loadingOn()
-        resetPasswordUseCase(email, resetPasswordListener)
+        resetPasswordUseCase(email, resetPasswordListener) { viewModelState.loadingOff }
     }
 
     private val resetPasswordListener = object : FirebaseListener {
         override fun taskSuccess() {
             viewModelState.showToast(R.string.email_send_complete)
-            viewModelState.loadingOff()
             viewModelState.taskSuccess()
         }
 
-        override fun taskFailed(exception: Exception?) {
-            val firebaseAuthException = exception as? FirebaseAuthException
-
-            if (firebaseAuthException == null) {
-                viewModelState.showToast(R.string.unknown_error)
-                Log.d(TAG, "taskFailed: firebaseAuthException = null")
-            } else setError(firebaseAuthException.errorCode)
-            viewModelState.loadingOff()
-        }
-    }
-
-    private fun setError(errorCode: String) {
-        when (errorCode) {
-            FirebaseErrorCode.ERROR_INVALID_EMAIL -> viewModelState.showEmailError(R.string.error_invalid_email)
-            FirebaseErrorCode.ERROR_USER_NOT_FOUND -> viewModelState.showEmailError(R.string.error_user_not_found)
-            else -> {
-                viewModelState.showToast(R.string.unknown_error)
-                Log.d(TAG, "setError: $errorCode")
-            }
-        }
+        override fun taskFailed(exception: Exception?) =
+            setFireBaseError(
+                exception = exception,
+                showEmailError = viewModelState.showEmailError,
+                showPasswordError = {},
+                showToast = viewModelState.showToast
+            )
     }
 }
 

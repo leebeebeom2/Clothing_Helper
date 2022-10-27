@@ -25,6 +25,7 @@ class SubCategoryViewModel @Inject constructor(
     private val addSubCategoryUseCase: AddSubCategoryUseCase,
     private val getPreferencesAndToggleAllExpandUseCase: GetPreferencesAndToggleAllExpandUseCase
 ) : BaseSubCategoriesViewModel(loadAndGetSubCategoriesUseCase) {
+
     override val viewModelState = SubCategoryViewModelState()
 
     init {

@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.signin.base
+package com.leebeebeom.clothinghelper.base
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -16,13 +16,13 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun DotProgress(
+fun DotProgressIndicator(
     modifier: Modifier,
     dotSize: Dp,
     color: Color = MaterialTheme.colors.primary.copy(ContentAlpha.disabled)
 ) {
     val maxOffset = 4f
-    val delayUnit = 300 // you can change delay to change animation speed
+    val delayUnit = 300
 
     @Composable
     fun Dot(offset: Float) =

@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.base
+package com.leebeebeom.clothinghelper.main.subcategory
 
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable

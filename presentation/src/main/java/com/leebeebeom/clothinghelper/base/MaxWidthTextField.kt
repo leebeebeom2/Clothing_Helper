@@ -13,13 +13,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -41,7 +42,8 @@ fun MaxWidthTextField(
     trailingIcon: @Composable (() -> Unit)? = null,
     showKeyboardEnabled: Boolean = false,
     visualTransformation: VisualTransformation = VisualTransformation.None,
-    keyboardOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
+    keyboardOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+    onFocusChanged: (FocusState) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = FocusRequester()
@@ -50,7 +52,8 @@ fun MaxWidthTextField(
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .focusRequester(focusRequester),
+                .focusRequester(focusRequester = focusRequester)
+                .onFocusChanged(onFocusChanged = onFocusChanged),
             value = text,
             onValueChange = onValueChange,
             label = { Text(text = stringResource(id = label)) },
@@ -88,7 +91,10 @@ private fun ErrorText(@StringRes error: Int?) {
             ),
             expandFrom = Alignment.Bottom
         ),
-        exit = shrinkVertically(animationSpec = tween(durationMillis = 50), shrinkTowards = Alignment.Top)
+        exit = shrinkVertically(
+            animationSpec = tween(durationMillis = 50),
+            shrinkTowards = Alignment.Top
+        )
     ) {
         Text(
             modifier = Modifier.padding(start = 4.dp, top = 4.dp),

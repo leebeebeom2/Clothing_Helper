@@ -9,6 +9,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelper.main.base.BaseSubCategoriesViewModel
 import com.leebeebeom.clothinghelper.main.base.BaseSubCategoriesViewModelState
+import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.usecase.preferences.GetPreferencesAndToggleAllExpandUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.AddSubCategoryUseCase
@@ -59,4 +60,24 @@ class SubCategoryViewModelState : BaseSubCategoriesViewModelState() {
     fun updateAllExpand(allExpand: Boolean) {
         this.allExpand = allExpand
     }
+
+    var selectedSubCategories by mutableStateOf(setOf<SubCategory>())
+        private set
+
+    val onSelect = { subCategory: SubCategory ->
+        this.selectedSubCategories =
+            if (this.selectedSubCategories.contains(subCategory))
+                this.selectedSubCategories.taskAndReturn { it.remove(subCategory) }
+            else this.selectedSubCategories.taskAndReturn { it.add(subCategory) }
+    }
+
+    fun toggleAllSelect(subCategoryParent: SubCategoryParent) {
+        val subCategories = getSubCategories(subCategoryParent)
+
+        selectedSubCategories =
+            if (selectedSubCategories.size == subCategories.size) emptySet() else subCategories.toSet()
+    }
+
+    val clearSelectedSubCategories =
+        { selectedSubCategories = selectedSubCategories.taskAndReturn { it.clear() } }
 }

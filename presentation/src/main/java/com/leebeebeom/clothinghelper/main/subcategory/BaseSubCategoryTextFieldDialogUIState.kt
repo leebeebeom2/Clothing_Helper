@@ -33,9 +33,9 @@ open class BaseSubCategoryTextFieldDialogUIState(
 
     val positiveButtonEnabled get() = categoryName.isNotBlank() && error == null
 
-    fun onDismissDialog() {
-        showDialog = false
+    val onDismissDialog = {
+        this.showDialog = false
         categoryNameInit()
-        error = null
+        this.error = null
     }
 }

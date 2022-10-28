@@ -42,13 +42,19 @@ class UserRepositoryImpl : UserRepository {
         }
     }
 
-    override fun signIn(email: String, password: String, signInListener: FirebaseListener) {
+    override fun signIn(
+        email: String,
+        password: String,
+        signInListener: FirebaseListener,
+        taskFinish: () -> Unit
+    ) {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
                 val user = it.result.user.toUser()!!
                 signInSuccess(user)
                 signInListener.taskSuccess()
             } else signInListener.taskFailed(it.exception)
+            taskFinish()
         }
     }
 
@@ -58,7 +64,8 @@ class UserRepositoryImpl : UserRepository {
         name: String,
         signUpListener: FirebaseListener,
         updateNameListener: FirebaseListener,
-        pushInitialSubCategories: (uid: String) -> Unit
+        pushInitialSubCategories: (uid: String) -> Unit,
+        taskFinish: () -> Unit
     ) {
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
@@ -69,6 +76,7 @@ class UserRepositoryImpl : UserRepository {
                 signUpListener.taskSuccess()
                 updateName(updateNameListener, firebaseUser, name)
             } else signUpListener.taskFailed(it.exception)
+            taskFinish()
         }
     }
 
@@ -86,10 +94,15 @@ class UserRepositoryImpl : UserRepository {
             }
     }
 
-    override fun resetPasswordEmail(email: String, resetPasswordListener: FirebaseListener) {
+    override fun resetPasswordEmail(
+        email: String,
+        resetPasswordListener: FirebaseListener,
+        taskFinish: () -> Unit
+    ) {
         auth.sendPasswordResetEmail(email).addOnCompleteListener {
             if (it.isSuccessful) resetPasswordListener.taskSuccess()
             else resetPasswordListener.taskFailed(it.exception)
+            taskFinish()
         }
     }
 
@@ -100,7 +113,7 @@ class UserRepositoryImpl : UserRepository {
 
     private fun pushUser(user: User) =
         FirebaseDatabase.getInstance().reference.child(user.uid)
-            .child(DatabasePath.USER_INFO).setValue(user) // TODO 실패 처리
+            .child(DatabasePath.USER_INFO).setValue(user)
 
     override fun signOut() {
         auth.signOut()

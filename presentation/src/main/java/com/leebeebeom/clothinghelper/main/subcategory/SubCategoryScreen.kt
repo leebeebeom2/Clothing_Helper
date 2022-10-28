@@ -79,13 +79,13 @@ fun SubCategoryScreen(
                 subCategoryParent = state.subCategoryParent
             )
 
-            EditSubCategoryNameDialog(
-                initialCategoryName = state.selectedSubCategories.first().name,
-                showDialog = state.showEditSubCategoryNameDialog,
-                subCategories = viewModelState.getSubCategories(state.subCategoryParent),
-                onPositiveButtonClick = {/*TODO*/ },
-                onDismissDialog = state.dismissEditSubCategoryNameDialog
-            )
+            if (state.showEditSubCategoryNameDialog)
+                EditSubCategoryNameDialog(
+                    initialCategoryName = state.selectedSubCategories.first().name,
+                    subCategories = viewModelState.getSubCategories(state.subCategoryParent),
+                    onPositiveButtonClick = {/*TODO*/ },
+                    onDismissDialog = state.dismissEditSubCategoryNameDialog
+                )
         }
     }
 

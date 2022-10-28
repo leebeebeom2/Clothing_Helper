@@ -9,6 +9,7 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.SimpleIcon
@@ -33,7 +34,8 @@ fun AddCategoryDialogFab(
     }
 
     if (state.showDialog)
-        SubCategoryTextFieldDialog(onDismissDialog = state.onDismissDialog,
+        SubCategoryTextFieldDialog(
+            onDismissDialog = state.onDismissDialog,
             categoryName = state.categoryName,
             error = state.error,
             title = R.string.add_category,
@@ -44,7 +46,9 @@ fun AddCategoryDialogFab(
                     state.categoryName.text,
                     subCategoryParent
                 )
-            })
+            },
+            onFocusChanged = state.onFocusChanged
+        )
 }
 
 class AddCategoryDialogUIState(
@@ -57,10 +61,12 @@ class AddCategoryDialogUIState(
         showDialog = true
     }
 
+    val onFocusChanged = { focusState: FocusState -> onText1FocusChanged(focusState) }
+
     companion object {
         val Saver: Saver<AddCategoryDialogUIState, *> = listSaver(save = {
             listOf(
-                it.categoryName, it.error, it.showDialog
+                it.categoryName.text, it.error, it.showDialog
             )
         }, restore = {
             AddCategoryDialogUIState(it[0] as String, it[1] as? Int, it[2] as Boolean)

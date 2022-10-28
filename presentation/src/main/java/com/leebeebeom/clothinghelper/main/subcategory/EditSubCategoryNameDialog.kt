@@ -32,7 +32,8 @@ fun EditSubCategoryNameDialog(
             )
         },
         positiveButtonEnabled = state.positiveButtonEnabled,
-        onPositiveButtonClick = { onPositiveButtonClick(state.categoryName.text) }
+        onPositiveButtonClick = { onPositiveButtonClick(state.categoryName.text) },
+        onFocusChanged = {} // TODO 구현
     )
 }
 

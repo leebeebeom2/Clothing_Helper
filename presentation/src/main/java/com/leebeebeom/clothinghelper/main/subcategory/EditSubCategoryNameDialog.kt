@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.text.input.TextFieldValue
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
@@ -31,7 +32,7 @@ fun EditSubCategoryNameDialog(
             )
         },
         positiveButtonEnabled = state.positiveButtonEnabled,
-        onPositiveButtonClick = { onPositiveButtonClick(state.categoryName) }
+        onPositiveButtonClick = { onPositiveButtonClick(state.categoryName.text) }
     )
 }
 
@@ -41,7 +42,8 @@ class EditSubCategoryNameDialogUIState(
     showDialog: Boolean = false // 미사용
 ) : BaseSubCategoryTextFieldDialogUIState(initialCategoryName, error, showDialog) {
 
-    override val text: MutableState<String> = mutableStateOf(initialCategoryName)
+    override val text: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue(
+        initialCategoryName))
 
     companion object {
         val Saver: Saver<EditSubCategoryNameDialogUIState, *> = listSaver(

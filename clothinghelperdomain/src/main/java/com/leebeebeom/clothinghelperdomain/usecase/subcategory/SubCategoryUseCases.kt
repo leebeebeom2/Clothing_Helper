@@ -1,7 +1,6 @@
 package com.leebeebeom.clothinghelperdomain.usecase.subcategory
 
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
-import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
 
 class LoadSubCategoriesUseCase(private val subCategoryRepository: SubCategoryRepository) {
@@ -37,10 +36,10 @@ class AddSubCategoryUseCase(private val subCategoryRepository: SubCategoryReposi
     operator fun invoke(
         subCategoryParent: SubCategoryParent,
         name: String,
-        addSubCategoryListener: FirebaseListener
+        taskFailed: (Exception?) -> Unit
     ) = subCategoryRepository.addSubCategory(
         subCategoryParent = subCategoryParent,
         name = name,
-        addSubCategoryListener
+        taskFailed
     )
 }

@@ -2,6 +2,7 @@ package com.leebeebeom.clothinghelper.main.subcategory
 
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.input.TextFieldValue
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.DialogRoot
 import com.leebeebeom.clothinghelper.base.DialogTextButtons
@@ -12,9 +13,9 @@ import com.leebeebeom.clothinghelper.base.DialogTitle
 fun SubCategoryTextFieldDialog(
     onDismissDialog: () -> Unit,
     @StringRes title: Int,
-    categoryName: String,
+    categoryName: TextFieldValue,
     error: Int?,
-    onCategoryNameChange: (String) -> Unit,
+    onCategoryNameChange: (TextFieldValue) -> Unit,
     positiveButtonEnabled: Boolean,
     onPositiveButtonClick: () -> Unit
 ) {

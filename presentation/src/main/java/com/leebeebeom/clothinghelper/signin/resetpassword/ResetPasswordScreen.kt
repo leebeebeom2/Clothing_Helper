@@ -43,7 +43,7 @@ fun ResetPasswordScreen(
 
         EmailTextField(
             email = state.text,
-            onEmailChange = { state.onTextChange(it, viewModelState.hideEmailError) },
+            onEmailChange = { state.onEmailChange(it, viewModelState.hideEmailError) },
             error = viewModelState.emailError,
             imeAction = ImeAction.Done
         )
@@ -69,6 +69,9 @@ fun PopBackStack(
 }
 
 class ResetPasswordScreenUIState(email: String = "") : OneTextFiledState(email) {
+
+    fun onEmailChange(email: String, hideEmailError: () -> Unit) =
+        super.onTextChange(email, hideEmailError)
 
     fun submitButtonEnabled(@StringRes emailError: Int?) = text.isNotBlank() && emailError == null
 

@@ -1,26 +1,21 @@
 package com.leebeebeom.clothinghelperdomain.usecase.subcategory
 
-import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
 
 class LoadSubCategoriesUseCase(private val subCategoryRepository: SubCategoryRepository) {
     suspend operator fun invoke(
-        onSubCategoriesLoadingDone: List<() -> Unit>,
-        onSubCategoriesLoadingCancelled: List<(Int, String) -> Unit>
+        onSubCategoriesLoadingDone: () -> Unit,
+        onSubCategoriesLoadingCancelled: (Int, String) -> Unit
     ) = subCategoryRepository.loadSubCategories(
         onSubCategoriesLoadingDone,
         onSubCategoriesLoadingCancelled
     )
-
 }
 
 class GetSubCategoriesUseCase(subCategoryRepository: SubCategoryRepository) {
-    val topSubCategories = subCategoryRepository.topSubCategories
-    val bottomSubCategories = subCategoryRepository.bottomSubCategories
-    val outerSubCategories = subCategoryRepository.outerSubCategories
-    val etcSubCategories = subCategoryRepository.etcSubCategories
+    val allSubCategories = subCategoryRepository.allSubCategories
 }
 
 class LoadAndGetSubCategoriesUseCase(
@@ -28,17 +23,14 @@ class LoadAndGetSubCategoriesUseCase(
     getSubCategoriesUseCase: GetSubCategoriesUseCase
 ) {
     suspend fun loadSubCategories(
-        onSubCategoriesLoadingDone: List<() -> Unit>,
-        onSubCategoriesLoadingCancelled: List<(Int, String) -> Unit>
+        onSubCategoriesLoadingDone: () -> Unit,
+        onSubCategoriesLoadingCancelled: (errorCode: Int, message: String) -> Unit
     ) = loadSubCategoriesUseCase(
         onSubCategoriesLoadingDone,
         onSubCategoriesLoadingCancelled
     )
 
-    val topSubCategories = getSubCategoriesUseCase.topSubCategories
-    val bottomSubCategories = getSubCategoriesUseCase.bottomSubCategories
-    val outerSubCategories = getSubCategoriesUseCase.outerSubCategories
-    val etcSubCategories = getSubCategoriesUseCase.etcSubCategories
+    val allSubCategories = getSubCategoriesUseCase.allSubCategories
 }
 
 class AddSubCategoryUseCase(private val subCategoryRepository: SubCategoryRepository) {
@@ -51,33 +43,4 @@ class AddSubCategoryUseCase(private val subCategoryRepository: SubCategoryReposi
         name = name,
         addSubCategoryListener
     )
-}
-
-class DeleteSubCategoryUseCase(private val subCategoryRepository: SubCategoryRepository) {
-    operator fun invoke(subCategory: SubCategory, deleteSubCategoryListener: FirebaseListener) =
-        subCategoryRepository.deleteSubCategory(
-            subCategory = subCategory,
-            deleteSubCategoryListener = deleteSubCategoryListener
-        )
-}
-
-class AddAndDeleteSubCategoryUseCase(
-    private val addSubCategoryUseCase: AddSubCategoryUseCase,
-    private val deleteSubCategoryUseCase: DeleteSubCategoryUseCase
-) {
-    fun addSubCategory(
-        subCategoryParent: SubCategoryParent,
-        name: String,
-        addSubCategoryListener: FirebaseListener
-    ) = addSubCategoryUseCase(
-        subCategoryParent = subCategoryParent,
-        name = name,
-        addSubCategoryListener = addSubCategoryListener
-    )
-
-    fun deleteSubCategory(subCategory: SubCategory, deleteSubCategoryListener: FirebaseListener) =
-        deleteSubCategoryUseCase(
-            subCategory = subCategory,
-            deleteSubCategoryListener = deleteSubCategoryListener
-        )
 }

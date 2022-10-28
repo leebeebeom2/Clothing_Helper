@@ -13,7 +13,7 @@ fun SubCategoryTextFieldDialog(
     onDismissDialog: () -> Unit,
     @StringRes title: Int,
     categoryName: String,
-    error: Int? = null,
+    error: Int?,
     onCategoryNameChange: (String) -> Unit,
     positiveButtonEnabled: Boolean,
     onPositiveButtonClick: () -> Unit

@@ -55,10 +55,11 @@ fun SubCategoryBottomAppBar(
                 modifier = Modifier.offset((-8).dp, 1.dp)
             )
             Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.End) {
-                AnimatedVisibility( // TODO 확인
+                val iconDuration = 200
+                AnimatedVisibility(
                     visible = selectedSubCategoriesSize == 1,
-                    enter = scaleIn(),
-                    exit = scaleOut()
+                    enter = scaleIn(tween(iconDuration)),
+                    exit = scaleOut(tween(iconDuration))
                 ) {
                     BottomAppBarIcon(
                         onClick = onEditSubCategoryNameClick,
@@ -66,10 +67,10 @@ fun SubCategoryBottomAppBar(
                         text = R.string.change_name
                     )
                 }
-                AnimatedVisibility( // TODO 확인
+                AnimatedVisibility(
                     visible = selectedSubCategoriesSize > 0,
-                    enter = scaleIn(),
-                    exit = scaleOut()
+                    enter = scaleIn(tween(iconDuration)),
+                    exit = scaleOut(tween(iconDuration))
                 ) {
                     BottomAppBarIcon(
                         onClick = { /*TODO*/ },

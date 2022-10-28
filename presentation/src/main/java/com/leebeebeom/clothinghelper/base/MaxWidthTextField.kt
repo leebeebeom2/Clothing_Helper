@@ -16,16 +16,19 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
+import kotlinx.coroutines.delay
 
 @Composable
 fun MaxWidthTextField(
@@ -95,9 +98,14 @@ private fun ErrorText(@StringRes error: Int?) {
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun ShowKeyboard(focusRequester: FocusRequester) { // TODO 확인
+fun ShowKeyboard(focusRequester: FocusRequester) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
+        delay(100)
+        keyboardController?.show()
     }
 }

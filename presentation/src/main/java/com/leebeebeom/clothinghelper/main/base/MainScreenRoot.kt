@@ -15,6 +15,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 /*
+제스쳐로 두로어 열리는 지 확인
+
 헤더에 유저 이름, 이메일 표시 확인
 
 최초 구동 시 로딩 확인

@@ -14,6 +14,23 @@ import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/*
+헤더에 유저 이름, 이메일 표시 확인
+
+최초 구동 시 로딩 확인
+
+설정 아이콘 클릭 시 리플 확인, 세팅 스크린으로 이동 확인
+드로어 아이템 클릭 시 드로어 닫히는 지 확인
+
+에센셜 메뉴 클릭 시 이동 확인 (메인 메뉴 빼고 아직 미구현)
+
+메인 카테고리 클릭 시 이동 확인
+서브 카테고리 클릭 시 이동 확인(미구현)
+
+메인 카테고리 익스팬드 아이콘 로테이션 및 동작 확인
+ 
+ */
+
 @Composable
 fun MainScreenRoot(
     onSettingIconClick: () -> Unit,

@@ -30,28 +30,28 @@ fun SignUpScreen(
         toastShown = viewModelState.toastShown
     ) {
         EmailTextField(
-            email = state.text,
-            onEmailChange = { state.onTextChange(it, viewModelState.hideEmailError) },
+            email = state.email,
+            onEmailChange = { state.onEmailChange(it, viewModelState.hideEmailError) },
             error = viewModelState.emailError,
             imeAction = ImeAction.Next
         )
 
         MaxWidthTextField(
             label = R.string.name,
-            text = state.text2,
-            onValueChange = { state.onText2Change(it) {} },
+            text = state.name,
+            onValueChange = state.onNameChange,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
         )
 
         PasswordTextField(
-            password = state.text3,
+            password = state.password,
             onPasswordChange = state::onPasswordChange,
             error = state.passwordError,
             imeAction = ImeAction.Next
         )
 
         PasswordTextField(
-            password = state.text4,
+            password = state.passwordConfirm,
             onPasswordChange = state::onPasswordConfirmChange,
             error = state.passwordConfirmError,
             imeAction = ImeAction.Done,
@@ -62,9 +62,9 @@ fun SignUpScreen(
             enabled = state.submitButtonEnabled(emailError = viewModelState.emailError),
             onClick = {
                 viewModel.signUpWithEmailAndPassword(
-                    email = state.text,
-                    name = state.text2,
-                    password = state.text3
+                    email = state.email,
+                    name = state.name,
+                    password = state.password
                 )
             })
         SimpleHeightSpacer(dp = 8)
@@ -87,6 +87,10 @@ class SignUpScreenUIState(
     @StringRes passwordError: Int? = null,
     @StringRes passwordConfirmError: Int? = null
 ) : FourTextFieldState(email, name, password, passwordConfirm) {
+    val email get() = text.value
+    val name get() = text2.value
+    val password get() = text3.value
+    val passwordConfirm get() = text4.value
 
     var passwordError: Int? by mutableStateOf(passwordError)
         private set
@@ -97,6 +101,11 @@ class SignUpScreenUIState(
     private val hidePasswordError = { this.passwordError = null }
     private val showPasswordConfirmError = { error: Int? -> this.passwordConfirmError = error }
     private val hidePasswordConfirmError = { this.passwordConfirmError = null }
+
+    fun onEmailChange(email: String, hideEmailError: () -> Unit) =
+        super.onTextChange(email, hideEmailError)
+
+    val onNameChange = { name: String -> super.onText2Change(name) {} }
 
     fun onPasswordChange(password: String) {
         super.onText3Change(password, hidePasswordError)
@@ -112,25 +121,25 @@ class SignUpScreenUIState(
     }
 
     private fun passwordSameCheck() {
-        if (text4.isNotBlank()) {
+        if (passwordConfirm.isNotBlank()) {
             if (text3 != text4) showPasswordConfirmError(R.string.error_password_confirm_not_same)
             else hidePasswordConfirmError()
         }
     }
 
     fun submitButtonEnabled(@StringRes emailError: Int?) =
-        text.isNotBlank() && emailError == null &&
-                text2.isNotBlank() &&
-                text3.isNotBlank() && passwordError == null &&
-                text4.isNotBlank() && passwordConfirmError == null
+        email.isNotBlank() && emailError == null &&
+                name.isNotBlank() &&
+                password.isNotBlank() && passwordError == null &&
+                passwordConfirm.isNotBlank() && passwordConfirmError == null
 
     companion object {
         val Saver: Saver<SignUpScreenUIState, *> = listSaver(save = {
             listOf(
-                it.text,
-                it.text2,
-                it.text3,
-                it.text4,
+                it.email,
+                it.name,
+                it.password,
+                it.passwordConfirm,
                 it.passwordError,
                 it.passwordConfirmError
             )

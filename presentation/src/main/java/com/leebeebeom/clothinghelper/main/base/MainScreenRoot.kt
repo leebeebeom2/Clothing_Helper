@@ -4,9 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.base.SimpleToast
@@ -30,7 +28,10 @@ import kotlinx.coroutines.launch
 서브 카테고리 클릭 시 이동 확인(미구현)
 
 메인 카테고리 익스팬드 아이콘 로테이션 및 동작 확인
- 
+
+드로어가 열려있을때 뒤로 가기 시 드로어 닫히는지 확인
+
+TODO 현재 메인 제외 다른 페이지에서 드로어 열려있을때 뒤로가기 누르면 팝백스택됨
  */
 
 @Composable

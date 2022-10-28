@@ -3,6 +3,7 @@ package com.leebeebeom.clothinghelper.main.subcategory
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.input.TextFieldValue
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.signin.base.OneTextFiledState
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
@@ -19,15 +20,15 @@ open class BaseSubCategoryTextFieldDialogUIState(
 
     private val hideCategoryNameError = { this.error = null }
 
-    private val categoryNameInit = { this.text.value = "" }
+    private val categoryNameInit = { this.text.value = TextFieldValue("") }
 
-    fun onCategoryNameChange(newName: String, subCategories: List<SubCategory>) {
+    fun onCategoryNameChange(newName: TextFieldValue, subCategories: List<SubCategory>) {
         super.onTextChange(newName, hideCategoryNameError)
-        if (subCategories.map { it.name }.contains(newName)) error =
+        if (subCategories.map { it.name }.contains(newName.text)) error =
             R.string.error_same_category_name
     }
 
-    val positiveButtonEnabled get() = categoryName.isNotBlank() && error == null
+    val positiveButtonEnabled get() = categoryName.text.isNotBlank() && error == null
 
     val onDismissDialog = {
         this.showDialog = false

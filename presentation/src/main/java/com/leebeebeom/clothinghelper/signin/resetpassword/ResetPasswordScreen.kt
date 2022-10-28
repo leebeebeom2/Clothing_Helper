@@ -20,6 +20,21 @@ import com.leebeebeom.clothinghelper.signin.base.EmailTextField
 import com.leebeebeom.clothinghelper.signin.base.OneTextFiledState
 import com.leebeebeom.clothinghelper.signin.base.SignInBaseRoot
 
+/*
+이메일 필드가 비어있거나 에러 메세지 표시 중일 경우 확인 버튼 비활성화
+에러가 표시중인 경우 텍스트가 변경되면 에러 숨김
+
+확인 버튼 클릭 시 로딩화면 출력, 끝나면 로딩화면 숨김
+
+이메일 형식이 올바르지 않은 경우 "이메일 형식이 올바르지 않아요" 에러 표시
+이메일을 찾을 수 없는 경우 "이메일을 찾을 수 없어요" 에러 표시
+
+정상적으로 이메일이 발송된 경우 "이메일이 전송되었습니다" 토스트 출력
+로그인 화면으로 이동
+
+//TODO 필드에 포커스 잡힐때 확인 버튼이 보이지 않아서 불편함이 있음
+ */
+
 @Composable
 fun ResetPasswordScreen(
     viewModel: ResetPasswordViewModel = hiltViewModel(),

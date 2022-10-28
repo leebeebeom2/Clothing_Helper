@@ -83,10 +83,10 @@ fun SubCategoryScreen(
 
     if (editSubCategoryNameDialogUIState.showDialog)
         EditSubCategoryNameDialog(
-            categoryName = editSubCategoryNameDialogUIState.text,
+            categoryName = editSubCategoryNameDialogUIState.categoryName,
             error = editSubCategoryNameDialogUIState.error,
             onCategoryNameChange = {
-                editSubCategoryNameDialogUIState.onTextChange(
+                editSubCategoryNameDialogUIState.onCategoryNameChange(
                     it,
                     viewModelState.getSubCategories(state.subCategoryParent)
                 )
@@ -175,8 +175,9 @@ class EditSubCategoryNameDialogUIState(
     error: Int? = null,
     showDialog: Boolean = false
 ) : BaseSubCategoryTextFieldDialogUIState(categoryName, error, showDialog) {
+
     fun showDialog(categoryName: String) {
-        text = categoryName
+        setCategoryName(categoryName)
         showDialog = true
     }
 
@@ -184,7 +185,7 @@ class EditSubCategoryNameDialogUIState(
         val Saver: Saver<EditSubCategoryNameDialogUIState, *> = listSaver(
             save = {
                 listOf(
-                    it.text,
+                    it.categoryName,
                     it.error,
                     it.showDialog
                 )

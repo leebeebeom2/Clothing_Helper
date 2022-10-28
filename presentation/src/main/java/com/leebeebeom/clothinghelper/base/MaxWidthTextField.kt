@@ -87,7 +87,7 @@ private fun ErrorText(@StringRes error: Int?) {
             ),
             expandFrom = Alignment.Bottom
         ),
-        exit = shrinkVertically(animationSpec = tween(durationMillis = 200), shrinkTowards = Alignment.Top)
+        exit = shrinkVertically(animationSpec = tween(durationMillis = 50), shrinkTowards = Alignment.Top)
     ) {
         Text(
             modifier = Modifier.padding(start = 4.dp, top = 4.dp),

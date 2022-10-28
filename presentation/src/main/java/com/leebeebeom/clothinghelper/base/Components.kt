@@ -66,8 +66,8 @@ fun MaxWidthButton(
 }
 
 @Composable
-fun CenterDotProgressIndicator() {
-    Surface(color = Disabled) {
+fun CenterDotProgressIndicator(backGroundColor: Color = Disabled) {
+    Surface(color = backGroundColor) {
         Box(modifier = Modifier
             .fillMaxSize()
             .clickable(enabled = false) { }) {

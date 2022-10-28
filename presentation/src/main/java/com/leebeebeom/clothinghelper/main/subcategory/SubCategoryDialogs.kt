@@ -2,6 +2,7 @@ package com.leebeebeom.clothinghelper.main.subcategory
 
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.text.input.TextFieldValue
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.DialogRoot
@@ -17,7 +18,8 @@ fun SubCategoryTextFieldDialog(
     error: Int?,
     onCategoryNameChange: (TextFieldValue) -> Unit,
     positiveButtonEnabled: Boolean,
-    onPositiveButtonClick: () -> Unit
+    onPositiveButtonClick: () -> Unit,
+    onFocusChanged: (FocusState) -> Unit
 ) {
     DialogRoot(onDismissDialog = onDismissDialog) {
         DialogTitle(text = title)
@@ -26,7 +28,8 @@ fun SubCategoryTextFieldDialog(
             placeHolder = R.string.category_place_holder,
             text = categoryName,
             error = error,
-            onTextChange = onCategoryNameChange
+            onTextChange = onCategoryNameChange,
+            onFocusChanged = onFocusChanged
         )
         DialogTextButtons(
             positiveButtonEnabled = positiveButtonEnabled,

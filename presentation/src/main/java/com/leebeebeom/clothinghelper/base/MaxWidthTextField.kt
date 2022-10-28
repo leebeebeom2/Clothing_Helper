@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
@@ -34,8 +35,8 @@ import kotlinx.coroutines.delay
 fun MaxWidthTextField(
     @StringRes label: Int,
     @StringRes placeholder: Int = R.string.empty,
-    text: String,
-    onValueChange: (String) -> Unit,
+    text: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
     @StringRes error: Int? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     showKeyboardEnabled: Boolean = false,

@@ -2,6 +2,8 @@ package com.leebeebeom.clothinghelper.signin.base
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.focus.FocusState
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 
 private fun baseOnTextChange(
@@ -13,11 +15,25 @@ private fun baseOnTextChange(
     hideTextError()
 }
 
+private fun baseOnFocusChanged(
+    _text: MutableState<TextFieldValue>,
+    focusState: FocusState
+) {
+    if (focusState.hasFocus)
+        _text.value = _text.value.copy(
+            selection = TextRange(_text.value.text.length)
+        )
+}
+
 open class OneTextFiledState(text: String = "") {
     protected open val text = mutableStateOf(TextFieldValue(text))
 
     protected val onTextChange = { newText: TextFieldValue, hideTextError: () -> Unit ->
         baseOnTextChange(this.text, newText, hideTextError)
+    }
+
+    protected val onText1FocusChanged = { focusState: FocusState ->
+        baseOnFocusChanged(this.text, focusState)
     }
 }
 
@@ -27,6 +43,10 @@ open class TwoTextFiledState(text: String = "", text2: String = "") :
 
     protected val onText2Change = { newText2: TextFieldValue, hideText2Error: () -> Unit ->
         baseOnTextChange(this.text2, newText2, hideText2Error)
+    }
+
+    protected val onText2FocusChanged = { focusState: FocusState ->
+        baseOnFocusChanged(this.text2, focusState)
     }
 }
 
@@ -46,5 +66,13 @@ open class FourTextFieldState(
 
     protected val onText4Change = { newText4: TextFieldValue, hideText4Error: () -> Unit ->
         baseOnTextChange(this.text4, newText4, hideText4Error)
+    }
+
+    protected val onText3FocusChanged = { focusState: FocusState ->
+        baseOnFocusChanged(this.text3, focusState)
+    }
+
+    protected val onText4FocusChanged = { focusState: FocusState ->
+        baseOnFocusChanged(this.text4, focusState)
     }
 }

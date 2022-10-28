@@ -32,7 +32,7 @@ open class OneTextFiledState(text: String = "") {
         baseOnTextChange(this.text, newText, hideTextError)
     }
 
-    protected val onText1FocusChanged = { focusState: FocusState ->
+    protected open val onText1FocusChanged = { focusState: FocusState ->
         baseOnFocusChanged(this.text, focusState)
     }
 }

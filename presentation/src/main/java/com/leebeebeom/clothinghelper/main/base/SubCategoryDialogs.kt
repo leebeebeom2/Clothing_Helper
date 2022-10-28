@@ -25,7 +25,7 @@ fun SubCategoryTextFieldDialog(
             placeHolder = R.string.category_place_holder,
             text = categoryName,
             error = error,
-            onCategoryNameChange = onCategoryNameChange
+            onTextChange = onCategoryNameChange
         )
         DialogTextButtons(
             positiveButtonEnabled = positiveButtonEnabled,

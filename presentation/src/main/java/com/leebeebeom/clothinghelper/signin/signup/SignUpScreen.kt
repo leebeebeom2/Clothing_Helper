@@ -10,6 +10,7 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.MaxWidthButton
@@ -91,9 +92,9 @@ fun SignUpScreen(
             enabled = state.submitButtonEnabled(emailError = viewModelState.emailError),
             onClick = {
                 viewModel.signUpWithEmailAndPassword(
-                    email = state.email,
-                    name = state.name,
-                    password = state.password
+                    email = state.email.text,
+                    name = state.name.text,
+                    password = state.password.text
                 )
             })
         SimpleHeightSpacer(dp = 8)
@@ -131,44 +132,44 @@ class SignUpScreenUIState(
     private val showPasswordConfirmError = { error: Int? -> this.passwordConfirmError = error }
     private val hidePasswordConfirmError = { this.passwordConfirmError = null }
 
-    fun onEmailChange(email: String, hideEmailError: () -> Unit) =
+    fun onEmailChange(email: TextFieldValue, hideEmailError: () -> Unit) =
         super.onTextChange(email, hideEmailError)
 
-    val onNameChange = { name: String -> super.onText2Change(name) {} }
+    val onNameChange = { name: TextFieldValue -> super.onText2Change(name) {} }
 
-    fun onPasswordChange(password: String) {
+    fun onPasswordChange(password: TextFieldValue) {
         super.onText3Change(password, hidePasswordError)
-        if (password.isNotBlank()) {
+        if (password.text.isNotBlank()) {
             passwordSameCheck()
-            if (password.length < 6) showPasswordError(R.string.error_weak_password)
+            if (password.text.length < 6) showPasswordError(R.string.error_weak_password)
         }
     }
 
-    fun onPasswordConfirmChange(passwordConfirm: String) {
+    fun onPasswordConfirmChange(passwordConfirm: TextFieldValue) {
         super.onText4Change(passwordConfirm, hidePasswordConfirmError)
         passwordSameCheck()
     }
 
     private fun passwordSameCheck() {
-        if (passwordConfirm.isNotBlank()) {
+        if (passwordConfirm.text.isNotBlank()) {
             if (password != passwordConfirm) showPasswordConfirmError(R.string.error_password_confirm_not_same)
             else hidePasswordConfirmError()
         }
     }
 
     fun submitButtonEnabled(@StringRes emailError: Int?) =
-        email.isNotBlank() && emailError == null &&
-                name.isNotBlank() &&
-                password.isNotBlank() && passwordError == null &&
-                passwordConfirm.isNotBlank() && passwordConfirmError == null
+        email.text.isNotBlank() && emailError == null &&
+                name.text.isNotBlank() &&
+                password.text.isNotBlank() && passwordError == null &&
+                passwordConfirm.text.isNotBlank() && passwordConfirmError == null
 
     companion object {
         val Saver: Saver<SignUpScreenUIState, *> = listSaver(save = {
             listOf(
-                it.email,
-                it.name,
-                it.password,
-                it.passwordConfirm,
+                it.email.text,
+                it.name.text,
+                it.password.text,
+                it.passwordConfirm.text,
                 it.passwordError,
                 it.passwordConfirmError
             )

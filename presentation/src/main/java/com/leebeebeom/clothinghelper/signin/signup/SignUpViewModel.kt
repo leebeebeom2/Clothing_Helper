@@ -22,7 +22,7 @@ class SignUpViewModel @Inject constructor(
         viewModelState.loadingOn()
         signUpUseCase(
             email, password, name, signUpListener, updateNameListener
-        ) { viewModelState.loadingOff }
+        ) { viewModelState.loadingOff() }
     }
 
     private val signUpListener = object : FirebaseListener {

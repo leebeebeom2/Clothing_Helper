@@ -10,7 +10,6 @@ import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelper.main.base.BaseSubCategoriesViewModel
 import com.leebeebeom.clothinghelper.main.base.BaseSubCategoriesViewModelState
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
-import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.usecase.preferences.GetPreferencesAndToggleAllExpandUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.AddSubCategoryUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.LoadAndGetSubCategoriesUseCase

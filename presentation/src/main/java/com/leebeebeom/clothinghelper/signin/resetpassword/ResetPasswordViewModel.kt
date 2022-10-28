@@ -1,14 +1,11 @@
 package com.leebeebeom.clothinghelper.signin.resetpassword
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelper.signin.base.EmailViewModelState
-import com.leebeebeom.clothinghelper.signin.base.FirebaseErrorCode
 import com.leebeebeom.clothinghelper.signin.base.TaskSuccessViewModelState
 import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
 import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener

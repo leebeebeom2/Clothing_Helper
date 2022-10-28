@@ -3,7 +3,10 @@ package com.leebeebeom.clothinghelper.main.base
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -22,7 +25,7 @@ fun DrawerMainCategory(
     subCategories: List<SubCategory>,
     isSubCategoriesLoading: Boolean,
     onMainCategoryClick: (mainCategoryName: String) -> Unit,
-    onSubCategoryClick: (key:String) -> Unit,
+    onSubCategoryClick: (key: String) -> Unit,
 ) {
     var isExpand by rememberSaveable { mutableStateOf(false) }
 
@@ -84,7 +87,11 @@ private fun SubCategories(
             Column {
                 for (subCategory in subCategories)
                     key(subCategory.key) {
-                        DrawerSubCategory(subCategory = subCategory) { onSubCategoryClick(subCategory.key) }
+                        DrawerSubCategory(subCategory = subCategory) {
+                            onSubCategoryClick(
+                                subCategory.key
+                            )
+                        }
                     }
             }
         }

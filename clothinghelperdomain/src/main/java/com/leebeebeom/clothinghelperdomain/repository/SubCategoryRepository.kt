@@ -2,7 +2,6 @@ package com.leebeebeom.clothinghelperdomain.repository
 
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
-import jdk.internal.loader.AbstractClassLoaderValue.Sub
 import kotlinx.coroutines.flow.StateFlow
 
 interface SubCategoryRepository {
@@ -18,6 +17,6 @@ interface SubCategoryRepository {
     fun addSubCategory(
         subCategoryParent: SubCategoryParent,
         name: String,
-        taskFailed:(Exception?)->Unit
+        taskFailed: (Exception?) -> Unit
     )
 }

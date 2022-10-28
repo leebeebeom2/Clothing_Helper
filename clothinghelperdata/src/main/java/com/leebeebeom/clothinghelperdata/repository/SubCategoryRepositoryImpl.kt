@@ -1,12 +1,14 @@
 package com.leebeebeom.clothinghelperdata.repository
 
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
-import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
 import com.leebeebeom.clothinghelperdomain.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -63,7 +65,7 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
     }
 
     override fun addSubCategory(
-        subCategoryParent: SubCategoryParent, name: String, taskFailed: (Exception?)->Unit
+        subCategoryParent: SubCategoryParent, name: String, taskFailed: (Exception?) -> Unit
     ) {
         val key = root.getSubCategoriesRef(user.value!!.uid).push().key
         if (key == null) {

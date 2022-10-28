@@ -82,7 +82,8 @@ fun MainNavHostWithArg(
             route = MainDestinations.SubCategory.routeWithArg,
             arguments = MainDestinations.SubCategory.arguments
         ) { entry ->
-            val mainCategoryName = entry.arguments?.getString(MainDestinations.SubCategory.mainCategoryName)!!
+            val mainCategoryName =
+                entry.arguments?.getString(MainDestinations.SubCategory.mainCategoryName)!!
             SubCategoryScreen(
                 mainCategoryName = mainCategoryName,
                 isSubCategoriesLoading = isSubCategoriesLoading

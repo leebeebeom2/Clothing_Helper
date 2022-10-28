@@ -32,11 +32,19 @@ fun AddCategoryDialogFab(
         SimpleIcon(drawable = R.drawable.ic_add)
     }
 
-    if (state.showDialog) SubCategoryTextFieldDialog(onDismissDialog = state.onDismissDialog,
-        title = R.string.add_category,
-        onCategoryNameChange = { state.onCategoryNameChange(it, subCategories) },
-        positiveButtonEnabled = state.positiveButtonEnabled,
-        onPositiveButtonClick = { onPositiveButtonClick(state.categoryName, subCategoryParent) })
+    if (state.showDialog)
+        SubCategoryTextFieldDialog(onDismissDialog = state.onDismissDialog,
+            categoryName = state.categoryName,
+            error = state.error,
+            title = R.string.add_category,
+            onCategoryNameChange = { state.onCategoryNameChange(it, subCategories) },
+            positiveButtonEnabled = state.positiveButtonEnabled,
+            onPositiveButtonClick = {
+                onPositiveButtonClick(
+                    state.categoryName,
+                    subCategoryParent
+                )
+            })
 }
 
 class AddCategoryDialogUIState(

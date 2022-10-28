@@ -43,7 +43,7 @@ fun MaxWidthTextField(
     showKeyboardEnabled: Boolean = false,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-    onFocusChanged: (FocusState) -> Unit
+    onFocusChanged: (FocusState) -> Unit = {}
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = FocusRequester()

@@ -25,6 +25,15 @@ import com.leebeebeom.clothinghelper.main.base.MainCategory
 import com.leebeebeom.clothinghelper.main.base.getMainCategories
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
+/*
+최초 구동 시 로딩 확인
+
+카드 클릭 시 이동 확인
+
+서브 카테고리 갯수 일치 확인
+
+ */
+
 @Composable
 fun MainCategoryScreen(
     viewModel: MainCategoryViewModel = hiltViewModel(),

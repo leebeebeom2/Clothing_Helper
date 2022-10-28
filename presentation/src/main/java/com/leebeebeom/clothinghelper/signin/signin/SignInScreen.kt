@@ -22,6 +22,31 @@ import com.leebeebeom.clothinghelper.base.MaxWidthButton
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.signin.base.*
 
+/*
+테스트
+이메일, 비밀번호 필드가 둘 다 비어있거나, 하나라도 비어있을 경우 로그인 버튼 비 활성화
+
+이메일 형식이 올바르지 않을 경우 이메일에 에러 메세지 "이메일 형식이 올바르지 않아요"
+이메일을 찾을 수 없을 경우 이메일에 에러 메세지 "이메일을 찾을 수 없어요."
+비밀번호가 맞지 않을 경우 비밀번호에 에러 메세지 "비밀번호를 확인해 주세요"
+
+에러 메세지가 표시된 필드의 경우 텍스트가 변경될 경우 에러 메세지 사라짐
+에러 메세지가 표시된 필드가 하나라도 있을 경우 로그인 버튼 비 활성화
+
+비밀번호 필드 숨김 처리
+눈 아이콘으로 가시성 토글
+
+모든 로그인 시도 시 로딩화면 표시
+실패 혹은 성공 시 로딩화면 숨김
+
+이메일과 패스워드가 일치할 경우 로딩화면이 숨겨지며 로그인
+이때 로그인 화면은 화면 아래로 이동하면서 사라짐
+
+"비밀 번호를 잊으셨나요?" 텍스트 클릭 시 비밀번호 재설정 화면으로 이동
+"이메일로 가입하기" 텍스트 클릭 시 회원가입 화면으로 이동
+
+// TODO 현재 이동 시 페이드 인 아웃되며 메인 화면 보이는 버그 있음 
+ */
 @Composable
 fun SignInScreen(
     onForgotPasswordClick: () -> Unit,

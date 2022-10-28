@@ -7,7 +7,6 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.main.base.SubCategoryTextFieldDialog
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
 @Composable

@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.text.input.*
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.MaxWidthTextField
@@ -16,7 +17,8 @@ fun EmailTextField(
     email: TextFieldValue,
     onEmailChange: (TextFieldValue) -> Unit,
     @StringRes error: Int?,
-    imeAction: ImeAction
+    imeAction: ImeAction,
+    onFocusChanged:(FocusState) -> Unit
 ) {
     MaxWidthTextField(
         label = R.string.email,
@@ -25,7 +27,8 @@ fun EmailTextField(
         placeholder = R.string.email_place_holder,
         error = error,
         showKeyboardEnabled = false,
-        keyboardOptions = KeyboardOptions(imeAction = imeAction, keyboardType = KeyboardType.Email)
+        keyboardOptions = KeyboardOptions(imeAction = imeAction, keyboardType = KeyboardType.Email),
+        onFocusChanged = onFocusChanged
     )
 }
 
@@ -35,7 +38,8 @@ fun PasswordTextField(
     onPasswordChange: (TextFieldValue) -> Unit,
     @StringRes error: Int?,
     imeAction: ImeAction,
-    @StringRes label: Int = R.string.password
+    @StringRes label: Int = R.string.password,
+    onFocusChanged:(FocusState) -> Unit
 ) {
     var isVisible by rememberSaveable { mutableStateOf(false) }
 
@@ -49,6 +53,7 @@ fun PasswordTextField(
         keyboardOptions = KeyboardOptions(
             imeAction = imeAction,
             keyboardType = KeyboardType.Password
-        )
+        ),
+        onFocusChanged = onFocusChanged
     )
 }

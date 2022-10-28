@@ -85,7 +85,7 @@ private fun SubCategoryTitle(
             SimpleWidthSpacer(dp = 8)
             val duration = 300
             AnimatedVisibility(
-                visible = isSelectMode, // TODO 테스트
+                visible = isSelectMode,
                 enter = expandHorizontally(tween(duration)) { 0 } + scaleIn(tween(duration)),
                 exit = shrinkHorizontally(tween(duration)) { 0 } + scaleOut(tween(duration))
             ) {

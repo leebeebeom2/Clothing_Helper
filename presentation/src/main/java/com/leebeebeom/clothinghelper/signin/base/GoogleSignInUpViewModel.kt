@@ -24,7 +24,7 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
         viewModelState.setGoogleButtonDisable()
     }
 
-    fun taskFinish() {
+    val taskFinish = {
         viewModelState.loadingOff()
         viewModelState.setGoogleButtonEnable()
     }
@@ -32,8 +32,8 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
     fun signInWithGoogleEmail(activityResult: ActivityResult) {
         when (activityResult.resultCode) {
             RESULT_OK -> googleSignInUseCase(
-                getGoogleCredential(activityResult),
-                googleSignInListener
+                googleCredential = getGoogleCredential(activityResult),
+                googleSignInListener = googleSignInListener, taskFinish = taskFinish
             )
             RESULT_CANCELED -> {
                 viewModelState.showToast(R.string.canceled)

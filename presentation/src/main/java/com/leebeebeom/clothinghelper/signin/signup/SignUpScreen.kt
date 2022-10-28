@@ -65,7 +65,7 @@ fun SignUpScreen(
                     email = state.text,
                     name = state.text2,
                     password = state.text3
-                    )
+                )
             })
         SimpleHeightSpacer(dp = 8)
         OrDivider()

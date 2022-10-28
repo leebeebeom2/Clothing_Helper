@@ -15,7 +15,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.base.Anime.screenSlideInBottom
 import com.leebeebeom.clothinghelper.base.Anime.screenSlideOutBottom
-import com.leebeebeom.clothinghelper.main.base.MainNavHost
+import com.leebeebeom.clothinghelper.main.MainNavHost
 import com.leebeebeom.clothinghelper.signin.SignInNavHost
 import com.leebeebeom.clothinghelperdomain.usecase.user.GetSignInStateUseCase
 import dagger.hilt.android.AndroidEntryPoint

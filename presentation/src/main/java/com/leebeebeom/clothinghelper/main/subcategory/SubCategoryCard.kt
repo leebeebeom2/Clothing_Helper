@@ -35,8 +35,12 @@ fun SubCategoryCard(
     allExpand: Boolean,
     isChecked: Boolean
 ) {
-    var isExpanded by rememberSaveable { mutableStateOf(false) }
-    isExpanded = allExpand
+    var isExpanded by rememberSaveable { mutableStateOf(allExpand) }
+    var rememberedAllExpand by rememberSaveable { mutableStateOf(allExpand) }
+    if (rememberedAllExpand != allExpand) {
+        isExpanded = allExpand
+        rememberedAllExpand = allExpand
+    }
 
     Card(elevation = 2.dp, shape = RoundedCornerShape(12.dp)) {
         Column(

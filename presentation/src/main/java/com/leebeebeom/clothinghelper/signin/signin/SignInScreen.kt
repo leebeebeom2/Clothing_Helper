@@ -39,13 +39,13 @@ fun SignInScreen(
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
             EmailTextField(
                 email = state.text, error = viewModelState.emailError, onEmailChange = {
-                    state.onTextChange(it, viewModelState.hideEmailError)
+                    state.onEmailChange(it, viewModelState.hideEmailError)
                 }, imeAction = ImeAction.Next
             )
 
             PasswordTextField(
                 password = state.text2, onPasswordChange = {
-                    state.onText2Change(it, viewModelState.hidePasswordError)
+                    state.onPasswordChange(it, viewModelState.hidePasswordError)
                 }, error = viewModelState.passwordError, imeAction = ImeAction.Done
             )
 
@@ -116,6 +116,12 @@ class SignInScreenUIState(
     email: String = "",
     password: String = "",
 ) : TwoTextFiledState(email, password) {
+
+    fun onEmailChange(email: String, hideEmailError: () -> Unit) =
+        super.onTextChange(email, hideEmailError)
+
+    fun onPasswordChange(password: String, hidePasswordError: () -> Unit) =
+        super.onText2Change(password, hidePasswordError)
 
     fun signInButtonEnabled(@StringRes emailError: Int?, @StringRes passwordError: Int?) =
         text.isNotBlank() && emailError == null && text2.isNotBlank() && passwordError == null

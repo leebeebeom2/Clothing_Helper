@@ -7,17 +7,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.input.*
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.MaxWidthTextField
 
 @Composable
 fun EmailTextField(
-    email: String,
-    onEmailChange: (String) -> Unit,
+    email: TextFieldValue,
+    onEmailChange: (TextFieldValue) -> Unit,
     @StringRes error: Int?,
     imeAction: ImeAction
 ) {
@@ -34,8 +31,8 @@ fun EmailTextField(
 
 @Composable
 fun PasswordTextField(
-    password: String,
-    onPasswordChange: (String) -> Unit,
+    password: TextFieldValue,
+    onPasswordChange: (TextFieldValue) -> Unit,
     @StringRes error: Int?,
     imeAction: ImeAction,
     @StringRes label: Int = R.string.password

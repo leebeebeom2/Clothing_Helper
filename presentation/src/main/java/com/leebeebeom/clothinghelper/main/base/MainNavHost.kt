@@ -90,7 +90,9 @@ fun MainNavHostWithArg(
             )
         }
         composable(MainDestinations.Setting.route) {
-            SettingScreen()
+            SettingScreen {
+                navController.mainNavigate(MainDestinations.MainCategory.route)
+            }
         }
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
@@ -91,7 +92,7 @@ fun SignInScreen(
                 passwordError = viewModelState.passwordError
             ), onClick = {
                 viewModel.signInWithEmailAndPassword(
-                    email = state.email, password = state.password
+                    email = state.email.text, password = state.password.text
                 )
             })
             SimpleHeightSpacer(dp = 8)
@@ -154,18 +155,18 @@ class SignInScreenUIState(
     val email get() = text.value
     val password get() = text2.value
 
-    fun onEmailChange(email: String, hideEmailError: () -> Unit) =
+    fun onEmailChange(email: TextFieldValue, hideEmailError: () -> Unit) =
         super.onTextChange(email, hideEmailError)
 
-    fun onPasswordChange(password: String, hidePasswordError: () -> Unit) =
+    fun onPasswordChange(password: TextFieldValue, hidePasswordError: () -> Unit) =
         super.onText2Change(password, hidePasswordError)
 
     fun signInButtonEnabled(@StringRes emailError: Int?, @StringRes passwordError: Int?) =
-        email.isNotBlank() && emailError == null && password.isNotBlank() && passwordError == null
+        email.text.isNotBlank() && emailError == null && password.text.isNotBlank() && passwordError == null
 
     companion object {
         val Saver: Saver<SignInScreenUIState, *> =
-            listSaver(save = { listOf(it.email, it.password) },
+            listSaver(save = { listOf(it.email.text, it.password.text) },
                 restore = { SignInScreenUIState(it[0], it[1]) })
     }
 }

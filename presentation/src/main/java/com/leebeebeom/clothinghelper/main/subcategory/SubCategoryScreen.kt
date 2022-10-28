@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.main.base.SubCategoryTextFieldDialog
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
@@ -30,7 +29,6 @@ fun SubCategoryScreen(
 ) {
     val viewModelState = viewModel.viewModelState
     val state = rememberSubCategoryScreenUIState(mainCategoryName = mainCategoryName)
-    val editSubCategoryNameDialogUIState = rememberEditSubCategoryNameDialogUIState()
 
     Scaffold(bottomBar = {
         SubCategoryBottomAppBar(
@@ -39,7 +37,7 @@ fun SubCategoryScreen(
             subCategoriesSize = viewModelState.getSubCategories(state.subCategoryParent).size,
             onAllSelectCheckBoxClick = { state.toggleAllSelect(viewModelState.getSubCategories(state.subCategoryParent)) },
             onEditSubCategoryNameClick = {
-                editSubCategoryNameDialogUIState.showDialog(state.selectedSubCategories.first().name)
+                state.showEditSubCategoryNameDialog()
                 state.selectModeOff()
             }
         )
@@ -77,26 +75,19 @@ fun SubCategoryScreen(
                     .align(Alignment.BottomEnd)
                     .padding(end = 16.dp, bottom = 16.dp),
                 onPositiveButtonClick = viewModel.addSubCategory,
-                subCategories = viewModelState.getSubCategories(state.subCategoryParent)
+                subCategories = viewModelState.getSubCategories(state.subCategoryParent),
+                subCategoryParent = state.subCategoryParent
+            )
+
+            EditSubCategoryNameDialog(
+                initialCategoryName = state.selectedSubCategories.first().name,
+                showDialog = state.showEditSubCategoryNameDialog,
+                subCategories = viewModelState.getSubCategories(state.subCategoryParent),
+                onPositiveButtonClick = {/*TODO*/ },
+                onDismissDialog = state.dismissEditSubCategoryNameDialog
             )
         }
     }
-
-    if (editSubCategoryNameDialogUIState.showDialog)
-        SubCategoryTextFieldDialog(
-            categoryName = editSubCategoryNameDialogUIState.categoryName,
-            error = editSubCategoryNameDialogUIState.error,
-            onDismissDialog = editSubCategoryNameDialogUIState.onDismissDialog,
-            title = R.string.edit_category_name,
-            onCategoryNameChange = {
-                editSubCategoryNameDialogUIState.onCategoryNameChange(
-                    it,
-                    viewModelState.getSubCategories(state.subCategoryParent)
-                )
-            },
-            positiveButtonEnabled = editSubCategoryNameDialogUIState.positiveButtonEnabled,
-            onPositiveButtonClick = { /*TODO*/ }
-        )
 
     BackHandler(enabled = state.isSelectMode, onBack = state.selectModeOff)
 }
@@ -119,12 +110,21 @@ fun CircleCheckBox(modifier: Modifier = Modifier, isChecked: Boolean) { // TODO 
 class SubCategoryScreenUIState(
     mainCategoryName: String,
     isSelectMode: Boolean = false,
+    showEditSubCategoryNameDialog: Boolean = false,
     vararg selectedSubCategories: SubCategory = emptyArray()
 ) {
     val subCategoryParent = enumValueOf<SubCategoryParent>(mainCategoryName)
 
     var isSelectMode by mutableStateOf(isSelectMode)
         private set
+
+    var showEditSubCategoryNameDialog by mutableStateOf(showEditSubCategoryNameDialog)
+
+    fun showEditSubCategoryNameDialog() {
+        this.showEditSubCategoryNameDialog = true
+    }
+
+    val dismissEditSubCategoryNameDialog = { this.showEditSubCategoryNameDialog = false }
 
     val selectModeOff = { this.isSelectMode = false }
 
@@ -147,9 +147,16 @@ class SubCategoryScreenUIState(
 
     companion object {
         val Saver: Saver<SubCategoryScreenUIState, *> = listSaver(
-            save = { listOf(it.subCategoryParent.name, it.isSelectMode, it.selectedSubCategories) },
+            save = {
+                listOf(
+                    it.subCategoryParent.name,
+                    it.isSelectMode,
+                    it.showEditSubCategoryNameDialog,
+                    it.selectedSubCategories
+                )
+            },
             restore = {
-                val selectedSubCategories = it[2] as Set<*>
+                val selectedSubCategories = it[3] as Set<*>
                 val selectedSubCategoriesArray = Array(selectedSubCategories.size) { SubCategory() }
                 selectedSubCategories.forEachIndexed { i, subCategory ->
                     selectedSubCategoriesArray[i] = subCategory as SubCategory
@@ -158,6 +165,7 @@ class SubCategoryScreenUIState(
                 SubCategoryScreenUIState(
                     it[0] as String,
                     it[1] as Boolean,
+                    it[2] as Boolean,
                     *selectedSubCategoriesArray
                 )
             }
@@ -169,42 +177,6 @@ class SubCategoryScreenUIState(
 fun rememberSubCategoryScreenUIState(mainCategoryName: String) =
     rememberSaveable(saver = SubCategoryScreenUIState.Saver) {
         SubCategoryScreenUIState(mainCategoryName)
-    }
-
-
-class EditSubCategoryNameDialogUIState(
-    categoryName: String = "",
-    error: Int? = null,
-    showDialog: Boolean = false
-) : BaseSubCategoryTextFieldDialogUIState(categoryName, error, showDialog) {
-
-    fun showDialog(categoryName: String) {
-        setCategoryName(categoryName)
-        showDialog = true
-    }
-
-    companion object {
-        val Saver: Saver<EditSubCategoryNameDialogUIState, *> = listSaver(
-            save = {
-                listOf(
-                    it.categoryName,
-                    it.error,
-                    it.showDialog
-                )
-            },
-            restore = {
-                EditSubCategoryNameDialogUIState(
-                    it[0] as String, it[1] as? Int, it[2] as Boolean
-                )
-            }
-        )
-    }
-}
-
-@Composable
-fun rememberEditSubCategoryNameDialogUIState() =
-    rememberSaveable(saver = EditSubCategoryNameDialogUIState.Saver) {
-        EditSubCategoryNameDialogUIState()
     }
 
 fun <T> Set<T>.taskAndReturn(task: (MutableList<T>) -> Unit): Set<T> {

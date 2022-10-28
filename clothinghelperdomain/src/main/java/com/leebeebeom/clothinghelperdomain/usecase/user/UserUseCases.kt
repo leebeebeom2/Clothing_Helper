@@ -23,8 +23,11 @@ class GoogleSignInUseCase(
 
 class SignInUseCase(private val userRepository: UserRepository) {
     operator fun invoke(
-        email: String, password: String, signInListener: FirebaseListener
-    ) = userRepository.signIn(email, password, signInListener)
+        email: String,
+        password: String,
+        signInListener: FirebaseListener,
+        taskFinish: () -> Unit
+    ) = userRepository.signIn(email, password, signInListener, taskFinish)
 }
 
 class SignUpUseCase(
@@ -36,21 +39,23 @@ class SignUpUseCase(
         password: String,
         name: String,
         signUpListener: FirebaseListener,
-        updateNameListener: FirebaseListener
+        updateNameListener: FirebaseListener,
+        taskFinish: () -> Unit
     ) = userRepository.signUp(
         email,
         password,
         name,
         signUpListener,
         updateNameListener,
-        subCategoryRepository::pushInitialSubCategories
+        subCategoryRepository::pushInitialSubCategories,
+        taskFinish
     )
 }
 
 class ResetPasswordUseCase(private val userRepository: UserRepository) {
     operator fun invoke(
-        email: String, resetPasswordListener: FirebaseListener
-    ) = userRepository.resetPasswordEmail(email, resetPasswordListener)
+        email: String, resetPasswordListener: FirebaseListener, taskFinish: () -> Unit
+    ) = userRepository.resetPasswordEmail(email, resetPasswordListener, taskFinish)
 }
 
 class GetUserUseCase(private val userRepository: UserRepository) {

@@ -9,7 +9,7 @@ private fun baseOnTextChange(_text: MutableState<String>, text: String, hideText
 }
 
 open class OneTextFiledState(text: String = "") {
-    protected val text = mutableStateOf(text)
+    protected open val text = mutableStateOf(text)
 
     protected val onTextChange = { newText: String, hideTextError: () -> Unit ->
         baseOnTextChange(this.text, newText, hideTextError)

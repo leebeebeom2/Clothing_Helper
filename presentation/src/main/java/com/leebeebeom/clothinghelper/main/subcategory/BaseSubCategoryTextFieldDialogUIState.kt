@@ -10,7 +10,7 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategory
 open class BaseSubCategoryTextFieldDialogUIState(
     text: String = "", error: Int? = null, showDialog: Boolean = false
 ) : OneTextFiledState(text) {
-    val categoryName get() = text.value
+    open val categoryName get() = text.value
 
     var error by mutableStateOf(error)
         protected set

@@ -14,14 +14,17 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.MaxWidthButton
 
 @Composable
-fun SettingScreen(viewModel: SettingViewModel = hiltViewModel()) {
+fun SettingScreen(viewModel: SettingViewModel = hiltViewModel(), onSignOutButtonClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 20.dp),
         contentAlignment = Alignment.BottomCenter
     ) {
-        SignOutButton(onSignOutClick = viewModel.signOut)
+        SignOutButton(onSignOutClick = {
+            viewModel.signOut()
+            onSignOutButtonClick()
+        })
     }
 }
 

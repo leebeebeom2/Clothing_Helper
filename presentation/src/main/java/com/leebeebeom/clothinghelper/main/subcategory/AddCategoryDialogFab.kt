@@ -11,13 +11,17 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.*
-import com.leebeebeom.clothinghelper.signin.base.BaseSubCategoryTextFieldDialogUIState
+import com.leebeebeom.clothinghelper.base.SimpleIcon
+import com.leebeebeom.clothinghelper.main.base.SubCategoryTextFieldDialog
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
+import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
 @Composable
 fun AddCategoryDialogFab(
-    modifier: Modifier, onPositiveButtonClick: (String) -> Unit, subCategories: List<SubCategory>
+    modifier: Modifier,
+    onPositiveButtonClick: (String, SubCategoryParent) -> Unit,
+    subCategories: List<SubCategory>,
+    subCategoryParent: SubCategoryParent
 ) {
     val state = rememberAddCategoryDialogUIState()
 
@@ -29,19 +33,11 @@ fun AddCategoryDialogFab(
         SimpleIcon(drawable = R.drawable.ic_add)
     }
 
-    if (state.showDialog)
-        DialogRoot(state::onDismissDialog) {
-            DialogTitle(title = R.string.add_category_title)
-
-            DialogTextField(categoryName = state.text,
-                error = state.error,
-                onCategoryNameChange = { state.onTextChange(it, subCategories) })
-            DialogTextButtons(
-                positiveButtonEnabled = state.positiveButtonEnabled,
-                onPositiveButtonClick = { onPositiveButtonClick(state.text) },
-                onDismissDialog = state::onDismissDialog,
-            )
-        }
+    if (state.showDialog) SubCategoryTextFieldDialog(onDismissDialog = state.onDismissDialog,
+        title = R.string.add_category,
+        onCategoryNameChange = { state.onCategoryNameChange(it, subCategories) },
+        positiveButtonEnabled = state.positiveButtonEnabled,
+        onPositiveButtonClick = { onPositiveButtonClick(state.categoryName, subCategoryParent) })
 }
 
 class AddCategoryDialogUIState(

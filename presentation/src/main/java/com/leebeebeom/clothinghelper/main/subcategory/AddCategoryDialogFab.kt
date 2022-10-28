@@ -41,7 +41,7 @@ fun AddCategoryDialogFab(
             positiveButtonEnabled = state.positiveButtonEnabled,
             onPositiveButtonClick = {
                 onPositiveButtonClick(
-                    state.categoryName,
+                    state.categoryName.text,
                     subCategoryParent
                 )
             })

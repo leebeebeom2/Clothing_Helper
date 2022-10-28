@@ -43,14 +43,14 @@ class EditSubCategoryNameDialogUIState(
     showDialog: Boolean = false // 미사용
 ) : BaseSubCategoryTextFieldDialogUIState(initialCategoryName, error, showDialog) {
 
-    override val text: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue(
-        initialCategoryName))
+    override val text: MutableState<TextFieldValue> =
+        mutableStateOf(TextFieldValue(initialCategoryName))
 
     companion object {
         val Saver: Saver<EditSubCategoryNameDialogUIState, *> = listSaver(
             save = {
                 listOf(
-                    it.categoryName,
+                    it.categoryName.text,
                     it.error,
                     it.showDialog
                 )

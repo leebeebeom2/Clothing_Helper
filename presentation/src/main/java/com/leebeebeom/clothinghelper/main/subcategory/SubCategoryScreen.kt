@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.main.base.SubCategoryTextFieldDialog
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
@@ -82,18 +83,19 @@ fun SubCategoryScreen(
     }
 
     if (editSubCategoryNameDialogUIState.showDialog)
-        EditSubCategoryNameDialog(
+        SubCategoryTextFieldDialog(
             categoryName = editSubCategoryNameDialogUIState.categoryName,
             error = editSubCategoryNameDialogUIState.error,
+            onDismissDialog = editSubCategoryNameDialogUIState.onDismissDialog,
+            title = R.string.edit_category_name,
             onCategoryNameChange = {
                 editSubCategoryNameDialogUIState.onCategoryNameChange(
                     it,
                     viewModelState.getSubCategories(state.subCategoryParent)
                 )
             },
-            onPositiveButtonClick = { /*TODO*/ },
-            onDismissDialog = editSubCategoryNameDialogUIState::onDismissDialog,
-            positiveButtonEnabled = editSubCategoryNameDialogUIState.positiveButtonEnabled
+            positiveButtonEnabled = editSubCategoryNameDialogUIState.positiveButtonEnabled,
+            onPositiveButtonClick = { /*TODO*/ }
         )
 
     BackHandler(enabled = state.isSelectMode, onBack = state.selectModeOff)

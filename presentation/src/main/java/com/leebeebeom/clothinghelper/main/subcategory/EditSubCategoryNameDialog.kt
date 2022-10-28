@@ -34,7 +34,6 @@ fun EditSubCategoryNameDialog(
         onPositiveButtonClick = { onPositiveButtonClick(state.categoryName) }
     )
 }
-}
 
 class EditSubCategoryNameDialogUIState(
     initialCategoryName: String = "",

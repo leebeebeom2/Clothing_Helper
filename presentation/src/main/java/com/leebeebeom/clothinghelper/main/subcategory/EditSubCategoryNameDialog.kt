@@ -18,7 +18,7 @@ fun EditSubCategoryNameDialog(
     onPositiveButtonClick: (String) -> Unit
 ) {
     // TODO 커서 포지션(텍스트 셀렉트),  처음 다이얼로그 보일 시 확인 버튼 disable(변경되어야 enable)
-    if (showDialog){
+    if (showDialog) {
         val state = rememberEditSubCategoryNameDialogUIState(initialCategoryName)
 
         SubCategoryTextFieldDialog(

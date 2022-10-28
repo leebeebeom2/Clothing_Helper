@@ -2,6 +2,7 @@ package com.leebeebeom.clothinghelper.signin.base
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -22,13 +23,17 @@ fun SignInBaseRoot(
     content: @Composable ColumnScope.() -> Unit
 ) {
     val focusManager = LocalFocusManager.current
+
     ClothingHelperTheme {
         Scaffold {
             Column(modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 20.dp)
                 .padding(it)
-                .clickable { focusManager.clearFocus() } // TODO 인터렉션 소스 삭제 동작 확인
+                .clickable(
+                    interactionSource = MutableInteractionSource(),
+                    indication = null
+                ) { focusManager.clearFocus() }
                 .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.Center,
                 content = content

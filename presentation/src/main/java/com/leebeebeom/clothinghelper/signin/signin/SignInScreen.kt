@@ -11,6 +11,7 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -76,13 +77,15 @@ fun SignInScreen(
             EmailTextField(
                 email = state.email, error = viewModelState.emailError, onEmailChange = {
                     state.onEmailChange(it, viewModelState.hideEmailError)
-                }, imeAction = ImeAction.Next
+                }, imeAction = ImeAction.Next,
+                onFocusChanged = state.onEmailFocusChanged
             )
 
             PasswordTextField(
                 password = state.password, onPasswordChange = {
                     state.onPasswordChange(it, viewModelState.hidePasswordError)
-                }, error = viewModelState.passwordError, imeAction = ImeAction.Done
+                }, error = viewModelState.passwordError, imeAction = ImeAction.Done,
+                onFocusChanged = state.onPasswordFocusChanged
             )
 
             ForgotPasswordText(onForgotPasswordClick = onForgotPasswordClick)
@@ -160,6 +163,9 @@ class SignInScreenUIState(
 
     fun onPasswordChange(password: TextFieldValue, hidePasswordError: () -> Unit) =
         super.onText2Change(password, hidePasswordError)
+
+    val onEmailFocusChanged = { focusState:FocusState -> onText1FocusChanged(focusState) }
+    val onPasswordFocusChanged = { focusState:FocusState -> onText2FocusChanged(focusState) }
 
     fun signInButtonEnabled(@StringRes emailError: Int?, @StringRes passwordError: Int?) =
         email.text.isNotBlank() && emailError == null && password.text.isNotBlank() && passwordError == null

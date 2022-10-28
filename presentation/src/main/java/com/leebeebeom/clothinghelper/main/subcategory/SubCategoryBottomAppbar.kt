@@ -49,7 +49,7 @@ fun SubCategoryBottomAppBar(
             }
             Text(
                 text = stringResource(
-                    id = R.string.selected,
+                    id = R.string.count_selected,
                     formatArgs = arrayOf(selectedSubCategoriesSize)
                 ),
                 modifier = Modifier.offset((-8).dp, 1.dp)

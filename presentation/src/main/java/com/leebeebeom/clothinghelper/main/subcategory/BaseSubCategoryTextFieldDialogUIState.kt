@@ -21,10 +21,6 @@ open class BaseSubCategoryTextFieldDialogUIState(
 
     private val categoryNameInit = { this.text.value = "" }
 
-    fun setCategoryName(categoryName: String) {
-        text.value = categoryName
-    }
-
     fun onCategoryNameChange(newName: String, subCategories: List<SubCategory>) {
         super.onTextChange(newName, hideCategoryNameError)
         if (subCategories.map { it.name }.contains(newName)) error =

@@ -67,11 +67,14 @@ fun MaxWidthButton(
 
 @Composable
 fun CenterDotProgressIndicator() {
-    Surface(color = Disabled) { // TODO 확인
+    Surface(color = Disabled) {
         Box(modifier = Modifier
             .fillMaxSize()
             .clickable(enabled = false) { }) {
-            DotProgressIndicator(modifier = Modifier.align(Alignment.Center), dotSize = 24.dp)
+            DotProgressIndicator(
+                modifier = Modifier.align(Alignment.Center), dotSize = 8.dp,
+                color = LocalContentColor.current.copy(ContentAlpha.medium)
+            )
         }
     }
 }

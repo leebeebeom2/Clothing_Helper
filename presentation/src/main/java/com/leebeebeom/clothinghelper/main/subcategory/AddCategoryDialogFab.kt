@@ -60,7 +60,7 @@ class AddCategoryDialogUIState(
     companion object {
         val Saver: Saver<AddCategoryDialogUIState, *> = listSaver(save = {
             listOf(
-                it.text, it.error, it.showDialog
+                it.categoryName, it.error, it.showDialog
             )
         }, restore = {
             AddCategoryDialogUIState(it[0] as String, it[1] as? Int, it[2] as Boolean)

@@ -12,7 +12,7 @@ import com.leebeebeom.clothinghelper.base.DialogTitle
 fun SubCategoryTextFieldDialog(
     onDismissDialog: () -> Unit,
     @StringRes title: Int,
-    categoryName: String = "",
+    categoryName: String,
     error: Int? = null,
     onCategoryNameChange: (String) -> Unit,
     positiveButtonEnabled: Boolean,

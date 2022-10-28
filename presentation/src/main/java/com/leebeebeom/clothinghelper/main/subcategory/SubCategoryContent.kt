@@ -7,15 +7,17 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
+import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
 @Composable
 fun SubCategoryContent(
-    headerText: String,
+    mainCategoryName: String,
     allExpandIconClick: () -> Unit,
     allExpand: Boolean,
     subCategories: List<SubCategory>,
@@ -33,7 +35,7 @@ fun SubCategoryContent(
     ) {
         item {
             Header(
-                headerText = headerText,
+                mainCategoryName = mainCategoryName,
                 allExpandIconClick = allExpandIconClick,
                 allExpand = allExpand
             )
@@ -54,11 +56,11 @@ fun SubCategoryContent(
 
 @Composable
 private fun Header(
-    headerText: String, allExpandIconClick: () -> Unit, allExpand: Boolean
+    mainCategoryName: String, allExpandIconClick: () -> Unit, allExpand: Boolean
 ) {
     Text(
         modifier = Modifier.padding(4.dp),
-        text = headerText,
+        text = stringResource(id = getHeaderStringRes(mainCategoryName)),
         style = MaterialTheme.typography.h2,
         fontSize = 32.sp
     )
@@ -70,6 +72,14 @@ private fun Header(
         SortIcon()
     }
 }
+
+fun getHeaderStringRes(mainCategoryName: String) =
+    when (mainCategoryName) {
+        SubCategoryParent.TOP.name -> R.string.top
+        SubCategoryParent.BOTTOM.name -> R.string.bottom
+        SubCategoryParent.OUTER.name -> R.string.outer
+        else -> R.string.etc
+    }
 
 @Composable
 private fun AllExpandIcon(allExpandIconClick: () -> Unit, allExpand: Boolean) {

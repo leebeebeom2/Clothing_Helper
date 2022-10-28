@@ -137,7 +137,7 @@ class SubCategoryScreenUIState(
             else this.selectedSubCategories.taskAndReturn { it.add(subCategory) }
     }
 
-    var selectedSubCategories by mutableStateOf(selectedSubCategories.toSet()) // TODO remember
+    var selectedSubCategories by mutableStateOf(selectedSubCategories.toSet())
         private set
 
     fun toggleAllSelect(subCategories: List<SubCategory>) {

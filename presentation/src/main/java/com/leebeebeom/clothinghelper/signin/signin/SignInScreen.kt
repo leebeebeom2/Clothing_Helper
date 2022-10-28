@@ -38,13 +38,13 @@ fun SignInScreen(
     ) {
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
             EmailTextField(
-                email = state.text, error = viewModelState.emailError, onEmailChange = {
+                email = state.email, error = viewModelState.emailError, onEmailChange = {
                     state.onEmailChange(it, viewModelState.hideEmailError)
                 }, imeAction = ImeAction.Next
             )
 
             PasswordTextField(
-                password = state.text2, onPasswordChange = {
+                password = state.password, onPasswordChange = {
                     state.onPasswordChange(it, viewModelState.hidePasswordError)
                 }, error = viewModelState.passwordError, imeAction = ImeAction.Done
             )
@@ -56,7 +56,7 @@ fun SignInScreen(
                 passwordError = viewModelState.passwordError
             ), onClick = {
                 viewModel.signInWithEmailAndPassword(
-                    email = state.text, password = state.text2
+                    email = state.email, password = state.password
                 )
             })
             SimpleHeightSpacer(dp = 8)
@@ -116,6 +116,8 @@ class SignInScreenUIState(
     email: String = "",
     password: String = "",
 ) : TwoTextFiledState(email, password) {
+    val email get() = text.value
+    val password get() = text2.value
 
     fun onEmailChange(email: String, hideEmailError: () -> Unit) =
         super.onTextChange(email, hideEmailError)
@@ -124,11 +126,12 @@ class SignInScreenUIState(
         super.onText2Change(password, hidePasswordError)
 
     fun signInButtonEnabled(@StringRes emailError: Int?, @StringRes passwordError: Int?) =
-        text.isNotBlank() && emailError == null && text2.isNotBlank() && passwordError == null
+        email.isNotBlank() && emailError == null && password.isNotBlank() && passwordError == null
 
     companion object {
-        val Saver: Saver<SignInScreenUIState, *> = listSaver(save = { listOf(it.text, it.text2) },
-            restore = { SignInScreenUIState(it[0], it[1]) })
+        val Saver: Saver<SignInScreenUIState, *> =
+            listSaver(save = { listOf(it.email, it.password) },
+                restore = { SignInScreenUIState(it[0], it[1]) })
     }
 }
 

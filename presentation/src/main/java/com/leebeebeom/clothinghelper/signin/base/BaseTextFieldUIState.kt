@@ -39,11 +39,11 @@ open class FourTextFieldState(
     private val _text4 = mutableStateOf(text4)
     open val text4 get() = _text4.value
 
-    val onText3Change = { newText3: String, hideText3Error: () -> Unit ->
+    open val onText3Change = { newText3: String, hideText3Error: () -> Unit ->
         baseOnTextChange(_text3, newText3, hideText3Error)
     }
 
-    val onText4Change = { newText4: String, hideText4Error: () -> Unit ->
+    open val onText4Change = { newText4: String, hideText4Error: () -> Unit ->
         baseOnTextChange(_text4, newText4, hideText4Error)
     }
 }

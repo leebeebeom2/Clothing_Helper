@@ -13,11 +13,11 @@ interface SubCategoryRepository {
 
     fun pushInitialSubCategories(uid: String)
 
-    val allSubCategories: List<StateFlow<SubCategory>>
+    val allSubCategories: List<StateFlow<List<SubCategory>>>
 
     fun addSubCategory(
         subCategoryParent: SubCategoryParent,
         name: String,
-        addSubCategoryListener: FirebaseListener
+        taskFailed:(Exception?)->Unit
     )
 }

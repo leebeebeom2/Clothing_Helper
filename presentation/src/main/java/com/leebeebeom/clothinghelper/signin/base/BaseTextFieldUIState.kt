@@ -9,21 +9,19 @@ private fun baseOnTextChange(_text: MutableState<String>, text: String, hideText
 }
 
 open class OneTextFiledState(text: String = "") {
-    private val _text = mutableStateOf(text)
-    open val text get() = _text.value
+    protected val text = mutableStateOf(text)
 
     protected val onTextChange = { newText: String, hideTextError: () -> Unit ->
-        baseOnTextChange(_text, newText, hideTextError)
+        baseOnTextChange(this.text, newText, hideTextError)
     }
 }
 
 open class TwoTextFiledState(text: String = "", text2: String = "") :
     OneTextFiledState(text) {
-    private val _text2 = mutableStateOf(text2)
-    open val text2 get() = _text2.value
+    protected val text2 = mutableStateOf(text2)
 
     protected val onText2Change = { newText2: String, hideText2Error: () -> Unit ->
-        baseOnTextChange(_text2, newText2, hideText2Error)
+        baseOnTextChange(this.text2, newText2, hideText2Error)
     }
 }
 
@@ -33,17 +31,15 @@ open class FourTextFieldState(
     text3: String = "",
     text4: String = ""
 ) : TwoTextFiledState(text, text2) {
-    private val _text3 = mutableStateOf(text3)
-    open val text3 get() = _text3.value
+    protected val text3 = mutableStateOf(text3)
 
-    private val _text4 = mutableStateOf(text4)
-    open val text4 get() = _text4.value
+    protected val text4 = mutableStateOf(text4)
 
     protected val onText3Change = { newText3: String, hideText3Error: () -> Unit ->
-        baseOnTextChange(_text3, newText3, hideText3Error)
+        baseOnTextChange(this.text3, newText3, hideText3Error)
     }
 
     protected val onText4Change = { newText4: String, hideText4Error: () -> Unit ->
-        baseOnTextChange(_text4, newText4, hideText4Error)
+        baseOnTextChange(this.text4, newText4, hideText4Error)
     }
 }

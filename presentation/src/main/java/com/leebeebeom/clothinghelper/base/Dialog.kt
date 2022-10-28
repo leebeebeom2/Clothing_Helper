@@ -10,8 +10,10 @@ import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.leebeebeom.clothinghelper.R
@@ -45,9 +47,10 @@ fun DialogTitle(@StringRes text: Int) {
 fun DialogTextField(
     @StringRes label: Int,
     @StringRes placeHolder: Int,
-    text: String,
+    text: TextFieldValue,
     @StringRes error: Int?,
-    onTextChange: (String) -> Unit,
+    onTextChange: (TextFieldValue) -> Unit,
+    onFocusChanged:(FocusState) -> Unit
 ) {
     MaxWidthTextField(
         label = label,
@@ -55,7 +58,8 @@ fun DialogTextField(
         text = text,
         onValueChange = onTextChange,
         error = error,
-        showKeyboardEnabled = true
+        showKeyboardEnabled = true,
+        onFocusChanged = onFocusChanged
     )
     SimpleHeightSpacer(dp = 12)
 }

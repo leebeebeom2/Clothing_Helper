@@ -43,7 +43,7 @@ fun MainActivityScreen(viewModel: MainActivityViewModel = hiltViewModel()) {
         MainNavHost()
         AnimatedVisibility(
             visible = !viewModel.isSignIn,
-            enter = screenSlideInBottom,
+            enter = screenSlideInBottom, // TODO 작동 안함
             exit = screenSlideOutBottom
         ) {
             SignInNavHost()

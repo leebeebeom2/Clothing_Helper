@@ -44,10 +44,6 @@ open class TwoTextFiledState(text: String = "", text2: String = "") :
     protected val onText2Change = { newText2: TextFieldValue, hideText2Error: () -> Unit ->
         baseOnTextChange(this.text2, newText2, hideText2Error)
     }
-
-    protected val onText2FocusChanged = { focusState: FocusState ->
-        baseOnFocusChanged(this.text2, focusState)
-    }
 }
 
 open class FourTextFieldState(
@@ -66,13 +62,5 @@ open class FourTextFieldState(
 
     protected val onText4Change = { newText4: TextFieldValue, hideText4Error: () -> Unit ->
         baseOnTextChange(this.text4, newText4, hideText4Error)
-    }
-
-    protected val onText3FocusChanged = { focusState: FocusState ->
-        baseOnFocusChanged(this.text3, focusState)
-    }
-
-    protected val onText4FocusChanged = { focusState: FocusState ->
-        baseOnFocusChanged(this.text4, focusState)
     }
 }

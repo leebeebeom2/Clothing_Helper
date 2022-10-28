@@ -9,6 +9,7 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -63,21 +64,24 @@ fun SignUpScreen(
             email = state.email,
             onEmailChange = { state.onEmailChange(it, viewModelState.hideEmailError) },
             error = viewModelState.emailError,
-            imeAction = ImeAction.Next
+            imeAction = ImeAction.Next,
+            onFocusChanged = state.onEmailFocusChanged
         )
 
         MaxWidthTextField(
             label = R.string.name,
             text = state.name,
             onValueChange = state.onNameChange,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            onFocusChanged = state.onNameFocusChanged
         )
 
         PasswordTextField(
             password = state.password,
             onPasswordChange = state::onPasswordChange,
             error = state.passwordError,
-            imeAction = ImeAction.Next
+            imeAction = ImeAction.Next,
+            onFocusChanged = state.onPasswordFocusChanged
         )
 
         PasswordTextField(
@@ -85,7 +89,8 @@ fun SignUpScreen(
             onPasswordChange = state::onPasswordConfirmChange,
             error = state.passwordConfirmError,
             imeAction = ImeAction.Done,
-            label = R.string.password_confirm
+            label = R.string.password_confirm,
+            onFocusChanged = state.onPasswordConfirmFocusChanged
         )
         SimpleHeightSpacer(dp = 12)
         MaxWidthButton(text = R.string.sign_up,
@@ -156,6 +161,11 @@ class SignUpScreenUIState(
             else hidePasswordConfirmError()
         }
     }
+
+    val onEmailFocusChanged = { focusState: FocusState -> onText1FocusChanged(focusState) }
+    val onNameFocusChanged = { focusState: FocusState -> onText2FocusChanged(focusState) }
+    val onPasswordFocusChanged = { focusState: FocusState -> onText3FocusChanged(focusState) }
+    val onPasswordConfirmFocusChanged = { focusState: FocusState -> onText4FocusChanged(focusState) }
 
     fun submitButtonEnabled(@StringRes emailError: Int?) =
         email.text.isNotBlank() && emailError == null &&

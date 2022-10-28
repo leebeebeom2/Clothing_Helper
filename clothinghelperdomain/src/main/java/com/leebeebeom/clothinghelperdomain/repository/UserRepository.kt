@@ -13,7 +13,12 @@ interface UserRepository {
         pushInitialSubCategories: (uid: String) -> Unit
     )
 
-    fun signIn(email: String, password: String, signInListener: FirebaseListener)
+    fun signIn(
+        email: String,
+        password: String,
+        signInListener: FirebaseListener,
+        taskFinish: () -> Unit
+    )
 
     fun signUp(
         email: String,
@@ -21,10 +26,15 @@ interface UserRepository {
         name: String,
         signUpListener: FirebaseListener,
         updateNameListener: FirebaseListener,
-        pushInitialSubCategories: (uid: String) -> Unit
+        pushInitialSubCategories: (uid: String) -> Unit,
+        taskFinish: () -> Unit
     )
 
-    fun resetPasswordEmail(email: String, resetPasswordListener: FirebaseListener)
+    fun resetPasswordEmail(
+        email: String,
+        resetPasswordListener: FirebaseListener,
+        taskFinish: () -> Unit
+    )
 
     fun signOut()
 }

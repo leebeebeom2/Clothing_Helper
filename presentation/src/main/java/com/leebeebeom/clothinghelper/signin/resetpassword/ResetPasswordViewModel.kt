@@ -21,7 +21,7 @@ class ResetPasswordViewModel @Inject constructor(
 
     fun sendResetPasswordEmail(email: String) {
         viewModelState.loadingOn()
-        resetPasswordUseCase(email, resetPasswordListener) { viewModelState.loadingOff }
+        resetPasswordUseCase(email, resetPasswordListener) { viewModelState.loadingOff() }
     }
 
     private val resetPasswordListener = object : FirebaseListener {

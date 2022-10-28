@@ -11,6 +11,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
@@ -66,7 +67,7 @@ fun ResetPasswordScreen(
         MaxWidthButton(
             text = R.string.check,
             enabled = state.submitButtonEnabled(viewModelState.emailError),
-            onClick = { viewModel.sendResetPasswordEmail(email = state.email) }
+            onClick = { viewModel.sendResetPasswordEmail(email = state.email.text) }
         )
     }
 }
@@ -86,15 +87,15 @@ fun PopBackStack(
 class ResetPasswordScreenUIState(email: String = "") : OneTextFiledState(email) {
     val email get() = text.value
 
-    fun onEmailChange(email: String, hideEmailError: () -> Unit) =
+    fun onEmailChange(email: TextFieldValue, hideEmailError: () -> Unit) =
         super.onTextChange(email, hideEmailError)
 
     fun submitButtonEnabled(@StringRes emailError: Int?) =
-        email.isNotBlank() && emailError == null
+        email.text.isNotBlank() && emailError == null
 
     companion object {
         val Saver: Saver<ResetPasswordScreenUIState, *> = listSaver(
-            save = { listOf(it.email) },
+            save = { listOf(it.email.text) },
             restore = { ResetPasswordScreenUIState(it[0]) }
         )
     }

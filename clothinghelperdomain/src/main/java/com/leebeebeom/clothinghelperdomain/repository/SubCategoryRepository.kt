@@ -2,6 +2,7 @@ package com.leebeebeom.clothinghelperdomain.repository
 
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
+import jdk.internal.loader.AbstractClassLoaderValue.Sub
 import kotlinx.coroutines.flow.StateFlow
 
 interface SubCategoryRepository {
@@ -12,16 +13,11 @@ interface SubCategoryRepository {
 
     fun pushInitialSubCategories(uid: String)
 
-    val topSubCategories: StateFlow<List<SubCategory>>
-    val bottomSubCategories: StateFlow<List<SubCategory>>
-    val outerSubCategories: StateFlow<List<SubCategory>>
-    val etcSubCategories: StateFlow<List<SubCategory>>
+    val allSubCategories: List<StateFlow<SubCategory>>
 
     fun addSubCategory(
         subCategoryParent: SubCategoryParent,
         name: String,
         addSubCategoryListener: FirebaseListener
     )
-
-    fun deleteSubCategory(subCategory: SubCategory, deleteSubCategoryListener: FirebaseListener)
 }

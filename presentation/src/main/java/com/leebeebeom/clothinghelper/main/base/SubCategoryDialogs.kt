@@ -14,7 +14,7 @@ fun SubCategoryTextFieldDialog(
     @StringRes title: Int,
     categoryName: String = "",
     error: Int? = null,
-    onTextChange: (String) -> Unit,
+    onCategoryNameChange: (String) -> Unit,
     positiveButtonEnabled: Boolean,
     onPositiveButtonClick: () -> Unit
 ) {
@@ -25,7 +25,7 @@ fun SubCategoryTextFieldDialog(
             placeHolder = R.string.category_place_holder,
             text = categoryName,
             error = error,
-            onTextChange = onTextChange
+            onCategoryNameChange = onCategoryNameChange
         )
         DialogTextButtons(
             positiveButtonEnabled = positiveButtonEnabled,

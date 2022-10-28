@@ -8,6 +8,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
@@ -23,6 +24,7 @@ fun SignInBaseRoot(
     content: @Composable ColumnScope.() -> Unit
 ) {
     val focusManager = LocalFocusManager.current
+    val interactionSource = remember { MutableInteractionSource() }
 
     ClothingHelperTheme {
         Scaffold {
@@ -31,7 +33,7 @@ fun SignInBaseRoot(
                 .padding(horizontal = 20.dp)
                 .padding(it)
                 .clickable(
-                    interactionSource = MutableInteractionSource(),
+                    interactionSource = interactionSource,
                     indication = null
                 ) { focusManager.clearFocus() }
                 .verticalScroll(rememberScrollState()),

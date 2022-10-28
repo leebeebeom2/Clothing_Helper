@@ -75,20 +75,19 @@ fun MaxWidthTextField(
 
 @Composable
 private fun ErrorText(@StringRes error: Int?) {
-    AnimatedVisibility( // TODO 확인
+    AnimatedVisibility(
         visible = error != null,
         enter = expandVertically(
             animationSpec = spring(
                 dampingRatio = Spring.DampingRatioHighBouncy,
                 stiffness = Spring.StiffnessMedium
             ),
-            expandFrom = Alignment.Bottom,
-            clip = false
+            expandFrom = Alignment.Bottom
         ),
-        exit = shrinkVertically(animationSpec = tween(150), shrinkTowards = Alignment.Top)
+        exit = shrinkVertically(animationSpec = tween(durationMillis = 250), shrinkTowards = Alignment.Top)
     ) {
         Text(
-            modifier = Modifier.padding(start = 4.dp),
+            modifier = Modifier.padding(start = 4.dp, top = 4.dp),
             text = error?.let { stringResource(id = it) } ?: "",
             color = MaterialTheme.colors.error,
             style = MaterialTheme.typography.caption,

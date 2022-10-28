@@ -23,7 +23,7 @@ class SignInViewModel @Inject constructor(
 
     fun signInWithEmailAndPassword(email: String, password: String) {
         viewModelState.loadingOn()
-        signInUseCase(email, password, signInListener) { viewModelState.loadingOff }
+        signInUseCase(email, password, signInListener) { viewModelState.loadingOff() }
     }
 
     private val signInListener = object : FirebaseListener {

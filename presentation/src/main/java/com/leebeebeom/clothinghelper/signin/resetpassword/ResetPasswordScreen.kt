@@ -42,7 +42,7 @@ fun ResetPasswordScreen(
         )
 
         EmailTextField(
-            email = state.text,
+            email = state.email,
             onEmailChange = { state.onEmailChange(it, viewModelState.hideEmailError) },
             error = viewModelState.emailError,
             imeAction = ImeAction.Done
@@ -51,7 +51,7 @@ fun ResetPasswordScreen(
         MaxWidthButton(
             text = R.string.check,
             enabled = state.submitButtonEnabled(viewModelState.emailError),
-            onClick = { viewModel.sendResetPasswordEmail(email = state.text) }
+            onClick = { viewModel.sendResetPasswordEmail(email = state.email) }
         )
     }
 }
@@ -69,15 +69,17 @@ fun PopBackStack(
 }
 
 class ResetPasswordScreenUIState(email: String = "") : OneTextFiledState(email) {
+    val email get() = text.value
 
     fun onEmailChange(email: String, hideEmailError: () -> Unit) =
         super.onTextChange(email, hideEmailError)
 
-    fun submitButtonEnabled(@StringRes emailError: Int?) = text.isNotBlank() && emailError == null
+    fun submitButtonEnabled(@StringRes emailError: Int?) =
+        email.isNotBlank() && emailError == null
 
     companion object {
         val Saver: Saver<ResetPasswordScreenUIState, *> = listSaver(
-            save = { listOf(it.text) },
+            save = { listOf(it.email) },
             restore = { ResetPasswordScreenUIState(it[0]) }
         )
     }

@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleIcon
+import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -78,23 +79,24 @@ private fun SubCategoryTitle(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = 12.dp),
+            modifier = Modifier.weight(1f),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            SimpleWidthSpacer(dp = 8)
+            val duration = 300
             AnimatedVisibility(
                 visible = isSelectMode, // TODO 테스트
-                enter = slideInVertically() + scaleIn(),
-                exit = slideOutVertically() + scaleOut()
+                enter = expandHorizontally(tween(duration)) { 0 } + scaleIn(tween(duration)),
+                exit = shrinkHorizontally(tween(duration)) { 0 } + scaleOut(tween(duration))
             ) {
                 CircleCheckBox(
                     isChecked = isChecked,
-                    modifier = Modifier.padding(end = 8.dp)
+                    modifier = Modifier.size(18.dp)
                 )
             }
 
             Text(
+                modifier = Modifier.padding(start = 4.dp),
                 text = title,
                 style = MaterialTheme.typography.subtitle1,
                 maxLines = 1,

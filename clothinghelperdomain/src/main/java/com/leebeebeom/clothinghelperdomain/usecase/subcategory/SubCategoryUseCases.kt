@@ -51,3 +51,7 @@ class EditSubCategoryNameUseCase(private val subCategoryRepository: SubCategoryR
         newName: String
     ) = subCategoryRepository.editSubCategoryName(subCategory, newName)
 }
+
+class SortSubCategoriesUseCase(private val subCategoryRepository: SubCategoryRepository) {
+    suspend operator fun invoke() = subCategoryRepository.sortSubCategories()
+}

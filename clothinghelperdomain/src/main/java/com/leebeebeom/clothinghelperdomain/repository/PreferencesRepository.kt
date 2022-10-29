@@ -16,5 +16,7 @@ enum class SortOrder {
 }
 
 data class SubCategoryPreferences(
-    val allExpand: Boolean
+    val allExpand: Boolean,
+    val sort: SubCategorySort,
+    val sortOrder: SortOrder
 )

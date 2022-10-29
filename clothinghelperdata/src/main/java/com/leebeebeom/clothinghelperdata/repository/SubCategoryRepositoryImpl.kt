@@ -86,6 +86,10 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
 
     }
 
+    override fun editSubCategoryName(subCategory: SubCategory, newName: String) {
+        // TODO
+    }
+
     private fun getInitialSubCategories(): List<SubCategory> {
         return listOf(
             SubCategory(

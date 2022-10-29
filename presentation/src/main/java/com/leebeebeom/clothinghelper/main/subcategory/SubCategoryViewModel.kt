@@ -12,7 +12,8 @@ import com.leebeebeom.clothinghelper.main.base.BaseSubCategoriesViewModelState
 import com.leebeebeom.clothinghelper.util.taskAndReturn
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
-import com.leebeebeom.clothinghelperdomain.usecase.preferences.GetPreferencesAndToggleAllExpandUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.preferences.GetSubCategoryPreferencesUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.preferences.ToggleAllExpandUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.AddSubCategoryUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.EditSubCategoryNameUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.LoadAndGetSubCategoriesUseCase
@@ -26,7 +27,8 @@ class SubCategoryViewModel @Inject constructor(
     loadAndGetSubCategoriesUseCase: LoadAndGetSubCategoriesUseCase,
     private val addSubCategoryUseCase: AddSubCategoryUseCase,
     private val editSubCategoryNameUseCase: EditSubCategoryNameUseCase,
-    private val getPreferencesAndToggleAllExpandUseCase: GetPreferencesAndToggleAllExpandUseCase
+    private val getSubCategoryPreferencesUseCase: GetSubCategoryPreferencesUseCase,
+    private val toggleAllExpandUseCase: ToggleAllExpandUseCase
 ) : BaseSubCategoriesViewModel(loadAndGetSubCategoriesUseCase) {
 
     override val viewModelState = SubCategoryViewModelState()
@@ -35,7 +37,7 @@ class SubCategoryViewModel @Inject constructor(
         collectSubCategories()
 
         viewModelScope.launch {
-            getPreferencesAndToggleAllExpandUseCase.getPreferences(scope = this).collect {
+            getSubCategoryPreferencesUseCase(scope = this).collect {
                 viewModelState.updateAllExpand(it.allExpand)
             }
         }
@@ -52,7 +54,7 @@ class SubCategoryViewModel @Inject constructor(
     }
 
     fun toggleAllExpand() = viewModelScope.launch {
-        getPreferencesAndToggleAllExpandUseCase.toggleAllExpand()
+        toggleAllExpandUseCase()
     }
 
     fun editSubCategoryName(newName: String) =

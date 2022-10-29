@@ -10,6 +10,8 @@ interface SubCategoryRepository {
         onSubCategoriesLoadingCancelled: (errorCode: Int, message: String) -> Unit
     )
 
+    suspend fun sortSubCategories()
+
     fun pushInitialSubCategories(uid: String)
 
     val allSubCategories: List<StateFlow<List<SubCategory>>>

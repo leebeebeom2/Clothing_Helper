@@ -70,7 +70,7 @@ fun SignInScreen(
     SignInBaseRoot(
         isLoading = viewModelState.isLoading,
         toastText = viewModelState.toastText,
-        toastShown = viewModelState.toastShown
+        toastShown = viewModelState::toastShown
     ) {
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
             EmailTextField(

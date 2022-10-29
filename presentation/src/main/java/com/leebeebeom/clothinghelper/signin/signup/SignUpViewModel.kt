@@ -34,7 +34,7 @@ class SignUpViewModel @Inject constructor(
             exception = exception,
             showEmailError = viewModelState.showEmailError,
             showPasswordError = {},
-            showToast = viewModelState.showToast
+            showToast = viewModelState::showToast
         )
     }
 

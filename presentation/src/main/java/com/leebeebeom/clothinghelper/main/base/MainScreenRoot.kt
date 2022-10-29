@@ -47,7 +47,7 @@ fun MainScreenRoot(
     val state = rememberMainScreenUIState()
 
     viewModelState.toastText?.let {
-        SimpleToast(text = it, viewModelState.toastShown)
+        SimpleToast(text = it, viewModelState::toastShown)
     }
 
     ClothingHelperTheme {

@@ -57,7 +57,7 @@ fun SignUpScreen(
     SignInBaseRoot(
         isLoading = viewModelState.isLoading,
         toastText = viewModelState.toastText,
-        toastShown = viewModelState.toastShown
+        toastShown = viewModelState::toastShown
     ) {
         EmailTextField(
             email = state.email,

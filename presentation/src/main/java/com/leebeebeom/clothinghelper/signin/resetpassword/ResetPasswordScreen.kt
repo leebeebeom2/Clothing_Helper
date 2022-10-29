@@ -49,7 +49,7 @@ fun ResetPasswordScreen(
     SignInBaseRoot(
         isLoading = viewModelState.isLoading,
         toastText = viewModelState.toastText,
-        toastShown = viewModelState.toastShown
+        toastShown = viewModelState::toastShown
     ) {
         Text(
             text = stringResource(id = R.string.reset_password_text),

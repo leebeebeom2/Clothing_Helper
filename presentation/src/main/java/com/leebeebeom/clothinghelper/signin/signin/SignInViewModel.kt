@@ -34,7 +34,7 @@ class SignInViewModel @Inject constructor(
                 exception = exception,
                 showEmailError = viewModelState.showEmailError,
                 showPasswordError = viewModelState.showPasswordError,
-                showToast = viewModelState.showToast
+                showToast = viewModelState::showToast
             )
 
         override fun taskFinish() = viewModelState.loadingOff()

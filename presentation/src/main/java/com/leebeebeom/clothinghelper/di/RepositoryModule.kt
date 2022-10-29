@@ -38,5 +38,5 @@ class RepositoryModule {
     fun dataStore(@ApplicationContext context: Context) = context.datastore
 }
 
-private const val PREFERENCES_NAME = "preferences"
+private const val PREFERENCES_NAME = "subCategory_preferences"
 private val Context.datastore by preferencesDataStore(name = PREFERENCES_NAME)

@@ -9,12 +9,16 @@ import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
-import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
-import com.leebeebeom.clothinghelperdomain.repository.UserRepository
+import com.leebeebeom.clothinghelperdomain.repository.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
+// TODO EXPAND 프리퍼런스로 이동??
+
+class SubCategoryRepositoryImpl(
+    private val userRepository: UserRepository,
+    private val preferencesRepository: PreferencesRepository
+) :
     SubCategoryRepository {
     private val root = Firebase.database.reference
     private val user = MutableStateFlow(userRepository.user.value)
@@ -51,6 +55,53 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
             }
         }
 
+    }
+
+    override suspend fun sortSubCategories() {
+        preferencesRepository.subCategoryPreferences.collect {
+            when (it.sort) {
+                SubCategorySort.NAME -> sortByName(it.sortOrder)
+                SubCategorySort.CREATE -> sortByCreate(it.sortOrder)
+            }
+        }
+    }
+
+    private fun sortByName(sortOrder: SortOrder) {
+        when (sortOrder) {
+            SortOrder.ASCENDING -> {
+                _allSubCategories.forEach { subCategories ->
+                    subCategories.taskAndAssign {
+                        it.sortBy { temp -> temp.name }
+                    }
+                }
+            }
+            SortOrder.DESCENDING -> {
+                _allSubCategories.forEach { subCategories ->
+                    subCategories.taskAndAssign {
+                        it.sortByDescending { temp -> temp.name }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun sortByCreate(sortOrder: SortOrder) {
+        when (sortOrder) {
+            SortOrder.ASCENDING -> {
+                _allSubCategories.forEach { subCategories ->
+                    subCategories.taskAndAssign {
+                        it.sortBy { temp -> temp.createDate }
+                    }
+                }
+            }
+            SortOrder.DESCENDING -> {
+                _allSubCategories.forEach { subCategories ->
+                    subCategories.taskAndAssign {
+                        it.sortByDescending { temp -> temp.createDate }
+                    }
+                }
+            }
+        }
     }
 
     override fun pushInitialSubCategories(uid: String) {

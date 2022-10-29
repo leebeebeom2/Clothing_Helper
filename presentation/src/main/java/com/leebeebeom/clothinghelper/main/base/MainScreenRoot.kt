@@ -32,8 +32,6 @@ import kotlinx.coroutines.launch
 메인 카테고리 익스팬드 아이콘 로테이션 및 동작 확인
 
 드로어가 열려있을때 뒤로 가기 시 드로어 닫히는지 확인
-
-TODO 현재 메인 제외 다른 페이지에서 드로어 열려있을때 뒤로가기 누르면 팝백스택됨
  */
 
 @Composable

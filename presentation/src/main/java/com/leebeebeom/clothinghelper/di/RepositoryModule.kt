@@ -35,8 +35,8 @@ class RepositoryModule {
 
     @Singleton
     @Provides
-    fun dataStore(@ApplicationContext context: Context) = context.datastore
+    fun dataStore(@ApplicationContext context: Context) = context.subCategoryDatastore
 }
 
-private const val PREFERENCES_NAME = "subCategory_preferences"
-private val Context.datastore by preferencesDataStore(name = PREFERENCES_NAME)
+private const val SUBCATEGORY = "subCategory_preferences"
+private val Context.subCategoryDatastore by preferencesDataStore(name = SUBCATEGORY)

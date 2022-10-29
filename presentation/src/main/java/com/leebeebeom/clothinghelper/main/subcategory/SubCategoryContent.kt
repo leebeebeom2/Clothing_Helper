@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -95,10 +95,15 @@ private fun AllExpandIcon(allExpandIconClick: () -> Unit, allExpand: Boolean) {
 
 @Composable
 private fun SortIcon() {
-    // TODO 드랍다운 메뉴
-    IconButton(onClick = {}, modifier = Modifier.size(22.dp)) {
-        SimpleIcon(
-            drawable = R.drawable.ic_sort, tint = LocalContentColor.current.copy(0.5f)
-        )
+    var showDropDownMenu by remember { mutableStateOf(false) }
+
+    Box {
+        IconButton(onClick = { showDropDownMenu = true }, modifier = Modifier.size(22.dp)) {
+            SimpleIcon(
+                drawable = R.drawable.ic_sort, tint = LocalContentColor.current.copy(0.5f)
+            )
+        }
+
+        SortDropdownMenu(showDropDownMenu) { showDropDownMenu = false }
     }
 }

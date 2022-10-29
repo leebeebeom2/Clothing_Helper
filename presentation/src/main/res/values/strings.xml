@@ -57,4 +57,8 @@
     <string name="delete_category_failed">카테고리 삭제에 실패하였습니다.</string>
     <string name="edit_category_name">카테고리 이름 수정</string>
     <string name="count_selected">%1d개 선택됨</string>
+    <string name="sort_name">이름 순</string>
+    <string name="sort_create_date">만든 날짜 순</string>
+    <string name="sort_Ascending">오름차</string>
+    <string name="sort_Descending">내림차</string>
 </resources>

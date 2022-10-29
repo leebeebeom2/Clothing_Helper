@@ -4,7 +4,9 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.base.SimpleToast
@@ -41,7 +43,7 @@ fun MainScreenRoot(
     onMainCategoryClick: (mainCategoryName: String) -> Unit,
     onSubCategoryClick: (key: String) -> Unit,
     viewModel: MainScreenRootViewModel = hiltViewModel(),
-    content: @Composable (PaddingValues, getIsSubCategoriesLoading: Boolean) -> Unit,
+    content: @Composable (PaddingValues, getIsSubCategoriesLoading: Boolean, backHandler: @Composable () -> Unit) -> Unit
 ) {
     val viewModelState = viewModel.viewModelState
     val state = rememberMainScreenUIState()
@@ -77,10 +79,24 @@ fun MainScreenRoot(
             },
             drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
             drawerBackgroundColor = MaterialTheme.colors.primary,
-            content = { content(it, viewModelState.isSubCategoriesLoading) })
-
-        BackHandler(enabled = state.drawerState.isOpen, onBack = state::onDrawerClose)
+            content = {
+                content(it, viewModelState.isSubCategoriesLoading) {
+                    DrawerCloseBackHandler(
+                        isDrawerOpen = state.drawerState.isOpen,
+                        onDrawerClose = state.onDrawerClose
+                    )
+                }
+            })
+        DrawerCloseBackHandler(
+            isDrawerOpen = state.drawerState.isOpen,
+            onDrawerClose = state.onDrawerClose
+        )
     }
+}
+
+@Composable
+fun DrawerCloseBackHandler(isDrawerOpen: Boolean, onDrawerClose: () -> Unit) {
+    BackHandler(enabled = isDrawerOpen, onBack = onDrawerClose)
 }
 
 class MainScreenUIState(
@@ -89,8 +105,9 @@ class MainScreenUIState(
 ) {
     val drawerState: DrawerState = scaffoldState.drawerState
 
-    fun onDrawerClose() {
+    val onDrawerClose = {
         coroutineScope.launch { drawerState.close() }
+        Unit
     }
 }
 

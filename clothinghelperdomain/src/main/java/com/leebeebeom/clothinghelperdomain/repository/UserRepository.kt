@@ -1,5 +1,7 @@
 package com.leebeebeom.clothinghelperdomain.repository
 
+import com.leebeebeom.clothinghelperdomain.model.SignIn
+import com.leebeebeom.clothinghelperdomain.model.SignUp
 import com.leebeebeom.clothinghelperdomain.model.User
 import kotlinx.coroutines.flow.StateFlow
 
@@ -14,19 +16,15 @@ interface UserRepository {
     )
 
     fun signIn(
-        email: String,
-        password: String,
+        signIn: SignIn,
         listener: FirebaseListener2,
     )
 
     fun signUp(
-        email: String,
-        password: String,
-        name: String,
-        signUpListener: FirebaseListener,
-        updateNameListener: FirebaseListener,
-        pushInitialSubCategories: (uid: String) -> Unit,
-        taskFinish: () -> Unit
+        signUp: SignUp,
+        signUpListener: FirebaseListener2,
+        updateNameListener: FirebaseListener2,
+        pushInitialSubCategories: (uid: String) -> Unit
     )
 
     fun resetPasswordEmail(

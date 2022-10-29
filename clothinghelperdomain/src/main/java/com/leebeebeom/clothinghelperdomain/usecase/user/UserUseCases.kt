@@ -1,5 +1,7 @@
 package com.leebeebeom.clothinghelperdomain.usecase.user
 
+import com.leebeebeom.clothinghelperdomain.model.SignIn
+import com.leebeebeom.clothinghelperdomain.model.SignUp
 import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener2
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
@@ -27,7 +29,7 @@ class SignInUseCase(private val userRepository: UserRepository) {
         email: String,
         password: String,
         listener: FirebaseListener2,
-    ) = userRepository.signIn(email, password, listener)
+    ) = userRepository.signIn(SignIn(email = email, password = password), listener)
 }
 
 class SignUpUseCase(
@@ -38,17 +40,13 @@ class SignUpUseCase(
         email: String,
         password: String,
         name: String,
-        signUpListener: FirebaseListener,
-        updateNameListener: FirebaseListener,
-        taskFinish: () -> Unit
+        signUpListener: FirebaseListener2,
+        updateNameListener: FirebaseListener2,
     ) = userRepository.signUp(
-        email,
-        password,
-        name,
-        signUpListener,
-        updateNameListener,
-        subCategoryRepository::pushInitialSubCategories,
-        taskFinish
+        signUp = SignUp(email = email, password = password, name = name),
+        signUpListener = signUpListener,
+        updateNameListener = updateNameListener,
+        pushInitialSubCategories = subCategoryRepository::pushInitialSubCategories,
     )
 }
 

@@ -5,6 +5,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
+import com.leebeebeom.clothinghelperdomain.model.SignIn
+import com.leebeebeom.clothinghelperdomain.model.SignUp
 import com.leebeebeom.clothinghelperdomain.model.User
 import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
 import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener2
@@ -45,14 +47,13 @@ class UserRepositoryImpl : UserRepository {
     }
 
     override fun signIn(
-        email: String,
-        password: String,
+        signIn: SignIn,
         listener: FirebaseListener2,
     ) {
-        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
+        auth.signInWithEmailAndPassword(signIn.email, signIn.password).addOnCompleteListener {
             if (it.isSuccessful) {
-                val user = it.result.user.toUser()!!
-                signInSuccess(user)
+                val userObj = it.result.user.toUser()!!
+                signInSuccess(userObj)
                 listener.taskSuccess()
             } else listener.taskFailed(it.exception)
             listener.taskFinish()
@@ -60,28 +61,25 @@ class UserRepositoryImpl : UserRepository {
     }
 
     override fun signUp(
-        email: String,
-        password: String,
-        name: String,
-        signUpListener: FirebaseListener,
-        updateNameListener: FirebaseListener,
-        pushInitialSubCategories: (uid: String) -> Unit,
-        taskFinish: () -> Unit
+        signUp: SignUp,
+        signUpListener: FirebaseListener2,
+        updateNameListener: FirebaseListener2,
+        pushInitialSubCategories: (uid: String) -> Unit
     ) {
-        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
+        auth.createUserWithEmailAndPassword(signUp.email, signUp.password).addOnCompleteListener {
             if (it.isSuccessful) {
-                val firebaseUser = it.result.user!!
-                val user = firebaseUser.toUser()!!
-                pushFirstUser(user, pushInitialSubCategories)
-                signInSuccess(user)
+                val user = it.result.user!!
+                val userObj = user.toUser()!!
+                pushFirstUser(userObj, pushInitialSubCategories)
+                signInSuccess(userObj)
                 signUpListener.taskSuccess()
-                updateName(updateNameListener, firebaseUser, name)
+                updateName(updateNameListener, user, signUp.name)
             } else signUpListener.taskFailed(it.exception)
-            taskFinish()
+            signUpListener.taskFinish()
         }
     }
 
-    private fun updateName(updateNameListener: FirebaseListener, user: FirebaseUser, name: String) {
+    private fun updateName(updateNameListener: FirebaseListener2, user: FirebaseUser, name: String) {
         val request = userProfileChangeRequest { displayName = name }
 
         user.updateProfile(request)
@@ -92,6 +90,7 @@ class UserRepositoryImpl : UserRepository {
                     updateUser(newNameUser)
                     updateNameListener.taskSuccess()
                 } else updateNameListener.taskFailed(it.exception)
+                updateNameListener.taskFinish()
             }
     }
 

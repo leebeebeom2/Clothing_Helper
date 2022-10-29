@@ -1,10 +1,7 @@
 package com.leebeebeom.clothinghelperdata.repository
 
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.*
 import com.leebeebeom.clothinghelperdomain.repository.PreferencesRepository
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryPreferences
 import kotlinx.coroutines.flow.Flow
@@ -22,7 +19,13 @@ class PreferencesRepositoryImpl(private val dataStore: DataStore<Preferences>) :
         }
         .map {
             val allExpand = it[PreferenceKeys.ALL_EXPAND] ?: false
-            SubCategoryPreferences(allExpand)
+            val sort = it[PreferenceKeys.SORT] ?: "name"
+            val order = it[PreferenceKeys.ORDER] ?: "ascending"
+            SubCategoryPreferences(
+                allExpand = allExpand,
+                sort = enumValueOf(sort),
+                sortOrder = enumValueOf(order)
+            )
         }
 
     override suspend fun toggleAllExpand() {
@@ -35,4 +38,6 @@ class PreferencesRepositoryImpl(private val dataStore: DataStore<Preferences>) :
 
 private object PreferenceKeys {
     val ALL_EXPAND = booleanPreferencesKey("all_expand")
+    val SORT = stringPreferencesKey("sort")
+    val ORDER = stringPreferencesKey("order")
 }

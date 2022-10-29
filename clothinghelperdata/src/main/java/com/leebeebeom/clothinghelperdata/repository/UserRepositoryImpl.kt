@@ -47,16 +47,15 @@ class UserRepositoryImpl : UserRepository {
     override fun signIn(
         email: String,
         password: String,
-        signInListener: FirebaseListener,
-        taskFinish: () -> Unit
+        listener: FirebaseListener2,
     ) {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
                 val user = it.result.user.toUser()!!
                 signInSuccess(user)
-                signInListener.taskSuccess()
-            } else signInListener.taskFailed(it.exception)
-            taskFinish()
+                listener.taskSuccess()
+            } else listener.taskFailed(it.exception)
+            listener.taskFinish()
         }
     }
 

@@ -7,7 +7,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInViewModelState
 import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
-import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
+import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener2
 import com.leebeebeom.clothinghelperdomain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.user.SignInUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,13 +23,11 @@ class SignInViewModel @Inject constructor(
 
     fun signInWithEmailAndPassword(email: String, password: String) {
         viewModelState.loadingOn()
-        signInUseCase(email, password, signInListener) { viewModelState.loadingOff() }
+        signInUseCase(email, password, signInListener)
     }
 
-    private val signInListener = object : FirebaseListener {
-        override fun taskSuccess() {
-            viewModelState.showToast(R.string.sign_in_complete)
-        }
+    private val signInListener = object : FirebaseListener2 {
+        override fun taskSuccess() = viewModelState.showToast(R.string.sign_in_complete)
 
         override fun taskFailed(exception: Exception?) =
             setFireBaseError(
@@ -38,6 +36,8 @@ class SignInViewModel @Inject constructor(
                 showPasswordError = viewModelState.showPasswordError,
                 showToast = viewModelState.showToast
             )
+
+        override fun taskFinish() = viewModelState.loadingOff()
     }
 }
 

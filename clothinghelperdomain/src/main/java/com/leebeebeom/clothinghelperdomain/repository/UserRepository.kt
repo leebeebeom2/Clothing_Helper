@@ -16,8 +16,7 @@ interface UserRepository {
     fun signIn(
         email: String,
         password: String,
-        signInListener: FirebaseListener,
-        taskFinish: () -> Unit
+        listener: FirebaseListener2,
     )
 
     fun signUp(

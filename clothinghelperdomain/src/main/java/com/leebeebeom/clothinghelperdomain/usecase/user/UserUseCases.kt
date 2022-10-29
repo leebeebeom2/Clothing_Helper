@@ -26,9 +26,8 @@ class SignInUseCase(private val userRepository: UserRepository) {
     operator fun invoke(
         email: String,
         password: String,
-        signInListener: FirebaseListener,
-        taskFinish: () -> Unit
-    ) = userRepository.signIn(email, password, signInListener, taskFinish)
+        listener: FirebaseListener2,
+    ) = userRepository.signIn(email, password, listener)
 }
 
 class SignUpUseCase(

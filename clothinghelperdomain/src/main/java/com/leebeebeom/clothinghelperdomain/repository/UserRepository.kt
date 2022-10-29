@@ -8,8 +8,8 @@ interface UserRepository {
     val user: StateFlow<User?>
 
     fun googleSignIn(
-        googleCredential: Any?,
-        googleSignInListener: FirebaseListener,
+        credential: Any?,
+        listener: FirebaseListener2,
         pushInitialSubCategories: (uid: String) -> Unit
     )
 
@@ -42,4 +42,10 @@ interface UserRepository {
 interface FirebaseListener {
     fun taskSuccess()
     fun taskFailed(exception: Exception?)
+}
+
+interface FirebaseListener2 {
+    fun taskSuccess()
+    fun taskFailed(exception: Exception?)
+    fun taskFinish()
 }

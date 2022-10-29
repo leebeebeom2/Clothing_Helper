@@ -11,7 +11,7 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
-import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
+import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener2
 import com.leebeebeom.clothinghelperdomain.usecase.user.GoogleSignInUseCase
 
 abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSignInUseCase) :
@@ -24,20 +24,16 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
         viewModelState.setGoogleButtonDisable()
     }
 
-    fun taskFinish() {
-        viewModelState.loadingOff()
-        viewModelState.setGoogleButtonEnable()
-    }
-
     fun signInWithGoogleEmail(activityResult: ActivityResult) {
         when (activityResult.resultCode) {
             RESULT_OK -> googleSignInUseCase(
-                googleCredential = getGoogleCredential(activityResult),
-                googleSignInListener = googleSignInListener
+                credential = getGoogleCredential(activityResult),
+                listener = listener
             )
             RESULT_CANCELED -> {
                 viewModelState.showToast(R.string.canceled)
-                taskFinish()
+                listener.taskFailed(null)
+                listener.taskFinish()
             }
             else -> {
                 viewModelState.showToast(R.string.unknown_error)
@@ -45,7 +41,8 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
                     TAG,
                     "GoogleSignInUpViewModel.signInWithGoogleEmail: resultCode = ${activityResult.resultCode}"
                 )
-                taskFinish()
+                listener.taskFailed(null)
+                listener.taskFinish()
             }
         }
     }
@@ -63,16 +60,19 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
         }
     }
 
-    private val googleSignInListener = object : FirebaseListener {
+    private val listener = object : FirebaseListener2 {
         override fun taskSuccess() {
             viewModelState.showToast(R.string.google_sign_in_complete)
-            viewModelState.loadingOff()
         }
 
         override fun taskFailed(exception: Exception?) {
             viewModelState.showToast(R.string.unknown_error)
-            taskFinish()
+            viewModelState.setGoogleButtonEnable()
             Log.d(TAG, "taskFailed: $exception")
+        }
+
+        override fun taskFinish() {
+            viewModelState.loadingOff()
         }
     }
 }

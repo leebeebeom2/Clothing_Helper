@@ -1,6 +1,7 @@
 package com.leebeebeom.clothinghelperdomain.usecase.user
 
 import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
+import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener2
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
 import com.leebeebeom.clothinghelperdomain.repository.UserRepository
 
@@ -13,10 +14,10 @@ class GoogleSignInUseCase(
     private val subCategoryRepository: SubCategoryRepository
 ) {
     operator fun invoke(
-        googleCredential: Any?, googleSignInListener: FirebaseListener
+        credential: Any?, listener: FirebaseListener2
     ) = userRepository.googleSignIn(
-        googleCredential,
-        googleSignInListener,
+        credential,
+        listener,
         subCategoryRepository::pushInitialSubCategories
     )
 }

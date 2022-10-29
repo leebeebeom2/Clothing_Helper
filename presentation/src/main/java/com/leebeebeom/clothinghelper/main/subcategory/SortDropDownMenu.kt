@@ -105,7 +105,7 @@ fun SortButton(
 ) {
     val strokeColor by animateColorAsState(
         targetValue = if (text == selectedRes) MaterialTheme.colors.primary.copy(0.8f) else Color.Transparent,
-        animationSpec = tween(durationMillis = 250)
+        animationSpec = tween(durationMillis = 200)
     )
 
     Box(

@@ -10,7 +10,7 @@ import dagger.hilt.android.components.ViewModelComponent
 
 @Module
 @InstallIn(ViewModelComponent::class)
-class PreferencesUseCaseModule {
+class SubCategoryPreferencesUseCaseModule {
     @Provides
     fun getSubCategoryPreferencesUseCase(subCategoryPreferencesRepository: SubCategoryPreferencesRepositoryImpl) =
         GetSubCategoryPreferencesUseCase(subCategoryPreferencesRepository)

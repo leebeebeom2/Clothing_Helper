@@ -28,7 +28,7 @@ open class BaseSubCategoryTextFieldDialogUIState(
             R.string.error_same_category_name
     }
 
-    val positiveButtonEnabled get() = categoryName.text.isNotBlank() && error == null
+    open val c get() = categoryName.text.isNotBlank() && error == null
 
     val onDismissDialog = {
         this.showDialog = false

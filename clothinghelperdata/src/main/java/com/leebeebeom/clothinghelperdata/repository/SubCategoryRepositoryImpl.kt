@@ -174,7 +174,7 @@ object DatabasePath {
     const val USER_INFO = "user info"
 }
 
-fun <T> MutableStateFlow<List<T>>.taskAndAssign(task: (MutableList<T>) -> Unit) {
+inline fun <T> MutableStateFlow<List<T>>.taskAndAssign(crossinline task: (MutableList<T>) -> Unit) {
     val temp = this.value.toMutableList()
     task(temp)
     this.value = temp

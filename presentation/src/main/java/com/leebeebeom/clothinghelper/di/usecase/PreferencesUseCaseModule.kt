@@ -1,6 +1,6 @@
 package com.leebeebeom.clothinghelper.di.usecase
 
-import com.leebeebeom.clothinghelperdata.repository.PreferencesRepositoryImpl
+import com.leebeebeom.clothinghelperdata.repository.SubCategoryPreferencesRepositoryImpl
 import com.leebeebeom.clothinghelperdomain.usecase.preferences.GetSubCategoryPreferencesUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.preferences.ToggleAllExpandUseCase
 import dagger.Module
@@ -12,10 +12,10 @@ import dagger.hilt.android.components.ViewModelComponent
 @InstallIn(ViewModelComponent::class)
 class PreferencesUseCaseModule {
     @Provides
-    fun getPreferencesUseCase(preferencesRepository: PreferencesRepositoryImpl) =
-        GetSubCategoryPreferencesUseCase(preferencesRepository)
+    fun getSubCategoryPreferencesUseCase(subCategoryPreferencesRepository: SubCategoryPreferencesRepositoryImpl) =
+        GetSubCategoryPreferencesUseCase(subCategoryPreferencesRepository)
 
     @Provides
-    fun toggleAllExpandUseCase(preferencesRepository: PreferencesRepositoryImpl) =
-        ToggleAllExpandUseCase(preferencesRepository)
+    fun toggleAllExpandUseCase(subCategoryPreferencesRepository: SubCategoryPreferencesRepositoryImpl) =
+        ToggleAllExpandUseCase(subCategoryPreferencesRepository)
 }

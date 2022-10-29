@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 class SubCategoryRepositoryImpl(
     private val userRepository: UserRepository,
-    private val preferencesRepository: PreferencesRepository
+    private val subCategoryPreferencesRepository: SubCategoryPreferencesRepository
 ) :
     SubCategoryRepository {
     private val root = Firebase.database.reference
@@ -58,7 +58,7 @@ class SubCategoryRepositoryImpl(
     }
 
     override suspend fun sortSubCategories() {
-        preferencesRepository.subCategoryPreferences.collect {
+        subCategoryPreferencesRepository.subCategoryPreferences.collect {
             when (it.sort) {
                 SubCategorySort.NAME -> sortByName(it.sortOrder)
                 SubCategorySort.CREATE -> sortByCreate(it.sortOrder)

@@ -2,15 +2,15 @@ package com.leebeebeom.clothinghelperdata.repository
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
-import com.leebeebeom.clothinghelperdomain.repository.PreferencesRepository
+import com.leebeebeom.clothinghelperdomain.repository.SubCategoryPreferencesRepository
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryPreferences
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 
-class PreferencesRepositoryImpl(private val dataStore: DataStore<Preferences>) :
-    PreferencesRepository {
+class SubCategoryPreferencesRepositoryImpl(private val dataStore: DataStore<Preferences>) :
+    SubCategoryPreferencesRepository {
 
     override val subCategoryPreferences: Flow<SubCategoryPreferences> = dataStore.data
         .catch {

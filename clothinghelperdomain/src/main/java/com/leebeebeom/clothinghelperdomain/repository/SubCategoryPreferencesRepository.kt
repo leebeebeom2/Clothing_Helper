@@ -2,7 +2,7 @@ package com.leebeebeom.clothinghelperdomain.repository
 
 import kotlinx.coroutines.flow.Flow
 
-interface PreferencesRepository {
+interface SubCategoryPreferencesRepository {
     val subCategoryPreferences: Flow<SubCategoryPreferences>
     suspend fun toggleAllExpand()
 }

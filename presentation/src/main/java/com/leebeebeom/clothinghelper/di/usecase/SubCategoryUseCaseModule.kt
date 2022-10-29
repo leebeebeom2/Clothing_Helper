@@ -31,4 +31,8 @@ class SubCategoryUseCaseModule {
     @Provides
     fun editSubCategoryNameUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
         EditSubCategoryNameUseCase(subCategoryRepository)
+
+    @Provides
+    fun sortSubCategoriesUseCate(subCategoryRepository: SubCategoryRepositoryImpl) =
+        SortSubCategoriesUseCase(subCategoryRepository)
 }

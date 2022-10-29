@@ -17,6 +17,7 @@ import com.leebeebeom.clothinghelperdomain.usecase.preferences.ToggleAllExpandUs
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.AddSubCategoryUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.EditSubCategoryNameUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.LoadAndGetSubCategoriesUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.subcategory.SortSubCategoriesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,12 +29,16 @@ class SubCategoryViewModel @Inject constructor(
     private val addSubCategoryUseCase: AddSubCategoryUseCase,
     private val editSubCategoryNameUseCase: EditSubCategoryNameUseCase,
     private val getSubCategoryPreferencesUseCase: GetSubCategoryPreferencesUseCase,
-    private val toggleAllExpandUseCase: ToggleAllExpandUseCase
+    private val toggleAllExpandUseCase: ToggleAllExpandUseCase,
+    private val sortSubCategoriesUseCase: SortSubCategoriesUseCase
 ) : BaseSubCategoriesViewModel(loadAndGetSubCategoriesUseCase) {
 
     override val viewModelState = SubCategoryViewModelState()
 
     init {
+        viewModelScope.launch {
+            sortSubCategoriesUseCase()
+        }
         collectSubCategories()
 
         viewModelScope.launch {
@@ -59,6 +64,8 @@ class SubCategoryViewModel @Inject constructor(
 
     fun editSubCategoryName(newName: String) =
         editSubCategoryNameUseCase(viewModelState.selectedSubCategories.first(), newName)
+
+    
 }
 
 class SubCategoryViewModelState : BaseSubCategoriesViewModelState() {

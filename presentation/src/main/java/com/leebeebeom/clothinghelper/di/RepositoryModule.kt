@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import com.leebeebeom.clothinghelperdata.repository.PreferencesRepositoryImpl
+import com.leebeebeom.clothinghelperdata.repository.SubCategoryPreferencesRepositoryImpl
 import com.leebeebeom.clothinghelperdata.repository.SubCategoryRepositoryImpl
 import com.leebeebeom.clothinghelperdata.repository.UserRepositoryImpl
 import dagger.Module
@@ -21,8 +21,8 @@ class RepositoryModule {
     @Provides
     fun subCategoryRepository(
         userRepository: UserRepositoryImpl,
-        preferencesRepository: PreferencesRepositoryImpl
-    ) = SubCategoryRepositoryImpl(userRepository, preferencesRepository)
+        subCategoryPreferencesRepository: SubCategoryPreferencesRepositoryImpl
+    ) = SubCategoryRepositoryImpl(userRepository, subCategoryPreferencesRepository)
 
     @Singleton
     @Provides
@@ -31,7 +31,7 @@ class RepositoryModule {
     @Singleton
     @Provides
     fun preferencesRepository(dataStore: DataStore<Preferences>) =
-        PreferencesRepositoryImpl(dataStore)
+        SubCategoryPreferencesRepositoryImpl(dataStore)
 
     @Singleton
     @Provides

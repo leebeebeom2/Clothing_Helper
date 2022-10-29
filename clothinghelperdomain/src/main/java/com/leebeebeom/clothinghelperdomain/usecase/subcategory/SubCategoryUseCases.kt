@@ -1,5 +1,6 @@
 package com.leebeebeom.clothinghelperdomain.usecase.subcategory
 
+import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
 
@@ -42,4 +43,11 @@ class AddSubCategoryUseCase(private val subCategoryRepository: SubCategoryReposi
         name = name,
         taskFailed
     )
+}
+
+class EditSubCategoryNameUseCase(private val subCategoryRepository: SubCategoryRepository) {
+    operator fun invoke(
+        subCategory: SubCategory,
+        newName: String
+    ) = subCategoryRepository.editSubCategoryName(subCategory, newName)
 }

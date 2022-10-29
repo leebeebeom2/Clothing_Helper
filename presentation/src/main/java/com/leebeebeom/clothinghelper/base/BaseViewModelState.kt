@@ -1,5 +1,6 @@
 package com.leebeebeom.clothinghelper.base
 
+import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,11 +11,19 @@ open class BaseViewModelState {
     var toastText: Int? by mutableStateOf(null)
         private set
 
-    val toastShown = { toastText = null }
+    fun toastShown() {
+        toastText = null
+    }
 
-    val showToast = { toastText: Int -> this.toastText = toastText }
+    fun showToast(@StringRes text: Int) {
+        toastText = text
+    }
 
-    val loadingOff = { isLoading = false }
+    fun loadingOn() {
+        isLoading = true
+    }
 
-    val loadingOn = { isLoading = true }
+    fun loadingOff() {
+        isLoading = false
+    }
 }

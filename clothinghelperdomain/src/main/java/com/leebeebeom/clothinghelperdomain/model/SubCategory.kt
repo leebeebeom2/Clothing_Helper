@@ -7,5 +7,6 @@ enum class SubCategoryParent {
 data class SubCategory(
     val parent: SubCategoryParent = SubCategoryParent.TOP,
     val key: String = "",
-    val name: String = ""
+    val name: String = "",
+    val createDate: Long = 0
 )

@@ -2,7 +2,10 @@ package com.leebeebeom.clothinghelperdomain.usecase.subcategory
 
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.repository.SortOrder
+import com.leebeebeom.clothinghelperdomain.repository.SubCategoryPreferencesRepository
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
+import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
 
 class LoadSubCategoriesUseCase(private val subCategoryRepository: SubCategoryRepository) {
     suspend operator fun invoke(
@@ -52,6 +55,15 @@ class EditSubCategoryNameUseCase(private val subCategoryRepository: SubCategoryR
     ) = subCategoryRepository.editSubCategoryName(subCategory, newName)
 }
 
-class SortSubCategoriesUseCase(private val subCategoryRepository: SubCategoryRepository) {
+class SortSubCategoriesUseCase(
+    private val subCategoryRepository: SubCategoryRepository,
+    private val subCategoryPreferencesRepository: SubCategoryPreferencesRepository
+) {
     suspend operator fun invoke() = subCategoryRepository.sortSubCategories()
+
+    suspend fun changeSort(subCategorySort: SubCategorySort) =
+        subCategoryPreferencesRepository.changeSort(subCategorySort)
+
+    suspend fun changeOrder(sortOrder: SortOrder) =
+        subCategoryPreferencesRepository.changeOrder(sortOrder)
 }

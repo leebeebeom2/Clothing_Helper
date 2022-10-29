@@ -1,5 +1,6 @@
 package com.leebeebeom.clothinghelper.di.usecase
 
+import com.leebeebeom.clothinghelperdata.repository.SubCategoryPreferencesRepositoryImpl
 import com.leebeebeom.clothinghelperdata.repository.SubCategoryRepositoryImpl
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.*
 import dagger.Module
@@ -33,6 +34,8 @@ class SubCategoryUseCaseModule {
         EditSubCategoryNameUseCase(subCategoryRepository)
 
     @Provides
-    fun sortSubCategoriesUseCate(subCategoryRepository: SubCategoryRepositoryImpl) =
-        SortSubCategoriesUseCase(subCategoryRepository)
+    fun sortSubCategoriesUseCate(
+        subCategoryRepository: SubCategoryRepositoryImpl,
+        subCategoryPreferencesRepository: SubCategoryPreferencesRepositoryImpl
+    ) = SortSubCategoriesUseCase(subCategoryRepository, subCategoryPreferencesRepository)
 }

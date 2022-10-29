@@ -12,6 +12,9 @@ import com.leebeebeom.clothinghelper.main.base.BaseSubCategoriesViewModelState
 import com.leebeebeom.clothinghelper.util.taskAndReturn
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.repository.SortOrder
+import com.leebeebeom.clothinghelperdomain.repository.SubCategoryPreferences
+import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
 import com.leebeebeom.clothinghelperdomain.usecase.preferences.GetSubCategoryPreferencesUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.preferences.ToggleAllExpandUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.AddSubCategoryUseCase
@@ -36,15 +39,11 @@ class SubCategoryViewModel @Inject constructor(
     override val viewModelState = SubCategoryViewModelState()
 
     init {
-        viewModelScope.launch {
-            sortSubCategoriesUseCase()
-        }
+        viewModelScope.launch { sortSubCategoriesUseCase() }
         collectSubCategories()
 
         viewModelScope.launch {
-            getSubCategoryPreferencesUseCase(scope = this).collect {
-                viewModelState.updateAllExpand(it.allExpand)
-            }
+            getSubCategoryPreferencesUseCase(scope = this).collect(viewModelState.updatePreferences)
         }
     }
 
@@ -65,15 +64,35 @@ class SubCategoryViewModel @Inject constructor(
     fun editSubCategoryName(newName: String) =
         editSubCategoryNameUseCase(viewModelState.selectedSubCategories.first(), newName)
 
-    
+    val changeSort = { sort: SubCategorySort ->
+        viewModelScope.launch {
+            sortSubCategoriesUseCase.changeSort(sort)
+        }
+        Unit
+    }
+
+    val changeOrder = { order: SortOrder ->
+        viewModelScope.launch {
+            sortSubCategoriesUseCase.changeOrder(order)
+        }
+        Unit
+    }
 }
 
 class SubCategoryViewModelState : BaseSubCategoriesViewModelState() {
     var allExpand by mutableStateOf(false)
         private set
 
-    fun updateAllExpand(allExpand: Boolean) {
-        this.allExpand = allExpand
+    var selectedSort by mutableStateOf(SubCategorySort.NAME)
+        private set
+
+    var selectedOrder by mutableStateOf(SortOrder.ASCENDING)
+        private set
+
+    val updatePreferences = { subCategoryPreferences: SubCategoryPreferences ->
+        this.allExpand = subCategoryPreferences.allExpand
+        this.selectedSort = subCategoryPreferences.sort
+        this.selectedOrder = subCategoryPreferences.sortOrder
     }
 
     var selectedSubCategories by mutableStateOf(setOf<SubCategory>())

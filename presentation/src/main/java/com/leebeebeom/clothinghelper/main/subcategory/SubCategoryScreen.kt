@@ -100,7 +100,11 @@ fun SubCategoryScreen(
                 if (!state.isSelectMode) {
                     {/*TODO*/ }
                 } else viewModelState.onSelect,
-                selectedSubCategories = viewModelState.selectedSubCategories
+                selectedSubCategories = viewModelState.selectedSubCategories,
+                selectedSort = viewModelState.selectedSort,
+                selectedOder = viewModelState.selectedOrder,
+                onSortClick = viewModel.changeSort,
+                onOrderClick = viewModel.changeOrder
             )
 
             AddCategoryDialogFab(

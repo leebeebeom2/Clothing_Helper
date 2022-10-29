@@ -10,7 +10,9 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
@@ -20,14 +22,29 @@ import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
+import com.leebeebeom.clothinghelperdomain.repository.SortOrder
+import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
 
 @Composable
-fun SortDropdownMenu(showDropDownMenu: Boolean, onDismiss: () -> Unit) {
-    var selectedSort by remember { mutableStateOf(R.string.sort_name) }
-    val onSortButtonClick = { res: Int -> selectedSort = res }
+fun SortDropdownMenu(
+    showDropDownMenu: Boolean,
+    selectedSort: SubCategorySort,
+    selectedOrder: SortOrder,
+    onSortClick: (SubCategorySort) -> Unit,
+    onOrderClick: (SortOrder) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val selectedSortRes =
+        when (selectedSort) {
+            SubCategorySort.NAME -> R.string.sort_name
+            SubCategorySort.CREATE -> R.string.sort_create_date
+        }
 
-    var selectedOrder by remember { mutableStateOf(R.string.sort_Ascending) }
-    val onOrderButtonClick = { res: Int -> selectedOrder = res }
+    val selectedOrderRes =
+        when (selectedOrder) {
+            SortOrder.ASCENDING -> R.string.sort_Ascending
+            SortOrder.DESCENDING -> R.string.sort_Descending
+        }
 
     MaterialTheme(shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(20.dp))) {
         DropdownMenu(
@@ -44,14 +61,14 @@ fun SortDropdownMenu(showDropDownMenu: Boolean, onDismiss: () -> Unit) {
                 Column {
                     SortButton(
                         text = R.string.sort_name,
-                        selectedRes = selectedSort,
-                        onSortButtonClick = onSortButtonClick
+                        selectedRes = selectedSortRes,
+                        onSortButtonClick = { onSortClick(SubCategorySort.NAME) }
                     )
                     SimpleHeightSpacer(dp = 8)
                     SortButton(
                         text = R.string.sort_create_date,
-                        selectedRes = selectedSort,
-                        onSortButtonClick = onSortButtonClick
+                        selectedRes = selectedSortRes,
+                        onSortButtonClick = { onSortClick(SubCategorySort.CREATE) }
                     )
                 }
 
@@ -68,14 +85,14 @@ fun SortDropdownMenu(showDropDownMenu: Boolean, onDismiss: () -> Unit) {
                 Column {
                     SortButton(
                         text = R.string.sort_Ascending,
-                        selectedRes = selectedOrder,
-                        onSortButtonClick = onOrderButtonClick
+                        selectedRes = selectedOrderRes,
+                        onSortButtonClick = { onOrderClick(SortOrder.ASCENDING) }
                     )
                     SimpleHeightSpacer(dp = 8)
                     SortButton(
                         text = R.string.sort_Descending,
-                        selectedRes = selectedOrder,
-                        onSortButtonClick = onOrderButtonClick
+                        selectedRes = selectedOrderRes,
+                        onSortButtonClick = { onOrderClick(SortOrder.DESCENDING) }
                     )
                 }
             }
@@ -101,7 +118,7 @@ private fun Header() {
 fun SortButton(
     @StringRes text: Int,
     @StringRes selectedRes: Int,
-    onSortButtonClick: (Int) -> Unit
+    onSortButtonClick: () -> Unit
 ) {
     val strokeColor by animateColorAsState(
         targetValue = if (text == selectedRes) MaterialTheme.colors.primary.copy(0.8f) else Color.Transparent,
@@ -118,7 +135,7 @@ fun SortButton(
     ) {
         Text(
             modifier = Modifier
-                .noRippleClickable { onSortButtonClick(text) },
+                .noRippleClickable(onSortButtonClick),
             text = stringResource(id = text),
             style = MaterialTheme.typography.body2,
         )

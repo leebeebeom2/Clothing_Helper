@@ -14,6 +14,8 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.repository.SortOrder
+import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
 
 @Composable
 fun SubCategoryContent(
@@ -24,7 +26,11 @@ fun SubCategoryContent(
     onLongClick: (SubCategory) -> Unit,
     isSelectMode: Boolean,
     onSubCategoryClick: (SubCategory) -> Unit,
-    selectedSubCategories: Set<SubCategory>
+    selectedSubCategories: Set<SubCategory>,
+    selectedSort: SubCategorySort,
+    selectedOder: SortOrder,
+    onSortClick: (SubCategorySort) -> Unit,
+    onOrderClick: (SortOrder) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -37,7 +43,11 @@ fun SubCategoryContent(
             Header(
                 mainCategoryName = mainCategoryName,
                 allExpandIconClick = allExpandIconClick,
-                allExpand = allExpand
+                allExpand = allExpand,
+                selectedSort = selectedSort,
+                selectedOder = selectedOder,
+                onSortClick = onSortClick,
+                onOrderClick = onOrderClick
             )
         }
         items(items = subCategories,
@@ -56,7 +66,13 @@ fun SubCategoryContent(
 
 @Composable
 private fun Header(
-    mainCategoryName: String, allExpandIconClick: () -> Unit, allExpand: Boolean
+    mainCategoryName: String,
+    allExpandIconClick: () -> Unit,
+    allExpand: Boolean,
+    selectedSort: SubCategorySort,
+    selectedOder: SortOrder,
+    onSortClick: (SubCategorySort) -> Unit,
+    onOrderClick: (SortOrder) -> Unit
 ) {
     Text(
         modifier = Modifier.padding(4.dp),
@@ -69,7 +85,12 @@ private fun Header(
     Row(verticalAlignment = Alignment.CenterVertically) {
         Divider(modifier = Modifier.weight(1f))
         AllExpandIcon(allExpandIconClick = allExpandIconClick, allExpand)
-        SortIcon()
+        SortIcon(
+            selectedSort = selectedSort,
+            selectedOder = selectedOder,
+            onSortClick = onSortClick,
+            onOrderClick = onOrderClick
+        )
     }
 }
 
@@ -94,7 +115,12 @@ private fun AllExpandIcon(allExpandIconClick: () -> Unit, allExpand: Boolean) {
 }
 
 @Composable
-private fun SortIcon() {
+private fun SortIcon(
+    selectedSort: SubCategorySort,
+    selectedOder: SortOrder,
+    onSortClick: (SubCategorySort) -> Unit,
+    onOrderClick: (SortOrder) -> Unit
+) {
     var showDropDownMenu by remember { mutableStateOf(false) }
 
     Box {
@@ -104,6 +130,12 @@ private fun SortIcon() {
             )
         }
 
-        SortDropdownMenu(showDropDownMenu) { showDropDownMenu = false }
+        SortDropdownMenu(
+            showDropDownMenu = showDropDownMenu,
+            selectedSort = selectedSort,
+            selectedOrder = selectedOder,
+            onSortClick = onSortClick,
+            onOrderClick = onOrderClick
+        ) { showDropDownMenu = false }
     }
 }

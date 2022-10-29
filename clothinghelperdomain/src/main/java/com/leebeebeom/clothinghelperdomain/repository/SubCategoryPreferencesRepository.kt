@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.Flow
 interface SubCategoryPreferencesRepository {
     val subCategoryPreferences: Flow<SubCategoryPreferences>
     suspend fun toggleAllExpand()
+    suspend fun changeSort(subCategorySort: SubCategorySort)
+    suspend fun changeOrder(sortOrder: SortOrder)
 }
 
 enum class SubCategorySort {

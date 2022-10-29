@@ -79,7 +79,11 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
             root.getSubCategoriesRef(it.uid).child(key).setValue(newSubCategory)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        _allSubCategories[subCategoryParent.ordinal].addAndAssign(newSubCategory) // TODO 차일드 리스너 달기??
+                        _allSubCategories[subCategoryParent.ordinal].taskAndAssign { temp ->
+                            temp.add(
+                                newSubCategory
+                            )
+                        }
                     } else taskFailed(task.exception)
                 }
         }
@@ -87,7 +91,16 @@ class SubCategoryRepositoryImpl(private val userRepository: UserRepository) :
     }
 
     override fun editSubCategoryName(subCategory: SubCategory, newName: String) {
-        // TODO
+        user.value?.run {
+            root.getSubCategoriesRef(uid).child(subCategory.key).child("name").setValue(newName)
+                .addOnSuccessListener {
+                    _allSubCategories[subCategory.parent.ordinal].taskAndAssign {
+                        val index = it.indexOf(subCategory)
+                        it.remove(subCategory)
+                        it.add(index, subCategory.copy(name = newName))
+                    }
+                }
+        }
     }
 
     private fun getInitialSubCategories(): List<SubCategory> {
@@ -161,8 +174,8 @@ object DatabasePath {
     const val USER_INFO = "user info"
 }
 
-fun <T> MutableStateFlow<List<T>>.addAndAssign(value: T) {
+fun <T> MutableStateFlow<List<T>>.taskAndAssign(task: (MutableList<T>) -> Unit) {
     val temp = this.value.toMutableList()
-    temp.add(value)
+    task(temp)
     this.value = temp
 }

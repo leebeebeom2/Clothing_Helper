@@ -19,4 +19,6 @@ interface SubCategoryRepository {
         name: String,
         taskFailed: (Exception?) -> Unit
     )
+
+    fun editSubCategoryName(subCategory: SubCategory, newName: String)
 }

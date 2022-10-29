@@ -72,10 +72,7 @@ fun SubCategoryScreen(
             selectedSubCategoriesSize = viewModelState.selectedSubCategories.size,
             subCategoriesSize = viewModelState.getSubCategories(subCategoryParent).size,
             onAllSelectCheckBoxClick = { viewModelState.toggleAllSelect(subCategoryParent) },
-            onEditSubCategoryNameClick = {
-                state.showEditSubCategoryNameDialog()
-                state.selectModeOff(clearSelectedSubCategories = viewModelState.clearSelectedSubCategories)
-            }
+            onEditSubCategoryNameClick = { state.showEditSubCategoryNameDialog() } // TODO 이름 수정 확인 누르면 셀렉트 모드 종료
         )
     }) {
         if (isSubCategoriesLoading)
@@ -116,7 +113,10 @@ fun SubCategoryScreen(
                 EditSubCategoryNameDialog(
                     initialCategoryName = viewModelState.selectedSubCategories.first().name,
                     subCategories = viewModelState.getSubCategories(subCategoryParent),
-                    onPositiveButtonClick = {/*TODO*/ },
+                    onPositiveButtonClick = { newName ->
+                        viewModel.editSubCategoryName(newName)
+                        state.selectModeOff(viewModelState.clearSelectedSubCategories)
+                    },
                     onDismissDialog = state.dismissEditSubCategoryNameDialog
                 )
         }

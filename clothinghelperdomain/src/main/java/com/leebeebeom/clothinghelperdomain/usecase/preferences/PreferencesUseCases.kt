@@ -8,15 +8,7 @@ class ToggleAllExpandUseCase(private val preferencesRepository: PreferencesRepos
     suspend operator fun invoke() = preferencesRepository.toggleAllExpand()
 }
 
-class GetPreferencesUseCase(private val preferencesRepository: PreferencesRepository) {
+class GetSubCategoryPreferencesUseCase(private val preferencesRepository: PreferencesRepository) {
     suspend operator fun invoke(scope: CoroutineScope) =
-        preferencesRepository.preferencesFlow.stateIn(scope)
-}
-
-class GetPreferencesAndToggleAllExpandUseCase(
-    private val getPreferencesUseCase: GetPreferencesUseCase,
-    private val toggleAllExpandUseCase: ToggleAllExpandUseCase
-) {
-    suspend fun getPreferences(scope: CoroutineScope) = getPreferencesUseCase(scope)
-    suspend fun toggleAllExpand() = toggleAllExpandUseCase()
+        preferencesRepository.subCategoryPreferences.stateIn(scope)
 }

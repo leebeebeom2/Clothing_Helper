@@ -38,8 +38,11 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 fun MainCategoryScreen(
     viewModel: MainCategoryViewModel = hiltViewModel(),
     onMainCategoryClick: (mainCategoryName: String) -> Unit,
-    isSubCategoriesLoading: Boolean
+    isSubCategoriesLoading: Boolean,
+    drawerCloseBackHandler: @Composable () -> Unit
 ) {
+    drawerCloseBackHandler()
+
     val state = rememberMainCategoryScreenUIState()
     val viewModelState = viewModel.viewModelState
 

@@ -36,11 +36,12 @@ fun MainNavHost() {
         onEssentialMenuClick = navController::navigateToEssentialMenu,
         onMainCategoryClick = navController::navigateToSubCategory,
         onSubCategoryClick = { key -> /*TODO*/ },
-        onSettingIconClick = { navController.mainNavigate(MainDestinations.Setting.route) }) { padding, isSubCategoryLoading ->
+        onSettingIconClick = { navController.mainNavigate(MainDestinations.Setting.route) }) { padding, isSubCategoryLoading, drawerCloseBackHandler ->
         MainNavHostWithArg(
             navController = navController,
             paddingValues = padding,
-            isSubCategoriesLoading = isSubCategoryLoading
+            isSubCategoriesLoading = isSubCategoryLoading,
+            drawerCloseBackHandler = drawerCloseBackHandler
         )
     }
 }
@@ -67,7 +68,8 @@ fun NavController.navigateToEssentialMenu(essentialMenu: EssentialMenus) {
 fun MainNavHostWithArg(
     navController: NavHostController,
     paddingValues: PaddingValues,
-    isSubCategoriesLoading: Boolean
+    isSubCategoriesLoading: Boolean,
+    drawerCloseBackHandler: @Composable () -> Unit
 ) {
     NavHost(
         navController = navController,
@@ -77,7 +79,8 @@ fun MainNavHostWithArg(
         composable(MainDestinations.MainCategory.route) {
             MainCategoryScreen(
                 onMainCategoryClick = navController::navigateToSubCategory,
-                isSubCategoriesLoading = isSubCategoriesLoading
+                isSubCategoriesLoading = isSubCategoriesLoading,
+                drawerCloseBackHandler = drawerCloseBackHandler
             )
         }
         composable(
@@ -88,13 +91,14 @@ fun MainNavHostWithArg(
                 entry.arguments?.getString(MainDestinations.SubCategory.mainCategoryName)!!
             SubCategoryScreen(
                 mainCategoryName = mainCategoryName,
-                isSubCategoriesLoading = isSubCategoriesLoading
+                isSubCategoriesLoading = isSubCategoriesLoading,
+                drawerCloseBackHandler = drawerCloseBackHandler
             )
         }
         composable(MainDestinations.Setting.route) {
-            SettingScreen {
-                navController.mainNavigate(MainDestinations.MainCategory.route)
-            }
+            SettingScreen(
+                drawerCloseBackHandler = drawerCloseBackHandler,
+                onSignOutButtonClick = { navController.mainNavigate(MainDestinations.MainCategory.route) })
         }
     }
 }

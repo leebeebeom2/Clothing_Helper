@@ -27,12 +27,13 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
             RESULT_OK -> googleSignInUseCase(
                 credential = getGoogleCredential(activityResult)
             ) {
-                if (it is FirebaseResult.Success)
-                    viewModelState.showToast(R.string.google_sign_in_complete)
-                else {
-                    viewModelState.showToast(R.string.unknown_error)
-                    viewModelState.updateGoogleButtonEnabled(true)
-                    Log.d(TAG, "taskFailed: ${(it as FirebaseResult.Fail).exception}")
+                when (it) {
+                    is FirebaseResult.Success -> viewModelState.showToast(R.string.google_sign_in_complete)
+                    is FirebaseResult.Fail -> {
+                        viewModelState.showToast(R.string.unknown_error)
+                        viewModelState.updateGoogleButtonEnabled(true)
+                        Log.d(TAG, "taskFailed: ${it.exception}")
+                    }
                 }
             }
             RESULT_CANCELED -> {

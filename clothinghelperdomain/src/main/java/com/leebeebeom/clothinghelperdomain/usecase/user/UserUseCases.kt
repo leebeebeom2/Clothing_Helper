@@ -6,8 +6,8 @@ import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
 import com.leebeebeom.clothinghelperdomain.repository.UserRepository
 import com.leebeebeom.clothinghelperdomain.repository.onDone
 
-open class BaseSignInUseCase(protected val userRepository: UserRepository) {
-    val isLoading = userRepository.isLoading
+class GetSignInLoadingStateUseCase(private val userRepository: UserRepository) {
+    operator fun invoke() = userRepository.isLoading
 }
 
 class GetSignInStateUseCase(private val userRepository: UserRepository) {
@@ -15,8 +15,9 @@ class GetSignInStateUseCase(private val userRepository: UserRepository) {
 }
 
 class GoogleSignInUseCase(
-    userRepository: UserRepository, private val subCategoryRepository: SubCategoryRepository
-) : BaseSignInUseCase(userRepository) {
+    private val userRepository: UserRepository,
+    private val subCategoryRepository: SubCategoryRepository
+) {
     operator fun invoke(
         credential: Any?, onDone: onDone
     ) = userRepository.googleSignIn(

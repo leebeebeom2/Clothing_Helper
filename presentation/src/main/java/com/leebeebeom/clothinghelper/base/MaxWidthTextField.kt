@@ -149,13 +149,5 @@ open class MaxWidthTextFieldState(
             placeholder = R.string.email_place_holder,
             keyboardOptions = KeyboardOptions(imeAction = imeAction)
         )
-
-        fun password(imeAction: ImeAction) = MaxWidthTextFieldState(
-            label = R.string.password,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = imeAction
-            )
-        )
     }
 }

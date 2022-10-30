@@ -14,9 +14,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.listSaver
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -122,13 +119,12 @@ open class MaxWidthTextFieldState(
     @StringRes val label: Int,
     @StringRes val placeholder: Int = R.string.empty,
     text: String = "",
-    error: Int? = null,
     val showKeyboardEnabled: Boolean = false,
     val keyboardOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
 ) {
     var textFiled by mutableStateOf(TextFieldValue(text))
         private set
-    var error: Int? by mutableStateOf(error)
+    var error: Int? by mutableStateOf(null)
         private set
 
     val isError get() = error != null
@@ -161,43 +157,5 @@ open class MaxWidthTextFieldState(
                 imeAction = imeAction
             )
         )
-
-        val Saver: Saver<MaxWidthTextFieldState, *> = listSaver(
-            save = {
-                listOf(
-                    it.label,
-                    it.placeholder,
-                    it.textFiled.text,
-                    it.error,
-                    it.showKeyboardEnabled
-                )
-            },
-            restore = {
-                MaxWidthTextFieldState(
-                    it[0] as Int,
-                    it[1] as Int,
-                    it[2] as String,
-                    it[3] as Int?,
-                    it[4] as Boolean,
-                )
-            }
-        )
     }
-}
-
-@Composable
-fun rememberMaxWidthStateHolder(
-    @StringRes label: Int,
-    @StringRes placeholder: Int = R.string.empty,
-    text: String = "",
-    error: Int? = null,
-    showKeyboardEnabled: Boolean = false
-) = rememberSaveable(saver = MaxWidthTextFieldState.Saver) {
-    MaxWidthTextFieldState(
-        label = label,
-        placeholder = placeholder,
-        text = text,
-        error = error,
-        showKeyboardEnabled = showKeyboardEnabled
-    )
 }

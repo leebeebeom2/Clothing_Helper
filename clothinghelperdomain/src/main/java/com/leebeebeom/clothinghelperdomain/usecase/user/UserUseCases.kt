@@ -2,34 +2,34 @@ package com.leebeebeom.clothinghelperdomain.usecase.user
 
 import com.leebeebeom.clothinghelperdomain.model.SignIn
 import com.leebeebeom.clothinghelperdomain.model.SignUp
-import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener
-import com.leebeebeom.clothinghelperdomain.repository.FirebaseListener2
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
 import com.leebeebeom.clothinghelperdomain.repository.UserRepository
+import com.leebeebeom.clothinghelperdomain.repository.onDone
+
+open class BaseSignInUseCase(protected val userRepository: UserRepository) {
+    val isLoading = userRepository.isLoading
+}
 
 class GetSignInStateUseCase(private val userRepository: UserRepository) {
     operator fun invoke() = userRepository.isSignIn
 }
 
 class GoogleSignInUseCase(
-    private val userRepository: UserRepository,
-    private val subCategoryRepository: SubCategoryRepository
-) {
+    userRepository: UserRepository, private val subCategoryRepository: SubCategoryRepository
+) : BaseSignInUseCase(userRepository) {
     operator fun invoke(
-        credential: Any?, listener: FirebaseListener2
+        credential: Any?, onDone: onDone
     ) = userRepository.googleSignIn(
-        credential,
-        listener,
-        subCategoryRepository::pushInitialSubCategories
+        credential = credential,
+        onDone = onDone,
+        pushInitialSubCategories = subCategoryRepository::pushInitialSubCategories
     )
 }
 
 class SignInUseCase(private val userRepository: UserRepository) {
     operator fun invoke(
-        email: String,
-        password: String,
-        listener: FirebaseListener2,
-    ) = userRepository.signIn(SignIn(email = email, password = password), listener)
+        email: String, password: String, onDone: onDone
+    ) = userRepository.signIn(signIn = SignIn(email = email, password = password), onDone = onDone)
 }
 
 class SignUpUseCase(
@@ -40,20 +40,20 @@ class SignUpUseCase(
         email: String,
         password: String,
         name: String,
-        signUpListener: FirebaseListener2,
-        updateNameListener: FirebaseListener2,
+        onSignUpDone: onDone,
+        onNameUpdateDone: onDone
     ) = userRepository.signUp(
         signUp = SignUp(email = email, password = password, name = name),
-        signUpListener = signUpListener,
-        updateNameListener = updateNameListener,
+        onSignUpDone = onSignUpDone,
+        onNameUpdateDone = onNameUpdateDone,
         pushInitialSubCategories = subCategoryRepository::pushInitialSubCategories,
     )
 }
 
 class ResetPasswordUseCase(private val userRepository: UserRepository) {
     operator fun invoke(
-        email: String, resetPasswordListener: FirebaseListener, taskFinish: () -> Unit
-    ) = userRepository.resetPasswordEmail(email, resetPasswordListener, taskFinish)
+        email: String, onDone: onDone
+    ) = userRepository.resetPasswordEmail(email = email, onDone = onDone)
 }
 
 class GetUserUseCase(private val userRepository: UserRepository) {

@@ -6,9 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -20,6 +17,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun MaxWidthButton(
     state: MaxWidthButtonState,
+    enabled: Boolean,
     onClick: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
@@ -30,7 +28,7 @@ fun MaxWidthButton(
             .heightIn(52.dp), onClick = {
             focusManager.clearFocus()
             onClick()
-        }, colors = state.colors(), enabled = state.enabled
+        }, colors = state.colors(), enabled = enabled
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -47,15 +45,8 @@ fun MaxWidthButton(
     }
 }
 
-class MaxWidthButtonState(
+data class MaxWidthButtonState(
     @StringRes val text: Int,
     val colors: @Composable () -> ButtonColors = { ButtonDefaults.buttonColors() },
     val icon: @Composable (() -> Unit)? = null,
-) {
-    var enabled by mutableStateOf(true)
-        private set
-
-    fun updateEnabled(enabled: Boolean) {
-        this.enabled = enabled
-    }
-}
+)

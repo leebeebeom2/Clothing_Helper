@@ -8,17 +8,25 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.MaxWidthButton
+import com.leebeebeom.clothinghelper.base.MaxWidthTextField
+import com.leebeebeom.clothinghelper.base.MaxWidthTextFieldState
 import com.leebeebeom.clothinghelper.base.SimpleIcon
 
 @Composable
@@ -32,7 +40,7 @@ fun VisibleIcon(isVisible: Boolean, onIconClick: () -> Unit) {
 fun GoogleSignInButton(
     signInWithGoogleEmail: (ActivityResult) -> Unit,
     enabled: Boolean,
-    onGoogleSignInClick: () -> Unit
+    enabledOff: () -> Unit
 ) {
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
@@ -47,7 +55,7 @@ fun GoogleSignInButton(
         icon = googleIcon,
         enabled = enabled,
         onClick = {
-            onGoogleSignInClick()
+            enabledOff()
             launcher.launch(intent)
         }
     )
@@ -79,4 +87,15 @@ fun OrDivider() {
         )
         Divider(modifier = weightModifier)
     }
+}
+
+@Composable
+fun PasswordTextField(state: MaxWidthTextFieldState) {
+    var isVisible by rememberSaveable { mutableStateOf(false) }
+
+    MaxWidthTextField(
+        state = state,
+        trailingIcon = { VisibleIcon(isVisible) { isVisible = !isVisible } },
+        visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation()
+    )
 }

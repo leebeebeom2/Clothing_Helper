@@ -31,7 +31,7 @@ fun SignInNavHost(navController: NavHostController = rememberNavController()) {
                 )
             }
             composable(route = SignInDestinations.SIGN_UP) { SignUpScreen() }
-            composable(route = SignInDestinations.RESET_PASSWORD) { ResetPasswordScreen { navController.popBackStack() } }
+            composable(route = SignInDestinations.RESET_PASSWORD) { ResetPasswordScreen() }
         }
     }
 }

@@ -46,5 +46,5 @@ fun SignInRoot(
 }
 
 data class SignInRootState(
-    val isLoading: Boolean, @StringRes val toastText: Int?
+    val isLoading: Boolean = false, @StringRes val toastText: Int? = null
 )

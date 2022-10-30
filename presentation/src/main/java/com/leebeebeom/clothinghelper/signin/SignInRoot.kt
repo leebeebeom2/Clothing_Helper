@@ -13,12 +13,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.base.CenterDotProgressIndicator
+import com.leebeebeom.clothinghelper.signin.base.SignInRootViewModel
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 
 @Composable
 fun SignInRoot(
-    isLoading: Boolean = false,
+    viewModel: SignInRootViewModel = hiltViewModel(),
     content: @Composable (PaddingValues) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
@@ -37,5 +39,5 @@ fun SignInRoot(
         )
     }
 
-    if (isLoading) CenterDotProgressIndicator()
+    if (viewModel.isLoading) CenterDotProgressIndicator()
 }

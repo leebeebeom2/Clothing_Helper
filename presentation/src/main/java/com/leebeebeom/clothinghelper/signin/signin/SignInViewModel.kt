@@ -14,8 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
-    private val signInUseCase: SignInUseCase,
-    googleSignInUseCase: GoogleSignInUseCase
+    private val signInUseCase: SignInUseCase, googleSignInUseCase: GoogleSignInUseCase
 ) : GoogleSignInUpViewModel(googleSignInUseCase) {
 
     override val viewModelState = SignInViewModelState()
@@ -36,9 +35,12 @@ class SignInViewModel @Inject constructor(
 }
 
 class SignInViewModelState : GoogleSignInViewModelState() {
-    val emailState = MaxWidthTextFieldState.email(ImeAction.Next)
-    val passwordState = MaxWidthTextFieldState.password(ImeAction.Done)
+    val emailState = MaxWidthTextFieldState.email(imeAction = ImeAction.Next)
+    val passwordState = MaxWidthTextFieldState.password(imeAction = ImeAction.Done)
 
     val email get() = emailState.textFiled.text
     val password get() = passwordState.textFiled.text
+
+    val signInButtonEnabled =
+        email.isNotBlank() && password.isNotBlank() && !emailState.isError && !passwordState.isError
 }

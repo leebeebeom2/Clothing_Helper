@@ -14,6 +14,9 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -25,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
@@ -34,16 +38,10 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun MaxWidthTextField(
-    @StringRes label: Int,
-    @StringRes placeholder: Int = R.string.empty,
-    text: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit,
-    @StringRes error: Int? = null,
+    state: MaxWidthTextFieldState,
     trailingIcon: @Composable (() -> Unit)? = null,
-    showKeyboardEnabled: Boolean = false,
     visualTransformation: VisualTransformation = VisualTransformation.None,
-    keyboardOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-    onFocusChanged: (FocusState) -> Unit = {}
+    keyboardOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = FocusRequester()
@@ -53,12 +51,12 @@ fun MaxWidthTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(focusRequester = focusRequester)
-                .onFocusChanged(onFocusChanged = onFocusChanged),
-            value = text,
-            onValueChange = onValueChange,
-            label = { Text(text = stringResource(id = label)) },
-            placeholder = { Text(text = stringResource(id = placeholder)) },
-            isError = error != null,
+                .onFocusChanged(onFocusChanged = state::onFocusChanged),
+            value = state.textFiled,
+            onValueChange = state::onValueChange,
+            label = { Text(text = stringResource(id = state.label)) },
+            placeholder = { Text(text = stringResource(id = state.placeholder)) },
+            isError = state.isError,
             visualTransformation = visualTransformation,
             singleLine = true,
             maxLines = 1,
@@ -74,14 +72,17 @@ fun MaxWidthTextField(
                 placeholderColor = MaterialTheme.colors.onSurface.copy(ContentAlpha.disabled)
             )
         )
-        ErrorText(error)
+        ErrorText(state.error)
     }
-    if (showKeyboardEnabled) ShowKeyboard(focusRequester)
+    if (state.showKeyboardEnabled) ShowKeyboard(focusRequester)
 }
 
 
 @Composable
 private fun ErrorText(@StringRes error: Int?) {
+    var errorRes by remember { mutableStateOf(error) }
+    if (error != null) errorRes = error
+
     AnimatedVisibility(
         visible = error != null,
         enter = expandVertically(
@@ -92,7 +93,7 @@ private fun ErrorText(@StringRes error: Int?) {
             expandFrom = Alignment.Bottom
         ),
         exit = shrinkVertically(
-            animationSpec = tween(durationMillis = 50),
+            animationSpec = tween(durationMillis = 100),
             shrinkTowards = Alignment.Top
         )
     ) {
@@ -115,4 +116,69 @@ fun ShowKeyboard(focusRequester: FocusRequester) {
         delay(100)
         keyboardController?.show()
     }
+}
+
+open class MaxWidthTextFieldState(
+    @StringRes val label: Int,
+    @StringRes val placeholder: Int,
+    text: String,
+    error: Int?,
+    val showKeyboardEnabled: Boolean,
+) {
+    var textFiled by mutableStateOf(TextFieldValue(text))
+        private set
+    var error: Int? by mutableStateOf(error)
+        private set
+
+    val isError get() = error != null
+
+    open fun onValueChange(newText: TextFieldValue) {
+        textFiled = newText
+        error = null
+    }
+
+    open fun onFocusChanged(focusState: FocusState) {
+        if (focusState.hasFocus)
+            textFiled = textFiled.copy(selection = TextRange(textFiled.text.length))
+    }
+
+    companion object {
+        val Saver: Saver<MaxWidthTextFieldState, *> = listSaver(
+            save = {
+                listOf(
+                    it.label,
+                    it.placeholder,
+                    it.textFiled.text,
+                    it.error,
+                    it.showKeyboardEnabled
+                )
+            },
+            restore = {
+                MaxWidthTextFieldState(
+                    it[0] as Int,
+                    it[1] as Int,
+                    it[2] as String,
+                    it[3] as Int?,
+                    it[4] as Boolean,
+                )
+            }
+        )
+    }
+}
+
+@Composable
+fun rememberMaxWidthStateHolder(
+    @StringRes label: Int,
+    @StringRes placeholder: Int = R.string.empty,
+    text: String = "",
+    error: Int? = null,
+    showKeyboardEnabled: Boolean = false
+) = rememberSaveable(saver = MaxWidthTextFieldState.Saver) {
+    MaxWidthTextFieldState(
+        label = label,
+        placeholder = placeholder,
+        text = text,
+        error = error,
+        showKeyboardEnabled = showKeyboardEnabled
+    )
 }

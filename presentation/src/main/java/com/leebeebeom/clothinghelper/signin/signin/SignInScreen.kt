@@ -59,10 +59,9 @@ import com.leebeebeom.clothinghelper.signin.base.PasswordTextField
 fun SignInScreen(
     onForgotPasswordClick: () -> Unit,
     onEmailSignUpClick: () -> Unit,
-    viewModel: SignInViewModel = hiltViewModel()
+    viewModel: SignInViewModel = hiltViewModel(),
+    viewModelState: SignInViewModelState = viewModel.viewModelState
 ) {
-    val viewModelState = viewModel.viewModelState
-
     Column {
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
 

@@ -2,10 +2,10 @@ package com.leebeebeom.clothinghelper.signin
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.leebeebeom.clothinghelper.signin.base.SignInRoot
 import com.leebeebeom.clothinghelper.signin.resetpassword.ResetPasswordScreen
 import com.leebeebeom.clothinghelper.signin.signin.SignInScreen
 import com.leebeebeom.clothinghelper.signin.signup.SignUpScreen
@@ -17,8 +17,7 @@ object SignInDestinations {
 }
 
 @Composable
-fun SignInNavHost() {
-    val navController = rememberNavController()
+fun SignInNavHost(navController: NavHostController = rememberNavController()) {
 
     SignInRoot {
         NavHost(

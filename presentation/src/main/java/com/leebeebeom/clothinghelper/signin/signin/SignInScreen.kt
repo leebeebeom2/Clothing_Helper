@@ -5,17 +5,11 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
@@ -24,7 +18,7 @@ import com.leebeebeom.clothinghelper.base.MaxWidthTextField
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInButton
 import com.leebeebeom.clothinghelper.signin.base.OrDivider
-import com.leebeebeom.clothinghelper.signin.base.VisibleIcon
+import com.leebeebeom.clothinghelper.signin.base.PasswordTextField
 
 /*
 테스트
@@ -74,12 +68,7 @@ fun SignInScreen(
 
             MaxWidthTextField(state = viewModelState.emailState)
 
-            var isVisible by rememberSaveable { mutableStateOf(false) }
-            MaxWidthTextField(
-                state = viewModelState.passwordState,
-                trailingIcon = { VisibleIcon(isVisible) { isVisible = !isVisible } },
-                visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation()
-            )
+            PasswordTextField(state = viewModelState.passwordState)
 
             ForgotPasswordText(onForgotPasswordClick = onForgotPasswordClick)
 

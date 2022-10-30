@@ -41,7 +41,6 @@ fun MaxWidthTextField(
     state: MaxWidthTextFieldState,
     trailingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
-    keyboardOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = FocusRequester()
@@ -60,10 +59,10 @@ fun MaxWidthTextField(
             visualTransformation = visualTransformation,
             singleLine = true,
             maxLines = 1,
-            keyboardOptions = keyboardOptions,
+            keyboardOptions = state.keyboardOptions,
             trailingIcon = trailingIcon,
             keyboardActions =
-            if (keyboardOptions.imeAction == ImeAction.Done) KeyboardActions(onDone = { focusManager.clearFocus() })
+            if (state.keyboardOptions.imeAction == ImeAction.Done) KeyboardActions(onDone = { focusManager.clearFocus() })
             else KeyboardActions.Default,
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 unfocusedBorderColor = Color(0xFFDADADA),
@@ -120,10 +119,11 @@ fun ShowKeyboard(focusRequester: FocusRequester) {
 
 open class MaxWidthTextFieldState(
     @StringRes val label: Int,
-    @StringRes val placeholder: Int,
-    text: String,
-    error: Int?,
-    val showKeyboardEnabled: Boolean,
+    @StringRes val placeholder: Int = R.string.empty,
+    text: String = "",
+    error: Int? = null,
+    val showKeyboardEnabled: Boolean = false,
+    val keyboardOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
 ) {
     var textFiled by mutableStateOf(TextFieldValue(text))
         private set

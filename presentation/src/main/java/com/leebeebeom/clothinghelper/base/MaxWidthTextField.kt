@@ -30,6 +30,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -134,7 +135,11 @@ open class MaxWidthTextFieldState(
 
     open fun onValueChange(newText: TextFieldValue) {
         textFiled = newText
-        error = null
+        updateError(null)
+    }
+
+    fun updateError(@StringRes error: Int?) {
+        this.error = error
     }
 
     open fun onFocusChanged(focusState: FocusState) {
@@ -143,6 +148,20 @@ open class MaxWidthTextFieldState(
     }
 
     companion object {
+        fun email(imeAction: ImeAction) = MaxWidthTextFieldState(
+            label = R.string.email,
+            placeholder = R.string.email_place_holder,
+            keyboardOptions = KeyboardOptions(imeAction = imeAction)
+        )
+
+        fun password(imeAction: ImeAction) = MaxWidthTextFieldState(
+            label = R.string.password,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = imeAction
+            )
+        )
+
         val Saver: Saver<MaxWidthTextFieldState, *> = listSaver(
             save = {
                 listOf(

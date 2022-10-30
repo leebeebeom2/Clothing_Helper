@@ -82,6 +82,8 @@ class UserRepositoryImpl : UserRepository {
                 onSignUpDone(FirebaseResult.Success)
                 updateName(onNameUpdateDone, user, signUp.name)
             } else onSignUpDone(FirebaseResult.Fail(it.exception))
+
+            loadingOff()
         }
     }
 

@@ -1,8 +1,7 @@
-package com.leebeebeom.clothinghelper.signin.base
+package com.leebeebeom.clothinghelper.signin
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -14,13 +13,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.base.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 
 @Composable
 fun SignInRoot(
-    viewModel: SignInRootViewModel = hiltViewModel(),
+    isLoading: Boolean = false,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
@@ -39,5 +37,5 @@ fun SignInRoot(
         )
     }
 
-    if (viewModel.isLoading) CenterDotProgressIndicator()
+    if (isLoading) CenterDotProgressIndicator()
 }

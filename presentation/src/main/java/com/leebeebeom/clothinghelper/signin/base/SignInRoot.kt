@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.signin.base
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -12,14 +11,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.base.CenterDotProgressIndicator
-import com.leebeebeom.clothinghelper.base.SimpleToast
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 
 @Composable
 fun SignInRoot(
-    state: SignInRootState,
-    toastShown: () -> Unit,
+    viewModel: SignInRootViewModel = hiltViewModel(),
     content: @Composable ColumnScope.() -> Unit
 ) {
     val focusManager = LocalFocusManager.current
@@ -40,11 +38,5 @@ fun SignInRoot(
         }
     }
 
-    state.toastText?.let { SimpleToast(text = it, shownToast = toastShown) }
-
-    if (state.isLoading) CenterDotProgressIndicator()
+    if (viewModel.isLoading) CenterDotProgressIndicator()
 }
-
-data class SignInRootState(
-    val isLoading: Boolean = false, @StringRes val toastText: Int? = null
-)

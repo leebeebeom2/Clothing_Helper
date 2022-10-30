@@ -17,7 +17,7 @@ import com.leebeebeom.clothinghelper.base.Anime.screenSlideInBottom
 import com.leebeebeom.clothinghelper.base.Anime.screenSlideOutBottom
 import com.leebeebeom.clothinghelper.main.MainNavHost
 import com.leebeebeom.clothinghelper.signin.SignInNavHost
-import com.leebeebeom.clothinghelperdomain.usecase.user.GetSignInStateUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.signin.GetSignInStateUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 import dagger.hilt.android.lifecycle.HiltViewModel

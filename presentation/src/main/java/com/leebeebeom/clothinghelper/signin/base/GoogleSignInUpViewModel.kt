@@ -16,7 +16,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelper.base.BaseViewModelState
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
-import com.leebeebeom.clothinghelperdomain.usecase.user.GoogleSignInUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.signin.GoogleSignInUseCase
 
 abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSignInUseCase) :
     ViewModel() {

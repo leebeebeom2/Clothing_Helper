@@ -10,7 +10,7 @@ import com.leebeebeom.clothinghelper.base.BaseViewModelState
 import com.leebeebeom.clothinghelper.base.MaxWidthTextFieldState
 import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
-import com.leebeebeom.clothinghelperdomain.usecase.user.ResetPasswordUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.signin.ResetPasswordUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

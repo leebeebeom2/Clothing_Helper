@@ -9,8 +9,8 @@ import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInViewModelState
 import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
-import com.leebeebeom.clothinghelperdomain.usecase.user.GoogleSignInUseCase
-import com.leebeebeom.clothinghelperdomain.usecase.user.SignInUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.signin.GoogleSignInUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.signin.SignInUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

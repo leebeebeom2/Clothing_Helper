@@ -18,7 +18,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.base.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
-import com.leebeebeom.clothinghelperdomain.usecase.user.GetSignInLoadingStateUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.signin.GetSignInLoadingStateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

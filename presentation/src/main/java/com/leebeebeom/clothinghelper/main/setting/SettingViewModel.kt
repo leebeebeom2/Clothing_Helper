@@ -1,7 +1,7 @@
 package com.leebeebeom.clothinghelper.main.setting
 
 import androidx.lifecycle.ViewModel
-import com.leebeebeom.clothinghelperdomain.usecase.user.SignOutUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.signin.SignOutUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

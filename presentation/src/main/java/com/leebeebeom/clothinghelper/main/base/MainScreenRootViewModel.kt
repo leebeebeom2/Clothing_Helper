@@ -9,7 +9,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelperdomain.model.User
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.LoadAndGetSubCategoriesUseCase
-import com.leebeebeom.clothinghelperdomain.usecase.user.GetUserUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.signin.GetUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

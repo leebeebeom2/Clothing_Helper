@@ -1,25 +1,20 @@
 package com.leebeebeom.clothinghelper.signin.resetpassword
 
-import androidx.annotation.StringRes
+import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.listSaver
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.MaxWidthButton
+import com.leebeebeom.clothinghelper.base.MaxWidthTextField
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.signin.base.EmailTextField
-import com.leebeebeom.clothinghelper.signin.base.OneTextFiledState
-import com.leebeebeom.clothinghelper.signin.base.SignInBaseRoot
 
 /*
 이메일 필드가 비어있거나 에러 메세지 표시 중일 경우 확인 버튼 비활성화
@@ -39,69 +34,27 @@ import com.leebeebeom.clothinghelper.signin.base.SignInBaseRoot
 @Composable
 fun ResetPasswordScreen(
     viewModel: ResetPasswordViewModel = hiltViewModel(),
-    popBackStack: () -> Unit
+    viewModelState: ResetPasswordViewModelState = viewModel.viewModelState,
 ) {
-    val state = rememberResetScreenUIState()
-    val viewModelState = viewModel.viewModelState
+    if (viewModelState.isTaskSuccess) {
+        (LocalContext.current as ComponentActivity).onBackPressedDispatcher.onBackPressed()
+        viewModelState.updateTaskSuccess(false)
+    }
 
-    PopBackStack(viewModelState.taskSuccess, popBackStack, viewModelState::popBackStackDone)
-
-    SignInBaseRoot(
-        isLoading = viewModelState.isLoading,
-        toastText = viewModelState.toastText,
-        toastShown = viewModelState::toastShown
-    ) {
+    Column {
         Text(
             text = stringResource(id = R.string.reset_password_text),
             style = MaterialTheme.typography.body2,
             modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
         )
 
-        EmailTextField(
-            email = state.email,
-            onEmailChange = { state.onEmailChange(it, viewModelState.hideEmailError) },
-            error = viewModelState.emailError,
-            imeAction = ImeAction.Done
-        )
+        MaxWidthTextField(state = viewModelState.emailState)
+
         SimpleHeightSpacer(dp = 12)
         MaxWidthButton(
             text = R.string.check,
-            enabled = state.submitButtonEnabled(viewModelState.emailError),
-            onClick = { viewModel.sendResetPasswordEmail(email = state.email.text) }
+            enabled = viewModelState.submitButtonEnabled,
+            onClick = viewModel::sendResetPasswordEmail
         )
     }
-}
-
-@Composable
-fun PopBackStack(
-    taskSuccess: Boolean,
-    popBackStack: () -> Unit,
-    popBackStackDone: () -> Unit
-) {
-    if (taskSuccess) {
-        popBackStack()
-        popBackStackDone()
-    }
-}
-
-class ResetPasswordScreenUIState(email: String = "") : OneTextFiledState(email) {
-    val email get() = text.value
-
-    fun onEmailChange(email: TextFieldValue, hideEmailError: () -> Unit) =
-        super.onTextChange(email, hideEmailError)
-
-    fun submitButtonEnabled(@StringRes emailError: Int?) =
-        email.text.isNotBlank() && emailError == null
-
-    companion object {
-        val Saver: Saver<ResetPasswordScreenUIState, *> = listSaver(
-            save = { listOf(it.email.text) },
-            restore = { ResetPasswordScreenUIState(it[0]) }
-        )
-    }
-}
-
-@Composable
-fun rememberResetScreenUIState() = rememberSaveable(saver = ResetPasswordScreenUIState.Saver) {
-    ResetPasswordScreenUIState()
 }

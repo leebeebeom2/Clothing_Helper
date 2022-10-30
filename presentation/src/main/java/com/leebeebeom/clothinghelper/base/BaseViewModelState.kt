@@ -6,8 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 
 open class BaseViewModelState {
-    var isLoading: Boolean by mutableStateOf(false)
-        private set
     var toastText: Int? by mutableStateOf(null)
         private set
 
@@ -17,9 +15,5 @@ open class BaseViewModelState {
 
     fun showToast(@StringRes text: Int) {
         toastText = text
-    }
-
-    fun updateLoadingState(state: Boolean) {
-        isLoading = state
     }
 }

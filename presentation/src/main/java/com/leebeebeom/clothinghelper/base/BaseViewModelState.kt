@@ -19,11 +19,7 @@ open class BaseViewModelState {
         toastText = text
     }
 
-    fun loadingOn() {
-        isLoading = true
-    }
-
-    fun loadingOff() {
-        isLoading = false
+    fun updateLoadingState(state: Boolean) {
+        isLoading = state
     }
 }

@@ -15,6 +15,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.MaxWidthButton
 import com.leebeebeom.clothinghelper.base.MaxWidthTextField
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.base.SimpleToast
 
 /*
 이메일 필드가 비어있거나 에러 메세지 표시 중일 경우 확인 버튼 비활성화
@@ -57,4 +58,6 @@ fun ResetPasswordScreen(
             onClick = viewModel::sendResetPasswordEmail
         )
     }
+
+    SimpleToast(text = viewModelState.toastText, shownToast = viewModelState::toastShown)
 }

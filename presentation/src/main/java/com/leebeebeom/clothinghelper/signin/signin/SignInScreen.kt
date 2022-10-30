@@ -16,6 +16,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.MaxWidthButton
 import com.leebeebeom.clothinghelper.base.MaxWidthTextField
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.base.SimpleToast
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInButton
 import com.leebeebeom.clothinghelper.signin.base.OrDivider
 import com.leebeebeom.clothinghelper.signin.base.PasswordTextField
@@ -86,9 +87,10 @@ fun SignInScreen(
                 enabledOff = { viewModelState.updateGoogleButtonEnabled(false) }
             )
         }
+        SignUpText(onEmailSignUpClick)
     }
 
-    SignUpText(onEmailSignUpClick)
+    SimpleToast(text = viewModelState.toastText, shownToast = viewModelState::toastShown)
 }
 
 @Composable

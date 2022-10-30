@@ -1,27 +1,30 @@
 package com.leebeebeom.clothinghelper.signin.signin
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.MaxWidthButton
+import com.leebeebeom.clothinghelper.base.MaxWidthTextField
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.signin.base.*
+import com.leebeebeom.clothinghelper.signin.base.GoogleSignInButton
+import com.leebeebeom.clothinghelper.signin.base.OrDivider
+import com.leebeebeom.clothinghelper.signin.base.VisibleIcon
 
 /*
 테스트
@@ -64,37 +67,27 @@ fun SignInScreen(
     onEmailSignUpClick: () -> Unit,
     viewModel: SignInViewModel = hiltViewModel()
 ) {
-    val state = rememberSignInScreenUIState()
     val viewModelState = viewModel.viewModelState
 
-    SignInBaseRoot(
-        isLoading = viewModelState.isLoading,
-        toastText = viewModelState.toastText,
-        toastShown = viewModelState::toastShown
-    ) {
+    Column {
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
-            EmailTextField(
-                email = state.email, error = viewModelState.emailError, onEmailChange = {
-                    state.onEmailChange(it, viewModelState.hideEmailError)
-                }, imeAction = ImeAction.Next
-            )
 
-            PasswordTextField(
-                password = state.password, onPasswordChange = {
-                    state.onPasswordChange(it, viewModelState.hidePasswordError)
-                }, error = viewModelState.passwordError, imeAction = ImeAction.Done
+            MaxWidthTextField(state = viewModelState.emailState)
+
+            var isVisible by rememberSaveable { mutableStateOf(false) }
+            MaxWidthTextField(
+                state = viewModelState.passwordState,
+                trailingIcon = { VisibleIcon(isVisible) { isVisible = !isVisible } },
+                visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation()
             )
 
             ForgotPasswordText(onForgotPasswordClick = onForgotPasswordClick)
 
-            MaxWidthButton(text = R.string.sign_in, enabled = state.signInButtonEnabled(
-                emailError = viewModelState.emailError,
-                passwordError = viewModelState.passwordError
-            ), onClick = {
-                viewModel.signInWithEmailAndPassword(
-                    email = state.email.text, password = state.password.text
-                )
-            })
+            MaxWidthButton(
+                text = R.string.sign_in,
+                enabled = viewModelState.signInButtonEnabled,
+                onClick = viewModel::signInWithEmailAndPassword
+            )
             SimpleHeightSpacer(dp = 8)
             OrDivider()
             SimpleHeightSpacer(dp = 8)
@@ -102,11 +95,12 @@ fun SignInScreen(
             GoogleSignInButton(
                 signInWithGoogleEmail = viewModel::signInWithGoogleEmail,
                 enabled = viewModelState.googleButtonEnabled,
-                onGoogleSignInClick = viewModel.taskStart
+                enabledOff = { viewModelState.updateGoogleButtonEnabled(false) }
             )
         }
-        SignUpText(onEmailSignUpClick)
     }
+
+    SignUpText(onEmailSignUpClick)
 }
 
 @Composable
@@ -145,33 +139,4 @@ private fun ForgotPasswordText(onForgotPasswordClick: () -> Unit) {
             )
         }
     }
-}
-
-
-class SignInScreenUIState(
-    email: String = "",
-    password: String = "",
-) : TwoTextFiledState(email, password) {
-    val email get() = text.value
-    val password get() = text2.value
-
-    fun onEmailChange(email: TextFieldValue, hideEmailError: () -> Unit) =
-        super.onTextChange(email, hideEmailError)
-
-    fun onPasswordChange(password: TextFieldValue, hidePasswordError: () -> Unit) =
-        super.onText2Change(password, hidePasswordError)
-
-    fun signInButtonEnabled(@StringRes emailError: Int?, @StringRes passwordError: Int?) =
-        email.text.isNotBlank() && emailError == null && password.text.isNotBlank() && passwordError == null
-
-    companion object {
-        val Saver: Saver<SignInScreenUIState, *> =
-            listSaver(save = { listOf(it.email.text, it.password.text) },
-                restore = { SignInScreenUIState(it[0], it[1]) })
-    }
-}
-
-@Composable
-private fun rememberSignInScreenUIState() = rememberSaveable(saver = SignInScreenUIState.Saver) {
-    SignInScreenUIState()
 }

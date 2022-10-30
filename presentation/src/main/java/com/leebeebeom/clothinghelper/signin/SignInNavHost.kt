@@ -5,10 +5,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.leebeebeom.clothinghelper.signin.base.SignInRoot
 import com.leebeebeom.clothinghelper.signin.resetpassword.ResetPasswordScreen
 import com.leebeebeom.clothinghelper.signin.signin.SignInScreen
 import com.leebeebeom.clothinghelper.signin.signup.SignUpScreen
-import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 
 object SignInDestinations {
     const val SIGN_IN = "signIn"
@@ -20,7 +20,7 @@ object SignInDestinations {
 fun SignInNavHost() {
     val navController = rememberNavController()
 
-    ClothingHelperTheme {
+    SignInRoot {
         NavHost(
             navController = navController,
             startDestination = SignInDestinations.SIGN_IN

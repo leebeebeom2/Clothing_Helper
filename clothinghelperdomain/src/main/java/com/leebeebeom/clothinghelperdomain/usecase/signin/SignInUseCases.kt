@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelperdomain.usecase.user
+package com.leebeebeom.clothinghelperdomain.usecase.signin
 
 import com.leebeebeom.clothinghelperdomain.model.SignIn
 import com.leebeebeom.clothinghelperdomain.model.SignUp

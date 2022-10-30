@@ -2,7 +2,7 @@ package com.leebeebeom.clothinghelper.di.usecase
 
 import com.leebeebeom.clothinghelperdata.repository.SubCategoryRepositoryImpl
 import com.leebeebeom.clothinghelperdata.repository.UserRepositoryImpl
-import com.leebeebeom.clothinghelperdomain.usecase.user.*
+import com.leebeebeom.clothinghelperdomain.usecase.signin.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -10,7 +10,7 @@ import dagger.hilt.android.components.ViewModelComponent
 
 @Module
 @InstallIn(ViewModelComponent::class)
-class UserUseCaseModule {
+class SignInUseCaseModule {
     @Provides
     fun googleSignInUseCase(
         userRepository: UserRepositoryImpl,
@@ -38,5 +38,9 @@ class UserUseCaseModule {
     fun getUserUseCase(userRepository: UserRepositoryImpl) = GetUserUseCase(userRepository)
 
     @Provides
-    fun signOutUserCase(userRepository: UserRepositoryImpl) = SignOutUseCase(userRepository)
+    fun signOutUseCase(userRepository: UserRepositoryImpl) = SignOutUseCase(userRepository)
+
+    @Provides
+    fun getSignInLoadingStateUseCase(userRepository: UserRepositoryImpl) =
+        GetSignInLoadingStateUseCase(userRepository)
 }

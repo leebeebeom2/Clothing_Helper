@@ -17,9 +17,8 @@ import com.leebeebeom.clothinghelper.base.SimpleToast
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 
 @Composable
-fun SignInBaseRoot(
-    isLoading: Boolean,
-    @StringRes toastText: Int?,
+fun SignInRoot(
+    state: SignInRootState,
     toastShown: () -> Unit,
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -33,17 +32,19 @@ fun SignInBaseRoot(
                 .padding(horizontal = 20.dp)
                 .padding(it)
                 .clickable(
-                    interactionSource = interactionSource,
-                    indication = null
+                    interactionSource = interactionSource, indication = null
                 ) { focusManager.clearFocus() }
                 .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.Center,
-                content = content
-            )
+                content = content)
         }
     }
 
-    toastText?.let { SimpleToast(text = it, shownToast = toastShown) }
+    state.toastText?.let { SimpleToast(text = it, shownToast = toastShown) }
 
-    if (isLoading) CenterDotProgressIndicator()
+    if (state.isLoading) CenterDotProgressIndicator()
 }
+
+data class SignInRootState(
+    val isLoading: Boolean, @StringRes val toastText: Int?
+)

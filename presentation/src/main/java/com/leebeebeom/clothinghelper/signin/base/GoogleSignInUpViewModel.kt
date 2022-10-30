@@ -4,6 +4,9 @@ import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.util.Log
 import androidx.activity.result.ActivityResult
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
@@ -11,6 +14,7 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
+import com.leebeebeom.clothinghelper.base.BaseViewModelState
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.usecase.user.GoogleSignInUseCase
 
@@ -57,5 +61,14 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
                 .getResult(ApiException::class.java)
             GoogleAuthProvider.getCredential(account.idToken, null)
         }
+    }
+}
+
+open class GoogleSignInViewModelState : BaseViewModelState() {
+    var googleButtonEnabled by mutableStateOf(true)
+        private set
+
+    fun updateGoogleButtonEnabled(enabled: Boolean) {
+        googleButtonEnabled = enabled
     }
 }

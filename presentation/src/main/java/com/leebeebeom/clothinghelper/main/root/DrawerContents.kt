@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.base
+package com.leebeebeom.clothinghelper.main.root
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -96,7 +96,6 @@ private fun EssentialMenu(
     SimpleIcon(modifier = Modifier.size(22.dp), drawable = essentialMenu.drawable)
     SimpleWidthSpacer(dp = 12)
     DrawerContentText(
-        modifier = Modifier.weight(1f),
         text = stringResource(id = essentialMenu.name),
         style = MaterialTheme.typography.body1.copy(letterSpacing = 0.75.sp)
     )
@@ -119,9 +118,9 @@ fun DrawerContentRow(
 )
 
 @Composable
-fun DrawerContentText(modifier: Modifier, text: String, style: TextStyle) {
+fun RowScope.DrawerContentText(modifier: Modifier = Modifier, text: String, style: TextStyle) {
     Text(
-        modifier = modifier,
+        modifier = modifier.weight(1f),
         text = text,
         style = style,
         maxLines = 1,
@@ -129,13 +128,13 @@ fun DrawerContentText(modifier: Modifier, text: String, style: TextStyle) {
     )
 }
 
-class DrawerContentsUIState {
+class DrawerContentsState {
     val essentialMenus = getEssentialMenus()
     val mainCategories = getMainCategories()
 }
 
 @Composable
-fun rememberDrawerContentsUIState() = remember { DrawerContentsUIState() }
+fun rememberDrawerContentsUIState() = remember { DrawerContentsState() }
 
 fun getMainCategories() = listOf(
     MainCategory(R.string.top, SubCategoryParent.TOP),

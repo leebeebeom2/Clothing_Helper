@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.base.SimpleToast
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
+import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -38,7 +39,7 @@ import kotlinx.coroutines.launch
 fun MainScreenRoot(
     onSettingIconClick: () -> Unit,
     onEssentialMenuClick: (essentialMenu: EssentialMenus) -> Unit,
-    onMainCategoryClick: (mainCategoryName: String) -> Unit,
+    onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (key: String) -> Unit,
     viewModel: MainScreenRootViewModel = hiltViewModel(),
     viewModelState: MainRootViewModelState = viewModel.viewModelState,

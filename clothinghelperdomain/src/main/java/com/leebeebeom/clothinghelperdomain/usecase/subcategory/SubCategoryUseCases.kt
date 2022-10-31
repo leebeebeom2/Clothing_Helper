@@ -48,10 +48,12 @@ class EditSubCategoryNameUseCase(private val subCategoryRepository: SubCategoryR
     ) = subCategoryRepository.editSubCategoryName(subCategory, newName, uid, taskFailed)
 }
 
-class SortSubCategoriesUseCase(private val subCategoryPreferencesRepository: SubCategoryPreferencesRepository) {
-    suspend fun changeSort(subCategorySort: SubCategorySort) =
+class ChangeSortUseCase(private val subCategoryPreferencesRepository: SubCategoryPreferencesRepository) {
+    suspend operator fun invoke(subCategorySort: SubCategorySort) =
         subCategoryPreferencesRepository.changeSort(subCategorySort)
+}
 
-    suspend fun changeOrder(sortOrder: SortOrder) =
+class ChangeOrderUserCase(private val subCategoryPreferencesRepository: SubCategoryPreferencesRepository) {
+    suspend operator fun invoke(sortOrder: SortOrder) =
         subCategoryPreferencesRepository.changeOrder(sortOrder)
 }

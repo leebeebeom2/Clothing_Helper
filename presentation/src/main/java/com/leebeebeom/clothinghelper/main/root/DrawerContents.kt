@@ -60,7 +60,7 @@ fun DrawerContents(
                 DrawerMainCategory(
                     mainCategory = it,
                     subCategories = getSubCategories(it.type),
-                    isSubCategoriesLoading = isLoading,
+                    isLoading = isLoading,
                     onMainCategoryClick = onMainCategoryClick,
                     onSubCategoryClick = onSubCategoryClick
                 )

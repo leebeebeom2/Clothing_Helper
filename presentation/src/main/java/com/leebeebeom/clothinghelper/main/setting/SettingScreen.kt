@@ -24,7 +24,8 @@ fun SettingScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 20.dp),
+            .padding(horizontal = 20.dp)
+            .padding(bottom = 20.dp),
         contentAlignment = Alignment.BottomCenter
     ) {
         SignOutButton(onSignOutClick = {

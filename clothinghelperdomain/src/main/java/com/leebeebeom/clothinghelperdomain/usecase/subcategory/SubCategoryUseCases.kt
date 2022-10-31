@@ -6,61 +6,49 @@ import com.leebeebeom.clothinghelperdomain.repository.SortOrder
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryPreferencesRepository
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
+import com.leebeebeom.clothinghelperdomain.usecase.signin.GetUserUseCase
+import kotlinx.coroutines.CoroutineScope
 
-class LoadSubCategoriesUseCase(private val subCategoryRepository: SubCategoryRepository) {
-    suspend operator fun invoke(
-        onSubCategoriesLoadingDone: () -> Unit,
-        onSubCategoriesLoadingCancelled: (Int, String) -> Unit
-    ) = subCategoryRepository.loadSubCategories(
-        onSubCategoriesLoadingDone,
-        onSubCategoriesLoadingCancelled
-    )
+class GetSubCategoryLoadingStateUseCase(private val subCategoryRepository: SubCategoryRepository) {
+    val isLoading get() = subCategoryRepository.isLoading
 }
 
-class GetSubCategoriesUseCase(subCategoryRepository: SubCategoryRepository) {
-    val allSubCategories = subCategoryRepository.allSubCategories
-}
-
-class LoadAndGetSubCategoriesUseCase(
-    private val loadSubCategoriesUseCase: LoadSubCategoriesUseCase,
-    getSubCategoriesUseCase: GetSubCategoriesUseCase
+class LoadSubCategoriesUseCase(
+    private val subCategoryRepository: SubCategoryRepository,
+    private val getUserUseCase: GetUserUseCase
 ) {
-    suspend fun loadSubCategories(
-        onSubCategoriesLoadingDone: () -> Unit,
-        onSubCategoriesLoadingCancelled: (errorCode: Int, message: String) -> Unit
-    ) = loadSubCategoriesUseCase(
-        onSubCategoriesLoadingDone,
-        onSubCategoriesLoadingCancelled
-    )
+    suspend operator fun invoke(onFailed: (Exception) -> Unit) {
+        getUserUseCase().collect { subCategoryRepository.loadSubCategories(it, onFailed) }
+    }
+}
 
-    val allSubCategories = getSubCategoriesUseCase.allSubCategories
+class GetSubCategoriesUseCase(
+    private val subCategoryRepository: SubCategoryRepository,
+    private val subCategoryPreferencesRepository: SubCategoryPreferencesRepository
+) {
+    suspend operator fun invoke(scope: CoroutineScope) = subCategoryRepository.getAllSubCategories(
+        scope, subCategoryPreferencesRepository.subCategorySort
+    )
 }
 
 class AddSubCategoryUseCase(private val subCategoryRepository: SubCategoryRepository) {
     operator fun invoke(
         subCategoryParent: SubCategoryParent,
         name: String,
+        uid: String,
         taskFailed: (Exception?) -> Unit
     ) = subCategoryRepository.addSubCategory(
-        subCategoryParent = subCategoryParent,
-        name = name,
-        taskFailed
+        subCategoryParent = subCategoryParent, name = name, uid = uid, taskFailed = taskFailed
     )
 }
 
 class EditSubCategoryNameUseCase(private val subCategoryRepository: SubCategoryRepository) {
     operator fun invoke(
-        subCategory: SubCategory,
-        newName: String
-    ) = subCategoryRepository.editSubCategoryName(subCategory, newName)
+        subCategory: SubCategory, newName: String, uid: String, taskFailed: (Exception?) -> Unit
+    ) = subCategoryRepository.editSubCategoryName(subCategory, newName, uid, taskFailed)
 }
 
-class SortSubCategoriesUseCase(
-    private val subCategoryRepository: SubCategoryRepository,
-    private val subCategoryPreferencesRepository: SubCategoryPreferencesRepository
-) {
-    suspend operator fun invoke() = subCategoryRepository.sortSubCategories()
-
+class SortSubCategoriesUseCase(private val subCategoryPreferencesRepository: SubCategoryPreferencesRepository) {
     suspend fun changeSort(subCategorySort: SubCategorySort) =
         subCategoryPreferencesRepository.changeSort(subCategorySort)
 

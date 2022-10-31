@@ -42,7 +42,6 @@ import com.leebeebeom.clothinghelper.signin.base.PasswordTextField
 다른 계정으로 로그인 후 구글로 최초 로그인해도 전에 로그인한 유저 데이터 정상인지 확인
 (구글 최초 사용자 데이터 정상인지 확인)
 
-//TODO 현재 키보드에 확인 버튼이 가려져서 불편함 있음
  */
 
 @Composable

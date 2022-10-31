@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.base
+package com.leebeebeom.clothinghelper.main.root
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -18,13 +18,14 @@ import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.base.DotProgressIndicator
 import com.leebeebeom.clothinghelper.main.subcategory.ExpandIcon
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
+import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
 @Composable
 fun DrawerMainCategory(
     mainCategory: MainCategory,
     subCategories: List<SubCategory>,
-    isSubCategoriesLoading: Boolean,
-    onMainCategoryClick: (mainCategoryName: String) -> Unit,
+    isLoading: Boolean,
+    onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (key: String) -> Unit,
 ) {
     var isExpand by rememberSaveable { mutableStateOf(false) }
@@ -32,16 +33,14 @@ fun DrawerMainCategory(
     Column {
         DrawerContentRow(
             modifier = Modifier.heightIn(48.dp),
-            onDrawerContentClick = { onMainCategoryClick(mainCategory.type.name) }) {
+            onDrawerContentClick = { onMainCategoryClick(mainCategory.type) }) {
             DrawerContentText(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 8.dp),
+                modifier = Modifier.padding(start = 8.dp),
                 text = stringResource(id = mainCategory.name),
                 style = MaterialTheme.typography.subtitle1
             )
             DrawerMainCategoryExpandIcon(
-                isSubCategoriesLoading = isSubCategoriesLoading,
+                isLoading = isLoading,
                 isExpand = isExpand
             ) { isExpand = !isExpand }
         }
@@ -55,11 +54,11 @@ fun DrawerMainCategory(
 
 @Composable
 private fun DrawerMainCategoryExpandIcon(
-    isSubCategoriesLoading: Boolean,
+    isLoading: Boolean,
     isExpand: Boolean,
     onExpandIconClick: () -> Unit
 ) {
-    if (isSubCategoriesLoading)
+    if (isLoading)
         DotProgressIndicator(
             modifier = Modifier.padding(end = 12.dp),
             dotSize = 4.dp,
@@ -88,9 +87,7 @@ private fun SubCategories(
                 for (subCategory in subCategories)
                     key(subCategory.key) {
                         DrawerSubCategory(subCategory = subCategory) {
-                            onSubCategoryClick(
-                                subCategory.key
-                            )
+                            onSubCategoryClick(subCategory.key)
                         }
                     }
             }
@@ -107,9 +104,7 @@ private fun DrawerSubCategory(subCategory: SubCategory, onSubCategoryClick: () -
         onDrawerContentClick = onSubCategoryClick
     ) {
         DrawerContentText(
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = 12.dp),
+            modifier = Modifier.padding(start = 12.dp),
             text = subCategory.name,
             style = MaterialTheme.typography.subtitle2
         )

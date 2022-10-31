@@ -39,7 +39,7 @@ fun MainCategoryScreen(
     viewModel: MainCategoryViewModel = hiltViewModel(),
     viewModelState: MainCategoryViewModelState = viewModel.viewModelState,
     state: MainCategoryState = rememberMainCategoryState(),
-    onMainCategoryClick: (mainCategoryName: String) -> Unit,
+    onMainCategoryClick: (SubCategoryParent) -> Unit,
     drawerCloseBackHandler: @Composable () -> Unit
 ) {
     drawerCloseBackHandler()
@@ -60,7 +60,7 @@ fun MainCategoryScreen(
                 MainCategoryCard(
                     modifier = modifier,
                     mainCategory = mainCategory,
-                    onMainContentClick = { onMainCategoryClick(mainCategory.type.name) },
+                    onMainContentClick = { onMainCategoryClick(mainCategory.type) },
                     subCategoriesSize = viewModelState.getSubCategoriesSize(mainCategory.type),
                     isLoading = viewModelState.isLoading
                 )

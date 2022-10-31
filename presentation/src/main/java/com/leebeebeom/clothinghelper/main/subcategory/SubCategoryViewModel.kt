@@ -42,7 +42,6 @@ class SubCategoryViewModel @Inject constructor(
     getSubCategoryLoadingStateUseCase,
     getSubCategoriesUseCase
 ) {
-
     override val viewModelState = SubCategoryViewModelState()
 
     init {

@@ -8,17 +8,24 @@ import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.base.BaseViewModelState
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.model.User
+import com.leebeebeom.clothinghelperdomain.usecase.signin.GetUserUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoriesUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoryLoadingStateUseCase
 import kotlinx.coroutines.launch
 
 abstract class BaseSubCategoriesViewModel(
+    private val getUserUseCase: GetUserUseCase,
     private val getSubCategoryLoadingStateUseCase: GetSubCategoryLoadingStateUseCase,
     private val getSubCategoriesUseCase: GetSubCategoriesUseCase
 ) : ViewModel() {
     abstract val viewModelState: BaseSubCategoriesViewModelState
 
     init {
+        viewModelScope.launch {
+            getUserUseCase().collect(viewModelState::updateUser)
+        }
+
         viewModelScope.launch {
             getSubCategoryLoadingStateUseCase.isLoading.collect(viewModelState::updateLoading)
         }
@@ -35,6 +42,13 @@ abstract class BaseSubCategoriesViewModel(
 }
 
 open class BaseSubCategoriesViewModelState : BaseViewModelState() {
+    var user: User? by mutableStateOf(null)
+        private set
+
+    fun updateUser(user: User?) {
+        this.user = user
+    }
+
     var isLoading by mutableStateOf(false)
         private set
 

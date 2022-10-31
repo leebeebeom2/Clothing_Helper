@@ -54,9 +54,8 @@ import com.leebeebeom.clothinghelper.signin.base.PasswordTextField
 다른 계정으로 로그인 후 구글로 최초 로그인해도 전에 로그인한 유저 데이터 정상인지 확인
 (구글 최초 사용자 데이터 정상인지 확인)
 두 계정 번갈아 로그인해도 데이터 유지되는지 확인
-
-// TODO 현재 이동 시 페이드 인 아웃되며 메인 화면 보이는 버그 있음 
  */
+
 @Composable
 fun SignInScreen(
     onForgotPasswordClick: () -> Unit,

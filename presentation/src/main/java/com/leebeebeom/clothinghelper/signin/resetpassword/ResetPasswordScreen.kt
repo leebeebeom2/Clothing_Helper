@@ -31,7 +31,6 @@ import com.leebeebeom.clothinghelper.base.SimpleToast
 정상적으로 이메일이 발송된 경우 "이메일이 전송되었습니다" 토스트 출력
 로그인 화면으로 이동
 
-//TODO 필드에 포커스 잡힐때 확인 버튼이 보이지 않아서 불편함이 있음
  */
 
 @Composable

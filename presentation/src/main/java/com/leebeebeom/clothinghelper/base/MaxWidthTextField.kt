@@ -130,8 +130,8 @@ open class MaxWidthTextFieldState(
     val isError get() = error != null
 
     open fun onValueChange(newText: TextFieldValue) {
+        if (textFiled.text != newText.text) updateError(null)
         textFiled = newText
-        updateError(null)
     }
 
     fun updateError(@StringRes error: Int?) {
@@ -147,7 +147,10 @@ open class MaxWidthTextFieldState(
         fun email(imeAction: ImeAction) = MaxWidthTextFieldState(
             label = R.string.email,
             placeholder = R.string.email_place_holder,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email,imeAction = imeAction)
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = imeAction
+            )
         )
     }
 }

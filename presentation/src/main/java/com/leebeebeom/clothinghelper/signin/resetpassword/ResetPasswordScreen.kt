@@ -58,6 +58,7 @@ fun ResetPasswordScreen(
             enabled = viewModelState.submitButtonEnabled,
             onClick = viewModel::sendResetPasswordEmail
         )
+        SimpleHeightSpacer(dp = 80)
     }
 
     SimpleToast(text = viewModelState.toastText, shownToast = viewModelState::toastShown)

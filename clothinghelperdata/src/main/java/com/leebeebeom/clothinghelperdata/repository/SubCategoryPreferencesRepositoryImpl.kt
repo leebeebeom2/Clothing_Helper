@@ -3,9 +3,9 @@ package com.leebeebeom.clothinghelperdata.repository
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import com.leebeebeom.clothinghelperdomain.repository.SortOrder
-import com.leebeebeom.clothinghelperdomain.repository.SubCategoryPreferences
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryPreferencesRepository
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
+import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -13,21 +13,21 @@ import java.io.IOException
 
 class SubCategoryPreferencesRepositoryImpl(private val subCategoryDataStore: DataStore<Preferences>) :
     SubCategoryPreferencesRepository {
+    override val subCategoryAllExpand: Flow<Boolean> = subCategoryDataStore.data
+        .catch {
+            if (it is IOException) emit(emptyPreferences())
+            else throw it
+        }.map { it[PreferenceKeys.ALL_EXPAND] ?: false }
 
-    override val subCategoryPreferences: Flow<SubCategoryPreferences> = subCategoryDataStore.data
+    override val subCategorySort: Flow<SubCategorySortPreferences> = subCategoryDataStore.data
         .catch {
             if (it is IOException) emit(emptyPreferences())
             else throw it
         }
         .map {
-            val allExpand = it[PreferenceKeys.ALL_EXPAND] ?: false
-            val sort = it[PreferenceKeys.SORT] ?: "NAME"
-            val order = it[PreferenceKeys.ORDER] ?: "ASCENDING"
-            SubCategoryPreferences(
-                allExpand = allExpand,
-                sort = enumValueOf(sort),
-                sortOrder = enumValueOf(order)
-            )
+            val sort = it[PreferenceKeys.SORT] ?: SubCategorySort.NAME.name
+            val order = it[PreferenceKeys.ORDER] ?: SortOrder.ASCENDING.name
+            SubCategorySortPreferences(enumValueOf(sort), enumValueOf(order))
         }
 
     override suspend fun toggleAllExpand() {

@@ -42,7 +42,7 @@ class ResetPasswordViewModel @Inject constructor(
 
 class ResetPasswordViewModelState : BaseViewModelState() {
     val emailState = MaxWidthTextFieldState.email(imeAction = ImeAction.Done)
-    val email get() = emailState.textFiled.text
+    val email get() = emailState.textFiled.text.trim()
 
     val submitButtonEnabled get() = email.isNotEmpty() && !emailState.isError
 

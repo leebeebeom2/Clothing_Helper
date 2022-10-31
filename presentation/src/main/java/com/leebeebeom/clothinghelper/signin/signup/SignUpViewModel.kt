@@ -93,7 +93,7 @@ class SignUpPasswordConfirmState(private val passwordState: SignUpPasswordState)
     ) {
     override fun onValueChange(newText: TextFieldValue) {
         super.onValueChange(newText)
-        if (newText.text.isNotBlank() && newText.text != passwordState.textFiled.text)
+        if (newText.text.isNotBlank() && passwordState.textFiled.text.isNotBlank() && newText.text != passwordState.textFiled.text)
             updateError(R.string.error_password_confirm_not_same)
     }
 }

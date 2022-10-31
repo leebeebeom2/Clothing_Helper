@@ -1,6 +1,8 @@
 package com.leebeebeom.clothinghelper.signin.signin
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -10,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.MaxWidthButton
@@ -63,30 +64,32 @@ fun SignInScreen(
     viewModel: SignInViewModel = hiltViewModel(),
     viewModelState: SignInViewModelState = viewModel.viewModelState
 ) {
-    Column {
-        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.Center
+    ) {
+        MaxWidthTextField(state = viewModelState.emailState)
 
-            MaxWidthTextField(state = viewModelState.emailState)
+        PasswordTextField(state = viewModelState.passwordState)
 
-            PasswordTextField(state = viewModelState.passwordState)
+        ForgotPasswordText(onForgotPasswordClick = onForgotPasswordClick)
 
-            ForgotPasswordText(onForgotPasswordClick = onForgotPasswordClick)
-
-            MaxWidthButton(
-                text = R.string.sign_in,
-                enabled = viewModelState.signInButtonEnabled,
-                onClick = viewModel::signInWithEmailAndPassword
-            )
-            SimpleHeightSpacer(dp = 8)
-            OrDivider()
-            SimpleHeightSpacer(dp = 8)
-            // 프리뷰 시 주석 처리
-            GoogleSignInButton(
-                signInWithGoogleEmail = viewModel::signInWithGoogleEmail,
-                enabled = viewModelState.googleButtonEnabled,
-                enabledOff = { viewModelState.updateGoogleButtonEnabled(false) }
-            )
-        }
+        MaxWidthButton(
+            text = R.string.sign_in,
+            enabled = viewModelState.signInButtonEnabled,
+            onClick = viewModel::signInWithEmailAndPassword
+        )
+        SimpleHeightSpacer(dp = 8)
+        OrDivider()
+        SimpleHeightSpacer(dp = 8)
+        // 프리뷰 시 주석 처리
+        GoogleSignInButton(
+            signInWithGoogleEmail = viewModel::signInWithGoogleEmail,
+            enabled = viewModelState.googleButtonEnabled,
+            enabledOff = { viewModelState.updateGoogleButtonEnabled(false) }
+        )
+        SimpleHeightSpacer(dp = 4)
         SignUpText(onEmailSignUpClick)
     }
 
@@ -96,9 +99,7 @@ fun SignInScreen(
 @Composable
 private fun SignUpText(onEmailSignUpClick: () -> Unit) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 16.dp),
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {

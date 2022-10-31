@@ -144,13 +144,14 @@ open class MaxWidthTextFieldState(
     }
 
     companion object {
-        fun email(imeAction: ImeAction) = MaxWidthTextFieldState(
+        fun email(imeAction: ImeAction, showKeyboardEnabled: Boolean = true) = MaxWidthTextFieldState(
             label = R.string.email,
             placeholder = R.string.email_place_holder,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = imeAction
-            )
+            ),
+            showKeyboardEnabled = showKeyboardEnabled
         )
     }
 }

@@ -36,11 +36,10 @@ fun MainNavHost() {
         onEssentialMenuClick = navController::navigateToEssentialMenu,
         onMainCategoryClick = navController::navigateToSubCategory,
         onSubCategoryClick = { key -> /*TODO*/ },
-        onSettingIconClick = { navController.mainNavigate(MainDestinations.Setting.route) }) { padding, isSubCategoryLoading, drawerCloseBackHandler ->
+        onSettingIconClick = { navController.mainNavigate(MainDestinations.Setting.route) }) { padding, isSubCategoryLoading ->
         MainNavHostWithArg(
             navController = navController,
             paddingValues = padding,
-            isSubCategoriesLoading = isSubCategoryLoading,
             drawerCloseBackHandler = drawerCloseBackHandler
         )
     }
@@ -68,7 +67,6 @@ fun NavController.navigateToEssentialMenu(essentialMenu: EssentialMenus) {
 fun MainNavHostWithArg(
     navController: NavHostController,
     paddingValues: PaddingValues,
-    isSubCategoriesLoading: Boolean,
     drawerCloseBackHandler: @Composable () -> Unit
 ) {
     NavHost(

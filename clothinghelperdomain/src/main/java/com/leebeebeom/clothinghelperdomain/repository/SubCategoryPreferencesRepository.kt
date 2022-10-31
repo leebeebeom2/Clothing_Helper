@@ -3,7 +3,9 @@ package com.leebeebeom.clothinghelperdomain.repository
 import kotlinx.coroutines.flow.Flow
 
 interface SubCategoryPreferencesRepository {
-    val subCategoryPreferences: Flow<SubCategoryPreferences>
+    val subCategoryAllExpand: Flow<Boolean>
+    val subCategorySort: Flow<SubCategorySortPreferences>
+
     suspend fun toggleAllExpand()
     suspend fun changeSort(subCategorySort: SubCategorySort)
     suspend fun changeOrder(sortOrder: SortOrder)
@@ -17,8 +19,7 @@ enum class SortOrder {
     ASCENDING, DESCENDING
 }
 
-data class SubCategoryPreferences(
-    val allExpand: Boolean,
+data class SubCategorySortPreferences(
     val sort: SubCategorySort,
     val sortOrder: SortOrder
 )

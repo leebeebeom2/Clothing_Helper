@@ -21,8 +21,7 @@ fun SignInNavHost(navController: NavHostController = rememberNavController()) {
 
     SignInRoot {
         NavHost(
-            navController = navController,
-            startDestination = SignInDestinations.SIGN_IN
+            navController = navController, startDestination = SignInDestinations.SIGN_IN
         ) {
             composable(route = SignInDestinations.SIGN_IN) {
                 SignInScreen(
@@ -37,8 +36,7 @@ fun SignInNavHost(navController: NavHostController = rememberNavController()) {
 }
 
 
-fun NavController.signNavigate(destination: String) =
-    navigate(destination) {
-        launchSingleTop = true
-        popUpTo(SignInDestinations.SIGN_IN)
-    }
+fun NavController.signNavigate(destination: String) = navigate(destination) {
+    launchSingleTop = true
+    popUpTo(SignInDestinations.SIGN_IN)
+}

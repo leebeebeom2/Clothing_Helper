@@ -71,7 +71,7 @@ fun MainScreenRoot(
                         state.onDrawerClose()
                     },
                     getSubCategories = viewModelState::getSubCategories,
-                    isSubCategoriesLoading = viewModelState.isLoading
+                    isLoading = viewModelState.isLoading
                 )
             },
             drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),

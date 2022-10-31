@@ -2,25 +2,37 @@ package com.leebeebeom.clothinghelperdomain.repository
 
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.model.User
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 interface SubCategoryRepository {
-    suspend fun loadSubCategories(
-        onSubCategoriesLoadingDone: () -> Unit,
-        onSubCategoriesLoadingCancelled: (errorCode: Int, message: String) -> Unit
-    )
+    val isLoading: StateFlow<Boolean>
 
-    suspend fun sortSubCategories()
+    suspend fun loadSubCategories(
+        user: User?,
+        onFailed: (Exception) -> Unit
+    )
 
     fun pushInitialSubCategories(uid: String)
 
-    val allSubCategories: List<StateFlow<List<SubCategory>>>
+    suspend fun getAllSubCategories(
+        scope: CoroutineScope,
+        sortPreferencesFlow: Flow<SubCategorySortPreferences>
+    ): List<StateFlow<List<SubCategory>>>
 
     fun addSubCategory(
         subCategoryParent: SubCategoryParent,
         name: String,
+        uid: String,
         taskFailed: (Exception?) -> Unit
     )
 
-    fun editSubCategoryName(subCategory: SubCategory, newName: String)
+    fun editSubCategoryName(
+        subCategory: SubCategory,
+        newName: String,
+        uid: String,
+        taskFailed: (Exception?) -> Unit
+    )
 }

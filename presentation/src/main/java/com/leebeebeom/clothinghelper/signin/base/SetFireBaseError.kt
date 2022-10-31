@@ -20,7 +20,10 @@ fun setFireBaseError(
 ) {
     val firebaseAuthException = exception as? FirebaseAuthException
 
-    if (firebaseAuthException == null) showToast(R.string.unknown_error)
+    if (firebaseAuthException == null) {
+        showToast(R.string.unknown_error)
+        Log.d(TAG, "setFirebaseError: firebaseAuthExcaption = null")
+    }
     else when (firebaseAuthException.errorCode) {
         FirebaseErrorCode.ERROR_INVALID_EMAIL -> updateEmailError(R.string.error_invalid_email)
         FirebaseErrorCode.ERROR_EMAIL_ALREADY_IN_USE -> updateEmailError(R.string.error_email_already_in_use)
@@ -28,7 +31,7 @@ fun setFireBaseError(
         FirebaseErrorCode.ERROR_WRONG_PASSWORD -> updatePasswordError(R.string.error_wrong_password)
         else -> {
             showToast(R.string.unknown_error)
-            Log.d(TAG, "setError: ${firebaseAuthException.errorCode}")
+            Log.d(TAG, "setFirebaseError: ${firebaseAuthException.errorCode}")
         }
     }
 }

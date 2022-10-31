@@ -7,156 +7,146 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
+import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.model.User
 import com.leebeebeom.clothinghelperdomain.repository.*
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.*
 
 // TODO EXPAND 프리퍼런스로 이동??
 
 class SubCategoryRepositoryImpl(
-    private val userRepository: UserRepository,
-    private val subCategoryPreferencesRepository: SubCategoryPreferencesRepository
-) :
-    SubCategoryRepository {
+    private val userRepository: UserRepository
+) : SubCategoryRepository {
     private val root = Firebase.database.reference
     private val user = MutableStateFlow(userRepository.user.value)
 
+    private val _isLoading = MutableStateFlow(false)
+    override val isLoading: StateFlow<Boolean>
+        get() = _isLoading
+
     private val _allSubCategories = List(4) { MutableStateFlow(emptyList<SubCategory>()) }
-    override val allSubCategories: List<StateFlow<List<SubCategory>>>
-        get() = _allSubCategories
+
 
     override suspend fun loadSubCategories(
-        onSubCategoriesLoadingDone: () -> Unit,
-        onSubCategoriesLoadingCancelled: (errorCode: Int, message: String) -> Unit
+        user: User?,
+        onFailed: (Exception) -> Unit
     ) {
-        userRepository.user.collect {
-            this.user.value = it
-            it?.let {
-                root.getSubCategoriesRef(it.uid).orderByChild("parent")
-                    .addListenerForSingleValueEvent(object : ValueEventListener {
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            val temp = List(4) { mutableListOf<SubCategory>() }
+        loadingOn()
 
-                            for (child in snapshot.children) child.getValue<SubCategory>()
-                                ?.let { subCategory ->
-                                    temp[subCategory.parent.ordinal].add(subCategory)
-                                }
-                            _allSubCategories.forEachIndexed { i, subCategoriesFlow ->
-                                subCategoriesFlow.value = temp[i]
+        user?.let {
+            root.getSubCategoriesRef(it.uid).orderByChild("parent")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val temp = List(4) { mutableListOf<SubCategory>() }
+
+                        for (child in snapshot.children) child.getValue<SubCategory>()
+                            ?.let { subCategory ->
+                                temp[subCategory.parent.ordinal].add(subCategory)
                             }
-                            onSubCategoriesLoadingDone()
+                        _allSubCategories.forEachIndexed { i, subCategoriesFlow ->
+                            subCategoriesFlow.value = temp[i]
                         }
 
-                        override fun onCancelled(error: DatabaseError) =
-                            onSubCategoriesLoadingCancelled(error.code, error.message)
-                    })
-            }
-        }
+                        loadingOff()
+                    }
 
-    }
+                    override fun onCancelled(error: DatabaseError) {
+                        onFailed(error.toException())
 
-    override suspend fun sortSubCategories() {
-        subCategoryPreferencesRepository.subCategoryPreferences.collect {
-            when (it.sort) {
-                SubCategorySort.NAME -> sortByName(it.sortOrder)
-                SubCategorySort.CREATE -> sortByCreate(it.sortOrder)
-            }
+                        loadingOff()
+                    }
+                })
         }
     }
 
-    private fun sortByName(sortOrder: SortOrder) {
-        when (sortOrder) {
-            SortOrder.ASCENDING -> {
-                _allSubCategories.forEach { subCategories ->
-                    subCategories.taskAndAssign {
-                        it.sortBy { temp -> temp.name }
-                    }
-                }
-            }
-            SortOrder.DESCENDING -> {
-                _allSubCategories.forEach { subCategories ->
-                    subCategories.taskAndAssign {
-                        it.sortByDescending { temp -> temp.name }
-                    }
-                }
-            }
+    override suspend fun getAllSubCategories(
+        scope: CoroutineScope,
+        sortPreferencesFlow: Flow<SubCategorySortPreferences>
+    ): List<StateFlow<List<SubCategory>>> =
+        _allSubCategories.map { subCategoriesFlow ->
+            sortPreferencesFlow.combine(subCategoriesFlow) { preferences, subCategories ->
+                sortSubCategories(preferences, subCategories)
+            }.stateIn(scope)
         }
-    }
 
-    private fun sortByCreate(sortOrder: SortOrder) {
-        when (sortOrder) {
-            SortOrder.ASCENDING -> {
-                _allSubCategories.forEach { subCategories ->
-                    subCategories.taskAndAssign {
-                        it.sortBy { temp -> temp.createDate }
-                    }
-                }
-            }
-            SortOrder.DESCENDING -> {
-                _allSubCategories.forEach { subCategories ->
-                    subCategories.taskAndAssign {
-                        it.sortByDescending { temp -> temp.createDate }
-                    }
-                }
-            }
+    private fun sortSubCategories(
+        preferences: SubCategorySortPreferences,
+        subCategories: List<SubCategory>
+    ): List<SubCategory> {
+        val sort = preferences.sort
+        val order = preferences.sortOrder
+
+        return when {
+            sort == SubCategorySort.NAME && order == SortOrder.ASCENDING -> subCategories.sortedBy { it.name }
+            sort == SubCategorySort.NAME && order == SortOrder.DESCENDING -> subCategories.sortedByDescending { it.name }
+            sort == SubCategorySort.CREATE && order == SortOrder.ASCENDING -> subCategories.sortedBy { it.createDate }
+            sort == SubCategorySort.CREATE && order == SortOrder.DESCENDING -> subCategories.sortedByDescending { it.createDate }
+            else -> subCategories
         }
     }
 
     override fun pushInitialSubCategories(uid: String) {
         val subCategoryRef = root.getSubCategoriesRef(uid)
 
-        for (subCategory in getInitialSubCategories()) pushInitialData(subCategoryRef, subCategory)
+        for (subCategory in getInitialSubCategories())
+            if (pushSubCategory(subCategoryRef, subCategory) is FirebaseResult.Fail)
+                return
     }
 
-    private fun pushInitialData(subCategoryRef: DatabaseReference, subCategory: SubCategory) {
-        val key = subCategoryRef.push().key ?: return
-        subCategoryRef.child(key).setValue(subCategory.copy(key = key))
+    private fun pushSubCategory(
+        subCategoryRef: DatabaseReference,
+        subCategory: SubCategory
+    ): FirebaseResult {
+        val key = subCategoryRef.push().key
+            ?: return FirebaseResult.Fail(NullPointerException("key 생성 실패"))
+
+        return if (subCategoryRef.child(key).setValue(subCategory.copy(key = key)).isSuccessful)
+            FirebaseResult.Success
+        else FirebaseResult.Fail(exception = null)
     }
 
     override fun addSubCategory(
-        subCategoryParent: SubCategoryParent, name: String, taskFailed: (Exception?) -> Unit
+        subCategoryParent: SubCategoryParent,
+        name: String,
+        uid: String,
+        taskFailed: (Exception?) -> Unit
     ) {
-        val key = root.getSubCategoriesRef(user.value!!.uid).push().key
-        if (key == null) {
-            taskFailed(NullPointerException("키 생성 실패"))
-            return
-        }
-
         val newSubCategory = SubCategory(
             parent = subCategoryParent,
-            key = key,
             name = name,
             createDate = System.currentTimeMillis()
         )
 
-        user.value?.let {
-            root.getSubCategoriesRef(it.uid).child(key).setValue(newSubCategory)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        _allSubCategories[subCategoryParent.ordinal].taskAndAssign { temp ->
-                            temp.add(
-                                newSubCategory
-                            )
-                        }
-                    } else taskFailed(task.exception)
-                }
-        }
+        val subCategoryRef = root.getSubCategoriesRef(uid)
+        val result = pushSubCategory(subCategoryRef, newSubCategory)
 
+
+        if (result is FirebaseResult.Fail)
+            taskFailed(result.exception)
+        else _allSubCategories[subCategoryParent.ordinal]
+            .taskAndAssign { temp -> temp.add(newSubCategory) }
     }
 
-    override fun editSubCategoryName(subCategory: SubCategory, newName: String) {
-        user.value?.run {
-            root.getSubCategoriesRef(uid).child(subCategory.key).child("name").setValue(newName)
-                .addOnSuccessListener {
-                    _allSubCategories[subCategory.parent.ordinal].taskAndAssign {
-                        val index = it.indexOf(subCategory)
-                        it.remove(subCategory)
-                        it.add(index, subCategory.copy(name = newName))
-                    }
-                }
-        }
+
+    override fun editSubCategoryName(
+        subCategory: SubCategory,
+        newName: String,
+        uid: String,
+        taskFailed: (Exception?) -> Unit
+    ) {
+
+        if (root.getSubCategoriesRef(uid).child(subCategory.key).child("name")
+                .setValue(newName).isSuccessful
+        )
+            _allSubCategories[subCategory.parent.ordinal].taskAndAssign {
+                val index = it.indexOf(subCategory)
+                it.remove(subCategory)
+                it.add(index, subCategory.copy(name = newName))
+            }
+        else taskFailed(null)
     }
 
     private fun getInitialSubCategories(): List<SubCategory> {
@@ -220,6 +210,14 @@ class SubCategoryRepositoryImpl(
                 parent = SubCategoryParent.ETC, name = "장갑", createDate = timeStamp
             )
         )
+    }
+
+    private fun loadingOn() {
+        _isLoading.value = true
+    }
+
+    private fun loadingOff() {
+        _isLoading.value = true
     }
 
     private fun DatabaseReference.getSubCategoriesRef(uid: String) =

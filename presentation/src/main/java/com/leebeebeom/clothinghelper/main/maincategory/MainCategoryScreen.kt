@@ -21,8 +21,8 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.DotProgressIndicator
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleIcon
-import com.leebeebeom.clothinghelper.main.base.MainCategory
-import com.leebeebeom.clothinghelper.main.base.getMainCategories
+import com.leebeebeom.clothinghelper.main.root.MainCategory
+import com.leebeebeom.clothinghelper.main.root.getMainCategories
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
 /*
@@ -37,20 +37,18 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 @Composable
 fun MainCategoryScreen(
     viewModel: MainCategoryViewModel = hiltViewModel(),
+    viewModelState: MainCategoryViewModelState = viewModel.viewModelState,
+    state: MainCategoryState = rememberMainCategoryState(),
     onMainCategoryClick: (mainCategoryName: String) -> Unit,
-    isSubCategoriesLoading: Boolean,
     drawerCloseBackHandler: @Composable () -> Unit
 ) {
     drawerCloseBackHandler()
-
-    val state = rememberMainCategoryScreenUIState()
-    val viewModelState = viewModel.viewModelState
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(16.dp),
+            .padding(16.dp)
     ) {
         val modifier =
             if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT)
@@ -64,7 +62,7 @@ fun MainCategoryScreen(
                     mainCategory = mainCategory,
                     onMainContentClick = { onMainCategoryClick(mainCategory.type.name) },
                     subCategoriesSize = viewModelState.getSubCategoriesSize(mainCategory.type),
-                    isSubCategoriesLoading = isSubCategoriesLoading
+                    isLoading = viewModelState.isLoading
                 )
             }
     }
@@ -77,7 +75,7 @@ private fun MainCategoryCard(
     mainCategory: MainCategory,
     onMainContentClick: () -> Unit,
     subCategoriesSize: Int,
-    isSubCategoriesLoading: Boolean
+    isLoading: Boolean
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -101,11 +99,12 @@ private fun MainCategoryCard(
                 drawable = R.drawable.ic_navigate_next,
                 tint = LocalContentColor.current.copy(ContentAlpha.medium)
             )
-            if (isSubCategoriesLoading)
+            if (isLoading)
                 DotProgressIndicator(
-                    Modifier
+                    modifier = Modifier
                         .align(Alignment.BottomStart)
-                        .padding(bottom = 4.dp, start = 4.dp), 4.dp
+                        .padding(bottom = 4.dp, start = 4.dp),
+                    dotSize = 4.dp
                 )
             else Text(
                 text = stringResource(
@@ -124,9 +123,9 @@ private fun MainCategoryCard(
     if (mainCategory.type != SubCategoryParent.ETC) SimpleHeightSpacer(dp = 16)
 }
 
-class MainCategoryScreenUIState {
+class MainCategoryState {
     val mainCategories = getMainCategories()
 }
 
 @Composable
-fun rememberMainCategoryScreenUIState() = remember { MainCategoryScreenUIState() }
+fun rememberMainCategoryState() = remember { MainCategoryState() }

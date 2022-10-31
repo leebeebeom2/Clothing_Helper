@@ -1,8 +1,11 @@
 package com.leebeebeom.clothinghelper.signin.signup
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.MaxWidthButton
@@ -47,7 +50,7 @@ fun SignUpScreen(
     viewModel: SignUpViewModel = hiltViewModel(),
     viewModelState: SignUpViewModelState = viewModel.viewModelState
 ) {
-    Column {
+    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
         MaxWidthTextField(state = viewModelState.emailState)
 
         MaxWidthTextField(state = viewModelState.nameState)

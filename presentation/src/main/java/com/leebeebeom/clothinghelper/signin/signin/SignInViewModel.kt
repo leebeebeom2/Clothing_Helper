@@ -49,6 +49,5 @@ class SignInViewModelState : GoogleSignInViewModelState() {
     val email get() = emailState.textFiled.text
     val password get() = passwordState.textFiled.text
 
-    val signInButtonEnabled =
-        email.isNotBlank() && password.isNotBlank() && !emailState.isError && !passwordState.isError
+    val signInButtonEnabled get() = email.isNotBlank() && password.isNotBlank() && !emailState.isError && !passwordState.isError
 }

@@ -39,6 +39,7 @@ private fun SignOutButton(onSignOutClick: () -> Unit) {
     MaxWidthButton(
         text = R.string.sign_out,
         colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.error),
-        onClick = onSignOutClick
+        onClick = onSignOutClick,
+        enabled = true
     )
 }

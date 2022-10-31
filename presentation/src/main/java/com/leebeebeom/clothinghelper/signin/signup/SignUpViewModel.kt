@@ -58,10 +58,10 @@ class SignUpViewModelState : GoogleSignInViewModelState() {
     val passwordState = SignUpPasswordState()
     val passwordConfirmState = SignUpPasswordConfirmState(passwordState = passwordState)
 
-    val email get() = emailState.textFiled.text
-    val name get() = nameState.textFiled.text
-    val password get() = passwordState.textFiled.text
-    val passwordConfirm get() = passwordConfirmState.textFiled.text
+    val email get() = emailState.textFiled.text.trim()
+    val name get() = nameState.textFiled.text.trim()
+    val password get() = passwordState.textFiled.text.trim()
+    val passwordConfirm get() = passwordConfirmState.textFiled.text.trim()
 
     val submitButtonEnable
         get() = email.isNotBlank() && name.isNotBlank() && password.isNotBlank() && passwordConfirm.isNotBlank() &&

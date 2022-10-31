@@ -11,9 +11,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.leebeebeom.clothinghelper.main.base.EssentialMenus
-import com.leebeebeom.clothinghelper.main.base.MainScreenRoot
 import com.leebeebeom.clothinghelper.main.maincategory.MainCategoryScreen
+import com.leebeebeom.clothinghelper.main.root.EssentialMenus
+import com.leebeebeom.clothinghelper.main.root.MainScreenRoot
 import com.leebeebeom.clothinghelper.main.setting.SettingScreen
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryScreen
 
@@ -57,7 +57,7 @@ fun NavController.navigateToSubCategory(mainCategoryName: String) {
 fun NavController.navigateToEssentialMenu(essentialMenu: EssentialMenus) {
     when (essentialMenu) {
         EssentialMenus.MAIN_SCREEN -> mainNavigate(MainDestinations.MainCategory.route)
-        EssentialMenus.FAVORITE -> {} // TODO 
+        EssentialMenus.FAVORITE -> {} // TODO
         EssentialMenus.SEE_ALL -> {} // TODO
         EssentialMenus.TRASH -> {} // TODO
     }
@@ -77,7 +77,6 @@ fun MainNavHostWithArg(
         composable(MainDestinations.MainCategory.route) {
             MainCategoryScreen(
                 onMainCategoryClick = navController::navigateToSubCategory,
-                isSubCategoriesLoading = isSubCategoriesLoading,
                 drawerCloseBackHandler = drawerCloseBackHandler
             )
         }
@@ -89,7 +88,6 @@ fun MainNavHostWithArg(
                 entry.arguments?.getString(MainDestinations.SubCategory.mainCategoryName)!!
             SubCategoryScreen(
                 mainCategoryName = mainCategoryName,
-                isSubCategoriesLoading = isSubCategoriesLoading,
                 drawerCloseBackHandler = drawerCloseBackHandler
             )
         }

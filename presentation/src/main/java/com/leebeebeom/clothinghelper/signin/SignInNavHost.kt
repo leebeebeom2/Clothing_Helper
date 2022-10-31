@@ -20,9 +20,7 @@ object SignInDestinations {
 fun SignInNavHost(navController: NavHostController = rememberNavController()) {
 
     SignInRoot {
-        NavHost(
-            navController = navController, startDestination = SignInDestinations.SIGN_IN
-        ) {
+        NavHost(navController = navController, startDestination = SignInDestinations.SIGN_IN) {
             composable(route = SignInDestinations.SIGN_IN) {
                 SignInScreen(
                     onForgotPasswordClick = { navController.signNavigate(SignInDestinations.RESET_PASSWORD) },

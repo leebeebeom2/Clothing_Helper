@@ -37,7 +37,7 @@ class SignInViewModel @Inject constructor(
 }
 
 class SignInViewModelState : GoogleSignInViewModelState() {
-    val emailState = MaxWidthTextFieldState.email(imeAction = ImeAction.Next)
+    val emailState = MaxWidthTextFieldState.email(imeAction = ImeAction.Next, showKeyboardEnabled = false)
     val passwordState = MaxWidthTextFieldState(
         label = R.string.password,
         keyboardOptions = KeyboardOptions(

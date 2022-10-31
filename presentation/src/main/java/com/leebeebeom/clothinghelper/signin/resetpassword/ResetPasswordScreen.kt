@@ -1,7 +1,9 @@
 package com.leebeebeom.clothinghelper.signin.resetpassword
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -42,7 +44,7 @@ fun ResetPasswordScreen(
         viewModelState.updateTaskSuccess(false)
     }
 
-    Column {
+    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
         Text(
             text = stringResource(id = R.string.reset_password_text),
             style = MaterialTheme.typography.body2,

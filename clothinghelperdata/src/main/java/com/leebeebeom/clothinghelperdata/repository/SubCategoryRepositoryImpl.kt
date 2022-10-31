@@ -17,11 +17,8 @@ import kotlinx.coroutines.flow.*
 
 // TODO EXPAND 프리퍼런스로 이동??
 
-class SubCategoryRepositoryImpl(
-    private val userRepository: UserRepository
-) : SubCategoryRepository {
+class SubCategoryRepositoryImpl : SubCategoryRepository {
     private val root = Firebase.database.reference
-    private val user = MutableStateFlow(userRepository.user.value)
 
     private val _isLoading = MutableStateFlow(false)
     override val isLoading: StateFlow<Boolean>

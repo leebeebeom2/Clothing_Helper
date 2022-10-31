@@ -3,11 +3,11 @@ package com.leebeebeom.clothinghelper.signin
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
@@ -28,19 +28,21 @@ fun SignInRoot(
     viewModel: SignInRootViewModel = hiltViewModel(),
     focusManager: FocusManager = LocalFocusManager.current,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    content: @Composable () -> Unit
+    content: @Composable BoxScope.() -> Unit
 ) {
     ClothingHelperTheme {
         Scaffold {
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 20.dp)
-                .padding(it)
-                .clickable(
-                    interactionSource = interactionSource, indication = null
-                ) { focusManager.clearFocus() }
-                .verticalScroll(rememberScrollState())) {
-                content()
+            Surface {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(it)
+                        .padding(horizontal = 20.dp)
+                        .clickable(
+                            interactionSource = interactionSource, indication = null
+                        ) { focusManager.clearFocus() },
+                    content = content
+                )
             }
         }
     }

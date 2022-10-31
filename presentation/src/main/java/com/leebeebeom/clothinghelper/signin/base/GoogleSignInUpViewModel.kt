@@ -24,21 +24,23 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
 
     fun signInWithGoogleEmail(activityResult: ActivityResult) {
         when (activityResult.resultCode) {
-            RESULT_OK -> googleSignInUseCase(
-                credential = getGoogleCredential(activityResult)
-            ) {
-                when (it) {
-                    is FirebaseResult.Success -> viewModelState.showToast(R.string.google_sign_in_complete)
-                    is FirebaseResult.Fail -> {
-                        viewModelState.showToast(R.string.unknown_error)
-                        viewModelState.updateGoogleButtonEnabled(true)
-                        Log.d(TAG, "taskFailed: ${it.exception}")
+            RESULT_OK -> {
+                googleSignInUseCase(
+                    credential = getGoogleCredential(activityResult)
+                ) {
+                    when (it) {
+                        is FirebaseResult.Success -> viewModelState.showToast(R.string.google_sign_in_complete)
+                        is FirebaseResult.Fail -> {
+                            viewModelState.showToast(R.string.unknown_error)
+                            viewModelState.updateGoogleButtonEnabled(enabled = true)
+                            Log.d(TAG, "taskFailed: ${it.exception}")
+                        }
                     }
                 }
             }
             RESULT_CANCELED -> {
                 viewModelState.showToast(R.string.canceled)
-                viewModelState.updateGoogleButtonEnabled(false)
+                viewModelState.updateGoogleButtonEnabled(enabled = true)
             }
             else -> {
                 viewModelState.showToast(R.string.unknown_error)
@@ -46,7 +48,7 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
                     TAG,
                     "GoogleSignInUpViewModel.signInWithGoogleEmail: resultCode = ${activityResult.resultCode}"
                 )
-                viewModelState.updateGoogleButtonEnabled(false)
+                viewModelState.updateGoogleButtonEnabled(enabled = true)
             }
         }
     }

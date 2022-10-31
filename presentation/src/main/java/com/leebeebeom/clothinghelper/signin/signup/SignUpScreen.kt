@@ -86,6 +86,8 @@ fun SignUpScreen(
             enabled = viewModelState.googleButtonEnabled,
             enabledOff = { viewModelState.updateGoogleButtonEnabled(false) }
         )
+
+        SimpleHeightSpacer(dp = 150)
     }
 
     SimpleToast(text = viewModelState.toastText, shownToast = viewModelState::toastShown)

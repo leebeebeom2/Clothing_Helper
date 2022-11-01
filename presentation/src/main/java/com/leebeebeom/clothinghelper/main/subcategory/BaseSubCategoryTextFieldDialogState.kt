@@ -26,7 +26,7 @@ open class BaseSubCategoryTextFieldDialogState(
 
     open val positiveButtonEnabled get() = textFiled.text.isNotBlank() && error == null
 
-    fun showDialog() {
+    open fun showDialog() {
         showDialog = true
     }
 

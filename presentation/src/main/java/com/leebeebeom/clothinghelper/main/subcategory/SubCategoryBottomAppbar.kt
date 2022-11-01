@@ -2,11 +2,12 @@ package com.leebeebeom.clothinghelper.main.subcategory
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.BottomAppBar
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -15,7 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.*
+import com.leebeebeom.clothinghelper.base.CircleCheckBox
+import com.leebeebeom.clothinghelper.base.CustomIconButton
+import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
 
 @Composable
 fun SubCategoryBottomAppBar(
@@ -74,13 +78,11 @@ fun BottomAppBarIcon(
     @DrawableRes drawable: Int,
     @StringRes text: Int
 ) {
-    IconButton(modifier = modifier, onClick = onClick) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            CustomIconButton(modifier = modifier, onClick = onClick, drawable = drawable)
-            SimpleHeightSpacer(dp = 4)
-            Text(text = stringResource(id = text), style = MaterialTheme.typography.caption)
-        }
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        CustomIconButton(modifier = modifier, onClick = onClick, drawable = drawable)
+        SimpleHeightSpacer(dp = 4)
+        Text(text = stringResource(id = text), style = MaterialTheme.typography.caption)
     }
 }

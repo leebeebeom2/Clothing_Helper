@@ -61,7 +61,7 @@ class SubCategoryViewModel @Inject constructor(
         viewModelState.user?.let {
             addSubCategoryUseCase(
                 subCategoryParent = subCategoryParent,
-                name = name,
+                name = name.trim(),
                 uid = it.uid
             ) { exception ->
                 viewModelState.showToast(R.string.add_category_failed)
@@ -78,7 +78,7 @@ class SubCategoryViewModel @Inject constructor(
         viewModelState.user?.let {
             editSubCategoryNameUseCase(
                 viewModelState.selectedSubCategories.first(),
-                newName,
+                newName.trim(),
                 it.uid
             ) { exception ->
                 viewModelState.showToast(R.string.add_category_failed)

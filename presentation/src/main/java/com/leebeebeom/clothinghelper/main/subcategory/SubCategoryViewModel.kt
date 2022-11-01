@@ -15,11 +15,13 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.repository.SortOrder
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
-import com.leebeebeom.clothinghelperdomain.usecase.preferences.GetSubCategoryAllExpandUseCase
-import com.leebeebeom.clothinghelperdomain.usecase.preferences.GetSubCategorySortPreferencesUseCase
-import com.leebeebeom.clothinghelperdomain.usecase.preferences.ToggleAllExpandUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.preferences.SubCategoryAllExpandUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.preferences.SubCategorySortUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.signin.GetUserUseCase
-import com.leebeebeom.clothinghelperdomain.usecase.subcategory.*
+import com.leebeebeom.clothinghelperdomain.usecase.subcategory.AddSubCategoryUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.subcategory.EditSubCategoryNameUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoriesUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoryLoadingStateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,11 +34,8 @@ class SubCategoryViewModel @Inject constructor(
     getSubCategoriesUseCase: GetSubCategoriesUseCase,
     private val addSubCategoryUseCase: AddSubCategoryUseCase,
     private val editSubCategoryNameUseCase: EditSubCategoryNameUseCase,
-    private val getSubCategoryAllExpandUseCase: GetSubCategoryAllExpandUseCase,
-    private val toggleAllExpandUseCase: ToggleAllExpandUseCase,
-    private val getSubCategorySortPreferencesUseCase: GetSubCategorySortPreferencesUseCase,
-    private val changeSortUseCase: ChangeSortUseCase,
-    private val changeOrderUserCase: ChangeOrderUserCase
+    private val subCategoryAllExpandUseCase: SubCategoryAllExpandUseCase,
+    private val subCategorySortUseCase: SubCategorySortUseCase
 ) : BaseSubCategoriesViewModel(
     getUserUseCase,
     getSubCategoryLoadingStateUseCase,
@@ -48,11 +47,11 @@ class SubCategoryViewModel @Inject constructor(
         collectSubCategories()
 
         viewModelScope.launch {
-            getSubCategoryAllExpandUseCase.isAllExpand.collect(viewModelState::updateAllExpand)
+            subCategoryAllExpandUseCase.isAllExpand.collect(viewModelState::updateAllExpand)
         }
 
         viewModelScope.launch {
-            getSubCategorySortPreferencesUseCase().collect(viewModelState::updateSortPreferences)
+            subCategorySortUseCase.sortPreferences.collect(viewModelState::updateSort)
         }
     }
 
@@ -70,7 +69,7 @@ class SubCategoryViewModel @Inject constructor(
     }
 
     fun toggleAllExpand() = viewModelScope.launch {
-        toggleAllExpandUseCase()
+        subCategoryAllExpandUseCase.toggleAllExpand()
     }
 
     fun editSubCategoryName(newName: String) {
@@ -86,17 +85,12 @@ class SubCategoryViewModel @Inject constructor(
         }
     }
 
-    fun changeSort(sort: SubCategorySort) = {
-        viewModelScope.launch {
-            changeSortUseCase(sort)
-        }
+    fun changeSort(sort: SubCategorySort) {
+        viewModelScope.launch { subCategorySortUseCase.changeSort(sort) }
     }
 
-    fun changeOrder(order: SortOrder) {
-        viewModelScope.launch {
-            changeOrderUserCase(order)
-        }
-    }
+    fun changeOrder(order: SortOrder) =
+        viewModelScope.launch { subCategorySortUseCase.changeOrder(order) }
 }
 
 class SubCategoryViewModelState : BaseSubCategoriesViewModelState() {
@@ -113,7 +107,7 @@ class SubCategoryViewModelState : BaseSubCategoriesViewModelState() {
     var selectedOrder by mutableStateOf(SortOrder.ASCENDING)
         private set
 
-    fun updateSortPreferences(subCategorySortPreferences: SubCategorySortPreferences) {
+    fun updateSort(subCategorySortPreferences: SubCategorySortPreferences) {
         this.selectedSort = subCategorySortPreferences.sort
         this.selectedOrder = subCategorySortPreferences.sortOrder
     }

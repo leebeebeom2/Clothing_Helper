@@ -21,15 +21,15 @@ abstract class BaseSubCategoriesViewModel(
 ) : ViewModel() {
     abstract val viewModelState: BaseSubCategoriesViewModelState
 
-    init {
+    protected fun collectUser() =
         viewModelScope.launch {
             getUserUseCase().collect(viewModelState::updateUser)
         }
 
+    protected fun collectIsLoading() =
         viewModelScope.launch {
             getSubCategoryLoadingStateUseCase.isLoading.collect(viewModelState::updateLoading)
         }
-    }
 
     protected fun collectSubCategories() =
         viewModelScope.launch {

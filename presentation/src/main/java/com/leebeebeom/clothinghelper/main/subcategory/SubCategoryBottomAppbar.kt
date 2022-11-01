@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.base.CircleCheckBox
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleIcon
 

@@ -115,6 +115,8 @@ class SubCategoryViewModelState : BaseSubCategoriesViewModelState() {
     var selectedSubCategories by mutableStateOf(setOf<SubCategory>())
         private set
 
+    val selectedSubCategoriesSize get() = selectedSubCategories.size
+
     fun onSelect(subCategory: SubCategory) {
         this.selectedSubCategories =
             if (this.selectedSubCategories.contains(subCategory))

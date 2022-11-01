@@ -19,10 +19,7 @@ import javax.inject.Singleton
 class RepositoryModule {
     @Singleton
     @Provides
-    fun subCategoryRepository(
-        userRepository: UserRepositoryImpl,
-        subCategoryPreferencesRepository: SubCategoryPreferencesRepositoryImpl
-    ) = SubCategoryRepositoryImpl(userRepository, subCategoryPreferencesRepository)
+    fun subCategoryRepository() = SubCategoryRepositoryImpl()
 
     @Singleton
     @Provides

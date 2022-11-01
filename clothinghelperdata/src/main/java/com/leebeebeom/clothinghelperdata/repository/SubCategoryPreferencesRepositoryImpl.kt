@@ -13,13 +13,13 @@ import java.io.IOException
 
 class SubCategoryPreferencesRepositoryImpl(private val subCategoryDataStore: DataStore<Preferences>) :
     SubCategoryPreferencesRepository {
-    override val subCategoryAllExpand: Flow<Boolean> = subCategoryDataStore.data
+    override val allExpand: Flow<Boolean> = subCategoryDataStore.data
         .catch {
             if (it is IOException) emit(emptyPreferences())
             else throw it
         }.map { it[PreferenceKeys.ALL_EXPAND] ?: false }
 
-    override val subCategorySort: Flow<SubCategorySortPreferences> = subCategoryDataStore.data
+    override val sort: Flow<SubCategorySortPreferences> = subCategoryDataStore.data
         .catch {
             if (it is IOException) emit(emptyPreferences())
             else throw it

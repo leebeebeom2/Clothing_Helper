@@ -2,6 +2,7 @@ package com.leebeebeom.clothinghelper.di.usecase
 
 import com.leebeebeom.clothinghelperdata.repository.SubCategoryPreferencesRepositoryImpl
 import com.leebeebeom.clothinghelperdata.repository.SubCategoryRepositoryImpl
+import com.leebeebeom.clothinghelperdomain.usecase.signin.GetUserUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.*
 import dagger.Module
 import dagger.Provides
@@ -13,29 +14,24 @@ import dagger.hilt.android.components.ViewModelComponent
 class SubCategoryUseCaseModule {
     @Provides
     fun addSubCategoryUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
-        AddSubCategoryUseCase(subCategoryRepository)
+        AddSubCategoryUseCase(subCategoryRepository = subCategoryRepository)
 
     @Provides
-    fun loadAndGetSubCategoriesUseCase(
-        loadSubCategoriesUseCase: LoadSubCategoriesUseCase,
-        getSubCategoriesUseCase: GetSubCategoriesUseCase
-    ) = LoadAndGetSubCategoriesUseCase(loadSubCategoriesUseCase, getSubCategoriesUseCase)
+    fun loadSubCategoriesUseCase(
+        subCategoryRepository: SubCategoryRepositoryImpl,
+        getUserUseCase: GetUserUseCase
+    ) = LoadSubCategoriesUseCase(
+        subCategoryRepository = subCategoryRepository,
+        getUserUseCase = getUserUseCase
+    )
 
     @Provides
-    fun loadSubCategoriesUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
-        LoadSubCategoriesUseCase(subCategoryRepository)
-
-    @Provides
-    fun getSubCategoriesUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
-        GetSubCategoriesUseCase(subCategoryRepository)
+    fun getSubCategoriesUseCase(
+        subCategoryRepository: SubCategoryRepositoryImpl,
+        subCategoryPreferencesRepository: SubCategoryPreferencesRepositoryImpl
+    ) = GetSubCategoriesUseCase(subCategoryRepository, subCategoryPreferencesRepository)
 
     @Provides
     fun editSubCategoryNameUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
         EditSubCategoryNameUseCase(subCategoryRepository)
-
-    @Provides
-    fun sortSubCategoriesUseCate(
-        subCategoryRepository: SubCategoryRepositoryImpl,
-        subCategoryPreferencesRepository: SubCategoryPreferencesRepositoryImpl
-    ) = SortSubCategoriesUseCase(subCategoryRepository, subCategoryPreferencesRepository)
 }

@@ -5,34 +5,30 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.TextFieldValue
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.signin.base.OneTextFiledState
+import com.leebeebeom.clothinghelper.base.MaxWidthTextFieldState
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
 open class BaseSubCategoryTextFieldDialogUIState(
-    text: String = "", error: Int? = null, showDialog: Boolean = false
-) : OneTextFiledState(text) {
-    open val categoryName get() = text.value
-
-    var error by mutableStateOf(error)
-        protected set
+    text: String = "", showDialog: Boolean = false
+) : MaxWidthTextFieldState(
+    label = R.string.category,
+    placeholder = R.string.category_place_holder,
+    text = text,
+    showKeyboardEnabled = true
+) {
     var showDialog by mutableStateOf(showDialog)
         protected set
 
-    private val hideCategoryNameError = { this.error = null }
-
-    private val categoryNameInit = { this.text.value = TextFieldValue("") }
-
-    fun onCategoryNameChange(newName: TextFieldValue, subCategories: List<SubCategory>) {
-        super.onTextChange(newName, hideCategoryNameError)
-        if (subCategories.map { it.name }.contains(newName.text)) error =
-            R.string.error_same_category_name
+    fun onCategoryNameChange(newText: TextFieldValue, subCategories: List<SubCategory>) {
+        super.onValueChange(newText)
+        if (subCategories.map { it.name }.contains(newText.text))
+            updateError(R.string.error_same_category_name)
     }
 
-    val positiveButtonEnabled get() = categoryName.text.isNotBlank() && error == null
+    val positiveButtonEnabled get() = textFiled.text.isNotBlank() && error == null
 
     val onDismissDialog = {
         this.showDialog = false
-        categoryNameInit()
-        this.error = null
+        onValueChange(TextFieldValue(""))
     }
 }

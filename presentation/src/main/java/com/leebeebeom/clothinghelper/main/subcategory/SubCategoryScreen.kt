@@ -5,13 +5,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,6 +16,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.base.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /*
 최초 구동 시 로딩 확인
@@ -48,8 +48,8 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 바텀 앱바 애니메이션 확인
 하나 초과 혹은 미만 선택 시 이름 수정 애니메이션 확인
 하나 미만 선택 시 삭제 애니메이션 확인
-롱클릭 된 카드는 셀렉트 되어야 함 // TODO 롱클릭 시 진동
-선택모드 종료 시 셀렉티드 카테고리 초기화 되어야 함 // TODO 선택모드 종료 후 애니메이션 사라지고 초기화
+롱클릭 된 카드는 셀렉트 되어야 함
+선택모드 종료 시 셀렉티드 카테고리 초기화 되어야 함
 
 선택 갯수에 따라 바텀 앱바에 선택된 갯수 표시
 전체 선택 시 바텀앱바 체크박스 체크
@@ -70,7 +70,8 @@ fun SubCategoryScreen(
     viewModelState: SubCategoryViewModelState = viewModel.viewModelState,
     state: SubCategoryScreenState = rememberSubCategoryScreenUIState(),
     editNameDialogState: EditSubCategoryNameDialogState = rememberEditSubCategoryNameDialogState(),
-    drawerCloseBackHandler: @Composable () -> Unit
+    drawerCloseBackHandler: @Composable () -> Unit,
+    coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
     drawerCloseBackHandler()
 
@@ -120,13 +121,17 @@ fun SubCategoryScreen(
                 subCategories = viewModelState.getSubCategories(subCategoryParent),
             ) { newName ->
                 viewModel.editSubCategoryName(newName)
-                state.selectModeOff(viewModelState::clearSelectedSubCategories)
+                coroutineScope.launch {
+                    state.selectModeOff(viewModelState::clearSelectedSubCategories)
+                }
             }
         }
     }
 
     BackHandler(enabled = state.isSelectMode, onBack = {
-        state.selectModeOff(clearSelectedSubCategories = viewModelState::clearSelectedSubCategories)
+        coroutineScope.launch {
+            state.selectModeOff(clearSelectedSubCategories = viewModelState::clearSelectedSubCategories)
+        }
     })
 }
 
@@ -136,8 +141,9 @@ class SubCategoryScreenState(isSelectMode: Boolean = false) {
 
     val selectModeOn = { this.isSelectMode = true }
 
-    fun selectModeOff(clearSelectedSubCategories: () -> Unit) {
+    suspend fun selectModeOff(clearSelectedSubCategories: () -> Unit) {
         this.isSelectMode = false
+        delay(300)
         clearSelectedSubCategories()
     }
 

@@ -31,12 +31,10 @@ fun AddCategoryDialogFab(
         backgroundColor = MaterialTheme.colors.primary,
     ) { SimpleIcon(drawable = R.drawable.ic_add) }
 
-
-    if (state.showDialog) SubCategoryTextFieldDialog(state = state, onPositiveButtonClick = {
-        onPositiveButtonClick(
-            state.textFiled.text, subCategoryParent
-        )
-    })
+    if (state.showDialog)
+        SubCategoryTextFieldDialog(state = state) {
+            onPositiveButtonClick(state.textFiled.text, subCategoryParent)
+        }
 
     LaunchedEffect(key1 = state.textFiled, key2 = subCategories) {
         if (subCategories.map { it.name }

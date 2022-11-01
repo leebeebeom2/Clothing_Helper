@@ -37,15 +37,4 @@ interface UserRepository {
     fun signOut()
 }
 
-interface FirebaseListener {
-    fun taskSuccess()
-    fun taskFailed(exception: Exception?)
-}
-
-interface FirebaseListener2 {
-    fun taskSuccess()
-    fun taskFailed(exception: Exception?)
-    fun taskFinish()
-}
-
 typealias onDone = (FirebaseResult) -> Unit

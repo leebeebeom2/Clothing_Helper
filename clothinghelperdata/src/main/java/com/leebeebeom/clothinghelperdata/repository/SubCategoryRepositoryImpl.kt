@@ -18,8 +18,6 @@ import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 
-// TODO EXPAND 프리퍼런스로 이동??
-
 class SubCategoryRepositoryImpl : SubCategoryRepository {
     private val root = Firebase.database.reference
 

@@ -16,6 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -42,12 +44,17 @@ fun SubCategoryCard(
         rememberedAllExpand = isAllExpand
     }
 
+    val haptic = LocalHapticFeedback.current
+
     Card(elevation = 2.dp, shape = RoundedCornerShape(12.dp)) {
         Column(
             modifier = Modifier
                 .clip(RoundedCornerShape(12.dp))
                 .combinedClickable(
-                    onClick = onSubCategoryClick, onLongClick = onLongClick
+                    onClick = onSubCategoryClick, onLongClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        onLongClick()
+                    }
                 )
         ) {
             SubCategoryTitle(
@@ -90,7 +97,9 @@ private fun SubCategoryTitle(
             ) {
                 CircleCheckBox(
                     isChecked = isChecked,
-                    modifier = Modifier.padding(start = 6.dp).size(18.dp),
+                    modifier = Modifier
+                        .padding(start = 6.dp)
+                        .size(18.dp),
                 )
             }
 

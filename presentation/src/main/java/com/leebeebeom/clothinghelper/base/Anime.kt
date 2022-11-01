@@ -10,7 +10,7 @@ object Anime {
     private val screenSlideEasing = CubicBezierEasing(a = 0.36f, b = 0f, c = 0.66f, d = -0.1f)
 
     val screenSlideInBottom =
-        slideInVertically(animationSpec = tween(screenSlideDuration)) { it } // TODO 동작 안함
+        slideInVertically(animationSpec = tween(screenSlideDuration)) { it }
 
     val screenSlideOutBottom =
         slideOutVertically(

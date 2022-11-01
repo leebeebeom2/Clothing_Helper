@@ -10,7 +10,7 @@ import com.leebeebeom.clothinghelper.base.MaxWidthTextFieldState
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
 open class BaseSubCategoryTextFieldDialogState(
-    text: String = "", showDialog: Boolean = false, @StringRes val title: Int
+    text: String = "", showDialog: Boolean = false, @StringRes val title: Int, private val subCategories: List<SubCategory>
 ) : MaxWidthTextFieldState(
     label = R.string.category,
     placeholder = R.string.category_place_holder,
@@ -20,7 +20,7 @@ open class BaseSubCategoryTextFieldDialogState(
     var showDialog by mutableStateOf(showDialog)
         private set
 
-    fun onCategoryNameChange(newText: TextFieldValue, subCategories: List<SubCategory>) {
+    override fun onValueChange(newText: TextFieldValue) {
         super.onValueChange(newText)
         if (subCategories.map { it.name }.contains(newText.text))
             updateError(R.string.error_same_category_name)

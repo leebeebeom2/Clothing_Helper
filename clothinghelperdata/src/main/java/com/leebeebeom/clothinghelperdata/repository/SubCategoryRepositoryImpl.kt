@@ -11,7 +11,10 @@ import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.model.User
-import com.leebeebeom.clothinghelperdomain.repository.*
+import com.leebeebeom.clothinghelperdomain.repository.SortOrder
+import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
+import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
+import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 
@@ -94,20 +97,19 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
     private fun pushSubCategory(
         subCategoryRef: DatabaseReference,
         subCategory: SubCategory
-    ) {
-        pushSubCategory(subCategoryRef, subCategory) {}
-    }
+    ) = pushSubCategory(subCategoryRef, subCategory) { _, _ -> }
 
     private fun pushSubCategory(
         subCategoryRef: DatabaseReference,
         subCategory: SubCategory,
-        onDone: onDone
+        onDone: (FirebaseResult, SubCategory) -> Unit
     ) {
         val key = subCategoryRef.push().key ?: return
-        subCategoryRef.child(key).setValue(subCategory.copy(key = key)).addOnCompleteListener {
+        val subCategoryWithKey = subCategory.copy(key = key)
+        subCategoryRef.child(key).setValue(subCategoryWithKey).addOnCompleteListener {
             if (it.isSuccessful)
-                onDone(FirebaseResult.Success)
-            else onDone(FirebaseResult.Fail(it.exception))
+                onDone(FirebaseResult.Success, subCategoryWithKey)
+            else onDone(FirebaseResult.Fail(it.exception), subCategoryWithKey)
         }
     }
 
@@ -124,11 +126,11 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
         )
 
         val subCategoryRef = root.getSubCategoriesRef(uid)
-        pushSubCategory(subCategoryRef, newSubCategory) {
-            when (it) {
+        pushSubCategory(subCategoryRef, newSubCategory) { result, subCategory ->
+            when (result) {
                 is FirebaseResult.Success -> _allSubCategories[subCategoryParent.ordinal]
-                    .taskAndAssign { temp -> temp.add(newSubCategory) }
-                is FirebaseResult.Fail -> taskFailed(it.exception)
+                    .taskAndAssign { temp -> temp.add(subCategory) }
+                is FirebaseResult.Fail -> taskFailed(result.exception)
             }
         }
     }

@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.base.CustomIconButton
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
@@ -71,19 +72,14 @@ fun DrawerContents(
 
 @Composable
 private fun IconWithDivider() {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(end = 4.dp)) {
         Divider(color = Disabled, modifier = Modifier.weight(1f))
-        IconButton(
+        CustomIconButton(
+            modifier = Modifier.size(20.dp),
             onClick = { /*TODO*/ },
-            modifier = Modifier
-                .padding(horizontal = 4.dp)
-                .size(20.dp)
-        ) {
-            SimpleIcon(
-                drawable = R.drawable.ic_all_expand,
-                tint = LocalContentColor.current.copy(0.6f)
-            )
-        }
+            drawable = R.drawable.ic_all_expand,
+            tint = LocalContentColor.current.copy(0.6f)
+        )
     }
 }
 

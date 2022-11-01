@@ -2,6 +2,7 @@ package com.leebeebeom.clothinghelper.main.subcategory
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.*
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -81,7 +82,6 @@ private fun SubCategoryTitle(
             modifier = Modifier.weight(1f),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            SimpleWidthSpacer(dp = 8)
             val duration = 300
             AnimatedVisibility(
                 visible = isSelectMode,
@@ -90,12 +90,16 @@ private fun SubCategoryTitle(
             ) {
                 CircleCheckBox(
                     isChecked = isChecked,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.padding(start = 6.dp).size(18.dp),
                 )
             }
 
+            val padding by animateDpAsState(
+                targetValue = if (isSelectMode) 4.dp else 12.dp,
+                animationSpec = tween(duration)
+            )
             Text(
-                modifier = Modifier.padding(start = 4.dp),
+                modifier = Modifier.padding(start = padding),
                 text = name,
                 style = MaterialTheme.typography.subtitle1,
                 maxLines = 1,

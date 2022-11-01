@@ -105,8 +105,7 @@ private fun Header() {
     Column(modifier = Modifier.padding(start = 12.dp, top = 8.dp)) {
         Text(
             text = stringResource(R.string.sort),
-            style = MaterialTheme.typography.body2.copy(letterSpacing = 1.5.sp),
-            fontSize = 15.sp,
+            style = MaterialTheme.typography.subtitle2.copy(letterSpacing = 1.5.sp),
             color = LocalContentColor.current.copy(0.8f)
         )
         SimpleHeightSpacer(dp = 8)

@@ -12,15 +12,12 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
 @Composable
 fun EditSubCategoryNameDialog(
-    getSelectedCategoryName: () -> String,
     state: EditSubCategoryNameDialogState,
     subCategories: List<SubCategory>,
     onPositiveButtonClick: (String) -> Unit,
 ) {
 
     if (state.showDialog) {
-        state.setInitialName(getSelectedCategoryName())
-
         SubCategoryTextFieldDialog(
             state = state,
             onPositiveButtonClick = { onPositiveButtonClick(state.textFiled.text) },
@@ -40,9 +37,15 @@ class EditSubCategoryNameDialogState(
     var initialName: String = initialName
         private set
 
-    fun setInitialName(name: String) {
-        textFiled = TextFieldValue(name)
-        initialName = name
+    fun showDialog(initialName: String) {
+        super.showDialog()
+        this.initialName = initialName
+        textFiled = TextFieldValue(initialName)
+    }
+
+    override fun updateError(error: Int?) {
+        super.updateError(error)
+        if (textFiled.text.trim() == initialName) this.error = null
     }
 
     override fun onFocusChanged(focusState: FocusState) {
@@ -51,7 +54,7 @@ class EditSubCategoryNameDialogState(
     }
 
     override val positiveButtonEnabled: Boolean
-        get() = super.positiveButtonEnabled && initialName != textFiled.text
+        get() = super.positiveButtonEnabled && initialName != textFiled.text.trim()
 
     companion object {
         val Saver: Saver<EditSubCategoryNameDialogState, *> = listSaver(save = {

@@ -41,6 +41,7 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 텍스트 변경 시 에러 숨김
 카테고리 추가 시 올 익스팬드 상태에 따라 익스팬드 상태로 추가
 카테고리 추가 시 정렬 지키는지 확인
+트림 확인
 
 카드 롱 클릭 시 선택모드 활성화 확인
 체크 박스 애니메이션 확인
@@ -55,7 +56,9 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 전체 선택에서 하나라도 선택해제시 체크박스 체크 해제
 바텀 앱바 체크박스 클릭 시 전체선택 토글
 
-이름 수정 다이얼로그 동작 확인 // TODO 화면 회전 시 초기 이름 들어옴
+이름 수정 다이얼로그 동작 확인
+트림 확인
+본래 이름일 시 에러 표시 x 확인 버튼만 disable
 이름 변경 시 정렬 지키는 지 확인
  */
 
@@ -77,7 +80,7 @@ fun SubCategoryScreen(
             selectedSubCategoriesSize = viewModelState.selectedSubCategoriesSize,
             subCategoriesSize = viewModelState.getSubCategories(subCategoryParent).size,
             onAllSelectCheckBoxClick = { viewModelState.toggleAllSelect(subCategoryParent) },
-            onEditSubCategoryNameClick = { editNameDialogState.showDialog() })
+            onEditSubCategoryNameClick = { editNameDialogState.showDialog(viewModelState.selectedSubCategories.first().name) })
     }) {
         if (viewModelState.isLoading) CenterDotProgressIndicator(backGroundColor = Color.Transparent)
         else Box(
@@ -113,14 +116,12 @@ fun SubCategoryScreen(
             )
 
             EditSubCategoryNameDialog(
-                getSelectedCategoryName = { viewModelState.selectedSubCategories.first().name },
                 state = editNameDialogState,
                 subCategories = viewModelState.getSubCategories(subCategoryParent),
-                onPositiveButtonClick = { newName ->
-                    viewModel.editSubCategoryName(newName)
-                    state.selectModeOff(viewModelState::clearSelectedSubCategories)
-                },
-            )
+            ) { newName ->
+                viewModel.editSubCategoryName(newName)
+                state.selectModeOff(viewModelState::clearSelectedSubCategories)
+            }
         }
     }
 

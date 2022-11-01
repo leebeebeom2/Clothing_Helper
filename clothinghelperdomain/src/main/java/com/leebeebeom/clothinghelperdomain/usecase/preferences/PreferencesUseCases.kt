@@ -6,13 +6,13 @@ import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
 
 class SubCategoryAllExpandUseCase(private val subCategoryPreferencesRepository: SubCategoryPreferencesRepository) {
     val isAllExpand get() = subCategoryPreferencesRepository.allExpand
-}
 
-class ToggleAllExpandUseCase(private val subCategoryPreferencesRepository: SubCategoryPreferencesRepository) {
-    suspend operator fun invoke() = subCategoryPreferencesRepository.toggleAllExpand()
+    suspend fun toggleAllExpand() = subCategoryPreferencesRepository.toggleAllExpand()
 }
 
 class SubCategorySortUseCase(private val subCategoryPreferencesRepository: SubCategoryPreferencesRepository) {
+    val sortPreferences get() = subCategoryPreferencesRepository.sort
+
     suspend fun changeSort(subCategorySort: SubCategorySort) =
         subCategoryPreferencesRepository.changeSort(subCategorySort)
 

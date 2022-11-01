@@ -6,7 +6,6 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -32,7 +31,7 @@ fun DrawerMainCategory(
 
     Column {
         DrawerContentRow(
-            modifier = Modifier.heightIn(48.dp),
+            modifier = Modifier.heightIn(44.dp),
             onDrawerContentClick = { onMainCategoryClick(mainCategory.type) }) {
             DrawerContentText(
                 modifier = Modifier.padding(start = 8.dp),
@@ -65,7 +64,6 @@ private fun DrawerMainCategoryExpandIcon(
             color = MaterialTheme.colors.surface.copy(ContentAlpha.disabled)
         )
     else ExpandIcon(
-        modifier = Modifier.size(22.dp),
         isExpanded = isExpand,
         onExpandIconClick = onExpandIconClick
     )

@@ -120,11 +120,12 @@ open class MaxWidthTextFieldState(
     @StringRes val placeholder: Int = R.string.empty,
     text: String = "",
     val showKeyboardEnabled: Boolean = false,
-    val keyboardOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
+    val keyboardOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+    error: Int? = null
 ) {
     var textFiled by mutableStateOf(TextFieldValue(text))
         private set
-    var error: Int? by mutableStateOf(null)
+    var error: Int? by mutableStateOf(error)
         private set
 
     val isError get() = error != null
@@ -144,14 +145,15 @@ open class MaxWidthTextFieldState(
     }
 
     companion object {
-        fun email(imeAction: ImeAction, showKeyboardEnabled: Boolean = true) = MaxWidthTextFieldState(
-            label = R.string.email,
-            placeholder = R.string.email_place_holder,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Email,
-                imeAction = imeAction
-            ),
-            showKeyboardEnabled = showKeyboardEnabled
-        )
+        fun email(imeAction: ImeAction, showKeyboardEnabled: Boolean = true) =
+            MaxWidthTextFieldState(
+                label = R.string.email,
+                placeholder = R.string.email_place_holder,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = imeAction
+                ),
+                showKeyboardEnabled = showKeyboardEnabled
+            )
     }
 }

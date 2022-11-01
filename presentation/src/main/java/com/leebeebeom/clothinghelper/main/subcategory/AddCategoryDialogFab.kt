@@ -32,14 +32,9 @@ fun AddCategoryDialogFab(
     ) { SimpleIcon(drawable = R.drawable.ic_add) }
 
     if (state.showDialog)
-        SubCategoryTextFieldDialog(state = state) {
+        SubCategoryTextFieldDialog(state = state, subCategories = subCategories) {
             onPositiveButtonClick(state.textFiled.text, subCategoryParent)
         }
-
-    LaunchedEffect(key1 = state.textFiled, key2 = subCategories) {
-        if (subCategories.map { it.name }
-                .contains(state.textFiled.text)) state.updateError(R.string.error_same_category_name)
-    }
 }
 
 class AddCategoryDialogUIState(

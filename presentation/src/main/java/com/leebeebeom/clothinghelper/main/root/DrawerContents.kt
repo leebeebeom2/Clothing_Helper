@@ -52,7 +52,7 @@ fun DrawerContents(
 
             item {
                 SimpleHeightSpacer(dp = 4)
-                Divider(color = Disabled)
+                IconWithDivider()
                 SimpleHeightSpacer(dp = 4)
             }
 
@@ -65,6 +65,24 @@ fun DrawerContents(
                     onSubCategoryClick = onSubCategoryClick
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun IconWithDivider() {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Divider(color = Disabled, modifier = Modifier.weight(1f))
+        IconButton(
+            onClick = { /*TODO*/ },
+            modifier = Modifier
+                .padding(horizontal = 4.dp)
+                .size(20.dp)
+        ) {
+            SimpleIcon(
+                drawable = R.drawable.ic_all_expand,
+                tint = LocalContentColor.current.copy(0.6f)
+            )
         }
     }
 }

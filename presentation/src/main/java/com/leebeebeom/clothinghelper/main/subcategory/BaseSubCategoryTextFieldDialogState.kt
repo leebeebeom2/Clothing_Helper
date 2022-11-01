@@ -1,5 +1,6 @@
 package com.leebeebeom.clothinghelper.main.subcategory
 
+import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,8 +9,8 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.MaxWidthTextFieldState
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
-open class BaseSubCategoryTextFieldDialogUIState(
-    text: String = "", showDialog: Boolean = false
+open class BaseSubCategoryTextFieldDialogState(
+    text: String = "", showDialog: Boolean = false, @StringRes val title: Int
 ) : MaxWidthTextFieldState(
     label = R.string.category,
     placeholder = R.string.category_place_holder,
@@ -17,7 +18,7 @@ open class BaseSubCategoryTextFieldDialogUIState(
     showKeyboardEnabled = true
 ) {
     var showDialog by mutableStateOf(showDialog)
-        protected set
+        private set
 
     fun onCategoryNameChange(newText: TextFieldValue, subCategories: List<SubCategory>) {
         super.onValueChange(newText)
@@ -27,8 +28,12 @@ open class BaseSubCategoryTextFieldDialogUIState(
 
     val positiveButtonEnabled get() = textFiled.text.isNotBlank() && error == null
 
+    fun showDialog() {
+        showDialog = true
+    }
+
     fun onDismissDialog() {
-        this.showDialog = false
+        showDialog = false
         onValueChange(TextFieldValue(""))
     }
 }

@@ -21,10 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.CircleCheckBox
-import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.base.SimpleIcon
-import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
+import com.leebeebeom.clothinghelper.base.*
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -76,7 +73,8 @@ private fun SubCategoryTitle(
     Row(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 4.dp),
+            .padding(vertical = 4.dp)
+            .padding(end = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
@@ -105,26 +103,25 @@ private fun SubCategoryTitle(
             )
         }
         ExpandIcon(
-            isExpanded = isExpanded, onExpandIconClick = onExpandIconClick
+            isExpanded = isExpanded,
+            onExpandIconClick = onExpandIconClick,
+            modifier = Modifier.size(24.dp)
         )
     }
 }
 
 @Composable
-fun ExpandIcon(
-    modifier: Modifier = Modifier, isExpanded: Boolean, onExpandIconClick: () -> Unit
-) {
+fun ExpandIcon(modifier: Modifier = Modifier, isExpanded: Boolean, onExpandIconClick: () -> Unit) {
     val rotate by animateFloatAsState(
         targetValue = if (!isExpanded) 0f else 180f, animationSpec = tween(durationMillis = 300)
     )
 
-    IconButton(onClick = onExpandIconClick) {
-        SimpleIcon(
-            drawable = R.drawable.ic_expand_more,
-            modifier = modifier.rotate(rotate),
-            tint = LocalContentColor.current.copy(ContentAlpha.medium)
-        )
-    }
+    CustomIconButton(
+        modifier = modifier.rotate(rotate),
+        onClick = onExpandIconClick,
+        drawable = R.drawable.ic_expand_more,
+        tint = LocalContentColor.current.copy(alpha = 0.7f)
+    )
 }
 
 @Composable

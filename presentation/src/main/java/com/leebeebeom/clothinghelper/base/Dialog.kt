@@ -10,13 +10,12 @@ import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.main.subcategory.BaseSubCategoryTextFieldDialogState
 
 @Composable
 fun DialogRoot(onDismissDialog: () -> Unit, content: @Composable ColumnScope.() -> Unit) {
@@ -44,23 +43,8 @@ fun DialogTitle(@StringRes text: Int) {
 }
 
 @Composable
-fun DialogTextField(
-    @StringRes label: Int,
-    @StringRes placeHolder: Int,
-    text: TextFieldValue,
-    @StringRes error: Int?,
-    onTextChange: (TextFieldValue) -> Unit,
-    onFocusChanged:(FocusState) -> Unit
-) {
-    MaxWidthTextField(
-        label = label,
-        placeholder = placeHolder,
-        text = text,
-        onValueChange = onTextChange,
-        error = error,
-        showKeyboardEnabled = true,
-        onFocusChanged = onFocusChanged
-    )
+fun DialogTextField(state: BaseSubCategoryTextFieldDialogState) {
+    MaxWidthTextField(state = state)
     SimpleHeightSpacer(dp = 12)
 }
 

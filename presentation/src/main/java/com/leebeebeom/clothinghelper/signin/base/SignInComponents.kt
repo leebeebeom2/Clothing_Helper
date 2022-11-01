@@ -25,19 +25,19 @@ import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.base.CustomIconButton
 import com.leebeebeom.clothinghelper.base.MaxWidthButton
 import com.leebeebeom.clothinghelper.base.MaxWidthTextField
 import com.leebeebeom.clothinghelper.base.MaxWidthTextFieldState
-import com.leebeebeom.clothinghelper.base.SimpleIcon
 
 @Composable
 fun VisibleIcon(isVisible: Boolean, onIconClick: () -> Unit) {
-    IconButton(onClick = onIconClick, modifier = Modifier.size(24.dp)) {
-        SimpleIcon(
-            drawable = if (isVisible) R.drawable.ic_visibility_off else R.drawable.ic_visibility,
-            tint = LocalContentColor.current.copy(0.4f)
-        )
-    }
+    CustomIconButton(
+        drawable = if (isVisible) R.drawable.ic_visibility_off else R.drawable.ic_visibility,
+        tint = LocalContentColor.current.copy(0.4f),
+        onClick = onIconClick,
+        modifier = Modifier.size(24.dp)
+    )
 }
 
 @Composable

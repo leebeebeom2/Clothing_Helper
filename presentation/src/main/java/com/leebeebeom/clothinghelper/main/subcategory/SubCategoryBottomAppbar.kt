@@ -15,12 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.CircleCheckBox
-import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.base.SimpleIcon
-import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
+import com.leebeebeom.clothinghelper.base.*
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SubCategoryBottomAppBar(
     isSelectMode: Boolean,
@@ -52,29 +48,20 @@ fun SubCategoryBottomAppBar(
                 ), modifier = Modifier.offset((-8).dp, 1.dp)
             )
             Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.End) {
-                val iconDuration = 200
-                AnimatedVisibility(
-                    visible = selectedSubCategoriesSize == 1,
-                    enter = scaleIn(tween(iconDuration)),
-                    exit = scaleOut(tween(iconDuration))
-                ) {
+
+                if (selectedSubCategoriesSize == 1)
                     BottomAppBarIcon(
                         onClick = onEditSubCategoryNameClick,
                         drawable = R.drawable.ic_edit,
                         text = R.string.change_name
                     )
-                }
-                AnimatedVisibility(
-                    visible = selectedSubCategoriesSize > 0,
-                    enter = scaleIn(tween(iconDuration)),
-                    exit = scaleOut(tween(iconDuration))
-                ) {
+
+                if (selectedSubCategoriesSize > 0)
                     BottomAppBarIcon(
                         onClick = { /*TODO*/ },
                         drawable = R.drawable.ic_delete2,
                         text = R.string.delete
                     )
-                }
             }
         }
     }
@@ -88,12 +75,12 @@ fun BottomAppBarIcon(
     @StringRes text: Int
 ) {
     IconButton(modifier = modifier, onClick = onClick) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            SimpleIcon(drawable = drawable)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            CustomIconButton(modifier = modifier, onClick = onClick, drawable = drawable)
             SimpleHeightSpacer(dp = 4)
-            Text(
-                text = stringResource(id = text), style = MaterialTheme.typography.caption
-            )
+            Text(text = stringResource(id = text), style = MaterialTheme.typography.caption)
         }
     }
 }

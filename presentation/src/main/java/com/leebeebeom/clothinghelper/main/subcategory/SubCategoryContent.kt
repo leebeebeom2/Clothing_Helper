@@ -11,6 +11,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.base.CustomIconButton
 import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
@@ -124,11 +125,12 @@ private fun SortIcon(
     var showDropDownMenu by remember { mutableStateOf(false) }
 
     Box {
-        IconButton(onClick = { showDropDownMenu = true }, modifier = Modifier.size(22.dp)) {
-            SimpleIcon(
-                drawable = R.drawable.ic_sort, tint = LocalContentColor.current.copy(0.5f)
-            )
-        }
+        CustomIconButton(
+            modifier = Modifier.size(22.dp),
+            onClick = { showDropDownMenu = true },
+            drawable = R.drawable.ic_sort,
+            tint = LocalContentColor.current.copy(0.5f)
+        )
 
         SortDropdownMenu(
             showDropDownMenu = showDropDownMenu,

@@ -10,12 +10,17 @@ import com.leebeebeom.clothinghelper.base.MaxWidthTextFieldState
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
 open class BaseSubCategoryTextFieldDialogState(
-    text: String = "", showDialog: Boolean = false, @StringRes val title: Int, private val subCategories: List<SubCategory>
+    text: String = "",
+    error: Int? = null,
+    showDialog: Boolean = false,
+    @StringRes val title: Int,
+    private val subCategories: List<SubCategory>
 ) : MaxWidthTextFieldState(
     label = R.string.category,
     placeholder = R.string.category_place_holder,
     text = text,
-    showKeyboardEnabled = true
+    showKeyboardEnabled = true,
+    error = error
 ) {
     var showDialog by mutableStateOf(showDialog)
         private set

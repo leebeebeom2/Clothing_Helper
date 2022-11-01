@@ -6,6 +6,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,8 +32,11 @@ import com.leebeebeom.clothinghelper.base.SimpleIcon
 
 @Composable
 fun VisibleIcon(isVisible: Boolean, onIconClick: () -> Unit) {
-    IconButton(onClick = onIconClick) {
-        SimpleIcon(drawable = if (isVisible) R.drawable.ic_visibility_off else R.drawable.ic_visibility)
+    IconButton(onClick = onIconClick, modifier = Modifier.size(24.dp)) {
+        SimpleIcon(
+            drawable = if (isVisible) R.drawable.ic_visibility_off else R.drawable.ic_visibility,
+            tint = LocalContentColor.current.copy(0.4f)
+        )
     }
 }
 

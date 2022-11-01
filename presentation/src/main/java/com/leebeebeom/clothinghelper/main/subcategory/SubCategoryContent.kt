@@ -1,5 +1,9 @@
 package com.leebeebeom.clothinghelper.main.subcategory
 
+import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
+import androidx.compose.animation.graphics.res.animatedVectorResource
+import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
+import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,7 +14,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
@@ -111,15 +117,39 @@ fun getHeaderStringRes(mainCategoryName: String) =
 
 @Composable
 private fun AllExpandIcon(allExpandIconClick: () -> Unit, allExpand: Boolean) {
-    Box(modifier = Modifier.offset(4.dp, 0.dp)) {
-        CustomIconButton(
-            modifier = Modifier.size(22.dp),
-            onClick = allExpandIconClick,
-            drawable = if (allExpand) R.drawable.ic_unfold_less else R.drawable.ic_all_expand,
+    Box(modifier = Modifier.offset(2.dp, 0.dp)) {
+        AllExpandIcon(
+            size = 22.dp,
+            allExpandIconClick = allExpandIconClick,
             tint = LocalContentColor.current.copy(0.5f),
+            allExpand = allExpand,
             rippleSize = 2.dp
         )
     }
+}
+
+@OptIn(ExperimentalAnimationGraphicsApi::class)
+@Composable
+fun AllExpandIcon(
+    size: Dp,
+    allExpandIconClick: () -> Unit,
+    tint: Color,
+    allExpand: Boolean,
+    rippleSize: Dp = 4.dp
+) {
+    val painter = rememberAnimatedVectorPainter(
+        animatedImageVector = AnimatedImageVector.animatedVectorResource(
+            id = R.drawable.all_expand_anim
+        ), atEnd = allExpand
+    )
+
+    CustomIconButton(
+        modifier = Modifier.size(size),
+        onClick = allExpandIconClick,
+        painter = painter,
+        tint = tint,
+        rippleSize = rippleSize
+    )
 }
 
 @Composable

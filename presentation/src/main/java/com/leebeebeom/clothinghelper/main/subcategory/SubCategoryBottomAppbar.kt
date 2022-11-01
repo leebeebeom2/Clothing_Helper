@@ -18,6 +18,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.CircleCheckBox
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleIcon
+import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -38,12 +39,13 @@ fun SubCategoryBottomAppBar(
         )
     ) {
         BottomAppBar {
-            IconButton(onClick = onAllSelectCheckBoxClick) {
-                CircleCheckBox(
-                    isChecked = selectedSubCategoriesSize == subCategoriesSize,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
+            SimpleWidthSpacer(dp = 4)
+            CircleCheckBox(
+                isChecked = selectedSubCategoriesSize == subCategoriesSize,
+                modifier = Modifier.size(22.dp),
+                onClick = onAllSelectCheckBoxClick
+            )
+            SimpleWidthSpacer(dp = 10)
             Text(
                 text = stringResource(
                     id = R.string.count_selected, formatArgs = arrayOf(selectedSubCategoriesSize)

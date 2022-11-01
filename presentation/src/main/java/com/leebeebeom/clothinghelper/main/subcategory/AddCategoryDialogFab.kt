@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -45,10 +44,10 @@ class AddCategoryDialogUIState(
     companion object {
         val Saver: Saver<AddCategoryDialogUIState, *> = listSaver(save = {
             listOf(
-                it.textFiled.text, it.error, it.showDialog
+                it.textFiled.text, it.showDialog, it.error
             )
         }, restore = {
-            AddCategoryDialogUIState(it[0] as String, it[1] as Boolean)
+            AddCategoryDialogUIState(it[0] as String, it[1] as Boolean, it[2] as? Int)
         })
     }
 }

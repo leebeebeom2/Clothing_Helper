@@ -88,21 +88,27 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
     override fun pushInitialSubCategories(uid: String) {
         val subCategoryRef = root.getSubCategoriesRef(uid)
 
-        for (subCategory in getInitialSubCategories())
-            if (pushSubCategory(subCategoryRef, subCategory) is FirebaseResult.Fail)
-                return
+        for (subCategory in getInitialSubCategories()) pushSubCategory(subCategoryRef, subCategory)
     }
 
     private fun pushSubCategory(
         subCategoryRef: DatabaseReference,
         subCategory: SubCategory
-    ): FirebaseResult {
-        val key = subCategoryRef.push().key
-            ?: return FirebaseResult.Fail(NullPointerException("key 생성 실패"))
+    ) {
+        pushSubCategory(subCategoryRef, subCategory) {}
+    }
 
-        return if (subCategoryRef.child(key).setValue(subCategory.copy(key = key)).isSuccessful)
-            FirebaseResult.Success
-        else FirebaseResult.Fail(exception = null)
+    private fun pushSubCategory(
+        subCategoryRef: DatabaseReference,
+        subCategory: SubCategory,
+        onDone: onDone
+    ) {
+        val key = subCategoryRef.push().key ?: return
+        subCategoryRef.child(key).setValue(subCategory.copy(key = key)).addOnCompleteListener {
+            if (it.isSuccessful)
+                onDone(FirebaseResult.Success)
+            else onDone(FirebaseResult.Fail(it.exception))
+        }
     }
 
     override fun addSubCategory(
@@ -118,15 +124,14 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
         )
 
         val subCategoryRef = root.getSubCategoriesRef(uid)
-        val result = pushSubCategory(subCategoryRef, newSubCategory)
-
-
-        if (result is FirebaseResult.Fail)
-            taskFailed(result.exception)
-        else _allSubCategories[subCategoryParent.ordinal]
-            .taskAndAssign { temp -> temp.add(newSubCategory) }
+        pushSubCategory(subCategoryRef, newSubCategory) {
+            when (it) {
+                is FirebaseResult.Success -> _allSubCategories[subCategoryParent.ordinal]
+                    .taskAndAssign { temp -> temp.add(newSubCategory) }
+                is FirebaseResult.Fail -> taskFailed(it.exception)
+            }
+        }
     }
-
 
     override fun editSubCategoryName(
         subCategory: SubCategory,
@@ -134,16 +139,16 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
         uid: String,
         taskFailed: (Exception?) -> Unit
     ) {
-
-        if (root.getSubCategoriesRef(uid).child(subCategory.key).child("name")
-                .setValue(newName).isSuccessful
-        )
-            _allSubCategories[subCategory.parent.ordinal].taskAndAssign {
-                val index = it.indexOf(subCategory)
-                it.remove(subCategory)
-                it.add(index, subCategory.copy(name = newName))
+        root.getSubCategoriesRef(uid).child(subCategory.key).child("name").setValue(newName)
+            .addOnCompleteListener {
+                if (it.isSuccessful)
+                    _allSubCategories[subCategory.parent.ordinal].taskAndAssign { subCategories ->
+                        val index = subCategories.indexOf(subCategory)
+                        subCategories.remove(subCategory)
+                        subCategories.add(index, subCategory.copy(name = newName))
+                    }
+                else taskFailed(null)
             }
-        else taskFailed(null)
     }
 
     private fun getInitialSubCategories(): List<SubCategory> {

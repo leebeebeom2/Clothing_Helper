@@ -25,7 +25,7 @@ fun SubCategoryTextFieldDialog(
         )
     }
 
-    LaunchedEffect(key1 = state.textFiled, key2 = subCategories) {
+    LaunchedEffect(key1 = state.textFiled) {
         if (subCategories.map { it.name }
                 .contains(state.textFiled.text.trim())) state.updateError(R.string.error_same_category_name)
     }

@@ -48,7 +48,7 @@
     <string name="top_info">총장: 71 가슴: 50\n어깨: 53 소매: 24</string>
     <string name="most_have_size">가장 많이 보유한 사이즈</string>
     <string name="sub_categories_load_failed">서브카테고리 로드에 실패했습니다.</string>
-    <string name="categories">%1$d categories</string>
+    <string name="categories">%1d categories</string>
     <string name="main_categories">MAIN CATEGORIES</string>
     <string name="select_mode">선택 모드</string>
     <string name="change_name">이름 수정</string>
@@ -63,4 +63,5 @@
     <string name="sort_Ascending">오름차</string>
     <string name="sort_Descending">내림차</string>
     <string name="sort">정렬</string>
+    <string name="folders_and_contents">%1d folders, %2d contents</string>
 </resources>

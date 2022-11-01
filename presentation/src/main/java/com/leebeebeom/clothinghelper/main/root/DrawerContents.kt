@@ -18,7 +18,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
 import com.leebeebeom.clothinghelper.main.subcategory.AllExpandIcon
@@ -47,16 +46,14 @@ fun DrawerContents(
     Surface(color = Color(0xFF121212)) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(top = 4.dp, bottom = 40.dp)
+            contentPadding = PaddingValues(top = 8.dp, bottom = 40.dp)
         ) {
             this.items(state.essentialMenus, key = { it.type.name }) {
                 EssentialMenu(essentialMenu = it, onEssentialMenuClick = onEssentialMenuClick)
             }
 
             item {
-                SimpleHeightSpacer(dp = 4)
                 IconWithDivider(isAllExpand = isAllExpand, allExpandIconClick = allExpandIconClick)
-                SimpleHeightSpacer(dp = 4)
             }
 
             items(state.mainCategories, key = { it.type.name }) {
@@ -108,7 +105,7 @@ private fun EssentialMenu(
     essentialMenu: EssentialMenu,
     onEssentialMenuClick: (essentialMenu: EssentialMenus) -> Unit
 ) = DrawerContentRow(
-    modifier = Modifier.heightIn(44.dp),
+    modifier = Modifier.heightIn(40.dp),
     onDrawerContentClick = { onEssentialMenuClick(essentialMenu.type) }) {
     SimpleIcon(modifier = Modifier.size(22.dp), drawable = essentialMenu.drawable)
     SimpleWidthSpacer(dp = 12)

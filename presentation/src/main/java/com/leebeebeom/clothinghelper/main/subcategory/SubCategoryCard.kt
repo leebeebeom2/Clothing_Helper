@@ -81,7 +81,7 @@ private fun SubCategoryTitle(
     Row(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 4.dp)
+            .padding(top = 12.dp, bottom = 8.dp)
             .padding(end = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -104,16 +104,37 @@ private fun SubCategoryTitle(
             }
 
             val padding by animateDpAsState(
-                targetValue = if (isSelectMode) 4.dp else 12.dp,
+                targetValue = if (isSelectMode) 4.dp else 14.dp,
                 animationSpec = tween(duration)
             )
+
             Text(
-                modifier = Modifier.padding(start = padding),
+                // name
+                modifier = Modifier
+                    .padding(start = padding)
+                    .widthIn(max = 300.dp),
                 text = name,
                 style = MaterialTheme.typography.subtitle1,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
+            SimpleWidthSpacer(dp = 4)
+
+            AnimatedVisibility(visible = !isExpanded,
+                enter = fadeIn(tween(150)),
+                exit = fadeOut(tween(150))
+            ) {
+                Text( // total count
+                    modifier = Modifier.weight(1f),
+                    text = "(10)",
+                    style = MaterialTheme.typography.caption.copy(
+                        color = LocalContentColor.current.copy(ContentAlpha.medium)
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
         }
         ExpandIcon(
             isExpanded = isExpanded,

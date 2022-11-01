@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -115,9 +116,10 @@ private fun MainCategoryCard(
                 style = MaterialTheme.typography.caption.copy(
                     fontWeight = FontWeight.Bold,
                     color = LocalContentColor.current.copy(ContentAlpha.medium)
-                )
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
-
         }
     }
     if (mainCategory.type != SubCategoryParent.ETC) SimpleHeightSpacer(dp = 16)

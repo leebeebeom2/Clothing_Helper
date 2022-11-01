@@ -83,12 +83,11 @@ fun CircleCheckBox(modifier: Modifier = Modifier, isChecked: Boolean, onClick: (
 @Composable
 fun CustomIconButton(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
+    onClick: () -> Unit = {},
     @DrawableRes drawable: Int,
     rippleSize: Dp = 4.dp,
     tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
 ) {
-
     CustomIconButton(
         modifier = modifier,
         onClick = onClick,

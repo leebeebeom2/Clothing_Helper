@@ -4,9 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.base.SimpleToast
@@ -72,7 +70,9 @@ fun MainScreenRoot(
                         state.onDrawerClose()
                     },
                     getSubCategories = viewModelState::getSubCategories,
-                    isLoading = viewModelState.isLoading
+                    isLoading = viewModelState.isLoading,
+                    allExpandIconClick = viewModel::toggleAllExpand,
+                    isAllExpand = viewModelState.isAllExpand
                 )
             },
             drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),

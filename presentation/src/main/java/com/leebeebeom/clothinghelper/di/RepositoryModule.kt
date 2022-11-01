@@ -1,9 +1,8 @@
 package com.leebeebeom.clothinghelper.di
 
 import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.leebeebeom.clothinghelperdata.repository.MainScreenRootPreferencesRepositoryImpl
 import com.leebeebeom.clothinghelperdata.repository.SubCategoryPreferencesRepositoryImpl
 import com.leebeebeom.clothinghelperdata.repository.SubCategoryRepositoryImpl
 import com.leebeebeom.clothinghelperdata.repository.UserRepositoryImpl
@@ -27,13 +26,16 @@ class RepositoryModule {
 
     @Singleton
     @Provides
-    fun preferencesRepository(dataStore: DataStore<Preferences>) =
-        SubCategoryPreferencesRepositoryImpl(dataStore)
+    fun subCategoryPreferencesRepository(@ApplicationContext context: Context) =
+        SubCategoryPreferencesRepositoryImpl(context.subCategoryDatastore)
 
     @Singleton
     @Provides
-    fun dataStore(@ApplicationContext context: Context) = context.subCategoryDatastore
+    fun mainScreenRootPreferencesRepository(@ApplicationContext context: Context) =
+        MainScreenRootPreferencesRepositoryImpl(context.mainScreenRootDatastore)
 }
 
 private const val SUBCATEGORY = "subCategory_preferences"
+private const val MAIN_SCREEN_ROO = "main_screen_root_preferences"
 private val Context.subCategoryDatastore by preferencesDataStore(name = SUBCATEGORY)
+private val Context.mainScreenRootDatastore by preferencesDataStore(name = MAIN_SCREEN_ROO)

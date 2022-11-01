@@ -90,7 +90,7 @@ fun SubCategoryScreen(
         ) {
             SubCategoryContent(mainCategoryName = subCategoryParent.name,
                 allExpandIconClick = viewModel::toggleAllExpand,
-                allExpand = viewModelState.isAllExpand,
+                isAllExpand = viewModelState.isAllExpand,
                 subCategories = viewModelState.getSubCategories(subCategoryParent),
                 onLongClick = { subCategory ->
                     state.selectModeOn()

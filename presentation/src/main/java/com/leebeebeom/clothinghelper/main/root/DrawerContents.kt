@@ -18,10 +18,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.CustomIconButton
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
+import com.leebeebeom.clothinghelper.main.subcategory.AllExpandIcon
 import com.leebeebeom.clothinghelper.theme.Disabled
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
@@ -35,7 +35,9 @@ fun DrawerContents(
     onSubCategoryClick: (key: String) -> Unit,
     onSettingIconClick: () -> Unit,
     getSubCategories: (SubCategoryParent) -> List<SubCategory>,
-    isLoading: Boolean
+    isLoading: Boolean,
+    isAllExpand: Boolean,
+    allExpandIconClick: () -> Unit
 ) = Column {
 
     val state = rememberDrawerContentsUIState()
@@ -53,7 +55,7 @@ fun DrawerContents(
 
             item {
                 SimpleHeightSpacer(dp = 4)
-                IconWithDivider()
+                IconWithDivider(isAllExpand = isAllExpand, allExpandIconClick = allExpandIconClick)
                 SimpleHeightSpacer(dp = 4)
             }
 
@@ -63,7 +65,8 @@ fun DrawerContents(
                     subCategories = getSubCategories(it.type),
                     isLoading = isLoading,
                     onMainCategoryClick = onMainCategoryClick,
-                    onSubCategoryClick = onSubCategoryClick
+                    onSubCategoryClick = onSubCategoryClick,
+                    isAllExpand = isAllExpand
                 )
             }
         }
@@ -71,14 +74,14 @@ fun DrawerContents(
 }
 
 @Composable
-private fun IconWithDivider() {
+private fun IconWithDivider(isAllExpand: Boolean, allExpandIconClick: () -> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(end = 4.dp)) {
         Divider(color = Disabled, modifier = Modifier.weight(1f))
-        CustomIconButton(
-            modifier = Modifier.size(20.dp),
-            onClick = { /*TODO*/ },
-            drawable = R.drawable.ic_all_expand,
-            tint = LocalContentColor.current.copy(0.6f)
+        AllExpandIcon(
+            size = 20.dp,
+            allExpandIconClick = allExpandIconClick,
+            tint = LocalContentColor.current.copy(0.6f),
+            allExpand = isAllExpand
         )
     }
 }

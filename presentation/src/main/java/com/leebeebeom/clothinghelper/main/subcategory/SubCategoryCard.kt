@@ -32,14 +32,14 @@ fun SubCategoryCard(
     onLongClick: () -> Unit,
     isSelectMode: Boolean,
     onSubCategoryClick: () -> Unit,
-    allExpand: Boolean,
+    isAllExpand: Boolean,
     isChecked: Boolean
 ) {
-    var isExpanded by rememberSaveable { mutableStateOf(allExpand) }
-    var rememberedAllExpand by rememberSaveable { mutableStateOf(allExpand) }
-    if (rememberedAllExpand != allExpand) {
-        isExpanded = allExpand
-        rememberedAllExpand = allExpand
+    var isExpanded by rememberSaveable { mutableStateOf(isAllExpand) }
+    var rememberedAllExpand by rememberSaveable { mutableStateOf(isAllExpand) }
+    if (rememberedAllExpand != isAllExpand) {
+        isExpanded = isAllExpand
+        rememberedAllExpand = isAllExpand
     }
 
     Card(elevation = 2.dp, shape = RoundedCornerShape(12.dp)) {

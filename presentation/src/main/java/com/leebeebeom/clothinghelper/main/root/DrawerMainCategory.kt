@@ -26,8 +26,14 @@ fun DrawerMainCategory(
     isLoading: Boolean,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (key: String) -> Unit,
+    isAllExpand: Boolean,
 ) {
-    var isExpand by rememberSaveable { mutableStateOf(false) }
+    var isExpand by rememberSaveable { mutableStateOf(isAllExpand) }
+    var rememberedAllExpand by rememberSaveable { mutableStateOf(isAllExpand) }
+    if (rememberedAllExpand != isAllExpand) {
+        isExpand = isAllExpand
+        rememberedAllExpand = isAllExpand
+    }
 
     Column {
         DrawerContentRow(

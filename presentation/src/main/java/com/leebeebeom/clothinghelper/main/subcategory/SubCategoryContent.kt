@@ -30,7 +30,7 @@ import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
 fun SubCategoryContent(
     mainCategoryName: String,
     allExpandIconClick: () -> Unit,
-    allExpand: Boolean,
+    isAllExpand: Boolean,
     subCategories: List<SubCategory>,
     onLongClick: (SubCategory) -> Unit,
     isSelectMode: Boolean,
@@ -52,7 +52,7 @@ fun SubCategoryContent(
             Header(
                 mainCategoryName = mainCategoryName,
                 allExpandIconClick = allExpandIconClick,
-                allExpand = allExpand,
+                allExpand = isAllExpand,
                 selectedSort = selectedSort,
                 selectedOder = selectedOder,
                 onSortClick = onSortClick,
@@ -66,7 +66,7 @@ fun SubCategoryContent(
                 onLongClick = { onLongClick(it) },
                 isSelectMode = isSelectMode,
                 onSubCategoryClick = { onSubCategoryClick(it) },
-                allExpand = allExpand,
+                isAllExpand = isAllExpand,
                 isChecked = selectedSubCategories.contains(it)
             )
         }

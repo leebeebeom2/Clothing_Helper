@@ -17,7 +17,7 @@ class SubCategoryPreferencesRepositoryImpl(private val subCategoryDataStore: Dat
         .catch {
             if (it is IOException) emit(emptyPreferences())
             else throw it
-        }.map { it[PreferenceKeys.ALL_EXPAND] ?: false }
+        }.map { it[SubCategoryPreferenceKeys.ALL_EXPAND] ?: false }
 
     override val sort: Flow<SubCategorySortPreferences> = subCategoryDataStore.data
         .catch {
@@ -25,32 +25,32 @@ class SubCategoryPreferencesRepositoryImpl(private val subCategoryDataStore: Dat
             else throw it
         }
         .map {
-            val sort = it[PreferenceKeys.SORT] ?: SubCategorySort.NAME.name
-            val order = it[PreferenceKeys.ORDER] ?: SortOrder.ASCENDING.name
+            val sort = it[SubCategoryPreferenceKeys.SORT] ?: SubCategorySort.NAME.name
+            val order = it[SubCategoryPreferenceKeys.ORDER] ?: SortOrder.ASCENDING.name
             SubCategorySortPreferences(enumValueOf(sort), enumValueOf(order))
         }
 
     override suspend fun toggleAllExpand() {
         subCategoryDataStore.edit {
-            val current = it[PreferenceKeys.ALL_EXPAND] ?: false
-            it[PreferenceKeys.ALL_EXPAND] = !current
+            val current = it[SubCategoryPreferenceKeys.ALL_EXPAND] ?: false
+            it[SubCategoryPreferenceKeys.ALL_EXPAND] = !current
         }
     }
 
     override suspend fun changeSort(subCategorySort: SubCategorySort) {
         subCategoryDataStore.edit {
-            it[PreferenceKeys.SORT] = subCategorySort.name
+            it[SubCategoryPreferenceKeys.SORT] = subCategorySort.name
         }
     }
 
     override suspend fun changeOrder(sortOrder: SortOrder) {
         subCategoryDataStore.edit {
-            it[PreferenceKeys.ORDER] = sortOrder.name
+            it[SubCategoryPreferenceKeys.ORDER] = sortOrder.name
         }
     }
 }
 
-private object PreferenceKeys {
+private object SubCategoryPreferenceKeys {
     val ALL_EXPAND = booleanPreferencesKey("all_expand")
     val SORT = stringPreferencesKey("sort")
     val ORDER = stringPreferencesKey("order")

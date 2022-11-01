@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -66,15 +67,15 @@ fun SimpleToast(@StringRes text: Int?, shownToast: () -> Unit) {
 
 @OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
-fun CircleCheckBox(modifier: Modifier = Modifier, isChecked: Boolean) {
-    Icon(
+fun CircleCheckBox(modifier: Modifier = Modifier, isChecked: Boolean, onClick: () -> Unit = {}) {
+    CustomIconButton(
         modifier = modifier,
+        onClick = onClick,
         painter = rememberAnimatedVectorPainter(
             animatedImageVector = AnimatedImageVector.animatedVectorResource(
                 id = R.drawable.check_anim
             ), atEnd = isChecked
         ),
-        contentDescription = null,
         tint = LocalContentColor.current.copy(0.7f)
     )
 }
@@ -87,6 +88,24 @@ fun CustomIconButton(
     rippleSize: Dp = 4.dp,
     tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
 ) {
+
+    CustomIconButton(
+        modifier = modifier,
+        onClick = onClick,
+        painter = painterResource(id = drawable),
+        rippleSize = rippleSize,
+        tint = tint
+    )
+}
+
+@Composable
+fun CustomIconButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    painter: Painter,
+    rippleSize: Dp = 4.dp,
+    tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
+) {
     Box(
         modifier = Modifier
             .clip(CircleShape)
@@ -94,7 +113,7 @@ fun CustomIconButton(
             .padding(rippleSize)
     ) {
         Icon(
-            painter = painterResource(id = drawable),
+            painter = painter,
             contentDescription = null,
             modifier = modifier,
             tint = tint

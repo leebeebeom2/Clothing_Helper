@@ -109,7 +109,7 @@ fun SubCategoryScreen(
             )
 
             EditSubCategoryNameDialog(
-                initialCategoryName = viewModelState.selectedSubCategories.first().name,
+                getSelectedCategoryName = { viewModelState.selectedSubCategories.first().name },
                 state = editNameDialogState,
                 subCategories = viewModelState.getSubCategories(subCategoryParent),
                 onPositiveButtonClick = { newName ->

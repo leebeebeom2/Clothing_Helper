@@ -124,7 +124,7 @@ fun ExpandIcon(modifier: Modifier = Modifier, isExpanded: Boolean, onExpandIconC
         modifier = modifier.rotate(rotate),
         onClick = onExpandIconClick,
         drawable = R.drawable.ic_expand_more,
-        tint = LocalContentColor.current.copy(alpha = 0.7f)
+        tint = LocalContentColor.current.copy(alpha = 0.6f)
     )
 }
 

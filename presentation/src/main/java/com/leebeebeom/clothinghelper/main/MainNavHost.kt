@@ -16,6 +16,7 @@ import com.leebeebeom.clothinghelper.main.root.EssentialMenus
 import com.leebeebeom.clothinghelper.main.root.MainScreenRoot
 import com.leebeebeom.clothinghelper.main.setting.SettingScreen
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryScreen
+import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
 sealed class MainDestinations(val route: String) {
     object MainCategory : MainDestinations("mainCategory")
@@ -36,7 +37,7 @@ fun MainNavHost() {
         onEssentialMenuClick = navController::navigateToEssentialMenu,
         onMainCategoryClick = navController::navigateToSubCategory,
         onSubCategoryClick = { key -> /*TODO*/ },
-        onSettingIconClick = { navController.mainNavigate(MainDestinations.Setting.route) }) { padding, isSubCategoryLoading ->
+        onSettingIconClick = { navController.mainNavigate(MainDestinations.Setting.route) }) { padding, drawerCloseBackHandler ->
         MainNavHostWithArg(
             navController = navController,
             paddingValues = padding,
@@ -50,9 +51,8 @@ fun NavController.mainNavigate(destination: String) = navigate(destination) {
     launchSingleTop = true
 }
 
-fun NavController.navigateToSubCategory(mainCategoryName: String) {
-    mainNavigate("${MainDestinations.SubCategory.route}/$mainCategoryName")
-}
+fun NavController.navigateToSubCategory(subCategoryParent: SubCategoryParent) =
+    mainNavigate("${MainDestinations.SubCategory.route}/${subCategoryParent.name}")
 
 fun NavController.navigateToEssentialMenu(essentialMenu: EssentialMenus) {
     when (essentialMenu) {
@@ -87,7 +87,7 @@ fun MainNavHostWithArg(
             val mainCategoryName =
                 entry.arguments?.getString(MainDestinations.SubCategory.mainCategoryName)!!
             SubCategoryScreen(
-                mainCategoryName = mainCategoryName,
+                subCategoryParent = enumValueOf(mainCategoryName),
                 drawerCloseBackHandler = drawerCloseBackHandler
             )
         }

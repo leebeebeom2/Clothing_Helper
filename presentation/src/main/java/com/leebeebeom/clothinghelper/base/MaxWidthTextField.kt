@@ -124,7 +124,7 @@ open class MaxWidthTextFieldState(
     error: Int? = null
 ) {
     var textFiled by mutableStateOf(TextFieldValue(text))
-        private set
+        protected set
     var error: Int? by mutableStateOf(error)
         private set
 

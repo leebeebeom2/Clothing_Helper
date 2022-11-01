@@ -28,6 +28,9 @@ class MainScreenRootViewModel @Inject constructor(
     override val viewModelState = MainRootViewModelState()
 
     init {
+        collectUser()
+        collectIsLoading()
+
         viewModelScope.launch { loadSubCategoriesUseCase(viewModelState::onLoadFailed) }
 
         collectSubCategories()

@@ -31,14 +31,10 @@ fun SubCategoryBottomAppBar(
     val duration = 250
 
     AnimatedVisibility(
-        visible = isSelectMode,
-        enter = expandVertically(
-            expandFrom = Alignment.Top,
-            animationSpec = tween(durationMillis = duration)
-        ),
-        exit = shrinkVertically(
-            shrinkTowards = Alignment.Top,
-            animationSpec = tween(durationMillis = duration)
+        visible = isSelectMode, enter = expandVertically(
+            expandFrom = Alignment.Top, animationSpec = tween(durationMillis = duration)
+        ), exit = shrinkVertically(
+            shrinkTowards = Alignment.Top, animationSpec = tween(durationMillis = duration)
         )
     ) {
         BottomAppBar {
@@ -50,10 +46,8 @@ fun SubCategoryBottomAppBar(
             }
             Text(
                 text = stringResource(
-                    id = R.string.count_selected,
-                    formatArgs = arrayOf(selectedSubCategoriesSize)
-                ),
-                modifier = Modifier.offset((-8).dp, 1.dp)
+                    id = R.string.count_selected, formatArgs = arrayOf(selectedSubCategoriesSize)
+                ), modifier = Modifier.offset((-8).dp, 1.dp)
             )
             Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.End) {
                 val iconDuration = 200
@@ -96,8 +90,7 @@ fun BottomAppBarIcon(
             SimpleIcon(drawable = drawable)
             SimpleHeightSpacer(dp = 4)
             Text(
-                text = stringResource(id = text),
-                style = MaterialTheme.typography.caption
+                text = stringResource(id = text), style = MaterialTheme.typography.caption
             )
         }
     }

@@ -7,7 +7,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.TextFieldValue
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.MaxWidthTextFieldState
-import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
 open class BaseSubCategoryTextFieldDialogState(
     text: String = "",

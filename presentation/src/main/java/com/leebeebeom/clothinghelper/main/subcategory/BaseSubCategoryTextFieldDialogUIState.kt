@@ -27,7 +27,7 @@ open class BaseSubCategoryTextFieldDialogUIState(
 
     val positiveButtonEnabled get() = textFiled.text.isNotBlank() && error == null
 
-    val onDismissDialog = {
+    fun onDismissDialog() {
         this.showDialog = false
         onValueChange(TextFieldValue(""))
     }

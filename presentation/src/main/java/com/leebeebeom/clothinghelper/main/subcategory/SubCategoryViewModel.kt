@@ -44,7 +44,7 @@ class SubCategoryViewModel @Inject constructor(
     override val viewModelState = SubCategoryViewModelState()
 
     init {
-        collectIsLoading()
+        collectUser()
         collectIsLoading()
         collectSubCategories()
 

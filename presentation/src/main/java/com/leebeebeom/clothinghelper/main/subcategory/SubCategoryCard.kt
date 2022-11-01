@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.base.CircleCheckBox
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
@@ -52,7 +53,7 @@ fun SubCategoryCard(
                 )
         ) {
             SubCategoryTitle(
-                title = subCategory.name,
+                name = subCategory.name,
                 isExpanded = isExpanded,
                 onExpandIconClick = { isExpanded = !isExpanded },
                 isSelectMode = isSelectMode,
@@ -66,7 +67,7 @@ fun SubCategoryCard(
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun SubCategoryTitle(
-    title: String,
+    name: String,
     isExpanded: Boolean,
     onExpandIconClick: () -> Unit,
     isSelectMode: Boolean,
@@ -97,7 +98,7 @@ private fun SubCategoryTitle(
 
             Text(
                 modifier = Modifier.padding(start = 4.dp),
-                text = title,
+                text = name,
                 style = MaterialTheme.typography.subtitle1,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,

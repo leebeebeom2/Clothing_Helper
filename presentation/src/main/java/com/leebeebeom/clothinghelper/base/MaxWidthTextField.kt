@@ -90,7 +90,7 @@ private fun ErrorText(@StringRes error: Int?) {
             expandFrom = Alignment.Bottom
         ),
         exit = shrinkVertically(
-            animationSpec = tween(durationMillis = 100),
+            animationSpec = tween(durationMillis = 50),
             shrinkTowards = Alignment.Top
         )
     ) {

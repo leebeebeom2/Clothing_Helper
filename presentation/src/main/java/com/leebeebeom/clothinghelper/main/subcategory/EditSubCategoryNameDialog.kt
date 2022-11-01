@@ -12,52 +12,62 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
 @Composable
 fun EditSubCategoryNameDialog(
-    initialCategoryName: String,
+    getSelectedCategoryName: () -> String,
     state: EditSubCategoryNameDialogState,
     subCategories: List<SubCategory>,
     onPositiveButtonClick: (String) -> Unit,
 ) {
-    state.onValueChange(TextFieldValue(initialCategoryName))
 
-    if (state.showDialog)
+    if (state.showDialog) {
+        state.setInitialName(getSelectedCategoryName())
+
         SubCategoryTextFieldDialog(
             state = state,
             onPositiveButtonClick = { onPositiveButtonClick(state.textFiled.text) },
             subCategories = subCategories
         )
+    }
 }
 
 class EditSubCategoryNameDialogState(
-    private val initialCategoryName: String = "", error: Int? = null, showDialog: Boolean = false
+    text: String = "", error: Int? = null, showDialog: Boolean = false, initialName: String = ""
 ) : BaseSubCategoryTextFieldDialogState(
-    initialCategoryName,
-    error,
-    showDialog,
-    R.string.edit_category_name
+    text = text,
+    error = error,
+    showDialog = showDialog,
+    title = R.string.edit_category_name
 ) {
+    var initialName: String = initialName
+        private set
+
+    fun setInitialName(name: String) {
+        textFiled = TextFieldValue(name)
+        initialName = name
+    }
+
     override fun onFocusChanged(focusState: FocusState) {
         if (focusState.hasFocus)
             textFiled = textFiled.copy(selection = TextRange(0, textFiled.text.length))
     }
 
     override val positiveButtonEnabled: Boolean
-        get() = super.positiveButtonEnabled && initialCategoryName != textFiled.text
+        get() = super.positiveButtonEnabled && initialName != textFiled.text
 
     companion object {
         val Saver: Saver<EditSubCategoryNameDialogState, *> = listSaver(save = {
             listOf(
-                it.textFiled.text, it.error, it.showDialog
+                it.textFiled.text, it.error, it.showDialog, it.initialName
             )
         }, restore = {
             EditSubCategoryNameDialogState(
-                it[0] as String, it[1] as? Int, it[2] as Boolean
+                it[0] as String, it[1] as? Int, it[2] as Boolean, it[3] as String
             )
         })
     }
 }
 
 @Composable
-fun rememberEditSubCategoryNameDialogState(initialCategoryName: String = "") =
+fun rememberEditSubCategoryNameDialogState() =
     rememberSaveable(saver = EditSubCategoryNameDialogState.Saver) {
-        EditSubCategoryNameDialogState(initialCategoryName)
+        EditSubCategoryNameDialogState()
     }

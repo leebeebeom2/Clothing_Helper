@@ -67,6 +67,7 @@ fun SubCategoryBottomAppBar(
                         text = R.string.delete
                     )
             }
+            SimpleWidthSpacer(dp = 4)
         }
     }
 }

@@ -126,7 +126,7 @@ open class MaxWidthTextFieldState(
     var textFiled by mutableStateOf(TextFieldValue(text))
         protected set
     var error: Int? by mutableStateOf(error)
-        private set
+        protected set
 
     val isError get() = error != null
 
@@ -135,7 +135,7 @@ open class MaxWidthTextFieldState(
         textFiled = newText
     }
 
-    fun updateError(@StringRes error: Int?) {
+    open fun updateError(@StringRes error: Int?) {
         this.error = error
     }
 

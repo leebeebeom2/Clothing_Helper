@@ -3,6 +3,10 @@ package com.leebeebeom.clothinghelper.base
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
+import androidx.compose.animation.graphics.res.animatedVectorResource
+import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
+import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -14,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.theme.Disabled
 
 @Composable
@@ -54,4 +59,19 @@ fun SimpleToast(@StringRes text: Int?, shownToast: () -> Unit) {
         Toast.makeText(LocalContext.current, stringResource(id = text), Toast.LENGTH_SHORT).show()
         shownToast()
     }
+}
+
+@OptIn(ExperimentalAnimationGraphicsApi::class)
+@Composable
+fun CircleCheckBox(modifier: Modifier = Modifier, isChecked: Boolean) {
+    Icon(
+        modifier = modifier,
+        painter = rememberAnimatedVectorPainter(
+            animatedImageVector = AnimatedImageVector.animatedVectorResource(
+                id = R.drawable.check_anim
+            ), atEnd = isChecked
+        ),
+        contentDescription = null,
+        tint = LocalContentColor.current.copy(0.7f)
+    )
 }

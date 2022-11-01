@@ -214,7 +214,7 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
     }
 
     private fun loadingOff() {
-        _isLoading.value = true
+        _isLoading.value = false
     }
 
     private fun DatabaseReference.getSubCategoriesRef(uid: String) =

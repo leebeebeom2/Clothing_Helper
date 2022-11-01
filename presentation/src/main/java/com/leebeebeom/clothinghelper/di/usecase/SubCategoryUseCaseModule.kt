@@ -34,4 +34,8 @@ class SubCategoryUseCaseModule {
     @Provides
     fun editSubCategoryNameUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
         EditSubCategoryNameUseCase(subCategoryRepository)
+
+    @Provides
+    fun getSubCategoryLoadingStateUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
+        GetSubCategoryLoadingStateUseCase(subCategoryRepository)
 }

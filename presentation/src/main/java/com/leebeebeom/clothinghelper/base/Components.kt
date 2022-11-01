@@ -102,7 +102,7 @@ fun CustomIconButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     painter: Painter,
-    rippleSize: Dp = 0.dp,
+    rippleSize: Dp = 4.dp,
     tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
 ) {
     Box(

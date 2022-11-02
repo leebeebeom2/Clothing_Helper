@@ -45,9 +45,7 @@ fun MainActivityScreen(viewModel: MainActivityViewModel = hiltViewModel()) {
             visible = !viewModel.isSignIn,
             enter = screenSlideInBottom,
             exit = screenSlideOutBottom
-        ) {
-            SignInNavHost()
-        }
+        ) { SignInNavHost() }
     }
 }
 

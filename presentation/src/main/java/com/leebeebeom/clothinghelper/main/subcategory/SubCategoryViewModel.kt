@@ -1,17 +1,14 @@
 package com.leebeebeom.clothinghelper.main.subcategory
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
-import com.leebeebeom.clothinghelper.main.base.BaseSubCategoriesViewModel
-import com.leebeebeom.clothinghelper.main.base.BaseSubCategoriesViewModelState
-import com.leebeebeom.clothinghelper.util.taskAndReturn
+import com.leebeebeom.clothinghelper.base.BaseViewModel
+import com.leebeebeom.clothinghelper.main.base.BaseSubCategoryUIState
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.model.User
 import com.leebeebeom.clothinghelperdomain.repository.SortOrder
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
@@ -23,48 +20,58 @@ import com.leebeebeom.clothinghelperdomain.usecase.subcategory.EditSubCategoryNa
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoriesUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoryLoadingStateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 @HiltViewModel
 class SubCategoryViewModel @Inject constructor(
-    getUserUseCase: GetUserUseCase,
-    getSubCategoryLoadingStateUseCase: GetSubCategoryLoadingStateUseCase,
-    getSubCategoriesUseCase: GetSubCategoriesUseCase,
+    private val getUserUseCase: GetUserUseCase,
+    private val getSubCategoryLoadingStateUseCase: GetSubCategoryLoadingStateUseCase,
+    private val getSubCategoriesUseCase: GetSubCategoriesUseCase,
     private val addSubCategoryUseCase: AddSubCategoryUseCase,
     private val editSubCategoryNameUseCase: EditSubCategoryNameUseCase,
     private val subCategoryAllExpandUseCase: SubCategoryAllExpandUseCase,
     private val subCategorySortUseCase: SubCategorySortUseCase
-) : BaseSubCategoriesViewModel(
-    getUserUseCase,
-    getSubCategoryLoadingStateUseCase,
-    getSubCategoriesUseCase
-) {
-    override val viewModelState = SubCategoryViewModelState()
+) : BaseViewModel() {
+
+    private val _uiState = MutableStateFlow(SubCategoryUIState())
+    val uiState = _uiState.asStateFlow()
 
     init {
-        collectUser()
-        collectIsLoading()
-        collectSubCategories()
-
         viewModelScope.launch {
-            subCategoryAllExpandUseCase.isAllExpand.collect(viewModelState::updateAllExpand)
-        }
-
-        viewModelScope.launch {
-            subCategorySortUseCase.sortPreferences.collect(viewModelState::updateSort)
+            combine(
+                getUserUseCase(),
+                getSubCategoryLoadingStateUseCase(),
+                getSubCategoriesUseCase(),
+                subCategoryAllExpandUseCase.isAllExpand,
+                subCategorySortUseCase.sortPreferences
+            ) { user, isLoading, allSubCategories, isAllExpand, sort ->
+                SubCategoryUIState(
+                    user = user,
+                    isLoading = isLoading,
+                    allSubCategories = allSubCategories,
+                    isAllExpand = isAllExpand,
+                    sort = sort
+                )
+            }.collect {
+                _uiState.value = it
+            }
         }
     }
 
     fun addSubCategory(name: String, subCategoryParent: SubCategoryParent) {
-        viewModelState.user?.let {
+        uiState.value.user?.let {
             addSubCategoryUseCase(
                 subCategoryParent = subCategoryParent,
                 name = name.trim(),
                 uid = it.uid
             ) { exception ->
-                viewModelState.showToast(R.string.add_category_failed)
+                showToast(R.string.add_category_failed)
                 Log.d(TAG, "taskFailed: $exception")
             }
         }
@@ -74,14 +81,14 @@ class SubCategoryViewModel @Inject constructor(
         subCategoryAllExpandUseCase.toggleAllExpand()
     }
 
-    fun editSubCategoryName(newName: String) {
-        viewModelState.user?.let {
+    fun editSubCategoryName(newName: String, selectedSubCategory: SubCategory) {
+        uiState.value.user?.let {
             editSubCategoryNameUseCase(
-                viewModelState.selectedSubCategories.first(),
-                newName.trim(),
-                it.uid
+                subCategory = selectedSubCategory,
+                newName = newName.trim(),
+                uid = it.uid
             ) { exception ->
-                viewModelState.showToast(R.string.add_category_failed)
+                showToast(R.string.add_category_failed)
                 Log.d(TAG, "taskFailed: $exception")
             }
         }
@@ -93,47 +100,17 @@ class SubCategoryViewModel @Inject constructor(
 
     fun changeOrder(order: SortOrder) =
         viewModelScope.launch { subCategorySortUseCase.changeOrder(order) }
+
+    override fun showToast(toastText: Int?) = _uiState.update { it.copy(toastText = toastText) }
+
+    override fun toastShown() = _uiState.update { it.copy(toastText = null) }
 }
 
-class SubCategoryViewModelState : BaseSubCategoriesViewModelState() {
-    var isAllExpand by mutableStateOf(false)
-        private set
-
-    fun updateAllExpand(isAllExpand: Boolean) {
-        this.isAllExpand = isAllExpand
-    }
-
-    var selectedSort by mutableStateOf(SubCategorySort.NAME)
-        private set
-
-    var selectedOrder by mutableStateOf(SortOrder.ASCENDING)
-        private set
-
-    fun updateSort(subCategorySortPreferences: SubCategorySortPreferences) {
-        this.selectedSort = subCategorySortPreferences.sort
-        this.selectedOrder = subCategorySortPreferences.sortOrder
-    }
-
-    var selectedSubCategories by mutableStateOf(setOf<SubCategory>())
-        private set
-
-    val selectedSubCategoriesSize get() = selectedSubCategories.size
-
-    fun onSelect(subCategory: SubCategory) {
-        this.selectedSubCategories =
-            if (this.selectedSubCategories.contains(subCategory))
-                this.selectedSubCategories.taskAndReturn { it.remove(subCategory) }
-            else this.selectedSubCategories.taskAndReturn { it.add(subCategory) }
-    }
-
-    fun toggleAllSelect(subCategoryParent: SubCategoryParent) {
-        val subCategories = getSubCategories(subCategoryParent)
-
-        selectedSubCategories =
-            if (selectedSubCategories.size == subCategories.size) emptySet() else subCategories.toSet()
-    }
-
-    fun clearSelectedSubCategories() {
-        selectedSubCategories = selectedSubCategories.taskAndReturn { it.clear() }
-    }
-}
+data class SubCategoryUIState(
+    override val toastText: Int? = null,
+    override val user: User? = null,
+    override val isLoading: Boolean = false,
+    override val allSubCategories: List<List<SubCategory>> = List(4) { emptyList() },
+    val isAllExpand: Boolean = false,
+    val sort: SubCategorySortPreferences = SubCategorySortPreferences(),
+) : BaseSubCategoryUIState()

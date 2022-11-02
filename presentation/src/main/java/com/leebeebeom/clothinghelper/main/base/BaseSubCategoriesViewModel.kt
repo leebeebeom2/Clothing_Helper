@@ -5,7 +5,7 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.model.User
 
-abstract class BaseSubCategoriesViewModelState : BaseUIState() {
+abstract class BaseSubCategoryUIState : BaseUIState() {
     abstract val user: User?
     abstract val isLoading: Boolean
     abstract val allSubCategories: List<List<SubCategory>>

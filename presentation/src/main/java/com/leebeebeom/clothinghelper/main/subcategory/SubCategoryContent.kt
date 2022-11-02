@@ -1,10 +1,15 @@
 package com.leebeebeom.clothinghelper.main.subcategory
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
@@ -56,12 +61,12 @@ fun SubCategoryContent(
     }
 }
 
-fun getHeaderStringRes(mainCategoryName: String) =
-    when (mainCategoryName) {
-        SubCategoryParent.TOP.name -> R.string.top
-        SubCategoryParent.BOTTOM.name -> R.string.bottom
-        SubCategoryParent.OUTER.name -> R.string.outer
-        else -> R.string.etc
+fun getHeaderStringRes(parent: SubCategoryParent) =
+    when (parent) {
+        SubCategoryParent.TOP -> R.string.top
+        SubCategoryParent.BOTTOM -> R.string.bottom
+        SubCategoryParent.OUTER -> R.string.outer
+        SubCategoryParent.ETC -> R.string.etc
     }
 
 data class SubCategoryContentState(
@@ -75,14 +80,14 @@ data class SubCategoryContentState(
 
 @Composable
 fun rememberSubCategoryContentState(
-    mainCategoryName: String,
+    parent: SubCategoryParent,
     uiState: SubCategoryUIState,
     subCategories: List<SubCategory>,
     subCategoryScreenState: SubCategoryScreenState
 ) = remember {
     derivedStateOf {
         SubCategoryContentState(
-            headerText = getHeaderStringRes(mainCategoryName),
+            headerText = getHeaderStringRes(parent),
             isAllExpand = uiState.isAllExpand,
             subCategories = subCategories,
             isSelectMode = subCategoryScreenState.isSelectMode,

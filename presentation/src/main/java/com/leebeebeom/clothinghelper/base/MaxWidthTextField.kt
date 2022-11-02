@@ -31,7 +31,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun MaxWidthTextField(
     maxWidthTextFieldState: MaxWidthTextFieldState,
-    error: Int?,
+    error: Int? = null,
     onValueChange: (TextFieldValue) -> Unit,
     onFocusChanged: (FocusState) -> Unit,
     trailingIcon: @Composable (() -> Unit)? = null,

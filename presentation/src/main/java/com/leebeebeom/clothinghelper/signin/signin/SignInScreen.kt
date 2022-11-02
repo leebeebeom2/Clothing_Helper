@@ -97,7 +97,7 @@ fun SignInScreen(
             enabled = signInScreenState.isTextNotBlank && uiState.isNotError,
             onClick = {
                 viewModel.signInWithEmailAndPassword(
-                    signInScreenState.email.text, signInScreenState.password.text
+                    signInScreenState.email.text.trim(), signInScreenState.password.text.trim()
                 )
             }
         )

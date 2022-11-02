@@ -162,9 +162,6 @@ fun rememberEmailTextFieldState(
 )
 
 @Composable
-fun rememberNameTextFieldState() = rememberMaxWidthTextFiledState(label = R.string.name)
-
-@Composable
 fun rememberPasswordTextFieldState(
     @StringRes label: Int = R.string.password,
     imeAction: ImeAction = ImeAction.Done
@@ -175,7 +172,3 @@ fun rememberPasswordTextFieldState(
         imeAction = imeAction
     )
 )
-
-@Composable
-fun rememberPasswordConfirmTextFieldState() =
-    rememberPasswordTextFieldState(label = R.string.password_confirm)

@@ -12,9 +12,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.leebeebeom.clothinghelper.base.Anime.Expand.expand
-import com.leebeebeom.clothinghelper.base.Anime.Expand.shrink
+import com.leebeebeom.clothinghelper.base.Anime.ListExpand.listExpand
+import com.leebeebeom.clothinghelper.base.Anime.ListExpand.listShrink
 import com.leebeebeom.clothinghelper.base.DotProgressIndicator
+import com.leebeebeom.clothinghelper.main.base.AllExpandState
 import com.leebeebeom.clothinghelper.main.subcategory.ExpandIcon
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
@@ -36,12 +37,12 @@ fun DrawerMainCategory(
             )
             DrawerMainCategoryExpandIcon(
                 isLoading = drawerMainCategoryState.isLoading,
-                isExpand = drawerMainCategoryState.isExpand.value,
+                isExpand = drawerMainCategoryState.isExpand,
                 onExpandIconClick = drawerMainCategoryState::isExpandToggle
             )
         }
         SubCategories(
-            isExpand = drawerMainCategoryState.isExpand.value,
+            isExpand = drawerMainCategoryState.isExpand,
             subCategories = drawerMainCategoryState.subCategories,
             onSubCategoryClick = onSubCategoryClick
         )
@@ -52,19 +53,14 @@ data class DrawerMainCategoryState(
     val mainCategory: MainCategory,
     val subCategories: List<SubCategory>,
     val isLoading: Boolean,
-    val isAllExpand: Boolean,
-    val isExpand: MutableState<Boolean>,
-    private var rememberedIsAllExpand: Boolean
-) {
-    init {
-        if (isAllExpand != rememberedIsAllExpand) { // isAllExpandChange
-            isExpand.value = isAllExpand
-            rememberedIsAllExpand = isAllExpand
-        }
-    }
+    override val isAllExpand: Boolean,
+    override val _isExpand: MutableState<Boolean>,
+    override var rememberedIsAllExpand: Boolean
+) : AllExpandState() {
+    val isExpand get() = _isExpand.value
 
-    fun isExpandToggle() {
-        isExpand.value = !isExpand.value
+    init {
+        init()
     }
 }
 
@@ -81,7 +77,7 @@ fun rememberDrawerMainCategoryState(
             subCategories = drawerContentsState.allSubCategories[mainCategory.type.ordinal],
             isLoading = drawerContentsState.isLoading,
             isAllExpand = drawerContentsState.isAllExpand,
-            isExpand = isExpand,
+            _isExpand = isExpand,
             rememberedIsAllExpand = rememberedIsAllExpand
         )
     }
@@ -113,8 +109,8 @@ private fun SubCategories(
 ) {
     AnimatedVisibility(
         visible = isExpand,
-        enter = expand,
-        exit = shrink
+        enter = listExpand,
+        exit = listShrink
     ) {
         Surface(color = MaterialTheme.colors.primary) {
             Column {

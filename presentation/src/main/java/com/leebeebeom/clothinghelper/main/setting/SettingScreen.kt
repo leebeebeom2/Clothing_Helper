@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.MaxWidthButton
+import com.leebeebeom.clothinghelper.base.rememberMaxWidthButtonState
 
 @Composable
 fun SettingScreen(
@@ -37,9 +38,13 @@ fun SettingScreen(
 
 @Composable
 private fun SignOutButton(onSignOutClick: () -> Unit) {
-    MaxWidthButton(
+    val maxWidthButtonState = rememberMaxWidthButtonState(
         text = R.string.sign_out,
-        colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.error),
+        colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.error)
+    )
+
+    MaxWidthButton(
+        maxWidthButtonState = maxWidthButtonState,
         onClick = onSignOutClick,
         enabled = true
     )

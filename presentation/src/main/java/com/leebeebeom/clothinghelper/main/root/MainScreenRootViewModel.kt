@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainScreenViewModel @Inject constructor(
+class MainScreenRootViewModel @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
     private val getSubCategoryLoadingStateUseCase: GetSubCategoryLoadingStateUseCase,
     private val getSubCategoriesUseCase: GetSubCategoriesUseCase,
@@ -61,6 +61,8 @@ class MainScreenViewModel @Inject constructor(
         _uiState.update { it.copy(toastText = R.string.sub_categories_load_failed) }
         Log.e(TAG, "onLoadFailed: ${exception.message}", exception)
     }
+
+    fun toastShown() = _uiState.update { it.copy(toastText = null) }
 }
 
 data class MainRootUIState(

@@ -3,21 +3,25 @@ package com.leebeebeom.clothinghelper.signin.signin
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.MaxWidthButton
-import com.leebeebeom.clothinghelper.base.MaxWidthTextField
-import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.base.SimpleToast
+import com.leebeebeom.clothinghelper.base.*
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInButton
 import com.leebeebeom.clothinghelper.signin.base.OrDivider
 import com.leebeebeom.clothinghelper.signin.base.PasswordTextField
@@ -56,43 +60,72 @@ import com.leebeebeom.clothinghelper.signin.base.PasswordTextField
 두 계정 번갈아 로그인해도 데이터 유지되는지 확인
  */
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun SignInScreen(
     onForgotPasswordClick: () -> Unit,
     onEmailSignUpClick: () -> Unit,
     viewModel: SignInViewModel = hiltViewModel(),
-    viewModelState: SignInViewModelState = viewModel.viewModelState
+    signInScreenState: SignInScreenState = rememberSignInScreenState()
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val signInButtonEnabled by remember {
+        derivedStateOf {
+            uiState.emailError != null && uiState.passwordError != null &&
+                    signInScreenState.email.text.trim().isNotBlank() &&
+                    signInScreenState.password.text.trim().isNotBlank()
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.Center
     ) {
-        MaxWidthTextField(state = viewModelState.emailState)
+        MaxWidthTextField(
+            maxWidthTextFieldState = signInScreenState.email,
+            error = uiState.emailError,
+            onValueChange = {
+                signInScreenState.email.onValueChange(it, viewModel::updateEmailError)
+            },
+            onFocusChanged = signInScreenState.email::onFocusChanged,
+        )
 
-        PasswordTextField(state = viewModelState.passwordState)
+        PasswordTextField(
+            maxWidthTextFieldState = signInScreenState.password,
+            error = uiState.passwordError,
+            onValueChange = {
+                signInScreenState.password.onValueChange(it, viewModel::updatePasswordError)
+            },
+            onFocusChanged = signInScreenState.password::onFocusChanged
+        )
 
         ForgotPasswordText(onForgotPasswordClick = onForgotPasswordClick)
 
         MaxWidthButton(
-            text = R.string.sign_in,
-            enabled = viewModelState.signInButtonEnabled,
-            onClick = viewModel::signInWithEmailAndPassword
+            maxWidthButtonState = signInScreenState.singInButton,
+            enabled = signInButtonEnabled,
+            onClick = {
+                viewModel.signInWithEmailAndPassword(
+                    signInScreenState.email.text, signInScreenState.password.text
+                )
+            }
         )
         SimpleHeightSpacer(dp = 8)
         OrDivider()
         SimpleHeightSpacer(dp = 8)
         // 프리뷰 시 주석 처리
         GoogleSignInButton(
+            maxWidthButtonState = signInScreenState.googleButton,
             signInWithGoogleEmail = viewModel::signInWithGoogleEmail,
-            enabled = viewModelState.googleButtonEnabled,
-            enabledOff = { viewModelState.updateGoogleButtonEnabled(false) }
+            enabled = uiState.googleButtonEnabled,
+            enabledOff = { viewModel.updateGoogleButtonEnabled(enabled = false) }
         )
         SimpleHeightSpacer(dp = 4)
         SignUpText(onEmailSignUpClick)
     }
 
-    SimpleToast(text = viewModelState.toastText, shownToast = viewModelState::toastShown)
+    SimpleToast(text = uiState.toastText, shownToast = viewModel::toastShown)
 }
 
 @Composable
@@ -130,3 +163,21 @@ private fun ForgotPasswordText(onForgotPasswordClick: () -> Unit) {
         }
     }
 }
+
+data class SignInScreenState(
+    val email: MaxWidthTextFieldState,
+    val password: MaxWidthTextFieldState,
+    val singInButton: MaxWidthButtonState,
+    val googleButton: MaxWidthButtonState
+)
+
+@Composable
+fun rememberSignInScreenState(
+    email: MaxWidthTextFieldState = rememberEmailTextFieldState(imeAction = ImeAction.Next),
+    password: MaxWidthTextFieldState = rememberPasswordTextFieldState(imeAction = ImeAction.Done),
+    signInButtonState: MaxWidthButtonState = rememberMaxWidthButtonState(text = R.string.sign_in),
+    googleButtonState: MaxWidthButtonState = rememberMaxWidthButtonState(
+        text = R.string.starts_with_google_email,
+        colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface)
+    )
+) = remember { SignInScreenState(email, password, signInButtonState, googleButtonState) }

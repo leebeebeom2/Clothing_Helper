@@ -15,17 +15,22 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.*
+import com.leebeebeom.clothinghelper.base.CustomIconButton
+import com.leebeebeom.clothinghelper.base.MaxWidthButton
+import com.leebeebeom.clothinghelper.base.MaxWidthTextField
+import com.leebeebeom.clothinghelper.base.MaxWidthTextFieldState
 
 @Composable
 fun VisibleIcon(isVisible: Boolean, onIconClick: () -> Unit) {
@@ -91,12 +96,19 @@ fun OrDivider() {
 }
 
 @Composable
-fun PasswordTextField(uiState: MaxWidthTextFieldUIState, maxWidthTextFieldState: MaxWidthTextFieldState) {
+fun PasswordTextField(
+    maxWidthTextFieldState: MaxWidthTextFieldState,
+    error: Int?,
+    onValueChange: (TextFieldValue) -> Unit,
+    onFocusChanged: (FocusState) -> Unit
+) {
     var isVisible by rememberSaveable { mutableStateOf(false) }
 
     MaxWidthTextField(
-        uiState = uiState,
         maxWidthTextFieldState = maxWidthTextFieldState,
+        error = error,
+        onValueChange = onValueChange,
+        onFocusChanged = onFocusChanged,
         trailingIcon = { VisibleIcon(isVisible) { isVisible = !isVisible } },
         visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation()
     )

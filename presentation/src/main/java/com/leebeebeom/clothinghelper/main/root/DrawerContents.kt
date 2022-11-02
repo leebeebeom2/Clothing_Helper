@@ -7,6 +7,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,7 +56,7 @@ fun DrawerContents(
             }
 
             items(state.mainCategories, key = { it.type.name }) {
-                val drawerMainCategoryState = rememberDrawerMainCategoryState(
+                val drawerMainCategoryState by rememberDrawerMainCategoryState(
                     mainCategory = it,
                     subCategories = state.allSubCategories[it.type.ordinal],
                     isLoading = state.isLoading,
@@ -158,12 +160,14 @@ fun rememberDrawerContentsUIState(
     isAllExpand: Boolean,
     allSubCategories: List<List<SubCategory>>,
 ) = remember(keys = arrayOf(user, isLoading, isAllExpand, allSubCategories)) {
-    DrawerContentsState(
-        user = user,
-        isLoading = isLoading,
-        isAllExpand = isAllExpand,
-        allSubCategories = allSubCategories
-    )
+    derivedStateOf {
+        DrawerContentsState(
+            user = user,
+            isLoading = isLoading,
+            isAllExpand = isAllExpand,
+            allSubCategories = allSubCategories
+        )
+    }
 }
 
 fun getMainCategories() = listOf(

@@ -71,18 +71,16 @@ data class DrawerMainCategoryState(
 @Composable
 fun rememberDrawerMainCategoryState(
     mainCategory: MainCategory,
-    subCategories: List<SubCategory>,
-    isLoading: Boolean,
-    isAllExpand: Boolean,
-    isExpand: MutableState<Boolean> = rememberSaveable { mutableStateOf(isAllExpand) },
-    rememberedIsAllExpand: Boolean = rememberSaveable { isAllExpand }
-) = remember(keys = arrayOf(mainCategory, subCategories, isLoading, isAllExpand)) {
+    drawerContentsState: DrawerContentsState,
+    isExpand: MutableState<Boolean> = rememberSaveable { mutableStateOf(drawerContentsState.isAllExpand) },
+    rememberedIsAllExpand: Boolean = rememberSaveable { drawerContentsState.isAllExpand }
+) = remember(mainCategory, drawerContentsState) {
     derivedStateOf {
         DrawerMainCategoryState(
             mainCategory = mainCategory,
-            subCategories = subCategories,
-            isLoading = isLoading,
-            isAllExpand = isAllExpand,
+            subCategories = drawerContentsState.allSubCategories[mainCategory.type.ordinal],
+            isLoading = drawerContentsState.isLoading,
+            isAllExpand = drawerContentsState.isAllExpand,
             isExpand = isExpand,
             rememberedIsAllExpand = rememberedIsAllExpand
         )

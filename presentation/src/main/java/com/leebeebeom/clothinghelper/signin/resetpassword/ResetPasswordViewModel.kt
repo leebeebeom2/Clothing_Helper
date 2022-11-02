@@ -1,8 +1,8 @@
 package com.leebeebeom.clothinghelper.signin.resetpassword
 
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.BaseSignInViewModel
-import com.leebeebeom.clothinghelper.base.BaseUIState
+import com.leebeebeom.clothinghelper.signin.base.BaseSignInViewModel
+import com.leebeebeom.clothinghelper.signin.base.BaseSignInUIState
 import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.usecase.signin.ResetPasswordUseCase
@@ -53,6 +53,6 @@ data class ResetPasswordUIState(
     val emailError: Int? = null,
     override val toastText: Int? = null,
     val isTaskSuccess: Boolean = false
-) : BaseUIState() {
+) : BaseSignInUIState() {
     override val isNotError get() = emailError != null
 }

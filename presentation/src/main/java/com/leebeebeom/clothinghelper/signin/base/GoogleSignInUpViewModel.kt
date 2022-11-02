@@ -10,8 +10,6 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
-import com.leebeebeom.clothinghelper.base.BaseUIState
-import com.leebeebeom.clothinghelper.base.BaseSignInViewModel
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.usecase.signin.GoogleSignInUseCase
 
@@ -64,6 +62,6 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
     }
 }
 
-abstract class GoogleSignInViewModelState : BaseUIState() {
+abstract class GoogleSignInViewModelState : BaseSignInUIState() {
     abstract val googleButtonEnabled: Boolean
 }

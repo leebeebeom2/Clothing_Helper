@@ -2,11 +2,6 @@ package com.leebeebeom.clothinghelper.base
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,13 +9,9 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.FocusState
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -32,35 +23,36 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.base.Anime.Error.errorIn
+import com.leebeebeom.clothinghelper.base.Anime.Error.errorOut
 import kotlinx.coroutines.delay
 
 @Composable
 fun MaxWidthTextField(
-    state: MaxWidthTextFieldState,
+    elementsState: MaxWidthTextFieldElementsState,
+    state: MaxWidthTextFieldUIState,
     trailingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
-    val focusManager = LocalFocusManager.current
-    val focusRequester = FocusRequester()
-
     Column {
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .focusRequester(focusRequester = focusRequester)
+                .focusRequester(focusRequester = elementsState.focusRequester)
                 .onFocusChanged(onFocusChanged = state::onFocusChanged),
             value = state.textFiled,
             onValueChange = state::onValueChange,
-            label = { Text(text = stringResource(id = state.label)) },
-            placeholder = { Text(text = stringResource(id = state.placeholder)) },
+            label = { Text(text = stringResource(id = elementsState.label)) },
+            placeholder = { Text(text = stringResource(id = elementsState.placeholder)) },
             isError = state.isError,
             visualTransformation = visualTransformation,
             singleLine = true,
             maxLines = 1,
-            keyboardOptions = state.keyboardOptions,
+            keyboardOptions = elementsState.keyboardOptions,
             trailingIcon = trailingIcon,
             keyboardActions =
-            if (state.keyboardOptions.imeAction == ImeAction.Done) KeyboardActions(onDone = { focusManager.clearFocus() })
+            if (elementsState.keyboardOptions.imeAction == ImeAction.Done)
+                KeyboardActions(onDone = { elementsState.onKeyBoardActionDoneClick() })
             else KeyboardActions.Default,
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 unfocusedBorderColor = Color(0xFFDADADA),
@@ -69,11 +61,11 @@ fun MaxWidthTextField(
                 placeholderColor = MaterialTheme.colors.onSurface.copy(ContentAlpha.disabled)
             )
         )
+
         ErrorText(state.error)
     }
-    if (state.showKeyboardEnabled) ShowKeyboard(focusRequester)
+    if (elementsState.showKeyboardEnabled) ShowKeyboard(elementsState.focusRequester)
 }
-
 
 @Composable
 private fun ErrorText(@StringRes error: Int?) {
@@ -82,17 +74,8 @@ private fun ErrorText(@StringRes error: Int?) {
 
     AnimatedVisibility(
         visible = error != null,
-        enter = expandVertically(
-            animationSpec = spring(
-                dampingRatio = Spring.DampingRatioHighBouncy,
-                stiffness = Spring.StiffnessMedium
-            ),
-            expandFrom = Alignment.Bottom
-        ),
-        exit = shrinkVertically(
-            animationSpec = tween(durationMillis = 50),
-            shrinkTowards = Alignment.Top
-        )
+        enter = errorIn,
+        exit = errorOut
     ) {
         Text(
             modifier = Modifier.padding(start = 4.dp, top = 4.dp),
@@ -115,12 +98,70 @@ fun ShowKeyboard(focusRequester: FocusRequester) {
     }
 }
 
-open class MaxWidthTextFieldState(
+data class MaxWidthTextFieldElementsState(
     @StringRes val label: Int,
-    @StringRes val placeholder: Int = R.string.empty,
+    @StringRes val placeholder: Int,
+    val showKeyboardEnabled: Boolean,
+    val keyboardOptions: KeyboardOptions,
+    val focusManager: FocusManager,
+    val focusRequester: FocusRequester
+) {
+    fun onKeyBoardActionDoneClick() {
+        focusManager.clearFocus()
+    }
+}
+
+@Composable
+fun rememberMaxWidthTextFiledElementsState(
+    @StringRes label: Int,
+    @StringRes placeholder: Int = R.string.empty,
+    showKeyboardEnabled: Boolean = false,
+    keyboardOptions: KeyboardOptions = KeyboardOptions(
+        imeAction = ImeAction.Done
+    ),
+    focusManager: FocusManager = LocalFocusManager.current,
+    focusRequester: FocusRequester = FocusRequester()
+) = remember {
+    MaxWidthTextFieldElementsState(
+        label = label,
+        placeholder = placeholder,
+        showKeyboardEnabled = showKeyboardEnabled,
+        keyboardOptions = keyboardOptions,
+        focusManager = focusManager,
+        focusRequester = focusRequester
+    )
+}
+
+@Composable
+fun rememberEmailTextFieldElementState(
+    showKeyboardEnabled: Boolean = false,
+    imeAction: ImeAction = ImeAction.Done,
+) = rememberMaxWidthTextFiledElementsState(
+    label = R.string.email,
+    placeholder = R.string.email_place_holder,
+    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = imeAction),
+    showKeyboardEnabled = showKeyboardEnabled,
+)
+
+@Composable
+fun rememberNameTextFieldElementsState() = rememberMaxWidthTextFiledElementsState(label = R.string.name)
+
+@Composable
+fun rememberPasswordTextFieldElementState(@StringRes label: Int = R.string.password) =
+    rememberMaxWidthTextFiledElementsState(
+        label = R.string.password,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Password,
+            imeAction = ImeAction.Next
+        )
+    )
+
+@Composable
+fun rememberPasswordConfirmTextFieldElementState() =
+    rememberPasswordTextFieldElementState(label = R.string.password_confirm)
+
+open class MaxWidthTextFieldUIState(
     text: String = "",
-    val showKeyboardEnabled: Boolean = false,
-    val keyboardOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
     error: Int? = null
 ) {
     var textFiled by mutableStateOf(TextFieldValue(text))
@@ -142,18 +183,5 @@ open class MaxWidthTextFieldState(
     open fun onFocusChanged(focusState: FocusState) {
         if (focusState.hasFocus)
             textFiled = textFiled.copy(selection = TextRange(textFiled.text.length))
-    }
-
-    companion object {
-        fun email(imeAction: ImeAction, showKeyboardEnabled: Boolean = true) =
-            MaxWidthTextFieldState(
-                label = R.string.email,
-                placeholder = R.string.email_place_holder,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = imeAction
-                ),
-                showKeyboardEnabled = showKeyboardEnabled
-            )
     }
 }

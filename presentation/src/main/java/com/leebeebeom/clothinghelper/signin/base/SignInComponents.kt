@@ -25,10 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.CustomIconButton
-import com.leebeebeom.clothinghelper.base.MaxWidthButton
-import com.leebeebeom.clothinghelper.base.MaxWidthTextField
-import com.leebeebeom.clothinghelper.base.MaxWidthTextFieldState
+import com.leebeebeom.clothinghelper.base.*
 
 @Composable
 fun VisibleIcon(isVisible: Boolean, onIconClick: () -> Unit) {
@@ -94,11 +91,12 @@ fun OrDivider() {
 }
 
 @Composable
-fun PasswordTextField(state: MaxWidthTextFieldState) {
+fun PasswordTextField(uiState: MaxWidthTextFieldUIState, maxWidthTextFieldState: MaxWidthTextFieldState) {
     var isVisible by rememberSaveable { mutableStateOf(false) }
 
     MaxWidthTextField(
-        state = state,
+        uiState = uiState,
+        maxWidthTextFieldState = maxWidthTextFieldState,
         trailingIcon = { VisibleIcon(isVisible) { isVisible = !isVisible } },
         visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation()
     )

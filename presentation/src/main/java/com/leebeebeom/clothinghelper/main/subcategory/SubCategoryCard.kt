@@ -3,7 +3,6 @@ package com.leebeebeom.clothinghelper.main.subcategory
 import androidx.annotation.StringRes
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
@@ -11,13 +10,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -25,168 +22,172 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.*
+import com.leebeebeom.clothinghelper.base.Anime.CircleCheckBox.checkBoxIn
+import com.leebeebeom.clothinghelper.base.Anime.CircleCheckBox.checkBoxOut
+import com.leebeebeom.clothinghelper.base.Anime.SubCategoryCard.cardExpandIn
+import com.leebeebeom.clothinghelper.base.Anime.SubCategoryCard.cardShrinkOut
+import com.leebeebeom.clothinghelper.main.base.AllExpandState
+import com.leebeebeom.clothinghelper.main.base.ExpandIcon
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SubCategoryCard(
-    subCategory: SubCategory,
+    subCategoryCardState: SubCategoryCardState,
     onLongClick: () -> Unit,
-    isSelectMode: Boolean,
-    onSubCategoryClick: () -> Unit,
-    isAllExpand: Boolean,
-    isChecked: Boolean
+    onClick: () -> Unit
 ) {
-    var isExpanded by rememberSaveable { mutableStateOf(isAllExpand) }
-    var rememberedAllExpand by rememberSaveable { mutableStateOf(isAllExpand) }
-    if (rememberedAllExpand != isAllExpand) {
-        isExpanded = isAllExpand
-        rememberedAllExpand = isAllExpand
-    }
-
-    val haptic = LocalHapticFeedback.current
-
     Card(elevation = 2.dp, shape = RoundedCornerShape(12.dp)) {
         Column(
             modifier = Modifier
                 .clip(RoundedCornerShape(12.dp))
-                .combinedClickable(
-                    onClick = onSubCategoryClick, onLongClick = {
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        onLongClick()
-                    }
-                )
+                .combinedClickable(onClick = onClick, onLongClick = {
+                    subCategoryCardState.performHaptic()
+                    onLongClick()
+                })
         ) {
-            SubCategoryTitle(
-                name = subCategory.name,
-                isExpanded = isExpanded,
-                onExpandIconClick = { isExpanded = !isExpanded },
-                isSelectMode = isSelectMode,
-                isChecked = isChecked
+            val subCategoryCardTitleState by rememberSubCategoryCardTitleState(subCategoryCardState = subCategoryCardState)
+            SubCategoryCardTitle(
+                subCategoryCardTitleState,
+                onExpandIconClick = subCategoryCardState::isExpandToggle,
             )
-            SubCategoryInfo(isExpanded)
+
+            AnimatedVisibility(
+                visible = subCategoryCardState.isExpand,
+                enter = cardExpandIn,
+                exit = cardShrinkOut
+            ) { SubCategoryInfo() }
         }
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
-private fun SubCategoryTitle(
-    name: String,
-    isExpanded: Boolean,
+private fun SubCategoryCardTitle(
+    subCategoryCardTitleState: SubCategoryCardTitleState,
     onExpandIconClick: () -> Unit,
-    isSelectMode: Boolean,
-    isChecked: Boolean
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 12.dp, bottom = 8.dp)
-            .padding(end = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    Surface(elevation = 4.dp) {
         Row(
-            modifier = Modifier.weight(1f),
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 12.dp, bottom = 8.dp)
+                .padding(end = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            val duration = 300
-            AnimatedVisibility(
-                visible = isSelectMode,
-                enter = expandHorizontally(tween(duration)) { 0 } + scaleIn(tween(duration)),
-                exit = shrinkHorizontally(tween(duration)) { 0 } + scaleOut(tween(duration))
+            Row(
+                modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically
             ) {
                 CircleCheckBox(
-                    isChecked = isChecked,
-                    modifier = Modifier
-                        .padding(start = 6.dp)
-                        .size(18.dp),
+                    isSelectMode = subCategoryCardTitleState.isSelectMode,
+                    isChecked = subCategoryCardTitleState.isChecked
                 )
-            }
-
-            val padding by animateDpAsState(
-                targetValue = if (isSelectMode) 4.dp else 14.dp,
-                animationSpec = tween(duration)
-            )
-
-            Text(
-                // name
-                modifier = Modifier
-                    .padding(start = padding)
-                    .widthIn(max = 300.dp),
-                text = name,
-                style = MaterialTheme.typography.subtitle1,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            SimpleWidthSpacer(dp = 4)
-
-            AnimatedVisibility(visible = !isExpanded,
-                enter = fadeIn(tween(150)),
-                exit = fadeOut(tween(150))
-            ) {
-                Text( // total count
-                    modifier = Modifier.weight(1f),
-                    text = "(10)",
-                    style = MaterialTheme.typography.caption.copy(
-                        color = LocalContentColor.current.copy(ContentAlpha.medium)
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                Title(
+                    isSelectMode = subCategoryCardTitleState.isSelectMode,
+                    name = subCategoryCardTitleState.title
                 )
+                SimpleWidthSpacer(dp = 4)
+                TotalCount(isExpanded = subCategoryCardTitleState.isExpanded)
             }
-
+            ExpandIcon(
+                isExpanded = subCategoryCardTitleState.isExpanded,
+                onExpandIconClick = onExpandIconClick,
+                modifier = Modifier.size(24.dp)
+            )
         }
-        ExpandIcon(
-            isExpanded = isExpanded,
-            onExpandIconClick = onExpandIconClick,
-            modifier = Modifier.size(24.dp)
+    }
+}
+
+data class SubCategoryCardTitleState(
+    val title: String, val isExpanded: Boolean, val isSelectMode: Boolean, val isChecked: Boolean
+)
+
+@Composable
+fun rememberSubCategoryCardTitleState(
+    subCategoryCardState: SubCategoryCardState
+) = remember {
+    derivedStateOf {
+        SubCategoryCardTitleState(
+            title = subCategoryCardState.subCategory.name,
+            isExpanded = subCategoryCardState.isExpand,
+            isSelectMode = subCategoryCardState.isSelectMode,
+            isChecked = subCategoryCardState.isChecked
         )
     }
 }
 
 @Composable
-fun ExpandIcon(modifier: Modifier = Modifier, isExpanded: Boolean, onExpandIconClick: () -> Unit) {
-    val rotate by animateFloatAsState(
-        targetValue = if (!isExpanded) 0f else 180f, animationSpec = tween(durationMillis = 300)
+private fun TotalCount(isExpanded: Boolean) {
+    AnimatedVisibility(
+        visible = !isExpanded, enter = fadeIn(tween(150)), exit = fadeOut(tween(150))
+    ) {
+        Text( // TODO total count
+            text = "(10)",
+            style = MaterialTheme.typography.caption.copy(
+                color = LocalContentColor.current.copy(ContentAlpha.medium)
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Composable
+private fun Title(isSelectMode: Boolean, name: String) {
+    val padding by animateDpAsState(
+        targetValue = if (isSelectMode) 4.dp else 14.dp,
+        animationSpec = tween(Anime.CircleCheckBox.duration)
     )
 
-    CustomIconButton(
-        modifier = modifier.rotate(rotate),
-        onClick = onExpandIconClick,
-        drawable = R.drawable.ic_expand_more,
-        tint = LocalContentColor.current.copy(alpha = 0.6f)
+    Text(
+        modifier = Modifier
+            .padding(start = padding)
+            .widthIn(max = 300.dp),
+        text = name,
+        style = MaterialTheme.typography.subtitle1,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
     )
 }
 
 @Composable
-private fun SubCategoryInfo(isExpanded: Boolean) {
-    val duration = 250
-
+private fun RowScope.CircleCheckBox(
+    isSelectMode: Boolean, isChecked: Boolean
+) {
     AnimatedVisibility(
-        visible = isExpanded,
-        enter = expandVertically(animationSpec = tween(durationMillis = duration)),
-        exit = shrinkVertically(animationSpec = tween(durationMillis = duration))
+        visible = isSelectMode,
+        enter = checkBoxIn,
+        exit = checkBoxOut
     ) {
-        Surface(color = MaterialTheme.colors.background) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            ) {
-                val weightModifier = Modifier.weight(1f)
+        CircleCheckBox(
+            isChecked = isChecked,
+            modifier = Modifier
+                .padding(start = 6.dp)
+                .size(18.dp),
+        )
+    }
+}
 
-                SubCategoryInfoText( // TODO
-                    modifier = weightModifier,
-                    infoTitle = R.string.average_size,
-                    info = R.string.top_info
-                )
+@Composable
+private fun SubCategoryInfo() {
+    Surface(color = MaterialTheme.colors.background) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
+            val weightModifier = Modifier.weight(1f)
 
-                SubCategoryInfoText(
-                    modifier = weightModifier,
-                    infoTitle = R.string.most_have_size,
-                    info = R.string.top_info
-                )
-            }
+            SubCategoryInfoText( // TODO
+                modifier = weightModifier,
+                infoTitle = R.string.average_size,
+                info = R.string.top_info
+            )
+
+            SubCategoryInfoText(
+                modifier = weightModifier,
+                infoTitle = R.string.most_have_size,
+                info = R.string.top_info
+            )
         }
     }
 }
@@ -206,4 +207,20 @@ private fun SubCategoryInfoText(
             Text(text = stringResource(id = info))
         }
     }
+}
+
+data class SubCategoryCardState(
+    val subCategory: SubCategory,
+    val isSelectMode: Boolean,
+    override val isAllExpand: Boolean,
+    val isChecked: Boolean,
+    val haptic: HapticFeedback,
+    override val _isExpand: MutableState<Boolean>,
+    override var rememberedIsAllExpand: Boolean
+) : AllExpandState() {
+    init {
+        init()
+    }
+
+    fun performHaptic() = haptic.performHapticFeedback(HapticFeedbackType.LongPress)
 }

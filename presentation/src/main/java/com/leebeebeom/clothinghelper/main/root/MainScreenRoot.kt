@@ -7,7 +7,8 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.leebeebeom.clothinghelper.base.SimpleToast
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import kotlinx.coroutines.CoroutineScope
@@ -33,6 +34,7 @@ import kotlinx.coroutines.launch
 드로어가 열려있을때 뒤로 가기 시 드로어 닫히는지 확인
  */
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun MainScreenRoot(
     onSettingIconClick: () -> Unit,
@@ -40,19 +42,23 @@ fun MainScreenRoot(
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (key: String) -> Unit,
     viewModel: MainScreenRootViewModel = hiltViewModel(),
-    viewModelState: MainRootViewModelState = viewModel.viewModelState,
-    state: MainRootState = rememberMainScreenUIState(),
+    state: MainScreenRootState = rememberMainScreenRootState(),
     content: @Composable (PaddingValues, backHandler: @Composable () -> Unit) -> Unit
 ) {
-    viewModelState.toastText?.let {
-        SimpleToast(text = it, viewModelState::toastShown)
-    }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     ClothingHelperTheme {
         Scaffold(scaffoldState = state.scaffoldState,
             drawerContent = {
+                val drawerMainCategoryState by rememberDrawerContentsState(
+                    user = uiState.user,
+                    isLoading = uiState.isLoading,
+                    isAllExpand = uiState.isAllExpand,
+                    allSubCategories = uiState.allSubCategories
+                )
+
                 DrawerContents(
-                    user = viewModelState.user,
+                    drawerContentsState = drawerMainCategoryState,
                     onEssentialMenuClick = {
                         onEssentialMenuClick(it)
                         state.onDrawerClose()
@@ -69,10 +75,7 @@ fun MainScreenRoot(
                         onSettingIconClick()
                         state.onDrawerClose()
                     },
-                    getSubCategories = viewModelState::getSubCategories,
-                    isLoading = viewModelState.isLoading,
                     allExpandIconClick = viewModel::toggleAllExpand,
-                    isAllExpand = viewModelState.isAllExpand
                 )
             },
             drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
@@ -81,13 +84,13 @@ fun MainScreenRoot(
                 content(it) {
                     DrawerCloseBackHandler(
                         isDrawerOpen = state.drawerState.isOpen,
-                        onDrawerClose = state.onDrawerClose
+                        onDrawerClose = state::onDrawerClose
                     )
                 }
             })
         DrawerCloseBackHandler(
             isDrawerOpen = state.drawerState.isOpen,
-            onDrawerClose = state.onDrawerClose
+            onDrawerClose = state::onDrawerClose
         )
     }
 }
@@ -97,22 +100,18 @@ fun DrawerCloseBackHandler(isDrawerOpen: Boolean, onDrawerClose: () -> Unit) {
     BackHandler(enabled = isDrawerOpen, onBack = onDrawerClose)
 }
 
-class MainRootState(
+class MainScreenRootState(
     val scaffoldState: ScaffoldState,
     private val coroutineScope: CoroutineScope,
-) {
     val drawerState: DrawerState = scaffoldState.drawerState
-
-    val onDrawerClose = {
+) {
+    fun onDrawerClose() {
         coroutineScope.launch { drawerState.close() }
-        Unit
     }
 }
 
 @Composable
-fun rememberMainScreenUIState(
+fun rememberMainScreenRootState(
     scaffoldState: ScaffoldState = rememberScaffoldState(),
     coroutineScope: CoroutineScope = rememberCoroutineScope()
-) = remember {
-    MainRootState(scaffoldState, coroutineScope)
-}
+) = remember { MainScreenRootState(scaffoldState, coroutineScope) }

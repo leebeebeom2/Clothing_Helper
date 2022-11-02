@@ -4,7 +4,6 @@ import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.util.Log
 import androidx.activity.result.ActivityResult
-import androidx.annotation.StringRes
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.AuthCredential
@@ -12,12 +11,12 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelper.base.BaseUIState
-import com.leebeebeom.clothinghelper.base.BaseViewModel
+import com.leebeebeom.clothinghelper.base.BaseSignInViewModel
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.usecase.signin.GoogleSignInUseCase
 
 abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSignInUseCase) :
-    BaseViewModel() {
+    BaseSignInViewModel() {
 
     abstract fun updateGoogleButtonEnabled(enabled: Boolean)
 

@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -153,13 +154,15 @@ data class DrawerContentsState(
 @Composable
 fun rememberDrawerContentsState(
     mainRootUIState: MainRootUIState
-) = remember(mainRootUIState) {
-    DrawerContentsState(
-        user = mainRootUIState.user,
-        isLoading = mainRootUIState.isLoading,
-        isAllExpand = mainRootUIState.isAllExpand,
-        allSubCategories = mainRootUIState.allSubCategories
-    )
+) = remember {
+    derivedStateOf {
+        DrawerContentsState(
+            user = mainRootUIState.user,
+            isLoading = mainRootUIState.isLoading,
+            isAllExpand = mainRootUIState.isAllExpand,
+            allSubCategories = mainRootUIState.allSubCategories
+        )
+    }
 }
 
 fun getMainCategories() = listOf(

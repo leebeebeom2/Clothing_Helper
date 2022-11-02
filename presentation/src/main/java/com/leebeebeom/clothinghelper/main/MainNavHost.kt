@@ -1,10 +1,9 @@
 package com.leebeebeom.clothinghelper.main
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -30,71 +29,74 @@ sealed class MainDestinations(val route: String) {
 }
 
 @Composable
-fun MainNavHost() {
-    val navController = rememberNavController()
+fun MainNavHost(mainNavHostState: MainNavHostState = rememberMainNavHostState()) {
 
     MainScreenRoot(
-        onEssentialMenuClick = navController::navigateToEssentialMenu,
-        onMainCategoryClick = navController::navigateToSubCategory,
+        onEssentialMenuClick = mainNavHostState::onEssentialMenuClick,
+        onMainCategoryClick = mainNavHostState::onMainCategoryClick,
         onSubCategoryClick = { key -> /*TODO*/ },
-        onSettingIconClick = { navController.mainNavigate(MainDestinations.Setting.route) }) { padding, drawerCloseBackHandler ->
-        MainNavHostWithArg(
-            navController = navController,
-            paddingValues = padding,
-            drawerCloseBackHandler = drawerCloseBackHandler
-        )
+        onSettingIconClick = mainNavHostState::navigateToSetting
+    ) { paddingValues, drawerCloseBackHandler ->
+        NavHost(
+            navController = mainNavHostState.navController,
+            startDestination = MainDestinations.MainCategory.route,
+            modifier = Modifier.padding(paddingValues = paddingValues)
+        ) {
+            composable(MainDestinations.MainCategory.route) {
+                MainCategoryScreen(
+                    onMainCategoryClick = mainNavHostState::navigateToSubCategory,
+                    drawerCloseBackHandler = drawerCloseBackHandler
+                )
+            }
+            composable(
+                route = MainDestinations.SubCategory.routeWithArg,
+                arguments = MainDestinations.SubCategory.arguments
+            ) { entry ->
+                val mainCategoryName =
+                    entry.arguments?.getString(MainDestinations.SubCategory.mainCategoryName)!!
+                SubCategoryScreen(
+                    subCategoryParent = enumValueOf(mainCategoryName),
+                    drawerCloseBackHandler = drawerCloseBackHandler
+                )
+            }
+            composable(MainDestinations.Setting.route) {
+                SettingScreen(
+                    drawerCloseBackHandler = drawerCloseBackHandler,
+                    onSignOutButtonClick = mainNavHostState::navigateToSetting)
+            }
+        }
     }
 }
 
-fun NavController.mainNavigate(destination: String) = navigate(destination) {
-    popUpTo(MainDestinations.MainCategory.route)
-    launchSingleTop = true
-}
+data class MainNavHostState(val navController: NavHostController) {
+    fun onEssentialMenuClick(essentialMenu: EssentialMenus) =
+        when (essentialMenu) {
+            EssentialMenus.MainScreen -> navigateToMain()
+            EssentialMenus.Favorite -> {} // TODO
+            EssentialMenus.SeeAll -> {} // TODO
+            EssentialMenus.Trash -> {} // TODO
+        }
 
-fun NavController.navigateToSubCategory(subCategoryParent: SubCategoryParent) =
-    mainNavigate("${MainDestinations.SubCategory.route}/${subCategoryParent.name}")
+    fun onMainCategoryClick(subCategoryParent: SubCategoryParent) =
+        navController.navigate(route = "${MainDestinations.SubCategory.route}/${subCategoryParent.name}")
 
-fun NavController.navigateToEssentialMenu(essentialMenu: EssentialMenus) {
-    when (essentialMenu) {
-        EssentialMenus.MAIN_SCREEN -> mainNavigate(MainDestinations.MainCategory.route)
-        EssentialMenus.FAVORITE -> {} // TODO
-        EssentialMenus.SEE_ALL -> {} // TODO
-        EssentialMenus.TRASH -> {} // TODO
-    }
+    private fun navigateToMain() =
+        navController.navigate(route = MainDestinations.MainCategory.route) {
+            launchSingleTop = true
+        }
+
+    fun navigateToSetting() =
+        navController.navigate(route = MainDestinations.Setting.route) {
+            popUpTo(route = MainDestinations.MainCategory.route)
+            launchSingleTop = true
+        }
+
+    fun navigateToSubCategory(subCategoryParent: SubCategoryParent) =
+        navController.navigate("${MainDestinations.SubCategory.route}/${subCategoryParent.name}") {
+            popUpTo(route = MainDestinations.MainCategory.route)
+        }
 }
 
 @Composable
-fun MainNavHostWithArg(
-    navController: NavHostController,
-    paddingValues: PaddingValues,
-    drawerCloseBackHandler: @Composable () -> Unit
-) {
-    NavHost(
-        navController = navController,
-        startDestination = MainDestinations.MainCategory.route,
-        modifier = Modifier.padding(paddingValues)
-    ) {
-        composable(MainDestinations.MainCategory.route) {
-            MainCategoryScreen(
-                onMainCategoryClick = navController::navigateToSubCategory,
-                drawerCloseBackHandler = drawerCloseBackHandler
-            )
-        }
-        composable(
-            route = MainDestinations.SubCategory.routeWithArg,
-            arguments = MainDestinations.SubCategory.arguments
-        ) { entry ->
-            val mainCategoryName =
-                entry.arguments?.getString(MainDestinations.SubCategory.mainCategoryName)!!
-            SubCategoryScreen(
-                subCategoryParent = enumValueOf(mainCategoryName),
-                drawerCloseBackHandler = drawerCloseBackHandler
-            )
-        }
-        composable(MainDestinations.Setting.route) {
-            SettingScreen(
-                drawerCloseBackHandler = drawerCloseBackHandler,
-                onSignOutButtonClick = { navController.mainNavigate(MainDestinations.MainCategory.route) })
-        }
-    }
-}
+fun rememberMainNavHostState(navController: NavHostController = rememberNavController()) =
+    remember { MainNavHostState(navController) }

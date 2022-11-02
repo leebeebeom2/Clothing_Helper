@@ -234,13 +234,15 @@ fun rememberSubCategoryCardState(
     isExpand: MutableState<Boolean> = remember { mutableStateOf(false) },
     rememberedIsAllExpand: Boolean = remember { subCategoryContentState.isAllExpand }
 ) = remember {
-    SubCategoryCardState(
-        subCategory = subCategory,
-        isSelectMode = subCategoryContentState.isSelectMode,
-        isAllExpand = subCategoryContentState.isAllExpand,
-        isChecked = subCategoryContentState.selectedSubCategories.contains(subCategory),
-        haptic = haptic,
-        _isExpand = isExpand,
-        rememberedIsAllExpand = rememberedIsAllExpand
-    )
+    derivedStateOf {
+        SubCategoryCardState(
+            subCategory = subCategory,
+            isSelectMode = subCategoryContentState.isSelectMode,
+            isAllExpand = subCategoryContentState.isAllExpand,
+            isChecked = subCategoryContentState.selectedSubCategories.contains(subCategory),
+            haptic = haptic,
+            _isExpand = isExpand,
+            rememberedIsAllExpand = rememberedIsAllExpand
+        )
+    }
 }

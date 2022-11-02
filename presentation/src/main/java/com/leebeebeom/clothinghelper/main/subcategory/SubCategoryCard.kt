@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -223,4 +224,24 @@ data class SubCategoryCardState(
     }
 
     fun performHaptic() = haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+}
+
+@Composable
+fun rememberSubCategoryCardState(
+    subCategory: SubCategory,
+    subCategoryScreenState: SubCategoryScreenState,
+    uiState: SubCategoryUIState,
+    haptic: HapticFeedback = LocalHapticFeedback.current,
+    isExpand: MutableState<Boolean> = remember { mutableStateOf(false) },
+    rememberedIsAllExpand: Boolean = remember { uiState.isAllExpand }
+) = remember {
+    SubCategoryCardState(
+        subCategory = subCategory,
+        isSelectMode = subCategoryScreenState.isSelectMode,
+        isAllExpand = uiState.isAllExpand,
+        isChecked = subCategoryScreenState.selectedSubCategories.contains(subCategory),
+        haptic = haptic,
+        _isExpand = isExpand,
+        rememberedIsAllExpand = rememberedIsAllExpand
+    )
 }

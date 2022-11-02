@@ -14,6 +14,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.leebeebeom.clothinghelper.base.Anime.Expand.expand
+import com.leebeebeom.clothinghelper.base.Anime.Expand.shrink
 import com.leebeebeom.clothinghelper.base.DotProgressIndicator
 import com.leebeebeom.clothinghelper.main.subcategory.ExpandIcon
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
@@ -21,40 +23,70 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
 @Composable
 fun DrawerMainCategory(
-    mainCategory: MainCategory,
-    subCategories: List<SubCategory>,
-    isLoading: Boolean,
+    state: DrawerMainCategoryState,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (key: String) -> Unit,
-    isAllExpand: Boolean,
 ) {
-    var isExpand by rememberSaveable { mutableStateOf(isAllExpand) }
-    var rememberedAllExpand by rememberSaveable { mutableStateOf(isAllExpand) }
-    if (rememberedAllExpand != isAllExpand) {
-        isExpand = isAllExpand
-        rememberedAllExpand = isAllExpand
-    }
-
     Column {
         DrawerContentRow(
             modifier = Modifier.heightIn(44.dp),
-            onDrawerContentClick = { onMainCategoryClick(mainCategory.type) }) {
+            onDrawerContentClick = { onMainCategoryClick(state.mainCategory.type) }) {
             DrawerContentText(
                 modifier = Modifier.padding(start = 8.dp),
-                text = stringResource(id = mainCategory.name),
+                text = stringResource(id = state.mainCategory.name),
                 style = MaterialTheme.typography.subtitle1
             )
             DrawerMainCategoryExpandIcon(
-                isLoading = isLoading,
-                isExpand = isExpand
-            ) { isExpand = !isExpand }
+                isLoading = state.isLoading,
+                isExpand = state.isExpand.value,
+                onExpandIconClick = state::isExpandToggle
+            )
         }
         SubCategories(
-            isExpand = isExpand,
-            subCategories = subCategories,
+            isExpand = state.isExpand.value,
+            subCategories = state.subCategories,
             onSubCategoryClick = onSubCategoryClick
         )
     }
+}
+
+data class DrawerMainCategoryState(
+    val mainCategory: MainCategory,
+    val subCategories: List<SubCategory>,
+    val isLoading: Boolean,
+    val isAllExpand: Boolean,
+    val isExpand: MutableState<Boolean>,
+    private var rememberedIsAllExpand: Boolean
+) {
+    init {
+        if (isAllExpand != rememberedIsAllExpand) { // isAllExpandChange
+            isExpand.value = isAllExpand
+            rememberedIsAllExpand = isAllExpand
+        }
+    }
+
+    fun isExpandToggle() {
+        isExpand.value = !isExpand.value
+    }
+}
+
+@Composable
+fun rememberDrawerMainCategoryState(
+    mainCategory: MainCategory,
+    subCategories: List<SubCategory>,
+    isLoading: Boolean,
+    isAllExpand: Boolean,
+    isExpand: MutableState<Boolean> = rememberSaveable { mutableStateOf(isAllExpand) },
+    rememberedIsAllExpand: Boolean = rememberSaveable { isAllExpand }
+) = remember(keys = arrayOf(mainCategory, subCategories, isLoading, isAllExpand)) {
+    DrawerMainCategoryState(
+        mainCategory = mainCategory,
+        subCategories = subCategories,
+        isLoading = isLoading,
+        isAllExpand = isAllExpand,
+        isExpand = isExpand,
+        rememberedIsAllExpand = rememberedIsAllExpand
+    )
 }
 
 @Composable
@@ -83,8 +115,8 @@ private fun SubCategories(
 ) {
     AnimatedVisibility(
         visible = isExpand,
-        enter = expandVertically(),
-        exit = shrinkVertically()
+        enter = expand,
+        exit = shrink
     ) {
         Surface(color = MaterialTheme.colors.primary) {
             Column {

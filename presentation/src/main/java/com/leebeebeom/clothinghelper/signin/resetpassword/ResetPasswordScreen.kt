@@ -8,16 +8,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.MaxWidthButton
-import com.leebeebeom.clothinghelper.base.MaxWidthTextField
-import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.base.SimpleToast
+import com.leebeebeom.clothinghelper.base.*
+import com.leebeebeom.clothinghelper.signin.base.BaseState
 
 /*
 이메일 필드가 비어있거나 에러 메세지 표시 중일 경우 확인 버튼 비활성화
@@ -33,14 +35,17 @@ import com.leebeebeom.clothinghelper.base.SimpleToast
 
  */
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun ResetPasswordScreen(
     viewModel: ResetPasswordViewModel = hiltViewModel(),
-    viewModelState: ResetPasswordViewModelState = viewModel.viewModelState,
+    resetPasswordScreenState: ResetPasswordScreenState = rememberResetPasswordScreenState()
 ) {
-    if (viewModelState.isTaskSuccess) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    if (uiState.isTaskSuccess) {
         (LocalContext.current as ComponentActivity).onBackPressedDispatcher.onBackPressed()
-        viewModelState.updateTaskSuccess(false)
+        viewModel.updateTaskSuccess(false)
     }
 
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
@@ -50,16 +55,36 @@ fun ResetPasswordScreen(
             modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
         )
 
-        MaxWidthTextField(state = viewModelState.emailState)
+        MaxWidthTextField(
+            maxWidthTextFieldState = resetPasswordScreenState.email,
+            error = uiState.emailError,
+            onValueChange = {
+                resetPasswordScreenState.email.onValueChange(it, viewModel::updateEmailError)
+            }
+        )
 
         SimpleHeightSpacer(dp = 12)
         MaxWidthButton(
-            text = R.string.check,
-            enabled = viewModelState.submitButtonEnabled,
-            onClick = viewModel::sendResetPasswordEmail
+            maxWidthButtonState = resetPasswordScreenState.submitButton,
+            enabled = resetPasswordScreenState.isTextNotBlank && uiState.isNotError,
+            onClick = { viewModel.sendResetPasswordEmail(resetPasswordScreenState.email.text.trim()) }
         )
         SimpleHeightSpacer(dp = 80)
     }
 
-    SimpleToast(text = viewModelState.toastText, shownToast = viewModelState::toastShown)
+    SimpleToast(text = uiState.toastText, shownToast = viewModel::toastShown)
 }
+
+data class ResetPasswordScreenState(
+    val email: MaxWidthTextFieldState,
+    val submitButton: MaxWidthButtonState
+) : BaseState() {
+    override val isTextNotBlank: Boolean
+        get() = email.text.trim().isNotBlank()
+}
+
+@Composable
+fun rememberResetPasswordScreenState(
+    email: MaxWidthTextFieldState = rememberEmailTextFieldState(),
+    submitButton: MaxWidthButtonState = rememberMaxWidthButtonState(text = R.string.check)
+) = remember { ResetPasswordScreenState(email, submitButton) }

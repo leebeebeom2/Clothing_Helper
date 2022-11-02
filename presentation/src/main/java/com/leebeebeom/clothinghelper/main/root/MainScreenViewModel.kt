@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainScreenRootViewModel @Inject constructor(
+class MainScreenViewModel @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
     private val getSubCategoryLoadingStateUseCase: GetSubCategoryLoadingStateUseCase,
     private val getSubCategoriesUseCase: GetSubCategoriesUseCase,

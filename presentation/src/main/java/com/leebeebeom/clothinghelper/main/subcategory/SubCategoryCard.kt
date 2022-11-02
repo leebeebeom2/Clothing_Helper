@@ -230,15 +230,14 @@ data class SubCategoryCardState(
 fun rememberSubCategoryCardState(
     subCategory: SubCategory,
     subCategoryContentState: SubCategoryContentState,
-    uiState: SubCategoryUIState,
     haptic: HapticFeedback = LocalHapticFeedback.current,
     isExpand: MutableState<Boolean> = remember { mutableStateOf(false) },
-    rememberedIsAllExpand: Boolean = remember { uiState.isAllExpand }
+    rememberedIsAllExpand: Boolean = remember { subCategoryContentState.isAllExpand }
 ) = remember {
     SubCategoryCardState(
         subCategory = subCategory,
         isSelectMode = subCategoryContentState.isSelectMode,
-        isAllExpand = uiState.isAllExpand,
+        isAllExpand = subCategoryContentState.isAllExpand,
         isChecked = subCategoryContentState.selectedSubCategories.contains(subCategory),
         haptic = haptic,
         _isExpand = isExpand,

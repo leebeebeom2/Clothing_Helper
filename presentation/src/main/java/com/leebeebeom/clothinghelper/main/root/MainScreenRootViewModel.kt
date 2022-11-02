@@ -1,67 +1,72 @@
 package com.leebeebeom.clothinghelper.main.root
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
-import com.leebeebeom.clothinghelper.main.base.BaseSubCategoriesViewModel
-import com.leebeebeom.clothinghelper.main.base.BaseSubCategoriesViewModelState
+import com.leebeebeom.clothinghelper.main.base.BaseSubCategoryUIState
+import com.leebeebeom.clothinghelperdomain.model.SubCategory
+import com.leebeebeom.clothinghelperdomain.model.User
 import com.leebeebeom.clothinghelperdomain.usecase.preferences.MainScreenRootAllExpandUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.signin.GetUserUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoriesUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoryLoadingStateUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.LoadSubCategoriesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainScreenRootViewModel @Inject constructor(
-    getSubCategoryLoadingStateUseCase: GetSubCategoryLoadingStateUseCase,
-    getSubCategoriesUseCase: GetSubCategoriesUseCase,
-    getUserUseCase: GetUserUseCase,
+    private val getUserUseCase: GetUserUseCase,
+    private val getSubCategoryLoadingStateUseCase: GetSubCategoryLoadingStateUseCase,
+    private val getSubCategoriesUseCase: GetSubCategoriesUseCase,
     private val loadSubCategoriesUseCase: LoadSubCategoriesUseCase,
     private val mainScreenRootAllExpandUseCase: MainScreenRootAllExpandUseCase
-) : BaseSubCategoriesViewModel(
-    getUserUseCase = getUserUseCase,
-    getSubCategoryLoadingStateUseCase = getSubCategoryLoadingStateUseCase,
-    getSubCategoriesUseCase = getSubCategoriesUseCase
-) {
-    override val viewModelState = MainRootViewModelState()
+) : ViewModel() {
+    private val _uiState = MutableStateFlow(MainRootUIState())
+    val uiState = _uiState.asStateFlow()
 
     init {
-        collectUser()
-        collectIsLoading()
+        viewModelScope.launch { loadSubCategoriesUseCase(::onLoadFailed) }
+
         viewModelScope.launch {
-            mainScreenRootAllExpandUseCase.isAllExpand.collect(viewModelState::updateAllExpand)
+            combine(
+                getUserUseCase(),
+                getSubCategoryLoadingStateUseCase(),
+                getSubCategoriesUseCase(),
+                mainScreenRootAllExpandUseCase.isAllExpand
+            ) { user, isLoading, allSubCategories, isAllExpand ->
+                MainRootUIState(
+                    user = user,
+                    isLoading = isLoading,
+                    allSubCategories = allSubCategories,
+                    isAllExpand = isAllExpand
+                )
+            }.collect { _uiState.value = it }
         }
-
-        viewModelScope.launch { loadSubCategoriesUseCase(viewModelState::onLoadFailed) }
-
-        collectSubCategories()
     }
 
     fun toggleAllExpand() =
         viewModelScope.launch {
             mainScreenRootAllExpandUseCase.toggleAllExpand()
         }
-}
 
-class MainRootViewModelState : BaseSubCategoriesViewModelState() {
-    var isAllExpand by mutableStateOf(false)
-        private set
-
-    fun updateAllExpand(isAllExpand: Boolean) {
-        this.isAllExpand = isAllExpand
-    }
-
-    fun onLoadFailed(exception: Exception?) {
-        showToast(R.string.sub_categories_load_failed)
-        Log.d(
-            TAG, "MainScreenRootViewModel.subCategoryLoadFailed: errorCode = $exception"
-        )
+    private fun onLoadFailed(exception: Exception) {
+        _uiState.update { it.copy(toastText = R.string.sub_categories_load_failed) }
+        Log.e(TAG, "onLoadFailed: ${exception.message}", exception)
     }
 }
+
+data class MainRootUIState(
+    override val toastText: Int? = null,
+    override val user: User? = null,
+    override val isLoading: Boolean = false,
+    override val allSubCategories: List<List<SubCategory>> = List(4) { emptyList() },
+    val isAllExpand: Boolean = false
+) : BaseSubCategoryUIState()

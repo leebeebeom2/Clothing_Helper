@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.leebeebeom.clothinghelper.R
 
 @Composable
 fun MaxWidthButton(
@@ -57,3 +58,8 @@ fun rememberMaxWidthButtonState(
     @StringRes text: Int,
     colors: ButtonColors = ButtonDefaults.buttonColors()
 ) = remember { MaxWidthButtonState(text, colors) }
+
+@Composable
+fun rememberGoogleButtonState() = rememberMaxWidthButtonState(
+    text = R.string.starts_with_google_email,
+    colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface))

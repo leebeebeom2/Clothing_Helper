@@ -17,7 +17,10 @@ interface SubCategoryRepository {
 
     fun pushInitialSubCategories(uid: String)
 
-    suspend fun getAllSubCategories(): StateFlow<List<SubCategory>>
+    suspend fun getAllSubCategories(
+        scope: CoroutineScope,
+        sortPreferencesFlow: Flow<SubCategorySortPreferences>
+    ): StateFlow<List<SubCategory>>
 
     fun addSubCategory(
         subCategoryParent: SubCategoryParent,

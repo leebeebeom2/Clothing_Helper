@@ -11,4 +11,5 @@ abstract class BaseSignInViewModel : ViewModel() {
 
 abstract class BaseUIState {
     abstract val toastText: Int?
+    abstract val isNotError: Boolean
 }

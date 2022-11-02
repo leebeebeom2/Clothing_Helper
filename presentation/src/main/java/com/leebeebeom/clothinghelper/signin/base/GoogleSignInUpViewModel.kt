@@ -20,7 +20,7 @@ import com.leebeebeom.clothinghelperdomain.usecase.signin.GoogleSignInUseCase
 
 abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSignInUseCase) :
     ViewModel() {
-    abstract val viewModelState: GoogleSignInViewModelState
+    abstract val uiState: GoogleSignInViewModelState
 
     fun signInWithGoogleEmail(activityResult: ActivityResult) {
         when (activityResult.resultCode) {
@@ -29,32 +29,32 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
                     credential = getGoogleCredential(activityResult)
                 ) {
                     when (it) {
-                        is FirebaseResult.Success -> viewModelState.showToast(R.string.google_sign_in_complete)
+                        is FirebaseResult.Success -> uiState.showToast(R.string.google_sign_in_complete)
                         is FirebaseResult.Fail -> {
-                            viewModelState.showToast(R.string.unknown_error)
+                            uiState.showToast(R.string.unknown_error)
                             Log.d(TAG, "taskFailed: ${it.exception}")
                         }
                     }
                 }
             }
             RESULT_CANCELED -> {
-                viewModelState.showToast(R.string.canceled)
+                uiState.showToast(R.string.canceled)
             }
             else -> {
                 Log.d(
                     TAG,
                     "GoogleSignInUpViewModel.signInWithGoogleEmail: resultCode = ${activityResult.resultCode}"
                 )
-                viewModelState.showToast(R.string.unknown_error)
+                uiState.showToast(R.string.unknown_error)
             }
         }
-        viewModelState.updateGoogleButtonEnabled(enabled = true) // TODO 테스트
+        uiState.updateGoogleButtonEnabled(enabled = true) // TODO 테스트
     }
 
     private fun getGoogleCredential(activityResult: ActivityResult): AuthCredential? {
         return if (activityResult.data == null) {
-            viewModelState.showToast(R.string.unknown_error)
-            viewModelState.updateGoogleButtonEnabled(enabled = true)
+            uiState.showToast(R.string.unknown_error)
+            uiState.updateGoogleButtonEnabled(enabled = true)
             Log.d(TAG, "BaseSignInUpViewModel.getGoogleCredential: activityResult.data = null")
             null
         } else {

@@ -15,19 +15,19 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leebeebeom.clothinghelper.base.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelperdomain.usecase.signin.GetSignInLoadingStateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun SignInRoot(
     viewModel: SignInRootViewModel = hiltViewModel(),
-    focusManager: FocusManager = LocalFocusManager.current,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    state: SignInRootState = rememberSignInRootState(),
     content: @Composable BoxScope.() -> Unit
 ) {
     ClothingHelperTheme {
@@ -39,27 +39,30 @@ fun SignInRoot(
                         .padding(it)
                         .padding(horizontal = 20.dp)
                         .clickable(
-                            interactionSource = interactionSource, indication = null
-                        ) { focusManager.clearFocus() },
+                            interactionSource = state.interactionSource, indication = null
+                        ) { state.focusManager.clearFocus() },
                     content = content
                 )
             }
         }
     }
-
-    if (viewModel.isLoading) CenterDotProgressIndicator()
+    val isLoading by viewModel.getSignInLoadingStateUseCase().collectAsStateWithLifecycle()
+    if (isLoading) CenterDotProgressIndicator()
 }
 
 @HiltViewModel
-class SignInRootViewModel @Inject constructor(private val getSignInLoadingStateUseCase: GetSignInLoadingStateUseCase) :
-    ViewModel() {
-    var isLoading by mutableStateOf(false)
+class SignInRootViewModel @Inject constructor(val getSignInLoadingStateUseCase: GetSignInLoadingStateUseCase) :
+    ViewModel()
 
-    init {
-        viewModelScope.launch {
-            getSignInLoadingStateUseCase().collect {
-                isLoading = it
-            }
-        }
+data class SignInRootState(
+    val focusManager: FocusManager,
+    val interactionSource: MutableInteractionSource
+)
+
+@Composable
+fun rememberSignInRootState(
+    focusManager: FocusManager = LocalFocusManager.current,
+    interactionSource: MutableInteractionSource = remember {
+        MutableInteractionSource()
     }
-}
+) = remember { SignInRootState(focusManager, interactionSource) }

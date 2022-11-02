@@ -4,23 +4,21 @@ import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.util.Log
 import androidx.activity.result.ActivityResult
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
-import com.leebeebeom.clothinghelper.base.BaseViewModelState
+import com.leebeebeom.clothinghelper.base.BaseUIState
+import com.leebeebeom.clothinghelper.base.BaseViewModel
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.usecase.signin.GoogleSignInUseCase
 
 abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSignInUseCase) :
-    ViewModel() {
-    abstract val uiState: GoogleSignInViewModelState
+    BaseViewModel() {
+
+    abstract fun updateGoogleButtonEnabled(enabled: Boolean)
 
     fun signInWithGoogleEmail(activityResult: ActivityResult) {
         when (activityResult.resultCode) {
@@ -29,32 +27,32 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
                     credential = getGoogleCredential(activityResult)
                 ) {
                     when (it) {
-                        is FirebaseResult.Success -> uiState.showToast(R.string.google_sign_in_complete)
+                        is FirebaseResult.Success -> showToast(R.string.google_sign_in_complete)
                         is FirebaseResult.Fail -> {
-                            uiState.showToast(R.string.unknown_error)
+                            showToast(R.string.unknown_error)
                             Log.d(TAG, "taskFailed: ${it.exception}")
                         }
                     }
                 }
             }
             RESULT_CANCELED -> {
-                uiState.showToast(R.string.canceled)
+                showToast(R.string.canceled)
             }
             else -> {
                 Log.d(
                     TAG,
                     "GoogleSignInUpViewModel.signInWithGoogleEmail: resultCode = ${activityResult.resultCode}"
                 )
-                uiState.showToast(R.string.unknown_error)
+                showToast(R.string.unknown_error)
             }
         }
-        uiState.updateGoogleButtonEnabled(enabled = true) // TODO 테스트
+        updateGoogleButtonEnabled(enabled = true) // TODO 테스트
     }
 
     private fun getGoogleCredential(activityResult: ActivityResult): AuthCredential? {
         return if (activityResult.data == null) {
-            uiState.showToast(R.string.unknown_error)
-            uiState.updateGoogleButtonEnabled(enabled = true)
+            showToast(R.string.unknown_error)
+            updateGoogleButtonEnabled(enabled = true)
             Log.d(TAG, "BaseSignInUpViewModel.getGoogleCredential: activityResult.data = null")
             null
         } else {
@@ -66,11 +64,4 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
     }
 }
 
-open class GoogleSignInViewModelState : BaseViewModelState() {
-    var googleButtonEnabled by mutableStateOf(true)
-        private set
-
-    fun updateGoogleButtonEnabled(enabled: Boolean) {
-        googleButtonEnabled = enabled
-    }
-}
+abstract class GoogleSignInViewModelState(val googleButtonEnabled: Boolean = false) : BaseUIState()

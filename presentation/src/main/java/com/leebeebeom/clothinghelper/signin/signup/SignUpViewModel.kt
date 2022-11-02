@@ -1,13 +1,9 @@
 package com.leebeebeom.clothinghelper.signin.signup
 
 import android.util.Log
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
+import androidx.annotation.StringRes
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
-import com.leebeebeom.clothinghelper.base.MaxWidthTextFieldState
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInViewModelState
 import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
@@ -15,85 +11,71 @@ import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.usecase.signin.GoogleSignInUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.signin.SignUpUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val signUpUseCase: SignUpUseCase, googleSignInUseCase: GoogleSignInUseCase
 ) : GoogleSignInUpViewModel(googleSignInUseCase) {
-    override val viewModelState = SignUpViewModelState()
 
-    fun signUpWithEmailAndPassword() {
+    private val _uiState = MutableStateFlow(SignUpUIState())
+    val uiState get() = _uiState.asStateFlow()
+
+    fun signUpWithEmailAndPassword(email: String, name: String, password: String) {
         signUpUseCase(
-            email = viewModelState.email,
-            password = viewModelState.password,
-            name = viewModelState.name,
+            email = email,
+            password = password,
+            name = name,
             onSignUpDone = {
                 when (it) {
-                    is FirebaseResult.Success -> viewModelState.showToast(R.string.sign_up_complete)
+                    is FirebaseResult.Success -> showToast(R.string.sign_up_complete)
                     is FirebaseResult.Fail -> {
                         setFireBaseError(
                             exception = it.exception,
-                            updateEmailError = viewModelState.emailState::updateError,
+                            updateEmailError = ::updateEmailError,
                             updatePasswordError = {},
-                            showToast = viewModelState::showToast
+                            showToast = ::showToast
                         )
                     }
                 }
             }
         ) {
             if (it is FirebaseResult.Fail) {
-                viewModelState.showToast(R.string.name_update_failed)
+                showToast(R.string.name_update_failed)
                 Log.d(TAG, "taskFailed: $it.exception")
             }
         }
     }
+
+
+    override fun updateGoogleButtonEnabled(enabled: Boolean) =
+        _uiState.update { it.copy(googleButtonEnabled = enabled) }
+
+    override fun showToast(toastText: Int?) =
+        _uiState.update { it.copy(toastText = toastText) }
+
+    override fun toastShown() =
+        _uiState.update { it.copy(toastText = null) }
+
+    override fun updateEmailError(error: Int?) =
+        _uiState.update { it.copy(emailError = error) }
+
+    fun updatePasswordError(error: Int?) =
+        _uiState.update { it.copy(passwordError = error) }
+
+    fun updatePasswordConfirmError(error: Int?) =
+        _uiState.update { it.copy(passwordConfirmError = error) }
 }
 
-class SignUpViewModelState : GoogleSignInViewModelState() {
-    val emailState = MaxWidthTextFieldState.email(ImeAction.Next)
-    val nameState = MaxWidthTextFieldState(
-        label = R.string.name, keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
-    )
-    val passwordState = SignUpPasswordState()
-    val passwordConfirmState = SignUpPasswordConfirmState(passwordState = passwordState)
-
-    val email get() = emailState.textFiled.text.trim()
-    val name get() = nameState.textFiled.text.trim()
-    val password get() = passwordState.textFiled.text.trim()
-    val passwordConfirm get() = passwordConfirmState.textFiled.text.trim()
-
-    val submitButtonEnable
-        get() = email.isNotBlank() && name.isNotBlank() && password.isNotBlank() && passwordConfirm.isNotBlank() &&
-                !emailState.isError && !passwordState.isError && !passwordConfirmState.isError
-}
-
-class SignUpPasswordState :
-    MaxWidthTextFieldState(
-        label = R.string.password,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Password,
-            imeAction = ImeAction.Next
-        )
-    ) {
-
-    override fun onValueChange(newText: TextFieldValue) {
-        super.onValueChange(newText)
-        if (newText.text.isNotBlank() && newText.text.length < 6) updateError(R.string.error_weak_password)
-    }
-}
-
-class SignUpPasswordConfirmState(private val passwordState: SignUpPasswordState) :
-    MaxWidthTextFieldState(
-        label = R.string.password_confirm,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Password,
-            imeAction = ImeAction.Done
-        )
-    ) {
-    override fun onValueChange(newText: TextFieldValue) {
-        super.onValueChange(newText)
-        if (newText.text.isNotBlank() && passwordState.textFiled.text.isNotBlank() && newText.text != passwordState.textFiled.text)
-            updateError(R.string.error_password_confirm_not_same)
-    }
+data class SignUpUIState(
+    @StringRes val emailError: Int? = null,
+    @StringRes val passwordError: Int? = null,
+    @StringRes val passwordConfirmError: Int? = null,
+    override val toastText: Int? = null,
+    override val googleButtonEnabled: Boolean = false
+) : GoogleSignInViewModelState() {
+    override val isNotError get() = emailError != null && passwordError != null && passwordConfirmError != null
 }

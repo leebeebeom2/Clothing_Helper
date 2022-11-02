@@ -57,8 +57,6 @@ data class DrawerMainCategoryState(
     override val _isExpand: MutableState<Boolean>,
     override var rememberedIsAllExpand: Boolean
 ) : AllExpandState() {
-    val isExpand get() = _isExpand.value
-
     init {
         init()
     }

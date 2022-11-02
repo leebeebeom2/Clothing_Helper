@@ -116,12 +116,12 @@ data class MaxWidthTextFieldState(
         focusManager.clearFocus()
     }
 
-    open fun onValueChange(newText: TextFieldValue, updateError: (Int?) -> Unit) {
+    fun onValueChange(newText: TextFieldValue, updateError: (Int?) -> Unit) {
         if (text != newText.text) updateError(null)
         textField.value = newText
     }
 
-    open fun onFocusChanged(focusState: FocusState) {
+    fun onFocusChanged(focusState: FocusState) {
         if (focusState.hasFocus)
             textField.value = textField.value.copy(selection = TextRange(text.length))
     }

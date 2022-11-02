@@ -87,8 +87,7 @@ fun SignInScreen(
             error = uiState.emailError,
             onValueChange = {
                 signInScreenState.email.onValueChange(it, viewModel::updateEmailError)
-            },
-            onFocusChanged = signInScreenState.email::onFocusChanged,
+            }
         )
 
         PasswordTextField(
@@ -96,8 +95,7 @@ fun SignInScreen(
             error = uiState.passwordError,
             onValueChange = {
                 signInScreenState.password.onValueChange(it, viewModel::updatePasswordError)
-            },
-            onFocusChanged = signInScreenState.password::onFocusChanged
+            }
         )
 
         ForgotPasswordText(onForgotPasswordClick = onForgotPasswordClick)
@@ -176,8 +174,5 @@ fun rememberSignInScreenState(
     email: MaxWidthTextFieldState = rememberEmailTextFieldState(imeAction = ImeAction.Next),
     password: MaxWidthTextFieldState = rememberPasswordTextFieldState(imeAction = ImeAction.Done),
     signInButtonState: MaxWidthButtonState = rememberMaxWidthButtonState(text = R.string.sign_in),
-    googleButtonState: MaxWidthButtonState = rememberMaxWidthButtonState(
-        text = R.string.starts_with_google_email,
-        colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface)
-    )
+    googleButtonState: MaxWidthButtonState = rememberGoogleButtonState()
 ) = remember { SignInScreenState(email, password, signInButtonState, googleButtonState) }

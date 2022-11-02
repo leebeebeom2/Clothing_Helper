@@ -77,14 +77,16 @@ fun rememberDrawerMainCategoryState(
     isExpand: MutableState<Boolean> = rememberSaveable { mutableStateOf(isAllExpand) },
     rememberedIsAllExpand: Boolean = rememberSaveable { isAllExpand }
 ) = remember(keys = arrayOf(mainCategory, subCategories, isLoading, isAllExpand)) {
-    DrawerMainCategoryState(
-        mainCategory = mainCategory,
-        subCategories = subCategories,
-        isLoading = isLoading,
-        isAllExpand = isAllExpand,
-        isExpand = isExpand,
-        rememberedIsAllExpand = rememberedIsAllExpand
-    )
+    derivedStateOf {
+        DrawerMainCategoryState(
+            mainCategory = mainCategory,
+            subCategories = subCategories,
+            isLoading = isLoading,
+            isAllExpand = isAllExpand,
+            isExpand = isExpand,
+            rememberedIsAllExpand = rememberedIsAllExpand
+        )
+    }
 }
 
 @Composable

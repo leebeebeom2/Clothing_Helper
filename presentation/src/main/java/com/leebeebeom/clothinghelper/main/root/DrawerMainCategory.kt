@@ -74,7 +74,7 @@ fun rememberDrawerMainCategoryState(
     drawerContentsState: DrawerContentsState,
     isExpand: MutableState<Boolean> = rememberSaveable { mutableStateOf(drawerContentsState.isAllExpand) },
     rememberedIsAllExpand: Boolean = rememberSaveable { drawerContentsState.isAllExpand }
-) = remember(mainCategory, drawerContentsState) {
+) = remember {
     derivedStateOf {
         DrawerMainCategoryState(
             mainCategory = mainCategory,

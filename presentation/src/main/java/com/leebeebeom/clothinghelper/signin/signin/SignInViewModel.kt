@@ -54,4 +54,7 @@ data class SignInUIState(
     override val googleButtonEnabled: Boolean = false,
     @StringRes val emailError: Int? = null,
     @StringRes val passwordError: Int? = null
-) : GoogleSignInViewModelState()
+) : GoogleSignInViewModelState() {
+    override val isNotError: Boolean
+        get() = emailError !=null && passwordError != null
+}

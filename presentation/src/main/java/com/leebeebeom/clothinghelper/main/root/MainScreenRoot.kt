@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.leebeebeom.clothinghelper.base.SimpleToast
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import kotlinx.coroutines.CoroutineScope
@@ -46,6 +47,8 @@ fun MainScreenRoot(
     content: @Composable (PaddingValues, backHandler: @Composable () -> Unit) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    SimpleToast(text = uiState.toastText, shownToast = viewModel::toastShown)
 
     ClothingHelperTheme {
         Scaffold(scaffoldState = state.scaffoldState,

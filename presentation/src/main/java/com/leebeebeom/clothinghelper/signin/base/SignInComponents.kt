@@ -27,10 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.CustomIconButton
-import com.leebeebeom.clothinghelper.base.MaxWidthButton
-import com.leebeebeom.clothinghelper.base.MaxWidthTextField
-import com.leebeebeom.clothinghelper.base.MaxWidthTextFieldState
+import com.leebeebeom.clothinghelper.base.*
 
 @Composable
 fun VisibleIcon(isVisible: Boolean, onIconClick: () -> Unit) {
@@ -44,6 +41,7 @@ fun VisibleIcon(isVisible: Boolean, onIconClick: () -> Unit) {
 
 @Composable
 fun GoogleSignInButton(
+    maxWidthButtonState: MaxWidthButtonState,
     signInWithGoogleEmail: (ActivityResult) -> Unit,
     enabled: Boolean,
     enabledOff: () -> Unit
@@ -56,8 +54,7 @@ fun GoogleSignInButton(
     val intent = GoogleSignIn.getClient(LocalContext.current, getGso()).signInIntent
 
     MaxWidthButton(
-        text = R.string.starts_with_google_email,
-        colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
+        maxWidthButtonState = maxWidthButtonState,
         icon = googleIcon,
         enabled = enabled,
         onClick = {

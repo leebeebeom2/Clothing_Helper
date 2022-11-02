@@ -7,7 +7,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -21,6 +20,7 @@ import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.*
+import com.leebeebeom.clothinghelper.signin.base.BaseState
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInButton
 import com.leebeebeom.clothinghelper.signin.base.OrDivider
 import com.leebeebeom.clothinghelper.signin.base.PasswordTextField
@@ -159,8 +159,8 @@ data class SignInScreenState(
     val password: MaxWidthTextFieldState,
     val singInButton: MaxWidthButtonState,
     val googleButton: MaxWidthButtonState
-) {
-    val isTextNotBlank get() = email.text.trim().isNotBlank() && password.text.trim().isNotBlank()
+) : BaseState() {
+    override val isTextNotBlank get() = email.text.trim().isNotBlank() && password.text.trim().isNotBlank()
 }
 
 @Composable

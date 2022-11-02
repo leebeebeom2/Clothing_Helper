@@ -96,8 +96,7 @@ fun OrDivider() {
 fun PasswordTextField(
     maxWidthTextFieldState: MaxWidthTextFieldState,
     error: Int?,
-    onValueChange: (TextFieldValue) -> Unit,
-    onFocusChanged: (FocusState) -> Unit
+    onValueChange: (TextFieldValue) -> Unit
 ) {
     var isVisible by rememberSaveable { mutableStateOf(false) }
 
@@ -105,7 +104,6 @@ fun PasswordTextField(
         maxWidthTextFieldState = maxWidthTextFieldState,
         error = error,
         onValueChange = onValueChange,
-        onFocusChanged = onFocusChanged,
         trailingIcon = { VisibleIcon(isVisible) { isVisible = !isVisible } },
         visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation()
     )

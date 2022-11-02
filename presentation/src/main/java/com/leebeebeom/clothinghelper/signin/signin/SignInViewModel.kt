@@ -39,7 +39,8 @@ class SignInViewModel @Inject constructor(
     fun updatePasswordError(@StringRes error: Int?) =
         _uiState.update { it.copy(passwordError = error) }
 
-    override fun updateEmailError(@StringRes error: Int?) = _uiState.update { it.copy(emailError = error) }
+    override fun updateEmailError(@StringRes error: Int?) =
+        _uiState.update { it.copy(emailError = error) }
 
     override fun updateGoogleButtonEnabled(enabled: Boolean) =
         _uiState.update { it.copy(googleButtonEnabled = enabled) }
@@ -55,6 +56,5 @@ data class SignInUIState(
     @StringRes val emailError: Int? = null,
     @StringRes val passwordError: Int? = null
 ) : GoogleSignInViewModelState() {
-    override val isNotError: Boolean
-        get() = emailError !=null && passwordError != null
+    override val isNotError get() = emailError != null && passwordError != null
 }

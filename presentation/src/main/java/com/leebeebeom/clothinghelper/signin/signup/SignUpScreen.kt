@@ -134,7 +134,7 @@ data class SignUpScreenState(
     val signUpButton: MaxWidthButtonState,
     val googleButtonState: MaxWidthButtonState
 ) : BaseState() {
-    override val isTextNotBlank: Boolean
+    override val isTextNotBlank
         get() = email.text.trim().isNotBlank() && name.text.trim().isNotBlank()
                 && password.text.trim().isNotBlank() && passwordConfirm.text.trim().isNotBlank()
 }

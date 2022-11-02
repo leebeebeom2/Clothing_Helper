@@ -16,17 +16,17 @@ class SignInViewModel @Inject constructor(
     private val signInUseCase: SignInUseCase, googleSignInUseCase: GoogleSignInUseCase
 ) : GoogleSignInUpViewModel(googleSignInUseCase) {
 
-    override val viewModelState = SignInViewModelState()
+    override val uiState = SignInViewModelState()
 
     fun signInWithEmailAndPassword() {
-        signInUseCase(viewModelState.email, viewModelState.password) {
+        signInUseCase(uiState.email, uiState.password) {
             when (it) {
-                is FirebaseResult.Success -> viewModelState.showToast(R.string.sign_in_complete)
+                is FirebaseResult.Success -> uiState.showToast(R.string.sign_in_complete)
                 is FirebaseResult.Fail -> setFireBaseError(
                     exception = it.exception,
-                    updateEmailError = viewModelState.emailState::updateError,
-                    updatePasswordError = viewModelState.passwordState::updateError,
-                    showToast = viewModelState::showToast
+                    updateEmailError = uiState.emailState::updateError,
+                    updatePasswordError = uiState.passwordState::updateError,
+                    showToast = uiState::showToast
                 )
             }
         }

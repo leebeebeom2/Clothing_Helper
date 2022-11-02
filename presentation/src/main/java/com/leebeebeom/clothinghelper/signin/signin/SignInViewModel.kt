@@ -36,10 +36,10 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    fun updateEmailError(@StringRes error: Int?) = _uiState.update { it.copy(emailError = error) }
-
     fun updatePasswordError(@StringRes error: Int?) =
         _uiState.update { it.copy(passwordError = error) }
+
+    override fun updateEmailError(@StringRes error: Int?) = _uiState.update { it.copy(emailError = error) }
 
     override fun updateGoogleButtonEnabled(enabled: Boolean) =
         _uiState.update { it.copy(googleButtonEnabled = enabled) }

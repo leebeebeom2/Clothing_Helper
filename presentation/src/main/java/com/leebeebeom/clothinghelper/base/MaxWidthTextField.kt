@@ -29,8 +29,8 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun MaxWidthTextField(
-    elementsState: MaxWidthTextFieldElementsState,
-    state: MaxWidthTextFieldUIState,
+    maxWidthTextFieldState: MaxWidthTextFieldState,
+    uiState: MaxWidthTextFieldUIState,
     trailingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
@@ -38,21 +38,21 @@ fun MaxWidthTextField(
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .focusRequester(focusRequester = elementsState.focusRequester)
-                .onFocusChanged(onFocusChanged = state::onFocusChanged),
-            value = state.textFiled,
-            onValueChange = state::onValueChange,
-            label = { Text(text = stringResource(id = elementsState.label)) },
-            placeholder = { Text(text = stringResource(id = elementsState.placeholder)) },
-            isError = state.isError,
+                .focusRequester(focusRequester = maxWidthTextFieldState.focusRequester)
+                .onFocusChanged(onFocusChanged = uiState::onFocusChanged),
+            value = uiState.textFiled,
+            onValueChange = uiState::onValueChange,
+            label = { Text(text = stringResource(id = maxWidthTextFieldState.label)) },
+            placeholder = { Text(text = stringResource(id = maxWidthTextFieldState.placeholder)) },
+            isError = uiState.isError,
             visualTransformation = visualTransformation,
             singleLine = true,
             maxLines = 1,
-            keyboardOptions = elementsState.keyboardOptions,
+            keyboardOptions = maxWidthTextFieldState.keyboardOptions,
             trailingIcon = trailingIcon,
             keyboardActions =
-            if (elementsState.keyboardOptions.imeAction == ImeAction.Done)
-                KeyboardActions(onDone = { elementsState.onKeyBoardActionDoneClick() })
+            if (maxWidthTextFieldState.keyboardOptions.imeAction == ImeAction.Done)
+                KeyboardActions(onDone = { maxWidthTextFieldState.onKeyBoardActionDoneClick() })
             else KeyboardActions.Default,
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 unfocusedBorderColor = Color(0xFFDADADA),
@@ -62,9 +62,9 @@ fun MaxWidthTextField(
             )
         )
 
-        ErrorText(state.error)
+        ErrorText(uiState.error)
     }
-    if (elementsState.showKeyboardEnabled) ShowKeyboard(elementsState.focusRequester)
+    if (maxWidthTextFieldState.showKeyboardEnabled) ShowKeyboard(maxWidthTextFieldState.focusRequester)
 }
 
 @Composable
@@ -98,7 +98,7 @@ fun ShowKeyboard(focusRequester: FocusRequester) {
     }
 }
 
-data class MaxWidthTextFieldElementsState(
+data class MaxWidthTextFieldState(
     @StringRes val label: Int,
     @StringRes val placeholder: Int,
     val showKeyboardEnabled: Boolean,
@@ -112,7 +112,7 @@ data class MaxWidthTextFieldElementsState(
 }
 
 @Composable
-fun rememberMaxWidthTextFiledElementsState(
+fun rememberMaxWidthTextFiledState(
     @StringRes label: Int,
     @StringRes placeholder: Int = R.string.empty,
     showKeyboardEnabled: Boolean = false,
@@ -122,7 +122,7 @@ fun rememberMaxWidthTextFiledElementsState(
     focusManager: FocusManager = LocalFocusManager.current,
     focusRequester: FocusRequester = FocusRequester()
 ) = remember {
-    MaxWidthTextFieldElementsState(
+    MaxWidthTextFieldState(
         label = label,
         placeholder = placeholder,
         showKeyboardEnabled = showKeyboardEnabled,
@@ -133,10 +133,10 @@ fun rememberMaxWidthTextFiledElementsState(
 }
 
 @Composable
-fun rememberEmailTextFieldElementsState(
+fun rememberEmailTextFieldState(
     showKeyboardEnabled: Boolean = false,
     imeAction: ImeAction = ImeAction.Done,
-) = rememberMaxWidthTextFiledElementsState(
+) = rememberMaxWidthTextFiledState(
     label = R.string.email,
     placeholder = R.string.email_place_holder,
     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = imeAction),
@@ -144,11 +144,11 @@ fun rememberEmailTextFieldElementsState(
 )
 
 @Composable
-fun rememberNameTextFieldElementsState() = rememberMaxWidthTextFiledElementsState(label = R.string.name)
+fun rememberNameTextFieldState() = rememberMaxWidthTextFiledState(label = R.string.name)
 
 @Composable
-fun rememberPasswordTextFieldElementsState(@StringRes label: Int = R.string.password) =
-    rememberMaxWidthTextFiledElementsState(
+fun rememberPasswordTextFieldState(@StringRes label: Int = R.string.password) =
+    rememberMaxWidthTextFiledState(
         label = R.string.password,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password,
@@ -157,8 +157,8 @@ fun rememberPasswordTextFieldElementsState(@StringRes label: Int = R.string.pass
     )
 
 @Composable
-fun rememberPasswordConfirmTextFieldElementsState() =
-    rememberPasswordTextFieldElementsState(label = R.string.password_confirm)
+fun rememberPasswordConfirmTextFieldState() =
+    rememberPasswordTextFieldState(label = R.string.password_confirm)
 
 open class MaxWidthTextFieldUIState(
     text: String = "",

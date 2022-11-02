@@ -65,7 +65,6 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
     }
 }
 
-abstract class GoogleSignInViewModelState(
-    @StringRes toastText: Int?,
-    googleButtonEnabled: Boolean
-) : BaseUIState(toastText = toastText)
+abstract class GoogleSignInViewModelState : BaseUIState() {
+    abstract val googleButtonEnabled: Boolean
+}

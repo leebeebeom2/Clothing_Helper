@@ -33,7 +33,7 @@ fun MaxWidthTextField(
     maxWidthTextFieldState: MaxWidthTextFieldState,
     error: Int? = null,
     onValueChange: (TextFieldValue) -> Unit,
-    onFocusChanged: (FocusState) -> Unit,
+    onFocusChanged: (FocusState) -> Unit = {},
     trailingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {

@@ -133,7 +133,7 @@ fun rememberMaxWidthTextFiledElementsState(
 }
 
 @Composable
-fun rememberEmailTextFieldElementState(
+fun rememberEmailTextFieldElementsState(
     showKeyboardEnabled: Boolean = false,
     imeAction: ImeAction = ImeAction.Done,
 ) = rememberMaxWidthTextFiledElementsState(
@@ -147,7 +147,7 @@ fun rememberEmailTextFieldElementState(
 fun rememberNameTextFieldElementsState() = rememberMaxWidthTextFiledElementsState(label = R.string.name)
 
 @Composable
-fun rememberPasswordTextFieldElementState(@StringRes label: Int = R.string.password) =
+fun rememberPasswordTextFieldElementsState(@StringRes label: Int = R.string.password) =
     rememberMaxWidthTextFiledElementsState(
         label = R.string.password,
         keyboardOptions = KeyboardOptions(
@@ -157,8 +157,8 @@ fun rememberPasswordTextFieldElementState(@StringRes label: Int = R.string.passw
     )
 
 @Composable
-fun rememberPasswordConfirmTextFieldElementState() =
-    rememberPasswordTextFieldElementState(label = R.string.password_confirm)
+fun rememberPasswordConfirmTextFieldElementsState() =
+    rememberPasswordTextFieldElementsState(label = R.string.password_confirm)
 
 open class MaxWidthTextFieldUIState(
     text: String = "",

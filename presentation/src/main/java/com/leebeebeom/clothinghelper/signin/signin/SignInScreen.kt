@@ -160,7 +160,8 @@ data class SignInScreenState(
     val singInButton: MaxWidthButtonState,
     val googleButton: MaxWidthButtonState
 ) : BaseState() {
-    override val isTextNotBlank get() = email.text.trim().isNotBlank() && password.text.trim().isNotBlank()
+    override val isTextNotBlank
+        get() = email.text.trim().isNotBlank() && password.text.trim().isNotBlank()
 }
 
 @Composable

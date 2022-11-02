@@ -21,28 +21,28 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
 @Composable
 fun DrawerMainCategory(
-    state: DrawerMainCategoryState,
+    drawerMainCategoryState: DrawerMainCategoryState,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (key: String) -> Unit,
 ) {
     Column {
         DrawerContentRow(
             modifier = Modifier.heightIn(44.dp),
-            onDrawerContentClick = { onMainCategoryClick(state.mainCategory.type) }) {
+            onDrawerContentClick = { onMainCategoryClick(drawerMainCategoryState.mainCategory.type) }) {
             DrawerContentText(
                 modifier = Modifier.padding(start = 8.dp),
-                text = stringResource(id = state.mainCategory.name),
+                text = stringResource(id = drawerMainCategoryState.mainCategory.name),
                 style = MaterialTheme.typography.subtitle1
             )
             DrawerMainCategoryExpandIcon(
-                isLoading = state.isLoading,
-                isExpand = state.isExpand.value,
-                onExpandIconClick = state::isExpandToggle
+                isLoading = drawerMainCategoryState.isLoading,
+                isExpand = drawerMainCategoryState.isExpand.value,
+                onExpandIconClick = drawerMainCategoryState::isExpandToggle
             )
         }
         SubCategories(
-            isExpand = state.isExpand.value,
-            subCategories = state.subCategories,
+            isExpand = drawerMainCategoryState.isExpand.value,
+            subCategories = drawerMainCategoryState.subCategories,
             onSubCategoryClick = onSubCategoryClick
         )
     }

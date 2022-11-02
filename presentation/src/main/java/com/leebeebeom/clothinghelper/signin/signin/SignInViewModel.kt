@@ -1,10 +1,7 @@
 package com.leebeebeom.clothinghelper.signin.signin
 
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.MaxWidthTextFieldState
+import com.leebeebeom.clothinghelper.base.MaxWidthTextFieldUIState
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInViewModelState
 import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
@@ -37,14 +34,8 @@ class SignInViewModel @Inject constructor(
 }
 
 class SignInViewModelState : GoogleSignInViewModelState() {
-    val emailState = MaxWidthTextFieldState.email(imeAction = ImeAction.Next, showKeyboardEnabled = false)
-    val passwordState = MaxWidthTextFieldState(
-        label = R.string.password,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Password,
-            imeAction = ImeAction.Done
-        )
-    )
+    val emailState = MaxWidthTextFieldUIState()
+    val passwordState = MaxWidthTextFieldUIState()
 
     val email get() = emailState.textFiled.text.trim()
     val password get() = passwordState.textFiled.text.trim()

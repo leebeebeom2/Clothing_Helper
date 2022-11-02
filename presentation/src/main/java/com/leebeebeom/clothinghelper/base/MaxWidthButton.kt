@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -16,9 +17,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun MaxWidthButton(
-    @StringRes text: Int,
+    maxWidthButtonState: MaxWidthButtonState,
     enabled: Boolean,
-    colors: ButtonColors = ButtonDefaults.buttonColors(),
     icon: @Composable (() -> Unit)? = null,
     onClick: () -> Unit
 ) {
@@ -30,14 +30,14 @@ fun MaxWidthButton(
             .heightIn(52.dp), onClick = {
             focusManager.clearFocus()
             onClick()
-        }, colors = colors, enabled = enabled
+        }, colors = maxWidthButtonState.colors, enabled = enabled
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
             icon?.invoke()
             Text(
-                text = stringResource(id = text),
+                text = stringResource(id = maxWidthButtonState.text),
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f),
                 style = MaterialTheme.typography.body2,
@@ -46,3 +46,14 @@ fun MaxWidthButton(
         }
     }
 }
+
+data class MaxWidthButtonState(
+    @StringRes val text: Int,
+    val colors: ButtonColors
+)
+
+@Composable
+fun rememberMaxWidthButtonState(
+    @StringRes text: Int,
+    colors: ButtonColors = ButtonDefaults.buttonColors()
+) = remember { MaxWidthButtonState(text, colors) }

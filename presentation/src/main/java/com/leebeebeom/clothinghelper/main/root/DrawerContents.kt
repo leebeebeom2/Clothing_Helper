@@ -28,20 +28,14 @@ import com.leebeebeom.clothinghelperdomain.model.User
 
 @Composable
 fun DrawerContents(
-    user: User?,
+    state: DrawerContentsState,
     onEssentialMenuClick: (essentialMenu: EssentialMenus) -> Unit,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (key: String) -> Unit,
     onSettingIconClick: () -> Unit,
-    getSubCategories: (SubCategoryParent) -> List<SubCategory>,
-    isLoading: Boolean,
-    isAllExpand: Boolean,
     allExpandIconClick: () -> Unit
 ) = Column {
-
-    val state = rememberDrawerContentsUIState()
-
-    DrawerHeader(user = user, onSettingIconClick = onSettingIconClick)
+    DrawerHeader(user = state.user, onSettingIconClick = onSettingIconClick)
 
     Surface(color = Color(0xFF121212)) {
         LazyColumn(
@@ -53,17 +47,23 @@ fun DrawerContents(
             }
 
             item {
-                IconWithDivider(isAllExpand = isAllExpand, allExpandIconClick = allExpandIconClick)
+                IconWithDivider(
+                    isAllExpand = state.isAllExpand,
+                    allExpandIconClick = allExpandIconClick
+                )
             }
 
             items(state.mainCategories, key = { it.type.name }) {
-                DrawerMainCategory(
+                val drawerMainCategoryState = rememberDrawerMainCategoryState(
                     mainCategory = it,
-                    subCategories = getSubCategories(it.type),
-                    isLoading = isLoading,
+                    subCategories = state.allSubCategories[it.type.ordinal],
+                    isLoading = state.isLoading,
+                    isAllExpand = state.isAllExpand
+                )
+                DrawerMainCategory(
+                    drawerMainCategoryState = drawerMainCategoryState,
                     onMainCategoryClick = onMainCategoryClick,
-                    onSubCategoryClick = onSubCategoryClick,
-                    isAllExpand = isAllExpand
+                    onSubCategoryClick = onSubCategoryClick
                 )
             }
         }
@@ -142,13 +142,29 @@ fun RowScope.DrawerContentText(modifier: Modifier = Modifier, text: String, styl
     )
 }
 
-class DrawerContentsState {
-    val essentialMenus = getEssentialMenus()
-    val mainCategories = getMainCategories()
-}
+data class DrawerContentsState(
+    val user: User?,
+    val isLoading: Boolean,
+    val isAllExpand: Boolean,
+    val allSubCategories: List<List<SubCategory>>,
+    val essentialMenus: List<EssentialMenu> = getEssentialMenus(),
+    val mainCategories: List<MainCategory> = getMainCategories()
+)
 
 @Composable
-fun rememberDrawerContentsUIState() = remember { DrawerContentsState() }
+fun rememberDrawerContentsUIState(
+    user: User?,
+    isLoading: Boolean,
+    isAllExpand: Boolean,
+    allSubCategories: List<List<SubCategory>>,
+) = remember(keys = arrayOf(user, isLoading, isAllExpand, allSubCategories)) {
+    DrawerContentsState(
+        user = user,
+        isLoading = isLoading,
+        isAllExpand = isAllExpand,
+        allSubCategories = allSubCategories
+    )
+}
 
 fun getMainCategories() = listOf(
     MainCategory(R.string.top, SubCategoryParent.TOP),
@@ -158,14 +174,14 @@ fun getMainCategories() = listOf(
 )
 
 fun getEssentialMenus() = listOf(
-    EssentialMenu(R.string.main_screen, R.drawable.ic_home, EssentialMenus.MAIN_SCREEN),
-    EssentialMenu(R.string.favorite, R.drawable.ic_star, EssentialMenus.FAVORITE),
-    EssentialMenu(R.string.see_all, R.drawable.ic_list, EssentialMenus.SEE_ALL),
-    EssentialMenu(R.string.trash, R.drawable.ic_delete, EssentialMenus.TRASH)
+    EssentialMenu(R.string.main_screen, R.drawable.ic_home, EssentialMenus.MainScreen),
+    EssentialMenu(R.string.favorite, R.drawable.ic_star, EssentialMenus.Favorite),
+    EssentialMenu(R.string.see_all, R.drawable.ic_list, EssentialMenus.SeeAll),
+    EssentialMenu(R.string.trash, R.drawable.ic_delete, EssentialMenus.Trash)
 )
 
 enum class EssentialMenus {
-    MAIN_SCREEN, FAVORITE, SEE_ALL, TRASH
+    MainScreen, Favorite, SeeAll, Trash
 }
 
 data class EssentialMenu(

@@ -1,10 +1,10 @@
 package com.leebeebeom.clothinghelper.main.root
 
 import android.util.Log
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
+import com.leebeebeom.clothinghelper.base.BaseViewModel
 import com.leebeebeom.clothinghelper.main.base.BaseSubCategoryUIState
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.User
@@ -28,7 +28,7 @@ class MainScreenRootViewModel @Inject constructor(
     private val getSubCategoriesUseCase: GetSubCategoriesUseCase,
     private val loadSubCategoriesUseCase: LoadSubCategoriesUseCase,
     private val mainScreenRootAllExpandUseCase: MainScreenRootAllExpandUseCase
-) : ViewModel() {
+) : BaseViewModel() {
     private val _uiState = MutableStateFlow(MainRootUIState())
     val uiState = _uiState.asStateFlow()
 
@@ -62,7 +62,11 @@ class MainScreenRootViewModel @Inject constructor(
         Log.e(TAG, "onLoadFailed: ${exception.message}", exception)
     }
 
-    fun toastShown() = _uiState.update { it.copy(toastText = null) }
+    override fun showToast(toastText: Int?) {
+        _uiState.update { it.copy(toastText = toastText) }
+    }
+
+    override fun toastShown() = _uiState.update { it.copy(toastText = null) }
 }
 
 data class MainRootUIState(

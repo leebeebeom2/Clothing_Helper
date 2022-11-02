@@ -30,37 +30,37 @@ import com.leebeebeom.clothinghelperdomain.model.User
 
 @Composable
 fun DrawerContents(
-    state: DrawerContentsState,
+    drawerContentsState: DrawerContentsState,
     onEssentialMenuClick: (essentialMenu: EssentialMenus) -> Unit,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (key: String) -> Unit,
     onSettingIconClick: () -> Unit,
     allExpandIconClick: () -> Unit
 ) = Column {
-    DrawerHeader(user = state.user, onSettingIconClick = onSettingIconClick)
+    DrawerHeader(user = drawerContentsState.user, onSettingIconClick = onSettingIconClick)
 
     Surface(color = Color(0xFF121212)) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(top = 8.dp, bottom = 40.dp)
         ) {
-            this.items(state.essentialMenus, key = { it.type.name }) {
+            this.items(drawerContentsState.essentialMenus, key = { it.type.name }) {
                 EssentialMenu(essentialMenu = it, onEssentialMenuClick = onEssentialMenuClick)
             }
 
             item {
                 IconWithDivider(
-                    isAllExpand = state.isAllExpand,
+                    isAllExpand = drawerContentsState.isAllExpand,
                     allExpandIconClick = allExpandIconClick
                 )
             }
 
-            items(state.mainCategories, key = { it.type.name }) {
+            items(drawerContentsState.mainCategories, key = { it.type.name }) {
                 val drawerMainCategoryState by rememberDrawerMainCategoryState(
                     mainCategory = it,
-                    subCategories = state.allSubCategories[it.type.ordinal],
-                    isLoading = state.isLoading,
-                    isAllExpand = state.isAllExpand
+                    subCategories = drawerContentsState.allSubCategories[it.type.ordinal],
+                    isLoading = drawerContentsState.isLoading,
+                    isAllExpand = drawerContentsState.isAllExpand
                 )
                 DrawerMainCategory(
                     drawerMainCategoryState = drawerMainCategoryState,
@@ -154,7 +154,7 @@ data class DrawerContentsState(
 )
 
 @Composable
-fun rememberDrawerContentsUIState(
+fun rememberDrawerContentsState(
     user: User?,
     isLoading: Boolean,
     isAllExpand: Boolean,

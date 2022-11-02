@@ -50,13 +50,7 @@ fun MainScreenRoot(
     ClothingHelperTheme {
         Scaffold(scaffoldState = state.scaffoldState,
             drawerContent = {
-                val drawerMainCategoryState by rememberDrawerContentsState(
-                    user = uiState.user,
-                    isLoading = uiState.isLoading,
-                    isAllExpand = uiState.isAllExpand,
-                    allSubCategories = uiState.allSubCategories
-                )
-
+                val drawerMainCategoryState by rememberDrawerContentsState(uiState)
                 DrawerContents(
                     drawerContentsState = drawerMainCategoryState,
                     onEssentialMenuClick = {

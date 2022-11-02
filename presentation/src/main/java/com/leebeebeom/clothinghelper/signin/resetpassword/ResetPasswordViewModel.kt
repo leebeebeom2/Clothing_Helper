@@ -1,55 +1,58 @@
 package com.leebeebeom.clothinghelper.signin.resetpassword
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.text.input.ImeAction
-import androidx.lifecycle.ViewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.BaseViewModelState
-import com.leebeebeom.clothinghelper.base.MaxWidthTextFieldState
+import com.leebeebeom.clothinghelper.base.BaseSignInViewModel
+import com.leebeebeom.clothinghelper.base.BaseUIState
 import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.usecase.signin.ResetPasswordUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
 class ResetPasswordViewModel @Inject constructor(
     private val resetPasswordUseCase: ResetPasswordUseCase
-) : ViewModel() {
-    val viewModelState = ResetPasswordViewModelState()
+) : BaseSignInViewModel() {
 
-    fun sendResetPasswordEmail() {
-        resetPasswordUseCase(viewModelState.email) {
+    private val _uiState = MutableStateFlow(ResetPasswordUIState())
+    val uiState get() = _uiState.asStateFlow()
+
+    fun sendResetPasswordEmail(email: String) {
+        resetPasswordUseCase(email) {
             when (it) {
                 is FirebaseResult.Success -> {
-                    viewModelState.showToast(R.string.email_send_complete)
-                    viewModelState.updateTaskSuccess(true)
+                    showToast(R.string.email_send_complete)
+                    updateTaskSuccess(true)
                 }
                 is FirebaseResult.Fail -> {
                     setFireBaseError(
                         exception = it.exception,
-                        updateEmailError = viewModelState.emailState::updateError,
+                        updateEmailError = ::updateEmailError,
                         updatePasswordError = {},
-                        showToast = viewModelState::showToast
+                        showToast = ::showToast
                     )
                 }
             }
         }
     }
+
+    override fun showToast(toastText: Int?) = _uiState.update { it.copy(toastText = toastText) }
+
+    override fun toastShown() = _uiState.update { it.copy(toastText = null) }
+
+    override fun updateEmailError(error: Int?) = _uiState.update { it.copy(emailError = error) }
+
+    fun updateTaskSuccess(isTaskSuccess: Boolean) =
+        _uiState.update { it.copy(isTaskSuccess = isTaskSuccess) }
 }
 
-class ResetPasswordViewModelState : BaseViewModelState() {
-    val emailState = MaxWidthTextFieldState.email(imeAction = ImeAction.Done)
-    val email get() = emailState.textFiled.text.trim()
-
-    val submitButtonEnabled get() = email.isNotEmpty() && !emailState.isError
-
-    var isTaskSuccess by mutableStateOf(false)
-        private set
-
-    fun updateTaskSuccess(isSuccess: Boolean) {
-        isTaskSuccess = isSuccess
-    }
+data class ResetPasswordUIState(
+    val emailError: Int? = null,
+    override val toastText: Int? = null,
+    val isTaskSuccess: Boolean = false
+) : BaseUIState() {
+    override val isNotError get() = emailError != null
 }

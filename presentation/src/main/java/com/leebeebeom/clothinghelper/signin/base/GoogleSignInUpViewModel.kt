@@ -4,6 +4,7 @@ import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.util.Log
 import androidx.activity.result.ActivityResult
+import androidx.annotation.StringRes
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.AuthCredential
@@ -64,4 +65,7 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
     }
 }
 
-abstract class GoogleSignInViewModelState(val googleButtonEnabled: Boolean = false) : BaseUIState()
+abstract class GoogleSignInViewModelState(
+    @StringRes toastText: Int?,
+    googleButtonEnabled: Boolean
+) : BaseUIState(toastText = toastText)

@@ -21,7 +21,6 @@ import com.leebeebeom.clothinghelper.base.CircleCheckBox
 import com.leebeebeom.clothinghelper.base.CustomIconButton
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
-import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
 @Composable
 fun SubCategoryBottomAppBar(
@@ -98,14 +97,13 @@ data class SubCategoryBottomAppbarState(
 @Composable
 fun rememberSubCategoryBottomAppbarState(
     subCategoryScreenState: SubCategoryScreenState,
-    subCategoryUIState: SubCategoryUIState,
-    subCategoryParent: SubCategoryParent
+    subCategoriesSize: Int
 ) = remember {
     derivedStateOf {
         SubCategoryBottomAppbarState(
             isSelectMode = subCategoryScreenState.isSelectMode,
             selectedSubCategoriesSize = subCategoryScreenState.selectedSubCategoriesSize,
-            subCategoriesSize = subCategoryUIState.allSubCategories[subCategoryParent.ordinal].size
+            subCategoriesSize = subCategoriesSize
         )
     }
 }

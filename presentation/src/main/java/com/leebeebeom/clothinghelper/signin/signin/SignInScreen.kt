@@ -3,7 +3,6 @@ package com.leebeebeom.clothinghelper.signin.signin
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -69,13 +68,6 @@ fun SignInScreen(
     signInScreenState: SignInScreenState = rememberSignInScreenState()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val signInButtonEnabled by remember {
-        derivedStateOf {
-            uiState.emailError != null && uiState.passwordError != null &&
-                    signInScreenState.email.text.trim().isNotBlank() &&
-                    signInScreenState.password.text.trim().isNotBlank()
-        }
-    }
 
     Column(
         modifier = Modifier
@@ -102,7 +94,7 @@ fun SignInScreen(
 
         MaxWidthButton(
             maxWidthButtonState = signInScreenState.singInButton,
-            enabled = signInButtonEnabled,
+            enabled = signInScreenState.isTextNotBlank && uiState.isNotError,
             onClick = {
                 viewModel.signInWithEmailAndPassword(
                     signInScreenState.email.text, signInScreenState.password.text
@@ -167,7 +159,9 @@ data class SignInScreenState(
     val password: MaxWidthTextFieldState,
     val singInButton: MaxWidthButtonState,
     val googleButton: MaxWidthButtonState
-)
+) {
+    val isTextNotBlank get() = email.text.trim().isNotBlank() && password.text.trim().isNotBlank()
+}
 
 @Composable
 fun rememberSignInScreenState(

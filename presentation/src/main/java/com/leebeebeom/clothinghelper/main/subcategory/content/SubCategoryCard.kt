@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.subcategory
+package com.leebeebeom.clothinghelper.main.subcategory.content
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.*

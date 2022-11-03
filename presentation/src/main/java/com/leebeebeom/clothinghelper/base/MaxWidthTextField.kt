@@ -30,7 +30,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun MaxWidthTextField(
-    maxWidthTextFieldState: MaxWidthTextFieldState,
+    maxWidthTextFieldStateHolder: MaxWidthTextFieldStateHolder,
     error: Int? = null,
     onValueChange: (TextFieldValue) -> Unit,
     onFocusChanged: (FocusState) -> Unit = {},
@@ -41,21 +41,21 @@ fun MaxWidthTextField(
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .focusRequester(focusRequester = maxWidthTextFieldState.focusRequester)
+                .focusRequester(focusRequester = maxWidthTextFieldStateHolder.focusRequester)
                 .onFocusChanged(onFocusChanged = onFocusChanged),
-            value = maxWidthTextFieldState.textField.value,
+            value = maxWidthTextFieldStateHolder.textFieldState,
             onValueChange = onValueChange,
-            label = { Text(text = stringResource(id = maxWidthTextFieldState.label)) },
-            placeholder = { Text(text = stringResource(id = maxWidthTextFieldState.placeholder)) },
+            label = { Text(text = stringResource(id = maxWidthTextFieldStateHolder.label)) },
+            placeholder = { Text(text = stringResource(id = maxWidthTextFieldStateHolder.placeholder)) },
             isError = error != null,
             visualTransformation = visualTransformation,
             singleLine = true,
             maxLines = 1,
-            keyboardOptions = maxWidthTextFieldState.keyboardOptions,
+            keyboardOptions = maxWidthTextFieldStateHolder.keyboardOptions,
             trailingIcon = trailingIcon,
             keyboardActions =
-            if (maxWidthTextFieldState.keyboardOptions.imeAction == ImeAction.Done)
-                KeyboardActions(onDone = { maxWidthTextFieldState.onKeyBoardActionDoneClick() })
+            if (maxWidthTextFieldStateHolder.keyboardOptions.imeAction == ImeAction.Done)
+                KeyboardActions(onDone = { maxWidthTextFieldStateHolder.onKeyBoardActionDoneClick() })
             else KeyboardActions.Default,
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 unfocusedBorderColor = Color(0xFFDADADA),
@@ -67,7 +67,7 @@ fun MaxWidthTextField(
 
         ErrorText(error)
     }
-    if (maxWidthTextFieldState.showKeyboardEnabled) ShowKeyboard(maxWidthTextFieldState.focusRequester)
+    if (maxWidthTextFieldStateHolder.showKeyboardEnabled) ShowKeyboard(maxWidthTextFieldStateHolder.focusRequester)
 }
 
 @Composable
@@ -101,8 +101,8 @@ fun ShowKeyboard(focusRequester: FocusRequester) {
     }
 }
 
-data class MaxWidthTextFieldState(
-    val textField: MutableState<TextFieldValue>,
+data class MaxWidthTextFieldStateHolder(
+    private val _textFieldState: MutableState<TextFieldValue>,
     @StringRes val label: Int,
     @StringRes val placeholder: Int,
     val showKeyboardEnabled: Boolean,
@@ -110,20 +110,21 @@ data class MaxWidthTextFieldState(
     val focusManager: FocusManager,
     val focusRequester: FocusRequester
 ) {
-    val text get() = textField.value.text
+    val textState get() = _textFieldState.value.text
+    val textFieldState get() = _textFieldState.value
 
     fun onKeyBoardActionDoneClick() {
         focusManager.clearFocus()
     }
 
     fun onValueChange(newText: TextFieldValue, updateError: (Int?) -> Unit) {
-        if (text != newText.text) updateError(null)
-        textField.value = newText
+        if (textState != newText.text) updateError(null)
+        _textFieldState.value = newText
     }
 
     fun onFocusChanged(focusState: FocusState) {
         if (focusState.hasFocus)
-            textField.value = textField.value.copy(selection = TextRange(text.length))
+            _textFieldState.value = _textFieldState.value.copy(selection = TextRange(textState.length))
     }
 }
 
@@ -139,8 +140,8 @@ fun rememberMaxWidthTextFiledState(
     focusManager: FocusManager = LocalFocusManager.current,
     focusRequester: FocusRequester = FocusRequester()
 ) = remember {
-    MaxWidthTextFieldState(
-        textField = textField,
+    MaxWidthTextFieldStateHolder(
+        _textFieldState = textField,
         label = label,
         placeholder = placeholder,
         showKeyboardEnabled = showKeyboardEnabled,

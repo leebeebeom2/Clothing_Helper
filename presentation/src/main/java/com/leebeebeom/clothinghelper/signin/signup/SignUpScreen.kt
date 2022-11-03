@@ -99,7 +99,7 @@ fun SignUpScreen(
         SimpleHeightSpacer(dp = 12)
         MaxWidthButton(
             maxWidthButtonStateHolder = stateHolder.signUpButtonStateHolder,
-            enabled = uiState.isNotError && stateHolder.isTextNotBlank,
+            enabledState = uiState.isNotError && stateHolder.isTextNotBlank,
             onClick = {
                 viewModel.signUpWithEmailAndPassword(
                     email = stateHolder.emailStateHolder.textState.trim(),

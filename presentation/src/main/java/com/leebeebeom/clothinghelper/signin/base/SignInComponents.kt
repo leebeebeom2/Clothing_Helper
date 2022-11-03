@@ -55,7 +55,7 @@ fun GoogleSignInButton(
     MaxWidthButton(
         maxWidthButtonStateHolder = maxWidthButtonStateHolder,
         icon = googleIcon,
-        enabled = enabled,
+        enabledState = enabled,
         onClick = {
             enabledOff()
             launcher.launch(intent)

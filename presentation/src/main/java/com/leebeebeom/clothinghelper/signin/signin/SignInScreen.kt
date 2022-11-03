@@ -94,7 +94,7 @@ fun SignInScreen(
 
         MaxWidthButton(
             maxWidthButtonStateHolder = stateHolder.singInButtonStateHolder,
-            enabled = stateHolder.isTextNotBlank && uiState.isNotError,
+            enabledState = stateHolder.isTextNotBlank && uiState.isNotError,
             onClick = {
                 viewModel.signInWithEmailAndPassword(
                     stateHolder.emailStateHolder.textState.trim(),

@@ -54,5 +54,5 @@ data class ResetPasswordUIState(
     override val toastText: Int? = null,
     val isTaskSuccess: Boolean = false
 ) : BaseSignInUIState() {
-    override val isNotError get() = emailError != null
+    override val isNotError get() = emailError == null
 }

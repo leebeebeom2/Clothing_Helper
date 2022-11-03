@@ -66,7 +66,7 @@ fun ResetPasswordScreen(
         SimpleHeightSpacer(dp = 12)
         MaxWidthButton(
             maxWidthButtonStateHolder = stateHolder.submitButtonStateHolder,
-            enabled = stateHolder.isTextNotBlank && uiState.isNotError,
+            enabledState = stateHolder.isTextNotBlank && uiState.isNotError,
             onClick = { viewModel.sendResetPasswordEmail(stateHolder.emailStateHolder.textState.trim()) }
         )
         SimpleHeightSpacer(dp = 80)

@@ -56,5 +56,5 @@ data class SignInUIState(
     @StringRes val emailError: Int? = null,
     @StringRes val passwordError: Int? = null
 ) : GoogleSignInUIState() {
-    override val isNotError get() = emailError != null && passwordError != null
+    override val isNotError get() = emailError == null && passwordError == null
 }

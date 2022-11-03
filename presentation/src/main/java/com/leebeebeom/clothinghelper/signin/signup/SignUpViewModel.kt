@@ -77,5 +77,5 @@ data class SignUpUIState(
     override val toastText: Int? = null,
     override val googleButtonEnabled: Boolean = false
 ) : GoogleSignInUIState() {
-    override val isNotError get() = emailError != null && passwordError != null && passwordConfirmError != null
+    override val isNotError get() = emailError == null && passwordError == null && passwordConfirmError == null
 }

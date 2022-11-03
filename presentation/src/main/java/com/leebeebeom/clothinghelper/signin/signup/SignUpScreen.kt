@@ -61,8 +61,7 @@ fun SignUpScreen(
             error = uiState.emailError,
             onValueChange = {
                 stateHolder.emailStateHolder.onValueChange(it, viewModel::updateEmailError)
-            },
-            onFocusChanged = stateHolder.emailStateHolder.onFocusChanged
+            }
         )
 
         MaxWidthTextField(

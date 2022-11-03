@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.subcategory
+package com.leebeebeom.clothinghelper.main.subcategory.header
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateColorAsState
@@ -24,24 +24,24 @@ import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
 import com.leebeebeom.clothinghelperdomain.repository.SortOrder
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
+import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
 
 @Composable
 fun SortDropdownMenu(
     showDropDownMenu: Boolean,
-    selectedSort: SubCategorySort,
-    selectedOrder: SortOrder,
+    sort: SubCategorySortPreferences,
     onSortClick: (SubCategorySort) -> Unit,
     onOrderClick: (SortOrder) -> Unit,
     onDismiss: () -> Unit
 ) {
     val selectedSortRes =
-        when (selectedSort) {
+        when (sort.sort) {
             SubCategorySort.NAME -> R.string.sort_name
             SubCategorySort.CREATE -> R.string.sort_create_date
         }
 
     val selectedOrderRes =
-        when (selectedOrder) {
+        when (sort.sortOrder) {
             SortOrder.ASCENDING -> R.string.sort_Ascending
             SortOrder.DESCENDING -> R.string.sort_Descending
         }

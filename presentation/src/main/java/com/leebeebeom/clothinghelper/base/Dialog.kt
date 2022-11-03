@@ -15,7 +15,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.main.subcategory.BaseSubCategoryTextFieldDialogState
 
 @Composable
 fun DialogRoot(onDismissDialog: () -> Unit, content: @Composable ColumnScope.() -> Unit) {
@@ -43,14 +42,18 @@ fun DialogTitle(@StringRes text: Int) {
 }
 
 @Composable
-fun DialogTextField(state: BaseSubCategoryTextFieldDialogState) {
+fun DialogTextField(
+    textFieldStateHolder: MaxWidthTextFieldStateHolder,
+    error: Int?,
+    updateError: (String) -> Unit
+) {
     MaxWidthTextField(
-        stateHolder = state.textFiledStateHolder,
-        error = state.error,
+        stateHolder = textFieldStateHolder,
+        error = error,
         onValueChange = {
-            state.textFiledStateHolder.onValueChange(it) { _ -> state.updateError(it.text) }
+            textFieldStateHolder.onValueChange(it) { _ -> updateError(it.text) }
         },
-        onFocusChanged = state.textFiledStateHolder.onFocusChanged
+        onFocusChanged = textFieldStateHolder.onFocusChanged
     )
     SimpleHeightSpacer(dp = 12)
 }

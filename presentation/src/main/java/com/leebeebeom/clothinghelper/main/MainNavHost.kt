@@ -62,7 +62,8 @@ fun MainNavHost(stateHolder: MainNavHostStateHolder = rememberMainNavHostStateHo
             composable(MainDestinations.Setting.route) {
                 SettingScreen(
                     drawerCloseBackHandler = drawerCloseBackHandler,
-                    onSignOutButtonClick = stateHolder::navigateToSetting)
+                    onSignOutButtonClick = stateHolder::navigateToSetting
+                )
             }
         }
     }
@@ -87,13 +88,12 @@ data class MainNavHostStateHolder(val navController: NavHostController) {
 
     fun navigateToSetting() =
         navController.navigate(route = MainDestinations.Setting.route) {
-            popUpTo(route = MainDestinations.MainCategory.route)
             launchSingleTop = true
         }
 
     fun navigateToSubCategory(subCategoryParent: SubCategoryParent) =
-        navController.navigate("${MainDestinations.SubCategory.route}/${subCategoryParent.name}") {
-            popUpTo(route = MainDestinations.MainCategory.route)
+        navController.navigate("${MainDestinations.SubCategory.route}/${subCategoryParent.name}") { // TODO 중복 스택 막기
+            launchSingleTop = true
         }
 }
 

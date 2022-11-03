@@ -27,14 +27,14 @@ import com.leebeebeom.clothinghelper.base.Anime.CircleCheckBox.checkBoxIn
 import com.leebeebeom.clothinghelper.base.Anime.CircleCheckBox.checkBoxOut
 import com.leebeebeom.clothinghelper.base.Anime.SubCategoryCard.cardExpandIn
 import com.leebeebeom.clothinghelper.base.Anime.SubCategoryCard.cardShrinkOut
-import com.leebeebeom.clothinghelper.main.base.AllExpandState
+import com.leebeebeom.clothinghelper.main.base.AllExpandStateHolder
 import com.leebeebeom.clothinghelper.main.base.ExpandIcon
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SubCategoryCard(
-    subCategoryCardState: SubCategoryCardState,
+    state: SubCategoryCardState,
     onLongClick: () -> Unit,
     onClick: () -> Unit
 ) {
@@ -43,18 +43,18 @@ fun SubCategoryCard(
             modifier = Modifier
                 .clip(RoundedCornerShape(12.dp))
                 .combinedClickable(onClick = onClick, onLongClick = {
-                    subCategoryCardState.performHaptic()
+                    state.performHaptic()
                     onLongClick()
                 })
         ) {
-            val subCategoryCardTitleState by rememberSubCategoryCardTitleState(subCategoryCardState = subCategoryCardState)
+            val subCategoryCardTitleState by rememberSubCategoryCardTitleState(subCategoryCardState = state)
             SubCategoryCardTitle(
                 subCategoryCardTitleState,
-                onExpandIconClick = subCategoryCardState::isExpandToggle,
+                onExpandIconClick = state::isExpandToggle,
             )
 
             AnimatedVisibility(
-                visible = subCategoryCardState.isExpand,
+                visible = state.isExpand,
                 enter = cardExpandIn,
                 exit = cardShrinkOut
             ) { SubCategoryInfo() }
@@ -64,7 +64,7 @@ fun SubCategoryCard(
 
 @Composable
 private fun SubCategoryCardTitle(
-    subCategoryCardTitleState: SubCategoryCardTitleState,
+    state: SubCategoryCardTitleState,
     onExpandIconClick: () -> Unit,
 ) {
     Surface(elevation = 4.dp) {
@@ -78,19 +78,19 @@ private fun SubCategoryCardTitle(
             Row(
                 modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically
             ) {
-                CircleCheckBox(
-                    isSelectMode = subCategoryCardTitleState.isSelectMode,
-                    isChecked = subCategoryCardTitleState.isChecked
+                TitleCircleCheckBox(
+                    isSelectMode = state.isSelectMode,
+                    isChecked = state.isChecked
                 )
                 Title(
-                    isSelectMode = subCategoryCardTitleState.isSelectMode,
-                    name = subCategoryCardTitleState.title
+                    isSelectMode = state.isSelectMode,
+                    name = state.title
                 )
                 SimpleWidthSpacer(dp = 4)
-                TotalCount(isExpanded = subCategoryCardTitleState.isExpanded)
+                TotalCount(isExpanded = state.isExpanded)
             }
             ExpandIcon(
-                isExpanded = subCategoryCardTitleState.isExpanded,
+                isExpanded = state.isExpanded,
                 onExpandIconClick = onExpandIconClick,
                 modifier = Modifier.size(24.dp)
             )
@@ -151,7 +151,7 @@ private fun Title(isSelectMode: Boolean, name: String) {
 }
 
 @Composable
-private fun RowScope.CircleCheckBox(
+private fun RowScope.TitleCircleCheckBox(
     isSelectMode: Boolean, isChecked: Boolean
 ) {
     AnimatedVisibility(
@@ -218,7 +218,7 @@ data class SubCategoryCardState(
     val haptic: HapticFeedback,
     override val _isExpand: MutableState<Boolean>,
     override var rememberedIsAllExpand: Boolean
-) : AllExpandState() {
+) : AllExpandStateHolder() {
     init {
         init()
     }

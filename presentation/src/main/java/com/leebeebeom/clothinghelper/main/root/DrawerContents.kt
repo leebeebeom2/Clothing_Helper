@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
-import com.leebeebeom.clothinghelper.main.subcategory.AllExpandIcon
+import com.leebeebeom.clothinghelper.main.base.AllExpandIcon
 import com.leebeebeom.clothinghelper.theme.Disabled
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
@@ -30,35 +30,34 @@ import com.leebeebeom.clothinghelperdomain.model.User
 
 @Composable
 fun DrawerContents(
-    drawerContentsState: DrawerContentsState,
+    drawerContentsStateHolder: DrawerContentsStateHolder,
     onEssentialMenuClick: (essentialMenu: EssentialMenus) -> Unit,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (key: String) -> Unit,
     onSettingIconClick: () -> Unit,
     allExpandIconClick: () -> Unit
 ) = Column {
-    DrawerHeader(user = drawerContentsState.user, onSettingIconClick = onSettingIconClick)
+    DrawerHeader(user = drawerContentsStateHolder.user, onSettingIconClick = onSettingIconClick)
 
     Surface(color = Color(0xFF121212)) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(top = 8.dp, bottom = 40.dp)
         ) {
-            this.items(drawerContentsState.essentialMenus, key = { it.type.name }) {
+            this.items(drawerContentsStateHolder.essentialMenus, key = { it.type.name }) {
                 EssentialMenu(essentialMenu = it, onEssentialMenuClick = onEssentialMenuClick)
             }
 
             item {
                 IconWithDivider(
-                    isAllExpand = drawerContentsState.isAllExpand,
+                    isAllExpand = drawerContentsStateHolder.isAllExpand,
                     allExpandIconClick = allExpandIconClick
                 )
             }
 
-            items(drawerContentsState.mainCategories, key = { it.type.name }) {
+            items(drawerContentsStateHolder.mainCategories, key = { it.type.name }) {
                 val drawerMainCategoryState by rememberDrawerMainCategoryState(
-                    mainCategory = it,
-                    drawerContentsState = drawerContentsState
+                    mainCategory = it, drawerContentsStateHolder = drawerContentsStateHolder
                 )
                 DrawerMainCategory(
                     drawerMainCategoryState = drawerMainCategoryState,
@@ -102,10 +101,8 @@ private fun DrawerHeader(user: User?, onSettingIconClick: () -> Unit) {
 
 @Composable
 private fun EssentialMenu(
-    essentialMenu: EssentialMenu,
-    onEssentialMenuClick: (essentialMenu: EssentialMenus) -> Unit
-) = DrawerContentRow(
-    modifier = Modifier.heightIn(40.dp),
+    essentialMenu: EssentialMenu, onEssentialMenuClick: (essentialMenu: EssentialMenus) -> Unit
+) = DrawerContentRow(modifier = Modifier.heightIn(40.dp),
     onDrawerContentClick = { onEssentialMenuClick(essentialMenu.type) }) {
     SimpleIcon(modifier = Modifier.size(22.dp), drawable = essentialMenu.drawable)
     SimpleWidthSpacer(dp = 12)
@@ -117,9 +114,7 @@ private fun EssentialMenu(
 
 @Composable
 fun DrawerContentRow(
-    modifier: Modifier,
-    onDrawerContentClick: () -> Unit,
-    content: @Composable RowScope.() -> Unit
+    modifier: Modifier, onDrawerContentClick: () -> Unit, content: @Composable RowScope.() -> Unit
 ) = Row(
     modifier = modifier
         .fillMaxWidth()
@@ -142,7 +137,7 @@ fun RowScope.DrawerContentText(modifier: Modifier = Modifier, text: String, styl
     )
 }
 
-data class DrawerContentsState(
+data class DrawerContentsStateHolder(
     val user: User?,
     val isLoading: Boolean,
     val isAllExpand: Boolean,
@@ -153,14 +148,14 @@ data class DrawerContentsState(
 
 @Composable
 fun rememberDrawerContentsState(
-    mainRootUIState: MainRootUIState
+    uiState: MainRootUIState
 ) = remember {
     derivedStateOf {
-        DrawerContentsState(
-            user = mainRootUIState.user,
-            isLoading = mainRootUIState.isLoading,
-            isAllExpand = mainRootUIState.isAllExpand,
-            allSubCategories = mainRootUIState.allSubCategories
+        DrawerContentsStateHolder(
+            user = uiState.user,
+            isLoading = uiState.isLoading,
+            isAllExpand = uiState.isAllExpand,
+            allSubCategories = uiState.allSubCategories
         )
     }
 }
@@ -184,9 +179,7 @@ enum class EssentialMenus {
 }
 
 data class EssentialMenu(
-    val name: Int,
-    val drawable: Int,
-    val type: EssentialMenus
+    val name: Int, val drawable: Int, val type: EssentialMenus
 )
 
 data class MainCategory(val name: Int, val type: SubCategoryParent)

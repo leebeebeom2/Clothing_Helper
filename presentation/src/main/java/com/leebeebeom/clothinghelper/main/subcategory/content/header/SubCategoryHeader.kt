@@ -99,14 +99,12 @@ data class SubCategoryHeaderState(
 @Composable
 fun rememberSubCategoryHeaderState(
     subCategoryContentState: SubCategoryContentState
-) = remember {
-    derivedStateOf {
-        SubCategoryHeaderState(
-            headerText = getHeaderStringRes(subCategoryContentState.parent),
-            isAllExpand = subCategoryContentState.isAllExpand,
-            sort = subCategoryContentState.sort
-        )
-    }
+) = remember(subCategoryContentState) {
+    SubCategoryHeaderState(
+        headerText = getHeaderStringRes(subCategoryContentState.parent),
+        isAllExpand = subCategoryContentState.isAllExpand,
+        sort = subCategoryContentState.sort
+    )
 }
 
 fun getHeaderStringRes(parent: SubCategoryParent) =

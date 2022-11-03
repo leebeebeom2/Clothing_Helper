@@ -102,6 +102,7 @@ fun ShowKeyboard(focusRequester: FocusRequester) {
 }
 
 data class MaxWidthTextFieldStateHolder(
+    private val _textState: MutableState<String>,
     private val _textFieldState: MutableState<TextFieldValue>,
     @StringRes val label: Int,
     @StringRes val placeholder: Int,
@@ -110,7 +111,7 @@ data class MaxWidthTextFieldStateHolder(
     val focusManager: FocusManager,
     val focusRequester: FocusRequester
 ) {
-    val textState get() = _textFieldState.value.text
+    val textState get() = _textState.value
     val textFieldState get() = _textFieldState.value
 
     fun onKeyBoardActionDoneClick() {
@@ -119,18 +120,22 @@ data class MaxWidthTextFieldStateHolder(
 
     fun onValueChange(newText: TextFieldValue, updateError: (Int?) -> Unit) {
         if (textState != newText.text) updateError(null)
-        _textFieldState.value = newText
+        _textState.value = newText.text
+        _textFieldState.value = newText.copy(_textState.value)
     }
 
     fun onFocusChanged(focusState: FocusState) {
         if (focusState.hasFocus)
-            _textFieldState.value = _textFieldState.value.copy(selection = TextRange(textState.length))
+            _textFieldState.value =
+                _textFieldState.value.copy(selection = TextRange(textState.length))
     }
 }
 
 @Composable
 fun rememberMaxWidthTextFiledStateHolder(
-    textField: MutableState<TextFieldValue> = rememberSaveable { mutableStateOf(TextFieldValue("")) },
+    initialText: String = "",
+    textState: MutableState<String> = rememberSaveable { mutableStateOf(initialText) },
+    textFieldState: MutableState<TextFieldValue> = remember { mutableStateOf(TextFieldValue(text = textState.value)) },
     @StringRes label: Int,
     @StringRes placeholder: Int = R.string.empty,
     showKeyboardEnabled: Boolean = false,
@@ -141,7 +146,8 @@ fun rememberMaxWidthTextFiledStateHolder(
     focusRequester: FocusRequester = FocusRequester()
 ) = remember {
     MaxWidthTextFieldStateHolder(
-        _textFieldState = textField,
+        _textState = textState,
+        _textFieldState = textFieldState,
         label = label,
         placeholder = placeholder,
         showKeyboardEnabled = showKeyboardEnabled,
@@ -172,4 +178,14 @@ fun rememberPasswordTextFieldStateHolder(
         keyboardType = KeyboardType.Password,
         imeAction = imeAction
     )
+)
+
+@Composable
+fun rememberSubCategoryDialogTextFieldStateHolder(
+    initialCategoryName: String = ""
+) = rememberMaxWidthTextFiledStateHolder(
+    label = R.string.add_category,
+    placeholder = R.string.category_place_holder,
+    initialText = initialCategoryName,
+    showKeyboardEnabled = true,
 )

@@ -25,7 +25,7 @@ fun BoxScope.AddSubcategoryDialogFab(
     subCategoriesState: List<SubCategory>,
     subCategoryParent: SubCategoryParent
 ) {
-    val state by rememberAddCategoryDialogState(subCategoriesState = subCategoriesState)
+    val state = rememberAddCategoryDialogState(subCategoriesState = subCategoriesState)
 
     FloatingActionButton(
         modifier = Modifier

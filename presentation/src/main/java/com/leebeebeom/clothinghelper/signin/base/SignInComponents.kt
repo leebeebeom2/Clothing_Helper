@@ -40,7 +40,7 @@ fun VisibleIcon(isVisible: Boolean, onIconClick: () -> Unit) {
 
 @Composable
 fun GoogleSignInButton(
-    maxWidthButtonState: MaxWidthButtonState,
+    maxWidthButtonStateHolder: MaxWidthButtonStateHolder,
     signInWithGoogleEmail: (ActivityResult) -> Unit,
     enabled: Boolean,
     enabledOff: () -> Unit
@@ -53,7 +53,7 @@ fun GoogleSignInButton(
     val intent = GoogleSignIn.getClient(LocalContext.current, getGso()).signInIntent
 
     MaxWidthButton(
-        maxWidthButtonState = maxWidthButtonState,
+        maxWidthButtonStateHolder = maxWidthButtonStateHolder,
         icon = googleIcon,
         enabled = enabled,
         onClick = {
@@ -93,14 +93,14 @@ fun OrDivider() {
 
 @Composable
 fun PasswordTextField(
-    maxWidthTextFieldState: MaxWidthTextFieldState,
+    maxWidthTextFieldStateHolder: MaxWidthTextFieldStateHolder,
     error: Int?,
     onValueChange: (TextFieldValue) -> Unit
 ) {
     var isVisible by rememberSaveable { mutableStateOf(false) }
 
     MaxWidthTextField(
-        maxWidthTextFieldState = maxWidthTextFieldState,
+        maxWidthTextFieldStateHolder = maxWidthTextFieldStateHolder,
         error = error,
         onValueChange = onValueChange,
         trailingIcon = { VisibleIcon(isVisible) { isVisible = !isVisible } },

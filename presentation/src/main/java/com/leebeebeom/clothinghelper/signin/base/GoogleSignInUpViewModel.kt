@@ -62,6 +62,6 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
     }
 }
 
-abstract class GoogleSignInViewModelState : BaseSignInUIState() {
+abstract class GoogleSignInUIState : BaseSignInUIState() {
     abstract val googleButtonEnabled: Boolean
 }

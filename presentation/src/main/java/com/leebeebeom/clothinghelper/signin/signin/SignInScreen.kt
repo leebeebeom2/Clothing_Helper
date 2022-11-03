@@ -20,7 +20,7 @@ import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.*
-import com.leebeebeom.clothinghelper.signin.base.BaseState
+import com.leebeebeom.clothinghelper.signin.base.BaseStateHolder
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInButton
 import com.leebeebeom.clothinghelper.signin.base.OrDivider
 import com.leebeebeom.clothinghelper.signin.base.PasswordTextField
@@ -160,7 +160,7 @@ data class SignInStateHolder(
     val passwordStateHolder: MaxWidthTextFieldStateHolder,
     val singInButtonStateHolder: MaxWidthButtonStateHolder,
     val googleButtonStateHolder: MaxWidthButtonStateHolder
-) : BaseState() {
+) : BaseStateHolder() {
     override val isTextNotBlank
         get() = emailStateHolder.textState.trim().isNotBlank() && passwordStateHolder.textState.trim().isNotBlank()
 }

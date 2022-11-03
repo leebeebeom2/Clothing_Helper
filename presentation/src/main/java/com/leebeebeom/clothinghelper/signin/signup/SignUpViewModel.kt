@@ -5,7 +5,7 @@ import androidx.annotation.StringRes
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
-import com.leebeebeom.clothinghelper.signin.base.GoogleSignInViewModelState
+import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUIState
 import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.usecase.signin.GoogleSignInUseCase
@@ -76,6 +76,6 @@ data class SignUpUIState(
     @StringRes val passwordConfirmError: Int? = null,
     override val toastText: Int? = null,
     override val googleButtonEnabled: Boolean = false
-) : GoogleSignInViewModelState() {
+) : GoogleSignInUIState() {
     override val isNotError get() = emailError != null && passwordError != null && passwordConfirmError != null
 }

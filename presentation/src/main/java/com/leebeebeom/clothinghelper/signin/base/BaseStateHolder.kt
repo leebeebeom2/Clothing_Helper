@@ -1,5 +1,5 @@
 package com.leebeebeom.clothinghelper.signin.base
 
-abstract class BaseState {
+abstract class BaseStateHolder {
     abstract val isTextNotBlank: Boolean
 }

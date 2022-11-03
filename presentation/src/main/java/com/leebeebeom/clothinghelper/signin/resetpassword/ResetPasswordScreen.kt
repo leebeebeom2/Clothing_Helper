@@ -19,7 +19,7 @@ import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.*
-import com.leebeebeom.clothinghelper.signin.base.BaseState
+import com.leebeebeom.clothinghelper.signin.base.BaseStateHolder
 
 /*
 이메일 필드가 비어있거나 에러 메세지 표시 중일 경우 확인 버튼 비활성화
@@ -78,7 +78,7 @@ fun ResetPasswordScreen(
 data class ResetPasswordStateHolder(
     val emailStateHolder: MaxWidthTextFieldStateHolder,
     val submitButtonStateHolder: MaxWidthButtonStateHolder
-) : BaseState() {
+) : BaseStateHolder() {
     override val isTextNotBlank: Boolean
         get() = emailStateHolder.textState.trim().isNotBlank()
 }

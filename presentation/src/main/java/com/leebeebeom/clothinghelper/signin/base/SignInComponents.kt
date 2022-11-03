@@ -100,7 +100,7 @@ fun PasswordTextField(
     var isVisible by rememberSaveable { mutableStateOf(false) }
 
     MaxWidthTextField(
-        maxWidthTextFieldStateHolder = maxWidthTextFieldStateHolder,
+        stateHolder = maxWidthTextFieldStateHolder,
         error = error,
         onValueChange = onValueChange,
         trailingIcon = { VisibleIcon(isVisible) { isVisible = !isVisible } },

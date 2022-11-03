@@ -57,7 +57,7 @@ fun SignUpScreen(
 
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
         MaxWidthTextField(
-            maxWidthTextFieldStateHolder = stateHolder.emailStateHolder,
+            stateHolder = stateHolder.emailStateHolder,
             error = uiState.emailError,
             onValueChange = {
                 stateHolder.emailStateHolder.onValueChange(it, viewModel::updateEmailError)
@@ -65,7 +65,7 @@ fun SignUpScreen(
         )
 
         MaxWidthTextField(
-            maxWidthTextFieldStateHolder = stateHolder.nameStateHolder,
+            stateHolder = stateHolder.nameStateHolder,
             onValueChange = { stateHolder.nameStateHolder.onValueChange(it) {} },
         )
 

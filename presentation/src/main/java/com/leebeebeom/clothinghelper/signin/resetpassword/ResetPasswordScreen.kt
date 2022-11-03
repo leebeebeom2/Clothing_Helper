@@ -56,7 +56,7 @@ fun ResetPasswordScreen(
         )
 
         MaxWidthTextField(
-            maxWidthTextFieldStateHolder = stateHolder.emailStateHolder,
+            stateHolder = stateHolder.emailStateHolder,
             error = uiState.emailError,
             onValueChange = {
                 stateHolder.emailStateHolder.onValueChange(it, viewModel::updateEmailError)

@@ -75,30 +75,30 @@ fun SignInScreen(
             .verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.Center
     ) {
         MaxWidthTextField(
-            maxWidthTextFieldStateHolder = signInStateHolder.email,
+            maxWidthTextFieldStateHolder = signInStateHolder.emailStateHolder,
             error = uiState.emailError,
             onValueChange = {
-                signInStateHolder.email.onValueChange(it, viewModel::updateEmailError)
+                signInStateHolder.emailStateHolder.onValueChange(it, viewModel::updateEmailError)
             }
         )
 
         PasswordTextField(
-            maxWidthTextFieldStateHolder = signInStateHolder.password,
+            maxWidthTextFieldStateHolder = signInStateHolder.passwordStateHolder,
             error = uiState.passwordError,
             onValueChange = {
-                signInStateHolder.password.onValueChange(it, viewModel::updatePasswordError)
+                signInStateHolder.passwordStateHolder.onValueChange(it, viewModel::updatePasswordError)
             }
         )
 
         ForgotPasswordText(onForgotPasswordClick = onForgotPasswordClick)
 
         MaxWidthButton(
-            maxWidthButtonStateHolder = signInStateHolder.singInButton,
+            maxWidthButtonStateHolder = signInStateHolder.singInButtonStateHolder,
             enabled = signInStateHolder.isTextNotBlank && uiState.isNotError,
             onClick = {
                 viewModel.signInWithEmailAndPassword(
-                    signInStateHolder.email.textState.trim(),
-                    signInStateHolder.password.textState.trim()
+                    signInStateHolder.emailStateHolder.textState.trim(),
+                    signInStateHolder.passwordStateHolder.textState.trim()
                 )
             }
         )
@@ -107,7 +107,7 @@ fun SignInScreen(
         SimpleHeightSpacer(dp = 8)
         // 프리뷰 시 주석 처리
         GoogleSignInButton(
-            maxWidthButtonStateHolder = signInStateHolder.googleButton,
+            maxWidthButtonStateHolder = signInStateHolder.googleButtonStateHolder,
             signInWithGoogleEmail = viewModel::signInWithGoogleEmail,
             enabled = uiState.googleButtonEnabled,
             enabledOff = { viewModel.updateGoogleButtonEnabled(enabled = false) }
@@ -156,13 +156,13 @@ private fun ForgotPasswordText(onForgotPasswordClick: () -> Unit) {
 }
 
 data class SignInStateHolder(
-    val email: MaxWidthTextFieldStateHolder,
-    val password: MaxWidthTextFieldStateHolder,
-    val singInButton: MaxWidthButtonStateHolder,
-    val googleButton: MaxWidthButtonStateHolder
+    val emailStateHolder: MaxWidthTextFieldStateHolder,
+    val passwordStateHolder: MaxWidthTextFieldStateHolder,
+    val singInButtonStateHolder: MaxWidthButtonStateHolder,
+    val googleButtonStateHolder: MaxWidthButtonStateHolder
 ) : BaseState() {
     override val isTextNotBlank
-        get() = email.textState.trim().isNotBlank() && password.textState.trim().isNotBlank()
+        get() = emailStateHolder.textState.trim().isNotBlank() && passwordStateHolder.textState.trim().isNotBlank()
 }
 
 @Composable
@@ -173,9 +173,9 @@ fun rememberSignInStateHolder(
     googleButtonState: MaxWidthButtonStateHolder = rememberGoogleButtonStateHolder()
 ) = remember {
     SignInStateHolder(
-        email = email,
-        password = password,
-        singInButton = signInButtonState,
-        googleButton = googleButtonState
+        emailStateHolder = email,
+        passwordStateHolder = password,
+        singInButtonStateHolder = signInButtonState,
+        googleButtonStateHolder = googleButtonState
     )
 }

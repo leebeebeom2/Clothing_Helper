@@ -57,10 +57,10 @@ fun MainCategoryScreen(
             else Modifier.heightIn(160.dp)
 
         val mainCategories = remember { getMainCategories() }
-        for (mainCategory in mainCategories){
-            val mainCategoryCardState by rememberMainCategoryCardState(
+        for (mainCategory in mainCategories) {
+            val mainCategoryCardState = rememberMainCategoryCardState(
                 mainCategory = mainCategory,
-                mainCategoryUIState = uiState
+                uiState = uiState
             )
             key(mainCategory.type.name) {
                 MainCategoryCard(
@@ -136,13 +136,11 @@ data class MainCategoryCardState(
 @Composable
 fun rememberMainCategoryCardState(
     mainCategory: MainCategory,
-    mainCategoryUIState: MainCategoryUIState
-) = remember {
-    derivedStateOf {
-        MainCategoryCardState(
-            mainCategory = mainCategory,
-            subCategoriesSize = mainCategoryUIState.allSubCategories[mainCategory.type.ordinal].size,
-            isLoading = mainCategoryUIState.isLoading
-        )
-    }
+    uiState: MainCategoryUIState
+) = remember(uiState) {
+    MainCategoryCardState(
+        mainCategory = mainCategory,
+        subCategoriesSize = uiState.allSubCategories[mainCategory.type.ordinal].size,
+        isLoading = uiState.isLoading
+    )
 }

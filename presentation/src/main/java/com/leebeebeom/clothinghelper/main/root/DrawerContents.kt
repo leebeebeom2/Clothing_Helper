@@ -60,7 +60,7 @@ fun DrawerContents(
                     mainCategory = it, drawerContentsState = drawerContentsState
                 )
                 DrawerMainCategory(
-                    stateHolder = drawerMainCategoryState,
+                    state = drawerMainCategoryState,
                     onMainCategoryClick = onMainCategoryClick,
                     onSubCategoryClick = onSubCategoryClick
                 )

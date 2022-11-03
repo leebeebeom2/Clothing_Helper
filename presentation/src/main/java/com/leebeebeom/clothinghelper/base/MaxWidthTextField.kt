@@ -129,7 +129,7 @@ data class MaxWidthTextFieldStateHolder(
 }
 
 @Composable
-fun rememberMaxWidthTextFiledState(
+fun rememberMaxWidthTextFiledStateHolder(
     textField: MutableState<TextFieldValue> = rememberSaveable { mutableStateOf(TextFieldValue("")) },
     @StringRes label: Int,
     @StringRes placeholder: Int = R.string.empty,
@@ -152,10 +152,10 @@ fun rememberMaxWidthTextFiledState(
 }
 
 @Composable
-fun rememberEmailTextFieldState(
+fun rememberEmailTextFieldStateHolder(
     showKeyboardEnabled: Boolean = false,
     imeAction: ImeAction = ImeAction.Done,
-) = rememberMaxWidthTextFiledState(
+) = rememberMaxWidthTextFiledStateHolder(
     label = R.string.email,
     placeholder = R.string.email_place_holder,
     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = imeAction),
@@ -163,10 +163,10 @@ fun rememberEmailTextFieldState(
 )
 
 @Composable
-fun rememberPasswordTextFieldState(
+fun rememberPasswordTextFieldStateHolder(
     @StringRes label: Int = R.string.password,
     imeAction: ImeAction = ImeAction.Done
-) = rememberMaxWidthTextFiledState(
+) = rememberMaxWidthTextFiledStateHolder(
     label = label,
     keyboardOptions = KeyboardOptions(
         keyboardType = KeyboardType.Password,

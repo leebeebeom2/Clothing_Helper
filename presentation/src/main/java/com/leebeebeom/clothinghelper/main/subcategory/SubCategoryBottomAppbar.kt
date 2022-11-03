@@ -24,19 +24,19 @@ import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
 
 @Composable
 fun SubCategoryBottomAppBar(
-    subCategoryBottomAppbarState: SubCategoryBottomAppbarState,
+    stateHolder: SubCategoryBottomAppbarStateHolder,
     onAllSelectCheckBoxClick: () -> Unit,
     onEditSubCategoryNameClick: () -> Unit
 ) {
     AnimatedVisibility(
-        visible = subCategoryBottomAppbarState.isSelectMode,
+        visible = stateHolder.isSelectModeState,
         enter = bottomAppbarExpandIn,
         exit = bottomAppbarShrinkOut
     ) {
         BottomAppBar {
             SimpleWidthSpacer(dp = 4)
             CircleCheckBox(
-                isChecked = subCategoryBottomAppbarState.isAllSelected,
+                isChecked = stateHolder.isAllSelected,
                 modifier = Modifier.size(22.dp),
                 onClick = onAllSelectCheckBoxClick
             )
@@ -44,19 +44,19 @@ fun SubCategoryBottomAppBar(
             Text(
                 text = stringResource(
                     id = R.string.count_selected,
-                    formatArgs = arrayOf(subCategoryBottomAppbarState.selectedSubCategoriesSize)
+                    formatArgs = arrayOf(stateHolder.selectedSubCategoriesSizeState)
                 ), modifier = Modifier.offset((-8).dp, 1.dp)
             )
             Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.End) {
 
-                if (subCategoryBottomAppbarState.showEditName)
+                if (stateHolder.showEditName)
                     BottomAppBarIcon(
                         onClick = onEditSubCategoryNameClick,
                         drawable = R.drawable.ic_edit,
                         text = R.string.change_name
                     )
 
-                if (subCategoryBottomAppbarState.showDeleted)
+                if (stateHolder.showDeleted)
                     BottomAppBarIcon(
                         onClick = { /*TODO*/ },
                         drawable = R.drawable.ic_delete2,
@@ -84,26 +84,26 @@ fun BottomAppBarIcon(
     }
 }
 
-data class SubCategoryBottomAppbarState(
-    val isSelectMode: Boolean,
-    val selectedSubCategoriesSize: Int,
-    val subCategoriesSize: Int,
+data class SubCategoryBottomAppbarStateHolder(
+    val isSelectModeState: Boolean,
+    val selectedSubCategoriesSizeState: Int,
+    val subCategoriesSizeState: Int,
 ) {
-    val isAllSelected get() = selectedSubCategoriesSize == subCategoriesSize
-    val showEditName get() = selectedSubCategoriesSize == 1
-    val showDeleted get() = selectedSubCategoriesSize > 0
+    val isAllSelected get() = selectedSubCategoriesSizeState == subCategoriesSizeState
+    val showEditName get() = selectedSubCategoriesSizeState == 1
+    val showDeleted get() = selectedSubCategoriesSizeState > 0
 }
 
 @Composable
-fun rememberSubCategoryBottomAppbarState(
-    subCategoryScreenState: SubCategoryScreenState,
-    subCategoriesSize: Int
-) = remember {
+fun rememberSubCategoryBottomAppbarStateHolder(
+    subCategoryStateHolder: SubCategoryStateHolder,
+    subCategoriesSizeState: Int
+) = remember(key1 = subCategoryStateHolder) {
     derivedStateOf {
-        SubCategoryBottomAppbarState(
-            isSelectMode = subCategoryScreenState.isSelectMode,
-            selectedSubCategoriesSize = subCategoryScreenState.selectedSubCategoriesSize,
-            subCategoriesSize = subCategoriesSize
+        SubCategoryBottomAppbarStateHolder(
+            isSelectModeState = subCategoryStateHolder.isSelectModeState,
+            selectedSubCategoriesSizeState = subCategoryStateHolder.selectedSubCategoriesSizeState,
+            subCategoriesSizeState = subCategoriesSizeState
         )
     }
 }

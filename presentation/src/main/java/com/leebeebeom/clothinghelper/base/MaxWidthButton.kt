@@ -18,7 +18,7 @@ import com.leebeebeom.clothinghelper.R
 
 @Composable
 fun MaxWidthButton(
-    maxWidthButtonState: MaxWidthButtonState,
+    maxWidthButtonStateHolder: MaxWidthButtonStateHolder,
     enabled: Boolean,
     icon: @Composable (() -> Unit)? = null,
     onClick: () -> Unit
@@ -31,14 +31,14 @@ fun MaxWidthButton(
             .heightIn(52.dp), onClick = {
             focusManager.clearFocus()
             onClick()
-        }, colors = maxWidthButtonState.colors, enabled = enabled
+        }, colors = maxWidthButtonStateHolder.colors, enabled = enabled
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
             icon?.invoke()
             Text(
-                text = stringResource(id = maxWidthButtonState.text),
+                text = stringResource(id = maxWidthButtonStateHolder.text),
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f),
                 style = MaterialTheme.typography.body2,
@@ -48,7 +48,7 @@ fun MaxWidthButton(
     }
 }
 
-data class MaxWidthButtonState(
+data class MaxWidthButtonStateHolder(
     @StringRes val text: Int,
     val colors: ButtonColors
 )
@@ -57,10 +57,10 @@ data class MaxWidthButtonState(
 fun rememberMaxWidthButtonStateHolder(
     @StringRes text: Int,
     colors: ButtonColors = ButtonDefaults.buttonColors()
-) = remember(text, colors) { MaxWidthButtonState(text, colors) }
+) = remember(text, colors) { MaxWidthButtonStateHolder(text, colors) }
 
 @Composable
-fun rememberGoogleButtonState() = rememberMaxWidthButtonStateHolder(
+fun rememberGoogleButtonStateHolder() = rememberMaxWidthButtonStateHolder(
     text = R.string.starts_with_google_email,
     colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface)
 )

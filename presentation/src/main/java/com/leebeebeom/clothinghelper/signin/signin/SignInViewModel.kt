@@ -52,7 +52,7 @@ class SignInViewModel @Inject constructor(
 
 data class SignInUIState(
     override val toastText: Int? = null,
-    override val googleButtonEnabled: Boolean = false,
+    override val googleButtonEnabled: Boolean = true,
     @StringRes val emailError: Int? = null,
     @StringRes val passwordError: Int? = null
 ) : GoogleSignInUIState() {

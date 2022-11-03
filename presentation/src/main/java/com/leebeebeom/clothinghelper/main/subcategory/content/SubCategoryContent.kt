@@ -9,7 +9,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryStateHolder
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryUIState
 import com.leebeebeom.clothinghelper.main.subcategory.content.header.SubCategoryHeader
@@ -66,7 +65,7 @@ fun SubCategoryContent(
             }
         }
 
-        AddCategoryDialogFab(
+        AddSubcategoryDialogFab(
             onPositiveButtonClick = onAddCategoryPositiveButtonClick,
             subCategoriesState = state.subCategoriesState,
             subCategoryParent = state.parent

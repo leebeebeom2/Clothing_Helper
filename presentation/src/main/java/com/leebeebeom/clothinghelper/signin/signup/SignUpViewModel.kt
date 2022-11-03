@@ -50,7 +50,6 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-
     override fun updateGoogleButtonEnabled(enabled: Boolean) =
         _uiState.update { it.copy(googleButtonEnabled = enabled) }
 

@@ -24,7 +24,7 @@ import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
 
 @Composable
 fun SubCategoryBottomAppBar(
-    stateHolder: SubCategoryBottomAppbarStateHolder,
+    stateHolder: SubCategoryBottomAppbarState,
     onAllSelectCheckBoxClick: () -> Unit,
     onEditSubCategoryNameClick: () -> Unit
 ) {
@@ -84,7 +84,7 @@ fun BottomAppBarIcon(
     }
 }
 
-data class SubCategoryBottomAppbarStateHolder(
+data class SubCategoryBottomAppbarState(
     val isSelectModeState: Boolean,
     val selectedSubCategoriesSizeState: Int,
     val subCategoriesSizeState: Int,
@@ -95,12 +95,12 @@ data class SubCategoryBottomAppbarStateHolder(
 }
 
 @Composable
-fun rememberSubCategoryBottomAppbarStateHolder(
+fun rememberSubCategoryBottomAppbarState(
     subCategoryStateHolder: SubCategoryStateHolder,
     subCategoriesSizeState: Int
 ) = remember(key1 = subCategoryStateHolder) {
     derivedStateOf {
-        SubCategoryBottomAppbarStateHolder(
+        SubCategoryBottomAppbarState(
             isSelectModeState = subCategoryStateHolder.isSelectModeState,
             selectedSubCategoriesSizeState = subCategoryStateHolder.selectedSubCategoriesSizeState,
             subCategoriesSizeState = subCategoriesSizeState

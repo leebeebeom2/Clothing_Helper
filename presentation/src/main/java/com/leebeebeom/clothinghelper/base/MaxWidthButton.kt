@@ -57,9 +57,10 @@ data class MaxWidthButtonState(
 fun rememberMaxWidthButtonStateHolder(
     @StringRes text: Int,
     colors: ButtonColors = ButtonDefaults.buttonColors()
-) = remember { MaxWidthButtonState(text, colors) }
+) = remember(text, colors) { MaxWidthButtonState(text, colors) }
 
 @Composable
 fun rememberGoogleButtonState() = rememberMaxWidthButtonStateHolder(
     text = R.string.starts_with_google_email,
-    colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface))
+    colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface)
+)

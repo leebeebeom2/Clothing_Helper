@@ -56,11 +56,11 @@ fun DrawerContents(
             }
 
             items(drawerContentsStateHolder.mainCategories, key = { it.type.name }) {
-                val drawerMainCategoryState by rememberDrawerMainCategoryState(
+                val drawerMainCategoryStateHolder by rememberDrawerMainCategoryStateHolder(
                     mainCategory = it, drawerContentsStateHolder = drawerContentsStateHolder
                 )
                 DrawerMainCategory(
-                    drawerMainCategoryState = drawerMainCategoryState,
+                    stateHolder = drawerMainCategoryStateHolder,
                     onMainCategoryClick = onMainCategoryClick,
                     onSubCategoryClick = onSubCategoryClick
                 )

@@ -30,37 +30,37 @@ import com.leebeebeom.clothinghelperdomain.model.User
 
 @Composable
 fun DrawerContents(
-    drawerContentsStateHolder: DrawerContentsStateHolder,
+    drawerContentsState: DrawerContentsState,
     onEssentialMenuClick: (essentialMenu: EssentialMenus) -> Unit,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (key: String) -> Unit,
     onSettingIconClick: () -> Unit,
     allExpandIconClick: () -> Unit
 ) = Column {
-    DrawerHeader(user = drawerContentsStateHolder.user, onSettingIconClick = onSettingIconClick)
+    DrawerHeader(user = drawerContentsState.user, onSettingIconClick = onSettingIconClick)
 
     Surface(color = Color(0xFF121212)) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(top = 8.dp, bottom = 40.dp)
         ) {
-            this.items(drawerContentsStateHolder.essentialMenus, key = { it.type.name }) {
+            this.items(drawerContentsState.essentialMenus, key = { it.type.name }) {
                 EssentialMenu(essentialMenu = it, onEssentialMenuClick = onEssentialMenuClick)
             }
 
             item {
                 IconWithDivider(
-                    isAllExpand = drawerContentsStateHolder.isAllExpand,
+                    isAllExpand = drawerContentsState.isAllExpand,
                     allExpandIconClick = allExpandIconClick
                 )
             }
 
-            items(drawerContentsStateHolder.mainCategories, key = { it.type.name }) {
-                val drawerMainCategoryStateHolder by rememberDrawerMainCategoryStateHolder(
-                    mainCategory = it, drawerContentsStateHolder = drawerContentsStateHolder
+            items(drawerContentsState.mainCategories, key = { it.type.name }) {
+                val drawerMainCategoryState by rememberDrawerMainCategoryState(
+                    mainCategory = it, drawerContentsState = drawerContentsState
                 )
                 DrawerMainCategory(
-                    stateHolder = drawerMainCategoryStateHolder,
+                    stateHolder = drawerMainCategoryState,
                     onMainCategoryClick = onMainCategoryClick,
                     onSubCategoryClick = onSubCategoryClick
                 )
@@ -137,7 +137,7 @@ fun RowScope.DrawerContentText(modifier: Modifier = Modifier, text: String, styl
     )
 }
 
-data class DrawerContentsStateHolder(
+data class DrawerContentsState(
     val user: User?,
     val isLoading: Boolean,
     val isAllExpand: Boolean,
@@ -151,7 +151,7 @@ fun rememberDrawerContentsState(
     uiState: MainRootUIState
 ) = remember {
     derivedStateOf {
-        DrawerContentsStateHolder(
+        DrawerContentsState(
             user = uiState.user,
             isLoading = uiState.isLoading,
             isAllExpand = uiState.isAllExpand,

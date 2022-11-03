@@ -37,12 +37,12 @@ fun DrawerMainCategory(
             )
             DrawerMainCategoryExpandIcon(
                 isLoading = state.isLoading,
-                isExpand = state.isExpand,
+                isExpand = state.isExpandState,
                 onExpandIconClick = state::isExpandToggle
             )
         }
         SubCategories(
-            isExpand = state.isExpand,
+            isExpand = state.isExpandState,
             subCategories = state.subCategories,
             onSubCategoryClick = onSubCategoryClick
         )
@@ -54,31 +54,29 @@ data class DrawerMainCategoryState(
     val subCategories: List<SubCategory>,
     val isLoading: Boolean,
     override val isAllExpand: Boolean,
-    override val _isExpand: MutableState<Boolean>,
-    override var rememberedIsAllExpand: Boolean
-) : AllExpandStateHolder() {
-    init {
-        init()
-    }
-}
+    override val _isExpandState: MutableState<Boolean>,
+) : AllExpandStateHolder()
 
 @Composable
 fun rememberDrawerMainCategoryState(
     mainCategory: MainCategory,
     drawerContentsState: DrawerContentsState,
     isExpandState: MutableState<Boolean> = rememberSaveable { mutableStateOf(drawerContentsState.isAllExpand) },
-    rememberedIsAllExpand: Boolean = rememberSaveable { drawerContentsState.isAllExpand }
-) = remember {
-    derivedStateOf {
-        DrawerMainCategoryState(
-            mainCategory = mainCategory,
-            subCategories = drawerContentsState.allSubCategories[mainCategory.type.ordinal],
-            isLoading = drawerContentsState.isLoading,
-            isAllExpand = drawerContentsState.isAllExpand,
-            _isExpand = isExpandState,
-            rememberedIsAllExpand = rememberedIsAllExpand
-        )
+    rememberedIsAllExpandState: MutableState<Boolean> = rememberSaveable { mutableStateOf(drawerContentsState.isAllExpand) }
+) = remember(drawerContentsState) {
+
+    if (drawerContentsState.isAllExpand != rememberedIsAllExpandState.value) { // isAllExpandChange
+        isExpandState.value = drawerContentsState.isAllExpand
+        rememberedIsAllExpandState.value = drawerContentsState.isAllExpand
     }
+
+    DrawerMainCategoryState(
+        mainCategory = mainCategory,
+        subCategories = drawerContentsState.allSubCategories[mainCategory.type.ordinal],
+        isLoading = drawerContentsState.isLoading,
+        isAllExpand = drawerContentsState.isAllExpand,
+        _isExpandState = isExpandState,
+    )
 }
 
 @Composable

@@ -5,7 +5,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -43,7 +42,7 @@ fun SubCategoryContent(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             item {
-                val subCategoryHeaderState by rememberSubCategoryHeaderState(subCategoryContentState = state)
+                val subCategoryHeaderState = rememberSubCategoryHeaderState(subCategoryContentState = state)
                 SubCategoryHeader(
                     state = subCategoryHeaderState,
                     allExpandIconClick = allExpandIconClick,
@@ -53,9 +52,9 @@ fun SubCategoryContent(
             }
             items(items = state.subCategoriesState,
                 key = { subCategory -> subCategory.key }) {
-                val subCategoryCardState by rememberSubCategoryCardState(
+                val subCategoryCardState = rememberSubCategoryCardState(
                     subCategory = it,
-                    subCategoryContentState = state,
+                    state = state,
                 )
                 SubCategoryCard(
                     state = subCategoryCardState,
@@ -88,7 +87,7 @@ fun rememberSubCategoryContentState(
     uiState: SubCategoryUIState,
     subCategoriesState: List<SubCategory>,
     SubCategoryStateHolder: SubCategoryStateHolder
-) = remember(SubCategoryStateHolder) {
+) = remember(key1 = uiState) {
     derivedStateOf {
         SubCategoryContentState(
             parent = parent,

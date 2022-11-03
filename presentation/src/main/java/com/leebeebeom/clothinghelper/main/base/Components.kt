@@ -43,7 +43,7 @@ fun AllExpandIcon(
     )
 }
 
-abstract class AllExpandState {
+abstract class AllExpandStateHolder {
     abstract val isAllExpand: Boolean
     protected abstract val _isExpand: MutableState<Boolean>
     protected abstract var rememberedIsAllExpand: Boolean

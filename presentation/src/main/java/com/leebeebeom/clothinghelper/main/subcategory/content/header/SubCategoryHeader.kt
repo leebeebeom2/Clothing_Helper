@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.subcategory.header
+package com.leebeebeom.clothinghelper.main.subcategory.content.header
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*

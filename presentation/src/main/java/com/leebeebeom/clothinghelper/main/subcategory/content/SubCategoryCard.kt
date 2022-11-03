@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +39,14 @@ fun SubCategoryCard(
     onLongClick: () -> Unit,
     onClick: () -> Unit
 ) {
+    var rememberedIsAllExpandState by rememberSaveable { mutableStateOf(state.isAllExpand) }
+    var isExpanded by rememberSaveable { mutableStateOf(state.isAllExpand) }
+    if (rememberedIsAllExpandState != state.isAllExpand) {
+        isExpanded = state.isAllExpand
+        rememberedIsAllExpandState = state.isAllExpand
+    }
+
+
     Card(elevation = 2.dp, shape = RoundedCornerShape(12.dp)) {
         Column(
             modifier = Modifier
@@ -47,14 +56,16 @@ fun SubCategoryCard(
                     onLongClick()
                 })
         ) {
-            val subCategoryCardTitleState by rememberSubCategoryCardTitleState(subCategoryCardState = state)
+            val subCategoryCardTitleState =
+                rememberSubCategoryCardTitleState(subCategoryCardState = state)
             SubCategoryCardTitle(
                 subCategoryCardTitleState,
-                onExpandIconClick = state::isExpandToggle,
+                isExpanded = isExpanded,
+                onExpandIconClick = { isExpanded = !isExpanded },
             )
 
             AnimatedVisibility(
-                visible = state.isExpandState,
+                visible = isExpanded,
                 enter = cardExpandIn,
                 exit = cardShrinkOut
             ) { SubCategoryInfo() }
@@ -65,6 +76,7 @@ fun SubCategoryCard(
 @Composable
 private fun SubCategoryCardTitle(
     state: SubCategoryCardTitleState,
+    isExpanded: Boolean,
     onExpandIconClick: () -> Unit,
 ) {
     Surface(elevation = 4.dp) {
@@ -87,10 +99,10 @@ private fun SubCategoryCardTitle(
                     name = state.title
                 )
                 SimpleWidthSpacer(dp = 4)
-                TotalCount(isExpanded = state.isExpanded)
+                TotalCount(isExpanded = isExpanded)
             }
             ExpandIcon(
-                isExpanded = state.isExpanded,
+                isExpanded = isExpanded,
                 onExpandIconClick = onExpandIconClick,
                 modifier = Modifier.size(24.dp)
             )
@@ -99,21 +111,18 @@ private fun SubCategoryCardTitle(
 }
 
 data class SubCategoryCardTitleState(
-    val title: String, val isExpanded: Boolean, val isSelectMode: Boolean, val isChecked: Boolean
+    val title: String, val isSelectMode: Boolean, val isChecked: Boolean
 )
 
 @Composable
 fun rememberSubCategoryCardTitleState(
     subCategoryCardState: SubCategoryCardState
-) = remember {
-    derivedStateOf {
-        SubCategoryCardTitleState(
-            title = subCategoryCardState.subCategory.name,
-            isExpanded = subCategoryCardState.isExpandState,
-            isSelectMode = subCategoryCardState.isSelectMode,
-            isChecked = subCategoryCardState.isChecked
-        )
-    }
+) = remember(key1 = subCategoryCardState) {
+    SubCategoryCardTitleState(
+        title = subCategoryCardState.subCategory.name,
+        isSelectMode = subCategoryCardState.isSelectMode,
+        isChecked = subCategoryCardState.isChecked
+    )
 }
 
 @Composable
@@ -216,7 +225,7 @@ data class SubCategoryCardState(
     override val isAllExpand: Boolean,
     val isChecked: Boolean,
     val haptic: HapticFeedback,
-    override val _isExpandState: MutableState<Boolean>
+    override val _isExpandState: MutableState<Boolean> = mutableStateOf(value = false) // 미사용
 ) : AllExpandStateHolder() {
     fun performHaptic() = haptic.performHapticFeedback(HapticFeedbackType.LongPress)
 }
@@ -224,25 +233,14 @@ data class SubCategoryCardState(
 @Composable
 fun rememberSubCategoryCardState(
     subCategory: SubCategory,
-    subCategoryContentState: SubCategoryContentState,
-    haptic: HapticFeedback = LocalHapticFeedback.current,
-    isExpandState: MutableState<Boolean> = remember { mutableStateOf(subCategoryContentState.isAllExpand) },
-    rememberedIsAllExpandState: MutableState<Boolean> = remember { mutableStateOf(subCategoryContentState.isAllExpand) }
-) = remember {
-
-    if (subCategoryContentState.isAllExpand != rememberedIsAllExpandState.value) { // isAllExpandChange
-        isExpandState.value = subCategoryContentState.isAllExpand
-        rememberedIsAllExpandState.value = subCategoryContentState.isAllExpand
-    }
-
-    derivedStateOf {
-        SubCategoryCardState(
-            subCategory = subCategory,
-            isSelectMode = subCategoryContentState.isSelectMode,
-            isAllExpand = subCategoryContentState.isAllExpand,
-            isChecked = subCategoryContentState.selectedSubCategories.contains(subCategory),
-            haptic = haptic,
-            _isExpandState = isExpandState
-        )
-    }
+    state: SubCategoryContentState,
+    haptic: HapticFeedback = LocalHapticFeedback.current
+) = remember(state) {
+    SubCategoryCardState(
+        subCategory = subCategory,
+        isSelectMode = state.isSelectMode,
+        isAllExpand = state.isAllExpand,
+        isChecked = state.selectedSubCategories.contains(subCategory),
+        haptic = haptic
+    )
 }

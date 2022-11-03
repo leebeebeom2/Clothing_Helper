@@ -39,7 +39,7 @@ import com.leebeebeom.clothinghelper.signin.base.BaseState
 @Composable
 fun ResetPasswordScreen(
     viewModel: ResetPasswordViewModel = hiltViewModel(),
-    resetPasswordScreenState: ResetPasswordScreenState = rememberResetPasswordScreenState()
+    resetPasswordStateHolder: ResetPasswordStateHolder = rememberResetPasswordStateHolder()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -56,18 +56,18 @@ fun ResetPasswordScreen(
         )
 
         MaxWidthTextField(
-            maxWidthTextFieldState = resetPasswordScreenState.email,
+            maxWidthTextFieldStateHolder = resetPasswordStateHolder.emailStateHolder,
             error = uiState.emailError,
             onValueChange = {
-                resetPasswordScreenState.email.onValueChange(it, viewModel::updateEmailError)
+                resetPasswordStateHolder.emailStateHolder.onValueChange(it, viewModel::updateEmailError)
             }
         )
 
         SimpleHeightSpacer(dp = 12)
         MaxWidthButton(
-            maxWidthButtonState = resetPasswordScreenState.submitButton,
-            enabled = resetPasswordScreenState.isTextNotBlank && uiState.isNotError,
-            onClick = { viewModel.sendResetPasswordEmail(resetPasswordScreenState.email.text.trim()) }
+            maxWidthButtonStateHolder = resetPasswordStateHolder.submitButtonStateHolder,
+            enabled = resetPasswordStateHolder.isTextNotBlank && uiState.isNotError,
+            onClick = { viewModel.sendResetPasswordEmail(resetPasswordStateHolder.emailStateHolder.textState.trim()) }
         )
         SimpleHeightSpacer(dp = 80)
     }
@@ -75,16 +75,16 @@ fun ResetPasswordScreen(
     SimpleToast(text = uiState.toastText, shownToast = viewModel::toastShown)
 }
 
-data class ResetPasswordScreenState(
-    val email: MaxWidthTextFieldState,
-    val submitButton: MaxWidthButtonState
+data class ResetPasswordStateHolder(
+    val emailStateHolder: MaxWidthTextFieldStateHolder,
+    val submitButtonStateHolder: MaxWidthButtonStateHolder
 ) : BaseState() {
     override val isTextNotBlank: Boolean
-        get() = email.text.trim().isNotBlank()
+        get() = emailStateHolder.textState.trim().isNotBlank()
 }
 
 @Composable
-fun rememberResetPasswordScreenState(
-    email: MaxWidthTextFieldState = rememberEmailTextFieldState(),
-    submitButton: MaxWidthButtonState = rememberMaxWidthButtonState(text = R.string.check)
-) = remember { ResetPasswordScreenState(email, submitButton) }
+fun rememberResetPasswordStateHolder(
+    email: MaxWidthTextFieldStateHolder = rememberEmailTextFieldStateHolder(),
+    submitButton: MaxWidthButtonStateHolder = rememberMaxWidthButtonStateHolder(text = R.string.check)
+) = remember { ResetPasswordStateHolder(email, submitButton) }

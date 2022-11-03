@@ -30,7 +30,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun MaxWidthTextField(
-    maxWidthTextFieldStateHolder: MaxWidthTextFieldStateHolder,
+    stateHolder: MaxWidthTextFieldStateHolder,
     error: Int? = null,
     onValueChange: (TextFieldValue) -> Unit,
     onFocusChanged: (FocusState) -> Unit = {},
@@ -41,21 +41,21 @@ fun MaxWidthTextField(
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .focusRequester(focusRequester = maxWidthTextFieldStateHolder.focusRequester)
+                .focusRequester(focusRequester = stateHolder.focusRequester)
                 .onFocusChanged(onFocusChanged = onFocusChanged),
-            value = maxWidthTextFieldStateHolder.textFieldState,
+            value = stateHolder.textFieldState,
             onValueChange = onValueChange,
-            label = { Text(text = stringResource(id = maxWidthTextFieldStateHolder.label)) },
-            placeholder = { Text(text = stringResource(id = maxWidthTextFieldStateHolder.placeholder)) },
+            label = { Text(text = stringResource(id = stateHolder.label)) },
+            placeholder = { Text(text = stringResource(id = stateHolder.placeholder)) },
             isError = error != null,
             visualTransformation = visualTransformation,
             singleLine = true,
             maxLines = 1,
-            keyboardOptions = maxWidthTextFieldStateHolder.keyboardOptions,
+            keyboardOptions = stateHolder.keyboardOptions,
             trailingIcon = trailingIcon,
             keyboardActions =
-            if (maxWidthTextFieldStateHolder.keyboardOptions.imeAction == ImeAction.Done)
-                KeyboardActions(onDone = { maxWidthTextFieldStateHolder.onKeyBoardActionDoneClick() })
+            if (stateHolder.keyboardOptions.imeAction == ImeAction.Done)
+                KeyboardActions(onDone = { stateHolder.onKeyBoardActionDoneClick() })
             else KeyboardActions.Default,
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 unfocusedBorderColor = Color(0xFFDADADA),
@@ -67,7 +67,7 @@ fun MaxWidthTextField(
 
         ErrorText(error)
     }
-    if (maxWidthTextFieldStateHolder.showKeyboardEnabled) ShowKeyboard(maxWidthTextFieldStateHolder.focusRequester)
+    if (stateHolder.showKeyboardEnabled) ShowKeyboard(stateHolder.focusRequester)
 }
 
 @Composable

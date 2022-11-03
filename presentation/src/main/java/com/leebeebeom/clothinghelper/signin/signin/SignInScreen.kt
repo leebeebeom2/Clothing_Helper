@@ -65,7 +65,7 @@ fun SignInScreen(
     onForgotPasswordClick: () -> Unit,
     onEmailSignUpClick: () -> Unit,
     viewModel: SignInViewModel = hiltViewModel(),
-    signInScreenState: SignInScreenState = rememberSignInScreenState()
+    signInStateHolder: SignInStateHolder = rememberSignInStateHolder()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -75,29 +75,30 @@ fun SignInScreen(
             .verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.Center
     ) {
         MaxWidthTextField(
-            maxWidthTextFieldState = signInScreenState.email,
+            maxWidthTextFieldStateHolder = signInStateHolder.email,
             error = uiState.emailError,
             onValueChange = {
-                signInScreenState.email.onValueChange(it, viewModel::updateEmailError)
+                signInStateHolder.email.onValueChange(it, viewModel::updateEmailError)
             }
         )
 
         PasswordTextField(
-            maxWidthTextFieldState = signInScreenState.password,
+            maxWidthTextFieldStateHolder = signInStateHolder.password,
             error = uiState.passwordError,
             onValueChange = {
-                signInScreenState.password.onValueChange(it, viewModel::updatePasswordError)
+                signInStateHolder.password.onValueChange(it, viewModel::updatePasswordError)
             }
         )
 
         ForgotPasswordText(onForgotPasswordClick = onForgotPasswordClick)
 
         MaxWidthButton(
-            maxWidthButtonState = signInScreenState.singInButton,
-            enabled = signInScreenState.isTextNotBlank && uiState.isNotError,
+            maxWidthButtonStateHolder = signInStateHolder.singInButton,
+            enabled = signInStateHolder.isTextNotBlank && uiState.isNotError,
             onClick = {
                 viewModel.signInWithEmailAndPassword(
-                    signInScreenState.email.text.trim(), signInScreenState.password.text.trim()
+                    signInStateHolder.email.textState.trim(),
+                    signInStateHolder.password.textState.trim()
                 )
             }
         )
@@ -106,7 +107,7 @@ fun SignInScreen(
         SimpleHeightSpacer(dp = 8)
         // 프리뷰 시 주석 처리
         GoogleSignInButton(
-            maxWidthButtonState = signInScreenState.googleButton,
+            maxWidthButtonStateHolder = signInStateHolder.googleButton,
             signInWithGoogleEmail = viewModel::signInWithGoogleEmail,
             enabled = uiState.googleButtonEnabled,
             enabledOff = { viewModel.updateGoogleButtonEnabled(enabled = false) }
@@ -154,20 +155,27 @@ private fun ForgotPasswordText(onForgotPasswordClick: () -> Unit) {
     }
 }
 
-data class SignInScreenState(
-    val email: MaxWidthTextFieldState,
-    val password: MaxWidthTextFieldState,
-    val singInButton: MaxWidthButtonState,
-    val googleButton: MaxWidthButtonState
+data class SignInStateHolder(
+    val email: MaxWidthTextFieldStateHolder,
+    val password: MaxWidthTextFieldStateHolder,
+    val singInButton: MaxWidthButtonStateHolder,
+    val googleButton: MaxWidthButtonStateHolder
 ) : BaseState() {
     override val isTextNotBlank
-        get() = email.text.trim().isNotBlank() && password.text.trim().isNotBlank()
+        get() = email.textState.trim().isNotBlank() && password.textState.trim().isNotBlank()
 }
 
 @Composable
-fun rememberSignInScreenState(
-    email: MaxWidthTextFieldState = rememberEmailTextFieldState(imeAction = ImeAction.Next),
-    password: MaxWidthTextFieldState = rememberPasswordTextFieldState(imeAction = ImeAction.Done),
-    signInButtonState: MaxWidthButtonState = rememberMaxWidthButtonState(text = R.string.sign_in),
-    googleButtonState: MaxWidthButtonState = rememberGoogleButtonState()
-) = remember { SignInScreenState(email, password, signInButtonState, googleButtonState) }
+fun rememberSignInStateHolder(
+    email: MaxWidthTextFieldStateHolder = rememberEmailTextFieldStateHolder(imeAction = ImeAction.Next),
+    password: MaxWidthTextFieldStateHolder = rememberPasswordTextFieldStateHolder(imeAction = ImeAction.Done),
+    signInButtonState: MaxWidthButtonStateHolder = rememberMaxWidthButtonStateHolder(text = R.string.sign_in),
+    googleButtonState: MaxWidthButtonStateHolder = rememberGoogleButtonStateHolder()
+) = remember {
+    SignInStateHolder(
+        email = email,
+        password = password,
+        singInButton = signInButtonState,
+        googleButton = googleButtonState
+    )
+}

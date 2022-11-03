@@ -65,7 +65,7 @@ fun SignInScreen(
     onForgotPasswordClick: () -> Unit,
     onEmailSignUpClick: () -> Unit,
     viewModel: SignInViewModel = hiltViewModel(),
-    signInStateHolder: SignInStateHolder = rememberSignInStateHolder()
+    stateHolder: SignInStateHolder = rememberSignInStateHolder()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -75,30 +75,30 @@ fun SignInScreen(
             .verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.Center
     ) {
         MaxWidthTextField(
-            maxWidthTextFieldStateHolder = signInStateHolder.emailStateHolder,
+            maxWidthTextFieldStateHolder = stateHolder.emailStateHolder,
             error = uiState.emailError,
             onValueChange = {
-                signInStateHolder.emailStateHolder.onValueChange(it, viewModel::updateEmailError)
+                stateHolder.emailStateHolder.onValueChange(it, viewModel::updateEmailError)
             }
         )
 
         PasswordTextField(
-            maxWidthTextFieldStateHolder = signInStateHolder.passwordStateHolder,
+            maxWidthTextFieldStateHolder = stateHolder.passwordStateHolder,
             error = uiState.passwordError,
             onValueChange = {
-                signInStateHolder.passwordStateHolder.onValueChange(it, viewModel::updatePasswordError)
+                stateHolder.passwordStateHolder.onValueChange(it, viewModel::updatePasswordError)
             }
         )
 
         ForgotPasswordText(onForgotPasswordClick = onForgotPasswordClick)
 
         MaxWidthButton(
-            maxWidthButtonStateHolder = signInStateHolder.singInButtonStateHolder,
-            enabled = signInStateHolder.isTextNotBlank && uiState.isNotError,
+            maxWidthButtonStateHolder = stateHolder.singInButtonStateHolder,
+            enabled = stateHolder.isTextNotBlank && uiState.isNotError,
             onClick = {
                 viewModel.signInWithEmailAndPassword(
-                    signInStateHolder.emailStateHolder.textState.trim(),
-                    signInStateHolder.passwordStateHolder.textState.trim()
+                    stateHolder.emailStateHolder.textState.trim(),
+                    stateHolder.passwordStateHolder.textState.trim()
                 )
             }
         )
@@ -107,7 +107,7 @@ fun SignInScreen(
         SimpleHeightSpacer(dp = 8)
         // 프리뷰 시 주석 처리
         GoogleSignInButton(
-            maxWidthButtonStateHolder = signInStateHolder.googleButtonStateHolder,
+            maxWidthButtonStateHolder = stateHolder.googleButtonStateHolder,
             signInWithGoogleEmail = viewModel::signInWithGoogleEmail,
             enabled = uiState.googleButtonEnabled,
             enabledOff = { viewModel.updateGoogleButtonEnabled(enabled = false) }

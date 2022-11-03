@@ -7,7 +7,7 @@ import com.leebeebeom.clothinghelper.base.MaxWidthTextFieldStateHolder
 abstract class BaseSubCategoryTextFieldDialogStateHolder {
     abstract val titleRes: Int
     abstract val textFiledStateHolder: MaxWidthTextFieldStateHolder
-    protected abstract var errorState: MutableState<Int?>
+    protected abstract val errorState: MutableState<Int?>
     val error get() = errorState.value
 
     protected abstract var showDialogState: MutableState<Boolean>

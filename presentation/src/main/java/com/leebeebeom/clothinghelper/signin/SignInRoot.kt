@@ -27,7 +27,7 @@ import javax.inject.Inject
 @Composable
 fun SignInRoot(
     viewModel: SignInRootViewModel = hiltViewModel(),
-    state: SignInRootState = rememberSignInRootState(),
+    state: SignInRootStateHolder = rememberSignInRootStateHolder(),
     content: @Composable BoxScope.() -> Unit
 ) {
     ClothingHelperTheme {
@@ -54,15 +54,15 @@ fun SignInRoot(
 class SignInRootViewModel @Inject constructor(val getSignInLoadingStateUseCase: GetSignInLoadingStateUseCase) :
     ViewModel()
 
-data class SignInRootState(
+data class SignInRootStateHolder(
     val focusManager: FocusManager,
     val interactionSource: MutableInteractionSource
 )
 
 @Composable
-fun rememberSignInRootState(
+fun rememberSignInRootStateHolder(
     focusManager: FocusManager = LocalFocusManager.current,
     interactionSource: MutableInteractionSource = remember {
         MutableInteractionSource()
     }
-) = remember { SignInRootState(focusManager, interactionSource) }
+) = remember { SignInRootStateHolder(focusManager, interactionSource) }

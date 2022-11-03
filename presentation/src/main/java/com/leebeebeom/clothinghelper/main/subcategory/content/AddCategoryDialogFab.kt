@@ -9,8 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,8 +50,7 @@ class AddCategoryDialogStateHolder(
     override val textFiledStateHolder: MaxWidthTextFieldStateHolder,
     override var showDialogState: MutableState<Boolean>,
     override val errorState: MutableState<Int?>,
-) : BaseSubCategoryTextFieldDialogStateHolder() {
-}
+) : BaseSubCategoryTextFieldDialogStateHolder()
 
 @Composable
 fun rememberAddCategoryDialogStateHolder(

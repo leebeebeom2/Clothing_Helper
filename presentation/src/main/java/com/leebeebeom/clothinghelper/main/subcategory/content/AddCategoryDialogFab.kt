@@ -41,7 +41,7 @@ fun BoxScope.AddCategoryDialogFab(
 
     if (state.showDialog)
         SubCategoryTextFieldDialog(state = state, subCategories = subCategoriesState) {
-            onPositiveButtonClick(state.textFiledStateHolder.textState, subCategoryParent)
+            onPositiveButtonClick(state.textFiledStateHolder.textState.trim(), subCategoryParent)
         }
 }
 

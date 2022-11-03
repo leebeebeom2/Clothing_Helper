@@ -21,6 +21,6 @@ abstract class BaseSubCategoryTextFieldDialogStateHolder {
 
     fun onDismissDialog() {
         showDialogState.value = false
-        textFiledStateHolder.onValueChange(TextFieldValue("")){errorState.value = null}
+        textFiledStateHolder.onValueChange(TextFieldValue("")) { errorState.value = null }
     }
 }

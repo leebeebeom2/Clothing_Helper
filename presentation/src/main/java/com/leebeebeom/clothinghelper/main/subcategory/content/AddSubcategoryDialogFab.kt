@@ -25,7 +25,7 @@ fun BoxScope.AddSubcategoryDialogFab(
     subCategoriesState: List<SubCategory>,
     subCategoryParent: SubCategoryParent
 ) {
-    val state by rememberAddCategoryDialogState(subCategoriesState =  subCategoriesState)
+    val state by rememberAddCategoryDialogState(subCategoriesState = subCategoriesState)
 
     FloatingActionButton(
         modifier = Modifier
@@ -56,13 +56,11 @@ fun rememberAddCategoryDialogState(
     errorState: MutableState<Int?> = rememberSaveable { mutableStateOf(null) },
     showDialogState: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) },
     subCategoriesState: List<SubCategory>
-) = remember {
-    derivedStateOf {
-        AddCategoryDialogState(
-            textFiledStateHolder = textFiledStateHolder,
-            errorState = errorState,
-            showDialogState = showDialogState,
-            subCategoriesState = subCategoriesState
-        )
-    }
+) = remember(subCategoriesState) {
+    AddCategoryDialogState(
+        textFiledStateHolder = textFiledStateHolder,
+        errorState = errorState,
+        showDialogState = showDialogState,
+        subCategoriesState = subCategoriesState
+    )
 }

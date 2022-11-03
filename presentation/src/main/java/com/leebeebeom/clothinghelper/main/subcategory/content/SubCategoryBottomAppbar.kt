@@ -97,13 +97,13 @@ data class SubCategoryBottomAppbarState(
 
 @Composable
 fun rememberSubCategoryBottomAppbarState(
-    subCategoryStateHolder: SubCategoryStateHolder,
+    stateHolder: SubCategoryStateHolder,
     subCategoriesSizeState: Int
-) = remember(key1 = subCategoryStateHolder) {
+) = remember {
     derivedStateOf {
         SubCategoryBottomAppbarState(
-            isSelectModeState = subCategoryStateHolder.isSelectModeState,
-            selectedSubCategoriesSizeState = subCategoryStateHolder.selectedSubCategoriesSizeState,
+            isSelectModeState = stateHolder.isSelectModeState,
+            selectedSubCategoriesSizeState = stateHolder.selectedSubCategoriesSizeState,
             subCategoriesSizeState = subCategoriesSizeState
         )
     }

@@ -1,6 +1,18 @@
 plugins {
-    id 'java-library'
-    id 'org.jetbrains.kotlin.jvm'
+    id 'com.android.library'
+    id "org.jetbrains.kotlin.android"
+    id 'kotlin-parcelize'
+}
+
+android {
+    compileSdk 33
+
+    defaultConfig {
+        minSdk 21
+
+    }
+
+    namespace 'com.leebeebeom.clothinghelperdomain'
 }
 
 java {

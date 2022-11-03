@@ -19,7 +19,7 @@ import com.leebeebeom.clothinghelper.R
 @Composable
 fun MaxWidthButton(
     maxWidthButtonStateHolder: MaxWidthButtonStateHolder,
-    enabled: Boolean,
+    enabledState: Boolean,
     icon: @Composable (() -> Unit)? = null,
     onClick: () -> Unit
 ) {
@@ -31,7 +31,7 @@ fun MaxWidthButton(
             .heightIn(52.dp), onClick = {
             focusManager.clearFocus()
             onClick()
-        }, colors = maxWidthButtonStateHolder.colors, enabled = enabled
+        }, colors = maxWidthButtonStateHolder.colors, enabled = enabledState
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically

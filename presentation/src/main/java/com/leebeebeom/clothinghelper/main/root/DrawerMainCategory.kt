@@ -22,34 +22,34 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
 @Composable
 fun DrawerMainCategory(
-    stateHolder: DrawerMainCategoryStateHolder,
+    state: DrawerMainCategoryState,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (key: String) -> Unit,
 ) {
     Column {
         DrawerContentRow(
             modifier = Modifier.heightIn(44.dp),
-            onDrawerContentClick = { onMainCategoryClick(stateHolder.mainCategory.type) }) {
+            onDrawerContentClick = { onMainCategoryClick(state.mainCategory.type) }) {
             DrawerContentText(
                 modifier = Modifier.padding(start = 8.dp),
-                text = stringResource(id = stateHolder.mainCategory.name),
+                text = stringResource(id = state.mainCategory.name),
                 style = MaterialTheme.typography.subtitle1
             )
             DrawerMainCategoryExpandIcon(
-                isLoading = stateHolder.isLoading,
-                isExpand = stateHolder.isExpand,
-                onExpandIconClick = stateHolder::isExpandToggle
+                isLoading = state.isLoading,
+                isExpand = state.isExpand,
+                onExpandIconClick = state::isExpandToggle
             )
         }
         SubCategories(
-            isExpand = stateHolder.isExpand,
-            subCategories = stateHolder.subCategories,
+            isExpand = state.isExpand,
+            subCategories = state.subCategories,
             onSubCategoryClick = onSubCategoryClick
         )
     }
 }
 
-data class DrawerMainCategoryStateHolder(
+data class DrawerMainCategoryState(
     val mainCategory: MainCategory,
     val subCategories: List<SubCategory>,
     val isLoading: Boolean,
@@ -63,18 +63,18 @@ data class DrawerMainCategoryStateHolder(
 }
 
 @Composable
-fun rememberDrawerMainCategoryStateHolder(
+fun rememberDrawerMainCategoryState(
     mainCategory: MainCategory,
-    drawerContentsStateHolder: DrawerContentsStateHolder,
-    isExpandState: MutableState<Boolean> = rememberSaveable { mutableStateOf(drawerContentsStateHolder.isAllExpand) },
-    rememberedIsAllExpand: Boolean = rememberSaveable { drawerContentsStateHolder.isAllExpand }
+    drawerContentsState: DrawerContentsState,
+    isExpandState: MutableState<Boolean> = rememberSaveable { mutableStateOf(drawerContentsState.isAllExpand) },
+    rememberedIsAllExpand: Boolean = rememberSaveable { drawerContentsState.isAllExpand }
 ) = remember {
     derivedStateOf {
-        DrawerMainCategoryStateHolder(
+        DrawerMainCategoryState(
             mainCategory = mainCategory,
-            subCategories = drawerContentsStateHolder.allSubCategories[mainCategory.type.ordinal],
-            isLoading = drawerContentsStateHolder.isLoading,
-            isAllExpand = drawerContentsStateHolder.isAllExpand,
+            subCategories = drawerContentsState.allSubCategories[mainCategory.type.ordinal],
+            isLoading = drawerContentsState.isLoading,
+            isAllExpand = drawerContentsState.isAllExpand,
             _isExpand = isExpandState,
             rememberedIsAllExpand = rememberedIsAllExpand
         )

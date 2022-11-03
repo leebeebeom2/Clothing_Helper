@@ -45,19 +45,11 @@ fun AllExpandIcon(
 
 abstract class AllExpandStateHolder {
     abstract val isAllExpand: Boolean
-    protected abstract val _isExpand: MutableState<Boolean>
-    protected abstract var rememberedIsAllExpand: Boolean
-    val isExpand get() = _isExpand.value
-
-    protected fun init(){
-        if (isAllExpand != rememberedIsAllExpand) { // isAllExpandChange
-            _isExpand.value = isAllExpand
-            rememberedIsAllExpand = isAllExpand
-        }
-    }
+    protected abstract val _isExpandState: MutableState<Boolean>
+    val isExpandState get() = _isExpandState.value
 
     fun isExpandToggle() {
-        _isExpand.value = !_isExpand.value
+        _isExpandState.value = !_isExpandState.value
     }
 }
 

@@ -29,22 +29,22 @@ sealed class MainDestinations(val route: String) {
 }
 
 @Composable
-fun MainNavHost(mainNavHostState: MainNavHostState = rememberMainNavHostState()) {
+fun MainNavHost(stateHolder: MainNavHostStateHolder = rememberMainNavHostStateHolder()) {
 
     MainScreenRoot(
-        onEssentialMenuClick = mainNavHostState::onEssentialMenuClick,
-        onMainCategoryClick = mainNavHostState::onMainCategoryClick,
+        onEssentialMenuClick = stateHolder::onEssentialMenuClick,
+        onMainCategoryClick = stateHolder::onMainCategoryClick,
         onSubCategoryClick = { key -> /*TODO*/ },
-        onSettingIconClick = mainNavHostState::navigateToSetting
+        onSettingIconClick = stateHolder::navigateToSetting
     ) { paddingValues, drawerCloseBackHandler ->
         NavHost(
-            navController = mainNavHostState.navController,
+            navController = stateHolder.navController,
             startDestination = MainDestinations.MainCategory.route,
             modifier = Modifier.padding(paddingValues = paddingValues)
         ) {
             composable(MainDestinations.MainCategory.route) {
                 MainCategoryScreen(
-                    onMainCategoryClick = mainNavHostState::navigateToSubCategory,
+                    onMainCategoryClick = stateHolder::navigateToSubCategory,
                     drawerCloseBackHandler = drawerCloseBackHandler
                 )
             }
@@ -55,20 +55,20 @@ fun MainNavHost(mainNavHostState: MainNavHostState = rememberMainNavHostState())
                 val mainCategoryName =
                     entry.arguments?.getString(MainDestinations.SubCategory.mainCategoryName)!!
                 SubCategoryScreen(
-                    subCategoryParent = enumValueOf(mainCategoryName),
+                    parent = enumValueOf(mainCategoryName),
                     drawerCloseBackHandler = drawerCloseBackHandler
                 )
             }
             composable(MainDestinations.Setting.route) {
                 SettingScreen(
                     drawerCloseBackHandler = drawerCloseBackHandler,
-                    onSignOutButtonClick = mainNavHostState::navigateToSetting)
+                    onSignOutButtonClick = stateHolder::navigateToSetting)
             }
         }
     }
 }
 
-data class MainNavHostState(val navController: NavHostController) {
+data class MainNavHostStateHolder(val navController: NavHostController) {
     fun onEssentialMenuClick(essentialMenu: EssentialMenus) =
         when (essentialMenu) {
             EssentialMenus.MainScreen -> navigateToMain()
@@ -98,5 +98,5 @@ data class MainNavHostState(val navController: NavHostController) {
 }
 
 @Composable
-fun rememberMainNavHostState(navController: NavHostController = rememberNavController()) =
-    remember { MainNavHostState(navController) }
+fun rememberMainNavHostStateHolder(navController: NavHostController = rememberNavController()) =
+    remember { MainNavHostStateHolder(navController) }

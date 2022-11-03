@@ -15,67 +15,67 @@ import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.base.Anime.ListExpand.listExpand
 import com.leebeebeom.clothinghelper.base.Anime.ListExpand.listShrink
 import com.leebeebeom.clothinghelper.base.DotProgressIndicator
-import com.leebeebeom.clothinghelper.main.base.AllExpandState
-import com.leebeebeom.clothinghelper.main.subcategory.ExpandIcon
+import com.leebeebeom.clothinghelper.main.base.AllExpandStateHolder
+import com.leebeebeom.clothinghelper.main.base.ExpandIcon
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
 @Composable
 fun DrawerMainCategory(
-    drawerMainCategoryState: DrawerMainCategoryState,
+    stateHolder: DrawerMainCategoryStateHolder,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (key: String) -> Unit,
 ) {
     Column {
         DrawerContentRow(
             modifier = Modifier.heightIn(44.dp),
-            onDrawerContentClick = { onMainCategoryClick(drawerMainCategoryState.mainCategory.type) }) {
+            onDrawerContentClick = { onMainCategoryClick(stateHolder.mainCategory.type) }) {
             DrawerContentText(
                 modifier = Modifier.padding(start = 8.dp),
-                text = stringResource(id = drawerMainCategoryState.mainCategory.name),
+                text = stringResource(id = stateHolder.mainCategory.name),
                 style = MaterialTheme.typography.subtitle1
             )
             DrawerMainCategoryExpandIcon(
-                isLoading = drawerMainCategoryState.isLoading,
-                isExpand = drawerMainCategoryState.isExpand,
-                onExpandIconClick = drawerMainCategoryState::isExpandToggle
+                isLoading = stateHolder.isLoading,
+                isExpand = stateHolder.isExpand,
+                onExpandIconClick = stateHolder::isExpandToggle
             )
         }
         SubCategories(
-            isExpand = drawerMainCategoryState.isExpand,
-            subCategories = drawerMainCategoryState.subCategories,
+            isExpand = stateHolder.isExpand,
+            subCategories = stateHolder.subCategories,
             onSubCategoryClick = onSubCategoryClick
         )
     }
 }
 
-data class DrawerMainCategoryState(
+data class DrawerMainCategoryStateHolder(
     val mainCategory: MainCategory,
     val subCategories: List<SubCategory>,
     val isLoading: Boolean,
     override val isAllExpand: Boolean,
     override val _isExpand: MutableState<Boolean>,
     override var rememberedIsAllExpand: Boolean
-) : AllExpandState() {
+) : AllExpandStateHolder() {
     init {
         init()
     }
 }
 
 @Composable
-fun rememberDrawerMainCategoryState(
+fun rememberDrawerMainCategoryStateHolder(
     mainCategory: MainCategory,
-    drawerContentsState: DrawerContentsState,
-    isExpand: MutableState<Boolean> = rememberSaveable { mutableStateOf(drawerContentsState.isAllExpand) },
-    rememberedIsAllExpand: Boolean = rememberSaveable { drawerContentsState.isAllExpand }
+    drawerContentsStateHolder: DrawerContentsStateHolder,
+    isExpandState: MutableState<Boolean> = rememberSaveable { mutableStateOf(drawerContentsStateHolder.isAllExpand) },
+    rememberedIsAllExpand: Boolean = rememberSaveable { drawerContentsStateHolder.isAllExpand }
 ) = remember {
     derivedStateOf {
-        DrawerMainCategoryState(
+        DrawerMainCategoryStateHolder(
             mainCategory = mainCategory,
-            subCategories = drawerContentsState.allSubCategories[mainCategory.type.ordinal],
-            isLoading = drawerContentsState.isLoading,
-            isAllExpand = drawerContentsState.isAllExpand,
-            _isExpand = isExpand,
+            subCategories = drawerContentsStateHolder.allSubCategories[mainCategory.type.ordinal],
+            isLoading = drawerContentsStateHolder.isLoading,
+            isAllExpand = drawerContentsStateHolder.isAllExpand,
+            _isExpand = isExpandState,
             rememberedIsAllExpand = rememberedIsAllExpand
         )
     }

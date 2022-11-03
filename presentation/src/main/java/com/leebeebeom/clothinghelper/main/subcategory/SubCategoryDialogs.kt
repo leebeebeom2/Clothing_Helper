@@ -14,7 +14,11 @@ fun SubCategoryTextFieldDialog(
 ) {
     DialogRoot(onDismissDialog = state::onDismissDialog) {
         DialogTitle(text = state.titleRes)
-        DialogTextField(state)
+        DialogTextField(
+            textFieldStateHolder = state.textFiledStateHolder,
+            error = state.error,
+            updateError = state::updateError
+        )
         DialogTextButtons(
             positiveButtonEnabled = state.positiveButtonEnabled,
             onPositiveButtonClick = onPositiveButtonClick,

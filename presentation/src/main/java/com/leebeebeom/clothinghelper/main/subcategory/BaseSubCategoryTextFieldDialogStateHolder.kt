@@ -28,7 +28,7 @@ abstract class BaseSubCategoryTextFieldDialogStateHolder {
 
     open fun updateError(newName: String, subCategories: List<SubCategory>) {
         errorState.value = null
-        if (subCategories.map { it.name }.contains(newName))
+        if (subCategories.map { it.name }.contains(newName.trim()))
             errorState.value = R.string.error_same_category_name
     }
 }

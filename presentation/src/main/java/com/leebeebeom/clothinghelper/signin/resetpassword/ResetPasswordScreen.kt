@@ -39,7 +39,7 @@ import com.leebeebeom.clothinghelper.signin.base.BaseStateHolder
 @Composable
 fun ResetPasswordScreen(
     viewModel: ResetPasswordViewModel = hiltViewModel(),
-    resetPasswordStateHolder: ResetPasswordStateHolder = rememberResetPasswordStateHolder()
+    stateHolder: ResetPasswordStateHolder = rememberResetPasswordStateHolder()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -56,18 +56,18 @@ fun ResetPasswordScreen(
         )
 
         MaxWidthTextField(
-            maxWidthTextFieldStateHolder = resetPasswordStateHolder.emailStateHolder,
+            maxWidthTextFieldStateHolder = stateHolder.emailStateHolder,
             error = uiState.emailError,
             onValueChange = {
-                resetPasswordStateHolder.emailStateHolder.onValueChange(it, viewModel::updateEmailError)
+                stateHolder.emailStateHolder.onValueChange(it, viewModel::updateEmailError)
             }
         )
 
         SimpleHeightSpacer(dp = 12)
         MaxWidthButton(
-            maxWidthButtonStateHolder = resetPasswordStateHolder.submitButtonStateHolder,
-            enabled = resetPasswordStateHolder.isTextNotBlank && uiState.isNotError,
-            onClick = { viewModel.sendResetPasswordEmail(resetPasswordStateHolder.emailStateHolder.textState.trim()) }
+            maxWidthButtonStateHolder = stateHolder.submitButtonStateHolder,
+            enabled = stateHolder.isTextNotBlank && uiState.isNotError,
+            onClick = { viewModel.sendResetPasswordEmail(stateHolder.emailStateHolder.textState.trim()) }
         )
         SimpleHeightSpacer(dp = 80)
     }

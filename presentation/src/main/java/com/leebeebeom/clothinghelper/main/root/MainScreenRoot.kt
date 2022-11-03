@@ -55,7 +55,7 @@ fun MainScreenRoot(
             drawerContent = {
                 val drawerMainCategoryState = rememberDrawerContentsState(uiState)
                 DrawerContents(
-                    drawerContentsState = drawerMainCategoryState,
+                    state = drawerMainCategoryState,
                     onEssentialMenuClick = {
                         onEssentialMenuClick(it)
                         stateHolder.onDrawerClose()

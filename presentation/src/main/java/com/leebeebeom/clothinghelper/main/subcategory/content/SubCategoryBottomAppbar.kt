@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.subcategory
+package com.leebeebeom.clothinghelper.main.subcategory.content
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -21,6 +21,7 @@ import com.leebeebeom.clothinghelper.base.CircleCheckBox
 import com.leebeebeom.clothinghelper.base.CustomIconButton
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
+import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryStateHolder
 
 @Composable
 fun SubCategoryBottomAppBar(

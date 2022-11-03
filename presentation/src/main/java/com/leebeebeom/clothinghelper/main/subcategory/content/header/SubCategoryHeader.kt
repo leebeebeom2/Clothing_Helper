@@ -15,9 +15,7 @@ import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.CustomIconButton
 import com.leebeebeom.clothinghelper.main.base.AllExpandIcon
-import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryContentState
 import com.leebeebeom.clothinghelper.main.subcategory.content.SubCategoryContentState
-import com.leebeebeom.clothinghelper.main.subcategory.getHeaderStringRes
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.repository.SortOrder
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
@@ -104,7 +102,7 @@ fun rememberSubCategoryHeaderState(
 ) = remember {
     derivedStateOf {
         SubCategoryHeaderState(
-            headerText = getHeaderStringRes(subCategoryContentState.parent) ,
+            headerText = getHeaderStringRes(subCategoryContentState.parent),
             isAllExpand = subCategoryContentState.isAllExpand,
             sort = subCategoryContentState.sort
         )

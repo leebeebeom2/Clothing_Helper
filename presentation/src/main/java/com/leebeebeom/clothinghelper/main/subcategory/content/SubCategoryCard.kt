@@ -54,7 +54,7 @@ fun SubCategoryCard(
             )
 
             AnimatedVisibility(
-                visible = state.isExpand,
+                visible = state.isExpandState,
                 enter = cardExpandIn,
                 exit = cardShrinkOut
             ) { SubCategoryInfo() }
@@ -109,7 +109,7 @@ fun rememberSubCategoryCardTitleState(
     derivedStateOf {
         SubCategoryCardTitleState(
             title = subCategoryCardState.subCategory.name,
-            isExpanded = subCategoryCardState.isExpand,
+            isExpanded = subCategoryCardState.isExpandState,
             isSelectMode = subCategoryCardState.isSelectMode,
             isChecked = subCategoryCardState.isChecked
         )
@@ -216,13 +216,8 @@ data class SubCategoryCardState(
     override val isAllExpand: Boolean,
     val isChecked: Boolean,
     val haptic: HapticFeedback,
-    override val _isExpand: MutableState<Boolean>,
-    override var rememberedIsAllExpand: Boolean
+    override val _isExpandState: MutableState<Boolean>
 ) : AllExpandStateHolder() {
-    init {
-        init()
-    }
-
     fun performHaptic() = haptic.performHapticFeedback(HapticFeedbackType.LongPress)
 }
 
@@ -231,9 +226,15 @@ fun rememberSubCategoryCardState(
     subCategory: SubCategory,
     subCategoryContentState: SubCategoryContentState,
     haptic: HapticFeedback = LocalHapticFeedback.current,
-    isExpand: MutableState<Boolean> = remember { mutableStateOf(false) },
-    rememberedIsAllExpand: Boolean = remember { subCategoryContentState.isAllExpand }
+    isExpandState: MutableState<Boolean> = remember { mutableStateOf(subCategoryContentState.isAllExpand) },
+    rememberedIsAllExpandState: MutableState<Boolean> = remember { mutableStateOf(subCategoryContentState.isAllExpand) }
 ) = remember {
+
+    if (subCategoryContentState.isAllExpand != rememberedIsAllExpandState.value) { // isAllExpandChange
+        isExpandState.value = subCategoryContentState.isAllExpand
+        rememberedIsAllExpandState.value = subCategoryContentState.isAllExpand
+    }
+
     derivedStateOf {
         SubCategoryCardState(
             subCategory = subCategory,
@@ -241,8 +242,7 @@ fun rememberSubCategoryCardState(
             isAllExpand = subCategoryContentState.isAllExpand,
             isChecked = subCategoryContentState.selectedSubCategories.contains(subCategory),
             haptic = haptic,
-            _isExpand = isExpand,
-            rememberedIsAllExpand = rememberedIsAllExpand
+            _isExpandState = isExpandState
         )
     }
 }

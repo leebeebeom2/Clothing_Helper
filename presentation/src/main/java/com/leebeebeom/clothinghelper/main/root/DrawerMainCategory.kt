@@ -87,7 +87,7 @@ private fun DrawerMainCategoryExpandIcon(
 ) {
     if (isLoading)
         DotProgressIndicator(
-            modifier = Modifier.padding(end = 12.dp),
+            modifier = Modifier.padding(end = 4.dp),
             dotSize = 4.dp,
             color = MaterialTheme.colors.surface.copy(ContentAlpha.disabled)
         )

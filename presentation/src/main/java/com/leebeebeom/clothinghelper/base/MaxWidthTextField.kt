@@ -124,7 +124,7 @@ data class MaxWidthTextFieldStateHolder(
         _textFieldState.value = newText.copy(_textState.value)
     }
 
-    fun onFocusChanged(focusState: FocusState) {
+    var onFocusChanged = { focusState: FocusState ->
         if (focusState.hasFocus)
             _textFieldState.value =
                 _textFieldState.value.copy(selection = TextRange(textState.length))

@@ -58,14 +58,14 @@ fun MainCategoryScreen(
 
         val mainCategories = remember { getMainCategories() }
         for (mainCategory in mainCategories){
-            val mainCategoryCardState by rememberMainCategoryCardState(
+            val mainCategoryCardState by rememberMainCategoryCardStateHolder(
                 mainCategory = mainCategory,
                 mainCategoryUIState = uiState
             )
             key(mainCategory.type.name) {
                 MainCategoryCard(
                     modifier = modifier,
-                    mainCategoryCardState = mainCategoryCardState,
+                    stateHolder = mainCategoryCardState,
                     onMainContentClick = { onMainCategoryClick(mainCategory.type) }
                 )
             }
@@ -77,7 +77,7 @@ fun MainCategoryScreen(
 @Composable
 private fun MainCategoryCard(
     modifier: Modifier,
-    mainCategoryCardState: MainCategoryCardState,
+    stateHolder: MainCategoryCardStateHolder,
     onMainContentClick: () -> Unit,
 ) {
     Card(
@@ -92,7 +92,7 @@ private fun MainCategoryCard(
                 .padding(vertical = 16.dp)
         ) {
             Text(
-                text = stringResource(id = mainCategoryCardState.mainCategory.name),
+                text = stringResource(id = stateHolder.mainCategory.name),
                 style = MaterialTheme.typography.h2,
                 fontSize = 32.sp
             )
@@ -102,7 +102,7 @@ private fun MainCategoryCard(
                 drawable = R.drawable.ic_navigate_next,
                 tint = LocalContentColor.current.copy(ContentAlpha.medium)
             )
-            if (mainCategoryCardState.isLoading)
+            if (stateHolder.isLoading)
                 DotProgressIndicator(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
@@ -112,7 +112,7 @@ private fun MainCategoryCard(
             else Text(
                 text = stringResource(
                     id = R.string.categories,
-                    formatArgs = arrayOf(mainCategoryCardState.subCategoriesSize)
+                    formatArgs = arrayOf(stateHolder.subCategoriesSize)
                 ),
                 modifier = Modifier.align(Alignment.BottomStart),
                 style = MaterialTheme.typography.caption.copy(
@@ -124,22 +124,22 @@ private fun MainCategoryCard(
             )
         }
     }
-    if (mainCategoryCardState.mainCategory.type != SubCategoryParent.ETC) SimpleHeightSpacer(dp = 16)
+    if (stateHolder.mainCategory.type != SubCategoryParent.ETC) SimpleHeightSpacer(dp = 16)
 }
 
-data class MainCategoryCardState(
+data class MainCategoryCardStateHolder(
     val mainCategory: MainCategory,
     val subCategoriesSize: Int,
     val isLoading: Boolean
 )
 
 @Composable
-fun rememberMainCategoryCardState(
+fun rememberMainCategoryCardStateHolder(
     mainCategory: MainCategory,
     mainCategoryUIState: MainCategoryUIState
 ) = remember {
     derivedStateOf {
-        MainCategoryCardState(
+        MainCategoryCardStateHolder(
             mainCategory = mainCategory,
             subCategoriesSize = mainCategoryUIState.allSubCategories[mainCategory.type.ordinal].size,
             isLoading = mainCategoryUIState.isLoading

@@ -1,6 +1,7 @@
 package com.leebeebeom.clothinghelper.signin.base
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -100,6 +101,7 @@ fun NameTextFiled(
     val state = rememberMaxWidthTextFiledState(
         textFieldValueState = textFieldValueState,
         label = R.string.name,
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
     )
 
     MaxWidthTextField(

@@ -9,20 +9,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -43,7 +35,7 @@ fun VisibleIcon(isVisible: Boolean, onClick: () -> Unit) {
 fun GoogleSignInButton(
     state: MaxWidthButtonState,
     onActivityResult: (ActivityResult) -> Unit,
-    disEnabled: () -> Unit
+    disabled: () -> Unit
 ) {
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
@@ -56,7 +48,7 @@ fun GoogleSignInButton(
         state = state,
         icon = googleIcon,
         onClick = {
-            disEnabled()
+            disabled()
             launcher.launch(intent)
         }
     )
@@ -88,23 +80,4 @@ fun OrDivider() {
         )
         Divider(modifier = weightModifier)
     }
-}
-
-@Composable
-fun PasswordTextField(
-    state: MaxWidthTextFieldState,
-    error: Int?,
-    onValueChange: (TextFieldValue) -> Unit,
-    onFocusChanged: (FocusState) -> Unit
-) {
-    var isVisible by rememberSaveable { mutableStateOf(false) }
-
-    MaxWidthTextField(
-        state = state,
-        error = error,
-        onValueChange = onValueChange,
-        onFocusChanged = onFocusChanged,
-        trailingIcon = { VisibleIcon(isVisible) { isVisible = !isVisible } },
-        visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation()
-    )
 }

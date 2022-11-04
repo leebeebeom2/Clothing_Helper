@@ -23,18 +23,12 @@ fun SignInNavHost(navController: NavHostController = rememberNavController()) {
         NavHost(navController = navController, startDestination = SignInDestinations.SIGN_IN) {
             composable(route = SignInDestinations.SIGN_IN) {
                 SignInScreen(
-                    onForgotPasswordClick = { navController.signNavigate(SignInDestinations.RESET_PASSWORD) },
-                    onEmailSignUpClick = { navController.signNavigate(SignInDestinations.SIGN_UP) }
+                    onForgotPasswordClick = { navController.navigate(SignInDestinations.RESET_PASSWORD) },
+                    onEmailSignUpClick = { navController.navigate(SignInDestinations.SIGN_UP) }
                 )
             }
             composable(route = SignInDestinations.SIGN_UP) { SignUpScreen() }
             composable(route = SignInDestinations.RESET_PASSWORD) { ResetPasswordScreen() }
         }
     }
-}
-
-
-fun NavController.signNavigate(destination: String) = navigate(destination) {
-    launchSingleTop = true
-    popUpTo(SignInDestinations.SIGN_IN)
 }

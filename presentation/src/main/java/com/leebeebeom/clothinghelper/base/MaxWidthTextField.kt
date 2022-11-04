@@ -9,6 +9,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.*
@@ -36,12 +37,17 @@ fun MaxWidthTextField(
     trailingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
+    val hasFocusedState = rememberSaveable { mutableStateOf(false) }
+
     Column {
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(focusRequester = state.focusRequester)
-                .onFocusChanged(onFocusChanged = onFocusChanged),
+                .onFocusChanged(onFocusChanged = {
+                    hasFocusedState.value = it.isFocused
+                    onFocusChanged(it)
+                }),
             value = state.textFieldValue,
             onValueChange = onValueChange,
             label = { Text(text = stringResource(id = state.label)) },
@@ -68,6 +74,7 @@ fun MaxWidthTextField(
     }
     if (state.showKeyboardEnabled)
         LaunchedEffect(key1 = Unit) { state.showKeyboard() }
+    if (hasFocusedState.value) state.requestFocus()
 }
 
 @Composable
@@ -96,13 +103,13 @@ data class MaxWidthTextFieldState @OptIn(ExperimentalComposeUiApi::class) constr
     val showKeyboardEnabled: Boolean,
     val keyboardOptions: KeyboardOptions,
     override val focusManager: FocusManager,
-    val focusRequester: FocusRequester,
+    override val focusRequester: FocusRequester,
     val keyboardController: SoftwareKeyboardController?
-) : ClearFocus {
+) : ClearFocus, RequestFocus {
 
     @OptIn(ExperimentalComposeUiApi::class)
     suspend fun showKeyboard() {
-        focusRequester.requestFocus()
+        requestFocus()
         delay(100)
         keyboardController?.show()
     }

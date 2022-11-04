@@ -10,12 +10,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.leebeebeom.clothinghelper.base.Anime
 import com.leebeebeom.clothinghelper.main.maincategory.MainCategoryScreen
 import com.leebeebeom.clothinghelper.main.root.EssentialMenus
 import com.leebeebeom.clothinghelper.main.root.MainScreenRoot
 import com.leebeebeom.clothinghelper.main.setting.SettingScreen
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryScreen
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
+import kotlinx.coroutines.delay
 
 sealed class MainDestinations(val route: String) {
     object MainCategory : MainDestinations("mainCategory")
@@ -62,7 +64,7 @@ fun MainNavHost(state: MainNavHostState = rememberMainNavHostState()) {
             composable(MainDestinations.Setting.route) {
                 SettingScreen(
                     drawerCloseBackHandler = drawerCloseBackHandler,
-                    onSignOutButtonClick = state::navigateToSetting
+                    onSignOutButtonClick = state::navigateToMainWithDelay
                 )
             }
         }
@@ -77,6 +79,7 @@ data class MainNavHostState(val navController: NavHostController) {
             EssentialMenus.SeeAll -> {} // TODO
             EssentialMenus.Trash -> {} // TODO
         }
+
     fun navigateToSubCategory(subCategoryParent: SubCategoryParent) =
         navController.navigate("${MainDestinations.SubCategory.route}/${subCategoryParent.name}") { // TODO 중복 스택 막기
             launchSingleTop = true
@@ -87,10 +90,16 @@ data class MainNavHostState(val navController: NavHostController) {
             launchSingleTop = true
         }
 
-    fun navigateToSetting() =
+    suspend fun navigateToMainWithDelay() {
+        delay(Anime.Screen.duration.toLong())
+        navigateToMain()
+    }
+
+    fun navigateToSetting() {
         navController.navigate(route = MainDestinations.Setting.route) {
             launchSingleTop = true
         }
+    }
 }
 
 @Composable

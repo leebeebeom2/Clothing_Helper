@@ -9,7 +9,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.*
@@ -17,7 +16,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -30,7 +28,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun MaxWidthTextField(
-    stateHolder: MaxWidthTextFieldStateHolder,
+    state: MaxWidthTextFieldState,
     error: Int? = null,
     onValueChange: (TextFieldValue) -> Unit,
     onFocusChanged: (FocusState) -> Unit = {},
@@ -41,21 +39,21 @@ fun MaxWidthTextField(
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .focusRequester(focusRequester = stateHolder.focusRequester)
+                .focusRequester(focusRequester = state.focusRequester)
                 .onFocusChanged(onFocusChanged = onFocusChanged),
-            value = stateHolder.textFieldState,
+            value = state.textFieldValue,
             onValueChange = onValueChange,
-            label = { Text(text = stringResource(id = stateHolder.label)) },
-            placeholder = { Text(text = stringResource(id = stateHolder.placeholder)) },
+            label = { Text(text = stringResource(id = state.label)) },
+            placeholder = { Text(text = stringResource(id = state.placeholder)) },
             isError = error != null,
             visualTransformation = visualTransformation,
             singleLine = true,
             maxLines = 1,
-            keyboardOptions = stateHolder.keyboardOptions,
+            keyboardOptions = state.keyboardOptions,
             trailingIcon = trailingIcon,
             keyboardActions =
-            if (stateHolder.keyboardOptions.imeAction == ImeAction.Done)
-                KeyboardActions(onDone = { stateHolder.onKeyBoardActionDoneClick() })
+            if (state.keyboardOptions.imeAction == ImeAction.Done)
+                KeyboardActions(onDone = { state.clearFocus() })
             else KeyboardActions.Default,
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 unfocusedBorderColor = Color(0xFFDADADA),
@@ -67,7 +65,7 @@ fun MaxWidthTextField(
 
         ErrorText(error)
     }
-    if (stateHolder.showKeyboardEnabled) ShowKeyboard(stateHolder.focusRequester)
+    if (state.showKeyboardEnabled) ShowKeyboard(state.focusRequester)
 }
 
 @Composable
@@ -101,41 +99,31 @@ fun ShowKeyboard(focusRequester: FocusRequester) {
     }
 }
 
-data class MaxWidthTextFieldStateHolder(
-    private val _textState: MutableState<String>,
-    private val _textFieldState: MutableState<TextFieldValue>,
+data class MaxWidthTextFieldState(
+    val textFieldValue: TextFieldValue,
     @StringRes val label: Int,
     @StringRes val placeholder: Int,
     val showKeyboardEnabled: Boolean,
     val keyboardOptions: KeyboardOptions,
-    val focusManager: FocusManager,
+    override val focusManager: FocusManager,
     val focusRequester: FocusRequester
-) {
-    val textState get() = _textState.value
-    val textFieldState get() = _textFieldState.value
+) : ClearFocus
 
-    fun onKeyBoardActionDoneClick() {
-        focusManager.clearFocus()
-    }
-
-    fun onValueChange(newText: TextFieldValue, updateError: (Int?) -> Unit) {
-        if (textState != newText.text) updateError(null)
-        _textState.value = newText.text
-        _textFieldState.value = newText.copy(_textState.value)
-    }
-
-    var onFocusChanged = { focusState: FocusState ->
-        if (focusState.hasFocus)
-            _textFieldState.value =
-                _textFieldState.value.copy(selection = TextRange(textState.length))
-    }
-}
+//    fun onValueChange(newText: TextFieldValue, updateError: (Int?) -> Unit) {
+//        if (textState != newText.text) updateError(null)
+//        _textState.value = newText.text
+//        textField.value = newText.copy(_textState.value)
+//    }
+//
+//    var onFocusChanged = { focusState: FocusState ->
+//        if (focusState.hasFocus)
+//            textField.value =
+//                textField.value.copy(selection = TextRange(textState.length))
+//    }
 
 @Composable
-fun rememberMaxWidthTextFiledStateHolder(
-    initialText: String = "",
-    textState: MutableState<String> = rememberSaveable { mutableStateOf(initialText) },
-    textFieldState: MutableState<TextFieldValue> = remember { mutableStateOf(TextFieldValue(text = textState.value)) },
+fun rememberMaxWidthTextFiledState(
+    textFieldValue: TextFieldValue = TextFieldValue(""),
     @StringRes label: Int,
     @StringRes placeholder: Int = R.string.empty,
     showKeyboardEnabled: Boolean = false,
@@ -145,9 +133,8 @@ fun rememberMaxWidthTextFiledStateHolder(
     focusManager: FocusManager = LocalFocusManager.current,
     focusRequester: FocusRequester = FocusRequester()
 ) = remember {
-    MaxWidthTextFieldStateHolder(
-        _textState = textState,
-        _textFieldState = textFieldState,
+    MaxWidthTextFieldState(
+        textFieldValue = textFieldValue,
         label = label,
         placeholder = placeholder,
         showKeyboardEnabled = showKeyboardEnabled,
@@ -158,10 +145,10 @@ fun rememberMaxWidthTextFiledStateHolder(
 }
 
 @Composable
-fun rememberEmailTextFieldStateHolder(
+fun rememberEmailTextFieldState(
     showKeyboardEnabled: Boolean = false,
     imeAction: ImeAction = ImeAction.Done,
-) = rememberMaxWidthTextFiledStateHolder(
+) = rememberMaxWidthTextFiledState(
     label = R.string.email,
     placeholder = R.string.email_place_holder,
     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = imeAction),
@@ -169,10 +156,10 @@ fun rememberEmailTextFieldStateHolder(
 )
 
 @Composable
-fun rememberPasswordTextFieldStateHolder(
+fun rememberPasswordTextFieldState(
     @StringRes label: Int = R.string.password,
     imeAction: ImeAction = ImeAction.Done
-) = rememberMaxWidthTextFiledStateHolder(
+) = rememberMaxWidthTextFiledState(
     label = label,
     keyboardOptions = KeyboardOptions(
         keyboardType = KeyboardType.Password,
@@ -181,11 +168,11 @@ fun rememberPasswordTextFieldStateHolder(
 )
 
 @Composable
-fun rememberSubCategoryDialogTextFieldStateHolder(
-    initialCategoryName: String = ""
-) = rememberMaxWidthTextFiledStateHolder(
+fun rememberSubCategoryDialogTextFieldState(
+    textFieldValue: TextFieldValue = TextFieldValue("")
+) = rememberMaxWidthTextFiledState(
+    textFieldValue = textFieldValue,
     label = R.string.add_category,
     placeholder = R.string.category_place_holder,
-    initialText = initialCategoryName,
     showKeyboardEnabled = true,
 )

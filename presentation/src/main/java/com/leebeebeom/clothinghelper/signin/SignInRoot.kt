@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leebeebeom.clothinghelper.base.CenterDotProgressIndicator
+import com.leebeebeom.clothinghelper.base.ClearFocus
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelperdomain.usecase.signin.GetSignInLoadingStateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,7 +28,7 @@ import javax.inject.Inject
 @Composable
 fun SignInRoot(
     viewModel: SignInRootViewModel = hiltViewModel(),
-    state: SignInRootStateHolder = rememberSignInRootStateHolder(),
+    state: SignInRootState = rememberSignInRootState(),
     content: @Composable BoxScope.() -> Unit
 ) {
     ClothingHelperTheme {
@@ -40,29 +41,29 @@ fun SignInRoot(
                         .padding(horizontal = 20.dp)
                         .clickable(
                             interactionSource = state.interactionSource, indication = null
-                        ) { state.focusManager.clearFocus() },
+                        ) { state.clearFocus() },
                     content = content
                 )
             }
         }
     }
-    val isLoading by viewModel.getSignInLoadingStateUseCase().collectAsStateWithLifecycle()
-    if (isLoading) CenterDotProgressIndicator()
+    val isLoadingState = viewModel.getSignInLoadingStateUseCase().collectAsStateWithLifecycle()
+    if (isLoadingState.value) CenterDotProgressIndicator()
 }
 
 @HiltViewModel
 class SignInRootViewModel @Inject constructor(val getSignInLoadingStateUseCase: GetSignInLoadingStateUseCase) :
     ViewModel()
 
-data class SignInRootStateHolder(
-    val focusManager: FocusManager,
+data class SignInRootState(
+    override val focusManager: FocusManager,
     val interactionSource: MutableInteractionSource
-)
+) : ClearFocus
 
 @Composable
-fun rememberSignInRootStateHolder(
+fun rememberSignInRootState(
     focusManager: FocusManager = LocalFocusManager.current,
     interactionSource: MutableInteractionSource = remember {
         MutableInteractionSource()
     }
-) = remember { SignInRootStateHolder(focusManager, interactionSource) }
+) = remember { SignInRootState(focusManager, interactionSource) }

@@ -56,6 +56,11 @@ object Anime {
 
         val expandIn = expandVertically(animationSpec = tween(durationMillis = duration))
         val shrinkOut = shrinkVertically(animationSpec = tween(durationMillis = duration))
+
+        private const val fadeInDuration = 150
+
+        val fadeIn = fadeIn(tween(fadeInDuration))
+        val fadeOut = fadeOut(tween(fadeInDuration))
     }
 
     @OptIn(ExperimentalAnimationApi::class)

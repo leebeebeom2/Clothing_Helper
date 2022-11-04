@@ -37,17 +37,14 @@ fun MaxWidthTextField(
     trailingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
-    val hasFocusedState = rememberSaveable { mutableStateOf(false) }
+    val didShowKeyboardState = rememberSaveable { mutableStateOf(false) }
 
     Column {
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(focusRequester = state.focusRequester)
-                .onFocusChanged(onFocusChanged = {
-                    hasFocusedState.value = it.isFocused
-                    onFocusChanged(it)
-                }),
+                .onFocusChanged(onFocusChanged = onFocusChanged),
             value = state.textFieldValue,
             onValueChange = onValueChange,
             label = { Text(text = stringResource(id = state.label)) },
@@ -68,11 +65,13 @@ fun MaxWidthTextField(
                 placeholderColor = MaterialTheme.colors.onSurface.copy(ContentAlpha.disabled)
             )
         )
-
         ErrorText(error)
     }
-    if (state.showKeyboardEnabled) LaunchedEffect(key1 = Unit) { state.showKeyboard() }
-    if (hasFocusedState.value) state.requestFocus()
+
+    if (!didShowKeyboardState.value && state.showKeyboardEnabled) {
+        LaunchedEffect(key1 = Unit) { state.showKeyboard() }
+        didShowKeyboardState.value = true
+    }
 }
 
 @Composable

@@ -15,6 +15,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -42,7 +43,6 @@ fun VisibleIcon(isVisible: Boolean, onClick: () -> Unit) {
 fun GoogleSignInButton(
     state: MaxWidthButtonState,
     onActivityResult: (ActivityResult) -> Unit,
-    enabled: Boolean,
     disEnabled: () -> Unit
 ) {
     val launcher = rememberLauncherForActivityResult(
@@ -94,7 +94,8 @@ fun OrDivider() {
 fun PasswordTextField(
     state: MaxWidthTextFieldState,
     error: Int?,
-    onValueChange: (TextFieldValue) -> Unit
+    onValueChange: (TextFieldValue) -> Unit,
+    onFocusChanged: (FocusState) -> Unit
 ) {
     var isVisible by rememberSaveable { mutableStateOf(false) }
 
@@ -102,6 +103,7 @@ fun PasswordTextField(
         state = state,
         error = error,
         onValueChange = onValueChange,
+        onFocusChanged = onFocusChanged,
         trailingIcon = { VisibleIcon(isVisible) { isVisible = !isVisible } },
         visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation()
     )

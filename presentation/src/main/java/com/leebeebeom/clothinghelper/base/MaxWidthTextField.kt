@@ -15,6 +15,7 @@ import androidx.compose.ui.focus.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -65,7 +66,8 @@ fun MaxWidthTextField(
 
         ErrorText(error)
     }
-    if (state.showKeyboardEnabled) ShowKeyboard(state.focusRequester)
+    if (state.showKeyboardEnabled)
+        LaunchedEffect(key1 = Unit) { state.showKeyboard() }
 }
 
 @Composable
@@ -87,27 +89,24 @@ private fun ErrorText(@StringRes error: Int?) {
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-fun ShowKeyboard(focusRequester: FocusRequester) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-        delay(100)
-        keyboardController?.show()
-    }
-}
-
-data class MaxWidthTextFieldState(
+data class MaxWidthTextFieldState @OptIn(ExperimentalComposeUiApi::class) constructor(
     val textFieldValue: TextFieldValue,
     @StringRes val label: Int,
     @StringRes val placeholder: Int,
     val showKeyboardEnabled: Boolean,
     val keyboardOptions: KeyboardOptions,
     override val focusManager: FocusManager,
-    val focusRequester: FocusRequester
-) : ClearFocus
+    val focusRequester: FocusRequester,
+    val keyboardController: SoftwareKeyboardController?
+) : ClearFocus {
+
+    @OptIn(ExperimentalComposeUiApi::class)
+    suspend fun showKeyboard() {
+        focusRequester.requestFocus()
+        delay(100)
+        keyboardController?.show()
+    }
+}
 
 //    fun onValueChange(newText: TextFieldValue, updateError: (Int?) -> Unit) {
 //        if (textState != newText.text) updateError(null)
@@ -121,6 +120,7 @@ data class MaxWidthTextFieldState(
 //                textField.value.copy(selection = TextRange(textState.length))
 //    }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun rememberMaxWidthTextFiledState(
     textFieldValue: TextFieldValue = TextFieldValue(""),
@@ -131,7 +131,8 @@ fun rememberMaxWidthTextFiledState(
         imeAction = ImeAction.Done
     ),
     focusManager: FocusManager = LocalFocusManager.current,
-    focusRequester: FocusRequester = FocusRequester()
+    focusRequester: FocusRequester = FocusRequester(),
+    keyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
 ) = remember {
     MaxWidthTextFieldState(
         textFieldValue = textFieldValue,
@@ -140,10 +141,12 @@ fun rememberMaxWidthTextFiledState(
         showKeyboardEnabled = showKeyboardEnabled,
         keyboardOptions = keyboardOptions,
         focusManager = focusManager,
-        focusRequester = focusRequester
+        focusRequester = focusRequester,
+        keyboardController = keyboardController
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun rememberEmailTextFieldState(
     showKeyboardEnabled: Boolean = false,
@@ -155,6 +158,7 @@ fun rememberEmailTextFieldState(
     showKeyboardEnabled = showKeyboardEnabled,
 )
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun rememberPasswordTextFieldState(
     @StringRes label: Int = R.string.password,
@@ -167,6 +171,7 @@ fun rememberPasswordTextFieldState(
     )
 )
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun rememberSubCategoryDialogTextFieldState(
     textFieldValue: TextFieldValue = TextFieldValue("")

@@ -69,7 +69,7 @@ fun PasswordTextField(
         error = error,
         onValueChange = {
             onValueChange(
-                newTextFieldValue = it, updateError = updateError,
+                newTextFieldValue = it.copy(it.text.trim()), updateError = updateError,
                 textFieldValueState = textFieldValueState,
                 onValueChange = onPasswordChange
             )

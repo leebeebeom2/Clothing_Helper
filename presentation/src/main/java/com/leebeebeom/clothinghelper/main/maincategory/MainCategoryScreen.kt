@@ -107,7 +107,7 @@ private fun MainCategoryCard(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
                         .padding(bottom = 4.dp, start = 4.dp),
-                    dotSize = 4.dp
+                    size = 4.dp
                 )
             else Text(
                 text = stringResource(

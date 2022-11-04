@@ -28,7 +28,7 @@ fun VisibleIcon(isVisible: Boolean, onClick: () -> Unit) {
         tint = LocalContentColor.current.copy(0.4f),
         onClick = onClick,
         modifier = Modifier.size(24.dp),
-        contentDescription = "visibleIcon"
+        contentDescription = if (isVisible) "closeEye" else "openEye"
     )
 }
 

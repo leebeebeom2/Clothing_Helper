@@ -11,8 +11,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.leebeebeom.clothinghelper.base.Anime.Screen.screenSlideInBottom
-import com.leebeebeom.clothinghelper.base.Anime.Screen.screenSlideOutBottom
+import com.leebeebeom.clothinghelper.base.Anime.Screen.slideInBottom
+import com.leebeebeom.clothinghelper.base.Anime.Screen.slideOutBottom
 import com.leebeebeom.clothinghelper.main.MainNavHost
 import com.leebeebeom.clothinghelper.signin.SignInNavHost
 import com.leebeebeom.clothinghelperdomain.usecase.signin.GetSignInStateUseCase
@@ -43,8 +43,8 @@ fun MainActivityScreen(viewModel: MainActivityViewModel = hiltViewModel()) {
         MainNavHost()
         AnimatedVisibility(
             visible = !isSignIn,
-            enter = screenSlideInBottom,
-            exit = screenSlideOutBottom
+            enter = slideInBottom,
+            exit = slideOutBottom
         ) { SignInNavHost() }
     }
 }

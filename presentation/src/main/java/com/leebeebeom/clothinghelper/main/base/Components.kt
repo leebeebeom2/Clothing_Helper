@@ -9,13 +9,11 @@ import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.LocalContentColor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.CustomIconButton
 
@@ -23,10 +21,9 @@ import com.leebeebeom.clothinghelper.base.CustomIconButton
 @Composable
 fun AllExpandIcon(
     size: Dp,
-    allExpandIconClick: () -> Unit,
+    onClick: () -> Unit,
     tint: Color,
-    allExpand: Boolean,
-    rippleSize: Dp = 4.dp
+    allExpand: Boolean
 ) {
     val painter = rememberAnimatedVectorPainter(
         animatedImageVector = AnimatedImageVector.animatedVectorResource(
@@ -36,32 +33,21 @@ fun AllExpandIcon(
 
     CustomIconButton(
         modifier = Modifier.size(size),
-        onClick = allExpandIconClick,
+        onClick = onClick,
         painter = painter,
         tint = tint,
-        rippleSize = rippleSize
     )
 }
 
-abstract class AllExpandStateHolder {
-    abstract val isAllExpand: Boolean
-    protected abstract val _isExpandState: MutableState<Boolean>
-    val isExpandState get() = _isExpandState.value
-
-    fun isExpandToggle() {
-        _isExpandState.value = !_isExpandState.value
-    }
-}
-
 @Composable
-fun ExpandIcon(modifier: Modifier = Modifier, isExpanded: Boolean, onExpandIconClick: () -> Unit) {
+fun ExpandIcon(modifier: Modifier = Modifier, isExpanded: Boolean, onClick: () -> Unit) {
     val rotate by animateFloatAsState(
         targetValue = if (!isExpanded) 0f else 180f, animationSpec = tween(durationMillis = 300)
     )
 
     CustomIconButton(
         modifier = modifier.rotate(rotate),
-        onClick = onExpandIconClick,
+        onClick = onClick,
         drawable = R.drawable.ic_expand_more,
         tint = LocalContentColor.current.copy(alpha = 0.6f)
     )

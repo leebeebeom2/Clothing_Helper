@@ -8,7 +8,6 @@ import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -16,6 +15,7 @@ import com.leebeebeom.clothinghelper.base.Anime.List.listExpand
 import com.leebeebeom.clothinghelper.base.Anime.List.listShrink
 import com.leebeebeom.clothinghelper.base.DotProgressIndicator
 import com.leebeebeom.clothinghelper.main.base.ExpandIcon
+import com.leebeebeom.clothinghelper.main.base.isExpandStateWithIsAllExpand
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
@@ -25,12 +25,7 @@ fun DrawerMainCategory(
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (key: String) -> Unit,
 ) {
-    val isExpandState = rememberSaveable { mutableStateOf(state.value.isAllExpand) }
-    val rememberedIsAllExpandState = rememberSaveable { mutableStateOf(state.value.isAllExpand) }
-    if (state.value.isAllExpand != rememberedIsAllExpandState.value) {
-        isExpandState.value = state.value.isAllExpand
-        rememberedIsAllExpandState.value = state.value.isAllExpand
-    }
+    val isExpandState = isExpandStateWithIsAllExpand(isAllExpand = state.value.isAllExpand)
 
     Column {
         DrawerContentRow(

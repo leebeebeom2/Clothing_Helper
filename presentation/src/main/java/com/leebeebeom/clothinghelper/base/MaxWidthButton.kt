@@ -48,10 +48,8 @@ data class MaxWidthButtonState(
     @StringRes val text: Int,
     val colors: ButtonColors,
     val enabled: Boolean,
-    val focusManager: FocusManager
-) {
-    fun clearFocus() = focusManager.clearFocus()
-}
+    override val focusManager: FocusManager
+) : ClearFocus
 
 @Composable
 fun rememberMaxWidthButtonState(

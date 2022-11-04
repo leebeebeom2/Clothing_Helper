@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 
 object Anime {
     object Screen {
-        private const val duration = 350
+        const val duration = 350
         private val easing = CubicBezierEasing(a = 0.36f, b = 0f, c = 0.66f, d = -0.1f)
 
         val slideInBottom =

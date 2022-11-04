@@ -45,16 +45,16 @@ fun DialogTitle(@StringRes text: Int) {
 
 @Composable
 fun DialogTextField(
-    textFieldStateHolder: MaxWidthTextFieldState,
+    state: MaxWidthTextFieldState,
     error: Int?,
     onValueChange: (TextFieldValue) -> Unit,
-    onFocusChange: (FocusState) -> Unit
+    onFocusChanged: (FocusState) -> Unit
 ) {
     MaxWidthTextField(
-        state = textFieldStateHolder,
+        state = state,
         error = error,
         onValueChange = onValueChange,
-        onFocusChanged = onFocusChange
+        onFocusChanged = onFocusChanged
     )
     SimpleHeightSpacer(dp = 12)
 }

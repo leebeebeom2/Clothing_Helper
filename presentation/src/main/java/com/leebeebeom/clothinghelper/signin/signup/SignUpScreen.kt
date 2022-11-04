@@ -50,12 +50,12 @@ fun SignUpScreen(
     viewModel: SignUpViewModel = hiltViewModel(),
     state: SignUpState = rememberSignUpState()
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
         EmailTextFiled(
             email = state.emailState.value,
-            error = uiState.emailError,
+            error = uiState.value.emailError,
             updateError = viewModel::updateEmailError,
             onEmailChange = state::onEmailChange
         )
@@ -96,7 +96,7 @@ fun SignUpScreen(
         MaxWidthButton(
             state = rememberMaxWidthButtonState(
                 text = R.string.sign_up,
-                enabled = uiState.isNotError && state.isTextNotBlank && state.isNotError
+                enabled = uiState.value.isNotError && state.isTextNotBlank && state.isNotError
             ),
             onClick = {
                 viewModel.signUpWithEmailAndPassword(
@@ -111,14 +111,14 @@ fun SignUpScreen(
         SimpleHeightSpacer(dp = 8)
         // 프리뷰 시 주석처리
         GoogleSignInButton(
-            state = rememberGoogleButtonState(enabled = uiState.googleButtonEnabled),
+            state = rememberGoogleButtonState(enabled = uiState.value.googleButtonEnabled),
             onActivityResult = viewModel::signInWithGoogleEmail
         ) { viewModel.updateGoogleButtonEnabled(enabled = false) }
 
         SimpleHeightSpacer(dp = 150)
     }
 
-    SimpleToast(text = uiState.toastText, shownToast = viewModel::toastShown)
+    SimpleToast(text = uiState.value.toastText, shownToast = viewModel::toastShown)
 }
 
 data class SignUpState(

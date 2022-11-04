@@ -9,7 +9,10 @@ import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.LocalContentColor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
@@ -37,6 +40,17 @@ fun AllExpandIcon(
         painter = painter,
         tint = tint,
     )
+}
+
+@Composable
+fun isExpandStateWithIsAllExpand(isAllExpand: Boolean): MutableState<Boolean> {
+    val isExpandState = rememberSaveable { mutableStateOf(isAllExpand) }
+    val rememberedIsAllExpandState = rememberSaveable { mutableStateOf(isAllExpand) }
+    if (isAllExpand != rememberedIsAllExpandState.value) {
+        isExpandState.value = isAllExpand
+        rememberedIsAllExpandState.value = isAllExpand
+    }
+    return isExpandState
 }
 
 @Composable

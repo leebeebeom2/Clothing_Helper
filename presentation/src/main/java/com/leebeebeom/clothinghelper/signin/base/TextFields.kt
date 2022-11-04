@@ -28,7 +28,7 @@ fun EmailTextFiled(
     val textFieldValueState = remember { mutableStateOf(TextFieldValue(email)) }
 
     val state = rememberEmailTextFieldState(
-        textFieldValue = textFieldValueState,
+        textFieldValueState = textFieldValueState,
         imeAction = imeAction
     )
 
@@ -60,7 +60,7 @@ fun PasswordTextField(
     val state =
         rememberPasswordTextFieldState(
             label = label,
-            textFieldValue = textFieldValueState,
+            textFieldValueState = textFieldValueState,
             imeAction = imeAction
         )
 
@@ -95,7 +95,7 @@ fun NameTextFiled(
     val textFieldValueState = remember { mutableStateOf(TextFieldValue(name)) }
 
     val state = rememberEmailTextFieldState(
-        textFieldValue = textFieldValueState,
+        textFieldValueState = textFieldValueState,
         imeAction = ImeAction.Done
     )
 

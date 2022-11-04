@@ -114,7 +114,7 @@ data class MaxWidthTextFieldState @OptIn(ExperimentalComposeUiApi::class) constr
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun rememberMaxWidthTextFiledState(
-    textFieldValue: State<TextFieldValue>,
+    textFieldValueState: State<TextFieldValue>,
     @StringRes label: Int,
     @StringRes placeholder: Int = R.string.empty,
     showKeyboardEnabled: Boolean = false,
@@ -127,7 +127,7 @@ fun rememberMaxWidthTextFiledState(
 ) = remember {
     derivedStateOf {
         MaxWidthTextFieldState(
-            textFieldValue = textFieldValue.value,
+            textFieldValue = textFieldValueState.value,
             label = label,
             placeholder = placeholder,
             showKeyboardEnabled = showKeyboardEnabled,
@@ -142,10 +142,10 @@ fun rememberMaxWidthTextFiledState(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun rememberEmailTextFieldState(
-    textFieldValue: State<TextFieldValue>,
+    textFieldValueState: State<TextFieldValue>,
     imeAction: ImeAction,
 ) = rememberMaxWidthTextFiledState(
-    textFieldValue = textFieldValue,
+    textFieldValueState = textFieldValueState,
     label = R.string.email,
     placeholder = R.string.email_place_holder,
     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = imeAction),
@@ -155,23 +155,12 @@ fun rememberEmailTextFieldState(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun rememberPasswordTextFieldState(
-    textFieldValue: State<TextFieldValue>,
+    textFieldValueState: State<TextFieldValue>,
     @StringRes label: Int = R.string.password,
     imeAction: ImeAction = ImeAction.Done
 ) = rememberMaxWidthTextFiledState(
-    textFieldValue = textFieldValue,
+    textFieldValueState = textFieldValueState,
     label = label, keyboardOptions = KeyboardOptions(
         keyboardType = KeyboardType.Password, imeAction = imeAction
     )
-)
-
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-fun rememberSubCategoryDialogTextFieldState(
-    textFieldValue: State<TextFieldValue>,
-) = rememberMaxWidthTextFiledState(
-    textFieldValue = textFieldValue,
-    label = R.string.add_category,
-    placeholder = R.string.category_place_holder,
-    showKeyboardEnabled = true,
 )

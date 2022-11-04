@@ -4,11 +4,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryStateHolder
+import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryStates
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryUIState
 import com.leebeebeom.clothinghelper.main.subcategory.content.header.SubCategoryHeader
 import com.leebeebeom.clothinghelper.main.subcategory.content.header.rememberSubCategoryHeaderState
@@ -20,8 +21,7 @@ import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
 
 @Composable
 fun SubCategoryContent(
-    state: SubCategoryContentState,
-    paddingValues: PaddingValues,
+    state: State<SubCategoryContentState>,
     allExpandIconClick: () -> Unit,
     onLongClick: (SubCategory) -> Unit,
     onSubCategoryClick: (SubCategory) -> Unit,
@@ -32,7 +32,7 @@ fun SubCategoryContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(paddingValues)
+            .padding(state.value.paddingValues)
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -42,7 +42,8 @@ fun SubCategoryContent(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             item {
-                val subCategoryHeaderState = rememberSubCategoryHeaderState(subCategoryContentState = state)
+                val subCategoryHeaderState =
+                    rememberSubCategoryHeaderState(subCategoryContentState = state)
                 SubCategoryHeader(
                     state = subCategoryHeaderState,
                     allExpandIconClick = allExpandIconClick,
@@ -50,11 +51,11 @@ fun SubCategoryContent(
                     onOrderClick = onOrderClick
                 )
             }
-            items(items = state.subCategoriesState,
+            items(items = state.value.subCategories,
                 key = { subCategory -> subCategory.key }) {
                 val subCategoryCardState = rememberSubCategoryCardState(
                     subCategory = it,
-                    state = state,
+                    subCategoryContentState = state,
                 )
                 SubCategoryCard(
                     state = subCategoryCardState,
@@ -65,9 +66,8 @@ fun SubCategoryContent(
         }
 
         AddSubcategoryDialogFab(
-            onPositiveButtonClick = onAddCategoryPositiveButtonClick,
-            subCategoriesState = state.subCategoriesState,
-            subCategoryParent = state.parent
+            onPositiveButtonClick = { onAddCategoryPositiveButtonClick(it, state.value.parent) },
+            subCategories = state.value.subCategories,
         )
     }
 }
@@ -75,27 +75,29 @@ fun SubCategoryContent(
 data class SubCategoryContentState(
     val parent: SubCategoryParent,
     val isAllExpand: Boolean,
-    val subCategoriesState: List<SubCategory>,
+    val subCategories: List<SubCategory>,
     val isSelectMode: Boolean,
     val selectedSubCategories: Set<SubCategory>,
     val sort: SubCategorySortPreferences,
+    val paddingValues: PaddingValues
 )
 
 @Composable
 fun rememberSubCategoryContentState(
-    parent: SubCategoryParent,
-    uiState: SubCategoryUIState,
-    subCategoriesState: List<SubCategory>,
-    SubCategoryStateHolder: SubCategoryStateHolder
-) = remember(key1 = uiState) {
+    uiState: State<SubCategoryUIState>,
+    subCategoriesState: State<List<SubCategory>>,
+    subCategoryStates: SubCategoryStates,
+    paddingValues: PaddingValues
+) = remember {
     derivedStateOf {
         SubCategoryContentState(
-            parent = parent,
-            isAllExpand = uiState.isAllExpand,
-            subCategoriesState = subCategoriesState,
-            isSelectMode = SubCategoryStateHolder.isSelectModeState,
-            selectedSubCategories = SubCategoryStateHolder.selectedSubCategoriesState,
-            sort = uiState.sort
+            parent = subCategoryStates.parent,
+            isAllExpand = uiState.value.isAllExpand,
+            subCategories = subCategoriesState.value,
+            isSelectMode = subCategoryStates.isSelectMode,
+            selectedSubCategories = subCategoryStates.selectedSubCategories,
+            sort = uiState.value.sort,
+            paddingValues = paddingValues
         )
     }
 }

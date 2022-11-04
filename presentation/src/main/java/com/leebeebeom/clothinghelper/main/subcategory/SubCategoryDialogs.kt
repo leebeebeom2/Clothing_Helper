@@ -58,6 +58,7 @@ abstract class BaseSubCategoryTextFieldDialogState {
     val text get() = textState.value
     val textFieldValueState: State<TextFieldValue> get() = textFieldValueMutableState
     val error get() = errorState.value
+    val positiveButtonEnabled get() = text.isNotBlank() && error == null
 
     fun onValueChange(newTextFiled: TextFieldValue) {
         if (textState.value != newTextFiled.text) errorState.value = null

@@ -23,14 +23,14 @@ import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
 
 @Composable
 fun SubCategoryHeader(
-    state: SubCategoryHeaderState,
+    state: State<SubCategoryHeaderState>,
     allExpandIconClick: () -> Unit,
     onSortClick: (SubCategorySort) -> Unit,
     onOrderClick: (SortOrder) -> Unit
 ) {
     Text(
         modifier = Modifier.padding(4.dp),
-        text = stringResource(id = state.headerText),
+        text = stringResource(id = state.value.headerText),
         style = MaterialTheme.typography.h2,
         fontSize = 32.sp
     )
@@ -40,10 +40,10 @@ fun SubCategoryHeader(
 
         AllExpandIcon(
             allExpandIconClick = allExpandIconClick,
-            allExpand = state.isAllExpand
+            allExpand = state.value.isAllExpand
         )
         SortIcon(
-            sort = state.sort,
+            sort = state.value.sort,
             onSortClick = onSortClick,
             onOrderClick = onOrderClick
         )
@@ -55,10 +55,9 @@ private fun AllExpandIcon(allExpandIconClick: () -> Unit, allExpand: Boolean) {
     Box(modifier = Modifier.offset(4.dp, 0.dp)) {
         AllExpandIcon(
             size = 22.dp,
-            allExpandIconClick = allExpandIconClick,
+            onClick = allExpandIconClick,
             tint = LocalContentColor.current.copy(0.5f),
-            allExpand = allExpand,
-            rippleSize = 2.dp
+            allExpand = allExpand
         )
     }
 }
@@ -77,7 +76,6 @@ private fun SortIcon(
             onClick = { showDropDownMenu = true },
             drawable = R.drawable.ic_sort,
             tint = LocalContentColor.current.copy(0.5f),
-            rippleSize = 2.dp
         )
 
         SortDropdownMenu(
@@ -98,13 +96,15 @@ data class SubCategoryHeaderState(
 
 @Composable
 fun rememberSubCategoryHeaderState(
-    subCategoryContentState: SubCategoryContentState
-) = remember(subCategoryContentState) {
-    SubCategoryHeaderState(
-        headerText = getHeaderStringRes(subCategoryContentState.parent),
-        isAllExpand = subCategoryContentState.isAllExpand,
-        sort = subCategoryContentState.sort
-    )
+    subCategoryContentState: State<SubCategoryContentState>
+) = remember {
+    derivedStateOf {
+        SubCategoryHeaderState(
+            headerText = getHeaderStringRes(subCategoryContentState.value.parent),
+            isAllExpand = subCategoryContentState.value.isAllExpand,
+            sort = subCategoryContentState.value.sort
+        )
+    }
 }
 
 fun getHeaderStringRes(parent: SubCategoryParent) =

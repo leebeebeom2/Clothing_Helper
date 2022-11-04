@@ -1,12 +1,11 @@
 package com.leebeebeom.clothinghelper.signin.signup
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -14,10 +13,7 @@ import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.*
-import com.leebeebeom.clothinghelper.signin.base.BaseStateHolder
-import com.leebeebeom.clothinghelper.signin.base.GoogleSignInButton
-import com.leebeebeom.clothinghelper.signin.base.OrDivider
-import com.leebeebeom.clothinghelper.signin.base.PasswordTextField
+import com.leebeebeom.clothinghelper.signin.base.*
 
 /*
 필드가 하나라도 비어있거나 에러 메세지가 표시중인 경우 가입하기 버튼 비활성화
@@ -52,60 +48,61 @@ import com.leebeebeom.clothinghelper.signin.base.PasswordTextField
 @Composable
 fun SignUpScreen(
     viewModel: SignUpViewModel = hiltViewModel(),
-    stateHolder: SignUpStateHolder = rememberSignUpStateHolder()
+    state: SignUpState = rememberSignUpState()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
-        MaxWidthTextField(
-            stateHolder = stateHolder.emailStateHolder,
+        EmailTextFiled(
+            email = state.emailState.value,
             error = uiState.emailError,
-            onValueChange = {
-                stateHolder.emailStateHolder.onValueChange(it, viewModel::updateEmailError)
-            }
+            updateError = viewModel::updateEmailError,
+            onEmailChange = state::onEmailChange
         )
 
-        MaxWidthTextField(
-            stateHolder = stateHolder.nameStateHolder,
-            onValueChange = { stateHolder.nameStateHolder.onValueChange(it) {} },
+        NameTextFiled(name = state.nameState.value, onNameChange = state::onNameChange)
+
+        PasswordTextField(
+            password = state.passwordState.value,
+            error = state.passwordErrorState.value,
+            imeAction = ImeAction.Next,
+            onPasswordChange = {
+                state.onPasswordChange(it)
+                val newText = it.trim()
+                if (newText.isNotBlank()) {
+                    if (newText.length < 6)
+                        state.updatePasswordError(R.string.error_weak_password)
+                    if (state.passwordConfirmState.value.isNotBlank() && newText != state.passwordConfirmState.value)
+                        state.updatePasswordConfirmError(R.string.error_password_confirm_not_same)
+                }
+            },
+            updateError = state::updatePasswordError
         )
 
         PasswordTextField(
-            maxWidthTextFieldStateHolder = stateHolder.passwordStateHolder,
-            error = uiState.passwordError,
-            onValueChange = {
-                stateHolder.passwordStateHolder.onValueChange(it, viewModel::updatePasswordError)
-                val newText = it.text.trim()
-                if (newText.isNotBlank() && newText.length < 6)
-                    viewModel.updatePasswordError(R.string.error_weak_password)
-            }
-        )
-
-        PasswordTextField(
-            maxWidthTextFieldStateHolder = stateHolder.passwordConfirmStateHolder,
-            error = uiState.passwordConfirmError,
-            onValueChange = {
-                stateHolder.passwordConfirmStateHolder.onValueChange(
-                    it,
-                    viewModel::updatePasswordConfirmError
-                )
-                val password = stateHolder.passwordStateHolder.textState.trim()
-                val passwordConfirm = stateHolder.passwordConfirmStateHolder.textState.trim()
-                if (password.isNotBlank() && passwordConfirm.isNotBlank() && password != passwordConfirm)
-                    viewModel.updatePasswordConfirmError(R.string.error_password_confirm_not_same)
-                else viewModel.updatePasswordConfirmError(null)
-            }
+            label = R.string.password_confirm,
+            password = state.passwordConfirmState.value,
+            error = state.passwordConfirmErrorState.value,
+            imeAction = ImeAction.Done,
+            onPasswordChange = {
+                state.onPasswordConfirmChange(it)
+                if (it.isNotBlank() && state.passwordState.value.isNotBlank() && it.trim() != state.passwordState.value)
+                    state.updatePasswordConfirmError(R.string.error_password_confirm_not_same)
+            },
+            updateError = state::updatePasswordConfirmError
         )
 
         SimpleHeightSpacer(dp = 12)
         MaxWidthButton(
-            maxWidthButtonStateHolder = stateHolder.signUpButtonStateHolder,
-            enabledState = uiState.isNotError && stateHolder.isTextNotBlank,
+            state = rememberMaxWidthButtonState(
+                text = R.string.sign_up,
+                enabled = uiState.isNotError && state.isTextNotBlank && state.isNotError
+            ),
             onClick = {
                 viewModel.signUpWithEmailAndPassword(
-                    email = stateHolder.emailStateHolder.textState.trim(),
-                    name = stateHolder.nameStateHolder.textState.trim(),
-                    password = stateHolder.passwordStateHolder.textState.trim(),
+                    email = state.emailState.value.trim(),
+                    name = state.nameState.value.trim(),
+                    password = state.passwordState.value.trim(),
                 )
             }
         )
@@ -114,11 +111,9 @@ fun SignUpScreen(
         SimpleHeightSpacer(dp = 8)
         // 프리뷰 시 주석처리
         GoogleSignInButton(
-            maxWidthButtonStateHolder = stateHolder.googleButtonStateHolder,
-            signInWithGoogleEmail = viewModel::signInWithGoogleEmail,
-            enabled = uiState.googleButtonEnabled,
-            enabledOff = { viewModel.updateGoogleButtonEnabled(enabled = false) }
-        )
+            state = rememberGoogleButtonState(enabled = uiState.googleButtonEnabled),
+            onActivityResult = viewModel::signInWithGoogleEmail
+        ) { viewModel.updateGoogleButtonEnabled(enabled = false) }
 
         SimpleHeightSpacer(dp = 150)
     }
@@ -126,39 +121,55 @@ fun SignUpScreen(
     SimpleToast(text = uiState.toastText, shownToast = viewModel::toastShown)
 }
 
-data class SignUpStateHolder(
-    val emailStateHolder: MaxWidthTextFieldStateHolder,
-    val nameStateHolder: MaxWidthTextFieldStateHolder,
-    val passwordStateHolder: MaxWidthTextFieldStateHolder,
-    val passwordConfirmStateHolder: MaxWidthTextFieldStateHolder,
-    val signUpButtonStateHolder: MaxWidthButtonStateHolder,
-    val googleButtonStateHolder: MaxWidthButtonStateHolder
-) : BaseStateHolder() {
+data class SignUpState(
+    override val emailState: MutableState<String>,
+    val nameState: MutableState<String>,
+    override val passwordState: MutableState<String>,
+    val passwordConfirmState: MutableState<String>,
+    @StringRes val passwordErrorState: MutableState<Int?>,
+    @StringRes val passwordConfirmErrorState: MutableState<Int?>
+) : BaseState(), EmailState, PasswordState {
+
+    fun onNameChange(email: String) {
+        nameState.value = email.trim()
+    }
+
+    fun onPasswordConfirmChange(email: String) {
+        passwordConfirmState.value = email.trim()
+    }
+
+    fun updatePasswordError(@StringRes error: Int?) {
+        passwordErrorState.value = error
+    }
+
+    fun updatePasswordConfirmError(@StringRes error: Int?) {
+        passwordConfirmErrorState.value = error
+    }
+
     override val isTextNotBlank
-        get() = emailStateHolder.textState.trim().isNotBlank() && nameStateHolder.textState.trim().isNotBlank()
-                && passwordStateHolder.textState.trim().isNotBlank() && passwordConfirmStateHolder.textState.trim().isNotBlank()
+        get() = emailState.value.trim().isNotBlank() && nameState.value.trim().isNotBlank()
+                && passwordState.value.trim().isNotBlank() && passwordConfirmState.value.trim()
+            .isNotBlank()
+
+    val isNotError
+        get() = passwordErrorState.value == null && passwordConfirmErrorState.value == null
 }
 
 @Composable
-fun rememberSignUpStateHolder(
-    email: MaxWidthTextFieldStateHolder = rememberEmailTextFieldStateHolder(imeAction = ImeAction.Next),
-    name: MaxWidthTextFieldStateHolder = rememberMaxWidthTextFiledStateHolder(
-        label = R.string.name,
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
-    ),
-    password: MaxWidthTextFieldStateHolder = rememberPasswordTextFieldStateHolder(imeAction = ImeAction.Next),
-    passwordConfirm: MaxWidthTextFieldStateHolder = rememberPasswordTextFieldStateHolder(
-        label = R.string.password_confirm,
-        imeAction = ImeAction.Done
-    ),
-    signUpButton: MaxWidthButtonStateHolder = rememberMaxWidthButtonStateHolder(R.string.sign_up),
-    googleButtonState: MaxWidthButtonStateHolder = rememberGoogleButtonStateHolder()
+fun rememberSignUpState(
+    emailState: MutableState<String> = rememberSaveable { mutableStateOf("") },
+    nameState: MutableState<String> = rememberSaveable { mutableStateOf("") },
+    passwordState: MutableState<String> = rememberSaveable { mutableStateOf("") },
+    passwordConfirmState: MutableState<String> = rememberSaveable { mutableStateOf("") },
+    passwordErrorState: MutableState<Int?> = rememberSaveable { mutableStateOf(null) },
+    passwordConfirmErrorState: MutableState<Int?> = rememberSaveable { mutableStateOf(null) }
 ) = remember {
-    SignUpStateHolder(
-        emailStateHolder = email,
-        nameStateHolder = name,
-        passwordStateHolder = password,
-        passwordConfirmStateHolder = passwordConfirm,
-        signUpButtonStateHolder = signUpButton, googleButtonStateHolder = googleButtonState
+    SignUpState(
+        emailState = emailState,
+        nameState = nameState,
+        passwordState = passwordState,
+        passwordConfirmState = passwordConfirmState,
+        passwordErrorState = passwordErrorState,
+        passwordConfirmErrorState = passwordConfirmErrorState
     )
 }

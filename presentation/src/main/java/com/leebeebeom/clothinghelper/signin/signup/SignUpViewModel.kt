@@ -53,19 +53,12 @@ class SignUpViewModel @Inject constructor(
     override fun toastShown() = _uiState.update { it.copy(toastText = null) }
 
     override fun updateEmailError(error: Int?) = _uiState.update { it.copy(emailError = error) }
-
-    fun updatePasswordError(error: Int?) = _uiState.update { it.copy(passwordError = error) }
-
-    fun updatePasswordConfirmError(error: Int?) =
-        _uiState.update { it.copy(passwordConfirmError = error) }
 }
 
 data class SignUpUIState(
     @StringRes val emailError: Int? = null,
-    @StringRes val passwordError: Int? = null,
-    @StringRes val passwordConfirmError: Int? = null,
     override val toastText: Int? = null,
     override val googleButtonEnabled: Boolean = true
 ) : GoogleSignInUIState() {
-    override val isNotError get() = emailError == null && passwordError == null && passwordConfirmError == null
+    override val isNotError get() = emailError == null
 }

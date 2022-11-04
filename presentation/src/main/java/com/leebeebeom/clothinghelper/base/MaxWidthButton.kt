@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -18,27 +19,22 @@ import com.leebeebeom.clothinghelper.R
 
 @Composable
 fun MaxWidthButton(
-    maxWidthButtonStateHolder: MaxWidthButtonStateHolder,
-    enabledState: Boolean,
-    icon: @Composable (() -> Unit)? = null,
-    onClick: () -> Unit
+    state: MaxWidthButtonState, icon: @Composable (() -> Unit)? = null, onClick: () -> Unit
 ) {
-    val focusManager = LocalFocusManager.current
-
     Button(
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(52.dp), onClick = {
-            focusManager.clearFocus()
+            state.clearFocus()
             onClick()
-        }, colors = maxWidthButtonStateHolder.colors, enabled = enabledState
+        }, colors = state.colors, enabled = state.enabled
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
             icon?.invoke()
             Text(
-                text = stringResource(id = maxWidthButtonStateHolder.text),
+                text = stringResource(id = state.text),
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f),
                 style = MaterialTheme.typography.body2,
@@ -48,19 +44,28 @@ fun MaxWidthButton(
     }
 }
 
-data class MaxWidthButtonStateHolder(
+data class MaxWidthButtonState(
     @StringRes val text: Int,
-    val colors: ButtonColors
-)
+    val colors: ButtonColors,
+    val enabled: Boolean,
+    val focusManager: FocusManager
+) {
+    fun clearFocus() = focusManager.clearFocus()
+}
 
 @Composable
-fun rememberMaxWidthButtonStateHolder(
+fun rememberMaxWidthButtonState(
     @StringRes text: Int,
-    colors: ButtonColors = ButtonDefaults.buttonColors()
-) = remember(text, colors) { MaxWidthButtonStateHolder(text, colors) }
+    colors: ButtonColors = ButtonDefaults.buttonColors(),
+    enabled: Boolean,
+    focusManager: FocusManager = LocalFocusManager.current
+) = remember(enabled) { MaxWidthButtonState(text, colors, enabled, focusManager) }
 
 @Composable
-fun rememberGoogleButtonStateHolder() = rememberMaxWidthButtonStateHolder(
+fun rememberGoogleButtonState(
+    enabled: Boolean
+) = rememberMaxWidthButtonState(
     text = R.string.starts_with_google_email,
-    colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface)
+    colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
+    enabled = enabled
 )

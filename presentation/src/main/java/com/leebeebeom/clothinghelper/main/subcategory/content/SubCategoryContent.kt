@@ -66,7 +66,7 @@ fun SubCategoryContent(
         }
 
         AddSubcategoryDialogFab(
-            onPositiveButtonClick = { onAddCategoryPositiveButtonClick(it, state.value.parent) },
+            onPositiveButtonClick = { onAddCategoryPositiveButtonClick(it.trim(), state.value.parent) },
             subCategories = state.value.subCategories,
         )
     }

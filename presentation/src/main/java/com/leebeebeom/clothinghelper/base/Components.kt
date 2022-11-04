@@ -89,13 +89,15 @@ fun CustomIconButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     @DrawableRes drawable: Int,
-    tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
+    tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current),
+    contentDescription: String? = null
 ) {
     CustomIconButton(
         modifier = modifier,
         onClick = onClick,
         painter = painterResource(id = drawable),
-        tint = tint
+        tint = tint,
+        contentDescription = contentDescription
     )
 }
 
@@ -104,12 +106,13 @@ fun CustomIconButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     painter: Painter,
-    tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
+    tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current),
+    contentDescription: String? = null
 ) {
     Box(
         modifier = Modifier
             .clip(CircleShape)
             .clickable(onClick = onClick)
             .padding(4.dp)
-    ) { Icon(painter = painter, contentDescription = null, modifier = modifier, tint = tint) }
+    ) { Icon(painter = painter, contentDescription = contentDescription, modifier = modifier, tint = tint) }
 }

@@ -18,7 +18,7 @@ import com.leebeebeom.clothinghelperdomain.model.User
 fun DrawerHeader(user: User?, onSettingIconClick: () -> Unit) {
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         HeaderText(user)
-        CustomIconButton(drawable = R.drawable.ic_settings, onClick = onSettingIconClick)
+        CustomIconButton(drawable = R.drawable.ic_settings, onClick = onSettingIconClick, contentDescription = "settingIcon")
     }
 }
 

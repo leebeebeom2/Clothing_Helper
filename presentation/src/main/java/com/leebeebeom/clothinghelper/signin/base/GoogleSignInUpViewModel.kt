@@ -28,7 +28,7 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
                         is FirebaseResult.Success -> showToast(R.string.google_sign_in_complete)
                         is FirebaseResult.Fail -> {
                             showToast(R.string.unknown_error)
-                            Log.d(TAG, "taskFailed: ${it.exception}")
+                            Log.e(TAG, "signInWithGoogleEmail: ${it.exception}")
                         }
                     }
                 }
@@ -37,21 +37,18 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
                 showToast(R.string.canceled)
             }
             else -> {
-                Log.d(
-                    TAG,
-                    "GoogleSignInUpViewModel.signInWithGoogleEmail: resultCode = ${activityResult.resultCode}"
-                )
+                Log.e(TAG, "signInWithGoogleEmail: resultCode = ${activityResult.resultCode}")
                 showToast(R.string.unknown_error)
             }
         }
-        updateGoogleButtonEnabled(enabled = true) // TODO 테스트
+        updateGoogleButtonEnabled(enabled = true)
     }
 
     private fun getGoogleCredential(activityResult: ActivityResult): AuthCredential? {
         return if (activityResult.data == null) {
             showToast(R.string.unknown_error)
             updateGoogleButtonEnabled(enabled = true)
-            Log.d(TAG, "BaseSignInUpViewModel.getGoogleCredential: activityResult.data = null")
+            Log.e(TAG, "getGoogleCredential: activityResult.data = null")
             null
         } else {
             val account = GoogleSignIn

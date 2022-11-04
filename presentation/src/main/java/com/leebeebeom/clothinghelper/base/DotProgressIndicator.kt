@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun DotProgressIndicator(
     modifier: Modifier,
-    dotSize: Dp,
+    size: Dp,
     color: Color = MaterialTheme.colors.primary.copy(ContentAlpha.disabled)
 ) {
     val maxOffset = 4f
@@ -28,7 +28,7 @@ fun DotProgressIndicator(
     fun Dot(offset: Float) =
         Spacer(
             Modifier
-                .size(dotSize)
+                .size(size)
                 .offset(y = -offset.dp)
                 .background(
                     color = color,

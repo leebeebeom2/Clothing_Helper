@@ -9,37 +9,32 @@ import androidx.compose.ui.Alignment
 
 object Anime {
     object Screen {
-        private const val screenSlideDuration = 350
-        private val screenSlideEasing = CubicBezierEasing(a = 0.36f, b = 0f, c = 0.66f, d = -0.1f)
+        private const val duration = 350
+        private val easing = CubicBezierEasing(a = 0.36f, b = 0f, c = 0.66f, d = -0.1f)
 
-        val screenSlideInBottom =
-            slideInVertically(animationSpec = tween(screenSlideDuration)) { it }
+        val slideInBottom =
+            slideInVertically(animationSpec = tween(duration)) { it }
 
-        val screenSlideOutBottom =
-            slideOutVertically(
-                animationSpec = tween(
-                    screenSlideDuration,
-                    easing = screenSlideEasing
-                )
-            ) { it }
+        val slideOutBottom = slideOutVertically(
+            animationSpec = tween(
+                duration, easing = easing
+            )
+        ) { it }
     }
 
     object Error {
         val errorIn = expandVertically(
             animationSpec = spring(
-                dampingRatio = Spring.DampingRatioHighBouncy,
-                stiffness = Spring.StiffnessMedium
-            ),
-            expandFrom = Alignment.Bottom
+                dampingRatio = Spring.DampingRatioHighBouncy, stiffness = Spring.StiffnessMedium
+            ), expandFrom = Alignment.Bottom
         )
 
         val errorOut = shrinkVertically(
-            animationSpec = tween(durationMillis = 50),
-            shrinkTowards = Alignment.Top
+            animationSpec = tween(durationMillis = 50), shrinkTowards = Alignment.Top
         )
     }
 
-    object ListExpand {
+    object List {
         val listExpand = expandVertically()
         val listShrink = shrinkVertically()
     }
@@ -47,11 +42,11 @@ object Anime {
     object BottomAppbar {
         const val duration = 250
 
-        val bottomAppbarExpandIn = expandVertically(
+        val expandIn = expandVertically(
             expandFrom = Alignment.Top, animationSpec = tween(durationMillis = duration)
         )
 
-        val bottomAppbarShrinkOut = shrinkVertically(
+        val shrinkOut = shrinkVertically(
             shrinkTowards = Alignment.Top, animationSpec = tween(durationMillis = duration)
         )
     }
@@ -59,15 +54,15 @@ object Anime {
     object SubCategoryCard {
         private const val duration = 250
 
-        val cardExpandIn = expandVertically(animationSpec = tween(durationMillis = duration))
-        val cardShrinkOut = shrinkVertically(animationSpec = tween(durationMillis = duration))
+        val expandIn = expandVertically(animationSpec = tween(durationMillis = duration))
+        val shrinkOut = shrinkVertically(animationSpec = tween(durationMillis = duration))
     }
 
     @OptIn(ExperimentalAnimationApi::class)
-    object CircleCheckBox{
+    object CircleCheckBox {
         const val duration = 300
 
-        val checkBoxIn = expandHorizontally(tween(duration)) { 0 } + scaleIn(tween(duration))
-        val checkBoxOut = shrinkHorizontally(tween(duration)) { 0 } + scaleOut(tween(duration))
+        val expandIn = expandHorizontally(tween(duration)) { 0 } + scaleIn(tween(duration))
+        val shrinkOut = shrinkHorizontally(tween(duration)) { 0 } + scaleOut(tween(duration))
     }
 }

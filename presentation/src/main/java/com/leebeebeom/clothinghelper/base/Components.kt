@@ -20,7 +20,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.theme.Disabled
@@ -38,16 +37,24 @@ fun SimpleIcon(
 )
 
 @Composable
-fun CenterDotProgressIndicator(backGroundColor: Color = Disabled) {
-    Surface(color = backGroundColor) {
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .clickable(enabled = false) { }) {
-            DotProgressIndicator(
-                modifier = Modifier.align(Alignment.Center), dotSize = 8.dp,
-                color = LocalContentColor.current.copy(ContentAlpha.medium)
-            )
-        }
+fun CenterDotProgressIndicator(backGround: Color = Disabled) {
+    IndicatorRoot(backGround) {
+        DotProgressIndicator(
+            modifier = Modifier.align(Alignment.Center),
+            size = 8.dp,
+            color = LocalContentColor.current.copy(ContentAlpha.medium)
+        )
+    }
+}
+
+@Composable
+private fun IndicatorRoot(backGround: Color, content: @Composable BoxScope.() -> Unit) {
+    Surface(color = backGround) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable(enabled = false) { }, content = content
+        )
     }
 }
 
@@ -69,14 +76,11 @@ fun SimpleToast(@StringRes text: Int?, shownToast: () -> Unit) {
 @Composable
 fun CircleCheckBox(modifier: Modifier = Modifier, isChecked: Boolean, onClick: () -> Unit = {}) {
     CustomIconButton(
-        modifier = modifier,
-        onClick = onClick,
-        painter = rememberAnimatedVectorPainter(
+        modifier = modifier, onClick = onClick, painter = rememberAnimatedVectorPainter(
             animatedImageVector = AnimatedImageVector.animatedVectorResource(
                 id = R.drawable.check_anim
             ), atEnd = isChecked
-        ),
-        tint = LocalContentColor.current.copy(0.7f)
+        ), tint = LocalContentColor.current.copy(0.7f)
     )
 }
 
@@ -85,14 +89,12 @@ fun CustomIconButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     @DrawableRes drawable: Int,
-    rippleSize: Dp = 4.dp,
     tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
 ) {
     CustomIconButton(
         modifier = modifier,
         onClick = onClick,
         painter = painterResource(id = drawable),
-        rippleSize = rippleSize,
         tint = tint
     )
 }
@@ -102,20 +104,12 @@ fun CustomIconButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     painter: Painter,
-    rippleSize: Dp = 4.dp,
     tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
 ) {
     Box(
         modifier = Modifier
             .clip(CircleShape)
             .clickable(onClick = onClick)
-            .padding(rippleSize)
-    ) {
-        Icon(
-            painter = painter,
-            contentDescription = null,
-            modifier = modifier,
-            tint = tint
-        )
-    }
+            .padding(4.dp)
+    ) { Icon(painter = painter, contentDescription = null, modifier = modifier, tint = tint) }
 }

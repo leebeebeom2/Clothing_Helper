@@ -46,16 +46,16 @@ fun MainScreenRoot(
     state: MainRootState = rememberMainRootState(),
     content: @Composable (PaddingValues, backHandler: @Composable () -> Unit) -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
-    SimpleToast(text = uiState.toastText, shownToast = viewModel::toastShown)
+    SimpleToast(text = uiState.value.toastText, shownToast = viewModel::toastShown)
 
     ClothingHelperTheme {
         Scaffold(scaffoldState = state.scaffoldState,
             drawerContent = {
                 val drawerMainCategoryState = rememberDrawerContentsState(uiState)
                 DrawerContents(
-                    state = drawerMainCategoryState,
+                    state = drawerMainCategoryState.value,
                     onEssentialMenuClick = {
                         onEssentialMenuClick(it)
                         state.onDrawerClose()

@@ -62,9 +62,7 @@ class MainScreenRootViewModel @Inject constructor(
         Log.e(TAG, "onLoadFailed: ${exception.message}", exception)
     }
 
-    override fun showToast(toastText: Int?) {
-        _uiState.update { it.copy(toastText = toastText) }
-    }
+    override fun showToast(toastText: Int?) = _uiState.update { it.copy(toastText = toastText) }
 
     override fun toastShown() = _uiState.update { it.copy(toastText = null) }
 }

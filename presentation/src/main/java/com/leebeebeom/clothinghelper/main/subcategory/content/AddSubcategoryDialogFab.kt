@@ -5,7 +5,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,6 +18,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.SimpleIcon
+import com.leebeebeom.clothinghelper.main.subcategory.BaseSubCategoryTextFieldDialogState
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryTextFieldDialog
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
@@ -48,18 +52,13 @@ fun BoxScope.AddSubcategoryDialogFab(
 }
 
 data class AddCategoryDialogState(
-    private val textState: MutableState<String>,
-    private val _textFieldValueState: MutableState<TextFieldValue>,
+    override val textState: MutableState<String>,
+    override val textFieldValueMutableState: MutableState<TextFieldValue>,
     private val showDialogState: MutableState<Boolean>,
-    private val errorState: MutableState<Int?>,
-    val subCategories: List<SubCategory>
-) {
+    override val errorState: MutableState<Int?>,
+    override val subCategories: List<SubCategory>
+) : BaseSubCategoryTextFieldDialogState() {
     val showDialog get() = showDialogState.value
-    val error get() = errorState.value
-    val text get() = textState.value
-    val textFieldValueState: State<TextFieldValue> get() = _textFieldValueState
-
-    val positiveButtonEnabled get() = text.isNotBlank() && error == null
 
     fun showDialog() {
         showDialogState.value = true
@@ -68,22 +67,18 @@ data class AddCategoryDialogState(
     fun onDismiss() {
         showDialogState.value = false
         textState.value = ""
-        _textFieldValueState.value = TextFieldValue("")
+        textFieldValueMutableState.value = TextFieldValue("")
         errorState.value = null
-    }
-
-    fun onValueChange(newTextFiled: TextFieldValue) {
-        if (text != newTextFiled.text) errorState.value = null
-        textState.value = newTextFiled.text
-        _textFieldValueState.value = newTextFiled
-        if (subCategories.map { it.name }.contains(newTextFiled.text))
-            errorState.value = R.string.error_same_category_name
     }
 
     fun onFocusChange(newFocusState: FocusState) {
         if (newFocusState.hasFocus)
-            _textFieldValueState.value =
-                _textFieldValueState.value.copy(selection = TextRange(_textFieldValueState.value.text.length))
+            textFieldValueMutableState.value =
+                textFieldValueMutableState.value.copy(
+                    selection = TextRange(
+                        textFieldValueMutableState.value.text.length
+                    )
+                )
     }
 }
 
@@ -103,7 +98,7 @@ fun rememberAddCategoryDialogState(
 ) = remember(subCategories) {
     AddCategoryDialogState(
         textState = textState,
-        _textFieldValueState = textFieldValueState,
+        textFieldValueMutableState = textFieldValueState,
         errorState = errorState,
         showDialogState = showDialogState,
         subCategories = subCategories

@@ -21,35 +21,35 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
 @Composable
 fun DrawerMainCategory(
-    state: DrawerMainCategoryState,
+    state: State<DrawerMainCategoryState>,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (key: String) -> Unit,
 ) {
-    val isExpandState = rememberSaveable { mutableStateOf(state.isAllExpand) }
-    val rememberedIsAllExpandState = rememberSaveable { mutableStateOf(state.isAllExpand) }
-    if (state.isAllExpand != rememberedIsAllExpandState.value) {
-        isExpandState.value = state.isAllExpand
-        rememberedIsAllExpandState.value = state.isAllExpand
+    val isExpandState = rememberSaveable { mutableStateOf(state.value.isAllExpand) }
+    val rememberedIsAllExpandState = rememberSaveable { mutableStateOf(state.value.isAllExpand) }
+    if (state.value.isAllExpand != rememberedIsAllExpandState.value) {
+        isExpandState.value = state.value.isAllExpand
+        rememberedIsAllExpandState.value = state.value.isAllExpand
     }
 
     Column {
         DrawerContentRow(
             modifier = Modifier.heightIn(44.dp),
-            onClick = { onMainCategoryClick(state.mainCategory.type) }) {
+            onClick = { onMainCategoryClick(state.value.mainCategory.type) }) {
             DrawerContentText(
                 modifier = Modifier.padding(start = 8.dp),
-                text = stringResource(id = state.mainCategory.name),
+                text = stringResource(id = state.value.mainCategory.name),
                 style = MaterialTheme.typography.subtitle1
             )
             ExpandIcon(
-                isLoading = state.isLoading,
+                isLoading = state.value.isLoading,
                 isExpand = isExpandState.value,
                 onClick = { isExpandState.value = !isExpandState.value }
             )
         }
         SubCategories(
             isExpand = isExpandState.value,
-            subCategories = state.subCategories,
+            subCategories = state.value.subCategories,
             onClick = onSubCategoryClick
         )
     }

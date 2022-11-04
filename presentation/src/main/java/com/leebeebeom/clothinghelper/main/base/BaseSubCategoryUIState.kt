@@ -9,7 +9,4 @@ abstract class BaseSubCategoryUIState : BaseUIState() {
     abstract val user: User?
     abstract val isLoading: Boolean
     abstract val allSubCategories: List<List<SubCategory>>
-
-    fun getSubCategories(subCategoryParent: SubCategoryParent) =
-        allSubCategories[subCategoryParent.ordinal]
 }

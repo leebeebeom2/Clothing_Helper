@@ -7,6 +7,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,13 +45,13 @@ fun DrawerContents(
             contentPadding = PaddingValues(top = 8.dp, bottom = 40.dp)
         ) {
             this.items(state.essentialMenus, key = { it.type.name }) {
-                EssentialMenu(essentialMenu = it, onEssentialMenuClick = onEssentialMenuClick)
+                EssentialMenu(essentialMenu = it, onClick = onEssentialMenuClick)
             }
 
             item {
                 IconWithDivider(
                     isAllExpand = state.isAllExpand,
-                    allExpandIconClick = allExpandIconClick
+                    onCLick = allExpandIconClick
                 )
             }
 
@@ -68,12 +70,12 @@ fun DrawerContents(
 }
 
 @Composable
-private fun IconWithDivider(isAllExpand: Boolean, allExpandIconClick: () -> Unit) {
+private fun IconWithDivider(isAllExpand: Boolean, onCLick: () -> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(end = 4.dp)) {
         Divider(color = Disabled, modifier = Modifier.weight(1f))
         AllExpandIcon(
             size = 20.dp,
-            allExpandIconClick = allExpandIconClick,
+            onClick = onCLick,
             tint = LocalContentColor.current.copy(0.6f),
             allExpand = isAllExpand
         )
@@ -81,27 +83,10 @@ private fun IconWithDivider(isAllExpand: Boolean, allExpandIconClick: () -> Unit
 }
 
 @Composable
-private fun DrawerHeader(user: User?, onSettingIconClick: () -> Unit) {
-    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            modifier = Modifier
-                .padding(start = 12.dp)
-                .weight(1f),
-            style = MaterialTheme.typography.body1,
-            text = "${user?.name}(${user?.email})"
-        )
-
-        IconButton(onClick = onSettingIconClick) {
-            SimpleIcon(drawable = R.drawable.ic_settings)
-        }
-    }
-}
-
-@Composable
 private fun EssentialMenu(
-    essentialMenu: EssentialMenu, onEssentialMenuClick: (essentialMenu: EssentialMenus) -> Unit
+    essentialMenu: EssentialMenu, onClick: (essentialMenu: EssentialMenus) -> Unit
 ) = DrawerContentRow(modifier = Modifier.heightIn(40.dp),
-    onDrawerContentClick = { onEssentialMenuClick(essentialMenu.type) }) {
+    onClick = { onClick(essentialMenu.type) }) {
     SimpleIcon(modifier = Modifier.size(22.dp), drawable = essentialMenu.drawable)
     SimpleWidthSpacer(dp = 12)
     DrawerContentText(
@@ -112,13 +97,13 @@ private fun EssentialMenu(
 
 @Composable
 fun DrawerContentRow(
-    modifier: Modifier, onDrawerContentClick: () -> Unit, content: @Composable RowScope.() -> Unit
+    modifier: Modifier, onClick: () -> Unit, content: @Composable RowScope.() -> Unit
 ) = Row(
     modifier = modifier
         .fillMaxWidth()
         .padding(horizontal = 8.dp)
         .clip(RoundedCornerShape(12.dp))
-        .clickable(onClick = onDrawerContentClick)
+        .clickable(onClick = onClick)
         .padding(start = 4.dp),
     verticalAlignment = Alignment.CenterVertically,
     content = content
@@ -146,14 +131,16 @@ data class DrawerContentsState(
 
 @Composable
 fun rememberDrawerContentsState(
-    uiState: MainRootUIState
-) = remember(uiState) {
-    DrawerContentsState(
-        user = uiState.user,
-        isLoading = uiState.isLoading,
-        isAllExpand = uiState.isAllExpand,
-        allSubCategories = uiState.allSubCategories
-    )
+    uiState: State<MainRootUIState>
+) = remember {
+    derivedStateOf {
+        DrawerContentsState(
+            user = uiState.value.user,
+            isLoading = uiState.value.isLoading,
+            isAllExpand = uiState.value.isAllExpand,
+            allSubCategories = uiState.value.allSubCategories
+        )
+    }
 }
 
 fun getMainCategories() = listOf(

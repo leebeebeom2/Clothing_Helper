@@ -69,20 +69,16 @@ fun DialogTextButtons(
 ) {
     Row {
         DialogTextButton(
-            text = R.string.cancel,
-            textColor = cancelTextColor,
-            onClick = onDismiss
+            text = R.string.cancel, textColor = cancelTextColor, onClick = onDismiss
         )
 
-        DialogTextButton(
-            text = R.string.check,
+        DialogTextButton(text = R.string.check,
             textColor = positiveTextColor,
             enabled = positiveButtonEnabled,
             onClick = {
                 onPositiveButtonClick()
                 onDismiss()
-            }
-        )
+            })
     }
 }
 
@@ -95,9 +91,7 @@ fun RowScope.DialogTextButton(
 ) {
     Box(modifier = Modifier.weight(1f)) {
         TextButton(
-            modifier = Modifier.align(Alignment.Center),
-            onClick = onClick,
-            enabled = enabled
+            modifier = Modifier.align(Alignment.Center), onClick = onClick, enabled = enabled
         ) {
             Text(
                 text = stringResource(id = text),

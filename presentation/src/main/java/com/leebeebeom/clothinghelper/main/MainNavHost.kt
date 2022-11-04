@@ -29,22 +29,22 @@ sealed class MainDestinations(val route: String) {
 }
 
 @Composable
-fun MainNavHost(stateHolder: MainNavHostStateHolder = rememberMainNavHostStateHolder()) {
+fun MainNavHost(state: MainNavHostState = rememberMainNavHostState()) {
 
     MainScreenRoot(
-        onEssentialMenuClick = stateHolder::onEssentialMenuClick,
-        onMainCategoryClick = stateHolder::onMainCategoryClick,
+        onEssentialMenuClick = state::onEssentialMenuClick,
+        onMainCategoryClick = state::navigateToSubCategory,
         onSubCategoryClick = { key -> /*TODO*/ },
-        onSettingIconClick = stateHolder::navigateToSetting
+        onSettingIconClick = state::navigateToSetting
     ) { paddingValues, drawerCloseBackHandler ->
         NavHost(
-            navController = stateHolder.navController,
+            navController = state.navController,
             startDestination = MainDestinations.MainCategory.route,
             modifier = Modifier.padding(paddingValues = paddingValues)
         ) {
             composable(MainDestinations.MainCategory.route) {
                 MainCategoryScreen(
-                    onMainCategoryClick = stateHolder::navigateToSubCategory,
+                    onMainCategoryClick = state::navigateToSubCategory,
                     drawerCloseBackHandler = drawerCloseBackHandler
                 )
             }
@@ -62,14 +62,14 @@ fun MainNavHost(stateHolder: MainNavHostStateHolder = rememberMainNavHostStateHo
             composable(MainDestinations.Setting.route) {
                 SettingScreen(
                     drawerCloseBackHandler = drawerCloseBackHandler,
-                    onSignOutButtonClick = stateHolder::navigateToSetting
+                    onSignOutButtonClick = state::navigateToSetting
                 )
             }
         }
     }
 }
 
-data class MainNavHostStateHolder(val navController: NavHostController) {
+data class MainNavHostState(val navController: NavHostController) {
     fun onEssentialMenuClick(essentialMenu: EssentialMenus) =
         when (essentialMenu) {
             EssentialMenus.MainScreen -> navigateToMain()
@@ -77,9 +77,10 @@ data class MainNavHostStateHolder(val navController: NavHostController) {
             EssentialMenus.SeeAll -> {} // TODO
             EssentialMenus.Trash -> {} // TODO
         }
-
-    fun onMainCategoryClick(subCategoryParent: SubCategoryParent) =
-        navController.navigate(route = "${MainDestinations.SubCategory.route}/${subCategoryParent.name}")
+    fun navigateToSubCategory(subCategoryParent: SubCategoryParent) =
+        navController.navigate("${MainDestinations.SubCategory.route}/${subCategoryParent.name}") { // TODO 중복 스택 막기
+            launchSingleTop = true
+        }
 
     private fun navigateToMain() =
         navController.navigate(route = MainDestinations.MainCategory.route) {
@@ -90,13 +91,8 @@ data class MainNavHostStateHolder(val navController: NavHostController) {
         navController.navigate(route = MainDestinations.Setting.route) {
             launchSingleTop = true
         }
-
-    fun navigateToSubCategory(subCategoryParent: SubCategoryParent) =
-        navController.navigate("${MainDestinations.SubCategory.route}/${subCategoryParent.name}") { // TODO 중복 스택 막기
-            launchSingleTop = true
-        }
 }
 
 @Composable
-fun rememberMainNavHostStateHolder(navController: NavHostController = rememberNavController()) =
-    remember { MainNavHostStateHolder(navController) }
+fun rememberMainNavHostState(navController: NavHostController = rememberNavController()) =
+    remember { MainNavHostState(navController) }

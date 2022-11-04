@@ -30,32 +30,32 @@ import com.leebeebeom.clothinghelperdomain.model.User
 
 @Composable
 fun DrawerContents(
-    state: DrawerContentsState,
+    state: State<DrawerContentsState>,
     onEssentialMenuClick: (essentialMenu: EssentialMenus) -> Unit,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (key: String) -> Unit,
     onSettingIconClick: () -> Unit,
     allExpandIconClick: () -> Unit
 ) = Column {
-    DrawerHeader(user = state.user, onSettingIconClick = onSettingIconClick)
+    DrawerHeader(user = state.value.user, onSettingIconClick = onSettingIconClick)
 
     Surface(color = Color(0xFF121212)) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(top = 8.dp, bottom = 40.dp)
         ) {
-            this.items(state.essentialMenus, key = { it.type.name }) {
+            this.items(state.value.essentialMenus, key = { it.type.name }) {
                 EssentialMenu(essentialMenu = it, onClick = onEssentialMenuClick)
             }
 
             item {
                 IconWithDivider(
-                    isAllExpand = state.isAllExpand,
+                    isAllExpand = state.value.isAllExpand,
                     onCLick = allExpandIconClick
                 )
             }
 
-            items(state.mainCategories, key = { it.type.name }) {
+            items(state.value.mainCategories, key = { it.type.name }) {
                 val drawerMainCategoryState = rememberDrawerMainCategoryState(
                     mainCategory = it, drawerContentsState = state
                 )

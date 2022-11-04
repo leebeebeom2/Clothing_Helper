@@ -6,6 +6,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
@@ -15,6 +16,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.MaxWidthTextField
 import com.leebeebeom.clothinghelper.base.rememberEmailTextFieldState
+import com.leebeebeom.clothinghelper.base.rememberMaxWidthTextFiledState
 import com.leebeebeom.clothinghelper.base.rememberPasswordTextFieldState
 
 @Composable
@@ -87,6 +89,7 @@ fun PasswordTextField(
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun NameTextFiled(
     name: String,
@@ -94,9 +97,9 @@ fun NameTextFiled(
 ) {
     val textFieldValueState = remember { mutableStateOf(TextFieldValue(name)) }
 
-    val state = rememberEmailTextFieldState(
+    val state = rememberMaxWidthTextFiledState(
         textFieldValueState = textFieldValueState,
-        imeAction = ImeAction.Done
+        label = R.string.name,
     )
 
     MaxWidthTextField(

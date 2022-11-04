@@ -29,35 +29,34 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.*
 
 @Composable
-fun VisibleIcon(isVisible: Boolean, onIconClick: () -> Unit) {
+fun VisibleIcon(isVisible: Boolean, onClick: () -> Unit) {
     CustomIconButton(
         drawable = if (isVisible) R.drawable.ic_visibility_off else R.drawable.ic_visibility,
         tint = LocalContentColor.current.copy(0.4f),
-        onClick = onIconClick,
+        onClick = onClick,
         modifier = Modifier.size(24.dp)
     )
 }
 
 @Composable
 fun GoogleSignInButton(
-    maxWidthButtonStateHolder: MaxWidthButtonStateHolder,
-    signInWithGoogleEmail: (ActivityResult) -> Unit,
+    state: MaxWidthButtonState,
+    onActivityResult: (ActivityResult) -> Unit,
     enabled: Boolean,
-    enabledOff: () -> Unit
+    disEnabled: () -> Unit
 ) {
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
-        onResult = signInWithGoogleEmail
+        onResult = onActivityResult
     )
 
     val intent = GoogleSignIn.getClient(LocalContext.current, getGso()).signInIntent
 
     MaxWidthButton(
-        maxWidthButtonStateHolder = maxWidthButtonStateHolder,
+        state = state,
         icon = googleIcon,
-        enabledState = enabled,
         onClick = {
-            enabledOff()
+            disEnabled()
             launcher.launch(intent)
         }
     )
@@ -93,14 +92,14 @@ fun OrDivider() {
 
 @Composable
 fun PasswordTextField(
-    maxWidthTextFieldStateHolder: MaxWidthTextFieldStateHolder,
+    state: MaxWidthTextFieldState,
     error: Int?,
     onValueChange: (TextFieldValue) -> Unit
 ) {
     var isVisible by rememberSaveable { mutableStateOf(false) }
 
     MaxWidthTextField(
-        stateHolder = maxWidthTextFieldStateHolder,
+        state = state,
         error = error,
         onValueChange = onValueChange,
         trailingIcon = { VisibleIcon(isVisible) { isVisible = !isVisible } },

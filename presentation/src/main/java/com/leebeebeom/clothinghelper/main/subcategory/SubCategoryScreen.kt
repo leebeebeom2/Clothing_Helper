@@ -185,6 +185,8 @@ class SubCategoryStates(
 
     fun dismissEditDialog() {
         _showEditDialogState.value = false
+        _isSelectModeState.value = false
+        clearSelectedSubCategories()
     }
 
     fun getFirstSelectedSubCategory() = _selectedSubCategoriesState.value.first()

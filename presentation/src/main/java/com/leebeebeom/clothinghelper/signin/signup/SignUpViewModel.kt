@@ -8,6 +8,7 @@ import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
 import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
 import com.leebeebeom.clothinghelperdomain.model.AuthResult
 import com.leebeebeom.clothinghelperdomain.usecase.signin.GoogleSignInUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.signin.PushInitialSubCategoriesFailed
 import com.leebeebeom.clothinghelperdomain.usecase.signin.SignUpUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,12 +29,15 @@ class SignUpViewModel @Inject constructor(
         viewModelScope.launch {
             when (val authResult = signUpUseCase(email = email, password = password, name = name)) {
                 is AuthResult.Success -> showToast(R.string.sign_up_complete)
-                is AuthResult.Fail -> setFireBaseError(
-                    exception = authResult.exception,
-                    updateEmailError = ::updateEmailError,
-                    updatePasswordError = {},
-                    showToast = ::showToast
-                )
+                is AuthResult.Fail ->
+                    if (authResult.exception?.message == PushInitialSubCategoriesFailed)
+                        showToast(R.string.initial_sub_category_push_failed)
+                    else setFireBaseError(
+                        exception = authResult.exception,
+                        updateEmailError = ::updateEmailError,
+                        updatePasswordError = {},
+                        showToast = ::showToast
+                    )
             }
         }
 

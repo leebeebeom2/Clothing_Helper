@@ -2,6 +2,7 @@ package com.leebeebeom.clothinghelper.di.usecase
 
 import com.leebeebeom.clothinghelperdata.repository.UserRepositoryImpl
 import com.leebeebeom.clothinghelperdomain.usecase.signin.*
+import com.leebeebeom.clothinghelperdomain.usecase.subcategory.LoadSubCategoriesUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.PushInitialSubCategoriesUseCase
 import dagger.Module
 import dagger.Provides
@@ -14,8 +15,9 @@ class SignInUseCaseModule {
     @Provides
     fun googleSignInUseCase(
         userRepository: UserRepositoryImpl,
-        pushInitialSubCategoriesUseCase: PushInitialSubCategoriesUseCase
-    ) = GoogleSignInUseCase(userRepository, pushInitialSubCategoriesUseCase)
+        pushInitialSubCategoriesUseCase: PushInitialSubCategoriesUseCase,
+        loadSubCategoriesUseCase: LoadSubCategoriesUseCase
+    ) = GoogleSignInUseCase(userRepository, pushInitialSubCategoriesUseCase, loadSubCategoriesUseCase)
 
     @Provides
     fun resetPasswordUseCase(userRepository: UserRepositoryImpl) =
@@ -24,8 +26,9 @@ class SignInUseCaseModule {
     @Provides
     fun signUpUseCase(
         userRepository: UserRepositoryImpl,
-        pushInitialSubCategoriesUseCase: PushInitialSubCategoriesUseCase
-    ) = SignUpUseCase(userRepository, pushInitialSubCategoriesUseCase)
+        pushInitialSubCategoriesUseCase: PushInitialSubCategoriesUseCase,
+        loadSubCategoriesUseCase: LoadSubCategoriesUseCase
+    ) = SignUpUseCase(userRepository, pushInitialSubCategoriesUseCase, loadSubCategoriesUseCase)
 
     @Provides
     fun signInUseCase(userRepository: UserRepositoryImpl) = SignInUseCase(userRepository)

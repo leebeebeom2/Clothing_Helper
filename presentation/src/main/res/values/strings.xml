@@ -64,4 +64,5 @@
     <string name="sort_Descending">내림차</string>
     <string name="sort">정렬</string>
     <string name="folders_and_contents">%1d folders, %2d contents</string>
+    <string name="initial_sub_category_push_failed">초기 데이터 생성에 실패했습니다.</string>
 </resources>

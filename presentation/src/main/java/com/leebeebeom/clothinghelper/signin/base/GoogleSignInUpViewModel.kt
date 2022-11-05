@@ -13,6 +13,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelperdomain.model.AuthResult
 import com.leebeebeom.clothinghelperdomain.usecase.signin.GoogleSignInUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.signin.PushInitialSubCategoriesFailed
 import kotlinx.coroutines.launch
 
 abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSignInUseCase) :
@@ -28,9 +29,13 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
                         googleSignInUseCase(credential = getGoogleCredential(activityResult))) {
                         is AuthResult.Success -> showToast(R.string.google_sign_in_complete)
                         is AuthResult.Fail -> {
-                            showToast(R.string.unknown_error)
-                            Log.e(TAG, "signInWithGoogleEmail: $result")
-                            updateGoogleButtonEnabled(enabled = true)
+                            if (result.exception?.message == PushInitialSubCategoriesFailed)
+                                showToast(R.string.initial_sub_category_push_failed)
+                            else {
+                                showToast(R.string.unknown_error)
+                                Log.e(TAG, "signInWithGoogleEmail: $result")
+                                updateGoogleButtonEnabled(enabled = true)
+                            }
                         }
                     }
                 }

@@ -20,8 +20,8 @@
     <string name="empty"></string>
     <string name="sign_in_complete">로그인 되었습니다.</string>
     <string name="google_sign_in_complete">구글 이메일로 로그인 되었습니다.</string>
-    <string name="dont_have_an_account">계정이 없으신가요?</string>
-    <string name="forget_password">비밀번호를 잊으셨나요?</string>
+    <string name="do_not_have_an_account">계정이 없으신가요?</string>
+    <string name="forgot_password">비밀번호를 잊으셨나요?</string>
     <string name="email_send_complete">이메일이 전송되었습니다.</string>
     <string name="reset_password_text">가입하신 이메일을 입력해주세요.\n비밀번호 재설정 이메일이 발송됩니다.</string>
     <string name="check">확인</string>

@@ -1,5 +1,6 @@
 package com.leebeebeom.clothinghelperdata.repository
 
+import android.util.Log
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -15,7 +16,7 @@ import kotlinx.coroutines.withContext
 class SubCategoryRepositoryImpl : SubCategoryRepository {
     private val root = Firebase.database.reference
 
-    private val _isLoading = MutableStateFlow(false)
+    private val _isLoading = MutableStateFlow(true)
     override val isLoading get() = _isLoading.asStateFlow()
 
     private val _allSubCategories = MutableStateFlow(List(4) { emptyList<SubCategory>() })
@@ -38,6 +39,7 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
         } catch (e: Exception) {
             FirebaseResult.Fail(e)
         } finally {
+            Log.d("TAG", "loadSubCategories: 호출")
             loadingOff()
         }
     }

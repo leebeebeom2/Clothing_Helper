@@ -198,9 +198,9 @@ class SubCategoryStates(
             save = {
                 mapOf(
                     Parent to it.parent,
-                    IsSelectMode to it._isSelectModeState,
+                    IsSelectMode to it.isSelectMode,
                     SelectedSubCategories to it._selectedSubCategoriesState.value.toList(),
-                    ShowEditDialog to it._showEditDialogState,
+                    ShowEditDialog to it.showEditDialog,
                 )
             },
             restore = {

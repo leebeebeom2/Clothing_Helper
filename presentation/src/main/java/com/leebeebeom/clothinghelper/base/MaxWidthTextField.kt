@@ -37,8 +37,6 @@ fun MaxWidthTextField(
     trailingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
-    val didShowKeyboardState = rememberSaveable { mutableStateOf(false) }
-
     Column {
         OutlinedTextField(
             modifier = Modifier
@@ -68,6 +66,7 @@ fun MaxWidthTextField(
         ErrorText(error)
     }
 
+    val didShowKeyboardState = rememberSaveable { mutableStateOf(false) }
     if (!didShowKeyboardState.value && state.value.showKeyboardEnabled) {
         LaunchedEffect(key1 = Unit) { state.value.showKeyboard() }
         didShowKeyboardState.value = true

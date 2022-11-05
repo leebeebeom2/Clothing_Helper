@@ -88,7 +88,7 @@ fun SubCategoryScreen(
     Scaffold(bottomBar = {
         val subCategoryBottomAppbarState = rememberSubCategoryBottomAppbarState(
             subCategoryStates = states,
-            subCategoriesSize = subCategoriesState.value.size
+            subCategoriesState = subCategoriesState
         )
         SubCategoryBottomAppBar(
             state = subCategoryBottomAppbarState,
@@ -125,7 +125,13 @@ fun SubCategoryScreen(
                 EditSubCategoryNameDialog(
                     getSelectedSubCategory = states::getFirstSelectedSubCategory,
                     subCategoriesState = subCategoriesState,
-                    onPositiveButtonClick = viewModel::editSubCategoryName,
+                    onPositiveButtonClick = { name, subCategory ->
+                        viewModel.editSubCategoryName(
+                            newName = name,
+                            selectedSubCategory = subCategory
+                        )
+                        coroutineScope.launch { states.selectModeOff() }
+                    },
                     onDismiss = states::dismissEditDialog
                 )
         }
@@ -187,8 +193,6 @@ class SubCategoryStates(
 
     fun dismissEditDialog() {
         _showEditDialogState.value = false
-        _isSelectModeState.value = false
-        clearSelectedSubCategories()
     }
 
     fun getFirstSelectedSubCategory() = _selectedSubCategoriesState.value.first()

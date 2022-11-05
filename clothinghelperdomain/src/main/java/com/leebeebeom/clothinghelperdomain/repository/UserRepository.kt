@@ -18,5 +18,3 @@ interface UserRepository {
 
     suspend fun signOut()
 }
-
-typealias onDone = (FirebaseResult) -> Unit

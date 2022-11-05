@@ -36,7 +36,7 @@ fun SubCategoryTextFieldDialog(
         DialogTitle(text = titleRes)
 
         DialogTextField(
-            state = maxWidthTextFieldState.value,
+            state = maxWidthTextFieldState,
             error = error,
             onValueChange = onValueChange,
             onFocusChanged = onFocusChanged

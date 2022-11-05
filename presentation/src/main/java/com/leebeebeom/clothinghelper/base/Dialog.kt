@@ -8,13 +8,10 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.leebeebeom.clothinghelper.R
@@ -42,22 +39,6 @@ fun DialogTitle(@StringRes text: Int) {
         style = MaterialTheme.typography.subtitle1,
         modifier = Modifier.padding(start = 4.dp, bottom = 12.dp)
     )
-}
-
-@Composable
-fun DialogTextField(
-    state: State<MaxWidthTextFieldState>,
-    error: Int?,
-    onValueChange: (TextFieldValue) -> Unit,
-    onFocusChanged: (FocusState) -> Unit
-) {
-    MaxWidthTextField(
-        state = state,
-        error = error,
-        onValueChange = onValueChange,
-        onFocusChanged = onFocusChanged
-    )
-    SimpleHeightSpacer(dp = 12)
 }
 
 @Composable

@@ -58,7 +58,7 @@ fun SubCategoryContent(
                     subCategoryContentState = state,
                 )
                 SubCategoryCard(
-                    state = subCategoryCardState,
+                    state = subCategoryCardState.value,
                     onLongClick = { onLongClick(it) },
                     onClick = { onSubCategoryClick(it) },
                 )
@@ -88,7 +88,7 @@ fun rememberSubCategoryContentState(
     subCategoriesState: State<List<SubCategory>>,
     subCategoryStates: SubCategoryStates,
     paddingValues: PaddingValues
-) = remember {
+) = remember(paddingValues) {
     derivedStateOf {
         SubCategoryContentState(
             parent = subCategoryStates.parent,

@@ -49,10 +49,10 @@ class UserRepositoryImpl : UserRepository {
         try {
             loadingOn()
 
-            val authResult = auth.signInWithEmailAndPassword(signIn.email, signIn.password).await()
-            val userObj = authResult.user.toUser()!!
-            updateUserAndUpdateSignIn(userObj)
-            AuthResult.Success(userObj, false)
+            val user = auth.signInWithEmailAndPassword(signIn.email, signIn.password)
+                .await().user.toUser()!!
+            updateUserAndUpdateSignIn(user)
+            AuthResult.Success(user, false)
         } catch (e: Exception) {
             AuthResult.Fail(e)
         } finally {
@@ -64,10 +64,9 @@ class UserRepositoryImpl : UserRepository {
         try {
             loadingOn()
 
-            val authResult =
-                auth.createUserWithEmailAndPassword(signUp.email, signUp.password).await()
+            val user =
+                auth.createUserWithEmailAndPassword(signUp.email, signUp.password).await().user!!
 
-            val user = authResult.user!! // update display name
             val request = userProfileChangeRequest { displayName = signUp.name }
             user.updateProfile(request).await()
 
@@ -95,7 +94,7 @@ class UserRepositoryImpl : UserRepository {
         }
     }
 
-    override suspend fun signOut() {
+    override suspend fun signOut() = withContext(Dispatchers.IO) {
         auth.signOut()
         updateSignIn(false)
         updateUser(null)

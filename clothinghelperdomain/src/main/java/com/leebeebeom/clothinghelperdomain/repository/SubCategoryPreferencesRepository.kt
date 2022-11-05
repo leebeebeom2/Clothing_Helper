@@ -20,6 +20,6 @@ enum class SortOrder {
 }
 
 data class SubCategorySortPreferences(
-    val sort: SubCategorySort,
-    val sortOrder: SortOrder
+    val sort: SubCategorySort = SubCategorySort.NAME,
+    val sortOrder: SortOrder = SortOrder.ASCENDING
 )

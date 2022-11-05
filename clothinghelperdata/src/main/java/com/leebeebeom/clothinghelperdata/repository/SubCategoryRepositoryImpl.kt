@@ -28,7 +28,7 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
             user?.let {
                 val temp = List(4) { mutableListOf<SubCategory>() }
 
-                root.getSubCategoriesRef(it.uid).orderByChild("parent").get()
+                root.getSubCategoriesRef(it.uid).get()
                     .await().children.forEach { data ->
                         val subCategory = data.getValue(SubCategory::class.java)!!
                         temp[subCategory.parent.ordinal].add(subCategory)

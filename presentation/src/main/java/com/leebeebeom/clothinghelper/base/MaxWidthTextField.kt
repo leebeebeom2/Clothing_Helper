@@ -30,7 +30,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun MaxWidthTextField(
-    state: MaxWidthTextFieldState,
+    state: State<MaxWidthTextFieldState>,
     error: Int? = null,
     onValueChange: (TextFieldValue) -> Unit,
     onFocusChanged: (FocusState) -> Unit,
@@ -43,20 +43,20 @@ fun MaxWidthTextField(
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .focusRequester(focusRequester = state.focusRequester)
+                .focusRequester(focusRequester = state.value.focusRequester)
                 .onFocusChanged(onFocusChanged = onFocusChanged),
-            value = state.textFieldValue,
+            value = state.value.textFieldValue,
             onValueChange = onValueChange,
-            label = { Text(text = stringResource(id = state.label)) },
-            placeholder = { Text(text = stringResource(id = state.placeholder)) },
+            label = { Text(text = stringResource(id = state.value.label)) },
+            placeholder = { Text(text = stringResource(id = state.value.placeholder)) },
             isError = error != null,
             visualTransformation = visualTransformation,
             singleLine = true,
             maxLines = 1,
-            keyboardOptions = state.keyboardOptions,
+            keyboardOptions = state.value.keyboardOptions,
             trailingIcon = trailingIcon,
-            keyboardActions = if (state.keyboardOptions.imeAction == ImeAction.Done) KeyboardActions(
-                onDone = { state.clearFocus() })
+            keyboardActions = if (state.value.keyboardOptions.imeAction == ImeAction.Done) KeyboardActions(
+                onDone = { state.value.clearFocus() })
             else KeyboardActions.Default,
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 unfocusedBorderColor = Color(0xFFDADADA),
@@ -68,8 +68,8 @@ fun MaxWidthTextField(
         ErrorText(error)
     }
 
-    if (!didShowKeyboardState.value && state.showKeyboardEnabled) {
-        LaunchedEffect(key1 = Unit) { state.showKeyboard() }
+    if (!didShowKeyboardState.value && state.value.showKeyboardEnabled) {
+        LaunchedEffect(key1 = Unit) { state.value.showKeyboard() }
         didShowKeyboardState.value = true
     }
 }

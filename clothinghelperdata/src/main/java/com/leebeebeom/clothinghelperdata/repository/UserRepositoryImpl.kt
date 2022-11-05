@@ -5,14 +5,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
-import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
-import com.leebeebeom.clothinghelperdomain.model.SignIn
-import com.leebeebeom.clothinghelperdomain.model.SignUp
-import com.leebeebeom.clothinghelperdomain.model.User
+import com.leebeebeom.clothinghelperdomain.model.*
 import com.leebeebeom.clothinghelperdomain.repository.UserRepository
-import com.leebeebeom.clothinghelperdomain.repository.onDone
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 class UserRepositoryImpl : UserRepository {
     private val auth = FirebaseAuth.getInstance()
@@ -26,114 +25,97 @@ class UserRepositoryImpl : UserRepository {
     private val _user = MutableStateFlow(auth.currentUser.toUser())
     override val user: StateFlow<User?> get() = _user
 
-    override fun googleSignIn(
-        credential: Any?,
-        onDone: onDone,
-        pushInitialSubCategories: (uid: String) -> Unit
-    ) {
-        loadingOn()
+    override suspend fun googleSignIn(credential: Any?): AuthResult = withContext(Dispatchers.IO) {
+        try {
+            val authCredential = credential as AuthCredential
 
-        val authCredential = credential as AuthCredential
+            loadingOn()
 
-        auth.signInWithCredential(authCredential).addOnCompleteListener {
-            if (it.isSuccessful) {
-                val userObj = it.result.user.toUser()!!
-                if (it.result.additionalUserInfo!!.isNewUser)
-                    pushFirstUserData(userObj, pushInitialSubCategories)
-                updateSignIn(true)
-                updateUser(userObj)
-                onDone(FirebaseResult.Success)
-            } else onDone(FirebaseResult.Fail(it.exception))
+            val authResult = auth.signInWithCredential(authCredential).await()
 
+            val userObj = authResult.user.toUser()!!
+
+            val pushResult = pushNewUser(userObj)
+            if (pushResult is FirebaseResult.Fail) return@withContext AuthResult.Fail(pushResult.exception)
+            AuthResult.Success(userObj, authResult.additionalUserInfo!!.isNewUser)
+        } catch (e: Exception) {
+            AuthResult.Fail(e)
+        } finally {
             loadingOff()
         }
     }
 
-    override fun signIn(signIn: SignIn, onDone: onDone) {
-        loadingOn()
+    override suspend fun signIn(signIn: SignIn) = withContext(Dispatchers.IO) {
+        try {
+            loadingOn()
 
-        auth.signInWithEmailAndPassword(signIn.email, signIn.password).addOnCompleteListener {
-            if (it.isSuccessful) {
-                val userObj = it.result.user.toUser()!!
-                updateSignIn(true)
-                updateUser(userObj)
-                onDone(FirebaseResult.Success)
-            } else onDone(FirebaseResult.Fail(it.exception))
-
+            val authResult = auth.signInWithEmailAndPassword(signIn.email, signIn.password).await()
+            val userObj = authResult.user.toUser()!!
+            updateUserAndUpdateSignIn(userObj)
+            AuthResult.Success(userObj, false)
+        } catch (e: Exception) {
+            AuthResult.Fail(e)
+        } finally {
             loadingOff()
         }
     }
 
-    override fun signUp(
-        signUp: SignUp,
-        onSignUpDone: onDone,
-        onNameUpdateDone: onDone,
-        pushInitialSubCategories: (uid: String) -> Unit
-    ) {
-        loadingOn()
+    override suspend fun signUp(signUp: SignUp) = withContext(Dispatchers.IO) {
+        try {
+            loadingOn()
 
-        auth.createUserWithEmailAndPassword(signUp.email, signUp.password).addOnCompleteListener {
-            if (it.isSuccessful) {
-                val user = it.result.user!!
-                val userObj = user.toUser()!!
-                pushFirstUserData(userObj, pushInitialSubCategories)
-                updateSignIn(true)
-                updateUser(userObj)
-                onSignUpDone(FirebaseResult.Success)
-                updateName(onNameUpdateDone, user, signUp.name)
-            } else onSignUpDone(FirebaseResult.Fail(it.exception))
+            val authResult =
+                auth.createUserWithEmailAndPassword(signUp.email, signUp.password).await()
 
+            val user = authResult.user!! // update display name
+            val request = userProfileChangeRequest { displayName = signUp.name }
+            user.updateProfile(request).await()
+
+            val userObj = user.toUser()!!.copy(name = signUp.name)
+
+            val pushResult = pushNewUser(userObj)
+            if (pushResult is FirebaseResult.Fail) return@withContext AuthResult.Fail(pushResult.exception)
+            AuthResult.Success(user = userObj, isNewer = true)
+        } catch (e: Exception) {
+            AuthResult.Fail(e)
+        } finally {
             loadingOff()
         }
     }
 
-    private fun updateName(
-        onNameUpdateDone: onDone,
-        user: FirebaseUser,
-        name: String
-    ) {
-        loadingOn()
-
-        val request = userProfileChangeRequest { displayName = name }
-
-        user.updateProfile(request)
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    val newNameUser = user.toUser()?.copy(name = name)!!
-                    pushUser(newNameUser)
-                    updateUser(newNameUser)
-                    onNameUpdateDone(FirebaseResult.Success)
-                } else onNameUpdateDone(FirebaseResult.Fail(it.exception))
-
-                loadingOff()
-            }
-    }
-
-    override fun resetPasswordEmail(email: String, onDone: onDone) {
-        loadingOn()
-
-        auth.sendPasswordResetEmail(email).addOnCompleteListener {
-            if (it.isSuccessful) onDone(FirebaseResult.Success)
-            else onDone(FirebaseResult.Fail(it.exception))
-
+    override suspend fun resetPasswordEmail(email: String) = withContext(Dispatchers.IO) {
+        try {
+            loadingOn()
+            auth.sendPasswordResetEmail(email).await()
+            FirebaseResult.Success
+        } catch (e: Exception) {
+            FirebaseResult.Fail(e)
+        } finally {
             loadingOff()
         }
     }
 
-    override fun signOut() {
+    override suspend fun signOut() {
         auth.signOut()
         updateSignIn(false)
         updateUser(null)
     }
 
-    private fun pushFirstUserData(user: User, writeInitialSubCategory: (String) -> Unit) {
-        pushUser(user)
-        writeInitialSubCategory(user.uid)
+    private suspend fun pushNewUser(user: User) = withContext(Dispatchers.IO) {
+        try {
+            FirebaseDatabase.getInstance().reference.child(user.uid).child(DatabasePath.USER_INFO)
+                .setValue(user).await()
+            updateUserAndUpdateSignIn(user)
+            FirebaseResult.Success
+        } catch (e: Exception) {
+            FirebaseResult.Fail(e)
+        }
     }
 
-    private fun pushUser(user: User) =
-        FirebaseDatabase.getInstance().reference.child(user.uid)
-            .child(DatabasePath.USER_INFO).setValue(user)
+    private fun updateUserAndUpdateSignIn(userObj: User) {
+        updateUser(user = userObj)
+        updateSignIn(state = true)
+    }
 
     private fun updateSignIn(state: Boolean) {
         _isSignIn.value = state
@@ -143,11 +125,12 @@ class UserRepositoryImpl : UserRepository {
         this._user.value = user
     }
 
-    private fun loadingOn() {
+    private suspend fun loadingOn() = withContext(Dispatchers.Main) {
         _isLoading.value = true
     }
 
-    private fun loadingOff() {
+
+    private suspend fun loadingOff() = withContext(Dispatchers.Main) {
         _isLoading.value = false
     }
 }

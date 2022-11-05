@@ -1,9 +1,7 @@
 package com.leebeebeom.clothinghelper.main.subcategory
 
 import androidx.annotation.StringRes
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
+import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.text.input.TextFieldValue
@@ -23,17 +21,15 @@ fun SubCategoryTextFieldDialog(
     onPositiveButtonClick: () -> Unit,
     onDismiss: () -> Unit
 ) {
+    DialogRoot(onDismiss = onDismiss) {
+        DialogTitle(text = titleRes)
 
-    val maxWidthTextFieldState =
-        rememberMaxWidthTextFiledState(
+        val maxWidthTextFieldState = rememberMaxWidthTextFiledState(
             textFieldValueState = textFieldValueState,
             label = R.string.category,
             showKeyboardEnabled = true,
             placeholder = R.string.category_place_holder
         )
-
-    DialogRoot(onDismiss = onDismiss) {
-        DialogTitle(text = titleRes)
 
         MaxWidthTextField(
             state = maxWidthTextFieldState,
@@ -66,7 +62,7 @@ abstract class BaseSubCategoryTextFieldDialogState {
         if (textState.value != newTextFiled.text) errorState.value = null
         textState.value = newTextFiled.text
         textFieldValueMutableState.value = newTextFiled
-        if (subCategories.map { it.name }.contains(newTextFiled.text))
-            errorState.value = R.string.error_same_category_name
+        if (subCategories.map { it.name }.contains(newTextFiled.text)) errorState.value =
+            R.string.error_same_category_name
     }
 }

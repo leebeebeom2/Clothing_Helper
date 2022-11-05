@@ -67,7 +67,7 @@ fun rememberEditSubCategoryNameDialogState(
     errorState: MutableState<Int?> = rememberSaveable { mutableStateOf(null) },
     textState: MutableState<String> = rememberSaveable { mutableStateOf(initialName) },
     textFieldValueState: MutableState<TextFieldValue> = remember {
-        mutableStateOf(TextFieldValue(initialName))
+        mutableStateOf(TextFieldValue(textState.value))
     },
     subCategoriesState: State<List<SubCategory>>
 ) = remember {

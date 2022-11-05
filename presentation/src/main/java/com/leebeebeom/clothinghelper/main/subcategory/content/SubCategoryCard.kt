@@ -30,18 +30,18 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategory
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SubCategoryCard(
-    state: State<SubCategoryCardState>,
+    state: SubCategoryCardState,
     onLongClick: () -> Unit,
     onClick: () -> Unit
 ) {
-    val isExpandState = isExpandStateWithIsAllExpand(isAllExpand = state.value.isAllExpand)
+    val isExpandState = isExpandStateWithIsAllExpand(isAllExpand = state.isAllExpand)
 
     Card(elevation = 2.dp, shape = RoundedCornerShape(12.dp)) {
         Column(
             modifier = Modifier
                 .clip(RoundedCornerShape(12.dp))
                 .combinedClickable(onClick = onClick, onLongClick = {
-                    state.value.performHaptic()
+                    state.performHaptic()
                     onLongClick()
                 })
         ) {
@@ -64,7 +64,7 @@ fun SubCategoryCard(
 
 @Composable
 private fun SubCategoryCardTitle(
-    state: State<SubCategoryCardTitleState>,
+    state: SubCategoryCardTitleState,
     isExpanded: Boolean,
     onExpandIconClick: () -> Unit,
 ) {
@@ -80,12 +80,12 @@ private fun SubCategoryCardTitle(
                 modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically
             ) {
                 TitleCircleCheckBox(
-                    isSelectMode = state.value.isSelectMode,
-                    isChecked = state.value.isChecked
+                    isSelectMode = state.isSelectMode,
+                    isChecked = state.isChecked
                 )
                 Title(
-                    isSelectMode = state.value.isSelectMode,
-                    name = state.value.title
+                    isSelectMode = state.isSelectMode,
+                    name = state.title
                 )
                 SimpleWidthSpacer(dp = 4)
                 TotalCount(isExpanded = isExpanded)
@@ -105,15 +105,13 @@ data class SubCategoryCardTitleState(
 
 @Composable
 fun rememberSubCategoryCardTitleState(
-    subCategoryCardState: State<SubCategoryCardState>
-) = remember {
-    derivedStateOf {
+    subCategoryCardState: SubCategoryCardState
+) = remember(subCategoryCardState) {
         SubCategoryCardTitleState(
-            title = subCategoryCardState.value.subCategory.name,
-            isSelectMode = subCategoryCardState.value.isSelectMode,
-            isChecked = subCategoryCardState.value.isChecked
+            title = subCategoryCardState.subCategory.name,
+            isSelectMode = subCategoryCardState.isSelectMode,
+            isChecked = subCategoryCardState.isChecked
         )
-    }
 }
 
 @Composable
@@ -223,7 +221,7 @@ fun rememberSubCategoryCardState(
     subCategory: SubCategory,
     subCategoryContentState: State<SubCategoryContentState>,
     haptic: HapticFeedback = LocalHapticFeedback.current
-) = remember {
+) = remember(subCategory) {
     derivedStateOf {
         SubCategoryCardState(
             subCategory = subCategory,

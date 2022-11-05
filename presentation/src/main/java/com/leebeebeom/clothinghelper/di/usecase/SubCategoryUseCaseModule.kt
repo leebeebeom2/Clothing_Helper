@@ -2,7 +2,6 @@ package com.leebeebeom.clothinghelper.di.usecase
 
 import com.leebeebeom.clothinghelperdata.repository.SubCategoryPreferencesRepositoryImpl
 import com.leebeebeom.clothinghelperdata.repository.SubCategoryRepositoryImpl
-import com.leebeebeom.clothinghelperdomain.usecase.signin.GetUserUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.*
 import dagger.Module
 import dagger.Provides
@@ -17,13 +16,8 @@ class SubCategoryUseCaseModule {
         AddSubCategoryUseCase(subCategoryRepository = subCategoryRepository)
 
     @Provides
-    fun loadSubCategoriesUseCase(
-        subCategoryRepository: SubCategoryRepositoryImpl,
-        getUserUseCase: GetUserUseCase
-    ) = LoadSubCategoriesUseCase(
-        subCategoryRepository = subCategoryRepository,
-        getUserUseCase = getUserUseCase
-    )
+    fun loadSubCategoriesUseCase(subCategoryRepository: SubCategoryRepositoryImpl) =
+        LoadSubCategoriesUseCase(subCategoryRepository = subCategoryRepository)
 
     @Provides
     fun getSubCategoriesUseCase(

@@ -6,7 +6,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUIState
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
 import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
-import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
+import com.leebeebeom.clothinghelperdomain.model.AuthResult
 import com.leebeebeom.clothinghelperdomain.usecase.signin.GoogleSignInUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.signin.SignInUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,8 +28,8 @@ class SignInViewModel @Inject constructor(
         viewModelScope.launch {
 
             when (val result = signInUseCase(email, password)) {
-                is FirebaseResult.Success -> showToast(R.string.sign_in_complete)
-                is FirebaseResult.Fail -> setFireBaseError(
+                is AuthResult.Success -> showToast(R.string.sign_in_complete)
+                is AuthResult.Fail -> setFireBaseError(
                     exception = result.exception,
                     updateEmailError = ::updateEmailError,
                     updatePasswordError = ::updatePasswordError,

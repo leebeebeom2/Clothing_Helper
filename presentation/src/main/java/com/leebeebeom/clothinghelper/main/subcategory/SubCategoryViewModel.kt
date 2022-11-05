@@ -6,6 +6,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelper.base.BaseViewModel
 import com.leebeebeom.clothinghelper.main.base.BaseSubCategoryUIState
+import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.model.User
@@ -64,35 +65,39 @@ class SubCategoryViewModel @Inject constructor(
         }
     }
 
-    fun addSubCategory(name: String, subCategoryParent: SubCategoryParent) {
-        uiState.value.user?.let {
-            addSubCategoryUseCase(
-                subCategoryParent = subCategoryParent,
-                name = name.trim(),
-                uid = it.uid
-            ) { exception ->
-                showToast(R.string.add_category_failed)
-                Log.d(TAG, "taskFailed: $exception")
-            }
+    fun addSubCategory(name: String, subCategoryParent: SubCategoryParent) =
+        viewModelScope.launch {
+            uiState.value.user?.let {
+                val result = addSubCategoryUseCase(
+                    subCategoryParent = subCategoryParent, name = name.trim(), uid = it.uid
+                )
+
+                if (result is FirebaseResult.Fail) {
+                    showToast(R.string.add_category_failed)
+                    Log.d(TAG, "taskFailed: $result")
+                }
+            } ?: showToast(R.string.add_category_failed)
         }
-    }
 
     fun toggleAllExpand() = viewModelScope.launch {
         subCategoryAllExpandUseCase.toggleAllExpand()
     }
 
-    fun editSubCategoryName(newName: String, selectedSubCategory: SubCategory) {
-        uiState.value.user?.let {
-            editSubCategoryNameUseCase(
-                subCategory = selectedSubCategory,
-                newName = newName.trim(),
-                uid = it.uid
-            ) { exception ->
-                showToast(R.string.add_category_failed)
-                Log.d(TAG, "taskFailed: $exception")
-            }
+    fun editSubCategoryName(newName: String, selectedSubCategory: SubCategory) =
+        viewModelScope.launch {
+            uiState.value.user?.let {
+                val result = editSubCategoryNameUseCase(
+                    subCategory = selectedSubCategory,
+                    newName = newName.trim(),
+                    uid = it.uid
+                )
+
+                if (result is FirebaseResult.Fail) {
+                    showToast(R.string.add_category_failed)
+                    Log.d(TAG, "taskFailed: $result")
+                }
+            } ?: showToast(R.string.add_category_failed)
         }
-    }
 
     fun changeSort(sort: SubCategorySort) {
         viewModelScope.launch { subCategorySortUseCase.changeSort(sort) }

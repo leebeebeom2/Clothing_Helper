@@ -36,7 +36,7 @@ fun EmailTextFiled(
     )
 
     MaxWidthTextField(
-        state = state.value,
+        state = state,
         error = error,
         onValueChange = {
             onValueChange(
@@ -68,7 +68,7 @@ fun PasswordTextField(
         )
 
     MaxWidthTextField(
-        state = state.value,
+        state = state,
         error = error,
         onValueChange = {
             onValueChange(
@@ -105,7 +105,7 @@ fun NameTextFiled(
     )
 
     MaxWidthTextField(
-        state = state.value,
+        state = state,
         error = null,
         onValueChange = {
             onValueChange(

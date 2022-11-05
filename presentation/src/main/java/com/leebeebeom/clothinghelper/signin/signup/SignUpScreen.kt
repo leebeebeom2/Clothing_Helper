@@ -74,6 +74,7 @@ fun SignUpScreen(
                         state.updatePasswordError(R.string.error_weak_password)
                     if (state.passwordConfirmState.value.isNotBlank() && newText != state.passwordConfirmState.value)
                         state.updatePasswordConfirmError(R.string.error_password_confirm_not_same)
+                    else state.updatePasswordConfirmError(null)
                 }
             },
             updateError = state::updatePasswordError

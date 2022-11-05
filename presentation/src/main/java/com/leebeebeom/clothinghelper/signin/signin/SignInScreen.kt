@@ -45,7 +45,7 @@ fun SignInScreen(
             .fillMaxSize()
             .verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.Center
     ) {
-        EmailTextFiled(
+        EmailTextField(
             email = state.emailState.value,
             error = uiState.value.emailError,
             updateError = viewModel::updateEmailError,

@@ -20,7 +20,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.*
 import com.leebeebeom.clothinghelper.signin.base.BaseState
 import com.leebeebeom.clothinghelper.signin.base.EmailState
-import com.leebeebeom.clothinghelper.signin.base.EmailTextFiled
+import com.leebeebeom.clothinghelper.signin.base.EmailTextField
 
 /*
 이메일 필드가 비어있거나 에러 메세지 표시 중일 경우 확인 버튼 비활성화
@@ -56,7 +56,7 @@ fun ResetPasswordScreen(
             modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
         )
 
-        EmailTextFiled(
+        EmailTextField(
             email = state.emailState.value,
             error = uiState.value.emailError,
             updateError = viewModel::updateEmailError,

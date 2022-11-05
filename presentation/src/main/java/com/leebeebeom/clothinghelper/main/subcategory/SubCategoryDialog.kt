@@ -9,8 +9,6 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.*
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
-// TODO showKeyboard 미작동
-
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SubCategoryTextFieldDialog(

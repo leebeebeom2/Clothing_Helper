@@ -1,8 +1,9 @@
 package com.leebeebeom.clothinghelper.signin.resetpassword
 
+import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.signin.base.BaseSignInViewModel
 import com.leebeebeom.clothinghelper.signin.base.BaseSignInUIState
+import com.leebeebeom.clothinghelper.signin.base.BaseSignInViewModel
 import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.usecase.signin.ResetPasswordUseCase
@@ -10,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,21 +22,19 @@ class ResetPasswordViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ResetPasswordUIState())
     val uiState get() = _uiState.asStateFlow()
 
-    fun sendResetPasswordEmail(email: String) {
-        resetPasswordUseCase(email) {
-            when (it) {
-                is FirebaseResult.Success -> {
-                    showToast(R.string.email_send_complete)
-                    updateTaskSuccess(true)
-                }
-                is FirebaseResult.Fail -> {
-                    setFireBaseError(
-                        exception = it.exception,
-                        updateEmailError = ::updateEmailError,
-                        updatePasswordError = {},
-                        showToast = ::showToast
-                    )
-                }
+    fun sendResetPasswordEmail(email: String) = viewModelScope.launch {
+        when (val result = resetPasswordUseCase(email)) {
+            is FirebaseResult.Success -> {
+                showToast(R.string.email_send_complete)
+                updateTaskSuccess(true)
+            }
+            is FirebaseResult.Fail -> {
+                setFireBaseError(
+                    exception = result.exception,
+                    updateEmailError = ::updateEmailError,
+                    updatePasswordError = {},
+                    showToast = ::showToast
+                )
             }
         }
     }

@@ -53,14 +53,14 @@ fun SignUpScreen(
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
-        EmailTextFiled(
+        EmailTextField(
             email = state.emailState.value,
             error = uiState.value.emailError,
             updateError = viewModel::updateEmailError,
             onEmailChange = state::onEmailChange
         )
 
-        NameTextFiled(name = state.nameState.value, onNameChange = state::onNameChange)
+        NameTextField(name = state.nameState.value, onNameChange = state::onNameChange)
 
         PasswordTextField(
             password = state.passwordState.value,

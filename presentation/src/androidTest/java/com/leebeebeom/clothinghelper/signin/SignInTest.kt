@@ -26,6 +26,7 @@ class SignInTest {
             rule.onNodeWithContentDescription("settingIcon").performClick()
             rule.onNodeWithText(signOutText).performClick()
         }
+        clearAllText()
     }
 
     @Test
@@ -64,6 +65,9 @@ class SignInTest {
         passwordField.performTextInput(fakePassword)
         signInButtonClick()
         rule.onNodeWithText(getString(R.string.error_invalid_email)).assertExists() // error on
+        passwordField.performClick() // focus test
+        emailField.performClick()
+        rule.onNodeWithText(getString(R.string.error_invalid_email)).assertExists()
         signInButton.assertIsNotEnabled() // button not enabled
         emailField.performTextInput("aa")
         signInButton.assertIsEnabled() // button enabled
@@ -129,7 +133,7 @@ class SignInTest {
     }
 
     @Test
-    fun navigate(){
+    fun navigate() {
         rule.onNodeWithText(getString(R.string.forgot_password)).performClick()
         rule.onNodeWithText(getString(R.string.reset_password_text)).assertExists()
         rule.activityRule.scenario.onActivity {

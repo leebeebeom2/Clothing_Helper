@@ -6,6 +6,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelper.base.BaseViewModel
 import com.leebeebeom.clothinghelper.main.base.BaseSubCategoryUIState
+import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.User
 import com.leebeebeom.clothinghelperdomain.usecase.preferences.MainScreenRootAllExpandUseCase
@@ -33,7 +34,18 @@ class MainScreenRootViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     init {
-        viewModelScope.launch { loadSubCategoriesUseCase(::onLoadFailed) }
+        viewModelScope.launch {
+            getUserUseCase().collect {
+                when (val result = loadSubCategoriesUseCase(it)) {
+                    is FirebaseResult.Success -> {}
+                    is FirebaseResult.Fail -> {
+                        showToast(R.string.sub_categories_load_failed)
+                        Log.d(TAG, "subCategoryLoadFail: $result")
+                    }
+                }
+
+            }
+        }
 
         viewModelScope.launch {
             combine(
@@ -56,11 +68,6 @@ class MainScreenRootViewModel @Inject constructor(
         viewModelScope.launch {
             mainScreenRootAllExpandUseCase.toggleAllExpand()
         }
-
-    private fun onLoadFailed(exception: Exception) {
-        _uiState.update { it.copy(toastText = R.string.sub_categories_load_failed) }
-        Log.e(TAG, "onLoadFailed: ${exception.message}", exception)
-    }
 
     override fun showToast(toastText: Int?) = _uiState.update { it.copy(toastText = toastText) }
 

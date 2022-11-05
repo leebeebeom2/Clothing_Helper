@@ -23,6 +23,7 @@ import com.leebeebeom.clothinghelper.base.CustomIconButton
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryStates
+import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
 @Composable
 fun SubCategoryBottomAppBar(
@@ -98,13 +99,13 @@ data class SubCategoryBottomAppbarState(
 @Composable
 fun rememberSubCategoryBottomAppbarState(
     subCategoryStates: SubCategoryStates,
-    subCategoriesSize: Int
+    subCategoriesState: State<List<SubCategory>>
 ) = remember {
     derivedStateOf {
         SubCategoryBottomAppbarState(
             isSelectMode = subCategoryStates.isSelectMode,
             selectedSubCategoriesSize = subCategoryStates.selectedSubCategoriesSize,
-            subCategoriesSize = subCategoriesSize
+            subCategoriesSize = subCategoriesState.value.size
         )
     }
 }

@@ -121,7 +121,7 @@ fun rememberMaxWidthTextFiledState(
         imeAction = ImeAction.Done
     ),
     focusManager: FocusManager = LocalFocusManager.current,
-    focusRequester: FocusRequester = FocusRequester(),
+    focusRequester: FocusRequester = remember { FocusRequester() },
     keyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
 ) = remember {
     derivedStateOf {

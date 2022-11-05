@@ -5,7 +5,6 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -52,7 +51,8 @@ fun SubCategoryCard(
                 state = subCategoryCardTitleState,
                 isExpanded = isExpandState.value,
                 onExpandIconClick = { isExpandState.value = !isExpandState.value },
-            )
+                onCheckBoxClick = onClick
+                )
 
             AnimatedVisibility(
                 visible = isExpandState.value,
@@ -68,6 +68,7 @@ private fun SubCategoryCardTitle(
     state: SubCategoryCardTitleState,
     isExpanded: Boolean,
     onExpandIconClick: () -> Unit,
+    onCheckBoxClick:() -> Unit
 ) {
     Surface(elevation = 4.dp) {
         Row(
@@ -82,7 +83,8 @@ private fun SubCategoryCardTitle(
             ) {
                 TitleCircleCheckBox(
                     isSelectMode = state.isSelectMode,
-                    isChecked = state.isChecked
+                    isChecked = state.isChecked,
+                    onClick = onCheckBoxClick
                 )
                 Title(
                     isSelectMode = state.isSelectMode,
@@ -153,7 +155,7 @@ private fun Title(isSelectMode: Boolean, name: String) {
 
 @Composable
 private fun RowScope.TitleCircleCheckBox(
-    isSelectMode: Boolean, isChecked: Boolean
+    isSelectMode: Boolean, isChecked: Boolean, onClick: () -> Unit
 ) {
     AnimatedVisibility(
         visible = isSelectMode,
@@ -163,9 +165,9 @@ private fun RowScope.TitleCircleCheckBox(
         CircleCheckBox(
             isChecked = isChecked,
             modifier = Modifier
-                .clickable(enabled = false) {}
                 .padding(start = 6.dp)
                 .size(18.dp),
+            onClick = onClick
         )
     }
 }

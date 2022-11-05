@@ -81,9 +81,7 @@ data class MainNavHostState(val navController: NavHostController) {
         }
 
     fun navigateToSubCategory(subCategoryParent: SubCategoryParent) =
-        navController.navigate("${MainDestinations.SubCategory.route}/${subCategoryParent.name}") { // TODO 중복 스택 막기
-            launchSingleTop = true
-        }
+        navController.navigate("${MainDestinations.SubCategory.route}/${subCategoryParent.name}") // TODO 중복 스택 막기
 
     private fun navigateToMain() =
         navController.navigate(route = MainDestinations.MainCategory.route) {

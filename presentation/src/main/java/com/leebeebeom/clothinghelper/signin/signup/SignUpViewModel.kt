@@ -1,19 +1,19 @@
 package com.leebeebeom.clothinghelper.signin.signup
 
-import android.util.Log
 import androidx.annotation.StringRes
+import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUIState
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
 import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
-import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
+import com.leebeebeom.clothinghelperdomain.model.AuthResult
 import com.leebeebeom.clothinghelperdomain.usecase.signin.GoogleSignInUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.signin.SignUpUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,26 +24,18 @@ class SignUpViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SignUpUIState())
     val uiState get() = _uiState.asStateFlow()
 
-    fun signUpWithEmailAndPassword(email: String, name: String, password: String) {
-        signUpUseCase(email = email, password = password, name = name, onSignUpDone = {
-            when (it) {
-                is FirebaseResult.Success -> showToast(R.string.sign_up_complete)
-                is FirebaseResult.Fail -> {
-                    setFireBaseError(
-                        exception = it.exception,
-                        updateEmailError = ::updateEmailError,
-                        updatePasswordError = {},
-                        showToast = ::showToast
-                    )
-                }
-            }
-        }) {
-            if (it is FirebaseResult.Fail) {
-                showToast(R.string.name_update_failed)
-                Log.d(TAG, "taskFailed: $it.exception")
+    fun signUpWithEmailAndPassword(email: String, name: String, password: String) =
+        viewModelScope.launch {
+            when (val authResult = signUpUseCase(email = email, password = password, name = name)) {
+                is AuthResult.Success -> showToast(R.string.sign_up_complete)
+                is AuthResult.Fail -> setFireBaseError(
+                    exception = authResult.exception,
+                    updateEmailError = ::updateEmailError,
+                    updatePasswordError = {},
+                    showToast = ::showToast
+                )
             }
         }
-    }
 
     override fun updateGoogleButtonEnabled(enabled: Boolean) =
         _uiState.update { it.copy(googleButtonEnabled = enabled) }

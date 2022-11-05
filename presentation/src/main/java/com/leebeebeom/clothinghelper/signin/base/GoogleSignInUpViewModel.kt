@@ -4,6 +4,7 @@ import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.util.Log
 import androidx.activity.result.ActivityResult
+import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.AuthCredential
@@ -12,6 +13,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.usecase.signin.GoogleSignInUseCase
+import kotlinx.coroutines.launch
 
 abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSignInUseCase) :
     BaseSignInViewModel() {
@@ -21,14 +23,13 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
     fun signInWithGoogleEmail(activityResult: ActivityResult) {
         when (activityResult.resultCode) {
             RESULT_OK -> {
-                googleSignInUseCase(
-                    credential = getGoogleCredential(activityResult)
-                ) {
-                    when (it) {
+                viewModelScope.launch {
+                    when (val result =
+                        googleSignInUseCase(credential = getGoogleCredential(activityResult))) {
                         is FirebaseResult.Success -> showToast(R.string.google_sign_in_complete)
-                        is FirebaseResult.Fail -> {
+                        else -> {
                             showToast(R.string.unknown_error)
-                            Log.e(TAG, "signInWithGoogleEmail: ${it.exception}")
+                            Log.e(TAG, "signInWithGoogleEmail: $result")
                             updateGoogleButtonEnabled(enabled = true)
                         }
                     }
@@ -53,8 +54,7 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
             Log.e(TAG, "getGoogleCredential: activityResult.data = null")
             null
         } else {
-            val account = GoogleSignIn
-                .getSignedInAccountFromIntent(activityResult.data)
+            val account = GoogleSignIn.getSignedInAccountFromIntent(activityResult.data)
                 .getResult(ApiException::class.java)
             GoogleAuthProvider.getCredential(account.idToken, null)
         }

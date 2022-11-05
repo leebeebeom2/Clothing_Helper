@@ -35,12 +35,14 @@ fun SubCategoryTextFieldDialog(
     DialogRoot(onDismiss = onDismiss) {
         DialogTitle(text = titleRes)
 
-        DialogTextField(
+        MaxWidthTextField(
             state = maxWidthTextFieldState,
             error = error,
             onValueChange = onValueChange,
             onFocusChanged = onFocusChanged
         )
+        SimpleHeightSpacer(dp = 12)
+
         DialogTextButtons(
             positiveButtonEnabled = positiveButtonEnabled,
             onPositiveButtonClick = onPositiveButtonClick,

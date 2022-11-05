@@ -5,6 +5,7 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -107,11 +108,11 @@ data class SubCategoryCardTitleState(
 fun rememberSubCategoryCardTitleState(
     subCategoryCardState: SubCategoryCardState
 ) = remember(subCategoryCardState) {
-        SubCategoryCardTitleState(
-            title = subCategoryCardState.subCategory.name,
-            isSelectMode = subCategoryCardState.isSelectMode,
-            isChecked = subCategoryCardState.isChecked
-        )
+    SubCategoryCardTitleState(
+        title = subCategoryCardState.subCategory.name,
+        isSelectMode = subCategoryCardState.isSelectMode,
+        isChecked = subCategoryCardState.isChecked
+    )
 }
 
 @Composable
@@ -162,6 +163,7 @@ private fun RowScope.TitleCircleCheckBox(
         CircleCheckBox(
             isChecked = isChecked,
             modifier = Modifier
+                .clickable(enabled = false) {}
                 .padding(start = 6.dp)
                 .size(18.dp),
         )
@@ -196,9 +198,11 @@ private fun RowScope.SubCategoryInfoText(@StringRes infoTitle: Int, @StringRes i
             color = LocalContentColor.current.copy(ContentAlpha.medium), fontSize = 13.sp
         )
     ) {
-        Column(modifier = Modifier
-            .weight(1f)
-            .padding(start = 8.dp)) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 8.dp)
+        ) {
             Text(text = stringResource(id = infoTitle), fontWeight = FontWeight.Bold)
             SimpleHeightSpacer(dp = 2)
             Text(text = stringResource(id = info))

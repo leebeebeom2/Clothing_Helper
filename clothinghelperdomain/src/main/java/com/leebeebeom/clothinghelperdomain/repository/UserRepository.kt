@@ -1,9 +1,6 @@
 package com.leebeebeom.clothinghelperdomain.repository
 
-import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
-import com.leebeebeom.clothinghelperdomain.model.SignIn
-import com.leebeebeom.clothinghelperdomain.model.SignUp
-import com.leebeebeom.clothinghelperdomain.model.User
+import com.leebeebeom.clothinghelperdomain.model.*
 import kotlinx.coroutines.flow.StateFlow
 
 interface UserRepository {
@@ -11,30 +8,15 @@ interface UserRepository {
     val isSignIn: StateFlow<Boolean>
     val user: StateFlow<User?>
 
-    fun googleSignIn(
-        credential: Any?,
-        onDone: onDone,
-        pushInitialSubCategories: (uid: String) -> Unit
-    )
+    suspend fun googleSignIn(credential: Any?): AuthResult
 
-    fun signIn(
-        signIn: SignIn,
-        onDone: onDone
-    )
+    suspend fun signIn(signIn: SignIn): AuthResult
 
-    fun signUp(
-        signUp: SignUp,
-        onSignUpDone: onDone,
-        onNameUpdateDone: onDone,
-        pushInitialSubCategories: (uid: String) -> Unit
-    )
+    suspend fun signUp(signUp: SignUp): AuthResult
 
-    fun resetPasswordEmail(
-        email: String,
-        onDone: onDone
-    )
+    suspend fun resetPasswordEmail(email: String) : FirebaseResult
 
-    fun signOut()
+    suspend fun signOut()
 }
 
 typealias onDone = (FirebaseResult) -> Unit

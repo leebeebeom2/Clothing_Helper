@@ -63,6 +63,8 @@ import kotlinx.coroutines.launch
 트림 확인
 본래 이름일 시 에러 표시 x 확인 버튼만 disable
 이름 변경 시 정렬 지키는 지 확인
+
+TODO 추가, 이름 수정 시 너무 오래 걸림 로딩 추가
  */
 
 

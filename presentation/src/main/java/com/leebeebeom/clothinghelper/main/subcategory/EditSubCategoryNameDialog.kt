@@ -7,16 +7,13 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun EditSubCategoryNameDialog(
     getSelectedSubCategory: () -> SubCategory,
     subCategoriesState: State<List<SubCategory>>,
     onPositiveButtonClick: (String, SubCategory) -> Unit,
-    onDismiss: suspend () -> Unit,
-    coroutineScope: CoroutineScope = rememberCoroutineScope()
+    onDismiss: () -> Unit,
 ) {
     val state = rememberEditSubCategoryNameDialogState(
         initialName = getSelectedSubCategory().name,
@@ -25,7 +22,7 @@ fun EditSubCategoryNameDialog(
     SubCategoryTextFieldDialog(
         titleRes = R.string.edit_category_name,
         error = state.value.error,
-        onDismiss = { coroutineScope.launch { onDismiss() } },
+        onDismiss = onDismiss,
         textFieldValueState = state.value.textFieldValueState,
         onPositiveButtonClick = {
             onPositiveButtonClick(

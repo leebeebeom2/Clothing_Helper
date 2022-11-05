@@ -2,46 +2,64 @@ package com.leebeebeom.clothinghelperdomain.usecase.subcategory
 
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
-import com.leebeebeom.clothinghelperdomain.repository.SubCategoryPreferencesRepository
-import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
-import com.leebeebeom.clothinghelperdomain.usecase.signin.GetUserUseCase
-import kotlinx.coroutines.CoroutineScope
+import com.leebeebeom.clothinghelperdomain.model.User
+import com.leebeebeom.clothinghelperdomain.repository.*
+import kotlinx.coroutines.flow.combine
 
 class GetSubCategoryLoadingStateUseCase(private val subCategoryRepository: SubCategoryRepository) {
-    val isLoading get() = subCategoryRepository.isLoading
+    operator fun invoke() = subCategoryRepository.isLoading
 }
 
-class LoadSubCategoriesUseCase(
-    private val subCategoryRepository: SubCategoryRepository,
-    private val getUserUseCase: GetUserUseCase
-) {
-    suspend operator fun invoke(onFailed: (Exception) -> Unit) {
-        getUserUseCase().collect { subCategoryRepository.loadSubCategories(it, onFailed) }
-    }
+class PushInitialSubCategoriesUseCase(private val subCategoryRepository: SubCategoryRepository) {
+    suspend operator fun invoke(uid: String) = subCategoryRepository.pushInitialSubCategories(uid)
+}
+
+class LoadSubCategoriesUseCase(private val subCategoryRepository: SubCategoryRepository) {
+    suspend operator fun invoke(user: User?) = subCategoryRepository.loadSubCategories(user)
 }
 
 class GetSubCategoriesUseCase(
     private val subCategoryRepository: SubCategoryRepository,
     private val subCategoryPreferencesRepository: SubCategoryPreferencesRepository
 ) {
-    suspend operator fun invoke(scope: CoroutineScope) = subCategoryRepository.getAllSubCategories(
-        scope, subCategoryPreferencesRepository.sort
-    )
+    operator fun invoke() =
+        subCategoryRepository.allSubCategories.combine(subCategoryPreferencesRepository.sort) { allSubCategories, sort ->
+            val temp = arrayListOf<List<SubCategory>>()
+            allSubCategories.forEach {
+                temp.add(getSortSubCategories(subCategories = it, preferences = sort))
+            }
+            temp.toList()
+        }
+}
+
+private fun getSortSubCategories(
+    subCategories: List<SubCategory>, preferences: SubCategorySortPreferences
+): List<SubCategory> {
+    val sort = preferences.sort
+    val order = preferences.sortOrder
+
+    return when {
+        sort == SubCategorySort.NAME && order == SortOrder.ASCENDING -> subCategories.sortedBy { it.name }
+        sort == SubCategorySort.NAME && order == SortOrder.DESCENDING -> subCategories.sortedByDescending { it.name }
+        sort == SubCategorySort.CREATE && order == SortOrder.ASCENDING -> subCategories.sortedBy { it.createDate }
+        sort == SubCategorySort.CREATE && order == SortOrder.DESCENDING -> subCategories.sortedByDescending { it.createDate }
+        else -> subCategories
+    }
 }
 
 class AddSubCategoryUseCase(private val subCategoryRepository: SubCategoryRepository) {
-    operator fun invoke(
+    suspend operator fun invoke(
         subCategoryParent: SubCategoryParent,
         name: String,
-        uid: String,
-        taskFailed: (Exception?) -> Unit
+        uid: String
     ) = subCategoryRepository.addSubCategory(
-        subCategoryParent = subCategoryParent, name = name, uid = uid, taskFailed = taskFailed
+        subCategoryParent = subCategoryParent,
+        name = name,
+        uid = uid
     )
 }
 
 class EditSubCategoryNameUseCase(private val subCategoryRepository: SubCategoryRepository) {
-    operator fun invoke(
-        subCategory: SubCategory, newName: String, uid: String, taskFailed: (Exception?) -> Unit
-    ) = subCategoryRepository.editSubCategoryName(subCategory, newName, uid, taskFailed)
+    suspend operator fun invoke(subCategory: SubCategory, newName: String, uid: String) =
+        subCategoryRepository.editSubCategoryName(subCategory, newName, uid)
 }

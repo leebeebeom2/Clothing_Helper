@@ -97,7 +97,7 @@ private fun SignUpText(onEmailSignUpClick: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = stringResource(R.string.dont_have_an_account),
+            text = stringResource(R.string.do_not_have_an_account),
             style = MaterialTheme.typography.body2,
         )
         TextButton(onClick = onEmailSignUpClick) {

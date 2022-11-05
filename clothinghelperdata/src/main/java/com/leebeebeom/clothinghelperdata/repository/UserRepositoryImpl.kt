@@ -35,9 +35,12 @@ class UserRepositoryImpl : UserRepository {
 
             val userObj = authResult.user.toUser()!!
 
-            val pushResult = pushNewUser(userObj)
-            if (pushResult is FirebaseResult.Fail) return@withContext AuthResult.Fail(pushResult.exception)
-            AuthResult.Success(userObj, authResult.additionalUserInfo!!.isNewUser)
+            val isNewer = authResult.additionalUserInfo!!.isNewUser
+            if (isNewer) {
+                val pushResult = pushNewUser(userObj)
+                if (pushResult is FirebaseResult.Fail) return@withContext AuthResult.Fail(pushResult.exception)
+            }else updateUserAndUpdateSignIn(userObj)
+            AuthResult.Success(userObj, isNewer)
         } catch (e: Exception) {
             AuthResult.Fail(e)
         } finally {

@@ -8,6 +8,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusState
@@ -45,7 +46,7 @@ fun DialogTitle(@StringRes text: Int) {
 
 @Composable
 fun DialogTextField(
-    state: MaxWidthTextFieldState,
+    state: State<MaxWidthTextFieldState>,
     error: Int?,
     onValueChange: (TextFieldValue) -> Unit,
     onFocusChanged: (FocusState) -> Unit

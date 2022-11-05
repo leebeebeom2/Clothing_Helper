@@ -17,7 +17,7 @@ import androidx.compose.ui.window.Dialog
 import com.leebeebeom.clothinghelper.R
 
 @Composable
-fun DialogRoot(onDismiss: () -> Unit, content: @Composable ColumnScope.() -> Unit) {
+fun DialogRoot(onDismiss: () -> Unit, content: @Composable () -> Unit) {
     Dialog(onDismissRequest = onDismiss) {
         Surface(color = MaterialTheme.colors.surface, shape = RoundedCornerShape(20.dp)) {
             Column(

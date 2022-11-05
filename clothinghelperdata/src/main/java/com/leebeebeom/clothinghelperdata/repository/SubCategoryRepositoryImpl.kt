@@ -46,6 +46,8 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
     override suspend fun pushInitialSubCategories(uid: String): SubCategoryPushResult =
         withContext(Dispatchers.IO) {
             try {
+                loadingOn()
+
                 val subCategoryRef = root.getSubCategoriesRef(uid)
 
                 for (subCategory in getInitialSubCategories()) {
@@ -58,6 +60,8 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
                 SubCategoryPushResult.Success(SubCategory()) // dummy
             } catch (e: Exception) {
                 SubCategoryPushResult.Fail(e)
+            } finally {
+                loadingOff()
             }
         }
 

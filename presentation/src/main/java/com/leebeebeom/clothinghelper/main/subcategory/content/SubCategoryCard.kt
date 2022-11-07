@@ -3,9 +3,9 @@ package com.leebeebeom.clothinghelper.main.subcategory.content
 import androidx.annotation.StringRes
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.*
+import androidx.compose.foundation.interaction.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -90,7 +90,7 @@ private fun SubCategoryCardTitle(
                 Spacer(
                     modifier = Modifier
                         .animateContentSize(tween(Anime.CircleCheckBox.duration))
-                        .width(if (state.isSelectMode) 0.dp else 12.dp)
+                        .width(if (state.isSelectMode) 2.dp else 12.dp)
                         .background(Color.Transparent)
                 )
                 Title(name = state.title)

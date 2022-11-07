@@ -147,7 +147,7 @@ fun rememberEmailTextFieldState(
     label = R.string.email,
     placeholder = R.string.email_place_holder,
     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = imeAction),
-    showKeyboardEnabled = true,
+    showKeyboardEnabled = false,
 )
 
 @OptIn(ExperimentalComposeUiApi::class)

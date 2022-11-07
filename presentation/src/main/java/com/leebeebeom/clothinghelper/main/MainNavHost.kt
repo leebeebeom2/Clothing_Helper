@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.main
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -11,7 +10,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.leebeebeom.clothinghelper.base.Anime
 import com.leebeebeom.clothinghelper.base.FinishActivityBackHandler
 import com.leebeebeom.clothinghelper.main.maincategory.MainCategoryScreen
 import com.leebeebeom.clothinghelper.main.root.EssentialMenus
@@ -76,13 +74,12 @@ fun MainNavHost(state: MainNavHostState = rememberMainNavHostState()) {
 }
 
 data class MainNavHostState(val navController: NavHostController) {
-    fun onEssentialMenuClick(essentialMenu: EssentialMenus) =
-        when (essentialMenu) {
-            EssentialMenus.MainScreen -> navigateToMain()
-            EssentialMenus.Favorite -> {} // TODO
-            EssentialMenus.SeeAll -> {} // TODO
-            EssentialMenus.Trash -> {} // TODO
-        }
+    fun onEssentialMenuClick(essentialMenu: EssentialMenus) = when (essentialMenu) {
+        EssentialMenus.MainScreen -> navigateToMain()
+        EssentialMenus.Favorite -> {} // TODO
+        EssentialMenus.SeeAll -> {} // TODO
+        EssentialMenus.Trash -> {} // TODO
+    }
 
     fun navigateToSubCategory(subCategoryParent: SubCategoryParent) =
         navController.navigate("${MainDestinations.SubCategory.route}/${subCategoryParent.name}") // TODO 중복 스택 막기

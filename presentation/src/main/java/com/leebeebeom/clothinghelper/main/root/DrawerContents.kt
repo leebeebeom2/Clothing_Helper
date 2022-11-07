@@ -33,7 +33,7 @@ fun DrawerContents(
     state: State<DrawerContentsState>,
     onEssentialMenuClick: (essentialMenu: EssentialMenus) -> Unit,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
-    onSubCategoryClick: (key: String) -> Unit,
+    onSubCategoryClick: (SubCategory) -> Unit,
     onSettingIconClick: () -> Unit,
     allExpandIconClick: () -> Unit
 ) = Column {
@@ -110,9 +110,9 @@ fun DrawerContentRow(
 )
 
 @Composable
-fun RowScope.DrawerContentText(modifier: Modifier = Modifier, text: String, style: TextStyle) {
+fun DrawerContentText(modifier: Modifier = Modifier, text: String, style: TextStyle) {
     Text(
-        modifier = modifier.weight(1f),
+        modifier = modifier,
         text = text,
         style = style,
         maxLines = 1,

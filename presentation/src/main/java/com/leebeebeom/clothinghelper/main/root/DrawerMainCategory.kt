@@ -4,9 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -23,7 +21,7 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 fun DrawerMainCategory(
     state: State<DrawerMainCategoryState>,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
-    onSubCategoryClick: (key: String) -> Unit,
+    onSubCategoryClick: (SubCategory) -> Unit,
 ) {
     val isExpandState = isExpandStateWithIsAllExpand(isAllExpand = state.value.isAllExpand)
 
@@ -35,6 +33,15 @@ fun DrawerMainCategory(
                 modifier = Modifier.padding(start = 8.dp),
                 text = stringResource(id = state.value.mainCategory.name),
                 style = MaterialTheme.typography.subtitle1
+            )
+            Text( // count
+                modifier = Modifier.weight(1f).padding(start = 4.dp),
+                text = "(${state.value.subCategories.size})",
+                style = MaterialTheme.typography.caption.copy(
+                    LocalContentColor.current.copy(
+                        ContentAlpha.disabled
+                    )
+                )
             )
             ExpandIcon(
                 isLoading = state.value.isLoading,
@@ -94,7 +101,7 @@ private fun ExpandIcon(
 private fun SubCategories(
     isExpand: Boolean,
     subCategories: List<SubCategory>,
-    onClick: (key: String) -> Unit
+    onClick: (SubCategory) -> Unit
 ) {
     AnimatedVisibility(
         visible = isExpand,
@@ -105,7 +112,7 @@ private fun SubCategories(
             Column {
                 for (subCategory in subCategories)
                     key(subCategory.key) {
-                        SubCategory(subCategory = subCategory) { onClick(subCategory.key) }
+                        SubCategory(subCategory = subCategory, onClick = { onClick(subCategory) })
                     }
             }
         }
@@ -113,12 +120,12 @@ private fun SubCategories(
 }
 
 @Composable
-private fun SubCategory(subCategory: SubCategory, onSubCategoryClick: () -> Unit) {
+private fun SubCategory(subCategory: SubCategory, onClick: () -> Unit) {
     DrawerContentRow(
         modifier = Modifier
             .heightIn(40.dp)
             .padding(horizontal = 8.dp),
-        onClick = onSubCategoryClick
+        onClick = onClick
     ) {
         DrawerContentText(
             modifier = Modifier.padding(start = 12.dp),

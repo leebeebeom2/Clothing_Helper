@@ -11,6 +11,7 @@ import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leebeebeom.clothinghelper.base.SimpleToast
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
+import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -41,7 +42,7 @@ fun MainScreenRoot(
     onSettingIconClick: () -> Unit,
     onEssentialMenuClick: (essentialMenu: EssentialMenus) -> Unit,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
-    onSubCategoryClick: (key: String) -> Unit,
+    onSubCategoryClick: (SubCategory) -> Unit,
     viewModel: MainScreenRootViewModel = hiltViewModel(),
     state: MainRootState = rememberMainRootState(),
     content: @Composable (PaddingValues, backHandler: @Composable () -> Unit) -> Unit

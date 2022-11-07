@@ -74,7 +74,7 @@ private fun SubCategoryCardTitle(
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 12.dp, bottom = 8.dp)
+                .padding(vertical = 8.dp)
                 .padding(end = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {

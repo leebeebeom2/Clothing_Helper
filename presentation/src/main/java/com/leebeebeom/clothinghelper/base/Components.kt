@@ -1,6 +1,8 @@
 package com.leebeebeom.clothinghelper.base
 
 import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
@@ -42,7 +44,9 @@ fun SimpleIcon(
 fun CenterDotProgressIndicator(backGround: Color = Disabled) {
     IndicatorRoot(backGround) {
         DotProgressIndicator(
-            modifier = Modifier.align(Alignment.Center).semantics { contentDescription = "loading" },
+            modifier = Modifier
+                .align(Alignment.Center)
+                .semantics { contentDescription = "loading" },
             size = 8.dp,
             color = LocalContentColor.current.copy(ContentAlpha.medium)
         )
@@ -116,5 +120,18 @@ fun CustomIconButton(
             .clip(CircleShape)
             .clickable(onClick = onClick)
             .padding(4.dp)
-    ) { Icon(painter = painter, contentDescription = contentDescription, modifier = modifier, tint = tint) }
+    ) {
+        Icon(
+            painter = painter,
+            contentDescription = contentDescription,
+            modifier = modifier,
+            tint = tint
+        )
+    }
+}
+
+@Composable
+fun FinishActivityBackHandler() {
+    val activity = LocalContext.current as ComponentActivity
+    BackHandler(enabled = true) { activity.finish() }
 }

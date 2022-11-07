@@ -1,6 +1,9 @@
 package com.leebeebeom.clothinghelper.main.subcategory
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.text.TextRange
@@ -10,29 +13,35 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
 @Composable
 fun EditSubCategoryNameDialog(
-    getSelectedSubCategory: () -> SubCategory,
-    subCategoriesState: State<List<SubCategory>>,
+    firstSelectedSubCategory: SubCategory,
+    subCategories: List<SubCategory>,
     onPositiveButtonClick: (String, SubCategory) -> Unit,
-    onDismiss: () -> Unit,
+    onDismiss: () -> Unit
 ) {
     val state = rememberEditSubCategoryNameDialogState(
-        initialName = getSelectedSubCategory().name,
-        subCategoriesState = subCategoriesState
+        initialName = firstSelectedSubCategory.name,
+        subCategories = subCategories
     )
+    val initialed = rememberSaveable { mutableStateOf(false) }
+    if (!initialed.value) {
+        state.setInitialText(firstSelectedSubCategory.name)
+        initialed.value = true
+    }
+
     SubCategoryTextFieldDialog(
         titleRes = R.string.edit_category_name,
-        error = state.value.error,
+        error = state.error,
         onDismiss = onDismiss,
-        textFieldValueState = state.value.textFieldValueState,
+        textFieldValueState = state.textFieldValueState,
         onPositiveButtonClick = {
             onPositiveButtonClick(
-                state.value.text.trim(),
-                getSelectedSubCategory()
+                state.text.trim(),
+                firstSelectedSubCategory
             )
         },
-        positiveButtonEnabled = state.value.positiveButtonEnabled,
-        onValueChange = state.value::onValueChange,
-        onFocusChanged = state.value::onFocusChange
+        positiveButtonEnabled = state.positiveButtonEnabled,
+        onValueChange = state::onValueChange,
+        onFocusChanged = state::onFocusChange
     )
 }
 
@@ -41,8 +50,13 @@ data class EditSubCategoryNameDialogState(
     override val errorState: MutableState<Int?>,
     override val subCategories: List<SubCategory>,
     override val textState: MutableState<String>,
-    override val textFieldValueMutableState: MutableState<TextFieldValue>
+    override val textFieldValueMutableState: MutableState<TextFieldValue>,
 ) : BaseSubCategoryTextFieldDialogState() {
+    fun setInitialText(text: String) {
+        textState.value = text
+        textFieldValueMutableState.value =
+            TextFieldValue(text = text, TextRange(0, text.length))
+    }
 
     override fun onValueChange(newTextFiled: TextFieldValue) {
         super.onValueChange(newTextFiled)
@@ -64,20 +78,18 @@ data class EditSubCategoryNameDialogState(
 @Composable
 fun rememberEditSubCategoryNameDialogState(
     initialName: String,
+    textState: MutableState<String> = rememberSaveable { mutableStateOf("") },
     errorState: MutableState<Int?> = rememberSaveable { mutableStateOf(null) },
-    textState: MutableState<String> = rememberSaveable { mutableStateOf(initialName) },
     textFieldValueState: MutableState<TextFieldValue> = remember {
         mutableStateOf(TextFieldValue(textState.value))
     },
-    subCategoriesState: State<List<SubCategory>>
-) = remember {
-    derivedStateOf {
-        EditSubCategoryNameDialogState(
-            initialName = initialName,
-            errorState = errorState,
-            subCategories = subCategoriesState.value,
-            textState = textState,
-            textFieldValueMutableState = textFieldValueState
-        )
-    }
+    subCategories: List<SubCategory>,
+) = remember(subCategories) {
+    EditSubCategoryNameDialogState(
+        initialName = initialName,
+        errorState = errorState,
+        subCategories = subCategories,
+        textState = textState,
+        textFieldValueMutableState = textFieldValueState,
+    )
 }

@@ -4,15 +4,15 @@ import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.leebeebeom.clothinghelper.base.Anime.Screen.slideInBottom
-import com.leebeebeom.clothinghelper.base.Anime.Screen.slideOutBottom
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.leebeebeom.clothinghelper.main.MainNavHost
 import com.leebeebeom.clothinghelper.signin.SignInNavHost
 import com.leebeebeom.clothinghelperdomain.usecase.signin.GetSignInStateUseCase
@@ -30,25 +30,36 @@ class ClothingHelper : Application()
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent { MainActivityScreen() }
+        setContent { MainActivityNavHost() }
     }
 }
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
-fun MainActivityScreen(viewModel: MainActivityViewModel = hiltViewModel()) {
+fun MainActivityNavHost(
+    viewModel: MainActivityViewModel = hiltViewModel(),
+    navController: NavHostController = rememberNavController()
+) {
     val isSignIn by viewModel.getSignInStateUseCase().collectAsStateWithLifecycle()
 
-    Box {
-        MainNavHost()
-        AnimatedVisibility(
-            visible = !isSignIn,
-            enter = slideInBottom,
-            exit = slideOutBottom
-        ) { SignInNavHost() }
+    NavHost(navController = navController, startDestination = MainActivityDestinations.MAIN) {
+        composable(route = MainActivityDestinations.MAIN) { MainNavHost() }
+        composable(route = MainActivityDestinations.SIGN_IN) { SignInNavHost() }
     }
+
+    if (isSignIn) navController.mainActivityNavigate(MainActivityDestinations.MAIN)
+    else navController.mainActivityNavigate(MainActivityDestinations.SIGN_IN)
 }
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(val getSignInStateUseCase: GetSignInStateUseCase) :
     ViewModel()
+
+object MainActivityDestinations {
+    const val MAIN = "main"
+    const val SIGN_IN = "signIn"
+}
+
+private fun NavHostController.mainActivityNavigate(route: String) = navigate(route) {
+    launchSingleTop = true
+}

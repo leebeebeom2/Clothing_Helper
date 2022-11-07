@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.leebeebeom.clothinghelper.base.FinishActivityBackHandler
 import com.leebeebeom.clothinghelper.signin.resetpassword.ResetPasswordScreen
 import com.leebeebeom.clothinghelper.signin.signin.SignInScreen
 import com.leebeebeom.clothinghelper.signin.signup.SignUpScreen
@@ -17,7 +18,6 @@ object SignInDestinations {
 
 @Composable
 fun SignInNavHost(navController: NavHostController = rememberNavController()) {
-
     SignInRoot {
         NavHost(navController = navController, startDestination = SignInDestinations.SIGN_IN) {
             composable(route = SignInDestinations.SIGN_IN) {
@@ -30,4 +30,6 @@ fun SignInNavHost(navController: NavHostController = rememberNavController()) {
             composable(route = SignInDestinations.RESET_PASSWORD) { ResetPasswordScreen() }
         }
     }
+
+    FinishActivityBackHandler()
 }

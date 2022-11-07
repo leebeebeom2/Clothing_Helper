@@ -1,5 +1,6 @@
 package com.leebeebeom.clothinghelper.main
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -11,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.leebeebeom.clothinghelper.base.Anime
+import com.leebeebeom.clothinghelper.base.FinishActivityBackHandler
 import com.leebeebeom.clothinghelper.main.maincategory.MainCategoryScreen
 import com.leebeebeom.clothinghelper.main.root.EssentialMenus
 import com.leebeebeom.clothinghelper.main.root.MainScreenRoot
@@ -69,6 +71,8 @@ fun MainNavHost(state: MainNavHostState = rememberMainNavHostState()) {
             }
         }
     }
+
+    FinishActivityBackHandler()
 }
 
 data class MainNavHostState(val navController: NavHostController) {
@@ -89,7 +93,7 @@ data class MainNavHostState(val navController: NavHostController) {
         }
 
     suspend fun navigateToMainWithDelay() {
-        delay(Anime.Screen.duration.toLong())
+        delay(1000)
         navigateToMain()
     }
 

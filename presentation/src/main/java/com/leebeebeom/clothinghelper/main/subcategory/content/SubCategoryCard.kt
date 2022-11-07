@@ -2,9 +2,9 @@ package com.leebeebeom.clothinghelper.main.subcategory.content
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.*
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -27,12 +28,12 @@ import com.leebeebeom.clothinghelper.main.base.ExpandIcon
 import com.leebeebeom.clothinghelper.main.base.isExpandStateWithIsAllExpand
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
+// TODO 선택 모드 애니메이션 렉
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SubCategoryCard(
-    state: SubCategoryCardState,
-    onLongClick: () -> Unit,
-    onClick: () -> Unit
+    state: SubCategoryCardState, onLongClick: () -> Unit, onClick: () -> Unit
 ) {
     val isExpandState = isExpandStateWithIsAllExpand(isAllExpand = state.isAllExpand)
 
@@ -52,7 +53,7 @@ fun SubCategoryCard(
                 isExpanded = isExpandState.value,
                 onExpandIconClick = { isExpandState.value = !isExpandState.value },
                 onCheckBoxClick = onClick
-                )
+            )
 
             AnimatedVisibility(
                 visible = isExpandState.value,
@@ -68,7 +69,7 @@ private fun SubCategoryCardTitle(
     state: SubCategoryCardTitleState,
     isExpanded: Boolean,
     onExpandIconClick: () -> Unit,
-    onCheckBoxClick:() -> Unit
+    onCheckBoxClick: () -> Unit
 ) {
     Surface(elevation = 4.dp) {
         Row(
@@ -86,10 +87,13 @@ private fun SubCategoryCardTitle(
                     isChecked = state.isChecked,
                     onClick = onCheckBoxClick
                 )
-                Title(
-                    isSelectMode = state.isSelectMode,
-                    name = state.title
+                Spacer(
+                    modifier = Modifier
+                        .animateContentSize(tween(Anime.CircleCheckBox.duration))
+                        .width(if (state.isSelectMode) 0.dp else 12.dp)
+                        .background(Color.Transparent)
                 )
+                Title(name = state.title)
                 SimpleWidthSpacer(dp = 4)
                 TotalCount(isExpanded = isExpanded)
             }
@@ -125,27 +129,17 @@ private fun TotalCount(isExpanded: Boolean) {
         exit = Anime.SubCategoryCard.fadeOut
     ) {
         Text( // TODO total count
-            text = "(10)",
-            style = MaterialTheme.typography.caption.copy(
+            text = "(10)", style = MaterialTheme.typography.caption.copy(
                 color = LocalContentColor.current.copy(ContentAlpha.medium)
-            ),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            ), maxLines = 1, overflow = TextOverflow.Ellipsis
         )
     }
 }
 
 @Composable
-private fun Title(isSelectMode: Boolean, name: String) {
-    val padding by animateDpAsState(
-        targetValue = if (isSelectMode) 4.dp else 14.dp,
-        animationSpec = tween(Anime.CircleCheckBox.duration)
-    )
-
+private fun Title(name: String) {
     Text(
-        modifier = Modifier
-            .padding(start = padding)
-            .widthIn(max = 300.dp),
+        modifier = Modifier.widthIn(max = 300.dp),
         text = name,
         style = MaterialTheme.typography.subtitle1,
         maxLines = 1,
@@ -165,7 +159,7 @@ private fun RowScope.TitleCircleCheckBox(
         CircleCheckBox(
             isChecked = isChecked,
             modifier = Modifier
-                .padding(start = 6.dp)
+                .padding(start = 4.dp)
                 .size(18.dp),
             onClick = onClick
         )
@@ -181,13 +175,11 @@ private fun SubCategoryInfo() {
                 .padding(8.dp)
         ) {
             SubCategoryInfoText( // TODO
-                infoTitle = R.string.average_size,
-                info = R.string.top_info
+                infoTitle = R.string.average_size, info = R.string.top_info
             )
 
             SubCategoryInfoText(
-                infoTitle = R.string.most_have_size,
-                info = R.string.top_info
+                infoTitle = R.string.most_have_size, info = R.string.top_info
             )
         }
     }

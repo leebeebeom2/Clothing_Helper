@@ -16,9 +16,18 @@ import com.leebeebeom.clothinghelperdomain.model.User
 
 @Composable
 fun DrawerHeader(user: User?, onSettingIconClick: () -> Unit) {
-    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp, horizontal = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         HeaderText(user)
-        CustomIconButton(drawable = R.drawable.ic_settings, onClick = onSettingIconClick, contentDescription = "settingIcon")
+        CustomIconButton(
+            drawable = R.drawable.ic_settings,
+            onClick = onSettingIconClick,
+            contentDescription = "settingIcon"
+        )
     }
 }
 
@@ -26,7 +35,7 @@ fun DrawerHeader(user: User?, onSettingIconClick: () -> Unit) {
 private fun RowScope.HeaderText(user: User?) {
     Text(
         modifier = Modifier
-            .padding(start = 12.dp)
+            .padding(start = 4.dp)
             .weight(1f),
         style = MaterialTheme.typography.body1,
         text = "${user?.name}(${user?.email})"

@@ -11,23 +11,33 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.leebeebeom.clothinghelper.base.FinishActivityBackHandler
+import com.leebeebeom.clothinghelper.main.detail.DetailScreen
 import com.leebeebeom.clothinghelper.main.maincategory.MainCategoryScreen
 import com.leebeebeom.clothinghelper.main.root.EssentialMenus
 import com.leebeebeom.clothinghelper.main.root.MainScreenRoot
 import com.leebeebeom.clothinghelper.main.setting.SettingScreen
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryScreen
+import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
-import kotlinx.coroutines.delay
 
 sealed class MainDestinations(val route: String) {
     object MainCategory : MainDestinations("mainCategory")
     object SubCategory : MainDestinations("subCategory") {
-        const val mainCategoryName: String = "mainCategoryName"
+        const val mainCategoryName = "mainCategoryName"
         val routeWithArg = "$route/{$mainCategoryName}"
         val arguments = listOf(navArgument(mainCategoryName) { type = NavType.StringType })
     }
 
     object Setting : MainDestinations("setting")
+    object Detail : MainDestinations("detail") {
+        const val subCategoryName = "subCategoryName"
+        const val subCategoryKey = "subCategoryKey"
+        val routeWithArg = "$route/{$subCategoryName}/{$subCategoryKey}"
+        val arguments = listOf(
+            navArgument(subCategoryName) { type = NavType.StringType },
+            navArgument(subCategoryKey) { type = NavType.StringType },
+        )
+    }
 }
 
 @Composable
@@ -36,7 +46,7 @@ fun MainNavHost(state: MainNavHostState = rememberMainNavHostState()) {
     MainScreenRoot(
         onEssentialMenuClick = state::onEssentialMenuClick,
         onMainCategoryClick = state::navigateToSubCategory,
-        onSubCategoryClick = { key -> /*TODO*/ },
+        onSubCategoryClick = state::navigateToDetail,
         onSettingIconClick = state::navigateToSetting
     ) { paddingValues, drawerCloseBackHandler ->
         NavHost(
@@ -53,18 +63,24 @@ fun MainNavHost(state: MainNavHostState = rememberMainNavHostState()) {
             composable(
                 route = MainDestinations.SubCategory.routeWithArg,
                 arguments = MainDestinations.SubCategory.arguments
-            ) { entry ->
-                val mainCategoryName =
-                    entry.arguments?.getString(MainDestinations.SubCategory.mainCategoryName)!!
+            ) {
                 SubCategoryScreen(
-                    parent = enumValueOf(mainCategoryName),
-                    drawerCloseBackHandler = drawerCloseBackHandler
+                    parent = enumValueOf(it.arguments?.getString(MainDestinations.SubCategory.mainCategoryName)!!),
+                    drawerCloseBackHandler = drawerCloseBackHandler,
+                    onSubCategoryClick = state::navigateToDetail
                 )
             }
-            composable(MainDestinations.Setting.route) {
-                SettingScreen(
-                    drawerCloseBackHandler = drawerCloseBackHandler,
-                    onSignOutButtonClick = state::navigateToMainWithDelay
+            composable(route = MainDestinations.Setting.route) {
+                SettingScreen(drawerCloseBackHandler = drawerCloseBackHandler)
+            }
+            composable(
+                route = MainDestinations.Detail.routeWithArg,
+                arguments = MainDestinations.Detail.arguments
+            ) {
+                val arguments = it.arguments!!
+                DetailScreen(
+                    subCategoryName = arguments.getString(MainDestinations.Detail.subCategoryName)!!,
+                    subCategoryKey = arguments.getString(MainDestinations.Detail.subCategoryKey)!!
                 )
             }
         }
@@ -89,16 +105,13 @@ data class MainNavHostState(val navController: NavHostController) {
             launchSingleTop = true
         }
 
-    suspend fun navigateToMainWithDelay() {
-        delay(1000)
-        navigateToMain()
-    }
-
-    fun navigateToSetting() {
+    fun navigateToSetting() =
         navController.navigate(route = MainDestinations.Setting.route) {
             launchSingleTop = true
         }
-    }
+
+    fun navigateToDetail(subCategory: SubCategory) =
+        navController.navigate(route = "${MainDestinations.Detail.route}/${subCategory.name}/${subCategory.key}") // TODO 중복 스택 막기
 }
 
 @Composable

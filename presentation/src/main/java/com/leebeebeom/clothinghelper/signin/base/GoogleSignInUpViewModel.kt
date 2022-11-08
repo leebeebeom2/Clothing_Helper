@@ -25,8 +25,7 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
         when (activityResult.resultCode) {
             RESULT_OK -> {
                 viewModelScope.launch {
-                    when (val result =
-                        googleSignInUseCase(credential = getGoogleCredential(activityResult))) {
+                    when (val result = googleSignInUseCase(getGoogleCredential(activityResult))) {
                         is AuthResult.Success -> showToast(R.string.google_sign_in_complete)
                         is AuthResult.Fail -> {
                             if (result.exception?.message == PushInitialSubCategoriesFailed)

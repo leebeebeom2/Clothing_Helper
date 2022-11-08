@@ -47,8 +47,9 @@ fun SignInRoot(
             }
         }
     }
-    val isLoadingState = viewModel.getSignInLoadingStateUseCase().collectAsStateWithLifecycle()
-    if (isLoadingState.value) CenterDotProgressIndicator()
+
+    val isLoading by viewModel.getSignInLoadingStateUseCase().collectAsStateWithLifecycle()
+    if (isLoading) CenterDotProgressIndicator()
 }
 
 @HiltViewModel
@@ -63,7 +64,5 @@ data class SignInRootState(
 @Composable
 fun rememberSignInRootState(
     focusManager: FocusManager = LocalFocusManager.current,
-    interactionSource: MutableInteractionSource = remember {
-        MutableInteractionSource()
-    }
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
 ) = remember { SignInRootState(focusManager, interactionSource) }

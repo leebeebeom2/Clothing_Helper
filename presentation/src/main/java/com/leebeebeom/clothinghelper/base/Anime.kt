@@ -8,20 +8,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.ui.Alignment
 
 object Anime {
-    object Screen {
-        const val duration = 350
-        private val easing = CubicBezierEasing(a = 0.36f, b = 0f, c = 0.66f, d = -0.1f)
-
-        val slideInBottom =
-            slideInVertically(animationSpec = tween(duration)) { it }
-
-        val slideOutBottom = slideOutVertically(
-            animationSpec = tween(
-                duration, easing = easing
-            )
-        ) { it }
-    }
-
     object Error {
         val errorIn = expandVertically(
             animationSpec = spring(
@@ -65,7 +51,7 @@ object Anime {
 
     @OptIn(ExperimentalAnimationApi::class)
     object CircleCheckBox {
-        const val duration = 300
+        private const val duration = 300
 
         val expandIn = expandHorizontally(tween(duration)) { 0 } + scaleIn(tween(duration))
         val shrinkOut = shrinkHorizontally(tween(duration)) { 0 } + scaleOut(tween(duration))

@@ -33,7 +33,7 @@ fun EmailTextField(
         error = error,
         onValueChange = {
             onValueChange(
-                newTextFieldValue = it,
+                newTextFieldValue = it.copy(it.text.trim()),
                 updateError = updateError,
                 textFieldValue = textFieldValue,
                 onValueChange = { newTextFieldValue ->

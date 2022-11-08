@@ -80,7 +80,8 @@ fun MainNavHost(state: MainNavHostState = rememberMainNavHostState()) {
                 val arguments = it.arguments!!
                 DetailScreen(
                     subCategoryName = arguments.getString(MainDestinations.Detail.subCategoryName)!!,
-                    subCategoryKey = arguments.getString(MainDestinations.Detail.subCategoryKey)!!
+                    subCategoryKey = arguments.getString(MainDestinations.Detail.subCategoryKey)!!,
+                    drawerCloseBackHandler = drawerCloseBackHandler
                 )
             }
         }

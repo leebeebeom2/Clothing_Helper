@@ -130,19 +130,40 @@ data class SignUpState(
     override var password: String = "",
     var passwordConfirm: String = "",
     @StringRes private val initialPasswordError: Int? = null,
-    @StringRes private val initialPasswordConfirmError: Int? = null
+    @StringRes private val initialPasswordConfirmError: Int? = null,
+    private val initialIsEmailEmpty: Boolean = true,
+    private val initialIsNameEmpty: Boolean = true,
+    private val initialIsPasswordEmpty: Boolean = true,
+    private val initialIsPasswordConfirmEmpty: Boolean = true
 ) : BaseState(), EmailState, PasswordState {
     var passwordError by mutableStateOf(initialPasswordError)
         private set
     var passwordConfirmError by mutableStateOf(initialPasswordConfirmError)
         private set
 
+    private var isEmailEmpty by mutableStateOf(initialIsEmailEmpty)
+    private var isNameEmpty by mutableStateOf(initialIsEmailEmpty)
+    private var isPasswordEmpty by mutableStateOf(initialIsPasswordEmpty)
+    private var isPasswordConfirmEmpty by mutableStateOf(initialIsPasswordEmpty)
+
+    override fun onEmailChange(email: String) {
+        super.onEmailChange(email)
+        isEmailEmpty = this.email.isBlank()
+    }
+
     fun onNameChange(name: String) {
         this.name = name.trim()
+        isNameEmpty = this.name.isBlank()
+    }
+
+    override fun onPasswordChange(password: String) {
+        super.onPasswordChange(password)
+        isPasswordEmpty = this.password.isBlank()
     }
 
     fun onPasswordConfirmChange(passwordConfirm: String) {
         this.passwordConfirm = passwordConfirm.trim()
+        isPasswordConfirmEmpty = this.passwordConfirm.isBlank()
     }
 
     fun updatePasswordError(@StringRes error: Int?) {
@@ -154,8 +175,7 @@ data class SignUpState(
     }
 
     override val isTextNotBlank
-        get() = email.trim().isNotBlank() && name.trim().isNotBlank()
-                && password.trim().isNotBlank() && passwordConfirm.trim().isNotBlank()
+        get() = !isEmailEmpty && !isNameEmpty && !isPasswordEmpty && !isPasswordConfirmEmpty
 
     val isNotError
         get() = passwordError == null && passwordConfirmError == null
@@ -169,7 +189,11 @@ data class SignUpState(
                     it.password,
                     it.passwordConfirm,
                     it.passwordError,
-                    it.passwordConfirmError
+                    it.passwordConfirmError,
+                    it.isEmailEmpty,
+                    it.isNameEmpty,
+                    it.isPasswordEmpty,
+                    it.isPasswordConfirmEmpty
                 )
             },
             restore = {
@@ -180,6 +204,10 @@ data class SignUpState(
                     it[3] as String,
                     it[4] as? Int,
                     it[5] as? Int,
+                    it[6] as Boolean,
+                    it[7] as Boolean,
+                    it[8] as Boolean,
+                    it[9] as Boolean,
                 )
             }
         )

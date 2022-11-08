@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -40,7 +41,7 @@ fun SubCategoryCard(
 
     Card(elevation = 2.dp, shape = RoundedCornerShape(12.dp)) {
         Column(
-            modifier = Modifier.clip(RoundedCornerShape(12.dp))
+            modifier = Modifier.clip(RoundedCornerShape(12.dp)).clickable(onClick = onClick)
         ) {
             val subCategoryCardTitleState =
                 rememberSubCategoryCardTitleState(subCategoryCardState = state)

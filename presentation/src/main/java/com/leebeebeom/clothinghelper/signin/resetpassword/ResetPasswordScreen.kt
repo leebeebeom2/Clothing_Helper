@@ -44,9 +44,9 @@ fun ResetPasswordScreen(
     viewModel: ResetPasswordViewModel = hiltViewModel(),
     state: ResetPasswordState = rememberResetPasswordState()
 ) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    if (uiState.value.isTaskSuccess) {
+    if (uiState.isTaskSuccess) {
         (LocalContext.current as ComponentActivity).onBackPressedDispatcher.onBackPressed()
         viewModel.updateTaskSuccess(false)
     }
@@ -60,7 +60,7 @@ fun ResetPasswordScreen(
 
         EmailTextField(
             email = state.email,
-            error = uiState.value.emailError,
+            error = uiState.emailError,
             updateError = viewModel::updateEmailError,
             onEmailChange = state::onEmailChange
         )
@@ -68,13 +68,13 @@ fun ResetPasswordScreen(
         SimpleHeightSpacer(dp = 12)
         MaxWidthButton(state = rememberMaxWidthButtonState(
             text = R.string.check,
-            enabled = state.isTextNotBlank && uiState.value.isNotError
+            enabled = state.isTextNotBlank && uiState.isNotError
         ),
             onClick = { viewModel.sendResetPasswordEmail(state.email.trim()) })
         SimpleHeightSpacer(dp = 80)
     }
 
-    SimpleToast(text = uiState.value.toastText, shownToast = viewModel::toastShown)
+    SimpleToast(text = uiState.toastText, shownToast = viewModel::toastShown)
 }
 
 data class ResetPasswordState(

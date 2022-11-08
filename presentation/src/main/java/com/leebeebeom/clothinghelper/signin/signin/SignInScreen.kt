@@ -129,15 +129,37 @@ private fun ForgotPasswordText(onForgotPasswordClick: () -> Unit) {
 
 data class SignInState(
     override var email: String = "",
-    override var password: String = ""
+    override var password: String = "",
+    private val initialIsEmailEmpty: Boolean = true,
+    private val initialIsPasswordEmpty: Boolean = true
 ) : BaseState(), EmailState, PasswordState {
+    private var isEmailEmpty by mutableStateOf(initialIsEmailEmpty)
+    private var isPasswordEmpty by mutableStateOf(initialIsPasswordEmpty)
+
+    override fun onEmailChange(email: String) {
+        super.onEmailChange(email)
+        isEmailEmpty = this.email.isBlank()
+    }
+
+    override fun onPasswordChange(password: String) {
+        super.onPasswordChange(password)
+        isPasswordEmpty = this.password.isBlank()
+    }
+
     override val isTextNotBlank
-        get() = email.trim().isNotBlank() && password.trim().isNotBlank()
+        get() = !isEmailEmpty && !isPasswordEmpty
 
     companion object {
         val Saver: Saver<SignInState, *> = listSaver(
-            save = { listOf(it.email, it.password) },
-            restore = { SignInState(it[0], it[1]) }
+            save = { listOf(it.email, it.password, it.isEmailEmpty, it.isPasswordEmpty) },
+            restore = {
+                SignInState(
+                    email = it[0] as String,
+                    password = it[1] as String,
+                    initialIsEmailEmpty = it[2] as Boolean,
+                    initialIsPasswordEmpty = it[3] as Boolean
+                )
+            }
         )
     }
 }

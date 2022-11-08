@@ -14,7 +14,7 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategory
 fun SubCategoryTextFieldDialog(
     @StringRes titleRes: Int,
     error: Int?,
-    textFieldValueState: State<TextFieldValue>,
+    textFieldValue: TextFieldValue,
     positiveButtonEnabled: Boolean,
     onValueChange: (TextFieldValue) -> Unit,
     onFocusChanged: (FocusState) -> Unit,
@@ -25,7 +25,7 @@ fun SubCategoryTextFieldDialog(
         DialogTitle(text = titleRes)
 
         val maxWidthTextFieldState = rememberMaxWidthTextFiledState(
-            textFieldValueState = textFieldValueState,
+            textFieldValue = textFieldValue,
             label = R.string.category,
             showKeyboardEnabled = true,
             placeholder = R.string.category_place_holder

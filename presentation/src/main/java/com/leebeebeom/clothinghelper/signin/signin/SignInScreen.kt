@@ -7,6 +7,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,14 +48,14 @@ fun SignInScreen(
             .verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.Center
     ) {
         EmailTextField(
-            email = state.emailState.value,
+            email = state.email,
             error = uiState.value.emailError,
             updateError = viewModel::updateEmailError,
             onEmailChange = state::onEmailChange
         )
 
         PasswordTextField(
-            password = state.passwordState.value,
+            password = state.password,
             error = uiState.value.passwordError,
             updateError = viewModel::updatePasswordError,
             onPasswordChange = state::onPasswordChange,
@@ -69,8 +71,8 @@ fun SignInScreen(
             ),
             onClick = {
                 viewModel.signInWithEmailAndPassword(
-                    state.emailState.value.trim(),
-                    state.passwordState.value.trim()
+                    state.email.trim(),
+                    state.password.trim()
                 )
             }
         )
@@ -126,15 +128,20 @@ private fun ForgotPasswordText(onForgotPasswordClick: () -> Unit) {
 }
 
 data class SignInState(
-    override val emailState: MutableState<String>,
-    override val passwordState: MutableState<String>
+    override var email: String = "",
+    override var password: String = ""
 ) : BaseState(), EmailState, PasswordState {
     override val isTextNotBlank
-        get() = emailState.value.trim().isNotBlank() && passwordState.value.trim().isNotBlank()
+        get() = email.trim().isNotBlank() && password.trim().isNotBlank()
+
+    companion object {
+        val Saver: Saver<SignInState, *> = listSaver(
+            save = { listOf(it.email, it.password) },
+            restore = { SignInState(it[0], it[1]) }
+        )
+    }
 }
 
 @Composable
 fun rememberSignInState(
-    emailState: MutableState<String> = rememberSaveable { mutableStateOf("") },
-    passwordState: MutableState<String> = rememberSaveable { mutableStateOf("") }
-) = remember { SignInState(emailState = emailState, passwordState = passwordState) }
+) = rememberSaveable(saver = SignInState.Saver) { SignInState() }

@@ -32,7 +32,7 @@ fun EditSubCategoryNameDialog(
         titleRes = R.string.edit_category_name,
         error = state.error,
         onDismiss = onDismiss,
-        textFieldValueState = state.textFieldValueState,
+        textFieldValue = state.textFieldValue,
         onPositiveButtonClick = {
             onPositiveButtonClick(
                 state.text.trim(),
@@ -50,11 +50,11 @@ data class EditSubCategoryNameDialogState(
     override val errorState: MutableState<Int?>,
     override val subCategories: List<SubCategory>,
     override val textState: MutableState<String>,
-    override val textFieldValueMutableState: MutableState<TextFieldValue>,
+    override val textFieldValueState: MutableState<TextFieldValue>,
 ) : BaseSubCategoryTextFieldDialogState() {
     fun setInitialText(text: String) {
         textState.value = text
-        textFieldValueMutableState.value =
+        textFieldValueState.value =
             TextFieldValue(text = text, TextRange(0, text.length))
     }
 
@@ -68,9 +68,9 @@ data class EditSubCategoryNameDialogState(
 
     fun onFocusChange(newFocusState: FocusState) {
         if (newFocusState.hasFocus)
-            textFieldValueMutableState.value =
-                textFieldValueMutableState.value.copy(
-                    selection = TextRange(0, textFieldValueMutableState.value.text.length)
+            textFieldValueState.value =
+                textFieldValueState.value.copy(
+                    selection = TextRange(0, textFieldValueState.value.text.length)
                 )
     }
 }
@@ -90,6 +90,6 @@ fun rememberEditSubCategoryNameDialogState(
         errorState = errorState,
         subCategories = subCategories,
         textState = textState,
-        textFieldValueMutableState = textFieldValueState,
+        textFieldValueState = textFieldValueState,
     )
 }

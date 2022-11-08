@@ -141,10 +141,10 @@ fun rememberMaxWidthTextFiledState(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun rememberEmailTextFieldState(
-    textFieldValueState: TextFieldValue,
+    textFieldValue: TextFieldValue,
     imeAction: ImeAction,
 ) = rememberMaxWidthTextFiledState(
-    textFieldValue = textFieldValueState,
+    textFieldValue = textFieldValue,
     label = R.string.email,
     placeholder = R.string.email_place_holder,
     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = imeAction),
@@ -154,11 +154,11 @@ fun rememberEmailTextFieldState(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun rememberPasswordTextFieldState(
-    textFieldValueState: TextFieldValue,
+    textFieldValue: TextFieldValue,
     @StringRes label: Int = R.string.password,
     imeAction: ImeAction = ImeAction.Done
 ) = rememberMaxWidthTextFiledState(
-    textFieldValue = textFieldValueState,
+    textFieldValue = textFieldValue,
     label = label, keyboardOptions = KeyboardOptions(
         keyboardType = KeyboardType.Password, imeAction = imeAction
     )

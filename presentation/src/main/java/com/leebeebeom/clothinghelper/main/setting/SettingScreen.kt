@@ -28,7 +28,6 @@ fun SettingScreen(
             .padding(bottom = 20.dp),
         contentAlignment = Alignment.BottomCenter
     ) {
-
         SignOutButton(onClick = viewModel::signOut)
     }
 }

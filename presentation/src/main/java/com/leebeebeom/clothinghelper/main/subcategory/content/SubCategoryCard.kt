@@ -1,50 +1,46 @@
 package com.leebeebeom.clothinghelper.main.subcategory.content
 
 import androidx.annotation.StringRes
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.*
-import androidx.compose.foundation.interaction.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.hapticfeedback.HapticFeedback
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.*
+import com.leebeebeom.clothinghelper.base.Anime
+import com.leebeebeom.clothinghelper.base.CircleCheckBox
+import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
 import com.leebeebeom.clothinghelper.main.base.ExpandIcon
 import com.leebeebeom.clothinghelper.main.base.isExpandStateWithIsAllExpand
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
 // TODO 선택 모드 애니메이션 렉
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SubCategoryCard(
-    state: SubCategoryCardState, onLongClick: () -> Unit, onClick: () -> Unit
+    state: SubCategoryCardState, onClick: () -> Unit
 ) {
     val isExpandState = isExpandStateWithIsAllExpand(isAllExpand = state.isAllExpand)
 
     Card(elevation = 2.dp, shape = RoundedCornerShape(12.dp)) {
         Column(
-            modifier = Modifier
-                .clip(RoundedCornerShape(12.dp))
-                .combinedClickable(onClick = onClick, onLongClick = {
-                    state.performHaptic()
-                    onLongClick()
-                })
+            modifier = Modifier.clip(RoundedCornerShape(12.dp))
         ) {
             val subCategoryCardTitleState =
                 rememberSubCategoryCardTitleState(subCategoryCardState = state)
@@ -209,24 +205,19 @@ data class SubCategoryCardState(
     val isSelectMode: Boolean,
     val isAllExpand: Boolean,
     val isChecked: Boolean,
-    val haptic: HapticFeedback,
-) {
-    fun performHaptic() = haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-}
+)
 
 @Composable
 fun rememberSubCategoryCardState(
     subCategory: SubCategory,
     subCategoryContentState: State<SubCategoryContentState>,
-    haptic: HapticFeedback = LocalHapticFeedback.current
 ) = remember(subCategory) {
     derivedStateOf {
         SubCategoryCardState(
             subCategory = subCategory,
             isSelectMode = subCategoryContentState.value.isSelectMode,
             isAllExpand = subCategoryContentState.value.isAllExpand,
-            isChecked = subCategoryContentState.value.selectedSubCategories.contains(subCategory),
-            haptic = haptic
+            isChecked = subCategoryContentState.value.selectedSubCategories.contains(subCategory)
         )
     }
 }

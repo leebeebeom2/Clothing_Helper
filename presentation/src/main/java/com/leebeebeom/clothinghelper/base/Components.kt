@@ -41,28 +41,22 @@ fun SimpleIcon(
 )
 
 @Composable
-fun CenterDotProgressIndicator(backGround: Color = Disabled) {
-    IndicatorRoot(backGround) {
-        DotProgressIndicator(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .semantics { contentDescription = "loading" },
-            size = 8.dp,
-            color = LocalContentColor.current.copy(ContentAlpha.medium)
-        )
-    }
-}
-
-@Composable
-private fun IndicatorRoot(backGround: Color, content: @Composable BoxScope.() -> Unit) {
+fun CenterDotProgressIndicator(backGround: Color = Disabled) =
     Surface(color = backGround) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .clickable(enabled = false) { }, content = content
-        )
+                .clickable(enabled = false) { }
+        ) {
+            DotProgressIndicator(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .semantics { contentDescription = "loading" },
+                size = 8.dp,
+                color = LocalContentColor.current.copy(ContentAlpha.medium)
+            )
+        }
     }
-}
 
 @Composable
 fun SimpleHeightSpacer(dp: Int) = Spacer(modifier = Modifier.height(dp.dp))
@@ -71,16 +65,15 @@ fun SimpleHeightSpacer(dp: Int) = Spacer(modifier = Modifier.height(dp.dp))
 fun SimpleWidthSpacer(dp: Int) = Spacer(modifier = Modifier.width(dp.dp))
 
 @Composable
-fun SimpleToast(@StringRes text: Int?, shownToast: () -> Unit) {
+fun SimpleToast(@StringRes text: Int?, shownToast: () -> Unit) =
     text?.let {
         Toast.makeText(LocalContext.current, stringResource(id = text), Toast.LENGTH_SHORT).show()
         shownToast()
     }
-}
 
 @OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
-fun CircleCheckBox(modifier: Modifier = Modifier, isChecked: Boolean, onClick: () -> Unit = {}) {
+fun CircleCheckBox(modifier: Modifier = Modifier, isChecked: Boolean, onClick: () -> Unit = {}) =
     CustomIconButton(
         modifier = modifier, onClick = onClick, painter = rememberAnimatedVectorPainter(
             animatedImageVector = AnimatedImageVector.animatedVectorResource(
@@ -88,7 +81,6 @@ fun CircleCheckBox(modifier: Modifier = Modifier, isChecked: Boolean, onClick: (
             ), atEnd = isChecked
         ), tint = LocalContentColor.current.copy(0.7f)
     )
-}
 
 @Composable
 fun CustomIconButton(
@@ -97,15 +89,13 @@ fun CustomIconButton(
     @DrawableRes drawable: Int,
     tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current),
     contentDescription: String? = null
-) {
-    CustomIconButton(
-        modifier = modifier,
-        onClick = onClick,
-        painter = painterResource(id = drawable),
-        tint = tint,
-        contentDescription = contentDescription
-    )
-}
+) = CustomIconButton(
+    modifier = modifier,
+    onClick = onClick,
+    painter = painterResource(id = drawable),
+    tint = tint,
+    contentDescription = contentDescription
+)
 
 @Composable
 fun CustomIconButton(
@@ -114,24 +104,23 @@ fun CustomIconButton(
     painter: Painter,
     tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current),
     contentDescription: String? = null
+) = Box(
+    modifier = Modifier
+        .clip(CircleShape)
+        .clickable(onClick = onClick)
+        .padding(4.dp)
 ) {
-    Box(
-        modifier = Modifier
-            .clip(CircleShape)
-            .clickable(onClick = onClick)
-            .padding(4.dp)
-    ) {
-        Icon(
-            painter = painter,
-            contentDescription = contentDescription,
-            modifier = modifier,
-            tint = tint
-        )
-    }
+    Icon(
+        painter = painter,
+        contentDescription = contentDescription,
+        modifier = modifier,
+        tint = tint
+    )
 }
 
 @Composable
 fun FinishActivityBackHandler() {
     val activity = LocalContext.current as ComponentActivity
+
     BackHandler(enabled = true) { activity.finish() }
 }

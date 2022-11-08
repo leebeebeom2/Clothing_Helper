@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
@@ -54,17 +56,17 @@ fun SignUpScreen(
 
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
         EmailTextField(
-            email = state.emailState.value,
+            email = state.email,
             error = uiState.value.emailError,
             updateError = viewModel::updateEmailError,
             onEmailChange = state::onEmailChange
         )
 
-        NameTextField(name = state.nameState.value, onNameChange = state::onNameChange)
+        NameTextField(name = state.name, onNameChange = state::onNameChange)
 
         PasswordTextField(
-            password = state.passwordState.value,
-            error = state.passwordErrorState.value,
+            password = state.password,
+            error = state.passwordError,
             imeAction = ImeAction.Next,
             onPasswordChange = {
                 state.onPasswordChange(it)
@@ -72,7 +74,7 @@ fun SignUpScreen(
                 if (newText.isNotBlank()) {
                     if (newText.length < 6)
                         state.updatePasswordError(R.string.error_weak_password)
-                    if (state.passwordConfirmState.value.isNotBlank() && newText != state.passwordConfirmState.value)
+                    if (state.passwordConfirm.isNotBlank() && newText != state.passwordConfirm)
                         state.updatePasswordConfirmError(R.string.error_password_confirm_not_same)
                     else state.updatePasswordConfirmError(null)
                 }
@@ -82,12 +84,12 @@ fun SignUpScreen(
 
         PasswordTextField(
             label = R.string.password_confirm,
-            password = state.passwordConfirmState.value,
-            error = state.passwordConfirmErrorState.value,
+            password = state.passwordConfirm,
+            error = state.passwordConfirmError,
             imeAction = ImeAction.Done,
             onPasswordChange = {
                 state.onPasswordConfirmChange(it)
-                if (it.isNotBlank() && state.passwordState.value.isNotBlank() && it.trim() != state.passwordState.value)
+                if (it.isNotBlank() && state.password.isNotBlank() && it.trim() != state.password)
                     state.updatePasswordConfirmError(R.string.error_password_confirm_not_same)
             },
             updateError = state::updatePasswordConfirmError
@@ -101,9 +103,9 @@ fun SignUpScreen(
             ),
             onClick = {
                 viewModel.signUpWithEmailAndPassword(
-                    email = state.emailState.value.trim(),
-                    name = state.nameState.value.trim(),
-                    password = state.passwordState.value.trim(),
+                    email = state.email.trim(),
+                    name = state.name.trim(),
+                    password = state.password.trim(),
                 )
             }
         )
@@ -123,54 +125,66 @@ fun SignUpScreen(
 }
 
 data class SignUpState(
-    override val emailState: MutableState<String>,
-    val nameState: MutableState<String>,
-    override val passwordState: MutableState<String>,
-    val passwordConfirmState: MutableState<String>,
-    @StringRes val passwordErrorState: MutableState<Int?>,
-    @StringRes val passwordConfirmErrorState: MutableState<Int?>
+    override var email: String = "",
+    var name: String = "",
+    override var password: String = "",
+    var passwordConfirm: String = "",
+    @StringRes private val initialPasswordError: Int? = null,
+    @StringRes private val initialPasswordConfirmError: Int? = null
 ) : BaseState(), EmailState, PasswordState {
+    var passwordError by mutableStateOf(initialPasswordError)
+        private set
+    var passwordConfirmError by mutableStateOf(initialPasswordConfirmError)
+        private set
 
-    fun onNameChange(email: String) {
-        nameState.value = email.trim()
+    fun onNameChange(name: String) {
+        this.name = name.trim()
     }
 
-    fun onPasswordConfirmChange(email: String) {
-        passwordConfirmState.value = email.trim()
+    fun onPasswordConfirmChange(passwordConfirm: String) {
+        this.passwordConfirm = passwordConfirm.trim()
     }
 
     fun updatePasswordError(@StringRes error: Int?) {
-        passwordErrorState.value = error
+        passwordError = error
     }
 
     fun updatePasswordConfirmError(@StringRes error: Int?) {
-        passwordConfirmErrorState.value = error
+        passwordConfirmError = error
     }
 
     override val isTextNotBlank
-        get() = emailState.value.trim().isNotBlank() && nameState.value.trim().isNotBlank()
-                && passwordState.value.trim().isNotBlank() && passwordConfirmState.value.trim()
-            .isNotBlank()
+        get() = email.trim().isNotBlank() && name.trim().isNotBlank()
+                && password.trim().isNotBlank() && passwordConfirm.trim().isNotBlank()
 
     val isNotError
-        get() = passwordErrorState.value == null && passwordConfirmErrorState.value == null
+        get() = passwordError == null && passwordConfirmError == null
+
+    companion object {
+        val Saver: Saver<SignUpState, *> = listSaver(
+            save = {
+                listOf(
+                    it.email,
+                    it.name,
+                    it.password,
+                    it.passwordConfirm,
+                    it.passwordError,
+                    it.passwordConfirmError
+                )
+            },
+            restore = {
+                SignUpState(
+                    it[0] as String,
+                    it[1] as String,
+                    it[2] as String,
+                    it[3] as String,
+                    it[4] as? Int,
+                    it[5] as? Int,
+                )
+            }
+        )
+    }
 }
 
 @Composable
-fun rememberSignUpState(
-    emailState: MutableState<String> = rememberSaveable { mutableStateOf("") },
-    nameState: MutableState<String> = rememberSaveable { mutableStateOf("") },
-    passwordState: MutableState<String> = rememberSaveable { mutableStateOf("") },
-    passwordConfirmState: MutableState<String> = rememberSaveable { mutableStateOf("") },
-    passwordErrorState: MutableState<Int?> = rememberSaveable { mutableStateOf(null) },
-    passwordConfirmErrorState: MutableState<Int?> = rememberSaveable { mutableStateOf(null) }
-) = remember {
-    SignUpState(
-        emailState = emailState,
-        nameState = nameState,
-        passwordState = passwordState,
-        passwordConfirmState = passwordConfirmState,
-        passwordErrorState = passwordErrorState,
-        passwordConfirmErrorState = passwordConfirmErrorState
-    )
-}
+fun rememberSignUpState() = rememberSaveable(saver = SignUpState.Saver) { SignUpState() }

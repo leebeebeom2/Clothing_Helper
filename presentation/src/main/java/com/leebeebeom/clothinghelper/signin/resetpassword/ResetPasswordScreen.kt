@@ -78,15 +78,23 @@ fun ResetPasswordScreen(
 }
 
 data class ResetPasswordState(
-    override var email: String = ""
+    override var email: String = "",
+    private val initialIsEmailEmpty: Boolean = true,
 ) : BaseState(), EmailState {
+    private var isEmailEmpty by mutableStateOf(initialIsEmailEmpty)
+
     override val isTextNotBlank: Boolean
-        get() = email.trim().isNotBlank()
+        get() = !isEmailEmpty
+
+    override fun onEmailChange(email: String) {
+        super.onEmailChange(email)
+        isEmailEmpty = this.email.isBlank()
+    }
 
     companion object {
         val Saver: Saver<ResetPasswordState, *> = listSaver(
-            save = { listOf(it.email) },
-            restore = { ResetPasswordState(it[0]) }
+            save = { listOf(it.email, it.isEmailEmpty) },
+            restore = { ResetPasswordState(it[0] as String, it[1] as Boolean) }
         )
     }
 }

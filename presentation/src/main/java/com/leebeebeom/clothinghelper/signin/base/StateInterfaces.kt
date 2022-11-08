@@ -1,19 +1,17 @@
 package com.leebeebeom.clothinghelper.signin.base
 
-import androidx.compose.runtime.MutableState
-
 interface EmailState {
-    val emailState: MutableState<String>
+    var email: String
 
     fun onEmailChange(email: String) {
-        emailState.value = email.trim()
+        this.email = email.trim()
     }
 }
 
 interface PasswordState {
-    val passwordState: MutableState<String>
+    var password: String
 
     fun onPasswordChange(password: String) {
-        passwordState.value = password.trim()
+        this.password = password.trim()
     }
 }

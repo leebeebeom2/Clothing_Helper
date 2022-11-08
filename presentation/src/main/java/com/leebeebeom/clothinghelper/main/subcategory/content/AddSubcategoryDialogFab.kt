@@ -42,7 +42,7 @@ fun BoxScope.AddSubcategoryDialogFab(
         SubCategoryTextFieldDialog(
             titleRes = R.string.add_category,
             error = state.error,
-            textFieldValueState = state.textFieldValueState,
+            textFieldValue = state.textFieldValue,
             positiveButtonEnabled = state.positiveButtonEnabled,
             onValueChange = state::onValueChange,
             onFocusChanged = state::onFocusChange,
@@ -53,7 +53,7 @@ fun BoxScope.AddSubcategoryDialogFab(
 
 data class AddCategoryDialogState(
     override val textState: MutableState<String>,
-    override val textFieldValueMutableState: MutableState<TextFieldValue>,
+    override val textFieldValueState: MutableState<TextFieldValue>,
     private val showDialogState: MutableState<Boolean>,
     override val errorState: MutableState<Int?>,
     override val subCategories: List<SubCategory>
@@ -67,16 +67,16 @@ data class AddCategoryDialogState(
     fun onDismiss() {
         showDialogState.value = false
         textState.value = ""
-        textFieldValueMutableState.value = TextFieldValue("")
+        textFieldValueState.value = TextFieldValue("")
         errorState.value = null
     }
 
     fun onFocusChange(newFocusState: FocusState) {
         if (newFocusState.hasFocus)
-            textFieldValueMutableState.value =
-                textFieldValueMutableState.value.copy(
+            textFieldValueState.value =
+                textFieldValueState.value.copy(
                     selection = TextRange(
-                        textFieldValueMutableState.value.text.length
+                        textFieldValueState.value.text.length
                     )
                 )
     }
@@ -86,11 +86,7 @@ data class AddCategoryDialogState(
 fun rememberAddCategoryDialogState(
     textState: MutableState<String> = rememberSaveable { mutableStateOf("") },
     textFieldValueState: MutableState<TextFieldValue> = remember {
-        mutableStateOf(
-            TextFieldValue(
-                textState.value
-            )
-        )
+        mutableStateOf(TextFieldValue(textState.value))
     },
     errorState: MutableState<Int?> = rememberSaveable { mutableStateOf(null) },
     showDialogState: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) },
@@ -98,7 +94,7 @@ fun rememberAddCategoryDialogState(
 ) = remember(subCategories) {
     AddCategoryDialogState(
         textState = textState,
-        textFieldValueMutableState = textFieldValueState,
+        textFieldValueState = textFieldValueState,
         errorState = errorState,
         showDialogState = showDialogState,
         subCategories = subCategories

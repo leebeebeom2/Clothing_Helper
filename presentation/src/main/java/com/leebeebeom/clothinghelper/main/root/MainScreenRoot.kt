@@ -1,6 +1,8 @@
 package com.leebeebeom.clothinghelper.main.root
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.Transition
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -44,19 +46,19 @@ fun MainScreenRoot(
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (SubCategory) -> Unit,
     viewModel: MainScreenRootViewModel = hiltViewModel(),
-    state: MainRootState = rememberMainRootState(),
     content: @Composable (PaddingValues, backHandler: @Composable () -> Unit) -> Unit
 ) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val state = rememberMainRootState(transition = updateTransition(targetState = uiState.isLoading, label = "isLoadingTransition"))
 
-    SimpleToast(text = uiState.value.toastText, shownToast = viewModel::toastShown)
+    SimpleToast(text = uiState.toastText, shownToast = viewModel::toastShown)
 
     ClothingHelperTheme {
         Scaffold(scaffoldState = state.scaffoldState,
             drawerContent = {
-                val drawerMainCategoryState = rememberDrawerContentsState(uiState)
+                val drawerContentsState = rememberDrawerContentsState(uiState)
                 DrawerContents(
-                    state = drawerMainCategoryState,
+                    state = drawerContentsState,
                     onEssentialMenuClick = {
                         onEssentialMenuClick(it)
                         state.onDrawerClose()
@@ -80,28 +82,18 @@ fun MainScreenRoot(
             drawerBackgroundColor = MaterialTheme.colors.primary,
             content = {
                 content(it) {
-                    DrawerCloseBackHandler(
-                        isDrawerOpen = state.drawerState.isOpen,
-                        onDrawerClose = state::onDrawerClose
-                    )
+                    BackHandler(enabled = state.drawerState.isOpen, onBack = state::onDrawerClose)
                 }
             })
-        DrawerCloseBackHandler(
-            isDrawerOpen = state.drawerState.isOpen,
-            onDrawerClose = state::onDrawerClose
-        )
     }
-}
-
-@Composable
-fun DrawerCloseBackHandler(isDrawerOpen: Boolean, onDrawerClose: () -> Unit) {
-    BackHandler(enabled = isDrawerOpen, onBack = onDrawerClose)
+    BackHandler(enabled = state.drawerState.isOpen, onBack = state::onDrawerClose)
 }
 
 class MainRootState(
     val scaffoldState: ScaffoldState,
     private val coroutineScope: CoroutineScope,
-    val drawerState: DrawerState = scaffoldState.drawerState
+    val drawerState: DrawerState = scaffoldState.drawerState,
+    val transition: Transition<Boolean>
 ) {
     fun onDrawerClose() {
         coroutineScope.launch { drawerState.close() }
@@ -111,5 +103,12 @@ class MainRootState(
 @Composable
 fun rememberMainRootState(
     scaffoldState: ScaffoldState = rememberScaffoldState(),
-    coroutineScope: CoroutineScope = rememberCoroutineScope()
-) = remember { MainRootState(scaffoldState, coroutineScope) }
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    transition: Transition<Boolean>
+) = remember {
+    MainRootState(
+        scaffoldState = scaffoldState,
+        coroutineScope = coroutineScope,
+        transition = transition
+    )
+}

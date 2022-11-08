@@ -1,5 +1,6 @@
 package com.leebeebeom.clothinghelper.main
 
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -10,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelper.base.FinishActivityBackHandler
 import com.leebeebeom.clothinghelper.main.detail.DetailScreen
 import com.leebeebeom.clothinghelper.main.maincategory.MainCategoryScreen
@@ -98,7 +100,9 @@ data class MainNavHostState(val navController: NavHostController) {
     }
 
     fun navigateToSubCategory(subCategoryParent: SubCategoryParent) =
-        navController.navigate("${MainDestinations.SubCategory.route}/${subCategoryParent.name}") // TODO 중복 스택 막기
+        navController.navigate("${MainDestinations.SubCategory.route}/${subCategoryParent.name}"){
+            launchSingleTop = true
+        }
 
     private fun navigateToMain() =
         navController.navigate(route = MainDestinations.MainCategory.route) {

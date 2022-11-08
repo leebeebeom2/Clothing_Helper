@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -57,7 +59,7 @@ fun ResetPasswordScreen(
         )
 
         EmailTextField(
-            email = state.emailState.value,
+            email = state.email,
             error = uiState.value.emailError,
             updateError = viewModel::updateEmailError,
             onEmailChange = state::onEmailChange
@@ -68,7 +70,7 @@ fun ResetPasswordScreen(
             text = R.string.check,
             enabled = state.isTextNotBlank && uiState.value.isNotError
         ),
-            onClick = { viewModel.sendResetPasswordEmail(state.emailState.value.trim()) })
+            onClick = { viewModel.sendResetPasswordEmail(state.email.trim()) })
         SimpleHeightSpacer(dp = 80)
     }
 
@@ -76,13 +78,19 @@ fun ResetPasswordScreen(
 }
 
 data class ResetPasswordState(
-    override val emailState: MutableState<String>
+    override var email: String = ""
 ) : BaseState(), EmailState {
     override val isTextNotBlank: Boolean
-        get() = emailState.value.trim().isNotBlank()
+        get() = email.trim().isNotBlank()
+
+    companion object {
+        val Saver: Saver<ResetPasswordState, *> = listSaver(
+            save = { listOf(it.email) },
+            restore = { ResetPasswordState(it[0]) }
+        )
+    }
 }
 
 @Composable
-fun rememberResetPasswordState(
-    emailState: MutableState<String> = rememberSaveable { mutableStateOf("") }
-) = remember { ResetPasswordState(emailState) }
+fun rememberResetPasswordState() =
+    rememberSaveable(saver = ResetPasswordState.Saver) { ResetPasswordState() }

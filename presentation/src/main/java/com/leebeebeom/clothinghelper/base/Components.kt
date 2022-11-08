@@ -119,8 +119,5 @@ fun CustomIconButton(
 }
 
 @Composable
-fun FinishActivityBackHandler() {
-    val activity = LocalContext.current as ComponentActivity
-
+fun FinishActivityBackHandler(activity: ComponentActivity = LocalContext.current as ComponentActivity) =
     BackHandler(enabled = true) { activity.finish() }
-}

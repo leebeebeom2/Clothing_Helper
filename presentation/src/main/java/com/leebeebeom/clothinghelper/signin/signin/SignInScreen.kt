@@ -40,7 +40,7 @@ fun SignInScreen(
     viewModel: SignInViewModel = hiltViewModel(),
     state: SignInState = rememberSignInState()
 ) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -49,25 +49,25 @@ fun SignInScreen(
     ) {
         EmailTextField(
             email = state.email,
-            error = uiState.value.emailError,
+            error = uiState.emailError,
             updateError = viewModel::updateEmailError,
             onEmailChange = state::onEmailChange
         )
 
         PasswordTextField(
             password = state.password,
-            error = uiState.value.passwordError,
+            error = uiState.passwordError,
             updateError = viewModel::updatePasswordError,
             onPasswordChange = state::onPasswordChange,
             imeAction = ImeAction.Done
         )
 
-        ForgotPasswordText(onForgotPasswordClick = onForgotPasswordClick)
+        ForgotPasswordText(onClick = onForgotPasswordClick)
 
         MaxWidthButton(
             state = rememberMaxWidthButtonState(
                 text = R.string.sign_in,
-                enabled = state.isTextNotBlank && uiState.value.isNotError
+                enabled = state.isTextNotBlank && uiState.isNotError
             ),
             onClick = {
                 viewModel.signInWithEmailAndPassword(
@@ -81,18 +81,19 @@ fun SignInScreen(
         SimpleHeightSpacer(dp = 8)
         // 프리뷰 시 주석 처리
         GoogleSignInButton(
-            state = rememberGoogleButtonState(enabled = uiState.value.googleButtonEnabled),
-            onActivityResult = viewModel::signInWithGoogleEmail
-        ) { viewModel.updateGoogleButtonEnabled(enabled = false) }
+            state = rememberGoogleButtonState(enabled = uiState.googleButtonEnabled),
+            onActivityResult = viewModel::signInWithGoogleEmail,
+            disabled = { viewModel.updateGoogleButtonEnabled(enabled = false) }
+        )
         SimpleHeightSpacer(dp = 4)
         SignUpText(onEmailSignUpClick)
     }
 
-    SimpleToast(text = uiState.value.toastText, shownToast = viewModel::toastShown)
+    SimpleToast(text = uiState.toastText, shownToast = viewModel::toastShown)
 }
 
 @Composable
-private fun SignUpText(onEmailSignUpClick: () -> Unit) {
+private fun SignUpText(onClick: () -> Unit) =
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
@@ -102,7 +103,7 @@ private fun SignUpText(onEmailSignUpClick: () -> Unit) {
             text = stringResource(R.string.do_not_have_an_account),
             style = MaterialTheme.typography.body2,
         )
-        TextButton(onClick = onEmailSignUpClick) {
+        TextButton(onClick = onClick) {
             Text(
                 text = stringResource(id = R.string.sign_up_with_email),
                 style = MaterialTheme.typography.body2.copy(
@@ -111,13 +112,13 @@ private fun SignUpText(onEmailSignUpClick: () -> Unit) {
             )
         }
     }
-}
+
 
 @Composable
-private fun ForgotPasswordText(onForgotPasswordClick: () -> Unit) {
+private fun ForgotPasswordText(onClick: () -> Unit) =
     Box(modifier = Modifier.fillMaxWidth()) {
         TextButton(
-            modifier = Modifier.align(Alignment.CenterEnd), onClick = onForgotPasswordClick
+            modifier = Modifier.align(Alignment.CenterEnd), onClick = onClick
         ) {
             Text(
                 text = stringResource(id = R.string.forgot_password),
@@ -125,7 +126,6 @@ private fun ForgotPasswordText(onForgotPasswordClick: () -> Unit) {
             )
         }
     }
-}
 
 data class SignInState(
     override var email: String = "",

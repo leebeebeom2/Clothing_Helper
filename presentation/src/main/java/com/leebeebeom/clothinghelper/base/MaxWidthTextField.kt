@@ -28,9 +28,12 @@ import com.leebeebeom.clothinghelper.base.Anime.Error.errorIn
 import com.leebeebeom.clothinghelper.base.Anime.Error.errorOut
 import kotlinx.coroutines.delay
 
+// TODO 포커스 복원
+// 사인인 show 키보드 고민
+
 @Composable
 fun MaxWidthTextField(
-    state: State<MaxWidthTextFieldState>,
+    state: MaxWidthTextFieldState,
     error: Int? = null,
     onValueChange: (TextFieldValue) -> Unit,
     onFocusChanged: (FocusState) -> Unit,
@@ -41,20 +44,20 @@ fun MaxWidthTextField(
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .focusRequester(focusRequester = state.value.focusRequester)
+                .focusRequester(focusRequester = state.focusRequester)
                 .onFocusChanged(onFocusChanged = onFocusChanged),
-            value = state.value.textFieldValue,
+            value = state.textFieldValue,
             onValueChange = onValueChange,
-            label = { Text(text = stringResource(id = state.value.label)) },
-            placeholder = { Text(text = stringResource(id = state.value.placeholder)) },
+            label = { Text(text = stringResource(id = state.label)) },
+            placeholder = { Text(text = stringResource(id = state.placeholder)) },
             isError = error != null,
             visualTransformation = visualTransformation,
             singleLine = true,
             maxLines = 1,
-            keyboardOptions = state.value.keyboardOptions,
+            keyboardOptions = state.keyboardOptions,
             trailingIcon = trailingIcon,
-            keyboardActions = if (state.value.keyboardOptions.imeAction == ImeAction.Done) KeyboardActions(
-                onDone = { state.value.clearFocus() })
+            keyboardActions = if (state.keyboardOptions.imeAction == ImeAction.Done) KeyboardActions(
+                onDone = { state.clearFocus() })
             else KeyboardActions.Default,
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 unfocusedBorderColor = Color(0xFFDADADA),
@@ -67,8 +70,8 @@ fun MaxWidthTextField(
     }
 
     val didShowKeyboardState = rememberSaveable { mutableStateOf(false) }
-    if (!didShowKeyboardState.value && state.value.showKeyboardEnabled) {
-        LaunchedEffect(key1 = Unit) { state.value.showKeyboard() }
+    if (!didShowKeyboardState.value && state.showKeyboardEnabled) {
+        LaunchedEffect(key1 = Unit) { state.showKeyboard() }
         didShowKeyboardState.value = true
     }
 }
@@ -112,7 +115,7 @@ data class MaxWidthTextFieldState @OptIn(ExperimentalComposeUiApi::class) constr
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun rememberMaxWidthTextFiledState(
-    textFieldValueState: State<TextFieldValue>,
+    textFieldValue: TextFieldValue,
     @StringRes label: Int,
     @StringRes placeholder: Int = R.string.empty,
     showKeyboardEnabled: Boolean = false,
@@ -122,28 +125,26 @@ fun rememberMaxWidthTextFiledState(
     focusManager: FocusManager = LocalFocusManager.current,
     focusRequester: FocusRequester = remember { FocusRequester() },
     keyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
-) = remember {
-    derivedStateOf {
-        MaxWidthTextFieldState(
-            textFieldValue = textFieldValueState.value,
-            label = label,
-            placeholder = placeholder,
-            showKeyboardEnabled = showKeyboardEnabled,
-            keyboardOptions = keyboardOptions,
-            focusManager = focusManager,
-            focusRequester = focusRequester,
-            keyboardController = keyboardController
-        )
-    }
+) = remember(textFieldValue) {
+    MaxWidthTextFieldState(
+        textFieldValue = textFieldValue,
+        label = label,
+        placeholder = placeholder,
+        showKeyboardEnabled = showKeyboardEnabled,
+        keyboardOptions = keyboardOptions,
+        focusManager = focusManager,
+        focusRequester = focusRequester,
+        keyboardController = keyboardController
+    )
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun rememberEmailTextFieldState(
-    textFieldValueState: State<TextFieldValue>,
+    textFieldValueState: TextFieldValue,
     imeAction: ImeAction,
 ) = rememberMaxWidthTextFiledState(
-    textFieldValueState = textFieldValueState,
+    textFieldValue = textFieldValueState,
     label = R.string.email,
     placeholder = R.string.email_place_holder,
     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = imeAction),
@@ -153,11 +154,11 @@ fun rememberEmailTextFieldState(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun rememberPasswordTextFieldState(
-    textFieldValueState: State<TextFieldValue>,
+    textFieldValueState: TextFieldValue,
     @StringRes label: Int = R.string.password,
     imeAction: ImeAction = ImeAction.Done
 ) = rememberMaxWidthTextFiledState(
-    textFieldValueState = textFieldValueState,
+    textFieldValue = textFieldValueState,
     label = label, keyboardOptions = KeyboardOptions(
         keyboardType = KeyboardType.Password, imeAction = imeAction
     )

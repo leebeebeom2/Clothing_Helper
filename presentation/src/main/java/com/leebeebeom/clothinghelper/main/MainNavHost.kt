@@ -99,24 +99,22 @@ data class MainNavHostState(val navController: NavHostController) {
     }
 
     fun navigateToSubCategory(subCategoryParent: SubCategoryParent) =
-        navController.navigate("${MainDestinations.SubCategory.route}/${subCategoryParent.name}") {
-            launchSingleTop = true
-        }
+        navController.navigateSingleTop("${MainDestinations.SubCategory.route}/${subCategoryParent.name}")
 
     private fun navigateToMain() =
-        navController.navigate(route = MainDestinations.MainCategory.route) {
-            launchSingleTop = true
-        }
+        navController.navigateSingleTop(route = MainDestinations.MainCategory.route)
 
     fun navigateToSetting() =
-        navController.navigate(route = MainDestinations.Setting.route) {
-            launchSingleTop = true
-        }
+        navController.navigateSingleTop(route = MainDestinations.Setting.route)
 
     fun navigateToDetail(subCategory: SubCategory) =
-        navController.navigate(route = "${MainDestinations.Detail.route}/${subCategory.name}/${subCategory.key}") // TODO 중복 스택 막기
+        navController.navigateSingleTop(route = "${MainDestinations.Detail.route}/${subCategory.name}/${subCategory.key}")
 }
 
 @Composable
 fun rememberMainNavHostState(navController: NavHostController = rememberNavController()) =
     remember { MainNavHostState(navController) }
+
+fun NavHostController.navigateSingleTop(route: String) = navigate(route) {
+    launchSingleTop = true
+}

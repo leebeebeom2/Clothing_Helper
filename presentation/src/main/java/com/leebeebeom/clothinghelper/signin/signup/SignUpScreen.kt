@@ -52,12 +52,12 @@ fun SignUpScreen(
     viewModel: SignUpViewModel = hiltViewModel(),
     state: SignUpState = rememberSignUpState()
 ) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
         EmailTextField(
             email = state.email,
-            error = uiState.value.emailError,
+            error = uiState.emailError,
             updateError = viewModel::updateEmailError,
             onEmailChange = state::onEmailChange
         )
@@ -99,7 +99,7 @@ fun SignUpScreen(
         MaxWidthButton(
             state = rememberMaxWidthButtonState(
                 text = R.string.sign_up,
-                enabled = uiState.value.isNotError && state.isTextNotBlank && state.isNotError
+                enabled = uiState.isNotError && state.isTextNotBlank && state.isNotError
             ),
             onClick = {
                 viewModel.signUpWithEmailAndPassword(
@@ -114,14 +114,14 @@ fun SignUpScreen(
         SimpleHeightSpacer(dp = 8)
         // 프리뷰 시 주석처리
         GoogleSignInButton(
-            state = rememberGoogleButtonState(enabled = uiState.value.googleButtonEnabled),
-            onActivityResult = viewModel::signInWithGoogleEmail
-        ) { viewModel.updateGoogleButtonEnabled(enabled = false) }
-
+            state = rememberGoogleButtonState(enabled = uiState.googleButtonEnabled),
+            onActivityResult = viewModel::signInWithGoogleEmail,
+            disabled = { viewModel.updateGoogleButtonEnabled(enabled = false) }
+        )
         SimpleHeightSpacer(dp = 150)
     }
 
-    SimpleToast(text = uiState.value.toastText, shownToast = viewModel::toastShown)
+    SimpleToast(text = uiState.toastText, shownToast = viewModel::toastShown)
 }
 
 data class SignUpState(

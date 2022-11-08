@@ -49,19 +49,19 @@ fun SubCategoryTextFieldDialog(
 
 abstract class BaseSubCategoryTextFieldDialogState {
     protected abstract val textState: MutableState<String>
-    protected abstract val textFieldValueMutableState: MutableState<TextFieldValue>
+    protected abstract val textFieldValueState: MutableState<TextFieldValue>
     protected abstract val errorState: MutableState<Int?>
     protected abstract val subCategories: List<SubCategory>
 
     val text get() = textState.value
-    val textFieldValueState: State<TextFieldValue> get() = textFieldValueMutableState
+    val textFieldValue: TextFieldValue get() = textFieldValueState.value
     val error get() = errorState.value
     open val positiveButtonEnabled get() = text.isNotBlank() && error == null
 
     open fun onValueChange(newTextFiled: TextFieldValue) {
         if (textState.value != newTextFiled.text) errorState.value = null
         textState.value = newTextFiled.text
-        textFieldValueMutableState.value = newTextFiled
+        textFieldValueState.value = newTextFiled
         if (subCategories.map { it.name }.contains(newTextFiled.text)) errorState.value =
             R.string.error_same_category_name
     }

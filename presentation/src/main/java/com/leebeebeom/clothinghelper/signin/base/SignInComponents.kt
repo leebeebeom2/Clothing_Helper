@@ -22,7 +22,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.*
 
 @Composable
-fun VisibleIcon(isVisible: Boolean, onClick: () -> Unit) {
+fun VisibleIcon(isVisible: Boolean, onClick: () -> Unit) =
     CustomIconButton(
         drawable = if (isVisible) R.drawable.ic_visibility_off else R.drawable.ic_visibility,
         tint = LocalContentColor.current.copy(0.4f),
@@ -30,7 +30,6 @@ fun VisibleIcon(isVisible: Boolean, onClick: () -> Unit) {
         modifier = Modifier.size(24.dp),
         contentDescription = if (isVisible) "closeEye" else "openEye"
     )
-}
 
 @Composable
 fun GoogleSignInButton(
@@ -47,7 +46,7 @@ fun GoogleSignInButton(
 
     MaxWidthButton(
         state = state,
-        icon = googleIcon,
+        icon = { GoogleIcon() },
         onClick = {
             disabled()
             launcher.launch(intent)
@@ -55,7 +54,8 @@ fun GoogleSignInButton(
     )
 }
 
-private val googleIcon = @Composable {
+@Composable
+fun GoogleIcon() {
     Image(
         imageVector = ImageVector.vectorResource(id = R.drawable.ic_google_icon),
         contentDescription = null,

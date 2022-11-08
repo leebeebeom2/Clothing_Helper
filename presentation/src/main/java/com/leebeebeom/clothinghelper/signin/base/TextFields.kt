@@ -32,15 +32,9 @@ fun EmailTextField(
         state = state,
         error = error,
         onValueChange = {
-            onValueChange(
-                newTextFieldValue = it.copy(it.text.trim()),
-                updateError = updateError,
-                textFieldValue = textFieldValue,
-                onValueChange = { newTextFieldValue ->
-                    textFieldValue = newTextFieldValue
-                    onEmailChange(newTextFieldValue.text)
-                }
-            )
+            if (textFieldValue.text != it.text) updateError(null)
+            textFieldValue = it.copy(it.text.trim())
+            onEmailChange(it.text)
         }, onFocusChanged = {
             if (it.hasFocus)
                 textFieldValue =
@@ -71,14 +65,8 @@ fun PasswordTextField(
         state = state,
         error = error,
         onValueChange = {
-            onValueChange(
-                newTextFieldValue = it.copy(it.text.trim()), updateError = updateError,
-                textFieldValue = textFieldValue,
-                onValueChange = { newTextFieldValue ->
-                    textFieldValue = newTextFieldValue
-                    onPasswordChange(newTextFieldValue.text)
-                }
-            )
+            if (textFieldValue.text != it.text) updateError(null)
+            textFieldValue = it.copy(it.text.trim())
             onPasswordChange(it.text)
         },
         onFocusChanged = {
@@ -111,28 +99,11 @@ fun NameTextField(
         state = state,
         error = null,
         onValueChange = {
-            onValueChange(
-                newTextFieldValue = it,
-                updateError = {},
-                textFieldValue = textFieldValue,
-                onValueChange = { newTextFieldValue ->
-                    textFieldValue = newTextFieldValue
-                    onNameChange(newTextFieldValue.text)
-                }
-            )
+            textFieldValue = it.copy(it.text.trim())
+            onNameChange(it.text)
         }, onFocusChanged = {
             if (it.hasFocus)
                 textFieldValue =
                     textFieldValue.copy(selection = TextRange(textFieldValue.text.length))
         })
-}
-
-private fun onValueChange(
-    newTextFieldValue: TextFieldValue,
-    updateError: (Int?) -> Unit,
-    textFieldValue: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit
-) {
-    if (textFieldValue.text != newTextFieldValue.text) updateError(null)
-    onValueChange(newTextFieldValue)
 }

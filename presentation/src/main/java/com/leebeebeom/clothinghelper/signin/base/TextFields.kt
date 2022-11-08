@@ -2,13 +2,9 @@ package com.leebeebeom.clothinghelper.signin.base
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -28,12 +24,9 @@ fun EmailTextField(
     updateError: (Int?) -> Unit,
     onEmailChange: (String) -> Unit
 ) {
-    val textFieldValueState = remember { mutableStateOf(TextFieldValue(email)) }
+    var textFieldValue by remember { mutableStateOf(TextFieldValue(email)) }
 
-    val state = rememberEmailTextFieldState(
-        textFieldValueState = textFieldValueState,
-        imeAction = imeAction
-    )
+    val state = rememberEmailTextFieldState(textFieldValue = textFieldValue, imeAction = imeAction)
 
     MaxWidthTextField(
         state = state,
@@ -42,10 +35,17 @@ fun EmailTextField(
             onValueChange(
                 newTextFieldValue = it,
                 updateError = updateError,
-                textFieldValueState = textFieldValueState,
-                onValueChange = onEmailChange
+                textFieldValue = textFieldValue,
+                onValueChange = { newTextFieldValue ->
+                    textFieldValue = newTextFieldValue
+                    onEmailChange(newTextFieldValue.text)
+                }
             )
-        }, onFocusChanged = { onFocusChanged(it, textFieldValueState) })
+        }, onFocusChanged = {
+            if (it.hasFocus)
+                textFieldValue =
+                    textFieldValue.copy(selection = TextRange(textFieldValue.text.length))
+        })
 }
 
 @Composable
@@ -57,13 +57,13 @@ fun PasswordTextField(
     onPasswordChange: (String) -> Unit,
     updateError: (Int?) -> Unit
 ) {
-    val isVisibleState = rememberSaveable { mutableStateOf(false) }
-    val textFieldValueState = remember { mutableStateOf(TextFieldValue(password)) }
+    var isVisible by rememberSaveable { mutableStateOf(false) }
+    var textFieldValue by remember { mutableStateOf(TextFieldValue(password)) }
 
     val state =
         rememberPasswordTextFieldState(
             label = label,
-            textFieldValueState = textFieldValueState,
+            textFieldValue = textFieldValue,
             imeAction = imeAction
         )
 
@@ -73,20 +73,23 @@ fun PasswordTextField(
         onValueChange = {
             onValueChange(
                 newTextFieldValue = it.copy(it.text.trim()), updateError = updateError,
-                textFieldValueState = textFieldValueState,
-                onValueChange = onPasswordChange
+                textFieldValue = textFieldValue,
+                onValueChange = { newTextFieldValue ->
+                    textFieldValue = newTextFieldValue
+                    onPasswordChange(newTextFieldValue.text)
+                }
             )
             onPasswordChange(it.text)
         },
         onFocusChanged = {
-            onFocusChanged(newFocusState = it, textFieldValueState = textFieldValueState)
+            if (it.hasFocus)
+                textFieldValue =
+                    textFieldValue.copy(selection = TextRange(textFieldValue.text.length))
         },
         trailingIcon = {
-            VisibleIcon(isVisibleState.value) {
-                isVisibleState.value = !isVisibleState.value
-            }
+            VisibleIcon(isVisible) { isVisible = !isVisible }
         },
-        visualTransformation = if (isVisibleState.value) VisualTransformation.None else PasswordVisualTransformation()
+        visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation()
     )
 }
 
@@ -96,10 +99,10 @@ fun NameTextField(
     name: String,
     onNameChange: (String) -> Unit
 ) {
-    val textFieldValueState = remember { mutableStateOf(TextFieldValue(name)) }
+    var textFieldValue by remember { mutableStateOf(TextFieldValue(name)) }
 
     val state = rememberMaxWidthTextFiledState(
-        textFieldValueState = textFieldValueState,
+        textFieldValue = textFieldValue,
         label = R.string.name,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
     )
@@ -111,28 +114,25 @@ fun NameTextField(
             onValueChange(
                 newTextFieldValue = it,
                 updateError = {},
-                textFieldValueState = textFieldValueState,
-                onValueChange = onNameChange
+                textFieldValue = textFieldValue,
+                onValueChange = { newTextFieldValue ->
+                    textFieldValue = newTextFieldValue
+                    onNameChange(newTextFieldValue.text)
+                }
             )
-        }, onFocusChanged = { onFocusChanged(it, textFieldValueState) })
+        }, onFocusChanged = {
+            if (it.hasFocus)
+                textFieldValue =
+                    textFieldValue.copy(selection = TextRange(textFieldValue.text.length))
+        })
 }
 
 private fun onValueChange(
     newTextFieldValue: TextFieldValue,
     updateError: (Int?) -> Unit,
-    textFieldValueState: MutableState<TextFieldValue>,
-    onValueChange: (String) -> Unit
+    textFieldValue: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit
 ) {
-    if (textFieldValueState.value.text != newTextFieldValue.text) updateError(null)
-    textFieldValueState.value = newTextFieldValue
-    onValueChange(newTextFieldValue.text)
-}
-
-private fun onFocusChanged(
-    newFocusState: FocusState,
-    textFieldValueState: MutableState<TextFieldValue>
-) {
-    if (newFocusState.hasFocus)
-        textFieldValueState.value =
-            textFieldValueState.value.copy(selection = TextRange(textFieldValueState.value.text.length))
+    if (textFieldValue.text != newTextFieldValue.text) updateError(null)
+    onValueChange(newTextFieldValue)
 }

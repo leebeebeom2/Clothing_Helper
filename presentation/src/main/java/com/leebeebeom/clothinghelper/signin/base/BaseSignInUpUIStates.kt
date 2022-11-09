@@ -5,15 +5,13 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import com.leebeebeom.clothinghelper.base.BaseUIState
 
-open class BaseEmailUIStates {
-    @StringRes
-    private val _toastText: MutableState<Int?> = mutableStateOf(null)
+open class BaseEmailUIStates : BaseUIState() {
 
     @StringRes
     private val _emailError: MutableState<Int?> = mutableStateOf(null)
 
-    val toastText by derivedStateOf { _toastText.value }
     val emailError by derivedStateOf { _emailError.value }
 
     var email = ""
@@ -23,14 +21,6 @@ open class BaseEmailUIStates {
         _emailError.value = error
     }
 
-    fun showToast(@StringRes text: Int?) {
-        _toastText.value = text
-    }
-
-    fun toastShown() {
-        _toastText.value = null
-    }
-
     fun onEmailChange(email: String) {
         this.email = email
     }
@@ -38,7 +28,7 @@ open class BaseEmailUIStates {
     open val buttonEnabled by derivedStateOf { email.isNotBlank() && emailError == null }
 }
 
-open class BaseSignInUpUIStates: BaseEmailUIStates() {
+open class BaseSignInUpUIStates : BaseEmailUIStates() {
     @StringRes
     private val _passwordError: MutableState<Int?> = mutableStateOf(null)
 

@@ -65,20 +65,23 @@ fun SimpleHeightSpacer(dp: Int) = Spacer(modifier = Modifier.height(dp.dp))
 fun SimpleWidthSpacer(dp: Int) = Spacer(modifier = Modifier.width(dp.dp))
 
 @Composable
-fun SimpleToast(@StringRes text: Int?, shownToast: () -> Unit) =
-    text?.let {
-        Toast.makeText(LocalContext.current, stringResource(id = text), Toast.LENGTH_SHORT).show()
+fun SimpleToast(@StringRes text: () -> Int?, shownToast: () -> Unit) =
+    text()?.let {
+        Toast.makeText(LocalContext.current, stringResource(id = it), Toast.LENGTH_SHORT).show()
         shownToast()
     }
 
 @OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
-fun CircleCheckBox(modifier: Modifier = Modifier, isChecked: Boolean, onClick: () -> Unit = {}) =
-    CustomIconButton(
+fun CircleCheckBox(
+    modifier: Modifier = Modifier,
+    isChecked: () -> Boolean,
+    onClick: () -> Unit = {}
+) = CustomIconButton(
         modifier = modifier, onClick = onClick, painter = rememberAnimatedVectorPainter(
             animatedImageVector = AnimatedImageVector.animatedVectorResource(
                 id = R.drawable.check_anim
-            ), atEnd = isChecked
+            ), atEnd = isChecked()
         ), tint = LocalContentColor.current.copy(0.7f)
     )
 

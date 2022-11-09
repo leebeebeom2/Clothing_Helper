@@ -1,10 +1,14 @@
 package com.leebeebeom.clothinghelper.main.subcategory.content
 
+import android.util.Log
 import androidx.compose.animation.core.Transition
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -15,6 +19,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
+import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelper.main.subcategory.content.header.SubCategoryHeader
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
@@ -40,9 +45,9 @@ fun SubCategoryContent(
     onSortClick: (SubCategorySort) -> Unit,
     onOrderClick: (SortOrder) -> Unit,
     onAddCategoryPositiveButtonClick: (String, SubCategoryParent) -> Unit,
-    paddingValue: () -> PaddingValues
+    paddingValue: () -> PaddingValues // 사용시 렉
 ) {
-    Box(modifier = Modifier.fillMaxSize().padding(paddingValue())) { // TODO 테스트
+    Box(modifier = Modifier.fillMaxSize()) { // TODO 테스트
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -124,14 +129,20 @@ data class SubCategoryContentState(
             isSelectedItem(touchOffset = touchOffset, visibleItem = visibleItem)
         }) { selectedItem, selectedSubCategory ->
             initialSelectedKeyState = selectedItem.key as? String
-            initialSelectedTopState = selectedItem.offset
+            initialSelectedTopState = selectedItem.realOffset
             initialSelectedBottomState = selectedItem.offsetEnd
+            Log.d(
+                TAG,
+                "dragSelectStart: $touchOffset / $initialSelectedTopState / $initialSelectedBottomState"
+            )
             onLongClick(selectedSubCategory)
             performHaptic()
         }
     }
 
     fun onDrag(touchOffset: Offset, onLongClick: (SubCategory) -> Unit) {
+        Log.d(TAG, "dragSelectStart: $touchOffset")
+
         initialSelectedKeyState?.let { initialSelectedKey ->
             lazyListState.getSelectedItem({ initialSelectedKey != it.key as? String },
                 { !passedItemKeys.contains(it.key) },
@@ -144,11 +155,11 @@ data class SubCategoryContentState(
     }
 
     private fun isSelectedItem(touchOffset: Offset, visibleItem: LazyListItemInfo) =
-        touchOffset.y.toInt() in visibleItem.offset..visibleItem.offsetEnd
+        touchOffset.y.toInt() in visibleItem.realOffset..visibleItem.offsetEnd
 
     fun onDragEndMove(touchOffset: Offset, onLongClick: (SubCategory) -> Unit) {
         when (currentDragPosition(touchOffset)) {
-            isDragDown -> dragEndMove(onSelect = onLongClick) { touchOffset.y.toInt() < it.offset }
+            isDragDown -> dragEndMove(onSelect = onLongClick) { touchOffset.y.toInt() < it.realOffset }
             isDragUp -> dragEndMove(onSelect = onLongClick) { touchOffset.y.toInt() > it.offsetEnd }
         }
     }
@@ -206,5 +217,8 @@ fun rememberSubCategoryContentState(
     )
 }
 
+val LazyListItemInfo.realOffset: Int
+    get() = offset + 50
+
 val LazyListItemInfo.offsetEnd: Int
-    get() = offset + size
+    get() = offset + size + 43

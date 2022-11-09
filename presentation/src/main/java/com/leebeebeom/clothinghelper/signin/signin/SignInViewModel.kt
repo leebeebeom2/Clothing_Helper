@@ -45,10 +45,10 @@ class SignInViewModel @Inject constructor(
 }
 
 data class SignInUIStates(
-    private val _toastText: MutableState<Int?> = mutableStateOf(null),
+    @StringRes private val _toastText: MutableState<Int?> = mutableStateOf(null),
     private val _googleButtonEnabled: MutableState<Boolean> = mutableStateOf(false),
-    private val _emailError: MutableState<Int?> = mutableStateOf(null),
-    private val _passwordError: MutableState<Int?> = mutableStateOf(null)
+    @StringRes private val _emailError: MutableState<Int?> = mutableStateOf(null),
+    @StringRes private val _passwordError: MutableState<Int?> = mutableStateOf(null)
 ) {
     val toastText by derivedStateOf { _toastText.value }
     val googleButtonEnabled by derivedStateOf { _googleButtonEnabled.value }

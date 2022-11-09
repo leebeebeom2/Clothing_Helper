@@ -14,7 +14,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.leebeebeom.clothinghelper.main.MainNavHost
+import com.leebeebeom.clothinghelper.main.navigateSingleTop
 import com.leebeebeom.clothinghelper.signin.SignInNavHost
+import com.leebeebeom.clothinghelper.util.navigateSingleTop
 import com.leebeebeom.clothinghelperdomain.usecase.signin.GetSignInStateUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
@@ -47,9 +49,15 @@ fun MainActivityNavHost(
         composable(route = MainActivityDestinations.SIGN_IN) { SignInNavHost() }
     }
 
-    if (isSignIn) navController.mainActivityNavigate(MainActivityDestinations.MAIN)
-    else navController.mainActivityNavigate(MainActivityDestinations.SIGN_IN)
+    Transition(
+        isSignIn = { isSignIn },
+        navigateToMain = { navController.navigateSingleTop(MainActivityDestinations.MAIN) },
+        navigateToSignIn = { navController.navigateSingleTop(MainActivityDestinations.SIGN_IN) })
 }
+
+@Composable
+fun Transition(isSignIn: () -> Boolean, navigateToMain: () -> Unit, navigateToSignIn: () -> Unit) =
+    if (isSignIn()) navigateToMain() else navigateToSignIn()
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(val getSignInStateUseCase: GetSignInStateUseCase) :
@@ -58,8 +66,4 @@ class MainActivityViewModel @Inject constructor(val getSignInStateUseCase: GetSi
 object MainActivityDestinations {
     const val MAIN = "main"
     const val SIGN_IN = "signIn"
-}
-
-private fun NavHostController.mainActivityNavigate(route: String) = navigate(route) {
-    launchSingleTop = true
 }

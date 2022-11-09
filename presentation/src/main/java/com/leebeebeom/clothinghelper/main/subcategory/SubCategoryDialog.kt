@@ -47,3 +47,29 @@ fun SubCategoryTextFieldDialog(
             )
         }
 }
+
+open class BaseSubCategoryDialogState(
+    initialText: String,
+    initialError: Int?,
+) {
+    var text: String = initialText
+        protected set
+
+    var textFieldValue by mutableStateOf(TextFieldValue(text))
+        protected set
+
+    var error: Int? by mutableStateOf(initialError)
+        protected set
+
+    fun updateError(@StringRes error: Int) {
+        this.error = error
+    }
+
+    val positiveButtonEnabled by derivedStateOf { text.isNotBlank() && error == null }
+
+    fun onValueChange(newTextFiled: TextFieldValue) {
+        if (text != newTextFiled.text) error = null
+        text = newTextFiled.text
+        textFieldValue = newTextFiled
+    }
+}

@@ -39,31 +39,33 @@ fun MainCategoryScreen(
     uiStates: BaseMainUIState = viewModel.uiStates,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     drawerCloseBackHandler: @Composable () -> Unit
-) = Column(
-    modifier = Modifier
-        .fillMaxSize()
-        .verticalScroll(rememberScrollState())
-        .padding(16.dp),
-    verticalArrangement = Arrangement.spacedBy(16.dp)
 ) {
-    val modifier =
-        if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT)
-            Modifier.weight(1f)
-        else Modifier.heightIn(160.dp)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        val modifier =
+            if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT)
+                Modifier.weight(1f)
+            else Modifier.heightIn(160.dp)
 
-    val mainCategories = remember { getMainCategories() }
-    for (mainCategory in mainCategories) {
-        key(mainCategory.type.name) {
-            MainCategoryCard(
-                modifier = modifier,
-                mainCategory = mainCategory,
-                subCategoriesSize = { uiStates.subCategoriesSize(mainCategory.type) },
-                isLoading = { uiStates.isLoading },
-                onMainContentClick = { onMainCategoryClick(mainCategory.type) }
-            )
+        val mainCategories = remember { getMainCategories() }
+        for (mainCategory in mainCategories) {
+            key(mainCategory.type.name) {
+                MainCategoryCard(
+                    modifier = modifier,
+                    mainCategory = mainCategory,
+                    subCategoriesSize = { uiStates.subCategoriesSize(mainCategory.type) },
+                    isLoading = { uiStates.isLoading },
+                    onMainContentClick = { onMainCategoryClick(mainCategory.type) }
+                )
+            }
         }
+        drawerCloseBackHandler()
     }
-    drawerCloseBackHandler()
 }
 
 

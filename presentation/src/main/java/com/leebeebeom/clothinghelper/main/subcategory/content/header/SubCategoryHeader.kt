@@ -1,7 +1,9 @@
 package com.leebeebeom.clothinghelper.main.subcategory.content.header
 
-import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Divider
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
@@ -15,7 +17,6 @@ import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.CustomIconButton
 import com.leebeebeom.clothinghelper.main.base.AllExpandIcon
-import com.leebeebeom.clothinghelper.main.subcategory.content.SubCategoryContentState
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.repository.SortOrder
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
@@ -23,14 +24,15 @@ import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
 
 @Composable
 fun SubCategoryHeader(
-    state: State<SubCategoryHeaderState>,
+    parent: () -> SubCategoryParent,
+    isAllExpand: () -> Boolean,
+    sort: () -> SubCategorySortPreferences,
     allExpandIconClick: () -> Unit,
     onSortClick: (SubCategorySort) -> Unit,
     onOrderClick: (SortOrder) -> Unit
 ) {
     Text(
-        modifier = Modifier.padding(4.dp),
-        text = stringResource(id = state.value.headerText),
+        text = stringResource(id = headerStringRes(parent)),
         style = MaterialTheme.typography.h2,
         fontSize = 32.sp
     )
@@ -40,10 +42,10 @@ fun SubCategoryHeader(
 
         AllExpandIcon(
             allExpandIconClick = allExpandIconClick,
-            allExpand = state.value.isAllExpand
+            allExpand = isAllExpand
         )
         SortIcon(
-            sort = state.value.sort,
+            sort = sort,
             onSortClick = onSortClick,
             onOrderClick = onOrderClick
         )
@@ -51,7 +53,7 @@ fun SubCategoryHeader(
 }
 
 @Composable
-private fun AllExpandIcon(allExpandIconClick: () -> Unit, allExpand: Boolean) {
+private fun AllExpandIcon(allExpandIconClick: () -> Unit, allExpand: () -> Boolean) {
     Box(modifier = Modifier.offset(4.dp, 0.dp)) {
         AllExpandIcon(
             size = 22.dp,
@@ -64,7 +66,7 @@ private fun AllExpandIcon(allExpandIconClick: () -> Unit, allExpand: Boolean) {
 
 @Composable
 private fun SortIcon(
-    sort: SubCategorySortPreferences,
+    sort: () -> SubCategorySortPreferences,
     onSortClick: (SubCategorySort) -> Unit,
     onOrderClick: (SortOrder) -> Unit
 ) {
@@ -79,7 +81,7 @@ private fun SortIcon(
         )
 
         SortDropdownMenu(
-            showDropDownMenu = showDropDownMenu,
+            showDropDownMenu = { showDropDownMenu },
             sort = sort,
             onSortClick = onSortClick,
             onOrderClick = onOrderClick,
@@ -88,27 +90,9 @@ private fun SortIcon(
     }
 }
 
-data class SubCategoryHeaderState(
-    @StringRes val headerText: Int,
-    val isAllExpand: Boolean,
-    val sort: SubCategorySortPreferences,
-)
-
 @Composable
-fun rememberSubCategoryHeaderState(
-    subCategoryContentState: State<SubCategoryContentState>
-) = remember {
-    derivedStateOf {
-        SubCategoryHeaderState(
-            headerText = getHeaderStringRes(subCategoryContentState.value.parent),
-            isAllExpand = subCategoryContentState.value.isAllExpand,
-            sort = subCategoryContentState.value.sort
-        )
-    }
-}
-
-fun getHeaderStringRes(parent: SubCategoryParent) =
-    when (parent) {
+fun headerStringRes(parent: () -> SubCategoryParent) =
+    when (parent()) {
         SubCategoryParent.TOP -> R.string.top
         SubCategoryParent.BOTTOM -> R.string.bottom
         SubCategoryParent.OUTER -> R.string.outer

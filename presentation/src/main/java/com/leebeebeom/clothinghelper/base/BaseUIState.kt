@@ -1,22 +1,19 @@
 package com.leebeebeom.clothinghelper.base
 
 import androidx.annotation.StringRes
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 
 open class BaseUIState {
-    @StringRes
-    private val _toastText: MutableState<Int?> = mutableStateOf(null)
-
-    val toastText by derivedStateOf { _toastText.value }
+    var toastText: Int? by mutableStateOf(null)
+        private set
 
     fun showToast(@StringRes text: Int?) {
-        _toastText.value = text
+        toastText = text
     }
 
     fun toastShown() {
-        _toastText.value = null
+        toastText = null
     }
 }

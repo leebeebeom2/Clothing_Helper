@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.signin.base.BaseSignInUpUIStates
+import com.leebeebeom.clothinghelper.signin.base.BaseSignInUpUIState
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
 import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
 import com.leebeebeom.clothinghelperdomain.model.AuthResult
@@ -23,7 +23,7 @@ class SignUpViewModel @Inject constructor(
     private val signUpUseCase: SignUpUseCase, googleSignInUseCase: GoogleSignInUseCase
 ) : GoogleSignInUpViewModel(googleSignInUseCase) {
 
-    val uiStates = SignUpUIStates()
+    val uiStates = SignUpUIState()
 
     fun signUpWithEmailAndPassword() = viewModelScope.launch {
         when (val result = signUpUseCase(
@@ -48,7 +48,7 @@ class SignUpViewModel @Inject constructor(
     override fun showToast(text: Int) = uiStates.showToast(text)
 }
 
-class SignUpUIStates : BaseSignInUpUIStates() {
+class SignUpUIState : BaseSignInUpUIState() {
     var passwordConfirmError: Int? by mutableStateOf(null)
         private set
 

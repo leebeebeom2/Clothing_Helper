@@ -5,7 +5,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -19,24 +22,29 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
 @Composable
 fun DrawerMainCategory(
-    state: State<DrawerMainCategoryState>,
+    mainCategory: MainCategory,
+    subCategories: () -> List<SubCategory>,
+    isLoading: () -> Boolean,
+    isAllExpand: () -> Boolean,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (SubCategory) -> Unit,
 ) {
-    val isExpandState = isExpandStateWithIsAllExpand(isAllExpand = state.value.isAllExpand)
+    var isExpand by isExpandStateWithIsAllExpand(isAllExpand)
 
     Column {
         DrawerContentRow(
             modifier = Modifier.heightIn(44.dp),
-            onClick = { onMainCategoryClick(state.value.mainCategory.type) }) {
+            onClick = { onMainCategoryClick(mainCategory.type) }) {
             DrawerContentText(
                 modifier = Modifier.padding(start = 8.dp),
-                text = stringResource(id = state.value.mainCategory.name),
+                text = stringResource(id = mainCategory.name),
                 style = MaterialTheme.typography.subtitle1
             )
             Text( // count
-                modifier = Modifier.weight(1f).padding(start = 4.dp),
-                text = "(${state.value.subCategories.size})",
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 4.dp),
+                text = "(${subCategories().size})",
                 style = MaterialTheme.typography.caption.copy(
                     LocalContentColor.current.copy(
                         ContentAlpha.disabled
@@ -44,73 +52,48 @@ fun DrawerMainCategory(
                 )
             )
             ExpandIcon(
-                isLoading = state.value.isLoading,
-                isExpand = isExpandState.value,
-                onClick = { isExpandState.value = !isExpandState.value }
+                isLoading = isLoading,
+                isExpand = { isExpand },
+                onClick = { isExpand = !isExpand }
             )
         }
         SubCategories(
-            isExpand = isExpandState.value,
-            subCategories = state.value.subCategories,
+            isExpand = { isExpand },
+            subCategories = subCategories,
             onClick = onSubCategoryClick
-        )
-    }
-}
-
-data class DrawerMainCategoryState(
-    val mainCategory: MainCategory,
-    val subCategories: List<SubCategory>,
-    val isLoading: Boolean,
-    val isAllExpand: Boolean
-)
-
-@Composable
-fun rememberDrawerMainCategoryState(
-    mainCategory: MainCategory,
-    drawerContentsState: State<DrawerContentsState>
-) = remember {
-    derivedStateOf {
-        DrawerMainCategoryState(
-            mainCategory = mainCategory,
-            subCategories = drawerContentsState.value.allSubCategories[mainCategory.type.ordinal],
-            isLoading = drawerContentsState.value.isLoading,
-            isAllExpand = drawerContentsState.value.isAllExpand,
         )
     }
 }
 
 @Composable
 private fun ExpandIcon(
-    isLoading: Boolean,
-    isExpand: Boolean,
+    isLoading: () -> Boolean,
+    isExpand: () -> Boolean,
     onClick: () -> Unit
 ) {
-    if (isLoading)
+    if (isLoading())
         DotProgressIndicator(
             modifier = Modifier.padding(end = 4.dp),
             size = 4.dp,
             color = MaterialTheme.colors.surface.copy(ContentAlpha.disabled)
         )
-    else ExpandIcon(
-        isExpanded = isExpand,
-        onClick = onClick
-    )
+    else ExpandIcon(isExpanded = isExpand, onClick = onClick)
 }
 
 @Composable
 private fun SubCategories(
-    isExpand: Boolean,
-    subCategories: List<SubCategory>,
+    isExpand: () -> Boolean,
+    subCategories: () -> List<SubCategory>,
     onClick: (SubCategory) -> Unit
 ) {
     AnimatedVisibility(
-        visible = isExpand,
+        visible = isExpand(),
         enter = listExpand,
         exit = listShrink
     ) {
         Surface(color = MaterialTheme.colors.primary) {
             Column {
-                for (subCategory in subCategories)
+                for (subCategory in subCategories())
                     key(subCategory.key) {
                         SubCategory(subCategory = subCategory, onClick = { onClick(subCategory) })
                     }

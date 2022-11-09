@@ -16,6 +16,19 @@ open class BaseMainUIState : BaseUIState() {
     val isLoading by derivedStateOf { _isLoading.value }
     val allSubCategories by derivedStateOf { _allSubCategories.value }
 
+    private val topSubCategories by derivedStateOf { _allSubCategories.value[0] }
+    private val bottomSubCategories by derivedStateOf { _allSubCategories.value[1] }
+    private val outerSubCategories by derivedStateOf { _allSubCategories.value[2] }
+    private val etcSubCategories by derivedStateOf { _allSubCategories.value[3] }
+
+    fun getSubCategories(subCategoryParent: SubCategoryParent) =
+        when (subCategoryParent) {
+            SubCategoryParent.TOP -> topSubCategories
+            SubCategoryParent.BOTTOM -> bottomSubCategories
+            SubCategoryParent.OUTER -> outerSubCategories
+            SubCategoryParent.ETC -> etcSubCategories
+        }
+
     fun subCategoriesSize(subCategoryParent: SubCategoryParent) =
         derivedStateOf { allSubCategories[subCategoryParent.ordinal].size }
 

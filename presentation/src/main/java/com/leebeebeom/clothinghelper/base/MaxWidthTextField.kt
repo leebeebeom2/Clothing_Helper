@@ -26,7 +26,6 @@ import com.leebeebeom.clothinghelper.base.Anime.Error.errorOut
 import kotlinx.coroutines.delay
 
 // TODO 포커스 복원
-// 사인인 show 키보드 고민
 
 @Composable
 fun MaxWidthTextField(
@@ -137,7 +136,7 @@ fun rememberEmailTextFieldState(
     label = R.string.email,
     placeholder = R.string.email_place_holder,
     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = imeAction),
-    showKeyboardEnabled = false,
+    showKeyboardEnabled = true,
 )
 
 @OptIn(ExperimentalComposeUiApi::class)

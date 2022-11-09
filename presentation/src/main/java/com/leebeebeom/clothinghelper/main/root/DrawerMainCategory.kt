@@ -111,16 +111,15 @@ private fun SubCategory(name: () -> String, onClick: () -> Unit) {
 
 @Composable
 private fun RowScope.TotalCount(subCategories: () -> List<SubCategory>, isLoading: () -> Boolean) {
-    if (!isLoading())
-        Text(
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = 4.dp),
-            text = "(${subCategories().size})",
-            style = MaterialTheme.typography.caption.copy(
-                LocalContentColor.current.copy(
-                    ContentAlpha.disabled
-                )
+    Text(
+        modifier = Modifier
+            .weight(1f)
+            .padding(start = 4.dp),
+        text = if (isLoading()) "" else "(${subCategories().size})",
+        style = MaterialTheme.typography.caption.copy(
+            LocalContentColor.current.copy(
+                ContentAlpha.disabled
             )
         )
+    )
 }

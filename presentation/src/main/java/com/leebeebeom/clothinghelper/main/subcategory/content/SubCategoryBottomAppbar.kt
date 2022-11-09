@@ -26,15 +26,13 @@ import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
 @Composable
 fun SubCategoryBottomAppBar(
     selectedSubCategoriesSize: () -> Int,
-    subCategoriesSize: () -> Int,
+    isAllSelected: () -> Boolean,
+    showEditIcon: () -> Boolean,
+    showDeleteIcon: () -> Boolean,
     selectModeTransition: Transition<Boolean>,
     onAllSelectCheckBoxClick: () -> Unit,
     onEditSubCategoryNameClick: () -> Unit
-) {
-    val isAllSelected by remember { derivedStateOf { selectedSubCategoriesSize() == subCategoriesSize() } }
-    val showEditName by remember { derivedStateOf { selectedSubCategoriesSize() == 1 } }
-    val showDelete by remember { derivedStateOf { selectedSubCategoriesSize() > 0 } }
-
+) =
     selectModeTransition.AnimatedVisibility(
         visible = { it },
         enter = expandIn,
@@ -43,26 +41,21 @@ fun SubCategoryBottomAppBar(
         BottomAppBar {
             SimpleWidthSpacer(dp = 4)
             CircleCheckBox(
-                isChecked = { isAllSelected },
+                isChecked = isAllSelected,
                 modifier = Modifier.size(22.dp),
                 onClick = onAllSelectCheckBoxClick
             )
             SimpleWidthSpacer(dp = 10)
-            Text(
-                text = stringResource(
-                    id = R.string.count_selected,
-                    formatArgs = arrayOf(selectedSubCategoriesSize())
-                ), modifier = Modifier.offset((-8).dp, 1.dp)
-            )
+            SelectText(selectedSubCategoriesSize = selectedSubCategoriesSize)
             Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.End) {
                 BottomAppBarIcon(
-                    visible = { showEditName },
+                    visible = showEditIcon,
                     onClick = onEditSubCategoryNameClick,
                     drawable = R.drawable.ic_edit,
                     text = R.string.change_name
                 )
                 BottomAppBarIcon(
-                    visible = { showDelete },
+                    visible = showDeleteIcon,
                     onClick = { /*TODO*/ },
                     drawable = R.drawable.ic_delete2,
                     text = R.string.delete
@@ -71,7 +64,6 @@ fun SubCategoryBottomAppBar(
             SimpleWidthSpacer(dp = 4)
         }
     }
-}
 
 @Composable
 fun BottomAppBarIcon(
@@ -89,3 +81,12 @@ fun BottomAppBarIcon(
             Text(text = stringResource(id = text), style = MaterialTheme.typography.caption)
         }
 }
+
+@Composable
+fun SelectText(selectedSubCategoriesSize: () -> Int) =
+    Text(
+        text = stringResource(
+            id = R.string.count_selected,
+            formatArgs = arrayOf(selectedSubCategoriesSize())
+        ), modifier = Modifier.offset((-8).dp, 1.dp)
+    )

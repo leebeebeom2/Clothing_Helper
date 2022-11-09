@@ -1,24 +1,18 @@
 package com.leebeebeom.clothinghelper.signin.base
 
 import androidx.annotation.StringRes
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import com.leebeebeom.clothinghelper.base.BaseUIState
 
 open class BaseEmailUIStates : BaseUIState() {
-
-    @StringRes
-    private val _emailError: MutableState<Int?> = mutableStateOf(null)
-
-    val emailError by derivedStateOf { _emailError.value }
+    var emailError: Int? by mutableStateOf(null)
+        private set
 
     var email = ""
         private set
 
     fun updateEmailError(@StringRes error: Int?) {
-        _emailError.value = error
+        emailError = error
     }
 
     fun onEmailChange(email: String) {
@@ -29,24 +23,21 @@ open class BaseEmailUIStates : BaseUIState() {
 }
 
 open class BaseSignInUpUIStates : BaseEmailUIStates() {
-    @StringRes
-    private val _passwordError: MutableState<Int?> = mutableStateOf(null)
+    var passwordError: Int? by mutableStateOf(null)
+        private set
 
-    private val _googleButtonEnabled: MutableState<Boolean> = mutableStateOf(false)
-
-
-    val googleButtonEnabled by derivedStateOf { _googleButtonEnabled.value }
-    val passwordError by derivedStateOf { _passwordError.value }
+    var googleButtonEnabled by mutableStateOf(false)
+        private set
 
     var password = ""
         private set
 
     fun updatePasswordError(@StringRes error: Int?) {
-        _passwordError.value = error
+        passwordError = error
     }
 
     fun updateGoogleButtonEnabled(enabled: Boolean) {
-        _googleButtonEnabled.value = enabled
+        googleButtonEnabled = enabled
     }
 
     open fun onPasswordChange(password: String) {
@@ -54,6 +45,6 @@ open class BaseSignInUpUIStates : BaseEmailUIStates() {
     }
 
     override val buttonEnabled by derivedStateOf {
-        super.buttonEnabled && passwordError == null && password.isNotBlank()
+        super.buttonEnabled && this.passwordError == null && password.isNotBlank()
     }
 }

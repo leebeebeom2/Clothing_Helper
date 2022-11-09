@@ -27,9 +27,6 @@ import com.leebeebeom.clothinghelper.main.base.ExpandIcon
 import com.leebeebeom.clothinghelper.main.base.isExpandStateWithIsAllExpand
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
-// TODO 선택 모드 애니메이션 렉
-// TODO Expand 트랜지션
-
 @Composable
 fun SubCategoryCard(
     subCategory: () -> SubCategory,

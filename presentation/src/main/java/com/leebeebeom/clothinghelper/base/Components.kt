@@ -41,22 +41,20 @@ fun SimpleIcon(
 )
 
 @Composable
-fun CenterDotProgressIndicator(backGround: Color = Disabled) =
-    Surface(color = backGround) {
-        Box(
+fun CenterDotProgressIndicator(backGround: Color = Disabled, isLoading: () -> Boolean) {
+    if (isLoading()) Surface(color = backGround) {}
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .clickable(enabled = false) { }) {
+        DotProgressIndicator(
             modifier = Modifier
-                .fillMaxSize()
-                .clickable(enabled = false) { }
-        ) {
-            DotProgressIndicator(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .semantics { contentDescription = "loading" },
-                size = 8.dp,
-                color = LocalContentColor.current.copy(ContentAlpha.medium)
-            )
-        }
+                .align(Alignment.Center)
+                .semantics { contentDescription = "loading" },
+            size = 8.dp,
+            color = LocalContentColor.current.copy(ContentAlpha.medium)
+        )
     }
+}
 
 @Composable
 fun SimpleHeightSpacer(dp: Int) = Spacer(modifier = Modifier.height(dp.dp))
@@ -65,25 +63,22 @@ fun SimpleHeightSpacer(dp: Int) = Spacer(modifier = Modifier.height(dp.dp))
 fun SimpleWidthSpacer(dp: Int) = Spacer(modifier = Modifier.width(dp.dp))
 
 @Composable
-fun SimpleToast(@StringRes text: () -> Int?, shownToast: () -> Unit) =
-    text()?.let {
-        Toast.makeText(LocalContext.current, stringResource(id = it), Toast.LENGTH_SHORT).show()
-        shownToast()
-    }
+fun SimpleToast(@StringRes text: () -> Int?, shownToast: () -> Unit) = text()?.let {
+    Toast.makeText(LocalContext.current, stringResource(id = it), Toast.LENGTH_SHORT).show()
+    shownToast()
+}
 
 @OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
 fun CircleCheckBox(
-    modifier: Modifier = Modifier,
-    isChecked: () -> Boolean,
-    onClick: () -> Unit = {}
+    modifier: Modifier = Modifier, isChecked: () -> Boolean, onClick: () -> Unit = {}
 ) = CustomIconButton(
-        modifier = modifier, onClick = onClick, painter = rememberAnimatedVectorPainter(
-            animatedImageVector = AnimatedImageVector.animatedVectorResource(
-                id = R.drawable.check_anim
-            ), atEnd = isChecked()
-        ), tint = LocalContentColor.current.copy(0.7f)
-    )
+    modifier = modifier, onClick = onClick, painter = rememberAnimatedVectorPainter(
+        animatedImageVector = AnimatedImageVector.animatedVectorResource(
+            id = R.drawable.check_anim
+        ), atEnd = isChecked()
+    ), tint = LocalContentColor.current.copy(0.7f)
+)
 
 @Composable
 fun CustomIconButton(
@@ -114,10 +109,7 @@ fun CustomIconButton(
         .padding(4.dp)
 ) {
     Icon(
-        painter = painter,
-        contentDescription = contentDescription,
-        modifier = modifier,
-        tint = tint
+        painter = painter, contentDescription = contentDescription, modifier = modifier, tint = tint
     )
 }
 

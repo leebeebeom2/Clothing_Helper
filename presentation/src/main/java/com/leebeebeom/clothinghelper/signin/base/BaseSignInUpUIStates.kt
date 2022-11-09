@@ -34,6 +34,8 @@ open class BaseEmailUIStates {
     fun onEmailChange(email: String) {
         this.email = email
     }
+
+    open val buttonEnabled by derivedStateOf { email.isNotBlank() && emailError == null }
 }
 
 open class BaseSignInUpUIStates: BaseEmailUIStates() {
@@ -61,7 +63,7 @@ open class BaseSignInUpUIStates: BaseEmailUIStates() {
         this.password = password
     }
 
-    open val buttonEnabled by derivedStateOf {
-        emailError == null && passwordError == null && email.isNotBlank() && password.isNotBlank()
+    override val buttonEnabled by derivedStateOf {
+        super.buttonEnabled && passwordError == null && password.isNotBlank()
     }
 }

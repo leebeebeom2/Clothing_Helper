@@ -34,7 +34,8 @@ import kotlinx.coroutines.delay
 @Composable
 fun MaxWidthTextField(
     state: MaxWidthTextFieldState,
-    error: Int? = null,
+    textFieldValue: () ->TextFieldValue,
+    error: () -> Int? = { null },
     onValueChange: (TextFieldValue) -> Unit,
     onFocusChanged: (FocusState) -> Unit,
     trailingIcon: @Composable (() -> Unit)? = null,
@@ -46,11 +47,11 @@ fun MaxWidthTextField(
                 .fillMaxWidth()
                 .focusRequester(focusRequester = state.focusRequester)
                 .onFocusChanged(onFocusChanged = onFocusChanged),
-            value = state.textFieldValue,
+            value = textFieldValue(),
             onValueChange = onValueChange,
             label = { Text(text = stringResource(id = state.label)) },
             placeholder = { Text(text = stringResource(id = state.placeholder)) },
-            isError = error != null,
+            isError = error() != null,
             visualTransformation = visualTransformation,
             singleLine = true,
             maxLines = 1,
@@ -77,16 +78,13 @@ fun MaxWidthTextField(
 }
 
 @Composable
-private fun ErrorText(@StringRes error: Int?) {
-    var errorRes by remember { mutableStateOf(error) }
-    if (error != null) errorRes = error
-
+private fun ErrorText(@StringRes error: () -> Int?) {
     AnimatedVisibility(
-        visible = error != null, enter = errorIn, exit = errorOut
+        visible = error() != null, enter = errorIn, exit = errorOut
     ) {
         Text(
             modifier = Modifier.padding(start = 4.dp, top = 4.dp),
-            text = error?.let { stringResource(id = it) } ?: "",
+            text = error()?.let { stringResource(id = it) } ?: "",
             color = MaterialTheme.colors.error,
             style = MaterialTheme.typography.caption,
         )
@@ -94,7 +92,6 @@ private fun ErrorText(@StringRes error: Int?) {
 }
 
 data class MaxWidthTextFieldState @OptIn(ExperimentalComposeUiApi::class) constructor(
-    val textFieldValue: TextFieldValue,
     @StringRes val label: Int,
     @StringRes val placeholder: Int,
     val showKeyboardEnabled: Boolean,
@@ -115,7 +112,6 @@ data class MaxWidthTextFieldState @OptIn(ExperimentalComposeUiApi::class) constr
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun rememberMaxWidthTextFiledState(
-    textFieldValue: TextFieldValue,
     @StringRes label: Int,
     @StringRes placeholder: Int = R.string.empty,
     showKeyboardEnabled: Boolean = false,
@@ -125,9 +121,8 @@ fun rememberMaxWidthTextFiledState(
     focusManager: FocusManager = LocalFocusManager.current,
     focusRequester: FocusRequester = remember { FocusRequester() },
     keyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
-) = remember(textFieldValue) {
+) = remember {
     MaxWidthTextFieldState(
-        textFieldValue = textFieldValue,
         label = label,
         placeholder = placeholder,
         showKeyboardEnabled = showKeyboardEnabled,
@@ -141,10 +136,8 @@ fun rememberMaxWidthTextFiledState(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun rememberEmailTextFieldState(
-    textFieldValue: TextFieldValue,
     imeAction: ImeAction,
 ) = rememberMaxWidthTextFiledState(
-    textFieldValue = textFieldValue,
     label = R.string.email,
     placeholder = R.string.email_place_holder,
     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = imeAction),
@@ -154,11 +147,9 @@ fun rememberEmailTextFieldState(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun rememberPasswordTextFieldState(
-    textFieldValue: TextFieldValue,
     @StringRes label: Int = R.string.password,
     imeAction: ImeAction = ImeAction.Done
 ) = rememberMaxWidthTextFiledState(
-    textFieldValue = textFieldValue,
     label = label, keyboardOptions = KeyboardOptions(
         keyboardType = KeyboardType.Password, imeAction = imeAction
     )

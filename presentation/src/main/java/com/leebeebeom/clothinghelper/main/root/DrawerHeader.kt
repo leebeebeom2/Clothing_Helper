@@ -15,7 +15,7 @@ import com.leebeebeom.clothinghelper.base.CustomIconButton
 import com.leebeebeom.clothinghelperdomain.model.User
 
 @Composable
-fun DrawerHeader(user: () -> User?, onSettingIconClick: () -> Unit) =
+fun DrawerHeader(user: () -> User?, onSettingIconClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -29,9 +29,10 @@ fun DrawerHeader(user: () -> User?, onSettingIconClick: () -> Unit) =
             contentDescription = "settingIcon"
         )
     }
+}
 
 @Composable
-private fun RowScope.HeaderText(user: () -> User?) =
+private fun RowScope.HeaderText(user: () -> User?) {
     Text(
         modifier = Modifier
             .padding(start = 4.dp)
@@ -39,3 +40,4 @@ private fun RowScope.HeaderText(user: () -> User?) =
         style = MaterialTheme.typography.body1,
         text = "${user()?.name}(${user()?.email})"
     )
+}

@@ -6,7 +6,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -15,7 +15,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.*
+import com.leebeebeom.clothinghelper.base.MaxWidthButton
+import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.base.SimpleToast
 import com.leebeebeom.clothinghelper.signin.base.*
 
 /*
@@ -59,9 +61,7 @@ fun SignInScreen(
         MaxWidthButton(
             text = R.string.sign_in,
             enabled = { uiStates.buttonEnabled },
-            onClick = {
-                viewModel.signInWithEmailAndPassword()
-            }
+            onClick = { viewModel.signInWithEmailAndPassword() }
         )
         SimpleHeightSpacer(dp = 8)
         OrDivider()

@@ -25,8 +25,6 @@ import com.leebeebeom.clothinghelper.base.Anime.Error.errorIn
 import com.leebeebeom.clothinghelper.base.Anime.Error.errorOut
 import kotlinx.coroutines.delay
 
-// TODO 포커스 복원
-
 @Composable
 fun MaxWidthTextField(
     state: MaxWidthTextFieldState,

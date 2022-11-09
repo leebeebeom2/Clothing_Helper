@@ -33,7 +33,7 @@ fun EmailTextField(
         onValueChange = {
             if (textFieldValue.text != it.text) updateError(null)
             textFieldValue = it.copy(it.text.trim())
-            onEmailChange(it.text)
+            onEmailChange(textFieldValue.text)
         }, onFocusChanged = {
             if (it.hasFocus)
                 textFieldValue =
@@ -60,7 +60,7 @@ fun PasswordTextField(
         onValueChange = {
             if (textFieldValue.text != it.text) updateError(null)
             textFieldValue = it.copy(it.text.trim())
-            onPasswordChange(it.text)
+            onPasswordChange(textFieldValue.text)
         },
         onFocusChanged = {
             if (it.hasFocus)
@@ -88,7 +88,7 @@ fun NameTextField(
         ),
         error = { null },
         onValueChange = {
-            textFieldValue = it.copy(it.text.trim())
+            textFieldValue = it
             onNameChange(it.text)
         }, onFocusChanged = {
             if (it.hasFocus)

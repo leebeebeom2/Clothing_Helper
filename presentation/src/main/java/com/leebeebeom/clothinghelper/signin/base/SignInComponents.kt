@@ -19,21 +19,22 @@ import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.*
+import com.leebeebeom.clothinghelper.base.CustomIconButton
+import com.leebeebeom.clothinghelper.base.MaxWidthButton
 
 @Composable
-fun VisibleIcon(isVisible: Boolean, onClick: () -> Unit) =
+fun VisibleIcon(isVisible: () -> Boolean, onClick: () -> Unit) =
     CustomIconButton(
-        drawable = if (isVisible) R.drawable.ic_visibility_off else R.drawable.ic_visibility,
+        drawable = if (isVisible()) R.drawable.ic_visibility_off else R.drawable.ic_visibility,
         tint = LocalContentColor.current.copy(0.4f),
         onClick = onClick,
         modifier = Modifier.size(24.dp),
-        contentDescription = if (isVisible) "closeEye" else "openEye"
+        contentDescription = if (isVisible()) "closeEye" else "openEye"
     )
 
 @Composable
 fun GoogleSignInButton(
-    state: MaxWidthButtonState,
+    enabled: () -> Boolean,
     onActivityResult: (ActivityResult) -> Unit,
     disabled: () -> Unit
 ) {
@@ -45,7 +46,9 @@ fun GoogleSignInButton(
     val intent = GoogleSignIn.getClient(LocalContext.current, getGso()).signInIntent
 
     MaxWidthButton(
-        state = state,
+        text = R.string.starts_with_google_email,
+        enabled = enabled,
+        colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
         icon = { GoogleIcon() },
         onClick = {
             disabled()
@@ -55,13 +58,12 @@ fun GoogleSignInButton(
 }
 
 @Composable
-fun GoogleIcon() {
+fun GoogleIcon() =
     Image(
         imageVector = ImageVector.vectorResource(id = R.drawable.ic_google_icon),
         contentDescription = null,
         modifier = Modifier.padding(start = 8.dp)
     )
-}
 
 @Composable
 private fun getGso() = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

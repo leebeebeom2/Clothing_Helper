@@ -45,8 +45,7 @@ fun CenterDotProgressIndicator(
     backGround: Color = Disabled,
     isLoading: () -> Boolean,
     content: @Composable () -> Unit = {}
-) {
-    if (isLoading()) Surface(color = backGround) {
+) = if (isLoading()) Surface(color = backGround) {
         Box(modifier = Modifier
             .fillMaxSize()
             .clickable(enabled = false) { }) {
@@ -59,7 +58,6 @@ fun CenterDotProgressIndicator(
             )
         }
     } else content()
-}
 
 @Composable
 fun SimpleHeightSpacer(dp: Int) = Spacer(modifier = Modifier.height(dp.dp))
@@ -68,10 +66,11 @@ fun SimpleHeightSpacer(dp: Int) = Spacer(modifier = Modifier.height(dp.dp))
 fun SimpleWidthSpacer(dp: Int) = Spacer(modifier = Modifier.width(dp.dp))
 
 @Composable
-fun SimpleToast(@StringRes text: () -> Int?, shownToast: () -> Unit) = text()?.let {
-    Toast.makeText(LocalContext.current, stringResource(id = it), Toast.LENGTH_SHORT).show()
-    shownToast()
-}
+fun SimpleToast(@StringRes text: () -> Int?, shownToast: () -> Unit) =
+    text()?.let {
+        Toast.makeText(LocalContext.current, stringResource(id = it), Toast.LENGTH_SHORT).show()
+        shownToast()
+    }
 
 @OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable

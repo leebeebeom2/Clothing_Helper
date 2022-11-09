@@ -16,11 +16,12 @@ import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryTextFieldDialog
+import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
 @Composable
 fun BoxScope.AddSubcategoryDialogFab(
     onPositiveButtonClick: (String) -> Unit,
-    isExistsName: (String) -> Boolean,
+    subCategories: () -> List<SubCategory>
 ) {
     val state = remember { AddCategoryDialogState() }
 
@@ -33,6 +34,7 @@ fun BoxScope.AddSubcategoryDialogFab(
         backgroundColor = MaterialTheme.colors.primary,
     ) { SimpleIcon(drawable = R.drawable.ic_add) }
 
+    val subCategoryNames by remember { derivedStateOf { subCategories().map { it.name } }}
     SubCategoryTextFieldDialog(
         title = R.string.add_category,
         error = { state.error },
@@ -41,11 +43,11 @@ fun BoxScope.AddSubcategoryDialogFab(
         showDialog = { state.showDialog },
         onValueChange = {
             state.onValueChange(it)
-            if (isExistsName(it.text)) state.updateError(R.string.error_same_category_name)
+            if (subCategoryNames.contains(it.text.trim())) state.updateError(R.string.error_same_category_name)
         },
         onFocusChanged = state::onFocusChange,
         onDismiss = state::onDismiss,
-        onPositiveButtonClick = { onPositiveButtonClick(state.text) }
+        onPositiveButtonClick = { onPositiveButtonClick(state.text.trim()) }
     )
 }
 

@@ -52,7 +52,7 @@ open class BaseSubCategoryDialogState(
     initialText: String,
     initialError: Int?,
 ) {
-    var text: String = initialText
+    var text by mutableStateOf(initialText)
         protected set
 
     var textFieldValue by mutableStateOf(TextFieldValue(text))

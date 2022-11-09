@@ -43,7 +43,7 @@ fun DialogTitle(@StringRes text: Int) =
 fun DialogTextButtons(
     positiveTextColor: Color = Color.Unspecified,
     cancelTextColor: Color = MaterialTheme.colors.error,
-    positiveButtonEnabled: Boolean,
+    positiveButtonEnabled: () -> Boolean,
     onPositiveButtonClick: () -> Unit,
     onDismiss: () -> Unit
 ) = Row {
@@ -61,11 +61,11 @@ fun DialogTextButtons(
 fun RowScope.DialogTextButton(
     @StringRes text: Int,
     textColor: Color = Color.Unspecified,
-    enabled: Boolean = true,
+    enabled: () -> Boolean = { true },
     onClick: () -> Unit
 ) = Box(modifier = Modifier.weight(1f)) {
     TextButton(
-        modifier = Modifier.align(Alignment.Center), onClick = onClick, enabled = enabled
+        modifier = Modifier.align(Alignment.Center), onClick = onClick, enabled = enabled()
     ) {
         Text(
             text = stringResource(id = text),

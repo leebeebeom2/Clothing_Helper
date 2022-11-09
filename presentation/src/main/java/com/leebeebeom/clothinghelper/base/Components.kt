@@ -67,9 +67,11 @@ fun SimpleWidthSpacer(dp: Int) = Spacer(modifier = Modifier.width(dp.dp))
 
 @Composable
 fun SimpleToast(@StringRes text: () -> Int?, shownToast: () -> Unit) =
-    text()?.let {
-        Toast.makeText(LocalContext.current, stringResource(id = it), Toast.LENGTH_SHORT).show()
-        shownToast()
+    Box{
+        text()?.let {
+            Toast.makeText(LocalContext.current, stringResource(id = it), Toast.LENGTH_SHORT).show()
+            shownToast()
+        }
     }
 
 @OptIn(ExperimentalAnimationGraphicsApi::class)

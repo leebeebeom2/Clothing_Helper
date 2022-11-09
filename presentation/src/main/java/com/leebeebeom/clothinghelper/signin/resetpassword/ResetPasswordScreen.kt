@@ -7,21 +7,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.listSaver
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.*
-import com.leebeebeom.clothinghelper.signin.base.BaseState
-import com.leebeebeom.clothinghelper.signin.base.EmailState
+import com.leebeebeom.clothinghelper.base.MaxWidthButton
+import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.base.SimpleToast
 import com.leebeebeom.clothinghelper.signin.base.EmailTextField
 
 /*
@@ -38,17 +33,14 @@ import com.leebeebeom.clothinghelper.signin.base.EmailTextField
 
  */
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun ResetPasswordScreen(
     viewModel: ResetPasswordViewModel = hiltViewModel(),
-    state: ResetPasswordState = rememberResetPasswordState()
+    uiStates: ResetPasswordUIState = viewModel.uiStates
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    if (uiState.isTaskSuccess) {
+    if (uiStates.isTaskSuccess) {
         (LocalContext.current as ComponentActivity).onBackPressedDispatcher.onBackPressed()
-        viewModel.updateTaskSuccess(false)
+        uiStates.updateIsTaskSuccess(false)
     }
 
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
@@ -59,46 +51,20 @@ fun ResetPasswordScreen(
         )
 
         EmailTextField(
-            email = state.email,
-            error = uiState.emailError,
-            updateError = viewModel::updateEmailError,
-            onEmailChange = state::onEmailChange
+            email = uiStates.email,
+            error = { uiStates.emailError },
+            updateError = uiStates::updateEmailError,
+            onEmailChange = uiStates::onEmailChange
         )
 
         SimpleHeightSpacer(dp = 12)
-        MaxWidthButton(state = rememberMaxWidthButtonState(
+        MaxWidthButton(
             text = R.string.check,
-            enabled = state.isTextNotBlank && uiState.isNotError
-        ),
-            onClick = { viewModel.sendResetPasswordEmail(state.email.trim()) })
+            enabled = { uiStates.buttonEnabled },
+            onClick = viewModel::sendResetPasswordEmail
+        )
         SimpleHeightSpacer(dp = 80)
     }
 
-    SimpleToast(text = uiState.toastText, shownToast = viewModel::toastShown)
+    SimpleToast(text = { uiStates.toastText }, shownToast = uiStates::toastShown)
 }
-
-data class ResetPasswordState(
-    override var email: String = "",
-    private val initialIsEmailEmpty: Boolean = true,
-) : BaseState(), EmailState {
-    private var isEmailEmpty by mutableStateOf(initialIsEmailEmpty)
-
-    override val isTextNotBlank: Boolean
-        get() = !isEmailEmpty
-
-    override fun onEmailChange(email: String) {
-        super.onEmailChange(email)
-        isEmailEmpty = this.email.isBlank()
-    }
-
-    companion object {
-        val Saver: Saver<ResetPasswordState, *> = listSaver(
-            save = { listOf(it.email, it.isEmailEmpty) },
-            restore = { ResetPasswordState(it[0] as String, it[1] as Boolean) }
-        )
-    }
-}
-
-@Composable
-fun rememberResetPasswordState() =
-    rememberSaveable(saver = ResetPasswordState.Saver) { ResetPasswordState() }

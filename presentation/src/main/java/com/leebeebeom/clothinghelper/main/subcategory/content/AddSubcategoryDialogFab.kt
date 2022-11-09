@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.main.subcategory.content
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -18,6 +17,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.SimpleIcon
+import com.leebeebeom.clothinghelper.main.subcategory.BaseSubCategoryDialogState
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryTextFieldDialog
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
@@ -26,7 +26,8 @@ fun BoxScope.AddSubcategoryDialogFab(
     onPositiveButtonClick: (String) -> Unit,
     subCategories: () -> List<SubCategory>
 ) {
-    val state = rememberSaveable(saver = AddSubCategoryDialogState.Saver ) { AddSubCategoryDialogState() }
+    val state =
+        rememberSaveable(saver = AddSubCategoryDialogState.Saver) { AddSubCategoryDialogState() }
 
     FloatingActionButton(
         modifier = Modifier
@@ -54,35 +55,17 @@ fun BoxScope.AddSubcategoryDialogFab(
     )
 }
 
-class AddSubCategoryDialogState(initialText: String = "") {
-    var text: String = initialText
-        private set
-
-    var textFieldValue by mutableStateOf(TextFieldValue(text))
-        private set
-
-    var error: Int? by mutableStateOf(null)
-        private set
-
-    var showDialog by mutableStateOf(false)
+class AddSubCategoryDialogState(
+    initialText: String = "",
+    initialError: Int? = null,
+    initialShowDialog: Boolean = false,
+):BaseSubCategoryDialogState(initialText, initialError) {
+    var showDialog by mutableStateOf(initialShowDialog)
         private set
 
     fun showDialog() {
         showDialog = true
     }
-
-    fun updateError(@StringRes error: Int) {
-        this.error = error
-    }
-
-    val positiveButtonEnabled by derivedStateOf { text.isNotBlank() && error == null }
-
-    fun onValueChange(newTextFiled: TextFieldValue) {
-        if (text != newTextFiled.text) error = null
-        text = newTextFiled.text
-        textFieldValue = newTextFiled
-    }
-
     fun onDismiss() {
         showDialog = false
         text = ""
@@ -97,8 +80,14 @@ class AddSubCategoryDialogState(initialText: String = "") {
 
     companion object {
         val Saver: Saver<AddSubCategoryDialogState, *> = listSaver(
-            save = { listOf(it.text) },
-            restore = { AddSubCategoryDialogState(it[0]) }
+            save = { listOf(it.text, it.error, it.showDialog) },
+            restore = {
+                AddSubCategoryDialogState(
+                    it[0] as String,
+                    it[1] as? Int,
+                    it[2] as Boolean
+                )
+            }
         )
     }
 }

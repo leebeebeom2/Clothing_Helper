@@ -14,7 +14,7 @@ import com.leebeebeom.clothinghelper.base.FinishActivityBackHandler
 import com.leebeebeom.clothinghelper.main.detail.DetailScreen
 import com.leebeebeom.clothinghelper.main.maincategory.MainCategoryScreen
 import com.leebeebeom.clothinghelper.main.root.EssentialMenus
-import com.leebeebeom.clothinghelper.main.root.MainScreenRoot
+import com.leebeebeom.clothinghelper.main.root.MainRoot
 import com.leebeebeom.clothinghelper.main.setting.SettingScreen
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryScreen
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
@@ -41,9 +41,8 @@ sealed class MainDestinations(val route: String) {
 }
 
 @Composable
-fun MainNavHost(state: MainNavHostState = rememberMainNavHostState()) {
-
-    MainScreenRoot(
+fun MainNavHost(state: MainNavHostState = rememberMainNavHostState()) =
+    MainRoot(
         onEssentialMenuClick = state::onEssentialMenuClick,
         onMainCategoryClick = state::navigateToSubCategory,
         onSubCategoryClick = state::navigateToDetail,
@@ -85,10 +84,8 @@ fun MainNavHost(state: MainNavHostState = rememberMainNavHostState()) {
                 )
             }
         }
+        FinishActivityBackHandler()
     }
-
-    FinishActivityBackHandler()
-}
 
 data class MainNavHostState(val navController: NavHostController) {
     fun onEssentialMenuClick(essentialMenu: EssentialMenus) = when (essentialMenu) {

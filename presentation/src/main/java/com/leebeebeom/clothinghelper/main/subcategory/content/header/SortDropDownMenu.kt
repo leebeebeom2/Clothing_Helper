@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -28,27 +29,33 @@ import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
 
 @Composable
 fun SortDropdownMenu(
-    showDropDownMenu: Boolean,
-    sort: SubCategorySortPreferences,
+    showDropDownMenu: () -> Boolean,
+    sort: () -> SubCategorySortPreferences,
     onSortClick: (SubCategorySort) -> Unit,
     onOrderClick: (SortOrder) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val selectedSortRes =
-        when (sort.sort) {
-            SubCategorySort.NAME -> R.string.sort_name
-            SubCategorySort.CREATE -> R.string.sort_create_date
+    val selectedSortRes by remember {
+        derivedStateOf {
+            when (sort().sort) {
+                SubCategorySort.NAME -> R.string.sort_name
+                SubCategorySort.CREATE -> R.string.sort_create_date
+            }
         }
+    }
 
-    val selectedOrderRes =
-        when (sort.sortOrder) {
-            SortOrder.ASCENDING -> R.string.sort_Ascending
-            SortOrder.DESCENDING -> R.string.sort_Descending
+    val selectedOrderRes by remember {
+        derivedStateOf {
+            when (sort().sortOrder) {
+                SortOrder.ASCENDING -> R.string.sort_Ascending
+                SortOrder.DESCENDING -> R.string.sort_Descending
+            }
         }
+    }
 
     MaterialTheme(shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(20.dp))) {
         DropdownMenu(
-            expanded = showDropDownMenu,
+            expanded = showDropDownMenu(),
             onDismissRequest = onDismiss
         ) {
             Header()
@@ -61,13 +68,13 @@ fun SortDropdownMenu(
                 Column {
                     SortButton(
                         text = R.string.sort_name,
-                        selectedRes = selectedSortRes,
+                        selectedRes = { selectedSortRes },
                         onSortButtonClick = { onSortClick(SubCategorySort.NAME) }
                     )
                     SimpleHeightSpacer(dp = 8)
                     SortButton(
                         text = R.string.sort_create_date,
-                        selectedRes = selectedSortRes,
+                        selectedRes = { selectedSortRes },
                         onSortButtonClick = { onSortClick(SubCategorySort.CREATE) }
                     )
                 }
@@ -85,13 +92,13 @@ fun SortDropdownMenu(
                 Column {
                     SortButton(
                         text = R.string.sort_Ascending,
-                        selectedRes = selectedOrderRes,
+                        selectedRes = { selectedOrderRes },
                         onSortButtonClick = { onOrderClick(SortOrder.ASCENDING) }
                     )
                     SimpleHeightSpacer(dp = 8)
                     SortButton(
                         text = R.string.sort_Descending,
-                        selectedRes = selectedOrderRes,
+                        selectedRes = { selectedOrderRes },
                         onSortButtonClick = { onOrderClick(SortOrder.DESCENDING) }
                     )
                 }
@@ -101,7 +108,7 @@ fun SortDropdownMenu(
 }
 
 @Composable
-private fun Header() {
+private fun Header() =
     Column(modifier = Modifier.padding(start = 12.dp, top = 8.dp)) {
         Text(
             text = stringResource(R.string.sort),
@@ -111,16 +118,15 @@ private fun Header() {
         SimpleHeightSpacer(dp = 8)
         Divider()
     }
-}
 
 @Composable
 fun SortButton(
     @StringRes text: Int,
-    @StringRes selectedRes: Int,
+    @StringRes selectedRes: () -> Int,
     onSortButtonClick: () -> Unit
 ) {
     val strokeColor by animateColorAsState(
-        targetValue = if (text == selectedRes) MaterialTheme.colors.primary.copy(0.8f) else Color.Transparent,
+        targetValue = if (text == selectedRes()) MaterialTheme.colors.primary.copy(0.8f) else Color.Transparent,
         animationSpec = tween(durationMillis = 200)
     )
 

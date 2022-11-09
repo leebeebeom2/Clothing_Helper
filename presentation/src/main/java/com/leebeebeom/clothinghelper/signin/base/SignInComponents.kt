@@ -23,7 +23,7 @@ import com.leebeebeom.clothinghelper.base.CustomIconButton
 import com.leebeebeom.clothinghelper.base.MaxWidthButton
 
 @Composable
-fun VisibleIcon(isVisible: () -> Boolean, onClick: () -> Unit) =
+fun VisibleIcon(isVisible: () -> Boolean, onClick: () -> Unit) {
     CustomIconButton(
         drawable = if (isVisible()) R.drawable.ic_visibility_off else R.drawable.ic_visibility,
         tint = LocalContentColor.current.copy(0.4f),
@@ -31,6 +31,7 @@ fun VisibleIcon(isVisible: () -> Boolean, onClick: () -> Unit) =
         modifier = Modifier.size(24.dp),
         contentDescription = if (isVisible()) "closeEye" else "openEye"
     )
+}
 
 @Composable
 fun GoogleSignInButton(
@@ -58,12 +59,13 @@ fun GoogleSignInButton(
 }
 
 @Composable
-fun GoogleIcon() =
+fun GoogleIcon() {
     Image(
         imageVector = ImageVector.vectorResource(id = R.drawable.ic_google_icon),
         contentDescription = null,
         modifier = Modifier.padding(start = 8.dp)
     )
+}
 
 @Composable
 private fun getGso() = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

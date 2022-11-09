@@ -80,7 +80,7 @@ fun SignInScreen(
 }
 
 @Composable
-private fun SignUpText(onClick: () -> Unit) =
+private fun SignUpText(onClick: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
@@ -99,10 +99,11 @@ private fun SignUpText(onClick: () -> Unit) =
             )
         }
     }
+}
 
 
 @Composable
-private fun ForgotPasswordText(onClick: () -> Unit) =
+private fun ForgotPasswordText(onClick: () -> Unit) {
     Box(modifier = Modifier.fillMaxWidth()) {
         TextButton(
             modifier = Modifier.align(Alignment.CenterEnd), onClick = onClick
@@ -113,3 +114,4 @@ private fun ForgotPasswordText(onClick: () -> Unit) =
             )
         }
     }
+}

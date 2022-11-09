@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.signin.base.BaseEmailUIStates
+import com.leebeebeom.clothinghelper.signin.base.BaseEmailUIState
 import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.usecase.signin.ResetPasswordUseCase
@@ -38,7 +38,7 @@ class ResetPasswordViewModel @Inject constructor(private val resetPasswordUseCas
     }
 }
 
-class ResetPasswordUIState : BaseEmailUIStates() {
+class ResetPasswordUIState : BaseEmailUIState() {
     var isTaskSuccess by mutableStateOf(false)
         private set
 

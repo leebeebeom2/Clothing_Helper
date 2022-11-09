@@ -2,6 +2,7 @@ package com.leebeebeom.clothinghelper.main.root
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
@@ -40,17 +41,7 @@ fun DrawerMainCategory(
                 text = stringResource(id = mainCategory.name),
                 style = MaterialTheme.typography.subtitle1
             )
-            Text( // count
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 4.dp),
-                text = "(${subCategories().size})",
-                style = MaterialTheme.typography.caption.copy(
-                    LocalContentColor.current.copy(
-                        ContentAlpha.disabled
-                    )
-                )
-            )
+            TotalCount(subCategories = subCategories)
             ExpandIcon(
                 isLoading = isLoading,
                 isExpand = { isExpand },
@@ -85,25 +76,23 @@ private fun SubCategories(
     isExpand: () -> Boolean,
     subCategories: () -> List<SubCategory>,
     onClick: (SubCategory) -> Unit
+) = AnimatedVisibility(
+    visible = isExpand(),
+    enter = listExpand,
+    exit = listShrink
 ) {
-    AnimatedVisibility(
-        visible = isExpand(),
-        enter = listExpand,
-        exit = listShrink
-    ) {
-        Surface(color = MaterialTheme.colors.primary) {
-            Column {
-                for (subCategory in subCategories())
-                    key(subCategory.key) {
-                        SubCategory(subCategory = subCategory, onClick = { onClick(subCategory) })
-                    }
-            }
+    Surface(color = MaterialTheme.colors.primary) {
+        Column {
+            for (subCategory in subCategories())
+                key(subCategory.key) {
+                    SubCategory(name = { subCategory.name }, onClick = { onClick(subCategory) })
+                }
         }
     }
 }
 
 @Composable
-private fun SubCategory(subCategory: SubCategory, onClick: () -> Unit) {
+private fun SubCategory(name: () -> String, onClick: () -> Unit) {
     DrawerContentRow(
         modifier = Modifier
             .heightIn(40.dp)
@@ -112,8 +101,22 @@ private fun SubCategory(subCategory: SubCategory, onClick: () -> Unit) {
     ) {
         DrawerContentText(
             modifier = Modifier.padding(start = 12.dp),
-            text = subCategory.name,
+            text = name,
             style = MaterialTheme.typography.subtitle2
         )
     }
 }
+
+@Composable
+private fun RowScope.TotalCount(subCategories: () -> List<SubCategory>) =
+    Text(
+        modifier = Modifier
+            .weight(1f)
+            .padding(start = 4.dp),
+        text = "(${subCategories().size})",
+        style = MaterialTheme.typography.caption.copy(
+            LocalContentColor.current.copy(
+                ContentAlpha.disabled
+            )
+        )
+    )

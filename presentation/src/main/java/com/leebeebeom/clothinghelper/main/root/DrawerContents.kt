@@ -31,7 +31,7 @@ fun DrawerContents(
     user: () -> User?,
     isLoading: () -> Boolean,
     isAllExpand: () -> Boolean,
-    allSubCategories: () -> List<List<SubCategory>>,
+    subCategories: (SubCategoryParent) -> List<SubCategory>,
     state: DrawerContentsState = rememberDrawerContentsState(),
     onEssentialMenuClick: (essentialMenu: EssentialMenus) -> Unit,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
@@ -60,7 +60,7 @@ fun DrawerContents(
             items(state.mainCategories, key = { it.name }) {
                 DrawerMainCategory(
                     mainCategory = it,
-                    subCategories = { allSubCategories()[it.type.ordinal] },
+                    subCategories = subCategories,
                     isLoading = isLoading,
                     isAllExpand = isAllExpand,
                     onMainCategoryClick = onMainCategoryClick,

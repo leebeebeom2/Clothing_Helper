@@ -18,10 +18,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.Anime.Error.errorIn
@@ -39,7 +36,7 @@ fun MaxWidthTextField(
     onValueChange: (TextFieldValue) -> Unit,
     onFocusChanged: (FocusState) -> Unit,
     trailingIcon: @Composable (() -> Unit)? = null,
-    visualTransformation: VisualTransformation = VisualTransformation.None,
+    isVisible: ()->Boolean = { true }
 ) {
     Column {
         OutlinedTextField(
@@ -52,7 +49,7 @@ fun MaxWidthTextField(
             label = { Text(text = stringResource(id = state.label)) },
             placeholder = { Text(text = stringResource(id = state.placeholder)) },
             isError = error() != null,
-            visualTransformation = visualTransformation,
+            visualTransformation = if (isVisible()) VisualTransformation.None else PasswordVisualTransformation(),
             singleLine = true,
             maxLines = 1,
             keyboardOptions = state.keyboardOptions,

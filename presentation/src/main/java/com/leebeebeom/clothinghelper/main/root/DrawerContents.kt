@@ -60,7 +60,7 @@ fun DrawerContents(
             items(state.mainCategories, key = { it.name }) {
                 DrawerMainCategory(
                     mainCategory = it,
-                    subCategories = subCategories,
+                    subCategories = { subCategories(it.type) },
                     isLoading = isLoading,
                     isAllExpand = isAllExpand,
                     onMainCategoryClick = onMainCategoryClick,

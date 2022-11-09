@@ -1,9 +1,11 @@
 package com.leebeebeom.clothinghelper.main.subcategory
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.text.TextRange
@@ -13,54 +15,43 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
 @Composable
 fun EditSubCategoryNameDialog(
-    firstSelectedSubCategory: SubCategory,
-    subCategories: List<SubCategory>,
-    onPositiveButtonClick: (String, SubCategory) -> Unit,
+    showDialog: () -> Boolean,
+    initialName: () -> String,
+    subCategories: () -> List<SubCategory>,
+    onPositiveButtonClick: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val state = rememberEditSubCategoryNameDialogState(
-        initialName = firstSelectedSubCategory.name,
-        subCategories = subCategories
-    )
-    val initialed = rememberSaveable { mutableStateOf(false) }
-    if (!initialed.value) {
-        state.setInitialText(firstSelectedSubCategory.name)
-        initialed.value = true
+    if (showDialog()) {
+        val state =
+            rememberSaveable(saver = EditSubCategoryNameDialogState.Saver) {
+                EditSubCategoryNameDialogState(initialName())
+            }
+        val subCategoryNames by remember { derivedStateOf { subCategories().map { it.name } } }
+
+        SubCategoryTextFieldDialog(
+            showDialog = showDialog,
+            title = R.string.edit_category_name,
+            error = { state.error },
+            onDismiss = onDismiss,
+            textFieldValue = { state.textFieldValue },
+            onPositiveButtonClick = { onPositiveButtonClick(state.text.trim()) },
+            positiveButtonEnabled = { state.positiveButtonEnabled },
+            onValueChange = {
+                state.onValueChange(it)
+                if (subCategoryNames.contains(it.text.trim())) state.updateError(R.string.error_same_category_name)
+            },
+            onFocusChanged = state::onFocusChange
+        )
     }
 
-    SubCategoryTextFieldDialog(
-        titleRes = R.string.edit_category_name,
-        error = state.error,
-        onDismiss = onDismiss,
-        textFieldValue = state.textFieldValue,
-        onPositiveButtonClick = {
-            onPositiveButtonClick(
-                state.text.trim(),
-                firstSelectedSubCategory
-            )
-        },
-        positiveButtonEnabled = state.positiveButtonEnabled,
-        onValueChange = state::onValueChange,
-        onFocusChanged = state::onFocusChange
-    )
 }
 
-data class EditSubCategoryNameDialogState(
-    val initialName: String,
-    override val errorState: MutableState<Int?>,
-    override val subCategories: List<SubCategory>,
-    override val textState: MutableState<String>,
-    override val textFieldValueState: MutableState<TextFieldValue>,
-) : BaseSubCategoryTextFieldDialogState() {
-    fun setInitialText(text: String) {
-        textState.value = text
-        textFieldValueState.value =
-            TextFieldValue(text = text, TextRange(0, text.length))
-    }
+class EditSubCategoryNameDialogState(private val initialName: String, initialError: Int? = null) :
+    BaseSubCategoryDialogState(initialName, initialError) {
 
     override fun onValueChange(newTextFiled: TextFieldValue) {
         super.onValueChange(newTextFiled)
-        if (newTextFiled.text.trim() == initialName) errorState.value = null
+        if (newTextFiled.text.trim() == initialName) error = null
     }
 
     override val positiveButtonEnabled: Boolean
@@ -68,28 +59,13 @@ data class EditSubCategoryNameDialogState(
 
     fun onFocusChange(newFocusState: FocusState) {
         if (newFocusState.hasFocus)
-            textFieldValueState.value =
-                textFieldValueState.value.copy(
-                    selection = TextRange(0, textFieldValueState.value.text.length)
-                )
+            textFieldValue = textFieldValue.copy(selection = TextRange(0, text.length))
     }
-}
 
-@Composable
-fun rememberEditSubCategoryNameDialogState(
-    initialName: String,
-    textState: MutableState<String> = rememberSaveable { mutableStateOf("") },
-    errorState: MutableState<Int?> = rememberSaveable { mutableStateOf(null) },
-    textFieldValueState: MutableState<TextFieldValue> = remember {
-        mutableStateOf(TextFieldValue(textState.value))
-    },
-    subCategories: List<SubCategory>,
-) = remember(subCategories) {
-    EditSubCategoryNameDialogState(
-        initialName = initialName,
-        errorState = errorState,
-        subCategories = subCategories,
-        textState = textState,
-        textFieldValueState = textFieldValueState,
-    )
+    companion object {
+        val Saver: Saver<EditSubCategoryNameDialogState, *> = listSaver(
+            save = { listOf(it.text, it.error) },
+            restore = { EditSubCategoryNameDialogState(it[0] as String, it[1] as? Int) }
+        )
+    }
 }

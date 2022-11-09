@@ -37,6 +37,7 @@ import kotlinx.coroutines.launch
 드로어가 열려있을때 뒤로 가기 시 드로어 닫히는지 확인
 
 TODO 메인 카테고리 롱클릭 시 서브카테고리 추가 컨텍스트 메뉴
+TODO 카운트 로딩 시 숨김
  */
 
 @Composable
@@ -49,42 +50,44 @@ fun MainRoot(
     uiStates: BaseIsAllExpandState = viewModel.uiStates,
     state: MainRootState = rememberMainRootState(),
     content: @Composable (PaddingValues, backHandler: @Composable () -> Unit) -> Unit
-) = ClothingHelperTheme {
-    Scaffold(scaffoldState = state.scaffoldState,
-        drawerContent = {
-            DrawerContents(
-                user = { uiStates.user },
-                isLoading = { uiStates.isLoading },
-                isAllExpand = { uiStates.isAllExpand },
-                subCategories = uiStates::getSubCategories,
-                onEssentialMenuClick = {
-                    onEssentialMenuClick(it)
-                    state.onDrawerClose()
-                },
-                onMainCategoryClick = {
-                    onMainCategoryClick(it)
-                    state.onDrawerClose()
-                },
-                onSubCategoryClick = {
-                    onSubCategoryClick(it)
-                    state.onDrawerClose()
-                },
-                onSettingIconClick = {
-                    onSettingIconClick()
-                    state.onDrawerClose()
-                },
-                allExpandIconClick = viewModel::toggleAllExpand,
-            )
-        },
-        drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
-        drawerBackgroundColor = MaterialTheme.colors.primary,
-        content = {
-            content(it) {
-                BackHandler(enabled = state.drawerState.isOpen, onBack = state::onDrawerClose)
-            }
-        })
-    SimpleToast(text = { uiStates.toastText }, shownToast = uiStates::toastShown)
-    BackHandler(enabled = state.drawerState.isOpen, onBack = state::onDrawerClose)
+) {
+    ClothingHelperTheme {
+        Scaffold(scaffoldState = state.scaffoldState,
+            drawerContent = {
+                DrawerContents(
+                    user = { uiStates.user },
+                    isLoading = { uiStates.isLoading },
+                    isAllExpand = { uiStates.isAllExpand },
+                    subCategories = uiStates::getSubCategories,
+                    onEssentialMenuClick = {
+                        onEssentialMenuClick(it)
+                        state.onDrawerClose()
+                    },
+                    onMainCategoryClick = {
+                        onMainCategoryClick(it)
+                        state.onDrawerClose()
+                    },
+                    onSubCategoryClick = {
+                        onSubCategoryClick(it)
+                        state.onDrawerClose()
+                    },
+                    onSettingIconClick = {
+                        onSettingIconClick()
+                        state.onDrawerClose()
+                    },
+                    allExpandIconClick = viewModel::toggleAllExpand,
+                )
+            },
+            drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
+            drawerBackgroundColor = MaterialTheme.colors.primary,
+            content = {
+                content(it) {
+                    BackHandler(enabled = state.drawerState.isOpen, onBack = state::onDrawerClose)
+                }
+            })
+        SimpleToast(text = { uiStates.toastText }, shownToast = uiStates::toastShown)
+        BackHandler(enabled = state.drawerState.isOpen, onBack = state::onDrawerClose)
+    }
 }
 
 class MainRootState(

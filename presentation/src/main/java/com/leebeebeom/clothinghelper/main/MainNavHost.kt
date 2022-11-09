@@ -17,6 +17,7 @@ import com.leebeebeom.clothinghelper.main.root.EssentialMenus
 import com.leebeebeom.clothinghelper.main.root.MainRoot
 import com.leebeebeom.clothinghelper.main.setting.SettingScreen
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryScreen
+import com.leebeebeom.clothinghelper.util.navigateSingleTop
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
@@ -111,7 +112,3 @@ data class MainNavHostState(val navController: NavHostController) {
 @Composable
 fun rememberMainNavHostState(navController: NavHostController = rememberNavController()) =
     remember { MainNavHostState(navController) }
-
-fun NavHostController.navigateSingleTop(route: String) = navigate(route) {
-    launchSingleTop = true
-}

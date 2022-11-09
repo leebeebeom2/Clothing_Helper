@@ -1,18 +1,18 @@
 package com.leebeebeom.clothinghelper.signin.signin
 
 import androidx.annotation.StringRes
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUIState
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
 import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
 import com.leebeebeom.clothinghelperdomain.model.AuthResult
 import com.leebeebeom.clothinghelperdomain.usecase.signin.GoogleSignInUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.signin.SignInUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,8 +21,7 @@ class SignInViewModel @Inject constructor(
     private val signInUseCase: SignInUseCase, googleSignInUseCase: GoogleSignInUseCase
 ) : GoogleSignInUpViewModel(googleSignInUseCase) {
 
-    private val _uiState = MutableStateFlow(SignInUIState())
-    val uiState get() = _uiState.asStateFlow()
+    val uiState = SignInUIStates()
 
     fun signInWithEmailAndPassword(email: String, password: String) =
         viewModelScope.launch {
@@ -31,33 +30,48 @@ class SignInViewModel @Inject constructor(
                 is AuthResult.Success -> showToast(R.string.sign_in_complete)
                 is AuthResult.Fail -> setFireBaseError(
                     exception = result.exception,
-                    updateEmailError = ::updateEmailError,
-                    updatePasswordError = ::updatePasswordError,
+                    updateEmailError = uiState::updateEmailError,
+                    updatePasswordError = uiState::updatePasswordError,
                     showToast = ::showToast
                 )
                 else -> showToast(R.string.unknown_error)
             }
         }
 
-    fun updatePasswordError(@StringRes error: Int?) =
-        _uiState.update { it.copy(passwordError = error) }
-
-    override fun updateEmailError(@StringRes error: Int?) =
-        _uiState.update { it.copy(emailError = error) }
-
     override fun updateGoogleButtonEnabled(enabled: Boolean) =
-        _uiState.update { it.copy(googleButtonEnabled = enabled) }
+        uiState.updateGoogleButtonEnabled(enabled)
 
-    override fun showToast(toastText: Int?) = _uiState.update { it.copy(toastText = toastText) }
+    override fun showToast(text: Int) = uiState.showToast(text)
 
-    override fun toastShown() = _uiState.update { it.copy(toastText = null) }
+    fun toastShown() = uiState.showToast(null)
 }
 
-data class SignInUIState(
-    override val toastText: Int? = null,
-    override val googleButtonEnabled: Boolean = true,
-    @StringRes val emailError: Int? = null,
-    @StringRes val passwordError: Int? = null
-) : GoogleSignInUIState() {
-    override val isNotError get() = emailError == null && passwordError == null
+data class SignInUIStates(
+    private val _toastText: MutableState<Int?> = mutableStateOf(null),
+    private val _googleButtonEnabled: MutableState<Boolean> = mutableStateOf(false),
+    private val _emailError: MutableState<Int?> = mutableStateOf(null),
+    private val _passwordError: MutableState<Int?> = mutableStateOf(null)
+) {
+    val toastText by derivedStateOf { _toastText.value }
+    val googleButtonEnabled by derivedStateOf { _googleButtonEnabled.value }
+    val emailError by derivedStateOf { _emailError.value }
+    val passwordError by derivedStateOf { _passwordError.value }
+
+    fun updateEmailError(@StringRes error: Int?) {
+        _emailError.value = error
+    }
+
+    fun updatePasswordError(@StringRes error: Int?) {
+        _passwordError.value = error
+    }
+
+    fun updateGoogleButtonEnabled(enabled: Boolean) {
+        _googleButtonEnabled.value = enabled
+    }
+
+    fun showToast(@StringRes text: Int?) {
+        _toastText.value = text
+    }
+
+    val isNotError by derivedStateOf { emailError == null && passwordError == null }
 }

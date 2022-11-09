@@ -1,17 +1,12 @@
 package com.leebeebeom.clothinghelper.signin.signup
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.listSaver
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.*
 import com.leebeebeom.clothinghelper.signin.base.*
@@ -48,7 +43,7 @@ import com.leebeebeom.clothinghelper.signin.base.*
 @Composable
 fun SignUpScreen(
     viewModel: SignUpViewModel = hiltViewModel(),
-    uiStates: SignUpUIStates = viewModel.uiStates
+    uiStates: SignUpUIState = viewModel.uiStates
 ) {
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
         EmailTextField(

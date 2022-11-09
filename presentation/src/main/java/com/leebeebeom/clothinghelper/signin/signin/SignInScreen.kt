@@ -34,7 +34,7 @@ fun SignInScreen(
     onForgotPasswordClick: () -> Unit,
     onEmailSignUpClick: () -> Unit,
     viewModel: SignInViewModel = hiltViewModel(),
-    uiStates: BaseSignInUpUIStates = viewModel.uiState
+    uiStates: BaseSignInUpUIState = viewModel.uiState
 ) {
     Column(
         modifier = Modifier

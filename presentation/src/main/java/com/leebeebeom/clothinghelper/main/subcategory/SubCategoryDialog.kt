@@ -65,9 +65,9 @@ open class BaseSubCategoryDialogState(
         this.error = error
     }
 
-    val positiveButtonEnabled by derivedStateOf { text.isNotBlank() && error == null }
+    open val positiveButtonEnabled by derivedStateOf { text.trim().isNotBlank() && error == null }
 
-    fun onValueChange(newTextFiled: TextFieldValue) {
+    open fun onValueChange(newTextFiled: TextFieldValue) {
         if (text != newTextFiled.text) error = null
         text = newTextFiled.text
         textFieldValue = newTextFiled

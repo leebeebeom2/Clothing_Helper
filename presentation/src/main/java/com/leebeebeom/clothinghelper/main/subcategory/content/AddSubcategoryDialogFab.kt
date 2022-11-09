@@ -59,13 +59,14 @@ class AddSubCategoryDialogState(
     initialText: String = "",
     initialError: Int? = null,
     initialShowDialog: Boolean = false,
-):BaseSubCategoryDialogState(initialText, initialError) {
+) : BaseSubCategoryDialogState(initialText, initialError) {
     var showDialog by mutableStateOf(initialShowDialog)
         private set
 
     fun showDialog() {
         showDialog = true
     }
+
     fun onDismiss() {
         showDialog = false
         text = ""

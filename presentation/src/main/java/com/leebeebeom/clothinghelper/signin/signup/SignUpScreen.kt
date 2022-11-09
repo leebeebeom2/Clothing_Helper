@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.*
 import com.leebeebeom.clothinghelper.signin.base.*
@@ -46,173 +45,55 @@ import com.leebeebeom.clothinghelper.signin.base.*
 
  */
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun SignUpScreen(
     viewModel: SignUpViewModel = hiltViewModel(),
-    state: SignUpState = rememberSignUpState()
+    uiStates: SignUpUIStates = viewModel.uiStates
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
         EmailTextField(
-            email = state.email,
-            error = uiState.emailError,
-            updateError = viewModel::updateEmailError,
-            onEmailChange = state::onEmailChange
+            email = uiStates.email,
+            error = { uiStates.emailError },
+            updateError = uiStates::updateEmailError,
+            onEmailChange = uiStates::onEmailChange
         )
 
-        NameTextField(name = state.name, onNameChange = state::onNameChange)
+        NameTextField(name = uiStates.name, onNameChange = uiStates::onNameChange)
 
         PasswordTextField(
-            password = state.password,
-            error = state.passwordError,
+            password = uiStates.password,
+            error = { uiStates.passwordError },
             imeAction = ImeAction.Next,
-            onPasswordChange = {
-                state.onPasswordChange(it)
-                val newText = it.trim()
-                if (newText.isNotBlank()) {
-                    if (newText.length < 6)
-                        state.updatePasswordError(R.string.error_weak_password)
-                    if (state.passwordConfirm.isNotBlank() && newText != state.passwordConfirm)
-                        state.updatePasswordConfirmError(R.string.error_password_confirm_not_same)
-                    else state.updatePasswordConfirmError(null)
-                }
-            },
-            updateError = state::updatePasswordError
+            onPasswordChange = uiStates::onPasswordChange,
+            updateError = uiStates::updatePasswordError
         )
 
         PasswordTextField(
             label = R.string.password_confirm,
-            password = state.passwordConfirm,
-            error = state.passwordConfirmError,
+            password = uiStates.passwordConfirm,
+            error = { uiStates.passwordConfirmError },
             imeAction = ImeAction.Done,
-            onPasswordChange = {
-                state.onPasswordConfirmChange(it)
-                if (it.isNotBlank() && state.password.isNotBlank() && it.trim() != state.password)
-                    state.updatePasswordConfirmError(R.string.error_password_confirm_not_same)
-            },
-            updateError = state::updatePasswordConfirmError
+            onPasswordChange = uiStates::onPasswordConfirmChange,
+            updateError = uiStates::updatePasswordConfirmError
         )
 
         SimpleHeightSpacer(dp = 12)
         MaxWidthButton(
-            state = rememberMaxWidthButtonState(
-                text = R.string.sign_up,
-                enabled = uiState.isNotError && state.isTextNotBlank && state.isNotError
-            ),
-            onClick = {
-                viewModel.signUpWithEmailAndPassword(
-                    email = state.email.trim(),
-                    name = state.name.trim(),
-                    password = state.password.trim(),
-                )
-            }
+            text = R.string.sign_up,
+            enabled = { uiStates.buttonEnabled },
+            onClick = viewModel::signUpWithEmailAndPassword,
         )
         SimpleHeightSpacer(dp = 8)
         OrDivider()
         SimpleHeightSpacer(dp = 8)
         // 프리뷰 시 주석처리
         GoogleSignInButton(
-            state = rememberGoogleButtonState(enabled = uiState.googleButtonEnabled),
+            enabled = { uiStates.googleButtonEnabled },
             onActivityResult = viewModel::signInWithGoogleEmail,
             disabled = { viewModel.updateGoogleButtonEnabled(enabled = false) }
         )
         SimpleHeightSpacer(dp = 150)
     }
 
-    SimpleToast(text = uiState.toastText, shownToast = viewModel::toastShown)
+    SimpleToast(text = { uiStates.toastText }, shownToast = uiStates::toastShown)
 }
-
-data class SignUpState(
-    override var email: String = "",
-    var name: String = "",
-    override var password: String = "",
-    var passwordConfirm: String = "",
-    @StringRes private val initialPasswordError: Int? = null,
-    @StringRes private val initialPasswordConfirmError: Int? = null,
-    private val initialIsEmailEmpty: Boolean = true,
-    private val initialIsNameEmpty: Boolean = true,
-    private val initialIsPasswordEmpty: Boolean = true,
-    private val initialIsPasswordConfirmEmpty: Boolean = true
-) : BaseState(), EmailState, PasswordState {
-    var passwordError by mutableStateOf(initialPasswordError)
-        private set
-    var passwordConfirmError by mutableStateOf(initialPasswordConfirmError)
-        private set
-
-    private var isEmailEmpty by mutableStateOf(initialIsEmailEmpty)
-    private var isNameEmpty by mutableStateOf(initialIsEmailEmpty)
-    private var isPasswordEmpty by mutableStateOf(initialIsPasswordEmpty)
-    private var isPasswordConfirmEmpty by mutableStateOf(initialIsPasswordEmpty)
-
-    override fun onEmailChange(email: String) {
-        super.onEmailChange(email)
-        isEmailEmpty = this.email.isBlank()
-    }
-
-    fun onNameChange(name: String) {
-        this.name = name.trim()
-        isNameEmpty = this.name.isBlank()
-    }
-
-    override fun onPasswordChange(password: String) {
-        super.onPasswordChange(password)
-        isPasswordEmpty = this.password.isBlank()
-    }
-
-    fun onPasswordConfirmChange(passwordConfirm: String) {
-        this.passwordConfirm = passwordConfirm.trim()
-        isPasswordConfirmEmpty = this.passwordConfirm.isBlank()
-    }
-
-    fun updatePasswordError(@StringRes error: Int?) {
-        passwordError = error
-    }
-
-    fun updatePasswordConfirmError(@StringRes error: Int?) {
-        passwordConfirmError = error
-    }
-
-    override val isTextNotBlank
-        get() = !isEmailEmpty && !isNameEmpty && !isPasswordEmpty && !isPasswordConfirmEmpty
-
-    val isNotError
-        get() = passwordError == null && passwordConfirmError == null
-
-    companion object {
-        val Saver: Saver<SignUpState, *> = listSaver(
-            save = {
-                listOf(
-                    it.email,
-                    it.name,
-                    it.password,
-                    it.passwordConfirm,
-                    it.passwordError,
-                    it.passwordConfirmError,
-                    it.isEmailEmpty,
-                    it.isNameEmpty,
-                    it.isPasswordEmpty,
-                    it.isPasswordConfirmEmpty
-                )
-            },
-            restore = {
-                SignUpState(
-                    it[0] as String,
-                    it[1] as String,
-                    it[2] as String,
-                    it[3] as String,
-                    it[4] as? Int,
-                    it[5] as? Int,
-                    it[6] as Boolean,
-                    it[7] as Boolean,
-                    it[8] as Boolean,
-                    it[9] as Boolean,
-                )
-            }
-        )
-    }
-}
-
-@Composable
-fun rememberSignUpState() = rememberSaveable(saver = SignUpState.Saver) { SignUpState() }

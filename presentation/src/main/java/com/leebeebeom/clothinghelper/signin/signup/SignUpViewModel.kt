@@ -1,9 +1,13 @@
 package com.leebeebeom.clothinghelper.signin.signup
 
 import androidx.annotation.StringRes
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUIState
+import com.leebeebeom.clothinghelper.signin.base.BaseSignInUpUIStates
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
 import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
 import com.leebeebeom.clothinghelperdomain.model.AuthResult
@@ -11,9 +15,6 @@ import com.leebeebeom.clothinghelperdomain.usecase.signin.GoogleSignInUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.signin.PushInitialSubCategoriesFailed
 import com.leebeebeom.clothinghelperdomain.usecase.signin.SignUpUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,39 +23,67 @@ class SignUpViewModel @Inject constructor(
     private val signUpUseCase: SignUpUseCase, googleSignInUseCase: GoogleSignInUseCase
 ) : GoogleSignInUpViewModel(googleSignInUseCase) {
 
-    private val _uiState = MutableStateFlow(SignUpUIState())
-    val uiState get() = _uiState.asStateFlow()
+    val uiStates = SignUpUIStates()
 
-    fun signUpWithEmailAndPassword(email: String, name: String, password: String) =
-        viewModelScope.launch {
-            when (val authResult = signUpUseCase(email = email, password = password, name = name)) {
-                is AuthResult.Success -> showToast(R.string.sign_up_complete)
-                is AuthResult.Fail ->
-                    if (authResult.exception?.message == PushInitialSubCategoriesFailed)
-                        showToast(R.string.initial_sub_category_push_failed)
-                    else setFireBaseError(
-                        exception = authResult.exception,
-                        updateEmailError = ::updateEmailError,
-                        updatePasswordError = {},
-                        showToast = ::showToast
-                    )
-            }
+    fun signUpWithEmailAndPassword() = viewModelScope.launch {
+        when (val result = signUpUseCase(
+            email = uiStates.email, password = uiStates.password, name = uiStates.name
+        )) {
+            is AuthResult.Success -> showToast(R.string.sign_up_complete)
+            is AuthResult.Fail -> if (result.exception?.message == PushInitialSubCategoriesFailed) showToast(
+                R.string.initial_sub_category_push_failed
+            )
+            else setFireBaseError(
+                exception = result.exception,
+                updateEmailError = uiStates::updateEmailError,
+                updatePasswordError = {},
+                showToast = ::showToast
+            )
         }
+    }
 
     override fun updateGoogleButtonEnabled(enabled: Boolean) =
-        _uiState.update { it.copy(googleButtonEnabled = enabled) }
+        uiStates.updateGoogleButtonEnabled(enabled)
 
-    override fun showToast(toastText: Int?) = _uiState.update { it.copy(toastText = toastText) }
-
-    override fun toastShown() = _uiState.update { it.copy(toastText = null) }
-
-    override fun updateEmailError(error: Int?) = _uiState.update { it.copy(emailError = error) }
+    override fun showToast(text: Int) = uiStates.showToast(text)
 }
 
-data class SignUpUIState(
-    @StringRes val emailError: Int? = null,
-    override val toastText: Int? = null,
-    override val googleButtonEnabled: Boolean = true
-) : GoogleSignInUIState() {
-    override val isNotError get() = emailError == null
+class SignUpUIStates : BaseSignInUpUIStates() {
+    @StringRes
+    private val _passwordConfirmError: MutableState<Int?> = mutableStateOf(null)
+
+    val passwordConfirmError by derivedStateOf { _passwordConfirmError.value }
+
+    var name = ""
+        private set
+    var passwordConfirm = ""
+        private set
+
+    fun onNameChange(name: String) {
+        this.name = name
+    }
+
+    override fun onPasswordChange(password: String) {
+        super.onPasswordChange(password)
+        if (password.isNotBlank()) {
+            if (password.length < 6) updatePasswordError(R.string.error_weak_password)
+            if (passwordConfirm.isNotBlank() && password != passwordConfirm) updatePasswordConfirmError(
+                R.string.error_password_confirm_not_same
+            )
+            else updatePasswordConfirmError(null)
+        }
+    }
+
+    fun onPasswordConfirmChange(passwordConfirm: String) {
+        this.passwordConfirm = passwordConfirm
+        if (passwordConfirm.isNotBlank() && password.isNotBlank() && passwordConfirm != password) updatePasswordConfirmError(
+            R.string.error_password_confirm_not_same
+        )
+    }
+
+    fun updatePasswordConfirmError(@StringRes error: Int?) {
+        _passwordConfirmError.value = error
+    }
+
+    override val buttonEnabled by derivedStateOf { super.buttonEnabled && passwordConfirm.isNotBlank() && passwordConfirmError == null }
 }

@@ -7,9 +7,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.input.VisualTransformation
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.MaxWidthTextField
 import com.leebeebeom.clothinghelper.base.rememberEmailTextFieldState
@@ -68,7 +66,7 @@ fun PasswordTextField(
                     textFieldValue.copy(selection = TextRange(textFieldValue.text.length))
         },
         trailingIcon = { VisibleIcon({ isVisible }) { isVisible = !isVisible } },
-        visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation()
+        isVisible = { isVisible }
     )
 }
 

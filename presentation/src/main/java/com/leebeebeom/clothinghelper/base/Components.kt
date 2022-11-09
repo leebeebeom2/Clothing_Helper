@@ -41,19 +41,24 @@ fun SimpleIcon(
 )
 
 @Composable
-fun CenterDotProgressIndicator(backGround: Color = Disabled, isLoading: () -> Boolean) {
-    if (isLoading()) Surface(color = backGround) {}
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .clickable(enabled = false) { }) {
-        DotProgressIndicator(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .semantics { contentDescription = "loading" },
-            size = 8.dp,
-            color = LocalContentColor.current.copy(ContentAlpha.medium)
-        )
-    }
+fun CenterDotProgressIndicator(
+    backGround: Color = Disabled,
+    isLoading: () -> Boolean,
+    content: @Composable () -> Unit = {}
+) {
+    if (isLoading()) Surface(color = backGround) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .clickable(enabled = false) { }) {
+            DotProgressIndicator(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .semantics { contentDescription = "loading" },
+                size = 8.dp,
+                color = LocalContentColor.current.copy(ContentAlpha.medium)
+            )
+        }
+    } else content()
 }
 
 @Composable

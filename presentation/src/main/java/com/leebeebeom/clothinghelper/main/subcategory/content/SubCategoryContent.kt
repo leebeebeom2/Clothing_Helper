@@ -51,7 +51,7 @@ fun SubCategoryContent(
                 .pointerInput(Unit) {
                     detectDragGesturesAfterLongPress(onDragStart = { offset ->
                         interceptOutOfBoundsChildEvents = true
-                        state.dragSelectStart(offset, subCategories,onLongClick)
+                        state.dragSelectStart(offset, subCategories, onLongClick)
                     }, onDrag = { change, _ ->
                         change.consume()
                         state.onDrag(change.position, subCategories, onLongClick)
@@ -87,7 +87,8 @@ fun SubCategoryContent(
 
         AddSubcategoryDialogFab(
             onPositiveButtonClick = { onAddCategoryPositiveButtonClick(it, parent()) },
-            subCategories = subCategories
+            subCategories = subCategories,
+            paddingValues = paddingValue
         )
     }
 }

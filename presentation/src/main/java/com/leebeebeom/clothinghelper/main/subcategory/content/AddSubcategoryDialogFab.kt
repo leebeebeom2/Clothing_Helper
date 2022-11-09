@@ -1,8 +1,6 @@
 package com.leebeebeom.clothinghelper.main.subcategory.content
 
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
@@ -24,19 +22,13 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategory
 @Composable
 fun BoxScope.AddSubcategoryDialogFab(
     onPositiveButtonClick: (String) -> Unit,
-    subCategories: () -> List<SubCategory>
+    subCategories: () -> List<SubCategory>,
+    paddingValues: () -> PaddingValues
 ) {
     val state =
         rememberSaveable(saver = AddSubCategoryDialogState.Saver) { AddSubCategoryDialogState() }
 
-    FloatingActionButton(
-        modifier = Modifier
-            .align(Alignment.BottomEnd)
-            .padding(end = 16.dp, bottom = 16.dp)
-            .size(48.dp),
-        onClick = state::showDialog,
-        backgroundColor = MaterialTheme.colors.primary,
-    ) { SimpleIcon(drawable = R.drawable.ic_add) }
+    AddSubCategoryFab(paddingValues = paddingValues, showDialog = state::showDialog)
 
     val subCategoryNames by remember { derivedStateOf { subCategories().map { it.name } } }
     SubCategoryTextFieldDialog(
@@ -91,4 +83,20 @@ class AddSubCategoryDialogState(
             }
         )
     }
+}
+
+@Composable
+fun BoxScope.AddSubCategoryFab(
+    showDialog: () -> Unit,
+    paddingValues: () -> PaddingValues
+) {
+    FloatingActionButton(
+        modifier = Modifier
+            .align(Alignment.BottomEnd)
+            .padding(end = 16.dp, bottom = 16.dp)
+            .padding(paddingValues())
+            .size(48.dp),
+        onClick = showDialog,
+        backgroundColor = MaterialTheme.colors.primary,
+    ) { SimpleIcon(drawable = R.drawable.ic_add) }
 }

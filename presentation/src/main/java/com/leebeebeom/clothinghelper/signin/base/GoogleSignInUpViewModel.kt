@@ -4,6 +4,8 @@ import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.util.Log
 import androidx.activity.result.ActivityResult
+import androidx.annotation.StringRes
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
@@ -17,9 +19,10 @@ import com.leebeebeom.clothinghelperdomain.usecase.signin.PushInitialSubCategori
 import kotlinx.coroutines.launch
 
 abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSignInUseCase) :
-    BaseSignInViewModel() {
+    ViewModel() {
 
     abstract fun updateGoogleButtonEnabled(enabled: Boolean)
+    abstract fun showToast(@StringRes text: Int)
 
     fun signInWithGoogleEmail(activityResult: ActivityResult) {
         when (activityResult.resultCode) {
@@ -63,8 +66,4 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
             GoogleAuthProvider.getCredential(account.idToken, null)
         }
     }
-}
-
-abstract class GoogleSignInUIState : BaseSignInUIState() {
-    abstract val googleButtonEnabled: Boolean
 }

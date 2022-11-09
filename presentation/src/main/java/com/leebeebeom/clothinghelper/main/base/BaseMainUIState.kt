@@ -25,3 +25,13 @@ open class BaseMainUIState : BaseUIState() {
         _allSubCategories.value = allSubCategories
     }
 }
+
+open class BaseIsAllExpandState : BaseMainUIState() {
+    private val _isAllExpand = mutableStateOf(false)
+
+    val isAllExpand by derivedStateOf { _isAllExpand.value }
+
+    fun updateIsAllExpand(isAllExpand: Boolean) {
+        _isAllExpand.value = isAllExpand
+    }
+}

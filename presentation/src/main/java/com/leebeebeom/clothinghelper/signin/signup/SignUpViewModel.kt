@@ -1,10 +1,10 @@
 package com.leebeebeom.clothinghelper.signin.signup
 
 import androidx.annotation.StringRes
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.signin.base.BaseSignInUpUIStates
@@ -49,10 +49,8 @@ class SignUpViewModel @Inject constructor(
 }
 
 class SignUpUIStates : BaseSignInUpUIStates() {
-    @StringRes
-    private val _passwordConfirmError: MutableState<Int?> = mutableStateOf(null)
-
-    val passwordConfirmError by derivedStateOf { _passwordConfirmError.value }
+    var passwordConfirmError: Int? by mutableStateOf(null)
+        private set
 
     var name = ""
         private set
@@ -82,8 +80,8 @@ class SignUpUIStates : BaseSignInUpUIStates() {
     }
 
     fun updatePasswordConfirmError(@StringRes error: Int?) {
-        _passwordConfirmError.value = error
+        passwordConfirmError = error
     }
 
-    override val buttonEnabled by derivedStateOf { super.buttonEnabled && passwordConfirm.isNotBlank() && passwordConfirmError == null }
+    override val buttonEnabled by derivedStateOf { super.buttonEnabled && passwordConfirm.isNotBlank() && this.passwordConfirmError == null }
 }

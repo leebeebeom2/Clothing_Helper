@@ -32,7 +32,7 @@ fun SignInScreen(
     onForgotPasswordClick: () -> Unit,
     onEmailSignUpClick: () -> Unit,
     viewModel: SignInViewModel = hiltViewModel(),
-    uiStates: SignInUIStates = viewModel.uiState
+    uiStates: BaseSignInUpUIStates = viewModel.uiState
 ) {
     Column(
         modifier = Modifier
@@ -58,7 +58,7 @@ fun SignInScreen(
 
         MaxWidthButton(
             text = R.string.sign_in,
-            enabled = { uiStates.signInButtonEnabled },
+            enabled = { uiStates.buttonEnabled },
             onClick = {
                 viewModel.signInWithEmailAndPassword()
             }

@@ -26,12 +26,12 @@ fun AllExpandIcon(
     size: Dp,
     onClick: () -> Unit,
     tint: Color,
-    allExpand: Boolean
+    allExpand: () -> Boolean
 ) {
     val painter = rememberAnimatedVectorPainter(
         animatedImageVector = AnimatedImageVector.animatedVectorResource(
             id = R.drawable.all_expand_anim
-        ), atEnd = allExpand
+        ), atEnd = allExpand()
     )
 
     CustomIconButton(
@@ -43,20 +43,20 @@ fun AllExpandIcon(
 }
 
 @Composable
-fun isExpandStateWithIsAllExpand(isAllExpand: Boolean): MutableState<Boolean> {
-    val isExpandState = rememberSaveable { mutableStateOf(isAllExpand) }
-    val rememberedIsAllExpandState = rememberSaveable { mutableStateOf(isAllExpand) }
-    if (isAllExpand != rememberedIsAllExpandState.value) {
-        isExpandState.value = isAllExpand
-        rememberedIsAllExpandState.value = isAllExpand
+fun isExpandStateWithIsAllExpand(isAllExpand: () -> Boolean): MutableState<Boolean> {
+    val isExpandState = rememberSaveable { mutableStateOf(isAllExpand()) }
+    val rememberedIsAllExpandState = rememberSaveable { mutableStateOf(isAllExpand()) }
+    if (isAllExpand() != rememberedIsAllExpandState.value) {
+        isExpandState.value = isAllExpand()
+        rememberedIsAllExpandState.value = isAllExpand()
     }
     return isExpandState
 }
 
 @Composable
-fun ExpandIcon(modifier: Modifier = Modifier, isExpanded: Boolean, onClick: () -> Unit) {
+fun ExpandIcon(modifier: Modifier = Modifier, isExpanded: () -> Boolean, onClick: () -> Unit) {
     val rotate by animateFloatAsState(
-        targetValue = if (!isExpanded) 0f else 180f, animationSpec = tween(durationMillis = 300)
+        targetValue = if (!isExpanded()) 0f else 180f, animationSpec = tween(durationMillis = 300)
     )
 
     CustomIconButton(

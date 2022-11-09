@@ -1,8 +1,8 @@
 package com.leebeebeom.clothinghelper.signin.resetpassword
 
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
@@ -39,10 +39,10 @@ class ResetPasswordViewModel @Inject constructor(private val resetPasswordUseCas
 }
 
 class ResetPasswordUIState : BaseEmailUIStates() {
-    val _isTaskSuccess = mutableStateOf(false)
-    val isTaskSuccess by derivedStateOf { _isTaskSuccess.value }
+    var isTaskSuccess by mutableStateOf(false)
+        private set
 
     fun updateIsTaskSuccess(taskSuccess: Boolean) {
-        _isTaskSuccess.value = taskSuccess
+        isTaskSuccess = taskSuccess
     }
 }

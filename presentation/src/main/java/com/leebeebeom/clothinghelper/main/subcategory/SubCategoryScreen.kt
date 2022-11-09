@@ -61,7 +61,6 @@ import kotlinx.coroutines.launch
 이름 변경 시 정렬 지키는 지 확인
 
 TODO 플레이스 홀더
-TODO 셀렉트 모드 시 fab 숨기기
  */
 
 
@@ -87,7 +86,7 @@ fun SubCategoryScreen(
             onAllSelectCheckBoxClick = { states.toggleAllSelect(uiStates.getSubCategories(parent)) },
             onEditSubCategoryNameClick = states::showEditDialog
         )
-    }) { paddingValue -> // TODO
+    }) { paddingValue ->
         CenterDotProgressIndicator(
             backGround = Color.Transparent,
             isLoading = { uiStates.isLoading }) {

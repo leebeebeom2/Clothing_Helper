@@ -115,13 +115,13 @@ fun SubCategoryScreen(
                 onPositiveButtonClick = {
                     viewModel.editSubCategoryName(
                         newName = it,
-                        selectedSubCategory = states.firstSelectedSubCategory!!
+                        selectedSubCategory = states.firstSelectedSubCategory
                     )
                     coroutineScope.launch { states.selectModeOff() }
                 },
                 onDismiss = states::dismissEditDialog,
                 showDialog = { states.showEditDialog },
-                initialName = { states.firstSelectedSubCategory!!.name }
+                initialName = { states.firstSelectedSubCategory?.name }
             )
 
             BackHandler(enabled = states.isSelectMode, onBack = {

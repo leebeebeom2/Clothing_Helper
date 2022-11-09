@@ -16,16 +16,17 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategory
 @Composable
 fun EditSubCategoryNameDialog(
     showDialog: () -> Boolean,
-    initialName: () -> String,
+    initialName: () -> String?,
     subCategories: () -> List<SubCategory>,
     onPositiveButtonClick: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
     if (showDialog()) {
         val state =
-            rememberSaveable(saver = EditSubCategoryNameDialogState.Saver) {
-                EditSubCategoryNameDialogState(initialName())
-            }
+            rememberSaveable(
+                initialName(),
+                saver = EditSubCategoryNameDialogState.Saver
+            ) { EditSubCategoryNameDialogState(initialName() ?: "") }
         val subCategoryNames by remember { derivedStateOf { subCategories().map { it.name } } }
 
         SubCategoryTextFieldDialog(

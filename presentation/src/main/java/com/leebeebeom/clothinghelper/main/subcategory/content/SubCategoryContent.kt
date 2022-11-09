@@ -4,10 +4,7 @@ import androidx.compose.animation.core.Transition
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -42,9 +39,10 @@ fun SubCategoryContent(
     onSubCategoryClick: (SubCategory) -> Unit,
     onSortClick: (SubCategorySort) -> Unit,
     onOrderClick: (SortOrder) -> Unit,
-    onAddCategoryPositiveButtonClick: (String, SubCategoryParent) -> Unit
+    onAddCategoryPositiveButtonClick: (String, SubCategoryParent) -> Unit,
+    paddingValue: () -> PaddingValues
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().padding(paddingValue())) { // TODO 테스트
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()

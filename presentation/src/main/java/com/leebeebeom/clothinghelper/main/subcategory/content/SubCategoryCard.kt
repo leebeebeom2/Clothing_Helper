@@ -121,7 +121,7 @@ private fun TotalCount(isExpanded: () -> Boolean) {
 }
 
 @Composable
-private fun Name(subCategory: () -> SubCategory){
+private fun Name(subCategory: () -> SubCategory) {
     Text(
         modifier = Modifier.widthIn(max = 300.dp),
         text = subCategory().name,

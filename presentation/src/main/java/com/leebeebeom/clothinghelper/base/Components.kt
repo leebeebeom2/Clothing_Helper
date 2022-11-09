@@ -33,19 +33,22 @@ fun SimpleIcon(
     modifier: Modifier = Modifier,
     @DrawableRes drawable: Int,
     tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
-) = Icon(
-    modifier = modifier,
-    painter = painterResource(id = drawable),
-    contentDescription = null,
-    tint = tint
-)
+) {
+    Icon(
+        modifier = modifier,
+        painter = painterResource(id = drawable),
+        contentDescription = null,
+        tint = tint
+    )
+}
 
 @Composable
 fun CenterDotProgressIndicator(
     backGround: Color = Disabled,
     isLoading: () -> Boolean,
     content: @Composable () -> Unit = {}
-) = if (isLoading()) Surface(color = backGround) {
+) {
+    if (isLoading()) Surface(color = backGround) {
         Box(modifier = Modifier
             .fillMaxSize()
             .clickable(enabled = false) { }) {
@@ -58,33 +61,39 @@ fun CenterDotProgressIndicator(
             )
         }
     } else content()
+}
 
 @Composable
-fun SimpleHeightSpacer(dp: Int) = Spacer(modifier = Modifier.height(dp.dp))
+fun SimpleHeightSpacer(dp: Int) {
+    Spacer(modifier = Modifier.height(dp.dp))
+}
 
 @Composable
-fun SimpleWidthSpacer(dp: Int) = Spacer(modifier = Modifier.width(dp.dp))
+fun SimpleWidthSpacer(dp: Int) {
+    Spacer(modifier = Modifier.width(dp.dp))
+}
 
 @Composable
-fun SimpleToast(@StringRes text: () -> Int?, shownToast: () -> Unit) =
-    Box{
-        text()?.let {
-            Toast.makeText(LocalContext.current, stringResource(id = it), Toast.LENGTH_SHORT).show()
-            shownToast()
-        }
+fun SimpleToast(@StringRes text: () -> Int?, shownToast: () -> Unit) {
+    text()?.let {
+        Toast.makeText(LocalContext.current, stringResource(id = it), Toast.LENGTH_SHORT).show()
+        shownToast()
     }
+}
 
 @OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
 fun CircleCheckBox(
     modifier: Modifier = Modifier, isChecked: () -> Boolean, onClick: () -> Unit = {}
-) = CustomIconButton(
-    modifier = modifier, onClick = onClick, painter = rememberAnimatedVectorPainter(
-        animatedImageVector = AnimatedImageVector.animatedVectorResource(
-            id = R.drawable.check_anim
-        ), atEnd = isChecked()
-    ), tint = LocalContentColor.current.copy(0.7f)
-)
+) {
+    CustomIconButton(
+        modifier = modifier, onClick = onClick, painter = rememberAnimatedVectorPainter(
+            animatedImageVector = AnimatedImageVector.animatedVectorResource(
+                id = R.drawable.check_anim
+            ), atEnd = isChecked()
+        ), tint = LocalContentColor.current.copy(0.7f)
+    )
+}
 
 @Composable
 fun CustomIconButton(
@@ -93,13 +102,15 @@ fun CustomIconButton(
     @DrawableRes drawable: Int,
     tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current),
     contentDescription: String? = null
-) = CustomIconButton(
-    modifier = modifier,
-    onClick = onClick,
-    painter = painterResource(id = drawable),
-    tint = tint,
-    contentDescription = contentDescription
-)
+) {
+    CustomIconButton(
+        modifier = modifier,
+        onClick = onClick,
+        painter = painterResource(id = drawable),
+        tint = tint,
+        contentDescription = contentDescription
+    )
+}
 
 @Composable
 fun CustomIconButton(
@@ -108,17 +119,20 @@ fun CustomIconButton(
     painter: Painter,
     tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current),
     contentDescription: String? = null
-) = Box(
-    modifier = Modifier
-        .clip(CircleShape)
-        .clickable(onClick = onClick)
-        .padding(4.dp)
 ) {
-    Icon(
-        painter = painter, contentDescription = contentDescription, modifier = modifier, tint = tint
-    )
+    Box(
+        modifier = Modifier
+            .clip(CircleShape)
+            .clickable(onClick = onClick)
+            .padding(4.dp)
+    ) {
+        Icon(
+            painter = painter, contentDescription = contentDescription, modifier = modifier, tint = tint
+        )
+    }
 }
 
 @Composable
-fun FinishActivityBackHandler(activity: ComponentActivity = LocalContext.current as ComponentActivity) =
+fun FinishActivityBackHandler(activity: ComponentActivity = LocalContext.current as ComponentActivity){
     BackHandler(enabled = true) { activity.finish() }
+}

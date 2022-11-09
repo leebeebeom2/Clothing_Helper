@@ -38,10 +38,9 @@ fun ResetPasswordScreen(
     viewModel: ResetPasswordViewModel = hiltViewModel(),
     uiStates: ResetPasswordUIState = viewModel.uiStates
 ) {
-    if (uiStates.isTaskSuccess) {
-        (LocalContext.current as ComponentActivity).onBackPressedDispatcher.onBackPressed()
-        uiStates.updateIsTaskSuccess(false)
-    }
+    TaskSuccess(
+        taskSuccess = { uiStates.isTaskSuccess },
+        updateIsTaskSuccess = { uiStates.updateIsTaskSuccess(true) })
 
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
         Text(
@@ -67,4 +66,12 @@ fun ResetPasswordScreen(
     }
 
     SimpleToast(text = { uiStates.toastText }, shownToast = uiStates::toastShown)
+}
+
+@Composable
+private fun TaskSuccess(taskSuccess: () -> Boolean, updateIsTaskSuccess: () -> Unit) {
+    if (taskSuccess()) {
+        (LocalContext.current as ComponentActivity).onBackPressedDispatcher.onBackPressed()
+        updateIsTaskSuccess()
+    }
 }

@@ -47,16 +47,16 @@ fun SignUpScreen(
 ) {
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
         EmailTextField(
-            email = uiStates.email,
+            email = { uiStates.email },
             error = { uiStates.emailError },
             updateError = uiStates::updateEmailError,
             onEmailChange = uiStates::onEmailChange
         )
 
-        NameTextField(name = uiStates.name, onNameChange = uiStates::onNameChange)
+        NameTextField(name = { uiStates.name }, onNameChange = uiStates::onNameChange)
 
         PasswordTextField(
-            password = uiStates.password,
+            password = { uiStates.password },
             error = { uiStates.passwordError },
             imeAction = ImeAction.Next,
             onPasswordChange = uiStates::onPasswordChange,
@@ -65,7 +65,7 @@ fun SignUpScreen(
 
         PasswordTextField(
             label = R.string.password_confirm,
-            password = uiStates.passwordConfirm,
+            password = { uiStates.passwordConfirm },
             error = { uiStates.passwordConfirmError },
             imeAction = ImeAction.Done,
             onPasswordChange = uiStates::onPasswordConfirmChange,

@@ -50,7 +50,7 @@ fun ResetPasswordScreen(
         )
 
         EmailTextField(
-            email = uiStates.email,
+            email = { uiStates.email },
             error = { uiStates.emailError },
             updateError = uiStates::updateEmailError,
             onEmailChange = uiStates::onEmailChange

@@ -42,14 +42,14 @@ fun SignInScreen(
             .verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.Center
     ) {
         EmailTextField(
-            email = uiStates.email,
+            email = { uiStates.email },
             error = { uiStates.emailError },
             updateError = uiStates::updateEmailError,
             onEmailChange = uiStates::onEmailChange
         )
 
         PasswordTextField(
-            password = uiStates.password,
+            password = { uiStates.password },
             error = { uiStates.passwordError },
             updateError = uiStates::updatePasswordError,
             onPasswordChange = uiStates::onPasswordChange,

@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.*
 import com.leebeebeom.clothinghelper.base.BaseUIState
 
-open class BaseEmailUIStates : BaseUIState() {
+open class BaseEmailUIState : BaseUIState() {
     var emailError: Int? by mutableStateOf(null)
         private set
 
@@ -22,7 +22,7 @@ open class BaseEmailUIStates : BaseUIState() {
     open val buttonEnabled by derivedStateOf { email.isNotBlank() && emailError == null }
 }
 
-open class BaseSignInUpUIStates : BaseEmailUIStates() {
+open class BaseSignInUpUIState : BaseEmailUIState() {
     var passwordError: Int? by mutableStateOf(null)
         private set
 

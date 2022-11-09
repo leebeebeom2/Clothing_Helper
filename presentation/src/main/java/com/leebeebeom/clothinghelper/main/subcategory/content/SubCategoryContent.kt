@@ -27,6 +27,8 @@ import com.leebeebeom.clothinghelperdomain.repository.SortOrder
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
 
+// TODO 이름 수정 다이얼로그 키보드 안나옴
+
 @Composable
 fun SubCategoryContent(
     parent: () -> SubCategoryParent,
@@ -42,9 +44,9 @@ fun SubCategoryContent(
     onSortClick: (SubCategorySort) -> Unit,
     onOrderClick: (SortOrder) -> Unit,
     onAddCategoryPositiveButtonClick: (String, SubCategoryParent) -> Unit,
-    paddingValue: () -> PaddingValues // 사용시 렉
+    paddingValue: () -> PaddingValues
 ) {
-    Box(modifier = Modifier.fillMaxSize()) { // TODO 테스트
+    Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()

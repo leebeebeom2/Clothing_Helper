@@ -41,7 +41,7 @@ fun DrawerMainCategory(
                 text = stringResource(id = mainCategory.name),
                 style = MaterialTheme.typography.subtitle1
             )
-            TotalCount(subCategories = subCategories)
+            TotalCount(subCategories = subCategories, isLoading = isLoading)
             ExpandIcon(
                 isLoading = isLoading,
                 isExpand = { isExpand },
@@ -76,17 +76,19 @@ private fun SubCategories(
     isExpand: () -> Boolean,
     subCategories: () -> List<SubCategory>,
     onClick: (SubCategory) -> Unit
-) = AnimatedVisibility(
-    visible = isExpand(),
-    enter = listExpand,
-    exit = listShrink
 ) {
-    Surface(color = MaterialTheme.colors.primary) {
-        Column {
-            for (subCategory in subCategories())
-                key(subCategory.key) {
-                    SubCategory(name = { subCategory.name }, onClick = { onClick(subCategory) })
-                }
+    AnimatedVisibility(
+        visible = isExpand(),
+        enter = listExpand,
+        exit = listShrink
+    ) {
+        Surface(color = MaterialTheme.colors.primary) {
+            Column {
+                for (subCategory in subCategories())
+                    key(subCategory.key) {
+                        SubCategory(name = { subCategory.name }, onClick = { onClick(subCategory) })
+                    }
+            }
         }
     }
 }
@@ -108,15 +110,17 @@ private fun SubCategory(name: () -> String, onClick: () -> Unit) {
 }
 
 @Composable
-private fun RowScope.TotalCount(subCategories: () -> List<SubCategory>) =
-    Text(
-        modifier = Modifier
-            .weight(1f)
-            .padding(start = 4.dp),
-        text = "(${subCategories().size})",
-        style = MaterialTheme.typography.caption.copy(
-            LocalContentColor.current.copy(
-                ContentAlpha.disabled
+private fun RowScope.TotalCount(subCategories: () -> List<SubCategory>, isLoading: () -> Boolean) {
+    if (!isLoading())
+        Text(
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 4.dp),
+            text = "(${subCategories().size})",
+            style = MaterialTheme.typography.caption.copy(
+                LocalContentColor.current.copy(
+                    ContentAlpha.disabled
+                )
             )
         )
-    )
+}

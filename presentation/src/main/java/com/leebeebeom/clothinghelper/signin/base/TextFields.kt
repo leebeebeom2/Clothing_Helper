@@ -16,13 +16,13 @@ import com.leebeebeom.clothinghelper.base.rememberPasswordTextFieldState
 
 @Composable
 fun EmailTextField(
-    email: String,
+    email: () -> String,
     error: () -> Int?,
     imeAction: ImeAction = ImeAction.Next,
     updateError: (Int?) -> Unit,
     onEmailChange: (String) -> Unit
 ) {
-    var textFieldValue by remember { mutableStateOf(TextFieldValue(email)) }
+    var textFieldValue by remember { mutableStateOf(TextFieldValue(email())) }
 
     MaxWidthTextField(
         textFieldValue = { textFieldValue },
@@ -42,14 +42,14 @@ fun EmailTextField(
 @Composable
 fun PasswordTextField(
     @StringRes label: Int = R.string.password,
-    password: String,
+    password: () -> String,
     error: () -> Int?,
     imeAction: ImeAction,
     onPasswordChange: (String) -> Unit,
     updateError: (Int?) -> Unit
 ) {
     var isVisible by rememberSaveable { mutableStateOf(false) }
-    var textFieldValue by remember { mutableStateOf(TextFieldValue(password)) }
+    var textFieldValue by remember { mutableStateOf(TextFieldValue(password())) }
 
     MaxWidthTextField(
         textFieldValue = { textFieldValue },
@@ -73,10 +73,10 @@ fun PasswordTextField(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun NameTextField(
-    name: String,
+    name: () -> String,
     onNameChange: (String) -> Unit
 ) {
-    var textFieldValue by remember { mutableStateOf(TextFieldValue(name)) }
+    var textFieldValue by remember { mutableStateOf(TextFieldValue(name())) }
 
     MaxWidthTextField(
         textFieldValue = { textFieldValue },

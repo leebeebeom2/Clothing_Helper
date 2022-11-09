@@ -10,7 +10,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.leebeebeom.clothinghelper.base.FinishActivityBackHandler
 import com.leebeebeom.clothinghelper.main.detail.DetailScreen
 import com.leebeebeom.clothinghelper.main.maincategory.MainCategoryScreen
 import com.leebeebeom.clothinghelper.main.root.EssentialMenus
@@ -85,7 +84,6 @@ fun MainNavHost(state: MainNavHostState = rememberMainNavHostState()) {
                 )
             }
         }
-        FinishActivityBackHandler()
     }
 }
 

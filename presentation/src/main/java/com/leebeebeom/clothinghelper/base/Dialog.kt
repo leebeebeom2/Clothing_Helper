@@ -17,7 +17,7 @@ import androidx.compose.ui.window.Dialog
 import com.leebeebeom.clothinghelper.R
 
 @Composable
-fun DialogRoot(onDismiss: () -> Unit, content: @Composable () -> Unit) =
+fun DialogRoot(onDismiss: () -> Unit, content: @Composable () -> Unit){
     Dialog(onDismissRequest = onDismiss) {
         Surface(color = MaterialTheme.colors.surface, shape = RoundedCornerShape(20.dp)) {
             Column(
@@ -30,14 +30,16 @@ fun DialogRoot(onDismiss: () -> Unit, content: @Composable () -> Unit) =
             }
         }
     }
+}
 
 @Composable
-fun DialogTitle(@StringRes text: Int) =
+fun DialogTitle(@StringRes text: Int){
     Text(
         text = stringResource(id = text),
         style = MaterialTheme.typography.subtitle1,
         modifier = Modifier.padding(start = 4.dp, bottom = 12.dp)
     )
+}
 
 @Composable
 fun DialogTextButtons(
@@ -46,15 +48,17 @@ fun DialogTextButtons(
     positiveButtonEnabled: () -> Boolean,
     onPositiveButtonClick: () -> Unit,
     onDismiss: () -> Unit
-) = Row {
-    DialogTextButton(text = R.string.cancel, textColor = cancelTextColor, onClick = onDismiss)
-    DialogTextButton(text = R.string.check,
-        textColor = positiveTextColor,
-        enabled = positiveButtonEnabled,
-        onClick = {
-            onPositiveButtonClick()
-            onDismiss()
-        })
+) {
+    Row {
+        DialogTextButton(text = R.string.cancel, textColor = cancelTextColor, onClick = onDismiss)
+        DialogTextButton(text = R.string.check,
+            textColor = positiveTextColor,
+            enabled = positiveButtonEnabled,
+            onClick = {
+                onPositiveButtonClick()
+                onDismiss()
+            })
+    }
 }
 
 @Composable
@@ -63,14 +67,16 @@ fun RowScope.DialogTextButton(
     textColor: Color = Color.Unspecified,
     enabled: () -> Boolean = { true },
     onClick: () -> Unit
-) = Box(modifier = Modifier.weight(1f)) {
-    TextButton(
-        modifier = Modifier.align(Alignment.Center), onClick = onClick, enabled = enabled()
-    ) {
-        Text(
-            text = stringResource(id = text),
-            style = MaterialTheme.typography.subtitle1,
-            color = textColor
-        )
+) {
+    Box(modifier = Modifier.weight(1f)) {
+        TextButton(
+            modifier = Modifier.align(Alignment.Center), onClick = onClick, enabled = enabled()
+        ) {
+            Text(
+                text = stringResource(id = text),
+                style = MaterialTheme.typography.subtitle1,
+                color = textColor
+            )
+        }
     }
 }

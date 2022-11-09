@@ -1,21 +1,17 @@
 package com.leebeebeom.clothinghelper.main.subcategory
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.Transition
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.mapSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leebeebeom.clothinghelper.base.Anime
 import com.leebeebeom.clothinghelper.base.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelper.main.subcategory.content.SubCategoryBottomAppBar
 import com.leebeebeom.clothinghelper.main.subcategory.content.SubCategoryContent
-import com.leebeebeom.clothinghelper.main.subcategory.content.rememberSubCategoryBottomAppbarState
-import com.leebeebeom.clothinghelper.main.subcategory.content.rememberSubCategoryContentState
 import com.leebeebeom.clothinghelper.util.taskAndReturn
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
@@ -64,166 +60,148 @@ import kotlinx.coroutines.launch
 본래 이름일 시 에러 표시 x 확인 버튼만 disable
 이름 변경 시 정렬 지키는 지 확인
 
-TODO 추가, 이름 수정 시 너무 오래 걸림 로딩 추가
+TODO 플레이스 홀더
+TODO 셀렉트 모드 시 fab 숨기기
  */
 
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun SubCategoryScreen(
     parent: SubCategoryParent,
     viewModel: SubCategoryViewModel = hiltViewModel(),
-    states: SubCategoryStates = rememberSubCategoryStates(parent),
+    uiStates: SubCategoryUIState = viewModel.uiStates,
+    states: SubCategoryState = rememberSubCategoryState(parent),
     drawerCloseBackHandler: @Composable () -> Unit,
-    coroutineScope: CoroutineScope = rememberCoroutineScope()
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    onSubCategoryClick: (SubCategory) -> Unit
 ) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-    val subCategoriesState = remember {
-        derivedStateOf {
-            uiState.value.allSubCategories[parent.ordinal]
-        }
-    }
     drawerCloseBackHandler()
 
     Scaffold(bottomBar = {
-        val subCategoryBottomAppbarState = rememberSubCategoryBottomAppbarState(
-            subCategoryStates = states,
-            subCategoriesState = subCategoriesState
-        )
         SubCategoryBottomAppBar(
-            state = subCategoryBottomAppbarState,
-            onAllSelectCheckBoxClick = {
-                states.toggleAllSelect(subCategoriesState.value)
-            },
+            selectedSubCategoriesSize = { states.selectedSubCategoriesSize },
+            isAllSelected = { states.selectedSubCategoriesSize == uiStates.subCategoriesSize(parent) },
+            showEditIcon = { states.showEditIcon },
+            showDeleteIcon = { states.showDeleteIcon },
+            selectModeTransition = states.selectModeTransition,
+            onAllSelectCheckBoxClick = { states.toggleAllSelect(uiStates.getSubCategories(parent)) },
             onEditSubCategoryNameClick = states::showEditDialog
         )
-    }) { paddingValue ->
-        if (uiState.value.isLoading) CenterDotProgressIndicator(backGround = Color.Transparent) // 플레이스 홀더
-        else {
-            val subCategoryContentState = rememberSubCategoryContentState(
-                uiState = uiState,
-                subCategoriesState = subCategoriesState,
-                subCategoryStates = states,
-                paddingValues = paddingValue
-            )
+    }) { paddingValue -> // TODO
+        CenterDotProgressIndicator(
+            backGround = Color.Transparent,
+            isLoading = { uiStates.isLoading }) {
             SubCategoryContent(
-                state = subCategoryContentState,
                 allExpandIconClick = viewModel::toggleAllExpand,
                 onLongClick = { subCategory ->
                     states.selectModeOn()
                     states.onSelect(subCategory)
                 },
-                onSubCategoryClick = if (!states.isSelectMode) {
-                    {/*TODO*/ }
-                } else states::onSelect,
+                onSubCategoryClick = if (!states.isSelectMode) onSubCategoryClick else states::onSelect,
                 onSortClick = viewModel::changeSort,
                 onOrderClick = viewModel::changeOrder,
-                onAddCategoryPositiveButtonClick = viewModel::addSubCategory
+                onAddCategoryPositiveButtonClick = viewModel::addSubCategory,
+                parent = { states.parent },
+                selectModeTransition = states.selectModeTransition,
+                isAllExpand = { uiStates.isAllExpand },
+                subCategories = { uiStates.getSubCategories(parent) },
+                isChecked = { states.selectedSubCategories.contains(it) },
+                sort = { uiStates.sort },
+                paddingValue = { paddingValue }
             )
 
-            if (states.showEditDialog)
-                EditSubCategoryNameDialog(
-                    getSelectedSubCategory = states::getFirstSelectedSubCategory,
-                    subCategoriesState = subCategoriesState,
-                    onPositiveButtonClick = { name, subCategory ->
-                        viewModel.editSubCategoryName(
-                            newName = name,
-                            selectedSubCategory = subCategory
-                        )
-                        coroutineScope.launch { states.selectModeOff() }
-                    },
-                    onDismiss = states::dismissEditDialog
-                )
-        }
+            EditSubCategoryNameDialog(
+                subCategories = { uiStates.getSubCategories(parent) },
+                onPositiveButtonClick = {
+                    viewModel.editSubCategoryName(
+                        newName = it,
+                        selectedSubCategory = states.firstSelectedSubCategory!!
+                    )
+                    coroutineScope.launch { states.selectModeOff() }
+                },
+                onDismiss = states::dismissEditDialog,
+                showDialog = { states.showEditDialog },
+                initialName = { states.firstSelectedSubCategory!!.name }
+            )
 
-        BackHandler(enabled = states.isSelectMode, onBack = {
-            coroutineScope.launch { states.selectModeOff() }
-        })
+            BackHandler(enabled = states.isSelectMode, onBack = {
+                coroutineScope.launch { states.selectModeOff() }
+            })
+        }
     }
 }
 
 @Suppress("UNCHECKED_CAST")
-class SubCategoryStates(
+class SubCategoryState(
     val parent: SubCategoryParent,
-    initialIsSelectMode: Boolean = false,
-    initialSelectedSubCategories: Set<SubCategory> = emptySet(),
-    initialShowEditDialog: Boolean = false
+    _isSelectMode: MutableState<Boolean>,
+    _selectedSubCategories: MutableState<Set<SubCategory>>,
+    _showEditDialog: MutableState<Boolean>,
+    val selectModeTransition: Transition<Boolean>,
 ) {
-    private val _isSelectModeState = mutableStateOf(initialIsSelectMode)
-    val isSelectMode get() = _isSelectModeState.value
-
-    private val _selectedSubCategoriesState = mutableStateOf(initialSelectedSubCategories)
-    val selectedSubCategories get() = _selectedSubCategoriesState.value
-
-    private val _showEditDialogState = mutableStateOf(initialShowEditDialog)
-    val showEditDialog get() = _showEditDialogState.value
-
-    val selectedSubCategoriesSize get() = _selectedSubCategoriesState.value.size
+    var isSelectMode by _isSelectMode
+        private set
+    var selectedSubCategories by _selectedSubCategories
+        private set
+    var showEditDialog by _showEditDialog
+    val selectedSubCategoriesSize by derivedStateOf { selectedSubCategories.size }
 
     fun onSelect(subCategory: SubCategory) {
-        _selectedSubCategoriesState.value =
-            if (_selectedSubCategoriesState.value.contains(subCategory))
-                _selectedSubCategoriesState.value.taskAndReturn { it.remove(subCategory) }
-            else this._selectedSubCategoriesState.value.taskAndReturn { it.add(subCategory) }
+        selectedSubCategories =
+            if (selectedSubCategories.contains(subCategory))
+                selectedSubCategories.taskAndReturn { it.remove(subCategory) }
+            else selectedSubCategories.taskAndReturn { it.add(subCategory) }
     }
 
     fun toggleAllSelect(subCategories: List<SubCategory>) {
-        _selectedSubCategoriesState.value =
-            if (_selectedSubCategoriesState.value.size == subCategories.size) emptySet() else subCategories.toSet()
+        selectedSubCategories =
+            if (selectedSubCategoriesSize == subCategories.size) emptySet() else subCategories.toSet()
     }
 
     private fun clearSelectedSubCategories() {
-        _selectedSubCategoriesState.value =
-            _selectedSubCategoriesState.value.taskAndReturn { it.clear() }
+        selectedSubCategories = selectedSubCategories.taskAndReturn { it.clear() }
     }
 
     fun selectModeOn() {
-        _isSelectModeState.value = true
+        isSelectMode = true
     }
 
     suspend fun selectModeOff() {
-        _isSelectModeState.value = false
+        isSelectMode = false
         delay(Anime.BottomAppbar.duration.toLong())
         clearSelectedSubCategories()
     }
 
     fun showEditDialog() {
-        _showEditDialogState.value = true
+        showEditDialog = true
     }
 
     fun dismissEditDialog() {
-        _showEditDialogState.value = false
+        showEditDialog = false
     }
 
-    fun getFirstSelectedSubCategory() = _selectedSubCategoriesState.value.first()
+    val firstSelectedSubCategory by derivedStateOf { selectedSubCategories.firstOrNull() }
 
-    companion object {
-        val Saver: Saver<SubCategoryStates, *> = mapSaver(
-            save = {
-                mapOf(
-                    Parent to it.parent,
-                    IsSelectMode to it.isSelectMode,
-                    SelectedSubCategories to it._selectedSubCategoriesState.value.toList(),
-                    ShowEditDialog to it.showEditDialog,
-                )
-            },
-            restore = {
-                SubCategoryStates(
-                    parent = it.getOrElse(Parent) { SubCategoryParent.TOP } as SubCategoryParent,
-                    initialIsSelectMode = it.getOrElse(IsSelectMode) { false } as Boolean,
-                    initialSelectedSubCategories = (it.getOrElse(SelectedSubCategories) { emptyList<SubCategory>() } as List<SubCategory>).toSet(),
-                    initialShowEditDialog = it.getOrElse(ShowEditDialog) { false } as Boolean,
-                )
-            }
-        )
-
-        private const val Parent = "parent"
-        private const val IsSelectMode = "isSelectMode"
-        private const val SelectedSubCategories = "selectedSubCategories"
-        private const val ShowEditDialog = "showEditDialog"
-    }
+    val showEditIcon by derivedStateOf { selectedSubCategoriesSize == 1 }
+    val showDeleteIcon by derivedStateOf { selectedSubCategoriesSize > 0 }
 }
 
 @Composable
-fun rememberSubCategoryStates(parent: SubCategoryParent) =
-    rememberSaveable(saver = SubCategoryStates.Saver) { SubCategoryStates(parent) }
+fun rememberSubCategoryState(
+    parent: SubCategoryParent,
+    isSelectModeState: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) },
+    selectedSubCategoriesState: MutableState<Set<SubCategory>> =
+        rememberSaveable { mutableStateOf(emptySet()) },
+    showEditDialogState: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) },
+    selectModeTransition: Transition<Boolean> = updateTransition(
+        targetState = isSelectModeState.value, label = "selectModeTransition"
+    )
+) = remember(parent) {
+    SubCategoryState(
+        parent = parent,
+        _isSelectMode = isSelectModeState,
+        _selectedSubCategories = selectedSubCategoriesState,
+        _showEditDialog = showEditDialogState,
+        selectModeTransition = selectModeTransition
+    )
+}

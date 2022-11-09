@@ -4,10 +4,13 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.base.SimpleToast
+import com.leebeebeom.clothinghelper.main.base.BaseIsAllExpandState
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
@@ -43,7 +46,7 @@ fun MainRoot(
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (SubCategory) -> Unit,
     viewModel: MainRootViewModel = hiltViewModel(),
-    uiStates: MainRootUIState = viewModel.uiStates,
+    uiStates: BaseIsAllExpandState = viewModel.uiStates,
     state: MainRootState = rememberMainRootState(),
     content: @Composable (PaddingValues, backHandler: @Composable () -> Unit) -> Unit
 ) = ClothingHelperTheme {

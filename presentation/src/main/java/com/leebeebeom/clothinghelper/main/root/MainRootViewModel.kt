@@ -1,18 +1,12 @@
 package com.leebeebeom.clothinghelper.main.root
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelper.main.base.BaseIsAllExpandState
-import com.leebeebeom.clothinghelper.main.base.BaseMainUIState
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
-import com.leebeebeom.clothinghelperdomain.model.User
 import com.leebeebeom.clothinghelperdomain.usecase.preferences.MainScreenRootAllExpandUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.signin.GetUserUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoriesUseCase
@@ -31,7 +25,7 @@ class MainRootViewModel @Inject constructor(
     private val mainScreenRootAllExpandUseCase: MainScreenRootAllExpandUseCase
 ) : ViewModel() {
 
-    val uiStates = MainRootUIState()
+    val uiStates = BaseIsAllExpandState()
 
     init {
         viewModelScope.launch {
@@ -63,16 +57,5 @@ class MainRootViewModel @Inject constructor(
 
     fun toggleAllExpand() = viewModelScope.launch {
         mainScreenRootAllExpandUseCase.toggleAllExpand()
-    }
-}
-
-class MainRootUIState : BaseIsAllExpandState() {
-    private val _user: MutableState<User?> = mutableStateOf(null)
-
-    val user by derivedStateOf { _user.value }
-
-
-    fun updateUser(user: User?) {
-        _user.value = user
     }
 }

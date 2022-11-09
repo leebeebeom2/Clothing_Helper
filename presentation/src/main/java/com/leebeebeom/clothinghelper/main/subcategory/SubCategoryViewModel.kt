@@ -1,15 +1,17 @@
 package com.leebeebeom.clothinghelper.main.subcategory
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
-import com.leebeebeom.clothinghelper.base.BaseViewModel
-import com.leebeebeom.clothinghelper.main.base.BaseSubCategoryUIState
+import com.leebeebeom.clothinghelper.main.base.BaseIsAllExpandState
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
-import com.leebeebeom.clothinghelperdomain.model.User
 import com.leebeebeom.clothinghelperdomain.repository.SortOrder
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
@@ -21,10 +23,6 @@ import com.leebeebeom.clothinghelperdomain.usecase.subcategory.EditSubCategoryNa
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoriesUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoryLoadingStateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,45 +36,44 @@ class SubCategoryViewModel @Inject constructor(
     private val editSubCategoryNameUseCase: EditSubCategoryNameUseCase,
     private val subCategoryAllExpandUseCase: SubCategoryAllExpandUseCase,
     private val subCategorySortUseCase: SubCategorySortUseCase
-) : BaseViewModel() {
+) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(SubCategoryUIState())
-    val uiState = _uiState.asStateFlow()
+    val uiStates = SubCategoryUIState()
 
     init {
         viewModelScope.launch {
-            combine(
-                getUserUseCase(),
-                getSubCategoryLoadingStateUseCase(),
-                getSubCategoriesUseCase(),
-                subCategoryAllExpandUseCase.isAllExpand,
-                subCategorySortUseCase.sortPreferences
-            ) { user, isLoading, allSubCategories, isAllExpand, sort ->
-                SubCategoryUIState(
-                    user = user,
-                    isLoading = isLoading,
-                    allSubCategories = allSubCategories,
-                    isAllExpand = isAllExpand,
-                    sort = sort
-                )
-            }.collect {
-                _uiState.value = it
-            }
+            getUserUseCase().collect(uiStates::updateUser)
+        }
+
+        viewModelScope.launch {
+            getSubCategoryLoadingStateUseCase().collect(uiStates::updateIsLoading)
+        }
+
+        viewModelScope.launch {
+            getSubCategoriesUseCase().collect(uiStates::updateAllSubCategories)
+        }
+
+        viewModelScope.launch {
+            subCategoryAllExpandUseCase.isAllExpand.collect(uiStates::updateIsAllExpand)
+        }
+
+        viewModelScope.launch {
+            subCategorySortUseCase.sortPreferences.collect(uiStates::updateSort)
         }
     }
 
     fun addSubCategory(name: String, subCategoryParent: SubCategoryParent) =
         viewModelScope.launch {
-            uiState.value.user?.let {
+            uiStates.user?.let {
                 val result = addSubCategoryUseCase(
                     subCategoryParent = subCategoryParent, name = name.trim(), uid = it.uid
                 )
 
                 if (result is FirebaseResult.Fail) {
-                    showToast(R.string.add_category_failed)
+                    uiStates.showToast(R.string.add_category_failed)
                     Log.d(TAG, "taskFailed: $result")
                 }
-            } ?: showToast(R.string.add_category_failed)
+            } ?: uiStates.showToast(R.string.add_category_failed)
         }
 
     fun toggleAllExpand() = viewModelScope.launch {
@@ -85,7 +82,7 @@ class SubCategoryViewModel @Inject constructor(
 
     fun editSubCategoryName(newName: String, selectedSubCategory: SubCategory) =
         viewModelScope.launch {
-            uiState.value.user?.let {
+            uiStates.user?.let {
                 val result = editSubCategoryNameUseCase(
                     subCategory = selectedSubCategory,
                     newName = newName.trim(),
@@ -93,10 +90,10 @@ class SubCategoryViewModel @Inject constructor(
                 )
 
                 if (result is FirebaseResult.Fail) {
-                    showToast(R.string.add_category_failed)
+                    uiStates.showToast(R.string.add_category_failed)
                     Log.d(TAG, "taskFailed: $result")
                 }
-            } ?: showToast(R.string.add_category_failed)
+            } ?: uiStates.showToast(R.string.add_category_failed)
         }
 
     fun changeSort(sort: SubCategorySort) {
@@ -105,17 +102,13 @@ class SubCategoryViewModel @Inject constructor(
 
     fun changeOrder(order: SortOrder) =
         viewModelScope.launch { subCategorySortUseCase.changeOrder(order) }
-
-    override fun showToast(toastText: Int?) = _uiState.update { it.copy(toastText = toastText) }
-
-    override fun toastShown() = _uiState.update { it.copy(toastText = null) }
 }
 
-data class SubCategoryUIState(
-    override val toastText: Int? = null,
-    override val user: User? = null,
-    override val isLoading: Boolean = false,
-    override val allSubCategories: List<List<SubCategory>> = List(4) { emptyList() },
-    val isAllExpand: Boolean = false,
-    val sort: SubCategorySortPreferences = SubCategorySortPreferences(),
-) : BaseSubCategoryUIState()
+class SubCategoryUIState : BaseIsAllExpandState() {
+    var sort by mutableStateOf(SubCategorySortPreferences())
+        private set
+
+    fun updateSort(sort: SubCategorySortPreferences) {
+        this.sort = sort
+    }
+}

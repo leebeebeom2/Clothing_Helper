@@ -16,12 +16,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.DotProgressIndicator
-import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleIcon
+import com.leebeebeom.clothinghelper.main.base.BaseMainUIState
 import com.leebeebeom.clothinghelper.main.root.MainCategory
 import com.leebeebeom.clothinghelper.main.root.getMainCategories
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
@@ -35,21 +33,19 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
  */
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun MainCategoryScreen(
     viewModel: MainCategoryViewModel = hiltViewModel(),
+    uiStates: BaseMainUIState = viewModel.uiStates,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     drawerCloseBackHandler: @Composable () -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    drawerCloseBackHandler()
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(16.dp)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         val modifier =
             if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT)
@@ -58,26 +54,27 @@ fun MainCategoryScreen(
 
         val mainCategories = remember { getMainCategories() }
         for (mainCategory in mainCategories) {
-            val mainCategoryCardState = rememberMainCategoryCardState(
-                mainCategory = mainCategory,
-                uiState = uiState
-            )
             key(mainCategory.type.name) {
                 MainCategoryCard(
                     modifier = modifier,
-                    state = mainCategoryCardState,
+                    mainCategory = mainCategory,
+                    subCategoriesSize = { uiStates.subCategoriesSize(mainCategory.type) },
+                    isLoading = { uiStates.isLoading },
                     onMainContentClick = { onMainCategoryClick(mainCategory.type) }
                 )
             }
         }
     }
+    drawerCloseBackHandler()
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun MainCategoryCard(
     modifier: Modifier,
-    state: MainCategoryCardState,
+    mainCategory: MainCategory,
+    subCategoriesSize: () -> Int,
+    isLoading: () -> Boolean,
     onMainContentClick: () -> Unit,
 ) {
     Card(
@@ -92,7 +89,7 @@ private fun MainCategoryCard(
                 .padding(vertical = 16.dp)
         ) {
             Text(
-                text = stringResource(id = state.mainCategory.name),
+                text = stringResource(id = mainCategory.name),
                 style = MaterialTheme.typography.h2,
                 fontSize = 32.sp
             )
@@ -102,7 +99,7 @@ private fun MainCategoryCard(
                 drawable = R.drawable.ic_navigate_next,
                 tint = LocalContentColor.current.copy(ContentAlpha.medium)
             )
-            if (state.isLoading)
+            if (isLoading())
                 DotProgressIndicator(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
@@ -112,7 +109,7 @@ private fun MainCategoryCard(
             else Text(
                 text = stringResource(
                     id = R.string.categories,
-                    formatArgs = arrayOf(state.subCategoriesSize)
+                    formatArgs = arrayOf(subCategoriesSize())
                 ),
                 modifier = Modifier.align(Alignment.BottomStart),
                 style = MaterialTheme.typography.caption.copy(
@@ -124,23 +121,4 @@ private fun MainCategoryCard(
             )
         }
     }
-    if (state.mainCategory.type != SubCategoryParent.ETC) SimpleHeightSpacer(dp = 16)
-}
-
-data class MainCategoryCardState(
-    val mainCategory: MainCategory,
-    val subCategoriesSize: Int,
-    val isLoading: Boolean
-)
-
-@Composable
-fun rememberMainCategoryCardState(
-    mainCategory: MainCategory,
-    uiState: MainCategoryUIState
-) = remember(uiState) {
-    MainCategoryCardState(
-        mainCategory = mainCategory,
-        subCategoriesSize = uiState.allSubCategories[mainCategory.type.ordinal].size,
-        isLoading = uiState.isLoading
-    )
 }

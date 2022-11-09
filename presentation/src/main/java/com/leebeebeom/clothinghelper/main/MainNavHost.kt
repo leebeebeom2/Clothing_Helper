@@ -42,7 +42,7 @@ sealed class MainDestinations(val route: String) {
 }
 
 @Composable
-fun MainNavHost(state: MainNavHostState = rememberMainNavHostState()) =
+fun MainNavHost(state: MainNavHostState = rememberMainNavHostState()) {
     MainRoot(
         onEssentialMenuClick = state::onEssentialMenuClick,
         onMainCategoryClick = state::navigateToSubCategory,
@@ -87,6 +87,7 @@ fun MainNavHost(state: MainNavHostState = rememberMainNavHostState()) =
         }
         FinishActivityBackHandler()
     }
+}
 
 data class MainNavHostState(val navController: NavHostController) {
     fun onEssentialMenuClick(essentialMenu: EssentialMenus) = when (essentialMenu) {

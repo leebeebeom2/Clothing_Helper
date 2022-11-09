@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusState
@@ -23,7 +26,7 @@ fun BoxScope.AddSubcategoryDialogFab(
     onPositiveButtonClick: (String) -> Unit,
     subCategories: () -> List<SubCategory>
 ) {
-    val state = remember { AddCategoryDialogState() }
+    val state = rememberSaveable(saver = AddSubCategoryDialogState.Saver ) { AddSubCategoryDialogState() }
 
     FloatingActionButton(
         modifier = Modifier
@@ -34,7 +37,7 @@ fun BoxScope.AddSubcategoryDialogFab(
         backgroundColor = MaterialTheme.colors.primary,
     ) { SimpleIcon(drawable = R.drawable.ic_add) }
 
-    val subCategoryNames by remember { derivedStateOf { subCategories().map { it.name } }}
+    val subCategoryNames by remember { derivedStateOf { subCategories().map { it.name } } }
     SubCategoryTextFieldDialog(
         title = R.string.add_category,
         error = { state.error },
@@ -51,7 +54,7 @@ fun BoxScope.AddSubcategoryDialogFab(
     )
 }
 
-class AddCategoryDialogState(initialText: String = "") {
+class AddSubCategoryDialogState(initialText: String = "") {
     var text: String = initialText
         private set
 
@@ -90,5 +93,12 @@ class AddCategoryDialogState(initialText: String = "") {
     fun onFocusChange(newFocusState: FocusState) {
         if (newFocusState.hasFocus)
             textFieldValue = textFieldValue.copy(selection = TextRange(text.length))
+    }
+
+    companion object {
+        val Saver: Saver<AddSubCategoryDialogState, *> = listSaver(
+            save = { listOf(it.text) },
+            restore = { AddSubCategoryDialogState(it[0]) }
+        )
     }
 }

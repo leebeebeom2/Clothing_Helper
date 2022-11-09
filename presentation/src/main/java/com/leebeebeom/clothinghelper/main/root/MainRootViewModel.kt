@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelper.base.BaseUIState
+import com.leebeebeom.clothinghelper.main.base.BaseMainUIState
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.User
@@ -31,7 +32,7 @@ class MainRootViewModel @Inject constructor(
     private val mainScreenRootAllExpandUseCase: MainScreenRootAllExpandUseCase
 ) : ViewModel() {
 
-    val uiStates = MainRootUIState()
+    val uiStates = BaseMainUIState()
 
     init {
         viewModelScope.launch {
@@ -63,33 +64,5 @@ class MainRootViewModel @Inject constructor(
 
     fun toggleAllExpand() = viewModelScope.launch {
         mainScreenRootAllExpandUseCase.toggleAllExpand()
-    }
-}
-
-class MainRootUIState : BaseUIState() {
-    private val _user: MutableState<User?> = mutableStateOf(null)
-    private val _isLoading = mutableStateOf(false)
-    private val _allSubCategories = mutableStateOf(List(4) { emptyList<SubCategory>() })
-    private val _isAllExpand = mutableStateOf(false)
-
-    val user by derivedStateOf { _user.value }
-    val isLoading by derivedStateOf { _isLoading.value }
-    val allSubCategories by derivedStateOf { _allSubCategories.value }
-    val isAllExpand by derivedStateOf { _isAllExpand.value }
-
-    fun updateUser(user: User?) {
-        _user.value = user
-    }
-
-    fun updateIsLoading(isLoading: Boolean) {
-        _isLoading.value = isLoading
-    }
-
-    fun updateAllSubCategories(allSubCategories: List<List<SubCategory>>) {
-        _allSubCategories.value = allSubCategories
-    }
-
-    fun updateIsAllExpand(isAllExpand: Boolean) {
-        _isAllExpand.value = isAllExpand
     }
 }

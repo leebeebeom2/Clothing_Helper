@@ -28,7 +28,7 @@ import com.leebeebeom.clothinghelper.main.base.isExpandStateWithIsAllExpand
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 
 // TODO 선택 모드 애니메이션 렉
-// Expand 트랜지션
+// TODO Expand 트랜지션
 
 @Composable
 fun SubCategoryCard(
@@ -67,8 +67,7 @@ private fun SubCategoryCardTitle(
     isExpanded: () -> Boolean,
     onExpandIconClick: () -> Unit,
     onCheckBoxClick: () -> Unit
-) {
-    Surface(elevation = 4.dp) {
+) = Surface(elevation = 4.dp) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
@@ -97,7 +96,6 @@ private fun SubCategoryCardTitle(
             )
         }
     }
-}
 
 @Composable
 private fun TotalCount(isExpanded: () -> Boolean) =
@@ -129,8 +127,7 @@ private fun TitleCircleCheckBox(
     selectModeTransition: Transition<Boolean>,
     isChecked: () -> Boolean,
     onClick: () -> Unit
-) =
-    selectModeTransition.AnimatedVisibility(
+) = selectModeTransition.AnimatedVisibility(
         visible = { it },
         enter = Anime.CircleCheckBox.expandIn,
         exit = Anime.CircleCheckBox.shrinkOut

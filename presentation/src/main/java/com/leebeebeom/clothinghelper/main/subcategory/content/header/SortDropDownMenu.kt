@@ -34,26 +34,7 @@ fun SortDropdownMenu(
     onSortClick: (SubCategorySort) -> Unit,
     onOrderClick: (SortOrder) -> Unit,
     onDismiss: () -> Unit
-) {
-    val selectedSortRes by remember {
-        derivedStateOf {
-            when (sort().sort) {
-                SubCategorySort.NAME -> R.string.sort_name
-                SubCategorySort.CREATE -> R.string.sort_create_date
-            }
-        }
-    }
-
-    val selectedOrderRes by remember {
-        derivedStateOf {
-            when (sort().sortOrder) {
-                SortOrder.ASCENDING -> R.string.sort_Ascending
-                SortOrder.DESCENDING -> R.string.sort_Descending
-            }
-        }
-    }
-
-    MaterialTheme(shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(20.dp))) {
+) = MaterialTheme(shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(20.dp))) {
         DropdownMenu(
             expanded = showDropDownMenu(),
             onDismissRequest = onDismiss
@@ -66,6 +47,15 @@ fun SortDropdownMenu(
             ) {
 
                 Column {
+                    val selectedSortRes by remember {
+                        derivedStateOf {
+                            when (sort().sort) {
+                                SubCategorySort.NAME -> R.string.sort_name
+                                SubCategorySort.CREATE -> R.string.sort_create_date
+                            }
+                        }
+                    }
+
                     SortButton(
                         text = R.string.sort_name,
                         selectedRes = { selectedSortRes },
@@ -90,6 +80,15 @@ fun SortDropdownMenu(
                 SimpleWidthSpacer(dp = 8)
 
                 Column {
+                    val selectedOrderRes by remember {
+                        derivedStateOf {
+                            when (sort().sortOrder) {
+                                SortOrder.ASCENDING -> R.string.sort_Ascending
+                                SortOrder.DESCENDING -> R.string.sort_Descending
+                            }
+                        }
+                    }
+
                     SortButton(
                         text = R.string.sort_Ascending,
                         selectedRes = { selectedOrderRes },
@@ -105,7 +104,6 @@ fun SortDropdownMenu(
             }
         }
     }
-}
 
 @Composable
 private fun Header() =

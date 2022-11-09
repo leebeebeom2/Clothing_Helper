@@ -55,8 +55,13 @@ fun MainActivityNavHost(
 }
 
 @Composable
-private fun Transition(isSignIn: () -> Boolean, navigateToMain: () -> Unit, navigateToSignIn: () -> Unit) =
+private fun Transition(
+    isSignIn: () -> Boolean,
+    navigateToMain: () -> Unit,
+    navigateToSignIn: () -> Unit
+) {
     if (isSignIn()) navigateToMain() else navigateToSignIn()
+}
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(val getSignInStateUseCase: GetSignInStateUseCase) :

@@ -7,9 +7,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.listSaver
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,8 +14,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.*
 import com.leebeebeom.clothinghelper.signin.base.*
@@ -32,48 +27,40 @@ import com.leebeebeom.clothinghelper.signin.base.*
 두 계정 번갈아 로그인해도 데이터 유지되는지 확인
  */
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun SignInScreen(
     onForgotPasswordClick: () -> Unit,
     onEmailSignUpClick: () -> Unit,
     viewModel: SignInViewModel = hiltViewModel(),
-    state: SignInState = rememberSignInState()
+    uiStates: SignInUIStates = viewModel.uiState
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.Center
     ) {
         EmailTextField(
-            email = state.email,
-            error = uiState.emailError,
-            updateError = viewModel::updateEmailError,
-            onEmailChange = state::onEmailChange
+            email = uiStates.email,
+            error = { uiStates.emailError },
+            updateError = uiStates::updateEmailError,
+            onEmailChange = uiStates::onEmailChange
         )
 
         PasswordTextField(
-            password = state.password,
-            error = uiState.passwordError,
-            updateError = viewModel::updatePasswordError,
-            onPasswordChange = state::onPasswordChange,
+            password = uiStates.password,
+            error = { uiStates.passwordError },
+            updateError = uiStates::updatePasswordError,
+            onPasswordChange = uiStates::onPasswordChange,
             imeAction = ImeAction.Done
         )
 
         ForgotPasswordText(onClick = onForgotPasswordClick)
 
         MaxWidthButton(
-            state = rememberMaxWidthButtonState(
-                text = R.string.sign_in,
-                enabled = state.isTextNotBlank && uiState.isNotError
-            ),
+            text = R.string.sign_in,
+            enabled = { uiStates.signInButtonEnabled },
             onClick = {
-                viewModel.signInWithEmailAndPassword(
-                    state.email.trim(),
-                    state.password.trim()
-                )
+                viewModel.signInWithEmailAndPassword()
             }
         )
         SimpleHeightSpacer(dp = 8)
@@ -81,15 +68,15 @@ fun SignInScreen(
         SimpleHeightSpacer(dp = 8)
         // 프리뷰 시 주석 처리
         GoogleSignInButton(
-            state = rememberGoogleButtonState(enabled = uiState.googleButtonEnabled),
+            enabled = { uiStates.googleButtonEnabled },
             onActivityResult = viewModel::signInWithGoogleEmail,
             disabled = { viewModel.updateGoogleButtonEnabled(enabled = false) }
         )
         SimpleHeightSpacer(dp = 4)
         SignUpText(onEmailSignUpClick)
-    }
 
-    SimpleToast(text = uiState.toastText, shownToast = viewModel::toastShown)
+        SimpleToast(text = { uiStates.toastText }, shownToast = uiStates::toastShown)
+    }
 }
 
 @Composable
@@ -126,44 +113,3 @@ private fun ForgotPasswordText(onClick: () -> Unit) =
             )
         }
     }
-
-data class SignInState(
-    override var email: String = "",
-    override var password: String = "",
-    private val initialIsEmailEmpty: Boolean = true,
-    private val initialIsPasswordEmpty: Boolean = true
-) : BaseState(), EmailState, PasswordState {
-    private var isEmailEmpty by mutableStateOf(initialIsEmailEmpty)
-    private var isPasswordEmpty by mutableStateOf(initialIsPasswordEmpty)
-
-    override fun onEmailChange(email: String) {
-        super.onEmailChange(email)
-        isEmailEmpty = this.email.isBlank()
-    }
-
-    override fun onPasswordChange(password: String) {
-        super.onPasswordChange(password)
-        isPasswordEmpty = this.password.isBlank()
-    }
-
-    override val isTextNotBlank
-        get() = !isEmailEmpty && !isPasswordEmpty
-
-    companion object {
-        val Saver: Saver<SignInState, *> = listSaver(
-            save = { listOf(it.email, it.password, it.isEmailEmpty, it.isPasswordEmpty) },
-            restore = {
-                SignInState(
-                    email = it[0] as String,
-                    password = it[1] as String,
-                    initialIsEmailEmpty = it[2] as Boolean,
-                    initialIsPasswordEmpty = it[3] as Boolean
-                )
-            }
-        )
-    }
-}
-
-@Composable
-fun rememberSignInState(
-) = rememberSaveable(saver = SignInState.Saver) { SignInState() }

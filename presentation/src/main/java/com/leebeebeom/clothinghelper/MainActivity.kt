@@ -14,7 +14,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.leebeebeom.clothinghelper.main.MainNavHost
-import com.leebeebeom.clothinghelper.main.navigateSingleTop
 import com.leebeebeom.clothinghelper.signin.SignInNavHost
 import com.leebeebeom.clothinghelper.util.navigateSingleTop
 import com.leebeebeom.clothinghelperdomain.usecase.signin.GetSignInStateUseCase

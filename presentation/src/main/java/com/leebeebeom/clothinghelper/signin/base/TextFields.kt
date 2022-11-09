@@ -19,17 +19,16 @@ import com.leebeebeom.clothinghelper.base.rememberPasswordTextFieldState
 @Composable
 fun EmailTextField(
     email: String,
-    error: Int?,
+    error: () -> Int?,
     imeAction: ImeAction = ImeAction.Next,
     updateError: (Int?) -> Unit,
     onEmailChange: (String) -> Unit
 ) {
     var textFieldValue by remember { mutableStateOf(TextFieldValue(email)) }
 
-    val state = rememberEmailTextFieldState(textFieldValue = textFieldValue, imeAction = imeAction)
-
     MaxWidthTextField(
-        state = state,
+        textFieldValue = { textFieldValue },
+        state = rememberEmailTextFieldState(imeAction = imeAction),
         error = error,
         onValueChange = {
             if (textFieldValue.text != it.text) updateError(null)
@@ -46,7 +45,7 @@ fun EmailTextField(
 fun PasswordTextField(
     @StringRes label: Int = R.string.password,
     password: String,
-    error: Int?,
+    error: () -> Int?,
     imeAction: ImeAction,
     onPasswordChange: (String) -> Unit,
     updateError: (Int?) -> Unit
@@ -54,15 +53,9 @@ fun PasswordTextField(
     var isVisible by rememberSaveable { mutableStateOf(false) }
     var textFieldValue by remember { mutableStateOf(TextFieldValue(password)) }
 
-    val state =
-        rememberPasswordTextFieldState(
-            label = label,
-            textFieldValue = textFieldValue,
-            imeAction = imeAction
-        )
-
     MaxWidthTextField(
-        state = state,
+        textFieldValue = { textFieldValue },
+        state = rememberPasswordTextFieldState(label = label, imeAction = imeAction),
         error = error,
         onValueChange = {
             if (textFieldValue.text != it.text) updateError(null)
@@ -74,7 +67,7 @@ fun PasswordTextField(
                 textFieldValue =
                     textFieldValue.copy(selection = TextRange(textFieldValue.text.length))
         },
-        trailingIcon = { VisibleIcon(isVisible) { isVisible = !isVisible } },
+        trailingIcon = { VisibleIcon({ isVisible }) { isVisible = !isVisible } },
         visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation()
     )
 }
@@ -87,15 +80,13 @@ fun NameTextField(
 ) {
     var textFieldValue by remember { mutableStateOf(TextFieldValue(name)) }
 
-    val state = rememberMaxWidthTextFiledState(
-        textFieldValue = textFieldValue,
-        label = R.string.name,
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
-    )
-
     MaxWidthTextField(
-        state = state,
-        error = null,
+        textFieldValue = { textFieldValue },
+        state = rememberMaxWidthTextFiledState(
+            label = R.string.name,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+        ),
+        error = { null },
         onValueChange = {
             textFieldValue = it.copy(it.text.trim())
             onNameChange(it.text)

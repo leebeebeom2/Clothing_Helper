@@ -1,6 +1,9 @@
 package com.leebeebeom.clothinghelper.main.base
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.leebeebeom.clothinghelper.base.BaseUIState
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
@@ -22,21 +25,19 @@ open class BaseMainUIState : BaseUIState() {
     private val outerSubCategoriesSize by derivedStateOf { outerSubCategories.size }
     private val etcSubCategoriesSize by derivedStateOf { etcSubCategories.size }
 
-    fun getSubCategories(subCategoryParent: SubCategoryParent) =
-        when (subCategoryParent) {
-            SubCategoryParent.TOP -> topSubCategories
-            SubCategoryParent.BOTTOM -> bottomSubCategories
-            SubCategoryParent.OUTER -> outerSubCategories
-            SubCategoryParent.ETC -> etcSubCategories
-        }
+    fun getSubCategories(subCategoryParent: SubCategoryParent) = when (subCategoryParent) {
+        SubCategoryParent.TOP -> topSubCategories
+        SubCategoryParent.BOTTOM -> bottomSubCategories
+        SubCategoryParent.OUTER -> outerSubCategories
+        SubCategoryParent.ETC -> etcSubCategories
+    }
 
-    fun subCategoriesSize(subCategoryParent: SubCategoryParent) =
-        when (subCategoryParent) {
-            SubCategoryParent.TOP -> topSubCategoriesSize
-            SubCategoryParent.BOTTOM -> bottomSubCategoriesSize
-            SubCategoryParent.OUTER -> outerSubCategoriesSize
-            SubCategoryParent.ETC -> etcSubCategoriesSize
-        }
+    fun subCategoriesSize(subCategoryParent: SubCategoryParent) = when (subCategoryParent) {
+        SubCategoryParent.TOP -> topSubCategoriesSize
+        SubCategoryParent.BOTTOM -> bottomSubCategoriesSize
+        SubCategoryParent.OUTER -> outerSubCategoriesSize
+        SubCategoryParent.ETC -> etcSubCategoriesSize
+    }
 
     fun updateIsLoading(isLoading: Boolean) {
         this.isLoading = isLoading
@@ -48,17 +49,16 @@ open class BaseMainUIState : BaseUIState() {
 }
 
 open class BaseIsAllExpandState : BaseMainUIState() {
-    private val _user: MutableState<User?> = mutableStateOf(null)
-    private val _isAllExpand = mutableStateOf(false)
-
-    val user by derivedStateOf { _user.value }
-    val isAllExpand by derivedStateOf { _isAllExpand.value }
+    var user: User? by mutableStateOf(null)
+        private set
+    var isAllExpand by mutableStateOf(false)
+        private set
 
     fun updateUser(user: User?) {
-        _user.value = user
+        this.user = user
     }
 
     fun updateIsAllExpand(isAllExpand: Boolean) {
-        _isAllExpand.value = isAllExpand
+        this.isAllExpand = isAllExpand
     }
 }

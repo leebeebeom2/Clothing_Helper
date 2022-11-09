@@ -1,25 +1,21 @@
 package com.leebeebeom.clothinghelper.main.base
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import com.leebeebeom.clothinghelper.base.BaseUIState
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.model.User
 
 open class BaseMainUIState : BaseUIState() {
-    private val _isLoading = mutableStateOf(false)
-    private val _allSubCategories = mutableStateOf(List(4) { emptyList<SubCategory>() })
+    var isLoading by mutableStateOf(false)
+        private set
+    var allSubCategories by mutableStateOf(List(4) { emptyList<SubCategory>() })
+        private set
 
-    val isLoading by derivedStateOf { _isLoading.value }
-    val allSubCategories by derivedStateOf { _allSubCategories.value }
-
-    private val topSubCategories by derivedStateOf { _allSubCategories.value[0] }
-    private val bottomSubCategories by derivedStateOf { _allSubCategories.value[1] }
-    private val outerSubCategories by derivedStateOf { _allSubCategories.value[2] }
-    private val etcSubCategories by derivedStateOf { _allSubCategories.value[3] }
+    private val topSubCategories by derivedStateOf { allSubCategories[0] }
+    private val bottomSubCategories by derivedStateOf { allSubCategories[1] }
+    private val outerSubCategories by derivedStateOf { allSubCategories[2] }
+    private val etcSubCategories by derivedStateOf { allSubCategories[3] }
 
     private val topSubCategoriesSize by derivedStateOf { topSubCategories.size }
     private val bottomSubCategoriesSize by derivedStateOf { bottomSubCategories.size }
@@ -43,11 +39,11 @@ open class BaseMainUIState : BaseUIState() {
         }
 
     fun updateIsLoading(isLoading: Boolean) {
-        _isLoading.value = isLoading
+        this.isLoading = isLoading
     }
 
     fun updateAllSubCategories(allSubCategories: List<List<SubCategory>>) {
-        _allSubCategories.value = allSubCategories
+        this.allSubCategories = allSubCategories
     }
 }
 

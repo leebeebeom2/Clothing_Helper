@@ -8,7 +8,7 @@ open class BaseEmailUIState : BaseUIState() {
     var emailError: Int? by mutableStateOf(null)
         private set
 
-    var email = ""
+    var email by mutableStateOf("")
         private set
 
     fun updateEmailError(@StringRes error: Int?) {
@@ -26,10 +26,10 @@ open class BaseSignInUpUIState : BaseEmailUIState() {
     var passwordError: Int? by mutableStateOf(null)
         private set
 
-    var googleButtonEnabled by mutableStateOf(false)
+    var googleButtonEnabled by mutableStateOf(true)
         private set
 
-    var password = ""
+    var password by mutableStateOf("")
         private set
 
     fun updatePasswordError(@StringRes error: Int?) {
@@ -45,6 +45,6 @@ open class BaseSignInUpUIState : BaseEmailUIState() {
     }
 
     override val buttonEnabled by derivedStateOf {
-        super.buttonEnabled && this.passwordError == null && password.isNotBlank()
+        super.buttonEnabled && passwordError == null && password.isNotBlank()
     }
 }

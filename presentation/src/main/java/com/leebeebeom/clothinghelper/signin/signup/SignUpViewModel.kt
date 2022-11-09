@@ -52,9 +52,9 @@ class SignUpUIState : BaseSignInUpUIState() {
     var passwordConfirmError: Int? by mutableStateOf(null)
         private set
 
-    var name = ""
+    var name by mutableStateOf("")
         private set
-    var passwordConfirm = ""
+    var passwordConfirm by mutableStateOf("")
         private set
 
     fun onNameChange(name: String) {

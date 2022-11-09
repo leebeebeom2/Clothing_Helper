@@ -56,7 +56,7 @@ fun MainRoot(
                 user = { uiStates.user },
                 isLoading = { uiStates.isLoading },
                 isAllExpand = { uiStates.isAllExpand },
-                allSubCategories = { uiStates.allSubCategories },
+                subCategories = uiStates::getSubCategories,
                 onEssentialMenuClick = {
                     onEssentialMenuClick(it)
                     state.onDrawerClose()

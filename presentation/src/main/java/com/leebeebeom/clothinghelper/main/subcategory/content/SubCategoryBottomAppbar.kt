@@ -27,7 +27,7 @@ import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
 fun SubCategoryBottomAppBar(
     selectedSubCategoriesSize: () -> Int,
     subCategoriesSize: () -> Int,
-    selectModeTransition: () -> Transition<Boolean>,
+    selectModeTransition: Transition<Boolean>,
     onAllSelectCheckBoxClick: () -> Unit,
     onEditSubCategoryNameClick: () -> Unit
 ) {
@@ -35,7 +35,7 @@ fun SubCategoryBottomAppBar(
     val showEditName by remember { derivedStateOf { selectedSubCategoriesSize() == 1 } }
     val showDelete by remember { derivedStateOf { selectedSubCategoriesSize() > 0 } }
 
-    selectModeTransition().AnimatedVisibility(
+    selectModeTransition.AnimatedVisibility(
         visible = { it },
         enter = expandIn,
         exit = shrinkOut

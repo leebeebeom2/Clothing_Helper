@@ -23,10 +23,10 @@ class SignInViewModel @Inject constructor(
 
     val uiState = SignInUIStates()
 
-    fun signInWithEmailAndPassword(email: String, password: String) =
+    fun signInWithEmailAndPassword() =
         viewModelScope.launch {
 
-            when (val result = signInUseCase(email, password)) {
+            when (val result = signInUseCase(uiState.email, uiState.password)) {
                 is AuthResult.Success -> showToast(R.string.sign_in_complete)
                 is AuthResult.Fail -> setFireBaseError(
                     exception = result.exception,
@@ -42,8 +42,6 @@ class SignInViewModel @Inject constructor(
         uiState.updateGoogleButtonEnabled(enabled)
 
     override fun showToast(text: Int) = uiState.showToast(text)
-
-    fun toastShown() = uiState.showToast(null)
 }
 
 data class SignInUIStates(
@@ -56,6 +54,11 @@ data class SignInUIStates(
     val googleButtonEnabled by derivedStateOf { _googleButtonEnabled.value }
     val emailError by derivedStateOf { _emailError.value }
     val passwordError by derivedStateOf { _passwordError.value }
+
+    var email = ""
+        private set
+    var password = ""
+        private set
 
     fun updateEmailError(@StringRes error: Int?) {
         _emailError.value = error
@@ -73,5 +76,19 @@ data class SignInUIStates(
         _toastText.value = text
     }
 
-    val isNotError by derivedStateOf { emailError == null && passwordError == null }
+    fun toastShown() {
+        _toastText.value = null
+    }
+
+    fun onEmailChange(email: String) {
+        this.email = email
+    }
+
+    fun onPasswordChange(email: String) {
+        this.password = email
+    }
+
+    val signInButtonEnabled by derivedStateOf {
+        emailError == null && passwordError == null && email.isNotBlank() && password.isNotBlank()
+    }
 }

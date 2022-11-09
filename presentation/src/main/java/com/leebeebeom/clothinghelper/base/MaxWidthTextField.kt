@@ -36,7 +36,7 @@ fun MaxWidthTextField(
     onValueChange: (TextFieldValue) -> Unit,
     onFocusChanged: (FocusState) -> Unit,
     trailingIcon: @Composable (() -> Unit)? = null,
-    isVisible: ()->Boolean = { true }
+    isVisible: () -> Boolean = { true }
 ) {
     Column {
         OutlinedTextField(
@@ -67,11 +67,10 @@ fun MaxWidthTextField(
         ErrorText(error)
     }
 
-    val didShowKeyboardState = rememberSaveable { mutableStateOf(false) }
-    if (!didShowKeyboardState.value && state.showKeyboardEnabled) {
-        LaunchedEffect(key1 = Unit) { state.showKeyboard() }
-        didShowKeyboardState.value = true
-    }
+    ShowKeyboard(
+        showKeyboardEnabled = { state.showKeyboardEnabled },
+        showKeyboard = state::showKeyboard
+    )
 }
 
 @Composable
@@ -151,3 +150,13 @@ fun rememberPasswordTextFieldState(
         keyboardType = KeyboardType.Password, imeAction = imeAction
     )
 )
+
+@Composable
+fun ShowKeyboard(showKeyboardEnabled: () -> Boolean, showKeyboard: suspend () -> Unit) {
+    var didShowKeyboardState by rememberSaveable { mutableStateOf(false) }
+
+    if (!didShowKeyboardState && showKeyboardEnabled()) {
+        LaunchedEffect(key1 = Unit) { showKeyboard() }
+        didShowKeyboardState = true
+    }
+}

@@ -49,7 +49,7 @@ fun SignInRoot(
     }
 
     val isLoading by viewModel.getSignInLoadingStateUseCase().collectAsStateWithLifecycle()
-    if (isLoading) CenterDotProgressIndicator()
+    CenterDotProgressIndicator { isLoading }
 }
 
 @HiltViewModel

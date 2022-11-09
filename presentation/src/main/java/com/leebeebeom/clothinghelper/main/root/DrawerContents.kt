@@ -114,6 +114,16 @@ fun DrawerContentRow(
 )
 
 @Composable
+fun DrawerContentText(modifier: Modifier = Modifier, text: () -> String, style: TextStyle) =
+    Text(
+        modifier = modifier,
+        text = text(),
+        style = style,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+    )
+
+@Composable
 fun DrawerContentText(modifier: Modifier = Modifier, text: String, style: TextStyle) =
     Text(
         modifier = modifier,

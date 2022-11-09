@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import com.leebeebeom.clothinghelper.base.BaseUIState
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
+import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
 open class BaseMainUIState : BaseUIState() {
     private val _isLoading = mutableStateOf(false)
@@ -13,6 +14,8 @@ open class BaseMainUIState : BaseUIState() {
     val isLoading by derivedStateOf { _isLoading.value }
     val allSubCategories by derivedStateOf { _allSubCategories.value }
 
+    fun subCategoriesSize(subCategoryParent: SubCategoryParent) =
+        derivedStateOf { allSubCategories[subCategoryParent.ordinal].size }
 
     fun updateIsLoading(isLoading: Boolean) {
         _isLoading.value = isLoading

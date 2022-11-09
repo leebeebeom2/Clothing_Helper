@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
+import com.leebeebeom.clothinghelper.main.base.BaseIsAllExpandState
 import com.leebeebeom.clothinghelper.main.base.BaseMainUIState
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.model.User
@@ -65,18 +66,13 @@ class MainRootViewModel @Inject constructor(
     }
 }
 
-class MainRootUIState : BaseMainUIState() {
+class MainRootUIState : BaseIsAllExpandState() {
     private val _user: MutableState<User?> = mutableStateOf(null)
-    private val _isAllExpand = mutableStateOf(false)
 
     val user by derivedStateOf { _user.value }
-    val isAllExpand by derivedStateOf { _isAllExpand.value }
+
 
     fun updateUser(user: User?) {
         _user.value = user
-    }
-
-    fun updateIsAllExpand(isAllExpand: Boolean) {
-        _isAllExpand.value = isAllExpand
     }
 }

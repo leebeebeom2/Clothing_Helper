@@ -67,7 +67,8 @@ private fun SubCategoryCardTitle(
     isExpanded: () -> Boolean,
     onExpandIconClick: () -> Unit,
     onCheckBoxClick: () -> Unit
-) = Surface(elevation = 4.dp) {
+) {
+    Surface(elevation = 4.dp) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
@@ -83,8 +84,7 @@ private fun SubCategoryCardTitle(
                     isChecked = isChecked,
                     onClick = onCheckBoxClick
                 )
-                val width by selectModeTransition.animateDp(label = "width") { if (it) 2.dp else 12.dp }
-                Spacer(modifier = Modifier.width(width))
+                AnimateSpacer(selectModeTransition)
                 Name(subCategory = subCategory)
                 SimpleWidthSpacer(dp = 4)
                 TotalCount(isExpanded = isExpanded)
@@ -96,9 +96,17 @@ private fun SubCategoryCardTitle(
             )
         }
     }
+}
 
 @Composable
-private fun TotalCount(isExpanded: () -> Boolean) =
+private fun AnimateSpacer(selectModeTransition: Transition<Boolean>) {
+    val width by selectModeTransition.animateDp(label = "width") { if (it) 2.dp else 12.dp }
+
+    Spacer(modifier = Modifier.width(width))
+}
+
+@Composable
+private fun TotalCount(isExpanded: () -> Boolean) {
     AnimatedVisibility(
         visible = !isExpanded(),
         enter = Anime.SubCategoryCard.fadeIn,
@@ -110,9 +118,10 @@ private fun TotalCount(isExpanded: () -> Boolean) =
             ), maxLines = 1, overflow = TextOverflow.Ellipsis
         )
     }
+}
 
 @Composable
-private fun Name(subCategory: () -> SubCategory) =
+private fun Name(subCategory: () -> SubCategory){
     Text(
         modifier = Modifier.widthIn(max = 300.dp),
         text = subCategory().name,
@@ -120,6 +129,7 @@ private fun Name(subCategory: () -> SubCategory) =
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
     )
+}
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -127,7 +137,8 @@ private fun TitleCircleCheckBox(
     selectModeTransition: Transition<Boolean>,
     isChecked: () -> Boolean,
     onClick: () -> Unit
-) = selectModeTransition.AnimatedVisibility(
+) {
+    selectModeTransition.AnimatedVisibility(
         visible = { it },
         enter = Anime.CircleCheckBox.expandIn,
         exit = Anime.CircleCheckBox.shrinkOut
@@ -140,6 +151,7 @@ private fun TitleCircleCheckBox(
             onClick = onClick
         )
     }
+}
 
 @Composable
 private fun SubCategoryInfo(isExpand: () -> Boolean) {

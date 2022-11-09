@@ -31,11 +31,7 @@ fun SubCategoryHeader(
     onSortClick: (SubCategorySort) -> Unit,
     onOrderClick: (SortOrder) -> Unit
 ) {
-    Text(
-        text = stringResource(id = headerStringRes(parent)),
-        style = MaterialTheme.typography.h2,
-        fontSize = 32.sp
-    )
+    HeaderText(parent = parent)
 
     Row(verticalAlignment = Alignment.CenterVertically) {
         Divider(modifier = Modifier.weight(1f))
@@ -53,7 +49,15 @@ fun SubCategoryHeader(
 }
 
 @Composable
-private fun AllExpandIcon(allExpandIconClick: () -> Unit, allExpand: () -> Boolean) {
+fun HeaderText(parent: () -> SubCategoryParent) =
+    Text(
+        text = stringResource(id = headerStringRes(parent)),
+        style = MaterialTheme.typography.h2,
+        fontSize = 32.sp
+    )
+
+@Composable
+private fun AllExpandIcon(allExpandIconClick: () -> Unit, allExpand: () -> Boolean) =
     Box(modifier = Modifier.offset(4.dp, 0.dp)) {
         AllExpandIcon(
             size = 22.dp,
@@ -62,7 +66,6 @@ private fun AllExpandIcon(allExpandIconClick: () -> Unit, allExpand: () -> Boole
             allExpand = allExpand
         )
     }
-}
 
 @Composable
 private fun SortIcon(
@@ -90,7 +93,6 @@ private fun SortIcon(
     }
 }
 
-@Composable
 fun headerStringRes(parent: () -> SubCategoryParent) =
     when (parent()) {
         SubCategoryParent.TOP -> R.string.top

@@ -38,41 +38,43 @@ fun DrawerContents(
     onSubCategoryClick: (SubCategory) -> Unit,
     onSettingIconClick: () -> Unit,
     allExpandIconClick: () -> Unit
-) = Column {
-    DrawerHeader(user = user, onSettingIconClick = onSettingIconClick)
+) {
+    Column {
+        DrawerHeader(user = user, onSettingIconClick = onSettingIconClick)
 
-    Surface(color = Color(0xFF121212)) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(top = 8.dp, bottom = 40.dp)
-        ) {
-            items(state.essentialMenus, key = { it.name }) {
-                EssentialMenu(essentialMenu = it, onClick = { onEssentialMenuClick(it.type) })
-            }
+        Surface(color = Color(0xFF121212)) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(top = 8.dp, bottom = 40.dp)
+            ) {
+                items(state.essentialMenus, key = { it.name }) {
+                    EssentialMenu(essentialMenu = it, onClick = { onEssentialMenuClick(it.type) })
+                }
 
-            item {
-                IconWithDivider(
-                    isAllExpand = isAllExpand,
-                    onCLick = allExpandIconClick
-                )
-            }
+                item {
+                    IconWithDivider(
+                        isAllExpand = isAllExpand,
+                        onCLick = allExpandIconClick
+                    )
+                }
 
-            items(state.mainCategories, key = { it.name }) {
-                DrawerMainCategory(
-                    mainCategory = it,
-                    subCategories = { subCategories(it.type) },
-                    isLoading = isLoading,
-                    isAllExpand = isAllExpand,
-                    onMainCategoryClick = onMainCategoryClick,
-                    onSubCategoryClick = onSubCategoryClick
-                )
+                items(state.mainCategories, key = { it.name }) {
+                    DrawerMainCategory(
+                        mainCategory = it,
+                        subCategories = { subCategories(it.type) },
+                        isLoading = isLoading,
+                        isAllExpand = isAllExpand,
+                        onMainCategoryClick = onMainCategoryClick,
+                        onSubCategoryClick = onSubCategoryClick
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-private fun IconWithDivider(isAllExpand: () -> Boolean, onCLick: () -> Unit) =
+private fun IconWithDivider(isAllExpand: () -> Boolean, onCLick: () -> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(end = 4.dp)) {
         Divider(color = Disabled, modifier = Modifier.weight(1f))
         AllExpandIcon(
@@ -82,9 +84,10 @@ private fun IconWithDivider(isAllExpand: () -> Boolean, onCLick: () -> Unit) =
             allExpand = isAllExpand
         )
     }
+}
 
 @Composable
-private fun EssentialMenu(essentialMenu: EssentialMenu, onClick: () -> Unit) =
+private fun EssentialMenu(essentialMenu: EssentialMenu, onClick: () -> Unit) {
     DrawerContentRow(
         modifier = Modifier.heightIn(40.dp),
         onClick = onClick
@@ -96,25 +99,28 @@ private fun EssentialMenu(essentialMenu: EssentialMenu, onClick: () -> Unit) =
             style = MaterialTheme.typography.body1.copy(letterSpacing = 0.75.sp)
         )
     }
+}
 
 @Composable
 fun DrawerContentRow(
     modifier: Modifier,
     onClick: () -> Unit,
     content: @Composable RowScope.() -> Unit
-) = Row(
-    modifier = modifier
-        .fillMaxWidth()
-        .padding(horizontal = 8.dp)
-        .clip(RoundedCornerShape(12.dp))
-        .clickable(onClick = onClick)
-        .padding(start = 4.dp),
-    verticalAlignment = Alignment.CenterVertically,
-    content = content
-)
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .clickable(onClick = onClick)
+            .padding(start = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        content = content
+    )
+}
 
 @Composable
-fun DrawerContentText(modifier: Modifier = Modifier, text: () -> String, style: TextStyle) =
+fun DrawerContentText(modifier: Modifier = Modifier, text: () -> String, style: TextStyle) {
     Text(
         modifier = modifier,
         text = text(),
@@ -122,9 +128,10 @@ fun DrawerContentText(modifier: Modifier = Modifier, text: () -> String, style: 
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
     )
+}
 
 @Composable
-fun DrawerContentText(modifier: Modifier = Modifier, text: String, style: TextStyle) =
+fun DrawerContentText(modifier: Modifier = Modifier, text: String, style: TextStyle) {
     Text(
         modifier = modifier,
         text = text,
@@ -132,6 +139,7 @@ fun DrawerContentText(modifier: Modifier = Modifier, text: String, style: TextSt
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
     )
+}
 
 data class DrawerContentsState(
     val essentialMenus: List<EssentialMenu> = getEssentialMenus(),

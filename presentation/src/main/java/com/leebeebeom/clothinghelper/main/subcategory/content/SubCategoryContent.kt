@@ -35,10 +35,7 @@ fun SubCategoryContent(
     subCategories: () -> List<SubCategory>,
     isChecked: (SubCategory) -> Boolean,
     sort: () -> SubCategorySortPreferences,
-    state: SubCategoryContentState = rememberSubCategoryContentState(
-        selectModeTransition,
-        subCategories
-    ),
+    state: SubCategoryContentState = rememberSubCategoryContentState(selectModeTransition = selectModeTransition),
     allExpandIconClick: () -> Unit,
     onLongClick: (SubCategory) -> Unit,
     onSubCategoryClick: (SubCategory) -> Unit,
@@ -54,11 +51,11 @@ fun SubCategoryContent(
                 .pointerInput(Unit) {
                     detectDragGesturesAfterLongPress(onDragStart = { offset ->
                         interceptOutOfBoundsChildEvents = true
-                        state.dragSelectStart(offset, onLongClick)
+                        state.dragSelectStart(offset, subCategories,onLongClick)
                     }, onDrag = { change, _ ->
                         change.consume()
-                        state.onDrag(change.position, onLongClick)
-                        state.onDragEndMove(change.position, onLongClick)
+                        state.onDrag(change.position, subCategories, onLongClick)
+                        state.onDragEndMove(change.position, subCategories, onLongClick)
                     }, onDragEnd = {
                         interceptOutOfBoundsChildEvents = false
                         state.onDragEnd()
@@ -98,7 +95,6 @@ fun SubCategoryContent(
 data class SubCategoryContentState(
     val lazyListState: LazyListState,
     val haptic: HapticFeedback,
-    private val subCategories: List<SubCategory>,
     private var initialSelectedKeyState: String? = null,
     private var initialSelectedTopState: Int? = null,
     private var initialSelectedBottomState: Int? = null,
@@ -124,27 +120,34 @@ data class SubCategoryContentState(
 
     private fun performHaptic() = haptic.performHapticFeedback(HapticFeedbackType.LongPress)
 
-    fun dragSelectStart(touchOffset: Offset, onLongClick: (SubCategory) -> Unit) {
-        lazyListState.getSelectedItem({ visibleItem ->
-            isSelectedItem(touchOffset = touchOffset, visibleItem = visibleItem)
-        }) { selectedItem, selectedSubCategory ->
+    fun dragSelectStart(
+        touchOffset: Offset,
+        subCategories: () -> List<SubCategory>,
+        onLongClick: (SubCategory) -> Unit
+    ) {
+        lazyListState.getSelectedItem(
+            subCategories,
+            { visibleItem -> isSelectedItem(touchOffset = touchOffset, visibleItem = visibleItem) })
+        { selectedItem, selectedSubCategory ->
             initialSelectedKeyState = selectedItem.key as? String
             initialSelectedTopState = selectedItem.realOffset
             initialSelectedBottomState = selectedItem.offsetEnd
-            Log.d(
-                TAG,
-                "dragSelectStart: $touchOffset / $initialSelectedTopState / $initialSelectedBottomState"
-            )
             onLongClick(selectedSubCategory)
             performHaptic()
         }
     }
 
-    fun onDrag(touchOffset: Offset, onLongClick: (SubCategory) -> Unit) {
+    fun onDrag(
+        touchOffset: Offset,
+        subCategories: () -> List<SubCategory>,
+        onLongClick: (SubCategory) -> Unit
+    ) {
         Log.d(TAG, "dragSelectStart: $touchOffset")
 
         initialSelectedKeyState?.let { initialSelectedKey ->
-            lazyListState.getSelectedItem({ initialSelectedKey != it.key as? String },
+            lazyListState.getSelectedItem(
+                subCategories,
+                { initialSelectedKey != it.key as? String },
                 { !passedItemKeys.contains(it.key) },
                 { isSelectedItem(touchOffset = touchOffset, visibleItem = it) }
             ) { _, selectedCategory ->
@@ -157,20 +160,35 @@ data class SubCategoryContentState(
     private fun isSelectedItem(touchOffset: Offset, visibleItem: LazyListItemInfo) =
         touchOffset.y.toInt() in visibleItem.realOffset..visibleItem.offsetEnd
 
-    fun onDragEndMove(touchOffset: Offset, onLongClick: (SubCategory) -> Unit) {
+    fun onDragEndMove(
+        touchOffset: Offset,
+        subCategories: () -> List<SubCategory>,
+        onLongClick: (SubCategory) -> Unit
+    ) {
         when (currentDragPosition(touchOffset)) {
-            isDragDown -> dragEndMove(onSelect = onLongClick) { touchOffset.y.toInt() < it.realOffset }
-            isDragUp -> dragEndMove(onSelect = onLongClick) { touchOffset.y.toInt() > it.offsetEnd }
+            isDragDown ->
+                dragEndMove(
+                    onLongClick = onLongClick,
+                    subCategories = subCategories
+                ) { touchOffset.y.toInt() < it.realOffset }
+            isDragUp ->
+                dragEndMove(
+                    onLongClick = onLongClick,
+                    subCategories = subCategories
+                ) { touchOffset.y.toInt() > it.offsetEnd }
         }
     }
 
     private fun dragEndMove(
-        onSelect: (SubCategory) -> Unit, condition: (selectedItem: LazyListItemInfo) -> Boolean
-    ) = lazyListState.getSelectedItem({
-        it.key == passedItemKeys.lastOrNull()
-    }) { selectedItem, selectedSubCategory ->
+        subCategories: () -> List<SubCategory>,
+        onLongClick: (SubCategory) -> Unit,
+        condition: (selectedItem: LazyListItemInfo) -> Boolean
+    ) = lazyListState.getSelectedItem(
+        subCategories,
+        { it.key == passedItemKeys.lastOrNull() }
+    ) { selectedItem, selectedSubCategory ->
         if (condition(selectedItem)) {
-            onSelect(selectedSubCategory)
+            onLongClick(selectedSubCategory)
             passedItemKeys.remove(selectedSubCategory.key)
         }
     }
@@ -183,6 +201,7 @@ data class SubCategoryContentState(
     }
 
     private fun LazyListState.getSelectedItem(
+        subCategories: () -> List<SubCategory>,
         vararg conditions: (visibleItem: LazyListItemInfo) -> Boolean,
         task: (LazyListItemInfo, SubCategory) -> Unit
     ) {
@@ -192,8 +211,8 @@ data class SubCategoryContentState(
             }
             true
         }
-        val selectedSubCategory = subCategories.firstOrNull { it.key == selectedItem?.key }
-
+        val selectedSubCategory = subCategories().firstOrNull { it.key == selectedItem?.key }
+        Log.d(TAG, "getSelectedItem: $selectedItem / $selectedSubCategory")
         if (selectedItem != null && selectedSubCategory != null) task(
             selectedItem, selectedSubCategory
         )
@@ -203,13 +222,11 @@ data class SubCategoryContentState(
 @Composable
 fun rememberSubCategoryContentState(
     selectModeTransition: Transition<Boolean>,
-    subCategories: () -> List<SubCategory>,
     lazyListState: LazyListState = rememberLazyListState(),
     haptic: HapticFeedback = LocalHapticFeedback.current,
     interactionSource: InteractionSource = remember { MutableInteractionSource() }
-) = remember(subCategories) {
+) = remember {
     SubCategoryContentState(
-        subCategories = subCategories(),
         lazyListState = lazyListState,
         haptic = haptic,
         interactionSource = interactionSource,

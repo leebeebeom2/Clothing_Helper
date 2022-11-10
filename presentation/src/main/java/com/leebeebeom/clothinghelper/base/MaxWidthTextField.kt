@@ -150,10 +150,10 @@ fun rememberPasswordTextFieldState(
 
 @Composable
 fun ShowKeyboard(showKeyboardEnabled: () -> Boolean, showKeyboard: suspend () -> Unit) {
-    var didShowKeyboardState by rememberSaveable { mutableStateOf(false) }
+    var doesShowKeyboardState by rememberSaveable { mutableStateOf(false) }
 
-    if (!didShowKeyboardState && showKeyboardEnabled()) {
+    if (!doesShowKeyboardState && showKeyboardEnabled()) {
         LaunchedEffect(key1 = Unit) { showKeyboard() }
-        didShowKeyboardState = true
+        doesShowKeyboardState = true
     }
 }

@@ -138,3 +138,8 @@ fun CustomIconButton(
 fun FinishActivityBackHandler(activity: ComponentActivity = LocalContext.current as ComponentActivity) {
     BackHandler(enabled = true) { activity.finish() }
 }
+
+@Composable
+fun BackHandler(enabled: () -> Boolean, task: () -> Unit) {
+    BackHandler(enabled(), onBack = task)
+}

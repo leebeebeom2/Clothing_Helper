@@ -60,6 +60,10 @@ class AddSubCategoryUseCase(private val subCategoryRepository: SubCategoryReposi
 }
 
 class EditSubCategoryNameUseCase(private val subCategoryRepository: SubCategoryRepository) {
-    suspend operator fun invoke(subCategory: SubCategory, newName: String, uid: String) =
-        subCategoryRepository.editSubCategoryName(subCategory, newName, uid)
+    suspend operator fun invoke(
+        parent: SubCategoryParent,
+        key: String,
+        newName: String,
+        uid: String
+    ) = subCategoryRepository.editSubCategoryName(parent, key, newName, uid)
 }

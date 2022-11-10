@@ -54,10 +54,7 @@ fun MainNavHost(state: MainNavHostState = rememberMainNavHostState()) {
             modifier = Modifier.padding(paddingValues = paddingValues)
         ) {
             composable(MainDestinations.MainCategory.route) {
-                MainCategoryScreen(
-                    onMainCategoryClick = state::navigateToSubCategory,
-                    drawerCloseBackHandler = drawerCloseBackHandler
-                )
+                MainCategoryScreen(onMainCategoryClick = state::navigateToSubCategory)
             }
             composable(
                 route = MainDestinations.SubCategory.routeWithArg,
@@ -95,19 +92,24 @@ data class MainNavHostState(val navController: NavHostController) {
         EssentialMenus.Trash -> {} // TODO
     }
 
-    fun navigateToSubCategory(subCategoryParent: SubCategoryParent) =
+    fun navigateToSubCategory(subCategoryParent: SubCategoryParent) {
         navController.navigateSingleTop("${MainDestinations.SubCategory.route}/${subCategoryParent.name}")
+    }
 
-    private fun navigateToMain() =
+    private fun navigateToMain() {
         navController.navigateSingleTop(route = MainDestinations.MainCategory.route)
+    }
 
-    fun navigateToSetting() =
+    fun navigateToSetting() {
         navController.navigateSingleTop(route = MainDestinations.Setting.route)
+    }
 
-    fun navigateToDetail(subCategory: SubCategory) =
+    fun navigateToDetail(subCategory: SubCategory) {
         navController.navigateSingleTop(route = "${MainDestinations.Detail.route}/${subCategory.name}/${subCategory.key}")
+    }
 }
 
 @Composable
-fun rememberMainNavHostState(navController: NavHostController = rememberNavController()) =
-    remember { MainNavHostState(navController) }
+fun rememberMainNavHostState(navController: NavHostController = rememberNavController()): MainNavHostState {
+    return remember { MainNavHostState(navController) }
+}

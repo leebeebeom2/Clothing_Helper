@@ -28,8 +28,7 @@ fun VisibleIcon(isVisible: () -> Boolean, onClick: () -> Unit) {
         drawable = if (isVisible()) R.drawable.ic_visibility_off else R.drawable.ic_visibility,
         tint = LocalContentColor.current.copy(0.4f),
         onClick = onClick,
-        modifier = Modifier.size(24.dp),
-        contentDescription = if (isVisible()) "closeEye" else "openEye"
+        modifier = Modifier.size(24.dp)
     )
 }
 

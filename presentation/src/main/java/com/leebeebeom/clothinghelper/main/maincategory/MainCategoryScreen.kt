@@ -37,8 +37,7 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 fun MainCategoryScreen(
     viewModel: MainCategoryViewModel = hiltViewModel(),
     uiStates: BaseMainUIState = viewModel.uiStates,
-    onMainCategoryClick: (SubCategoryParent) -> Unit,
-    drawerCloseBackHandler: @Composable () -> Unit
+    onMainCategoryClick: (SubCategoryParent) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -58,13 +57,12 @@ fun MainCategoryScreen(
                 MainCategoryCard(
                     modifier = modifier,
                     mainCategory = mainCategory,
-                    subCategoriesSize = { uiStates.subCategoriesSize(mainCategory.type) },
+                    subCategoriesSize = uiStates::subCategoriesSize,
                     isLoading = { uiStates.isLoading },
-                    onMainContentClick = { onMainCategoryClick(mainCategory.type) }
+                    onMainContentClick = onMainCategoryClick
                 )
             }
         }
-        drawerCloseBackHandler()
     }
 }
 
@@ -74,15 +72,17 @@ fun MainCategoryScreen(
 private fun MainCategoryCard(
     modifier: Modifier,
     mainCategory: MainCategory,
-    subCategoriesSize: () -> Int,
+    subCategoriesSize: (SubCategoryParent) -> Int,
     isLoading: () -> Boolean,
-    onMainContentClick: () -> Unit,
+    onMainContentClick: (SubCategoryParent) -> Unit,
 ) {
+    val onCardClick = remember { { onMainContentClick(mainCategory.type) } }
+
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
         elevation = 2.dp,
-        onClick = onMainContentClick
+        onClick = onCardClick
     ) {
         Box(
             modifier = Modifier
@@ -101,13 +101,21 @@ private fun MainCategoryCard(
                 tint = LocalContentColor.current.copy(ContentAlpha.medium)
             )
 
-            SubCategoryCountText(isLoading = isLoading, subCategoriesSize = subCategoriesSize)
+            SubCategoryCountText(
+                mainCategory = mainCategory,
+                isLoading = isLoading,
+                subCategoriesSize = subCategoriesSize
+            )
         }
     }
 }
 
 @Composable
-private fun BoxScope.SubCategoryCountText(isLoading: () -> Boolean, subCategoriesSize: () -> Int) {
+private fun BoxScope.SubCategoryCountText(
+    mainCategory: MainCategory,
+    isLoading: () -> Boolean,
+    subCategoriesSize: (SubCategoryParent) -> Int
+) {
     if (isLoading())
         DotProgressIndicator(
             modifier = Modifier
@@ -118,7 +126,7 @@ private fun BoxScope.SubCategoryCountText(isLoading: () -> Boolean, subCategorie
     else Text(
         text = stringResource(
             id = R.string.categories,
-            formatArgs = arrayOf(subCategoriesSize())
+            formatArgs = arrayOf(subCategoriesSize(mainCategory.type))
         ),
         modifier = Modifier.align(Alignment.BottomStart),
         style = MaterialTheme.typography.caption.copy(

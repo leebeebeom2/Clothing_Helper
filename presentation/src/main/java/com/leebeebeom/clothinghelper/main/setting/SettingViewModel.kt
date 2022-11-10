@@ -10,5 +10,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingViewModel @Inject constructor(private val signOutUseCase: SignOutUseCase) :
     ViewModel() {
-    fun signOut() = viewModelScope.launch { signOutUseCase() }
+    fun signOut() {
+        viewModelScope.launch { signOutUseCase() }
+    }
 }

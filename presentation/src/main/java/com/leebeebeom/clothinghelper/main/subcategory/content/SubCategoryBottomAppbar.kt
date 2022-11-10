@@ -21,18 +21,26 @@ import com.leebeebeom.clothinghelper.base.CircleCheckBox
 import com.leebeebeom.clothinghelper.base.CustomIconButton
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
+import com.leebeebeom.clothinghelperdomain.model.SubCategory
+import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SubCategoryBottomAppBar(
     selectedSubCategoriesSize: () -> Int,
-    isAllSelected: () -> Boolean,
     showEditIcon: () -> Boolean,
     showDeleteIcon: () -> Boolean,
     selectModeTransition: Transition<Boolean>,
-    onAllSelectCheckBoxClick: () -> Unit,
-    onEditSubCategoryNameClick: () -> Unit
-) =
+    onAllSelectCheckBoxClick: (List<SubCategory>) -> Unit,
+    onEditSubCategoryNameClick: () -> Unit,
+    parent: SubCategoryParent,
+    subCategoriesSize: (SubCategoryParent) -> Int,
+    subCategories: (SubCategoryParent) -> List<SubCategory>
+) {
+    val isAllSelected by remember {
+        derivedStateOf { selectedSubCategoriesSize() == subCategoriesSize(parent) }
+    }
+    val onCheckBoxClick = remember { { onAllSelectCheckBoxClick(subCategories(parent)) } }
     selectModeTransition.AnimatedVisibility(
         visible = { it },
         enter = expandIn,
@@ -41,9 +49,9 @@ fun SubCategoryBottomAppBar(
         BottomAppBar {
             SimpleWidthSpacer(dp = 4)
             CircleCheckBox(
-                isChecked = isAllSelected,
+                isChecked = { isAllSelected },
                 modifier = Modifier.size(22.dp),
-                onClick = onAllSelectCheckBoxClick
+                onClick = onCheckBoxClick
             )
             SimpleWidthSpacer(dp = 10)
             SelectText(selectedSubCategoriesSize = selectedSubCategoriesSize)
@@ -64,6 +72,7 @@ fun SubCategoryBottomAppBar(
             SimpleWidthSpacer(dp = 4)
         }
     }
+}
 
 @Composable
 fun BottomAppBarIcon(
@@ -83,10 +92,11 @@ fun BottomAppBarIcon(
 }
 
 @Composable
-fun SelectText(selectedSubCategoriesSize: () -> Int) =
+fun SelectText(selectedSubCategoriesSize: () -> Int) {
     Text(
         text = stringResource(
             id = R.string.count_selected,
             formatArgs = arrayOf(selectedSubCategoriesSize())
         ), modifier = Modifier.offset((-8).dp, 1.dp)
     )
+}

@@ -114,39 +114,45 @@ fun rememberMaxWidthTextFiledState(
     focusManager: FocusManager = LocalFocusManager.current,
     focusRequester: FocusRequester = remember { FocusRequester() },
     keyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
-) = remember {
-    MaxWidthTextFieldState(
-        label = label,
-        placeholder = placeholder,
-        showKeyboardEnabled = showKeyboardEnabled,
-        keyboardOptions = keyboardOptions,
-        focusManager = focusManager,
-        focusRequester = focusRequester,
-        keyboardController = keyboardController
-    )
+): MaxWidthTextFieldState {
+    return remember {
+        MaxWidthTextFieldState(
+            label = label,
+            placeholder = placeholder,
+            showKeyboardEnabled = showKeyboardEnabled,
+            keyboardOptions = keyboardOptions,
+            focusManager = focusManager,
+            focusRequester = focusRequester,
+            keyboardController = keyboardController
+        )
+    }
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun rememberEmailTextFieldState(
     imeAction: ImeAction,
-) = rememberMaxWidthTextFiledState(
-    label = R.string.email,
-    placeholder = R.string.email_place_holder,
-    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = imeAction),
-    showKeyboardEnabled = true,
-)
+): MaxWidthTextFieldState {
+    return rememberMaxWidthTextFiledState(
+        label = R.string.email,
+        placeholder = R.string.email_place_holder,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = imeAction),
+        showKeyboardEnabled = true,
+    )
+}
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun rememberPasswordTextFieldState(
     @StringRes label: Int = R.string.password,
     imeAction: ImeAction = ImeAction.Done
-) = rememberMaxWidthTextFiledState(
-    label = label, keyboardOptions = KeyboardOptions(
-        keyboardType = KeyboardType.Password, imeAction = imeAction
+): MaxWidthTextFieldState {
+    return rememberMaxWidthTextFiledState(
+        label = label, keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Password, imeAction = imeAction
+        )
     )
-)
+}
 
 @Composable
 fun ShowKeyboard(showKeyboardEnabled: () -> Boolean, showKeyboard: suspend () -> Unit) {

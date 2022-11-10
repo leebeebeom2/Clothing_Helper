@@ -40,8 +40,10 @@ fun SignInRoot(
                         .padding(it)
                         .padding(horizontal = 20.dp)
                         .clickable(
-                            interactionSource = state.interactionSource, indication = null
-                        ) { state.clearFocus() },
+                            interactionSource = state.interactionSource,
+                            indication = null,
+                            onClick = state::clearFocus
+                        ),
                     content = content
                 )
             }
@@ -65,4 +67,6 @@ data class SignInRootState(
 fun rememberSignInRootState(
     focusManager: FocusManager = LocalFocusManager.current,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
-) = remember { SignInRootState(focusManager, interactionSource) }
+): SignInRootState {
+    return remember { SignInRootState(focusManager, interactionSource) }
+}

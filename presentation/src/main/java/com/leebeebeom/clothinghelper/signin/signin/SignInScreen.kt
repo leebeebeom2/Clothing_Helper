@@ -61,7 +61,7 @@ fun SignInScreen(
         MaxWidthButton(
             text = R.string.sign_in,
             enabled = { uiStates.buttonEnabled },
-            onClick = { viewModel.signInWithEmailAndPassword() }
+            onClick = viewModel::signInWithEmailAndPassword
         )
         SimpleHeightSpacer(dp = 8)
         OrDivider()
@@ -70,7 +70,7 @@ fun SignInScreen(
         GoogleSignInButton(
             enabled = { uiStates.googleButtonEnabled },
             onActivityResult = viewModel::signInWithGoogleEmail,
-            disabled = { viewModel.updateGoogleButtonEnabled(enabled = false) }
+            disabled = viewModel::disableGoogleButton
         )
         SimpleHeightSpacer(dp = 4)
         SignUpText(onEmailSignUpClick)

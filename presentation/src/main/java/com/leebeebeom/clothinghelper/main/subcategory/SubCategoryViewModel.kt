@@ -79,7 +79,7 @@ class SubCategoryViewModel @Inject constructor(
         subCategoryAllExpandUseCase.toggleAllExpand()
     }
 
-    fun editSubCategoryName(parent: SubCategoryParent, key: String?, newName: String) =
+    fun editSubCategoryName(parent: SubCategoryParent, key: String?, newName: String) {
         viewModelScope.launch {
             uiStates.user?.let { user ->
                 key?.let { key ->
@@ -97,13 +97,15 @@ class SubCategoryViewModel @Inject constructor(
                 } ?: uiStates.showToast(R.string.add_category_failed)
             } ?: uiStates.showToast(R.string.add_category_failed)
         }
+    }
 
     fun changeSort(sort: SubCategorySort) {
         viewModelScope.launch { subCategorySortUseCase.changeSort(sort) }
     }
 
-    fun changeOrder(order: SortOrder) =
+    fun changeOrder(order: SortOrder) {
         viewModelScope.launch { subCategorySortUseCase.changeOrder(order) }
+    }
 }
 
 class SubCategoryUIState : BaseIsAllExpandState() {

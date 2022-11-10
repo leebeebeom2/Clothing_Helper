@@ -45,8 +45,7 @@ fun SimpleIcon(
 @Composable
 fun CenterDotProgressIndicator(
     backGround: Color = Disabled,
-    isLoading: () -> Boolean,
-    content: @Composable () -> Unit = {}
+    isLoading: () -> Boolean
 ) {
     if (isLoading()) Surface(color = backGround) {
         Box(modifier = Modifier
@@ -60,7 +59,7 @@ fun CenterDotProgressIndicator(
                 color = LocalContentColor.current.copy(ContentAlpha.medium)
             )
         }
-    } else content()
+    }
 }
 
 @Composable
@@ -84,7 +83,7 @@ fun SimpleToast(@StringRes text: () -> Int?, shownToast: () -> Unit) {
 @OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
 fun CircleCheckBox(
-    modifier: Modifier = Modifier, isChecked: () -> Boolean, onClick: (() -> Unit)? = null
+    modifier: Modifier = Modifier, isChecked: () -> Boolean, onClick: () -> Unit
 ) {
     CustomIconButton(
         modifier = modifier, onClick = onClick, painter = rememberAnimatedVectorPainter(
@@ -98,7 +97,7 @@ fun CircleCheckBox(
 @Composable
 fun CustomIconButton(
     modifier: Modifier = Modifier,
-    onClick: (() -> Unit)? = null,
+    onClick: () -> Unit,
     @DrawableRes drawable: Int,
     tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current),
     contentDescription: String? = null
@@ -115,7 +114,7 @@ fun CustomIconButton(
 @Composable
 fun CustomIconButton(
     modifier: Modifier = Modifier,
-    onClick: (() -> Unit)? = null,
+    onClick: () -> Unit,
     painter: Painter,
     tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current),
     contentDescription: String? = null
@@ -123,7 +122,7 @@ fun CustomIconButton(
     Box(
         modifier = Modifier
             .clip(CircleShape)
-            .clickable(enabled = onClick != null, onClick = { onClick?.invoke() })
+            .clickable(onClick = onClick)
             .padding(4.dp)
     ) {
         Icon(

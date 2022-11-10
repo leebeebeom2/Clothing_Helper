@@ -79,20 +79,22 @@ class SubCategoryViewModel @Inject constructor(
         subCategoryAllExpandUseCase.toggleAllExpand()
     }
 
-    fun editSubCategoryName(parent: SubCategoryParent, key: String, newName: String) =
+    fun editSubCategoryName(parent: SubCategoryParent, key: String?, newName: String) =
         viewModelScope.launch {
-            uiStates.user?.let {
-                val result = editSubCategoryNameUseCase(
-                    parent = parent,
-                    key = key,
-                    newName = newName.trim(),
-                    uid = it.uid
-                )
+            uiStates.user?.let { user ->
+                key?.let { key ->
+                    val result = editSubCategoryNameUseCase(
+                        parent = parent,
+                        key = key,
+                        newName = newName.trim(),
+                        uid = user.uid
+                    )
 
-                if (result is FirebaseResult.Fail) {
-                    uiStates.showToast(R.string.add_category_failed)
-                    Log.d(TAG, "taskFailed: $result")
-                }
+                    if (result is FirebaseResult.Fail) {
+                        uiStates.showToast(R.string.add_category_failed)
+                        Log.d(TAG, "taskFailed: $result")
+                    }
+                } ?: uiStates.showToast(R.string.add_category_failed)
             } ?: uiStates.showToast(R.string.add_category_failed)
         }
 

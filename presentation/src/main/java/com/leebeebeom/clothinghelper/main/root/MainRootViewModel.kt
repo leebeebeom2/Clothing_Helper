@@ -55,7 +55,9 @@ class MainRootViewModel @Inject constructor(
         }
     }
 
-    fun toggleAllExpand() = viewModelScope.launch {
-        mainScreenRootAllExpandUseCase.toggleAllExpand()
+    fun toggleAllExpand() {
+        viewModelScope.launch {
+            mainScreenRootAllExpandUseCase.toggleAllExpand()
+        }
     }
 }

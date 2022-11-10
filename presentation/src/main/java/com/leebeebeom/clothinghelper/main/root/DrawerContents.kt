@@ -70,7 +70,8 @@ fun DrawerContents(
                         isLoading = isLoading,
                         isAllExpand = isAllExpand,
                         onMainCategoryClick = onMainCategoryClick,
-                        onSubCategoryClick = onSubCategoryClick
+                        onSubCategoryClick = onSubCategoryClick,
+                        onDrawerClose = onDrawerClose
                     )
                 }
             }

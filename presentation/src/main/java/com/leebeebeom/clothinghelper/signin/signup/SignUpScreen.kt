@@ -85,7 +85,7 @@ fun SignUpScreen(
         GoogleSignInButton(
             enabled = { uiStates.googleButtonEnabled },
             onActivityResult = viewModel::signInWithGoogleEmail,
-            disabled = { viewModel.updateGoogleButtonEnabled(enabled = false) }
+            disabled = viewModel::disableGoogleButton
         )
         SimpleHeightSpacer(dp = 150)
     }

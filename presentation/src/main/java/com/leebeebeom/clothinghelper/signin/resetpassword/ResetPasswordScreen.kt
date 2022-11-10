@@ -40,7 +40,7 @@ fun ResetPasswordScreen(
 ) {
     TaskSuccess(
         taskSuccess = { uiStates.isTaskSuccess },
-        updateIsTaskSuccess = { uiStates.updateIsTaskSuccess(true) })
+        consumeIsTaskSuccess = uiStates::consumeIsTaskSuccess)
 
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
         Text(
@@ -69,9 +69,9 @@ fun ResetPasswordScreen(
 }
 
 @Composable
-private fun TaskSuccess(taskSuccess: () -> Boolean, updateIsTaskSuccess: () -> Unit) {
+private fun TaskSuccess(taskSuccess: () -> Boolean, consumeIsTaskSuccess: () -> Unit) {
     if (taskSuccess()) {
         (LocalContext.current as ComponentActivity).onBackPressedDispatcher.onBackPressed()
-        updateIsTaskSuccess()
+        consumeIsTaskSuccess()
     }
 }

@@ -42,10 +42,17 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    override fun updateGoogleButtonEnabled(enabled: Boolean) =
+    override fun updateGoogleButtonEnabled(enabled: Boolean) {
         uiStates.updateGoogleButtonEnabled(enabled)
+    }
 
-    override fun showToast(text: Int) = uiStates.showToast(text)
+    override fun showToast(text: Int) {
+        uiStates.showToast(text)
+    }
+
+    override fun disableGoogleButton() {
+        uiStates.updateGoogleButtonEnabled(false)
+    }
 }
 
 class SignUpUIState : BaseSignInUpUIState() {

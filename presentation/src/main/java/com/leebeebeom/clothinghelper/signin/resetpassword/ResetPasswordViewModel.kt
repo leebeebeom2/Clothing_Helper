@@ -45,4 +45,8 @@ class ResetPasswordUIState : BaseEmailUIState() {
     fun updateIsTaskSuccess(taskSuccess: Boolean) {
         isTaskSuccess = taskSuccess
     }
+
+    fun consumeIsTaskSuccess() {
+        isTaskSuccess = false
+    }
 }

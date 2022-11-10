@@ -38,7 +38,7 @@ class SignInViewModel @Inject constructor(
         uiState.updateGoogleButtonEnabled(enabled)
     }
 
-    fun disableGoogleButton() {
+    override fun disableGoogleButton() {
         uiState.updateGoogleButtonEnabled(false)
     }
 

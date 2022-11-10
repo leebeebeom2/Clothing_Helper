@@ -37,7 +37,8 @@ fun DrawerContents(
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (SubCategory) -> Unit,
     onSettingIconClick: () -> Unit,
-    allExpandIconClick: () -> Unit
+    allExpandIconClick: () -> Unit,
+    onDrawerClose: () -> Unit
 ) {
     Column {
         DrawerHeader(user = user, onSettingIconClick = onSettingIconClick)
@@ -48,7 +49,11 @@ fun DrawerContents(
                 contentPadding = PaddingValues(top = 8.dp, bottom = 40.dp)
             ) {
                 items(state.essentialMenus, key = { it.name }) {
-                    EssentialMenu(essentialMenu = it, onClick = { onEssentialMenuClick(it.type) })
+                    EssentialMenu(
+                        essentialMenu = it,
+                        onClick = onEssentialMenuClick,
+                        onDrawerClose = onDrawerClose
+                    )
                 }
 
                 item {
@@ -61,7 +66,7 @@ fun DrawerContents(
                 items(state.mainCategories, key = { it.name }) {
                     DrawerMainCategory(
                         mainCategory = it,
-                        subCategories = { subCategories(it.type) },
+                        subCategories = subCategories,
                         isLoading = isLoading,
                         isAllExpand = isAllExpand,
                         onMainCategoryClick = onMainCategoryClick,
@@ -87,10 +92,21 @@ private fun IconWithDivider(isAllExpand: () -> Boolean, onCLick: () -> Unit) {
 }
 
 @Composable
-private fun EssentialMenu(essentialMenu: EssentialMenu, onClick: () -> Unit) {
+private fun EssentialMenu(
+    essentialMenu: EssentialMenu,
+    onClick: (EssentialMenus) -> Unit,
+    onDrawerClose: () -> Unit
+) {
+    val onRowClick = remember {
+        {
+            onClick(essentialMenu.type)
+            onDrawerClose()
+        }
+    }
+
     DrawerContentRow(
         modifier = Modifier.heightIn(40.dp),
-        onClick = onClick
+        onClick = onRowClick
     ) {
         SimpleIcon(modifier = Modifier.size(22.dp), drawable = essentialMenu.drawable)
         SimpleWidthSpacer(dp = 12)

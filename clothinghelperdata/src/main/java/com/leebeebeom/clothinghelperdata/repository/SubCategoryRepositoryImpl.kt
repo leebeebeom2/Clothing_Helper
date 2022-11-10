@@ -97,13 +97,8 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
 
             when (val result = pushSubCategory(subCategoryRef, newSubCategory)) {
                 is SubCategoryPushResult.Success -> {
-                    _allSubCategories.update {
-                        val allSubCategories = it.toMutableList()
-                        val addedSubCategories =
-                            allSubCategories[subCategoryParent.ordinal].toMutableList()
-                        addedSubCategories.add(result.subCategory)
-                        allSubCategories[subCategoryParent.ordinal] = addedSubCategories
-                        allSubCategories
+                    _allSubCategories.singleListUpdate(subCategoryParent.ordinal) {
+                        it.add(result.subCategory)
                     }
                     FirebaseResult.Success
                 }
@@ -121,13 +116,10 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
         try {
             root.getSubCategoriesRef(uid).child(subCategory.key).child("name").setValue(newName)
                 .await()
-            val allSubCategorisesTemp = _allSubCategories.value.toMutableList()
-            val editedSubCategoriesTemp =
-                allSubCategorisesTemp[subCategory.parent.ordinal].toMutableList()
-            editedSubCategoriesTemp.remove(subCategory)
-            editedSubCategoriesTemp.add(subCategory.copy(name = newName))
-            allSubCategorisesTemp[subCategory.parent.ordinal] = editedSubCategoriesTemp
-            _allSubCategories.value = allSubCategorisesTemp
+            _allSubCategories.singleListUpdate(subCategory.parent.ordinal) {
+                it.remove(subCategory)
+                it.add(subCategory.copy(name = newName))
+            }
             FirebaseResult.Success
         } catch (e: Exception) {
             FirebaseResult.Fail(e)
@@ -212,4 +204,15 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
 object DatabasePath {
     const val SUB_CATEGORIES = "sub categories"
     const val USER_INFO = "user info"
+}
+
+fun MutableStateFlow<List<List<SubCategory>>>.singleListUpdate(
+    index: Int,
+    task: (MutableList<SubCategory>) -> Unit
+) {
+    val temp = value.toMutableList()
+    val temp2 = temp[index].toMutableList()
+    task(temp2)
+    temp[index] = temp2
+    update { temp }
 }

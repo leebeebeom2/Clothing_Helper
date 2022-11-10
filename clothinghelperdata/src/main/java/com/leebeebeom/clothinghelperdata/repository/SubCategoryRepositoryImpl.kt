@@ -111,12 +111,13 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
     }
 
     override suspend fun editSubCategoryName(
-        subCategory: SubCategory, newName: String, uid: String
+        parent: SubCategoryParent, key: String, newName: String, uid: String
     ): FirebaseResult = withContext(Dispatchers.IO) {
         try {
-            root.getSubCategoriesRef(uid).child(subCategory.key).child("name").setValue(newName)
+            root.getSubCategoriesRef(uid).child(key).child("name").setValue(newName)
                 .await()
-            _allSubCategories.singleListUpdate(subCategory.parent.ordinal) {
+            _allSubCategories.singleListUpdate(parent.ordinal) {
+                val subCategory = it.first { subCategory -> subCategory.key == key }
                 it.remove(subCategory)
                 it.add(subCategory.copy(name = newName))
             }

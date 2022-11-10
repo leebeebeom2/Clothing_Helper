@@ -84,7 +84,7 @@ fun SimpleToast(@StringRes text: () -> Int?, shownToast: () -> Unit) {
 @OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
 fun CircleCheckBox(
-    modifier: Modifier = Modifier, isChecked: () -> Boolean, onClick: () -> Unit = {}
+    modifier: Modifier = Modifier, isChecked: () -> Boolean, onClick: (() -> Unit)? = null
 ) {
     CustomIconButton(
         modifier = modifier, onClick = onClick, painter = rememberAnimatedVectorPainter(
@@ -98,7 +98,7 @@ fun CircleCheckBox(
 @Composable
 fun CustomIconButton(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {},
+    onClick: (() -> Unit)? = null,
     @DrawableRes drawable: Int,
     tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current),
     contentDescription: String? = null
@@ -115,7 +115,7 @@ fun CustomIconButton(
 @Composable
 fun CustomIconButton(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
     painter: Painter,
     tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current),
     contentDescription: String? = null
@@ -123,16 +123,19 @@ fun CustomIconButton(
     Box(
         modifier = Modifier
             .clip(CircleShape)
-            .clickable(onClick = onClick)
+            .clickable(enabled = onClick != null, onClick = { onClick?.invoke() })
             .padding(4.dp)
     ) {
         Icon(
-            painter = painter, contentDescription = contentDescription, modifier = modifier, tint = tint
+            painter = painter,
+            contentDescription = contentDescription,
+            modifier = modifier,
+            tint = tint
         )
     }
 }
 
 @Composable
-fun FinishActivityBackHandler(activity: ComponentActivity = LocalContext.current as ComponentActivity){
+fun FinishActivityBackHandler(activity: ComponentActivity = LocalContext.current as ComponentActivity) {
     BackHandler(enabled = true) { activity.finish() }
 }

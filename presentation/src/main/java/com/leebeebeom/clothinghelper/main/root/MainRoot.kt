@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.main.root
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -9,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.leebeebeom.clothinghelper.base.BackHandler
 import com.leebeebeom.clothinghelper.base.SimpleToast
 import com.leebeebeom.clothinghelper.main.base.BaseIsAllExpandState
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
@@ -58,34 +58,23 @@ fun MainRoot(
                     isLoading = { uiStates.isLoading },
                     isAllExpand = { uiStates.isAllExpand },
                     subCategories = uiStates::getSubCategories,
-                    onEssentialMenuClick = {
-                        onEssentialMenuClick(it)
-                        state.onDrawerClose()
-                    },
-                    onMainCategoryClick = {
-                        onMainCategoryClick(it)
-                        state.onDrawerClose()
-                    },
-                    onSubCategoryClick = {
-                        onSubCategoryClick(it)
-                        state.onDrawerClose()
-                    },
-                    onSettingIconClick = {
-                        onSettingIconClick()
-                        state.onDrawerClose()
-                    },
+                    onEssentialMenuClick = onEssentialMenuClick,
+                    onMainCategoryClick = onMainCategoryClick,
+                    onSubCategoryClick = onSubCategoryClick,
+                    onSettingIconClick = onSettingIconClick,
                     allExpandIconClick = viewModel::toggleAllExpand,
+                    onDrawerClose = state::onDrawerClose
                 )
             },
             drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
             drawerBackgroundColor = MaterialTheme.colors.primary,
             content = {
                 content(it) {
-                    BackHandler(enabled = state.drawerState.isOpen, onBack = state::onDrawerClose)
+                    BackHandler(enabled = { state.drawerState.isOpen }, task = state::onDrawerClose)
                 }
             })
         SimpleToast(text = { uiStates.toastText }, shownToast = uiStates::toastShown)
-        BackHandler(enabled = state.drawerState.isOpen, onBack = state::onDrawerClose)
+        BackHandler(enabled = { state.drawerState.isOpen }, task = state::onDrawerClose)
     }
 }
 

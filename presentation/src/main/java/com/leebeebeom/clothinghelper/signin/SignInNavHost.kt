@@ -1,6 +1,7 @@
 package com.leebeebeom.clothinghelper.signin
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -9,6 +10,7 @@ import com.leebeebeom.clothinghelper.base.FinishActivityBackHandler
 import com.leebeebeom.clothinghelper.signin.resetpassword.ResetPasswordScreen
 import com.leebeebeom.clothinghelper.signin.signin.SignInScreen
 import com.leebeebeom.clothinghelper.signin.signup.SignUpScreen
+import com.leebeebeom.clothinghelper.util.navigateSingleTop
 
 object SignInDestinations {
     const val SIGN_IN = "signIn"
@@ -17,13 +19,16 @@ object SignInDestinations {
 }
 
 @Composable
-fun SignInNavHost(navController: NavHostController = rememberNavController()) {
+fun SignInNavHost(state: SignInNavHostState = rememberSignInNavHostState()) {
     SignInRoot {
-        NavHost(navController = navController, startDestination = SignInDestinations.SIGN_IN) {
+        NavHost(
+            navController = state.navController,
+            startDestination = SignInDestinations.SIGN_IN
+        ) {
             composable(route = SignInDestinations.SIGN_IN) {
                 SignInScreen(
-                    onForgotPasswordClick = { navController.navigate(SignInDestinations.RESET_PASSWORD) },
-                    onEmailSignUpClick = { navController.navigate(SignInDestinations.SIGN_UP) }
+                    onForgotPasswordClick = state::navigateToResetPassword,
+                    onEmailSignUpClick = state::navigateToSignUp
                 )
             }
             composable(route = SignInDestinations.SIGN_UP) { SignUpScreen() }
@@ -32,4 +37,19 @@ fun SignInNavHost(navController: NavHostController = rememberNavController()) {
     }
 
     FinishActivityBackHandler()
+}
+
+data class SignInNavHostState(val navController: NavHostController) {
+    fun navigateToSignUp() {
+        navController.navigateSingleTop(SignInDestinations.SIGN_UP)
+    }
+
+    fun navigateToResetPassword() {
+        navController.navigateSingleTop(SignInDestinations.RESET_PASSWORD)
+    }
+}
+
+@Composable
+fun rememberSignInNavHostState(navController: NavHostController = rememberNavController()): SignInNavHostState {
+    return remember { SignInNavHostState(navController) }
 }

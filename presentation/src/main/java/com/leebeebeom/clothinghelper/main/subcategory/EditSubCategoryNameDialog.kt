@@ -1,9 +1,6 @@
 package com.leebeebeom.clothinghelper.main.subcategory
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -12,37 +9,50 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
+import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
+import kotlinx.coroutines.launch
 
 @Composable
 fun EditSubCategoryNameDialog(
     showDialog: () -> Boolean,
-    initialName: () -> String?,
-    subCategories: () -> List<SubCategory>,
-    onPositiveButtonClick: (String) -> Unit,
-    onDismiss: () -> Unit
+    subCategories: (SubCategoryParent) -> List<SubCategory>,
+    onPositiveButtonClick: (SubCategoryParent, name: String, key: String) -> Unit,
+    onDismiss: () -> Unit,
+    parent: SubCategoryParent,
+    firstSelectedSubCategoryKey: () -> String?,
+    selectModeOff: suspend () -> Unit
 ) {
     if (showDialog()) {
-        val state =
-            rememberSaveable(
-                initialName(),
-                saver = EditSubCategoryNameDialogState.Saver
-            ) { EditSubCategoryNameDialogState(initialName() ?: "") }
-        val subCategoryNames by remember { derivedStateOf { subCategories().map { it.name } } }
+        firstSelectedSubCategoryKey()?.let { key ->
 
-        SubCategoryTextFieldDialog(
-            showDialog = showDialog,
-            title = R.string.edit_category_name,
-            error = { state.error },
-            onDismiss = onDismiss,
-            textFieldValue = { state.textFieldValue },
-            onPositiveButtonClick = { onPositiveButtonClick(state.text.trim()) },
-            positiveButtonEnabled = { state.positiveButtonEnabled },
-            onValueChange = {
-                state.onValueChange(it)
-                if (subCategoryNames.contains(it.text.trim())) state.updateError(R.string.error_same_category_name)
-            },
-            onFocusChanged = state::onFocusChange
-        )
+            val selectedSubCategory by remember { derivedStateOf { subCategories(parent).firstOrNull { it.key == key } } }
+
+            selectedSubCategory?.let { subCategory ->
+                val state = rememberSaveable(saver = EditSubCategoryNameDialogState.Saver) {
+                    EditSubCategoryNameDialogState(subCategory.name)
+                }
+                val subCategoryNames by remember { derivedStateOf { subCategories(parent).map { it.name } } }
+                val coroutineScope = rememberCoroutineScope()
+
+                SubCategoryTextFieldDialog(
+                    showDialog = showDialog,
+                    title = R.string.edit_category_name,
+                    error = { state.error },
+                    onDismiss = onDismiss,
+                    textFieldValue = { state.textFieldValue },
+                    onPositiveButtonClick = {
+                        onPositiveButtonClick(parent, state.text.trim(), key)
+                        coroutineScope.launch { selectModeOff() }
+                    },
+                    positiveButtonEnabled = { state.positiveButtonEnabled },
+                    onValueChange = {
+                        state.onValueChange(it)
+                        if (subCategoryNames.contains(it.text.trim())) state.updateError(R.string.error_same_category_name)
+                    },
+                    onFocusChanged = state::onFocusChange
+                )
+            }
+        }
     }
 
 }
@@ -55,8 +65,7 @@ class EditSubCategoryNameDialogState(private val initialName: String, initialErr
         if (newTextFiled.text.trim() == initialName) error = null
     }
 
-    override val positiveButtonEnabled: Boolean
-        get() = super.positiveButtonEnabled && initialName != text.trim()
+    override val positiveButtonEnabled by derivedStateOf { super.positiveButtonEnabled && initialName != text.trim() }
 
     fun onFocusChange(newFocusState: FocusState) {
         if (newFocusState.hasFocus)

@@ -25,34 +25,21 @@ object Anime {
     }
 
     object BottomAppbar {
-        const val duration = 250
-
-        val expandIn = expandVertically(
-            expandFrom = Alignment.Top, animationSpec = tween(durationMillis = duration)
-        )
-
-        val shrinkOut = shrinkVertically(
-            shrinkTowards = Alignment.Top, animationSpec = tween(durationMillis = duration)
-        )
+        val expandIn = expandVertically(expandFrom = Alignment.Top)
+        val shrinkOut = shrinkVertically(shrinkTowards = Alignment.Top)
     }
 
     object SubCategoryCard {
-        private const val duration = 250
+        val expandIn = expandVertically()
+        val shrinkOut = shrinkVertically()
 
-        val expandIn = expandVertically(animationSpec = tween(durationMillis = duration))
-        val shrinkOut = shrinkVertically(animationSpec = tween(durationMillis = duration))
-
-        private const val fadeInDuration = 150
-
-        val fadeIn = fadeIn(tween(fadeInDuration))
-        val fadeOut = fadeOut(tween(fadeInDuration))
+        val fadeIn = fadeIn()
+        val fadeOut = fadeOut()
     }
 
     @OptIn(ExperimentalAnimationApi::class)
     object CircleCheckBox {
-        private const val duration = 300
-
-        val expandIn = expandHorizontally(tween(duration)) { 0 } + scaleIn(tween(duration))
-        val shrinkOut = shrinkHorizontally(tween(duration)) { 0 } + scaleOut(tween(duration))
+        val expandIn = expandHorizontally()+ scaleIn()
+        val shrinkOut = shrinkHorizontally() + scaleOut()
     }
 }

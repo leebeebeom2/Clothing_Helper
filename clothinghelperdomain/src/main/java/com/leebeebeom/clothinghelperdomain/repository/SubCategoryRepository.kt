@@ -18,7 +18,8 @@ interface SubCategoryRepository {
     ): FirebaseResult
 
     suspend fun editSubCategoryName(
-        subCategory: SubCategory,
+        parent: SubCategoryParent,
+        key: String,
         newName: String,
         uid: String
     ): FirebaseResult

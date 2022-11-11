@@ -68,20 +68,18 @@ private fun ExpandIcon(
     isAllExpand: () -> Boolean,
     updateIsExpand: (Boolean) -> Unit
 ) {
-    val isAllExpandVal = isAllExpand()
-    var rememberedIsAllExpand by rememberSaveable { mutableStateOf(isAllExpandVal) }
-    if (isAllExpand() != rememberedIsAllExpand) {
-        rememberedIsAllExpand = isAllExpandVal
-        updateIsExpand(isAllExpandVal)
-    }
-
     if (isLoading())
         DotProgressIndicator(
             modifier = Modifier.padding(end = 4.dp),
             size = 4.dp,
             color = MaterialTheme.colors.surface.copy(ContentAlpha.disabled)
         )
-    else ExpandIcon(isExpanded = isExpand, onClick = onClick)
+    else ExpandIcon(
+        isExpanded = isExpand,
+        onClick = onClick,
+        isAllExpand = isAllExpand,
+        updateIsExpand = updateIsExpand
+    )
 }
 
 @Composable

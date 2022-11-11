@@ -21,6 +21,8 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
     private val _allSubCategories = MutableStateFlow(List(4) { emptyList<SubCategory>() })
     override val allSubCategories get() = _allSubCategories.asStateFlow()
 
+    private var pushingInitialData = false
+
     override suspend fun loadSubCategories(user: User?): FirebaseResult {
         loadingOn()
         val result = withContext(Dispatchers.IO) {
@@ -41,13 +43,13 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
                 FirebaseResult.Fail(e)
             }
         }
-        loadingOff()
+        if (!pushingInitialData) loadingOff()
         return result
     }
 
     override suspend fun pushInitialSubCategories(uid: String): SubCategoryPushResult {
         loadingOn()
-
+        pushingInitialData = true
         val result = withContext(Dispatchers.IO) {
             try {
                 val subCategoryRef = root.getSubCategoriesRef(uid)
@@ -64,6 +66,7 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
                 SubCategoryPushResult.Fail(e)
             }
         }
+        pushingInitialData = false
         loadingOff()
         return result
     }

@@ -34,7 +34,8 @@ fun SortDropdownMenu(
     onSortClick: (SubCategorySort) -> Unit,
     onOrderClick: (SortOrder) -> Unit,
     onDismiss: () -> Unit
-) = MaterialTheme(shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(20.dp))) {
+) {
+    MaterialTheme(shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(20.dp))) {
         DropdownMenu(
             expanded = showDropDownMenu(),
             onDismissRequest = onDismiss
@@ -104,9 +105,10 @@ fun SortDropdownMenu(
             }
         }
     }
+}
 
 @Composable
-private fun Header() =
+private fun Header() {
     Column(modifier = Modifier.padding(start = 12.dp, top = 8.dp)) {
         Text(
             text = stringResource(R.string.sort),
@@ -116,6 +118,7 @@ private fun Header() =
         SimpleHeightSpacer(dp = 8)
         Divider()
     }
+}
 
 @Composable
 fun SortButton(

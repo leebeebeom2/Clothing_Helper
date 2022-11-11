@@ -3,13 +3,11 @@ package com.leebeebeom.clothinghelper.main.subcategory.content
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.Transition
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.BottomAppBar
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -22,19 +20,19 @@ import com.leebeebeom.clothinghelper.base.CustomIconButton
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun SubCategoryBottomAppBar(
+fun BoxScope.SubCategoryBottomAppBar(
     selectedSubCategoriesSize: () -> Int,
     isAllSelected: () -> Boolean,
     showEditIcon: () -> Boolean,
     showDeleteIcon: () -> Boolean,
-    selectModeTransition: Transition<Boolean>,
     onAllSelectCheckBoxClick: () -> Unit,
-    onEditSubCategoryNameClick: () -> Unit
+    onEditSubCategoryNameClick: () -> Unit,
+    isSelectMode: () -> Boolean
 ) {
-    selectModeTransition.AnimatedVisibility(
-        visible = { it },
+    AnimatedVisibility(
+        modifier = Modifier.align(Alignment.BottomCenter),
+        visible = isSelectMode(),
         enter = expandIn,
         exit = shrinkOut
     ) {

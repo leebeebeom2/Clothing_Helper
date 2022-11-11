@@ -12,17 +12,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.CustomIconButton
-import com.leebeebeom.clothinghelperdomain.model.User
+import com.leebeebeom.clothinghelper.map.StableUser
 
 @Composable
-fun DrawerHeader(user: () -> User?, onSettingIconClick: () -> Unit) {
+fun DrawerHeader(user: () -> StableUser?, onSettingIconClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp, horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        HeaderText(user)
+        HeaderText(name = { user()?.name ?: "" }, email = { user()?.email ?: "" })
         CustomIconButton(
             drawable = R.drawable.ic_settings,
             onClick = onSettingIconClick,
@@ -32,12 +32,12 @@ fun DrawerHeader(user: () -> User?, onSettingIconClick: () -> Unit) {
 }
 
 @Composable
-private fun RowScope.HeaderText(user: () -> User?) {
+private fun RowScope.HeaderText(name: () -> String, email: () -> String) {
     Text(
         modifier = Modifier
             .padding(start = 4.dp)
             .weight(1f),
         style = MaterialTheme.typography.body1,
-        text = "${user()?.name}(${user()?.email})"
+        text = "${name}(${email()})"
     )
 }

@@ -27,8 +27,8 @@ fun SubCategoryTextFieldDialog(
 
             val textFieldState = rememberMaxWidthTextFiledState(
                 label = R.string.category,
-                showKeyboardEnabled = true,
-                placeholder = R.string.category_place_holder
+                placeholder = R.string.category_place_holder,
+                showKeyboardEnabled = true
             )
 
             MaxWidthTextField(
@@ -61,7 +61,7 @@ open class BaseSubCategoryDialogState(
     var error: Int? by mutableStateOf(initialError)
         protected set
 
-    fun updateError(@StringRes error: Int) {
+    fun updateError(@StringRes error: Int?) {
         this.error = error
     }
 

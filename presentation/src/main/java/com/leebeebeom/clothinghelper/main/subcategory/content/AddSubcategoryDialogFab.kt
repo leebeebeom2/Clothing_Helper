@@ -1,6 +1,8 @@
 package com.leebeebeom.clothinghelper.main.subcategory.content
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
@@ -18,19 +20,20 @@ import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelper.main.subcategory.BaseSubCategoryDialogState
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryTextFieldDialog
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun BoxScope.AddSubcategoryDialogFab(
-    onPositiveButtonClick: (String) -> Unit,
-    subCategories: () -> List<SubCategory>,
-    paddingValues: () -> PaddingValues
+    onPositiveButtonClick: (newName: String) -> Unit,
+    subCategories: () -> ImmutableList<SubCategory>,
+    isSelectMode: () -> Boolean,
 ) {
     val state =
         rememberSaveable(saver = AddSubCategoryDialogState.Saver) { AddSubCategoryDialogState() }
-
-    AddSubCategoryFab(paddingValues = paddingValues, showDialog = state::showDialog)
-
     val subCategoryNames by remember { derivedStateOf { subCategories().map { it.name } } }
+
+    AddSubCategoryFab(isSelectMode = isSelectMode, showDialog = state::showDialog)
+
     SubCategoryTextFieldDialog(
         title = R.string.add_category,
         error = { state.error },
@@ -43,7 +46,7 @@ fun BoxScope.AddSubcategoryDialogFab(
         },
         onFocusChanged = state::onFocusChange,
         onDismiss = state::onDismiss,
-        onPositiveButtonClick = { onPositiveButtonClick(state.text.trim()) }
+        onPositiveButtonClick = { onPositiveButtonClick(state.text) }
     )
 }
 
@@ -88,15 +91,15 @@ class AddSubCategoryDialogState(
 @Composable
 fun BoxScope.AddSubCategoryFab(
     showDialog: () -> Unit,
-    paddingValues: () -> PaddingValues
+    isSelectMode: () -> Boolean
 ) {
-    FloatingActionButton(
-        modifier = Modifier
-            .align(Alignment.BottomEnd)
-            .padding(end = 16.dp, bottom = 16.dp)
-            .padding(paddingValues())
-            .size(48.dp),
-        onClick = showDialog,
-        backgroundColor = MaterialTheme.colors.primary,
-    ) { SimpleIcon(drawable = R.drawable.ic_add) }
+    if (!isSelectMode())
+        FloatingActionButton(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 16.dp, bottom = 16.dp)
+                .size(48.dp),
+            onClick = showDialog,
+            backgroundColor = MaterialTheme.colors.primary,
+        ) { SimpleIcon(drawable = R.drawable.ic_add) }
 }

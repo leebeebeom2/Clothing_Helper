@@ -8,7 +8,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -35,7 +38,7 @@ fun VisibleIcon(isVisible: () -> Boolean, onClick: () -> Unit) {
 @Composable
 fun GoogleSignInButton(
     enabled: () -> Boolean,
-    onActivityResult: (ActivityResult) -> Unit, // TODO Stable 확인
+    onActivityResult: (ActivityResult) -> Unit,
     disabled: () -> Unit
 ) {
     val launcher = rememberLauncherForActivityResult(

@@ -21,23 +21,24 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
 import com.leebeebeom.clothinghelper.main.base.AllExpandIcon
+import com.leebeebeom.clothinghelper.map.StableSubCategory
+import com.leebeebeom.clothinghelper.map.StableUser
 import com.leebeebeom.clothinghelper.theme.Disabled
-import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
-import com.leebeebeom.clothinghelperdomain.model.User
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun DrawerContents(
-    user: () -> User?,
+    user: () -> StableUser?,
     isLoading: () -> Boolean,
     isAllExpand: () -> Boolean,
-    subCategories: (SubCategoryParent) -> ImmutableList<SubCategory>,
-    state: DrawerContentsState = rememberDrawerContentsState(),
+    subCategories: (SubCategoryParent) -> ImmutableList<StableSubCategory>,
+    subCategoriesSize: (SubCategoryParent) -> Int,
+    state: DrawerContentsState = remember { DrawerContentsState() },
     onEssentialMenuClick: (essentialMenu: EssentialMenus) -> Unit,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
-    onSubCategoryClick: (SubCategory) -> Unit,
+    onSubCategoryClick: (StableSubCategory) -> Unit,
     onSettingIconClick: () -> Unit,
     allExpandIconClick: () -> Unit,
 ) {
@@ -71,6 +72,7 @@ fun DrawerContents(
                         isAllExpand = isAllExpand,
                         onMainCategoryClick = onMainCategoryClick,
                         onSubCategoryClick = onSubCategoryClick,
+                        subCategoriesSize = subCategoriesSize
                     )
                 }
             }
@@ -147,11 +149,6 @@ data class DrawerContentsState(
     val essentialMenus: ImmutableList<EssentialMenu> = getEssentialMenus(),
     val mainCategories: ImmutableList<MainCategory> = getMainCategories()
 )
-
-@Composable
-fun rememberDrawerContentsState(): DrawerContentsState {
-    return remember { DrawerContentsState() }
-}
 
 fun getMainCategories(): ImmutableList<MainCategory> {
     return listOf(

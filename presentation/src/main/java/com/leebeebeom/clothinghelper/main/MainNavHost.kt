@@ -2,12 +2,15 @@ package com.leebeebeom.clothinghelper.main
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.leebeebeom.clothinghelper.main.detail.DetailScreen
@@ -84,7 +87,10 @@ fun MainNavHost(state: MainNavHostState = rememberMainNavHostState()) {
     }
 }
 
-data class MainNavHostState(val navController: NavHostController) {
+data class MainNavHostState(
+    val navController: NavHostController,
+    val currentBackStack: State<NavBackStackEntry?>
+) {
     fun onEssentialMenuClick(essentialMenu: EssentialMenus) = when (essentialMenu) {
         EssentialMenus.MainScreen -> navigateToMain()
         EssentialMenus.Favorite -> {} // TODO
@@ -93,23 +99,35 @@ data class MainNavHostState(val navController: NavHostController) {
     }
 
     fun navigateToSubCategory(subCategoryParent: SubCategoryParent) {
-        navController.navigateSingleTop("${MainDestinations.SubCategory.route}/${subCategoryParent.name}")
+        if (currentBackStack.value?.arguments?.getString(MainDestinations.SubCategory.mainCategoryName) != subCategoryParent.name)
+            navController.navigate("${MainDestinations.SubCategory.route}/${subCategoryParent.name}")
     }
 
     private fun navigateToMain() {
-        navController.navigateSingleTop(route = MainDestinations.MainCategory.route)
+        if (currentBackStack.value?.destination?.route != MainDestinations.MainCategory.route)
+            navController.navigateSingleTop(route = MainDestinations.MainCategory.route)
     }
 
     fun navigateToSetting() {
-        navController.navigateSingleTop(route = MainDestinations.Setting.route)
+        if (currentBackStack.value?.destination?.route != MainDestinations.Setting.route)
+            navController.navigateSingleTop(route = MainDestinations.Setting.route)
     }
 
     fun navigateToDetail(subCategory: SubCategory) {
-        navController.navigateSingleTop(route = "${MainDestinations.Detail.route}/${subCategory.name}/${subCategory.key}")
+        val argument = currentBackStack.value?.arguments
+        val name = argument?.getString(MainDestinations.Detail.subCategoryName)
+        val key = argument?.getString(MainDestinations.Detail.subCategoryKey)
+        if (name != subCategory.name && key != subCategory.key)
+            navController.navigate(route = "${MainDestinations.Detail.route}/${subCategory.name}/${subCategory.key}")
     }
 }
 
 @Composable
-fun rememberMainNavHostState(navController: NavHostController = rememberNavController()): MainNavHostState {
-    return remember { MainNavHostState(navController) }
+fun rememberMainNavHostState(
+    navController: NavHostController = rememberNavController(),
+    currentBackStack: State<NavBackStackEntry?> = navController.currentBackStackEntryAsState()
+): MainNavHostState {
+    return remember {
+        MainNavHostState(navController, currentBackStack)
+    }
 }

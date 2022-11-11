@@ -38,6 +38,6 @@ private fun RowScope.HeaderText(name: () -> String, email: () -> String) {
             .padding(start = 4.dp)
             .weight(1f),
         style = MaterialTheme.typography.body1,
-        text = "${name}(${email()})"
+        text = "${name()}(${email()})"
     )
 }

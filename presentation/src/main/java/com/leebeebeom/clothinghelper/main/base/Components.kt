@@ -19,7 +19,10 @@ import com.leebeebeom.clothinghelper.base.CustomIconButton
 @OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
 fun AllExpandIcon(
-    size: Dp, onClick: () -> Unit, tint: Color, isAllExpand: () -> Boolean
+    size: Dp,
+    onClick: () -> Unit,
+    tint: Color,
+    isAllExpand: () -> Boolean
 ) {
     val painter = rememberAnimatedVectorPainter(
         animatedImageVector = AnimatedImageVector.animatedVectorResource(
@@ -28,7 +31,10 @@ fun AllExpandIcon(
     )
 
     CustomIconButton(
-        modifier = Modifier.size(size), onClick = onClick, painter = painter, tint = tint
+        modifier = Modifier.size(size),
+        onClick = onClick,
+        painter = painter,
+        tint = tint
     )
 }
 

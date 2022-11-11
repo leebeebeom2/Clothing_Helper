@@ -64,6 +64,8 @@ private fun TextField(
     isVisible: () -> Boolean,
     trailingIcon: @Composable (() -> Unit)?
 ) {
+    val focusManager = LocalFocusManager.current
+
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
@@ -80,7 +82,7 @@ private fun TextField(
         keyboardOptions = state.keyboardOptions,
         trailingIcon = trailingIcon,
         keyboardActions = if (state.keyboardOptions.imeAction == ImeAction.Done) KeyboardActions(
-            onDone = { state.clearFocus() }
+            onDone = { focusManager.clearFocus() }
         )
         else KeyboardActions.Default,
         colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -113,14 +115,13 @@ data class MaxWidthTextFieldState @OptIn(ExperimentalComposeUiApi::class) constr
     @StringRes val placeholder: Int,
     val showKeyboardEnabled: Boolean,
     val keyboardOptions: KeyboardOptions,
-    override val focusManager: FocusManager,
-    override val focusRequester: FocusRequester,
+    val focusRequester: FocusRequester, // TODO Stable 확인
     val keyboardController: SoftwareKeyboardController?
-) : ClearFocus, RequestFocus {
+) {
 
     @OptIn(ExperimentalComposeUiApi::class)
     suspend fun showKeyboard() {
-        requestFocus()
+        focusRequester.requestFocus()
         delay(100)
         keyboardController?.show()
     }
@@ -135,7 +136,6 @@ fun rememberMaxWidthTextFiledState(
     keyboardOptions: KeyboardOptions = KeyboardOptions(
         imeAction = ImeAction.Done
     ),
-    focusManager: FocusManager = LocalFocusManager.current,
     focusRequester: FocusRequester = remember { FocusRequester() },
     keyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
 ): MaxWidthTextFieldState {
@@ -145,7 +145,6 @@ fun rememberMaxWidthTextFiledState(
             placeholder = placeholder,
             showKeyboardEnabled = showKeyboardEnabled,
             keyboardOptions = keyboardOptions,
-            focusManager = focusManager,
             focusRequester = focusRequester,
             keyboardController = keyboardController
         )
@@ -160,8 +159,8 @@ fun rememberEmailTextFieldState(
     return rememberMaxWidthTextFiledState(
         label = R.string.email,
         placeholder = R.string.email_place_holder,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = imeAction),
         showKeyboardEnabled = true,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = imeAction),
     )
 }
 

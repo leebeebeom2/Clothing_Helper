@@ -1,7 +1,6 @@
 package com.leebeebeom.clothinghelper.main.base
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
@@ -20,10 +19,7 @@ import com.leebeebeom.clothinghelper.base.CustomIconButton
 @OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
 fun AllExpandIcon(
-    size: Dp,
-    onClick: () -> Unit,
-    tint: Color,
-    isAllExpand: () -> Boolean
+    size: Dp, onClick: () -> Unit, tint: Color, isAllExpand: () -> Boolean
 ) {
     val painter = rememberAnimatedVectorPainter(
         animatedImageVector = AnimatedImageVector.animatedVectorResource(
@@ -32,10 +28,7 @@ fun AllExpandIcon(
     )
 
     CustomIconButton(
-        modifier = Modifier.size(size),
-        onClick = onClick,
-        painter = painter,
-        tint = tint
+        modifier = Modifier.size(size), onClick = onClick, painter = painter, tint = tint
     )
 }
 

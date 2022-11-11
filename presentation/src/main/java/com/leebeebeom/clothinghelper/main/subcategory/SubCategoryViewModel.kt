@@ -1,6 +1,7 @@
 package com.leebeebeom.clothinghelper.main.subcategory
 
 import android.util.Log
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,7 +10,9 @@ import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelper.main.base.BaseIsAllExpandState
+import com.leebeebeom.clothinghelper.util.taskAndReturnSet
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
+import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.repository.SortOrder
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
@@ -22,6 +25,9 @@ import com.leebeebeom.clothinghelperdomain.usecase.subcategory.EditSubCategoryNa
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoriesUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoryLoadingStateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toImmutableSet
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -37,7 +43,12 @@ class SubCategoryViewModel @Inject constructor(
     private val subCategorySortUseCase: SubCategorySortUseCase
 ) : ViewModel() {
 
-    val uiStates = SubCategoryUIState()
+    private val uiStates = SubCategoryUIState()
+
+    fun getUiStates(parent: SubCategoryParent): SubCategoryUIState {
+        uiStates.setSubCategories(parent)
+        return uiStates
+    }
 
     init {
         viewModelScope.launch {
@@ -82,20 +93,23 @@ class SubCategoryViewModel @Inject constructor(
         }
     }
 
-    fun editSubCategoryName(parent: SubCategoryParent, newName: String, key: String) {
+    fun editSubCategoryName(newName: String) {
         viewModelScope.launch {
+            uiStates.selectModeOff()
             uiStates.user?.let { user ->
-                val result = editSubCategoryNameUseCase(
-                    parent = parent,
-                    key = key,
-                    newName = newName.trim(),
-                    uid = user.uid
-                )
+                uiStates.firstSelectedSubCategoryKey?.let { key ->
+                    val result = editSubCategoryNameUseCase(
+                        parent = uiStates.parent,
+                        key = key,
+                        newName = newName.trim(),
+                        uid = user.uid
+                    )
 
-                if (result is FirebaseResult.Fail) {
-                    uiStates.showToast(R.string.add_category_failed)
-                    Log.d(TAG, "taskFailed: $result")
-                }
+                    if (result is FirebaseResult.Fail) {
+                        uiStates.showToast(R.string.add_category_failed)
+                        Log.d(TAG, "taskFailed: $result")
+                    }
+                } ?: uiStates.showToast(R.string.add_category_failed)
             } ?: uiStates.showToast(R.string.add_category_failed)
         }
     }
@@ -110,10 +124,66 @@ class SubCategoryViewModel @Inject constructor(
 }
 
 class SubCategoryUIState : BaseIsAllExpandState() {
+    var parent = SubCategoryParent.TOP
+        private set
     var sort by mutableStateOf(SubCategorySortPreferences())
         private set
 
     fun updateSort(sort: SubCategorySortPreferences) {
         this.sort = sort
+    }
+
+    var isSelectMode by mutableStateOf(false)
+        private set
+
+    var selectedSubCategoryKeys by mutableStateOf(emptySet<String>().toImmutableSet())
+        private set
+    val selectedSubCategoryKeysSize by derivedStateOf { selectedSubCategoryKeys.size }
+    val firstSelectedSubCategoryKey by derivedStateOf { selectedSubCategoryKeys.firstOrNull() }
+
+    var subCategories by mutableStateOf(emptyList<SubCategory>().toImmutableList())
+        private set
+    val subCategoryNames by derivedStateOf { subCategories.map { it.name }.toImmutableList() }
+    val selectedSubCategoryName by derivedStateOf {
+        val firstKey = selectedSubCategoryKeys.firstOrNull()
+        firstKey?.let { key -> subCategories.firstOrNull { it.key == key }?.name ?: "" } ?: ""
+    }
+
+    val isAllSelected by derivedStateOf { selectedSubCategoryKeys.size == subCategories.size }
+    val showEditIcon by derivedStateOf { selectedSubCategoryKeysSize == 1 }
+    val showDeleteIcon by derivedStateOf { selectedSubCategoryKeysSize > 0 }
+
+    fun setSubCategories(parent: SubCategoryParent) {
+        this.parent = parent
+        subCategories = getSubCategories(parent)
+    }
+
+    fun toggleAllSelect() {
+        selectedSubCategoryKeys =
+            if (selectedSubCategoryKeysSize == subCategories.size) emptySet<String>().toImmutableSet()
+            else subCategories.map { it.key }.toImmutableSet()
+
+    }
+
+    fun onSelect(key: String) {
+        selectedSubCategoryKeys =
+            if (selectedSubCategoryKeys.contains(key))
+                selectedSubCategoryKeys.taskAndReturnSet { it.remove(key) }
+            else selectedSubCategoryKeys.taskAndReturnSet { it.add(key) }
+    }
+
+    fun selectModeOn(key: String) {
+        onSelect(key)
+        isSelectMode = true
+    }
+
+    suspend fun selectModeOff() {
+        isSelectMode = false
+        delay(300)
+        clearSelectedSubCategories()
+    }
+
+    private fun clearSelectedSubCategories() {
+        selectedSubCategoryKeys = selectedSubCategoryKeys.taskAndReturnSet { it.clear() }
     }
 }

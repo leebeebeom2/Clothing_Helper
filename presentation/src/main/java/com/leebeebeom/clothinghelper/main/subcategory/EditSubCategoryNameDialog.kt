@@ -1,6 +1,8 @@
 package com.leebeebeom.clothinghelper.main.subcategory
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -8,53 +10,36 @@ import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelperdomain.model.SubCategory
-import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
-import kotlinx.coroutines.launch
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun EditSubCategoryNameDialog(
     showDialog: () -> Boolean,
-    subCategories: (SubCategoryParent) -> List<SubCategory>,
-    onPositiveButtonClick: (SubCategoryParent, name: String, key: String) -> Unit,
-    onDismiss: () -> Unit,
-    parent: SubCategoryParent,
-    firstSelectedSubCategoryKey: () -> String?,
-    selectModeOff: suspend () -> Unit
+    selectedSubCategoryName: () -> String,
+    subCategoryNames: () -> ImmutableList<String>,
+    onPositiveButtonClick: (name: String) -> Unit,
+    onDismiss: () -> Unit
 ) {
     if (showDialog()) {
-        firstSelectedSubCategoryKey()?.let { key ->
-
-            val selectedSubCategory by remember { derivedStateOf { subCategories(parent).firstOrNull { it.key == key } } }
-
-            selectedSubCategory?.let { subCategory ->
-                val state = rememberSaveable(saver = EditSubCategoryNameDialogState.Saver) {
-                    EditSubCategoryNameDialogState(subCategory.name)
-                }
-                val subCategoryNames by remember { derivedStateOf { subCategories(parent).map { it.name } } }
-                val coroutineScope = rememberCoroutineScope()
-
-                SubCategoryTextFieldDialog(
-                    showDialog = showDialog,
-                    title = R.string.edit_category_name,
-                    error = { state.error },
-                    onDismiss = onDismiss,
-                    textFieldValue = { state.textFieldValue },
-                    onPositiveButtonClick = {
-                        onPositiveButtonClick(parent, state.text.trim(), key)
-                        coroutineScope.launch { selectModeOff() }
-                    },
-                    positiveButtonEnabled = { state.positiveButtonEnabled },
-                    onValueChange = {
-                        state.onValueChange(it)
-                        if (subCategoryNames.contains(it.text.trim())) state.updateError(R.string.error_same_category_name)
-                    },
-                    onFocusChanged = state::onFocusChange
-                )
-            }
+        val state = rememberSaveable(saver = EditSubCategoryNameDialogState.Saver) {
+            EditSubCategoryNameDialogState(selectedSubCategoryName())
         }
-    }
 
+        SubCategoryTextFieldDialog(
+            showDialog = showDialog,
+            title = R.string.edit_category_name,
+            error = { state.error },
+            onDismiss = onDismiss,
+            textFieldValue = { state.textFieldValue },
+            onPositiveButtonClick = { onPositiveButtonClick(state.text) },
+            positiveButtonEnabled = { state.positiveButtonEnabled },
+            onValueChange = {
+                state.onValueChange(it)
+                if (subCategoryNames().contains(it.text.trim())) state.updateError(R.string.error_same_category_name)
+            },
+            onFocusChanged = state::onFocusChange
+        )
+    }
 }
 
 class EditSubCategoryNameDialogState(private val initialName: String, initialError: Int? = null) :

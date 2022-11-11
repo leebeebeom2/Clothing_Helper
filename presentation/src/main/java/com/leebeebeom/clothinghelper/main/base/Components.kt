@@ -40,18 +40,20 @@ fun AllExpandIcon(
 }
 
 @Composable
-fun isExpandStateWithIsAllExpand(isAllExpand: () -> Boolean): MutableState<Boolean> {
-    val isExpandState = rememberSaveable { mutableStateOf(isAllExpand()) }
-    var rememberedIsAllExpandState by rememberSaveable { mutableStateOf(isAllExpand()) }
-    if (isAllExpand() != rememberedIsAllExpandState) {
-        isExpandState.value = isAllExpand()
-        rememberedIsAllExpandState = isAllExpand()
+fun ExpandIcon(
+    modifier: Modifier = Modifier,
+    isExpanded: () -> Boolean,
+    onClick: () -> Unit,
+    isAllExpand: () -> Boolean,
+    updateIsExpand: (Boolean) -> Unit
+) {
+    val isAllExpandVal = isAllExpand()
+    var rememberedIsAllExpand by rememberSaveable { mutableStateOf(isAllExpandVal) }
+    if (isAllExpand() != rememberedIsAllExpand) {
+        rememberedIsAllExpand = isAllExpandVal
+        updateIsExpand(isAllExpandVal)
     }
-    return isExpandState
-}
 
-@Composable
-fun ExpandIcon(modifier: Modifier = Modifier, isExpanded: () -> Boolean, onClick: () -> Unit) {
     val rotate by animateFloatAsState(
         targetValue = if (!isExpanded()) 0f else 180f, animationSpec = tween(durationMillis = 300)
     )

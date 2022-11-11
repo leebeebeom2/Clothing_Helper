@@ -44,8 +44,7 @@ fun SimpleIcon(
 
 @Composable
 fun CenterDotProgressIndicator(
-    backGround: Color = Disabled,
-    isLoading: () -> Boolean
+    backGround: Color = Disabled, isLoading: () -> Boolean
 ) {
     if (isLoading()) Surface(color = backGround) {
         Box(modifier = Modifier

@@ -5,10 +5,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusState
@@ -19,18 +22,16 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelper.main.subcategory.BaseSubCategoryDialogState
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryTextFieldDialog
-import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun BoxScope.AddSubcategoryDialogFab(
     onPositiveButtonClick: (newName: String) -> Unit,
-    subCategories: () -> ImmutableList<SubCategory>,
+    subCategoryNames: () -> ImmutableList<String>,
     isSelectMode: () -> Boolean,
 ) {
     val state =
         rememberSaveable(saver = AddSubCategoryDialogState.Saver) { AddSubCategoryDialogState() }
-    val subCategoryNames by remember { derivedStateOf { subCategories().map { it.name } } }
 
     AddSubCategoryFab(isSelectMode = isSelectMode, showDialog = state::showDialog)
 
@@ -42,7 +43,7 @@ fun BoxScope.AddSubcategoryDialogFab(
         showDialog = { state.showDialog },
         onValueChange = {
             state.onValueChange(it)
-            if (subCategoryNames.contains(it.text.trim())) state.updateError(R.string.error_same_category_name)
+            if (subCategoryNames().contains(it.text.trim())) state.updateError(R.string.error_same_category_name)
         },
         onFocusChanged = state::onFocusChange,
         onDismiss = state::onDismiss,

@@ -36,30 +36,14 @@ fun MaxWidthTextField(
     isVisible: () -> Boolean = { true }
 ) {
     Column {
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .focusRequester(focusRequester = state.focusRequester)
-                .onFocusChanged(onFocusChanged = onFocusChanged),
-            value = textFieldValue(),
+        TextField(
+            state = state,
+            onFocusChanged = onFocusChanged,
+            textFieldValue = textFieldValue,
             onValueChange = onValueChange,
-            label = { Text(text = stringResource(id = state.label)) },
-            placeholder = { Text(text = stringResource(id = state.placeholder)) },
-            isError = error() != null,
-            visualTransformation = if (isVisible()) VisualTransformation.None else PasswordVisualTransformation(),
-            singleLine = true,
-            maxLines = 1,
-            keyboardOptions = state.keyboardOptions,
-            trailingIcon = trailingIcon,
-            keyboardActions = if (state.keyboardOptions.imeAction == ImeAction.Done) KeyboardActions(
-                onDone = { state.clearFocus() })
-            else KeyboardActions.Default,
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                unfocusedBorderColor = Color(0xFFDADADA),
-                unfocusedLabelColor = Color(0xFF8391A1),
-                backgroundColor = Color(0xFFF7F8F9),
-                placeholderColor = MaterialTheme.colors.onSurface.copy(ContentAlpha.disabled)
-            )
+            error = error,
+            isVisible = isVisible,
+            trailingIcon = trailingIcon
         )
         ErrorText(error)
     }
@@ -71,9 +55,49 @@ fun MaxWidthTextField(
 }
 
 @Composable
+private fun TextField(
+    state: MaxWidthTextFieldState,
+    onFocusChanged: (FocusState) -> Unit,
+    textFieldValue: () -> TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
+    error: () -> Int?,
+    isVisible: () -> Boolean,
+    trailingIcon: @Composable (() -> Unit)?
+) {
+    OutlinedTextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .focusRequester(focusRequester = state.focusRequester)
+            .onFocusChanged(onFocusChanged = onFocusChanged),
+        value = textFieldValue(),
+        onValueChange = onValueChange,
+        label = { Text(text = stringResource(id = state.label)) },
+        placeholder = { Text(text = stringResource(id = state.placeholder)) },
+        isError = error() != null,
+        visualTransformation = if (isVisible()) VisualTransformation.None else PasswordVisualTransformation(),
+        singleLine = true,
+        maxLines = 1,
+        keyboardOptions = state.keyboardOptions,
+        trailingIcon = trailingIcon,
+        keyboardActions = if (state.keyboardOptions.imeAction == ImeAction.Done) KeyboardActions(
+            onDone = { state.clearFocus() }
+        )
+        else KeyboardActions.Default,
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            unfocusedBorderColor = Color(0xFFDADADA),
+            unfocusedLabelColor = Color(0xFF8391A1),
+            backgroundColor = Color(0xFFF7F8F9),
+            placeholderColor = MaterialTheme.colors.onSurface.copy(ContentAlpha.disabled)
+        )
+    )
+}
+
+@Composable
 private fun ErrorText(@StringRes error: () -> Int?) {
+    val isError by remember { derivedStateOf { error() != null } }
+
     AnimatedVisibility(
-        visible = error() != null, enter = errorIn, exit = errorOut
+        visible = isError, enter = errorIn, exit = errorOut
     ) {
         Text(
             modifier = Modifier.padding(start = 4.dp, top = 4.dp),

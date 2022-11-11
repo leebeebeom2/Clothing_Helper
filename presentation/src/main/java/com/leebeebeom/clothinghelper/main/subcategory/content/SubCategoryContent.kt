@@ -46,7 +46,8 @@ fun SubCategoryContent(
     paddingValue: () -> PaddingValues, // 미사용, 사용 시 버벅임
     selectedSubCategoryKey: () -> ImmutableSet<String>,
     isSelectMode: () -> Boolean,
-    onSelect: (String) -> Unit
+    onSelect: (String) -> Unit,
+    subCategoryNames: () -> ImmutableList<String>
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -91,7 +92,7 @@ fun SubCategoryContent(
 
         AddSubcategoryDialogFab(
             onPositiveButtonClick = { onAddCategoryPositiveButtonClick(it, parent) },
-            subCategories = subCategories,
+            subCategoryNames = subCategoryNames,
             isSelectMode = isSelectMode
         )
     }

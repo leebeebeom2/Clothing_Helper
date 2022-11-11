@@ -36,13 +36,14 @@ fun EditSubCategoryNameDialog(
             onValueChange = {
                 state.onValueChange(it)
                 if (subCategoryNames().contains(it.text.trim())) state.updateError(R.string.error_same_category_name)
+                if (state.initialName == it.text) state.updateError(null)
             },
             onFocusChanged = state::onFocusChange
         )
     }
 }
 
-class EditSubCategoryNameDialogState(private val initialName: String, initialError: Int? = null) :
+class EditSubCategoryNameDialogState(val initialName: String, initialError: Int? = null) :
     BaseSubCategoryDialogState(initialName, initialError) {
 
     override fun onValueChange(newTextFiled: TextFieldValue) {

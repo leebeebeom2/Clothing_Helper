@@ -115,7 +115,7 @@ data class MaxWidthTextFieldState @OptIn(ExperimentalComposeUiApi::class) constr
     @StringRes val placeholder: Int,
     val showKeyboardEnabled: Boolean,
     val keyboardOptions: KeyboardOptions,
-    val focusRequester: FocusRequester, // TODO Stable 확인
+    val focusRequester: FocusRequester,
     val keyboardController: SoftwareKeyboardController?
 ) {
 

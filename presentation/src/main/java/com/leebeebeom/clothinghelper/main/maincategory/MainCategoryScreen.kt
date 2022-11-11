@@ -76,13 +76,11 @@ private fun MainCategoryCard(
     isLoading: () -> Boolean,
     onMainContentClick: (SubCategoryParent) -> Unit,
 ) {
-    val onCardClick = remember { { onMainContentClick(mainCategory.type) } }
-
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
         elevation = 2.dp,
-        onClick = onCardClick
+        onClick = { onMainContentClick(mainCategory.type) }
     ) {
         Box(
             modifier = Modifier

@@ -19,8 +19,8 @@ import com.leebeebeom.clothinghelper.main.root.EssentialMenus
 import com.leebeebeom.clothinghelper.main.root.MainRoot
 import com.leebeebeom.clothinghelper.main.setting.SettingScreen
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryScreen
+import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.util.navigateSingleTop
-import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
 sealed class MainDestinations(val route: String) {
@@ -113,7 +113,7 @@ data class MainNavHostState(
             navController.navigateSingleTop(route = MainDestinations.Setting.route)
     }
 
-    fun navigateToDetail(subCategory: SubCategory) {
+    fun navigateToDetail(subCategory: StableSubCategory) {
         val argument = currentBackStack.value?.arguments
         val name = argument?.getString(MainDestinations.Detail.subCategoryName)
         val key = argument?.getString(MainDestinations.Detail.subCategoryKey)

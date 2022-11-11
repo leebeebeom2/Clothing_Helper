@@ -48,7 +48,8 @@ fun DrawerMainCategory(
                 isLoading = isLoading,
                 isExpand = { isExpand },
                 isAllExpand = isAllExpand,
-                onClick = { isExpand = !isExpand }
+                onClick = { isExpand = !isExpand },
+                updateIsExpand = { isExpand = it }
             )
         }
         SubCategories(
@@ -65,12 +66,13 @@ private fun ExpandIcon(
     isExpand: () -> Boolean,
     onClick: () -> Unit,
     isAllExpand: () -> Boolean,
+    updateIsExpand: (Boolean) -> Unit
 ) {
     val isAllExpandVal = isAllExpand()
     var rememberedIsAllExpand by rememberSaveable { mutableStateOf(isAllExpandVal) }
     if (isAllExpand() != rememberedIsAllExpand) {
         rememberedIsAllExpand = isAllExpandVal
-        onClick()
+        updateIsExpand(isAllExpandVal)
     }
 
     if (isLoading())
@@ -97,7 +99,10 @@ private fun SubCategories(
             Column {
                 for (subCategory in subCategories())
                     key(subCategory.key) {
-                        SubCategory(subCategory = { subCategory }, onClick = onClick) // TODO 익스팬드 시 두번씩 리컴포즈 됨 해결 못함
+                        SubCategory(
+                            subCategory = { subCategory },
+                            onClick = onClick
+                        ) // TODO 익스팬드 시 두번씩 리컴포즈 됨 해결 못함
                     }
             }
         }

@@ -48,7 +48,10 @@ fun ExpandIcon(
     updateIsExpand: (Boolean) -> Unit
 ) {
     val isAllExpandVal = isAllExpand()
-    var rememberedIsAllExpand by rememberSaveable { mutableStateOf(isAllExpandVal) }
+    var rememberedIsAllExpand by rememberSaveable {
+        updateIsExpand(isAllExpandVal)
+        mutableStateOf(isAllExpandVal)
+    }
     if (isAllExpand() != rememberedIsAllExpand) {
         rememberedIsAllExpand = isAllExpandVal
         updateIsExpand(isAllExpandVal)

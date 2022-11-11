@@ -24,7 +24,7 @@ import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
 
 @Composable
 fun SubCategoryHeader(
-    parent: () -> SubCategoryParent,
+    parent: SubCategoryParent,
     isAllExpand: () -> Boolean,
     sort: () -> SubCategorySortPreferences,
     allExpandIconClick: () -> Unit,
@@ -49,23 +49,25 @@ fun SubCategoryHeader(
 }
 
 @Composable
-fun HeaderText(parent: () -> SubCategoryParent) =
+fun HeaderText(parent: SubCategoryParent) {
     Text(
         text = stringResource(id = headerStringRes(parent)),
         style = MaterialTheme.typography.h2,
         fontSize = 32.sp
     )
+}
 
 @Composable
-private fun AllExpandIcon(allExpandIconClick: () -> Unit, allExpand: () -> Boolean) =
+private fun AllExpandIcon(allExpandIconClick: () -> Unit, allExpand: () -> Boolean) {
     Box(modifier = Modifier.offset(4.dp, 0.dp)) {
         AllExpandIcon(
             size = 22.dp,
             onClick = allExpandIconClick,
             tint = LocalContentColor.current.copy(0.5f),
-            allExpand = allExpand
+            isAllExpand = allExpand
         )
     }
+}
 
 @Composable
 private fun SortIcon(
@@ -93,10 +95,11 @@ private fun SortIcon(
     }
 }
 
-fun headerStringRes(parent: () -> SubCategoryParent) =
-    when (parent()) {
+fun headerStringRes(parent: SubCategoryParent):Int {
+    return when (parent) {
         SubCategoryParent.TOP -> R.string.top
         SubCategoryParent.BOTTOM -> R.string.bottom
         SubCategoryParent.OUTER -> R.string.outer
         SubCategoryParent.ETC -> R.string.etc
     }
+}

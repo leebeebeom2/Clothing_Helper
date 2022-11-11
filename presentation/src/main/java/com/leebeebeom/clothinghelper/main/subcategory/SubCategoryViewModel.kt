@@ -61,7 +61,7 @@ class SubCategoryViewModel @Inject constructor(
         }
     }
 
-    fun addSubCategory(name: String, subCategoryParent: SubCategoryParent) =
+    fun addSubCategory(name: String, subCategoryParent: SubCategoryParent) {
         viewModelScope.launch {
             uiStates.user?.let {
                 val result = addSubCategoryUseCase(
@@ -74,27 +74,28 @@ class SubCategoryViewModel @Inject constructor(
                 }
             } ?: uiStates.showToast(R.string.add_category_failed)
         }
-
-    fun toggleAllExpand() = viewModelScope.launch {
-        subCategoryAllExpandUseCase.toggleAllExpand()
     }
 
-    fun editSubCategoryName(parent: SubCategoryParent, key: String?, newName: String) {
+    fun toggleAllExpand() {
+        viewModelScope.launch {
+            subCategoryAllExpandUseCase.toggleAllExpand()
+        }
+    }
+
+    fun editSubCategoryName(parent: SubCategoryParent, newName: String, key: String) {
         viewModelScope.launch {
             uiStates.user?.let { user ->
-                key?.let { key ->
-                    val result = editSubCategoryNameUseCase(
-                        parent = parent,
-                        key = key,
-                        newName = newName.trim(),
-                        uid = user.uid
-                    )
+                val result = editSubCategoryNameUseCase(
+                    parent = parent,
+                    key = key,
+                    newName = newName.trim(),
+                    uid = user.uid
+                )
 
-                    if (result is FirebaseResult.Fail) {
-                        uiStates.showToast(R.string.add_category_failed)
-                        Log.d(TAG, "taskFailed: $result")
-                    }
-                } ?: uiStates.showToast(R.string.add_category_failed)
+                if (result is FirebaseResult.Fail) {
+                    uiStates.showToast(R.string.add_category_failed)
+                    Log.d(TAG, "taskFailed: $result")
+                }
             } ?: uiStates.showToast(R.string.add_category_failed)
         }
     }

@@ -24,18 +24,18 @@ import com.leebeebeom.clothinghelper.base.CircleCheckBox
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
 import com.leebeebeom.clothinghelper.main.base.ExpandIcon
-import com.leebeebeom.clothinghelper.main.base.isExpandStateWithIsAllExpand
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
+import kotlinx.collections.immutable.ImmutableSet
 
 @Composable
 fun SubCategoryCard(
     subCategory: () -> SubCategory,
     isAllExpand: () -> Boolean,
-    isChecked: () -> Boolean,
     selectModeTransition: Transition<Boolean>,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    selectedCategoryKeys: () -> ImmutableSet<String>
 ) {
-    var isExpand by isExpandStateWithIsAllExpand(isAllExpand = isAllExpand)
+    var isExpand by remember { mutableStateOf(isAllExpand()) }
 
     Card(elevation = 2.dp, shape = RoundedCornerShape(12.dp)) {
         Column(
@@ -44,12 +44,14 @@ fun SubCategoryCard(
                 .clickable(onClick = onClick)
         ) {
             SubCategoryCardTitle(
-                isExpanded = { isExpand },
-                onExpandIconClick = { isExpand = !isExpand },
-                onCheckBoxClick = onClick,
                 subCategory = subCategory,
                 selectModeTransition = selectModeTransition,
-                isChecked = isChecked
+                isExpanded = { isExpand },
+                isAllExpand = isAllExpand,
+                updateIsExpand = { isExpand = it },
+                onExpandIconClick = { isExpand = !isExpand },
+                onCheckBoxClick = onClick,
+                selectedCategoryKeys = selectedCategoryKeys
             )
             SubCategoryInfo { isExpand }
         }
@@ -60,10 +62,12 @@ fun SubCategoryCard(
 private fun SubCategoryCardTitle(
     subCategory: () -> SubCategory,
     selectModeTransition: Transition<Boolean>,
-    isChecked: () -> Boolean,
     isExpanded: () -> Boolean,
+    isAllExpand: () -> Boolean,
+    updateIsExpand: (Boolean) -> Unit,
     onExpandIconClick: () -> Unit,
-    onCheckBoxClick: () -> Unit
+    onCheckBoxClick: () -> Unit,
+    selectedCategoryKeys: () -> ImmutableSet<String>
 ) {
     Surface(elevation = 4.dp) {
         Row(
@@ -78,18 +82,22 @@ private fun SubCategoryCardTitle(
             ) {
                 TitleCircleCheckBox(
                     selectModeTransition = selectModeTransition,
-                    isChecked = isChecked,
-                    onClick = onCheckBoxClick
+                    subCategory = subCategory,
+                    onClick = onCheckBoxClick,
+                    selectedCategoryKeys = selectedCategoryKeys
                 )
                 AnimateSpacer(selectModeTransition)
                 Name(subCategory = subCategory)
                 SimpleWidthSpacer(dp = 4)
                 TotalCount(isExpanded = isExpanded)
             }
+
             ExpandIcon(
                 isExpanded = isExpanded,
                 onClick = onExpandIconClick,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(24.dp),
+                isAllExpand = isAllExpand,
+                updateIsExpand = updateIsExpand
             )
         }
     }
@@ -132,16 +140,19 @@ private fun Name(subCategory: () -> SubCategory) {
 @Composable
 private fun TitleCircleCheckBox(
     selectModeTransition: Transition<Boolean>,
-    isChecked: () -> Boolean,
-    onClick: () -> Unit
+    subCategory: () -> SubCategory,
+    onClick: () -> Unit,
+    selectedCategoryKeys: () -> ImmutableSet<String>
 ) {
+    val isChecked by remember { derivedStateOf { selectedCategoryKeys().contains(subCategory().key) } }
+
     selectModeTransition.AnimatedVisibility(
         visible = { it },
         enter = Anime.CircleCheckBox.expandIn,
         exit = Anime.CircleCheckBox.shrinkOut
     ) {
         CircleCheckBox(
-            isChecked = isChecked,
+            isChecked = { isChecked },
             modifier = Modifier
                 .padding(start = 4.dp)
                 .size(18.dp),

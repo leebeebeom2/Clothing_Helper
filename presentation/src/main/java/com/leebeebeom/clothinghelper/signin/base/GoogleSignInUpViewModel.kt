@@ -25,7 +25,7 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
     abstract fun showToast(@StringRes text: Int)
     abstract fun disableGoogleButton()
 
-    fun signInWithGoogleEmail(activityResult: ActivityResult) { // TODO Stable 확인
+    fun signInWithGoogleEmail(activityResult: ActivityResult) {
         when (activityResult.resultCode) {
             RESULT_OK -> {
                 viewModelScope.launch {

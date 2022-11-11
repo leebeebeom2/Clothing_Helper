@@ -10,9 +10,9 @@ import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelper.main.base.BaseIsAllExpandState
+import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.util.taskAndReturnSet
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
-import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.repository.SortOrder
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
@@ -95,9 +95,9 @@ class SubCategoryViewModel @Inject constructor(
 
     fun editSubCategoryName(newName: String) {
         viewModelScope.launch {
-            uiStates.selectModeOff()
             uiStates.user?.let { user ->
                 uiStates.firstSelectedSubCategoryKey?.let { key ->
+                    uiStates.selectModeOff()
                     val result = editSubCategoryNameUseCase(
                         parent = uiStates.parent,
                         key = key,
@@ -141,7 +141,7 @@ class SubCategoryUIState : BaseIsAllExpandState() {
     val selectedSubCategoryKeysSize by derivedStateOf { selectedSubCategoryKeys.size }
     val firstSelectedSubCategoryKey by derivedStateOf { selectedSubCategoryKeys.firstOrNull() }
 
-    var subCategories by mutableStateOf(emptyList<SubCategory>().toImmutableList())
+    var subCategories by mutableStateOf(emptyList<StableSubCategory>().toImmutableList())
         private set
     val subCategoryNames by derivedStateOf { subCategories.map { it.name }.toImmutableList() }
     val selectedSubCategoryName by derivedStateOf {

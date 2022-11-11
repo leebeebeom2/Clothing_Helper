@@ -25,20 +25,21 @@ import com.leebeebeom.clothinghelper.theme.Disabled
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.model.User
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun DrawerContents(
     user: () -> User?,
     isLoading: () -> Boolean,
     isAllExpand: () -> Boolean,
-    subCategories: (SubCategoryParent) -> List<SubCategory>,
+    subCategories: (SubCategoryParent) -> ImmutableList<SubCategory>,
     state: DrawerContentsState = rememberDrawerContentsState(),
     onEssentialMenuClick: (essentialMenu: EssentialMenus) -> Unit,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (SubCategory) -> Unit,
     onSettingIconClick: () -> Unit,
     allExpandIconClick: () -> Unit,
-    onDrawerClose: () -> Unit
 ) {
     Column {
         DrawerHeader(user = user, onSettingIconClick = onSettingIconClick)
@@ -52,7 +53,6 @@ fun DrawerContents(
                     EssentialMenu(
                         essentialMenu = it,
                         onClick = onEssentialMenuClick,
-                        onDrawerClose = onDrawerClose
                     )
                 }
 
@@ -71,7 +71,6 @@ fun DrawerContents(
                         isAllExpand = isAllExpand,
                         onMainCategoryClick = onMainCategoryClick,
                         onSubCategoryClick = onSubCategoryClick,
-                        onDrawerClose = onDrawerClose
                     )
                 }
             }
@@ -87,7 +86,7 @@ private fun IconWithDivider(isAllExpand: () -> Boolean, onCLick: () -> Unit) {
             size = 20.dp,
             onClick = onCLick,
             tint = LocalContentColor.current.copy(0.6f),
-            allExpand = isAllExpand
+            isAllExpand = isAllExpand
         )
     }
 }
@@ -95,19 +94,11 @@ private fun IconWithDivider(isAllExpand: () -> Boolean, onCLick: () -> Unit) {
 @Composable
 private fun EssentialMenu(
     essentialMenu: EssentialMenu,
-    onClick: (EssentialMenus) -> Unit,
-    onDrawerClose: () -> Unit
+    onClick: (EssentialMenus) -> Unit
 ) {
-    val onRowClick = remember {
-        {
-            onClick(essentialMenu.type)
-            onDrawerClose()
-        }
-    }
-
     DrawerContentRow(
         modifier = Modifier.heightIn(40.dp),
-        onClick = onRowClick
+        onClick = { onClick(essentialMenu.type) }
     ) {
         SimpleIcon(modifier = Modifier.size(22.dp), drawable = essentialMenu.drawable)
         SimpleWidthSpacer(dp = 12)
@@ -138,13 +129,7 @@ fun DrawerContentRow(
 
 @Composable
 fun DrawerContentText(modifier: Modifier = Modifier, text: () -> String, style: TextStyle) {
-    Text(
-        modifier = modifier,
-        text = text(),
-        style = style,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-    )
+    DrawerContentText(modifier = modifier, text = text(), style = style)
 }
 
 @Composable
@@ -159,26 +144,32 @@ fun DrawerContentText(modifier: Modifier = Modifier, text: String, style: TextSt
 }
 
 data class DrawerContentsState(
-    val essentialMenus: List<EssentialMenu> = getEssentialMenus(),
-    val mainCategories: List<MainCategory> = getMainCategories()
+    val essentialMenus: ImmutableList<EssentialMenu> = getEssentialMenus(),
+    val mainCategories: ImmutableList<MainCategory> = getMainCategories()
 )
 
 @Composable
-fun rememberDrawerContentsState() = remember { DrawerContentsState() }
+fun rememberDrawerContentsState(): DrawerContentsState {
+    return remember { DrawerContentsState() }
+}
 
-fun getMainCategories() = listOf(
-    MainCategory(R.string.top, SubCategoryParent.TOP),
-    MainCategory(R.string.bottom, SubCategoryParent.BOTTOM),
-    MainCategory(R.string.outer, SubCategoryParent.OUTER),
-    MainCategory(R.string.etc, SubCategoryParent.ETC)
-)
+fun getMainCategories(): ImmutableList<MainCategory> {
+    return listOf(
+        MainCategory(R.string.top, SubCategoryParent.TOP),
+        MainCategory(R.string.bottom, SubCategoryParent.BOTTOM),
+        MainCategory(R.string.outer, SubCategoryParent.OUTER),
+        MainCategory(R.string.etc, SubCategoryParent.ETC)
+    ).toImmutableList()
+}
 
-fun getEssentialMenus() = listOf(
-    EssentialMenu(R.string.main_screen, R.drawable.ic_home, EssentialMenus.MainScreen),
-    EssentialMenu(R.string.favorite, R.drawable.ic_star, EssentialMenus.Favorite),
-    EssentialMenu(R.string.see_all, R.drawable.ic_list, EssentialMenus.SeeAll),
-    EssentialMenu(R.string.trash, R.drawable.ic_delete, EssentialMenus.Trash)
-)
+fun getEssentialMenus(): ImmutableList<EssentialMenu> {
+    return listOf(
+        EssentialMenu(R.string.main_screen, R.drawable.ic_home, EssentialMenus.MainScreen),
+        EssentialMenu(R.string.favorite, R.drawable.ic_star, EssentialMenus.Favorite),
+        EssentialMenu(R.string.see_all, R.drawable.ic_list, EssentialMenus.SeeAll),
+        EssentialMenu(R.string.trash, R.drawable.ic_delete, EssentialMenus.Trash)
+    ).toImmutableList()
+}
 
 enum class EssentialMenus {
     MainScreen, Favorite, SeeAll, Trash

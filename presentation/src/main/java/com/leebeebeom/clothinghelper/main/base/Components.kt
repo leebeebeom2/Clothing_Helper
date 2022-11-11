@@ -23,19 +23,19 @@ fun AllExpandIcon(
     size: Dp,
     onClick: () -> Unit,
     tint: Color,
-    allExpand: () -> Boolean
+    isAllExpand: () -> Boolean
 ) {
     val painter = rememberAnimatedVectorPainter(
         animatedImageVector = AnimatedImageVector.animatedVectorResource(
             id = R.drawable.all_expand_anim
-        ), atEnd = allExpand()
+        ), atEnd = isAllExpand()
     )
 
     CustomIconButton(
         modifier = Modifier.size(size),
         onClick = onClick,
         painter = painter,
-        tint = tint,
+        tint = tint
     )
 }
 

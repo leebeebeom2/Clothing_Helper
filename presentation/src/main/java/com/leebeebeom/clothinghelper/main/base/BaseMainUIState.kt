@@ -8,6 +8,8 @@ import com.leebeebeom.clothinghelper.base.BaseUIState
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.model.User
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 open class BaseMainUIState : BaseUIState() {
     var isLoading by mutableStateOf(false)
@@ -15,28 +17,32 @@ open class BaseMainUIState : BaseUIState() {
     var allSubCategories by mutableStateOf(List(4) { emptyList<SubCategory>() })
         private set
 
-    private val topSubCategories by derivedStateOf { allSubCategories[0] }
-    private val bottomSubCategories by derivedStateOf { allSubCategories[1] }
-    private val outerSubCategories by derivedStateOf { allSubCategories[2] }
-    private val etcSubCategories by derivedStateOf { allSubCategories[3] }
+    private val topSubCategories by derivedStateOf { allSubCategories[0].toImmutableList() }
+    private val bottomSubCategories by derivedStateOf { allSubCategories[1].toImmutableList() }
+    private val outerSubCategories by derivedStateOf { allSubCategories[2].toImmutableList() }
+    private val etcSubCategories by derivedStateOf { allSubCategories[3].toImmutableList() }
 
     private val topSubCategoriesSize by derivedStateOf { topSubCategories.size }
     private val bottomSubCategoriesSize by derivedStateOf { bottomSubCategories.size }
     private val outerSubCategoriesSize by derivedStateOf { outerSubCategories.size }
     private val etcSubCategoriesSize by derivedStateOf { etcSubCategories.size }
 
-    fun getSubCategories(subCategoryParent: SubCategoryParent) = when (subCategoryParent) {
-        SubCategoryParent.TOP -> topSubCategories
-        SubCategoryParent.BOTTOM -> bottomSubCategories
-        SubCategoryParent.OUTER -> outerSubCategories
-        SubCategoryParent.ETC -> etcSubCategories
+    fun getSubCategories(subCategoryParent: SubCategoryParent): ImmutableList<SubCategory> {
+        return when (subCategoryParent) {
+            SubCategoryParent.TOP -> topSubCategories
+            SubCategoryParent.BOTTOM -> bottomSubCategories
+            SubCategoryParent.OUTER -> outerSubCategories
+            SubCategoryParent.ETC -> etcSubCategories
+        }
     }
 
-    fun subCategoriesSize(subCategoryParent: SubCategoryParent) = when (subCategoryParent) {
-        SubCategoryParent.TOP -> topSubCategoriesSize
-        SubCategoryParent.BOTTOM -> bottomSubCategoriesSize
-        SubCategoryParent.OUTER -> outerSubCategoriesSize
-        SubCategoryParent.ETC -> etcSubCategoriesSize
+    fun subCategoriesSize(subCategoryParent: SubCategoryParent): Int {
+        return when (subCategoryParent) {
+            SubCategoryParent.TOP -> topSubCategoriesSize
+            SubCategoryParent.BOTTOM -> bottomSubCategoriesSize
+            SubCategoryParent.OUTER -> outerSubCategoriesSize
+            SubCategoryParent.ETC -> etcSubCategoriesSize
+        }
     }
 
     fun updateIsLoading(isLoading: Boolean) {

@@ -48,8 +48,16 @@ fun MainRoot(
     viewModel: MainRootViewModel = hiltViewModel(),
     uiStates: BaseIsAllExpandState = viewModel.uiStates,
     state: MainRootState = rememberMainRootState(),
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
     content: @Composable (PaddingValues, backHandler: @Composable () -> Unit) -> Unit
 ) {
+    val drawerClose = remember {
+        {
+            coroutineScope.launch { state.onDrawerClose() }
+            Unit
+        }
+    }
+
     ClothingHelperTheme {
         Scaffold(scaffoldState = state.scaffoldState,
             drawerContent = {
@@ -58,43 +66,47 @@ fun MainRoot(
                     isLoading = { uiStates.isLoading },
                     isAllExpand = { uiStates.isAllExpand },
                     subCategories = uiStates::getSubCategories,
-                    onEssentialMenuClick = onEssentialMenuClick,
-                    onMainCategoryClick = onMainCategoryClick,
-                    onSubCategoryClick = onSubCategoryClick,
-                    onSettingIconClick = onSettingIconClick,
+                    onEssentialMenuClick = {
+                        onEssentialMenuClick(it)
+                        drawerClose()
+                    },
+                    onMainCategoryClick = {
+                        onMainCategoryClick(it)
+                        drawerClose()
+                    },
+                    onSubCategoryClick = {
+                        onSubCategoryClick(it)
+                        drawerClose()
+                    },
+                    onSettingIconClick = {
+                        onSettingIconClick()
+                        drawerClose()
+                    },
                     allExpandIconClick = viewModel::toggleAllExpand,
-                    onDrawerClose = state::onDrawerClose
                 )
             },
             drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
             drawerBackgroundColor = MaterialTheme.colors.primary,
             content = {
                 content(it) {
-                    BackHandler(enabled = { state.drawerState.isOpen }, task = state::onDrawerClose)
+                    BackHandler(enabled = { state.drawerState.isOpen }, task = drawerClose)
                 }
             })
         SimpleToast(text = { uiStates.toastText }, shownToast = uiStates::toastShown)
-        BackHandler(enabled = { state.drawerState.isOpen }, task = state::onDrawerClose)
+        BackHandler(enabled = { state.drawerState.isOpen }, task = drawerClose)
     }
 }
 
-class MainRootState(
+data class MainRootState(
     val scaffoldState: ScaffoldState,
-    private val coroutineScope: CoroutineScope,
     val drawerState: DrawerState = scaffoldState.drawerState
 ) {
-    fun onDrawerClose() {
-        coroutineScope.launch { drawerState.close() }
+    suspend fun onDrawerClose() {
+        drawerState.close()
     }
 }
 
 @Composable
-fun rememberMainRootState(
-    scaffoldState: ScaffoldState = rememberScaffoldState(),
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
-) = remember {
-    MainRootState(
-        scaffoldState = scaffoldState,
-        coroutineScope = coroutineScope
-    )
+fun rememberMainRootState(scaffoldState: ScaffoldState = rememberScaffoldState()): MainRootState {
+    return remember { MainRootState(scaffoldState = scaffoldState) }
 }

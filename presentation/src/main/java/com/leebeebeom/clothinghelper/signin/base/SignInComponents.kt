@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -35,7 +35,7 @@ fun VisibleIcon(isVisible: () -> Boolean, onClick: () -> Unit) {
 @Composable
 fun GoogleSignInButton(
     enabled: () -> Boolean,
-    onActivityResult: (ActivityResult) -> Unit,
+    onActivityResult: (ActivityResult) -> Unit, // TODO Stable 확인
     disabled: () -> Unit
 ) {
     val launcher = rememberLauncherForActivityResult(
@@ -45,15 +45,19 @@ fun GoogleSignInButton(
 
     val intent = GoogleSignIn.getClient(LocalContext.current, gso()).signInIntent
 
+    val rememberedOnClick by remember {
+        mutableStateOf({
+            disabled()
+            launcher.launch(intent)
+        })
+    }
+
     MaxWidthButton(
         text = R.string.starts_with_google_email,
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
         icon = { GoogleIcon() },
-        onClick = {
-            disabled()
-            launcher.launch(intent)
-        }
+        onClick = rememberedOnClick
     )
 }
 

@@ -120,15 +120,17 @@ data class SubCategoryContentState(
         }
     }
 
-    fun performHaptic() = haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+    fun performHaptic() {
+        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+    }
 
     inline fun dragSelectStart(
         touchOffset: Offset, crossinline onLongClick: (key: String) -> Unit
     ) {
-        lazyListState.getSelectedItem({ visibleItem ->
+        lazyListState.getSelectedItem({
             isSelectedItem(
                 touchOffset = touchOffset,
-                visibleItem = visibleItem
+                visibleItem = it
             )
         }) { selectedItem ->
             (selectedItem.key as? String)?.let {
@@ -146,7 +148,8 @@ data class SubCategoryContentState(
         touchOffset: Offset, crossinline onSelect: (String) -> Unit
     ) {
         initialSelectedKey?.let { initialSelectedKey ->
-            lazyListState.getSelectedItem({ initialSelectedKey != it.key as? String },
+            lazyListState.getSelectedItem(
+                { initialSelectedKey != it.key as? String },
                 { !passedItemKeys.contains(it.key) },
                 { isSelectedItem(touchOffset = touchOffset, visibleItem = it) }) {
                 (it.key as? String)?.let { key ->
@@ -157,30 +160,31 @@ data class SubCategoryContentState(
         }
     }
 
-    fun isSelectedItem(touchOffset: Offset, visibleItem: LazyListItemInfo) =
-        touchOffset.y.toInt() in visibleItem.realOffset..visibleItem.offsetEnd
+    fun isSelectedItem(touchOffset: Offset, visibleItem: LazyListItemInfo): Boolean {
+        return touchOffset.y.toInt() in visibleItem.realOffset..visibleItem.offsetEnd
+    }
 
     inline fun onDragEndMove(
         touchOffset: Offset, crossinline onSelect: (key: String) -> Unit
     ) {
         when (currentDragPosition(touchOffset)) {
             DragPosition.DragDown -> dragEndMove(
-                onLongClick = onSelect,
+                onSelect = onSelect,
             ) { touchOffset.y.toInt() < it.realOffset }
             DragPosition.DragUp -> dragEndMove(
-                onLongClick = onSelect,
+                onSelect = onSelect,
             ) { touchOffset.y.toInt() > it.offsetEnd }
             else -> {}
         }
     }
 
     inline fun dragEndMove(
-        crossinline onLongClick: (key: String) -> Unit,
+        crossinline onSelect: (key: String) -> Unit,
         crossinline condition: (selectedItem: LazyListItemInfo) -> Boolean
     ) = lazyListState.getSelectedItem({ it.key == passedItemKeys.lastOrNull() }) { selectedItem ->
         if (condition(selectedItem)) {
             (selectedItem.key as? String)?.let { key ->
-                onLongClick(key)
+                onSelect(key)
                 passedItemKeys.remove(key)
             }
         }
@@ -197,13 +201,12 @@ data class SubCategoryContentState(
         vararg conditions: (visibleItem: LazyListItemInfo) -> Boolean,
         crossinline task: (LazyListItemInfo) -> Unit
     ) {
-        val selectedItem = layoutInfo.visibleItemsInfo.firstOrNull { visibleItem ->
+        layoutInfo.visibleItemsInfo.firstOrNull { visibleItem ->
             conditions.forEach { condition ->
                 if (!condition(visibleItem)) return@firstOrNull false
             }
             true
-        }
-        selectedItem?.let { task(it) }
+        }?.let { task(it) }
     }
 }
 

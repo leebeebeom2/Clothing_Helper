@@ -15,20 +15,21 @@ import com.leebeebeom.clothinghelper.base.Anime.List.listExpand
 import com.leebeebeom.clothinghelper.base.Anime.List.listShrink
 import com.leebeebeom.clothinghelper.base.DotProgressIndicator
 import com.leebeebeom.clothinghelper.main.base.ExpandIcon
-import com.leebeebeom.clothinghelperdomain.model.SubCategory
+import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun DrawerMainCategory(
     mainCategory: MainCategory,
-    subCategories: (SubCategoryParent) -> ImmutableList<SubCategory>,
+    subCategories: (SubCategoryParent) -> ImmutableList<StableSubCategory>,
+    subCategoriesSize: (SubCategoryParent) -> Int,
     isLoading: () -> Boolean,
     isAllExpand: () -> Boolean,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
-    onSubCategoryClick: (SubCategory) -> Unit,
+    onSubCategoryClick: (StableSubCategory) -> Unit,
 ) {
-    var isExpand by rememberSaveable { mutableStateOf(isAllExpand()) }
+    var isExpand by rememberSaveable { mutableStateOf(false) }
 
     Column {
         DrawerContentRow(
@@ -41,7 +42,7 @@ fun DrawerMainCategory(
                 style = MaterialTheme.typography.subtitle1
             )
             TotalCount(
-                subCategories = { subCategories(mainCategory.type) },
+                subCategoriesSize = { subCategoriesSize(mainCategory.type) },
                 isLoading = isLoading
             )
             ExpandIcon(
@@ -85,42 +86,48 @@ private fun ExpandIcon(
 @Composable
 private fun SubCategories(
     isExpand: () -> Boolean,
-    subCategories: () -> ImmutableList<SubCategory>,
-    onClick: (SubCategory) -> Unit
+    subCategories: () -> ImmutableList<StableSubCategory>,
+    onClick: (StableSubCategory) -> Unit
 ) {
     AnimatedVisibility(
         visible = isExpand(),
         enter = listExpand,
         exit = listShrink
-    ) {
-        Surface(color = MaterialTheme.colors.primary) {
-            Column {
-                for (subCategory in subCategories())
-                    key(subCategory.key) {
-                        SubCategory(
-                            subCategory = { subCategory },
-                            onClick = onClick
-                        ) // TODO 익스팬드 시 두번씩 리컴포즈 됨 해결 못함
-                    }
-            }
+    ) { SubCategories(subCategories = subCategories, onClick = onClick) }
+}
+
+@Composable
+private fun SubCategories(
+    subCategories: () -> ImmutableList<StableSubCategory>,
+    onClick: (StableSubCategory) -> Unit
+) {
+    Surface(color = MaterialTheme.colors.primary) {
+        Column {
+            for (subCategory in subCategories())
+                key(subCategory.key) {
+                    SubCategory(
+                        name = { subCategory.name },
+                        onClick = { onClick(subCategory) }
+                    )
+                }
         }
     }
 }
 
 @Composable
 private fun SubCategory(
-    subCategory: () -> SubCategory,
-    onClick: (SubCategory) -> Unit
+    name: () -> String,
+    onClick: () -> Unit
 ) {
     DrawerContentRow(
         modifier = Modifier
             .heightIn(40.dp)
             .padding(horizontal = 8.dp),
-        onClick = { onClick(subCategory()) }
+        onClick = onClick
     ) {
         DrawerContentText(
             modifier = Modifier.padding(start = 12.dp),
-            text = { subCategory().name },
+            text = name,
             style = MaterialTheme.typography.subtitle2
         )
     }
@@ -128,15 +135,14 @@ private fun SubCategory(
 
 @Composable
 private fun RowScope.TotalCount(
-    subCategories: () -> ImmutableList<SubCategory>,
+    subCategoriesSize: () -> Int,
     isLoading: () -> Boolean,
 ) {
-
     Text(
         modifier = Modifier
             .weight(1f)
             .padding(start = 4.dp),
-        text = if (isLoading()) "" else "(${subCategories().size})",
+        text = if (isLoading()) "" else "(${subCategoriesSize()})",
         style = MaterialTheme.typography.caption.copy(
             LocalContentColor.current.copy(
                 ContentAlpha.disabled

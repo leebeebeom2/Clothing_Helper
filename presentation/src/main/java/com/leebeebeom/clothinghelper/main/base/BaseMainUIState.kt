@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.leebeebeom.clothinghelper.base.BaseUIState
+import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.map.StableUser
 import com.leebeebeom.clothinghelper.map.toStable
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
@@ -19,17 +20,17 @@ open class BaseMainUIState : BaseUIState() {
     var allSubCategories by mutableStateOf(List(4) { emptyList<SubCategory>() })
         private set
 
-    private val topSubCategories by derivedStateOf { allSubCategories[0].toImmutableList() }
-    private val bottomSubCategories by derivedStateOf { allSubCategories[1].toImmutableList() }
-    private val outerSubCategories by derivedStateOf { allSubCategories[2].toImmutableList() }
-    private val etcSubCategories by derivedStateOf { allSubCategories[3].toImmutableList() }
+    private val topSubCategories by derivedStateOf { allSubCategories[0].map { it.toStable() }.toImmutableList() }
+    private val bottomSubCategories by derivedStateOf { allSubCategories[1].map { it.toStable() }.toImmutableList() }
+    private val outerSubCategories by derivedStateOf { allSubCategories[2].map { it.toStable() }.toImmutableList() }
+    private val etcSubCategories by derivedStateOf { allSubCategories[3].map { it.toStable() }.toImmutableList() }
 
     private val topSubCategoriesSize by derivedStateOf { topSubCategories.size }
     private val bottomSubCategoriesSize by derivedStateOf { bottomSubCategories.size }
     private val outerSubCategoriesSize by derivedStateOf { outerSubCategories.size }
     private val etcSubCategoriesSize by derivedStateOf { etcSubCategories.size }
 
-    fun getSubCategories(subCategoryParent: SubCategoryParent): ImmutableList<SubCategory> {
+    fun getSubCategories(subCategoryParent: SubCategoryParent): ImmutableList<StableSubCategory> {
         return when (subCategoryParent) {
             SubCategoryParent.TOP -> topSubCategories
             SubCategoryParent.BOTTOM -> bottomSubCategories

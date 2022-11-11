@@ -21,26 +21,18 @@ import com.leebeebeom.clothinghelper.base.CircleCheckBox
 import com.leebeebeom.clothinghelper.base.CustomIconButton
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
-import com.leebeebeom.clothinghelperdomain.model.SubCategory
-import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SubCategoryBottomAppBar(
     selectedSubCategoriesSize: () -> Int,
+    isAllSelected: () -> Boolean,
     showEditIcon: () -> Boolean,
     showDeleteIcon: () -> Boolean,
     selectModeTransition: Transition<Boolean>,
-    onAllSelectCheckBoxClick: (List<SubCategory>) -> Unit,
-    onEditSubCategoryNameClick: () -> Unit,
-    parent: SubCategoryParent,
-    subCategoriesSize: (SubCategoryParent) -> Int,
-    subCategories: (SubCategoryParent) -> List<SubCategory>
+    onAllSelectCheckBoxClick: () -> Unit,
+    onEditSubCategoryNameClick: () -> Unit
 ) {
-    val isAllSelected by remember {
-        derivedStateOf { selectedSubCategoriesSize() == subCategoriesSize(parent) }
-    }
-    val onCheckBoxClick = remember { { onAllSelectCheckBoxClick(subCategories(parent)) } }
     selectModeTransition.AnimatedVisibility(
         visible = { it },
         enter = expandIn,
@@ -49,9 +41,9 @@ fun SubCategoryBottomAppBar(
         BottomAppBar {
             SimpleWidthSpacer(dp = 4)
             CircleCheckBox(
-                isChecked = { isAllSelected },
+                isChecked = isAllSelected,
                 modifier = Modifier.size(22.dp),
-                onClick = onCheckBoxClick
+                onClick = onAllSelectCheckBoxClick
             )
             SimpleWidthSpacer(dp = 10)
             SelectText(selectedSubCategoriesSize = selectedSubCategoriesSize)

@@ -15,7 +15,7 @@ import com.leebeebeom.clothinghelper.base.rememberMaxWidthTextFiledState
 import com.leebeebeom.clothinghelper.base.rememberPasswordTextFieldState
 
 @Composable
-fun EmailTextField( // TODO 리컴포즈 확인
+fun EmailTextField(
     email: () -> String,
     error: () -> Int?,
     imeAction: ImeAction = ImeAction.Next,
@@ -42,7 +42,7 @@ fun EmailTextField( // TODO 리컴포즈 확인
 }
 
 @Composable
-fun PasswordTextField(  // TODO 리컴포즈 확인
+fun PasswordTextField(
     @StringRes label: Int = R.string.password,
     password: () -> String,
     error: () -> Int?,
@@ -74,7 +74,7 @@ fun PasswordTextField(  // TODO 리컴포즈 확인
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun NameTextField(  // TODO 리컴포즈 확인
+fun NameTextField(
     name: () -> String,
     onNameChange: (String) -> Unit
 ) {

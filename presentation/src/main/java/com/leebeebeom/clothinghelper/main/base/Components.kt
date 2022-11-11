@@ -51,7 +51,7 @@ fun ExpandIcon(
         updateIsExpand(isAllExpandVal)
         mutableStateOf(isAllExpandVal)
     }
-    if (isAllExpand() != rememberedIsAllExpand) {
+    if (isAllExpandVal != rememberedIsAllExpand) {
         rememberedIsAllExpand = isAllExpandVal
         updateIsExpand(isAllExpandVal)
     }

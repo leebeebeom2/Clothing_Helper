@@ -20,19 +20,21 @@ class ResetPasswordViewModel @Inject constructor(private val resetPasswordUseCas
 
     val uiStates = ResetPasswordUIState()
 
-    fun sendResetPasswordEmail() = viewModelScope.launch {
-        when (val result = resetPasswordUseCase(uiStates.email)) {
-            is FirebaseResult.Success -> {
-                uiStates.showToast(R.string.email_send_complete)
-                uiStates.updateIsTaskSuccess(true)
-            }
-            is FirebaseResult.Fail -> {
-                setFireBaseError(
-                    exception = result.exception,
-                    updateEmailError = uiStates::updateEmailError,
-                    updatePasswordError = {},
-                    showToast = uiStates::showToast
-                )
+    fun sendResetPasswordEmail() {
+        viewModelScope.launch {
+            when (val result = resetPasswordUseCase(uiStates.email)) {
+                is FirebaseResult.Success -> {
+                    uiStates.showToast(R.string.email_send_complete)
+                    uiStates.updateIsTaskSuccess(true)
+                }
+                is FirebaseResult.Fail -> {
+                    setFireBaseError(
+                        exception = result.exception,
+                        updateEmailError = uiStates::updateEmailError,
+                        updatePasswordError = {},
+                        showToast = uiStates::showToast
+                    )
+                }
             }
         }
     }

@@ -43,7 +43,7 @@ fun GoogleSignInButton(
         onResult = onActivityResult
     )
 
-    val intent = GoogleSignIn.getClient(LocalContext.current, getGso()).signInIntent
+    val intent = GoogleSignIn.getClient(LocalContext.current, gso()).signInIntent
 
     MaxWidthButton(
         text = R.string.starts_with_google_email,
@@ -67,8 +67,10 @@ fun GoogleIcon() {
 }
 
 @Composable
-private fun getGso() = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-    .requestIdToken(stringResource(id = R.string.default_web_client_id)).requestEmail().build()
+private fun gso(): GoogleSignInOptions {
+    return GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        .requestIdToken(stringResource(id = R.string.default_web_client_id)).requestEmail().build()
+}
 
 @Composable
 fun OrDivider() {

@@ -19,7 +19,7 @@ class SignInViewModel @Inject constructor(
 
     val uiState = BaseSignInUpUIState()
 
-    fun signInWithEmailAndPassword() =
+    fun signInWithEmailAndPassword() {
         viewModelScope.launch {
 
             when (val result = signInUseCase(uiState.email, uiState.password)) {
@@ -33,6 +33,7 @@ class SignInViewModel @Inject constructor(
                 else -> showToast(R.string.unknown_error)
             }
         }
+    }
 
     override fun updateGoogleButtonEnabled(enabled: Boolean) {
         uiState.updateGoogleButtonEnabled(enabled)

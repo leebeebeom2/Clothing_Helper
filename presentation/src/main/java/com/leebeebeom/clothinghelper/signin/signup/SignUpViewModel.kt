@@ -25,20 +25,22 @@ class SignUpViewModel @Inject constructor(
 
     val uiStates = SignUpUIState()
 
-    fun signUpWithEmailAndPassword() = viewModelScope.launch {
-        when (val result = signUpUseCase(
-            email = uiStates.email, password = uiStates.password, name = uiStates.name
-        )) {
-            is AuthResult.Success -> showToast(R.string.sign_up_complete)
-            is AuthResult.Fail -> if (result.exception?.message == PushInitialSubCategoriesFailed) showToast(
-                R.string.initial_sub_category_push_failed
-            )
-            else setFireBaseError(
-                exception = result.exception,
-                updateEmailError = uiStates::updateEmailError,
-                updatePasswordError = {},
-                showToast = ::showToast
-            )
+    fun signUpWithEmailAndPassword() {
+        viewModelScope.launch {
+            when (val result = signUpUseCase(
+                email = uiStates.email, password = uiStates.password, name = uiStates.name
+            )) {
+                is AuthResult.Success -> showToast(R.string.sign_up_complete)
+                is AuthResult.Fail -> if (result.exception?.message == PushInitialSubCategoriesFailed) showToast(
+                    R.string.initial_sub_category_push_failed
+                )
+                else setFireBaseError(
+                    exception = result.exception,
+                    updateEmailError = uiStates::updateEmailError,
+                    updatePasswordError = {},
+                    showToast = ::showToast
+                )
+            }
         }
     }
 

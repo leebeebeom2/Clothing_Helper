@@ -11,8 +11,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.base.BackHandler
 import com.leebeebeom.clothinghelper.base.SimpleToast
 import com.leebeebeom.clothinghelper.main.base.BaseIsAllExpandState
+import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
-import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -44,7 +44,7 @@ fun MainRoot(
     onSettingIconClick: () -> Unit,
     onEssentialMenuClick: (essentialMenu: EssentialMenus) -> Unit,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
-    onSubCategoryClick: (SubCategory) -> Unit,
+    onSubCategoryClick: (StableSubCategory) -> Unit,
     viewModel: MainRootViewModel = hiltViewModel(),
     uiStates: BaseIsAllExpandState = viewModel.uiStates,
     state: MainRootState = rememberMainRootState(),
@@ -66,6 +66,7 @@ fun MainRoot(
                     isLoading = { uiStates.isLoading },
                     isAllExpand = { uiStates.isAllExpand },
                     subCategories = uiStates::getSubCategories,
+                    subCategoriesSize = uiStates::subCategoriesSize,
                     onEssentialMenuClick = {
                         onEssentialMenuClick(it)
                         drawerClose()

@@ -1,30 +1,11 @@
-restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun SubCategoryContent(
-  stable parent: SubCategoryParent
-  stable isAllExpand: Function0<Boolean>
-  stable subCategories: Function0<ImmutableList<StableSubCategory>>
-  stable sort: Function0<SubCategorySortPreferences>
-  unstable state: SubCategoryContentState? = @dynamic rememberSubCategoryContentState(null, null, null, null, null, $composer, 0, 0b00011111)
-  stable allExpandIconClick: Function0<Unit>
-  stable onLongClick: Function1<@[ParameterName(name = 'key')] String, Unit>
-  stable onSubCategoryClick: Function1<StableSubCategory, Unit>
-  stable onSortClick: Function1<SubCategorySort, Unit>
-  stable onOrderClick: Function1<SortOrder, Unit>
-  stable selectedSubCategoryKey: Function0<ImmutableSet<String>>
-  stable isSelectMode: Function0<Boolean>
-  stable onSelect: Function1<String, Unit>
-)
-restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun ScrollToTopFab(
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun AddSubcategoryDialogFab(
   stable <this>: BoxScope
-  stable showFab: Function0<Boolean>
-  stable onClick: Function0<Unit>
+  stable onPositiveButtonClick: Function1<@[ParameterName(name = 'newName')] String, Unit>
+  stable subCategoryNames: Function0<ImmutableList<String>>
+  stable isSelectMode: Function0<Boolean>
 )
-fun rememberSubCategoryContentState(
-  stable lazyListState: LazyListState? = @dynamic rememberLazyListState(0, 0, $composer, 0, 0b0011)
-  unstable haptic: HapticFeedback? = @dynamic LocalHapticFeedback.current
-  stable interactionSource: InteractionSource? = @static remember({
-  MutableInteractionSource  (  )
-}
-, $composer, 0)
-  unstable configuration: Configuration? = @dynamic LocalConfiguration.current
-  unstable coroutineScope: CoroutineScope? = @dynamic rememberCoroutineScope(null, $composer, 0, 0b0001)
-): SubCategoryContentState
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun AddSubCategoryFab(
+  stable <this>: BoxScope
+  stable showDialog: Function0<Unit>
+  stable isSelectMode: Function0<Boolean>
+)

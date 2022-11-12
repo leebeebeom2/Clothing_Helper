@@ -15,7 +15,7 @@ object Anime {
         )
 
         val errorOut = shrinkVertically(
-            animationSpec = tween(durationMillis = 50), shrinkTowards = Alignment.Top
+            animationSpec = tween(durationMillis = 0), shrinkTowards = Alignment.Top
         )
     }
 
@@ -25,13 +25,23 @@ object Anime {
     }
 
     object BottomAppbar {
-        val expandIn = expandVertically(expandFrom = Alignment.Top)
-        val shrinkOut = shrinkVertically(shrinkTowards = Alignment.Top)
+        const val duration = 250
+        const val delay = 150
+
+        val expandIn =
+            expandVertically(expandFrom = Alignment.Top, animationSpec = tween(duration, delay))
+        val shrinkOut =
+            shrinkVertically(shrinkTowards = Alignment.Top, animationSpec = tween(duration))
     }
 
     object SubCategoryCard {
         val expandIn = expandVertically()
         val shrinkOut = shrinkVertically()
+    }
+
+    object AddSubCategoryFab {
+        val fadeOut = fadeOut(tween(BottomAppbar.duration))
+        val fadeIn = fadeIn(tween(BottomAppbar.duration, BottomAppbar.delay))
     }
 
     @OptIn(ExperimentalAnimationApi::class)

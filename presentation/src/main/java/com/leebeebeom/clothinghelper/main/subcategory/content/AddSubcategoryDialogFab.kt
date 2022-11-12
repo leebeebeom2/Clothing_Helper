@@ -1,9 +1,6 @@
 package com.leebeebeom.clothinghelper.main.subcategory.content
 
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.VisibilityThreshold
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,9 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.base.Anime
 import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelper.main.subcategory.BaseSubCategoryDialogState
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryTextFieldDialog
@@ -99,22 +96,20 @@ fun BoxScope.AddSubCategoryFab(
     showDialog: () -> Unit,
     isSelectMode: () -> Boolean
 ) {
-    val dp by animateDpAsState(
-        targetValue = if (isSelectMode()) 72.dp else 16.dp,
-        animationSpec = spring(
-            stiffness = Spring.StiffnessMediumLow,
-            visibilityThreshold = Dp.VisibilityThreshold
-        )
-    )
-
-    FloatingActionButton(
-        modifier = Modifier
-            .align(Alignment.BottomEnd)
-            .padding(end = 16.dp, bottom = dp)
-            .size(48.dp),
-        onClick = showDialog,
-        backgroundColor = MaterialTheme.colors.primary,
+    AnimatedVisibility(
+        modifier = Modifier.align(Alignment.BottomEnd),
+        visible = !isSelectMode(),
+        enter = Anime.AddSubCategoryFab.fadeIn,
+        exit = Anime.AddSubCategoryFab.fadeOut
     ) {
-        SimpleIcon(drawable = R.drawable.ic_add)
+        FloatingActionButton(
+            modifier = Modifier
+                .padding(end = 16.dp, bottom = 16.dp)
+                .size(48.dp),
+            onClick = showDialog,
+            backgroundColor = MaterialTheme.colors.primary,
+        ) {
+            SimpleIcon(drawable = R.drawable.ic_add)
+        }
     }
 }

@@ -15,11 +15,8 @@ import com.leebeebeom.clothinghelper.base.MaxWidthButton
 
 @Composable
 fun SettingScreen(
-    viewModel: SettingViewModel = hiltViewModel(),
-    drawerCloseBackHandler: @Composable () -> Unit
+    viewModel: SettingViewModel = hiltViewModel()
 ) {
-    drawerCloseBackHandler()
-
     Box(
         modifier = Modifier
             .fillMaxSize()

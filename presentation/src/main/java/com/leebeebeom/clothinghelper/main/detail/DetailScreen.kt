@@ -21,10 +21,8 @@ import com.leebeebeom.clothinghelperdomain.model.getDummyFolders
 @Composable
 fun DetailScreen(
     subCategoryName: String,
-    subCategoryKey: String,
-    drawerCloseBackHandler: @Composable () -> Unit
+    subCategoryKey: String
 ) {
-    drawerCloseBackHandler()
     val backdropScaffoldState =
         rememberBackdropScaffoldState(initialValue = BackdropValue.Concealed)
     BackdropScaffold(

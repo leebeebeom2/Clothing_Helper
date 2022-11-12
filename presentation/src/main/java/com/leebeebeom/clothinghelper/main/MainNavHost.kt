@@ -51,11 +51,11 @@ fun MainNavHost(state: MainNavHostState = rememberMainNavHostState()) {
         onMainCategoryClick = state::navigateToSubCategory,
         onSubCategoryClick = state::navigateToDetail,
         onSettingIconClick = state::navigateToSetting
-    ) { paddingValues, drawerCloseBackHandler ->
+    ) {
         NavHost(
             navController = state.navController,
             startDestination = MainDestinations.MainCategory.route,
-            modifier = Modifier.padding(paddingValues = paddingValues)
+            modifier = Modifier.padding(it)
         ) {
             composable(MainDestinations.MainCategory.route) {
                 MainCategoryScreen(onMainCategoryClick = state::navigateToSubCategory)
@@ -63,25 +63,21 @@ fun MainNavHost(state: MainNavHostState = rememberMainNavHostState()) {
             composable(
                 route = MainDestinations.SubCategory.routeWithArg,
                 arguments = MainDestinations.SubCategory.arguments
-            ) {
+            ) { entry ->
                 SubCategoryScreen(
-                    parent = enumValueOf(it.arguments?.getString(MainDestinations.SubCategory.mainCategoryName)!!),
-                    drawerCloseBackHandler = drawerCloseBackHandler,
+                    parent = enumValueOf(entry.arguments?.getString(MainDestinations.SubCategory.mainCategoryName)!!),
                     onSubCategoryClick = state::navigateToDetail
                 )
             }
-            composable(route = MainDestinations.Setting.route) {
-                SettingScreen(drawerCloseBackHandler = drawerCloseBackHandler)
-            }
+            composable(route = MainDestinations.Setting.route) { SettingScreen() }
             composable(
                 route = MainDestinations.Detail.routeWithArg,
                 arguments = MainDestinations.Detail.arguments
-            ) {
-                val arguments = it.arguments!!
+            ) { entry ->
+                val arguments = entry.arguments!!
                 DetailScreen(
                     subCategoryName = arguments.getString(MainDestinations.Detail.subCategoryName)!!,
-                    subCategoryKey = arguments.getString(MainDestinations.Detail.subCategoryKey)!!,
-                    drawerCloseBackHandler = drawerCloseBackHandler
+                    subCategoryKey = arguments.getString(MainDestinations.Detail.subCategoryKey)!!
                 )
             }
         }

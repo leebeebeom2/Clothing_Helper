@@ -49,7 +49,7 @@ fun MainRoot(
     uiStates: BaseIsAllExpandState = viewModel.uiStates,
     state: MainRootState = rememberMainRootState(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    content: @Composable (PaddingValues, backHandler: @Composable () -> Unit) -> Unit
+    content: @Composable (PaddingValues) -> Unit
 ) {
     val drawerClose = remember {
         {
@@ -59,7 +59,8 @@ fun MainRoot(
     }
 
     ClothingHelperTheme {
-        Scaffold(scaffoldState = state.scaffoldState,
+        Scaffold(
+            scaffoldState = state.scaffoldState,
             drawerContent = {
                 DrawerContents(
                     user = { uiStates.user },
@@ -88,13 +89,11 @@ fun MainRoot(
             },
             drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
             drawerBackgroundColor = MaterialTheme.colors.primary,
-            content = {
-                content(it) {
-                    BackHandler(enabled = { state.drawerState.isOpen }, task = drawerClose)
-                }
-            })
+        ) {
+            content(it)
+            BackHandler(enabled = { state.drawerState.isOpen }, task = drawerClose)
+        }
         SimpleToast(text = { uiStates.toastText }, shownToast = uiStates::toastShown)
-        BackHandler(enabled = { state.drawerState.isOpen }, task = drawerClose)
     }
 }
 

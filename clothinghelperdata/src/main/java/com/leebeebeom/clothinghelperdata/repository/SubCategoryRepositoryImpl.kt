@@ -1,11 +1,14 @@
 package com.leebeebeom.clothinghelperdata.repository
 
+import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelperdomain.model.*
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -24,8 +27,7 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
     private var pushingInitialData = false
 
     override suspend fun loadSubCategories(user: User?): FirebaseResult {
-        loadingOn()
-        val result = withContext(Dispatchers.IO) {
+        return withContext(Dispatchers.IO) {
             try {
                 loadingOn()
 
@@ -41,76 +43,82 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
                 FirebaseResult.Success
             } catch (e: Exception) {
                 FirebaseResult.Fail(e)
+            } finally {
+                if (!pushingInitialData) loadingOff()
             }
         }
-        if (!pushingInitialData) loadingOff()
-        return result
     }
 
     override suspend fun pushInitialSubCategories(uid: String): SubCategoryPushResult {
-        loadingOn()
-        pushingInitialData = true
-        val result = withContext(Dispatchers.IO) {
+        return withContext(Dispatchers.IO) {
             try {
+                loadingOn()
+                pushingInitialData = true
+
                 val subCategoryRef = root.getSubCategoriesRef(uid)
 
                 for (subCategory in getInitialSubCategories()) {
-                    val pushResult = pushSubCategory(subCategoryRef, subCategory)
-                    if (pushResult is SubCategoryPushResult.Fail) {
-                        return@withContext pushResult
-                    }
+                    val subCategoryWithKey = getSubCategoryWithKey(subCategoryRef, subCategory)
+                    val exception =
+                        pushSubCategoryAsync(subCategoryRef, subCategoryWithKey).await().exception
+                    if (exception != null)
+                        return@withContext SubCategoryPushResult.Fail(exception)
                 }
 
                 SubCategoryPushResult.Success(SubCategory()) // dummy
             } catch (e: Exception) {
                 SubCategoryPushResult.Fail(e)
+            } finally {
+                pushingInitialData = false
+                loadingOff()
             }
         }
-        pushingInitialData = false
-        loadingOff()
-        return result
     }
 
-    private suspend fun pushSubCategory(
-        subCategoryRef: DatabaseReference, subCategory: SubCategory
-    ): SubCategoryPushResult = withContext(Dispatchers.IO) {
-        val key = subCategoryRef.push().key ?: return@withContext SubCategoryPushResult.Fail(
-            Exception("key 생성 실패")
-        )
+    private fun getSubCategoryWithKey(
+        subCategoryRef: DatabaseReference,
+        subCategory: SubCategory
+    ): SubCategory {
+        val key = subCategoryRef.push().key!!
+        return subCategory.copy(key = key)
+    }
 
-        val subCategoryWithKey = subCategory.copy(key = key)
-
-        try {
-            subCategoryRef.child(key).setValue(subCategoryWithKey).await()
-            SubCategoryPushResult.Success(subCategoryWithKey)
-        } catch (e: Exception) {
-            SubCategoryPushResult.Fail(e)
+    private suspend fun pushSubCategoryAsync(
+        subCategoryRef: DatabaseReference,
+        subCategory: SubCategory
+    ): Deferred<Task<Void>> {
+        return withContext(Dispatchers.IO) {
+            async { subCategoryRef.child(subCategory.key).setValue(subCategory) }
         }
     }
 
     override suspend fun addSubCategory(
         subCategoryParent: SubCategoryParent, name: String, uid: String
-    ): FirebaseResult = withContext(Dispatchers.IO) {
-        try {
-            val newSubCategory = SubCategory(
-                parent = subCategoryParent, name = name, createDate = System.currentTimeMillis()
-            )
+    ): FirebaseResult {
+        return withContext(Dispatchers.IO) {
+            try {
+                val newSubCategory = SubCategory(
+                    parent = subCategoryParent, name = name, createDate = System.currentTimeMillis()
+                )
 
-            val subCategoryRef = root.getSubCategoriesRef(uid)
+                val subCategoryRef = root.getSubCategoriesRef(uid)
 
-            when (val result = pushSubCategory(subCategoryRef, newSubCategory)) {
-                is SubCategoryPushResult.Success -> {
-                    _allSubCategories.singleListUpdate(subCategoryParent.ordinal) {
-                        it.add(result.subCategory)
+                val subCategoryWithKey = getSubCategoryWithKey(subCategoryRef, newSubCategory)
+
+                when (val exception =
+                    pushSubCategoryAsync(subCategoryRef, subCategoryWithKey).await().exception) {
+                    null -> {
+                        _allSubCategories.singleListUpdate(subCategoryParent.ordinal) {
+                            it.add(subCategoryWithKey)
+                        }
+                        FirebaseResult.Success
                     }
-                    FirebaseResult.Success
+                    else -> FirebaseResult.Fail(exception)
                 }
-                is SubCategoryPushResult.Fail -> FirebaseResult.Fail(result.exception)
+            } catch (e: Exception) {
+                FirebaseResult.Fail(e)
             }
-        } catch (e: Exception) {
-            FirebaseResult.Fail(e)
         }
-
     }
 
     override suspend fun editSubCategoryName(

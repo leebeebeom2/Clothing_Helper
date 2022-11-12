@@ -2,14 +2,15 @@ package com.leebeebeom.clothinghelper.main.subcategory.content
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.Transition
-import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,19 +25,20 @@ import com.leebeebeom.clothinghelper.base.CircleCheckBox
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
 import com.leebeebeom.clothinghelper.main.base.ExpandIcon
-import com.leebeebeom.clothinghelperdomain.model.SubCategory
+import com.leebeebeom.clothinghelper.map.StableSubCategory
 import kotlinx.collections.immutable.ImmutableSet
 
 @Composable
 fun SubCategoryCard(
-    subCategory: () -> SubCategory,
+    isExpanded: () -> Boolean,
+    subCategory: () -> StableSubCategory,
     isAllExpand: () -> Boolean,
-    selectModeTransition: Transition<Boolean>,
     onClick: () -> Unit,
-    selectedCategoryKeys: () -> ImmutableSet<String>
+    selectedCategoryKeys: () -> ImmutableSet<String>,
+    updateIsExpanded: (Boolean) -> Unit,
+    toggleIsExpanded: () -> Unit,
+    isSelectMode: () -> Boolean
 ) {
-    var isExpand by remember { mutableStateOf(isAllExpand()) }
-
     Card(elevation = 2.dp, shape = RoundedCornerShape(12.dp)) {
         Column(
             modifier = Modifier
@@ -45,29 +47,29 @@ fun SubCategoryCard(
         ) {
             SubCategoryCardTitle(
                 subCategory = subCategory,
-                selectModeTransition = selectModeTransition,
-                isExpanded = { isExpand },
+                isSelectMode = isSelectMode,
+                isExpanded = isExpanded,
                 isAllExpand = isAllExpand,
-                updateIsExpand = { isExpand = it },
-                onExpandIconClick = { isExpand = !isExpand },
+                updateIsExpand = updateIsExpanded,
+                onExpandIconClick = toggleIsExpanded,
                 onCheckBoxClick = onClick,
-                selectedCategoryKeys = selectedCategoryKeys
+                selectedCategoryKeys = selectedCategoryKeys,
             )
-            SubCategoryInfo { isExpand }
+            SubCategoryInfo(isExpanded)
         }
     }
 }
 
 @Composable
 private fun SubCategoryCardTitle(
-    subCategory: () -> SubCategory,
-    selectModeTransition: Transition<Boolean>,
+    subCategory: () -> StableSubCategory,
     isExpanded: () -> Boolean,
     isAllExpand: () -> Boolean,
     updateIsExpand: (Boolean) -> Unit,
     onExpandIconClick: () -> Unit,
     onCheckBoxClick: () -> Unit,
-    selectedCategoryKeys: () -> ImmutableSet<String>
+    selectedCategoryKeys: () -> ImmutableSet<String>,
+    isSelectMode: () -> Boolean
 ) {
     Surface(elevation = 4.dp) {
         Row(
@@ -81,15 +83,15 @@ private fun SubCategoryCardTitle(
                 modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically
             ) {
                 TitleCircleCheckBox(
-                    selectModeTransition = selectModeTransition,
+                    isSelectMode = isSelectMode,
                     subCategory = subCategory,
                     onClick = onCheckBoxClick,
                     selectedCategoryKeys = selectedCategoryKeys
                 )
-                AnimateSpacer(selectModeTransition)
-                Name(subCategory = subCategory)
+                AnimateSpacer(isSelectMode = isSelectMode)
+                Name(name = { subCategory().name })
                 SimpleWidthSpacer(dp = 4)
-                TotalCount(isExpanded = isExpanded)
+                TotalCount()
             }
 
             ExpandIcon(
@@ -104,50 +106,43 @@ private fun SubCategoryCardTitle(
 }
 
 @Composable
-private fun AnimateSpacer(selectModeTransition: Transition<Boolean>) {
-    val width by selectModeTransition.animateDp(label = "width") { if (it) 2.dp else 12.dp }
+private fun AnimateSpacer(isSelectMode: () -> Boolean) {
+    val width by animateDpAsState(targetValue = if (isSelectMode()) 2.dp else 12.dp)
 
     Spacer(modifier = Modifier.width(width))
 }
 
 @Composable
-private fun TotalCount(isExpanded: () -> Boolean) {
-    AnimatedVisibility(
-        visible = !isExpanded(),
-        enter = Anime.SubCategoryCard.fadeIn,
-        exit = Anime.SubCategoryCard.fadeOut
-    ) {
-        Text( // TODO total count
-            text = "(10)", style = MaterialTheme.typography.caption.copy(
-                color = LocalContentColor.current.copy(ContentAlpha.medium)
-            ), maxLines = 1, overflow = TextOverflow.Ellipsis
-        )
-    }
+private fun TotalCount() {
+    Text( // TODO total count
+        text = "(10)", style = MaterialTheme.typography.caption.copy(
+            color = LocalContentColor.current.copy(ContentAlpha.medium)
+        ), maxLines = 1, overflow = TextOverflow.Ellipsis
+    )
 }
 
 @Composable
-private fun Name(subCategory: () -> SubCategory) {
+private fun Name(name: () -> String) {
     Text(
         modifier = Modifier.widthIn(max = 300.dp),
-        text = subCategory().name,
+        text = name(),
         style = MaterialTheme.typography.subtitle1,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
     )
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun TitleCircleCheckBox(
-    selectModeTransition: Transition<Boolean>,
-    subCategory: () -> SubCategory,
+    subCategory: () -> StableSubCategory,
     onClick: () -> Unit,
-    selectedCategoryKeys: () -> ImmutableSet<String>
+    selectedCategoryKeys: () -> ImmutableSet<String>,
+    isSelectMode: () -> Boolean
 ) {
     val isChecked by remember { derivedStateOf { selectedCategoryKeys().contains(subCategory().key) } }
 
-    selectModeTransition.AnimatedVisibility(
-        visible = { it },
+    AnimatedVisibility(
+        visible = isSelectMode(),
         enter = Anime.CircleCheckBox.expandIn,
         exit = Anime.CircleCheckBox.shrinkOut
     ) {

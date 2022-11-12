@@ -1,17 +1,20 @@
 package com.leebeebeom.clothinghelper.main.subcategory
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.core.Transition
-import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.base.CenterDotProgressIndicator
+import com.leebeebeom.clothinghelper.main.subcategory.content.AddSubcategoryDialogFab
 import com.leebeebeom.clothinghelper.main.subcategory.content.SubCategoryBottomAppBar
 import com.leebeebeom.clothinghelper.main.subcategory.content.SubCategoryContent
-import com.leebeebeom.clothinghelperdomain.model.SubCategory
+import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -58,6 +61,7 @@ import kotlinx.coroutines.launch
 이름 변경 시 정렬 지키는 지 확인
 
 TODO 플레이스 홀더
+TODO 리프레쉬
  */
 
 
@@ -66,24 +70,11 @@ fun SubCategoryScreen(
     parent: SubCategoryParent,
     viewModel: SubCategoryViewModel = hiltViewModel(),
     uiStates: SubCategoryUIState = viewModel.getUiStates(parent),
-    states: SubCategoryState = rememberSubCategoryState(uiStates.isSelectMode),
-    drawerCloseBackHandler: @Composable () -> Unit,
+    states: SubCategoryState = rememberSubCategoryState(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    onSubCategoryClick: (SubCategory) -> Unit
+    onSubCategoryClick: (StableSubCategory) -> Unit
 ) {
-    drawerCloseBackHandler()
-
-    Scaffold(bottomBar = {
-        SubCategoryBottomAppBar(
-            selectedSubCategoriesSize = { uiStates.selectedSubCategoryKeysSize },
-            isAllSelected = { uiStates.isAllSelected },
-            showEditIcon = { uiStates.showEditIcon },
-            showDeleteIcon = { uiStates.showDeleteIcon },
-            selectModeTransition = states.selectModeTransition,
-            onAllSelectCheckBoxClick = uiStates::toggleAllSelect,
-            onEditSubCategoryNameClick = states::showEditDialog
-        )
-    }) { paddingValue ->
+    Box(modifier = Modifier.fillMaxSize()) {
         CenterDotProgressIndicator(
             backGround = MaterialTheme.colors.background,
             isLoading = { uiStates.isLoading })
@@ -94,17 +85,21 @@ fun SubCategoryScreen(
             onSubCategoryClick = onSubCategoryClick,
             onSortClick = viewModel::changeSort,
             onOrderClick = viewModel::changeOrder,
-            onAddCategoryPositiveButtonClick = viewModel::addSubCategory,
             parent = parent,
-            selectModeTransition = states.selectModeTransition,
             isAllExpand = { uiStates.isAllExpand },
             subCategories = { uiStates.subCategories },
             sort = { uiStates.sort },
-            paddingValue = { paddingValue },
             selectedSubCategoryKey = { uiStates.selectedSubCategoryKeys },
             isSelectMode = { uiStates.isSelectMode },
-            onSelect = uiStates::onSelect,
-            subCategoryNames = { uiStates.subCategoryNames }
+            onSelect = uiStates::onSelect
+        )
+
+        val addSubCategoryButtonClick =
+            remember<(String) -> Unit> { { viewModel.addSubCategory(it, parent) } }
+        AddSubcategoryDialogFab(
+            onPositiveButtonClick = addSubCategoryButtonClick,
+            subCategoryNames = { uiStates.subCategoryNames },
+            isSelectMode = { uiStates.isSelectMode }
         )
 
         EditSubCategoryNameDialog(
@@ -115,17 +110,24 @@ fun SubCategoryScreen(
             selectedSubCategoryName = { uiStates.selectedSubCategoryName }
         )
 
-        BackHandler(enabled = uiStates.isSelectMode, onBack = {
-            coroutineScope.launch { uiStates.selectModeOff() }
-        })
+        SubCategoryBottomAppBar(
+            selectedSubCategoriesSize = { uiStates.selectedSubCategoryKeysSize },
+            isAllSelected = { uiStates.isAllSelected },
+            showEditIcon = { uiStates.showEditIcon },
+            showDeleteIcon = { uiStates.showDeleteIcon },
+            onAllSelectCheckBoxClick = uiStates::toggleAllSelect,
+            onEditSubCategoryNameClick = states::showEditDialog,
+            isSelectMode = { uiStates.isSelectMode }
+        )
     }
+
+    BackHandler(enabled = uiStates.isSelectMode, onBack = {
+        coroutineScope.launch { uiStates.selectModeOff() }
+    })
 }
 
-class SubCategoryState(
-    _showEditDialog: MutableState<Boolean>,
-    val selectModeTransition: Transition<Boolean>,
-) {
-    var showEditDialog by _showEditDialog
+class SubCategoryState(initialShowDialog: Boolean = false) {
+    var showEditDialog by mutableStateOf(initialShowDialog)
         private set
 
     fun showEditDialog() {
@@ -135,21 +137,16 @@ class SubCategoryState(
     fun dismissEditDialog() {
         showEditDialog = false
     }
+
+    companion object {
+        val saver: Saver<SubCategoryState, *> = listSaver(
+            save = { listOf(it.showEditDialog) },
+            restore = { SubCategoryState(it[0]) }
+        )
+    }
 }
 
 @Composable
-fun rememberSubCategoryState(
-    isSelectMode: Boolean,
-    selectModeTransition: Transition<Boolean> = updateTransition(
-        targetState = isSelectMode,
-        label = "selectModeTransition"
-    ),
-    showEditDialogState: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) },
-): SubCategoryState {
-    return remember {
-        SubCategoryState(
-            _showEditDialog = showEditDialogState,
-            selectModeTransition = selectModeTransition
-        )
-    }
+fun rememberSubCategoryState(): SubCategoryState {
+    return rememberSaveable(saver = SubCategoryState.saver) { SubCategoryState() }
 }

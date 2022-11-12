@@ -1,21 +1,26 @@
 package com.leebeebeom.clothinghelperdomain.usecase.subcategory
 
-import com.leebeebeom.clothinghelperdomain.model.SubCategory
-import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
-import com.leebeebeom.clothinghelperdomain.model.User
+import com.leebeebeom.clothinghelperdomain.model.*
 import com.leebeebeom.clothinghelperdomain.repository.*
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 
 class GetSubCategoryLoadingStateUseCase(private val subCategoryRepository: SubCategoryRepository) {
-    operator fun invoke() = subCategoryRepository.isLoading
+    operator fun invoke(): StateFlow<Boolean> {
+        return subCategoryRepository.isLoading
+    }
 }
 
 class PushInitialSubCategoriesUseCase(private val subCategoryRepository: SubCategoryRepository) {
-    suspend operator fun invoke(uid: String) = subCategoryRepository.pushInitialSubCategories(uid)
+    suspend operator fun invoke(uid: String): SubCategoryPushResult {
+        return subCategoryRepository.pushInitialSubCategories(uid)
+    }
 }
 
 class LoadSubCategoriesUseCase(private val subCategoryRepository: SubCategoryRepository) {
-    suspend operator fun invoke(user: User?) = subCategoryRepository.loadSubCategories(user)
+    suspend operator fun invoke(user: User?): FirebaseResult {
+     return   subCategoryRepository.loadSubCategories(user)
+    }
 }
 
 class GetSubCategoriesUseCase(

@@ -3,6 +3,19 @@
   <component name="AndroidTestResultsUserPreferences">
     <option name="androidTestResultsTableState">
       <map>
+        <entry key="-2139244270">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="forTest30" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
         <entry key="-1918705230">
           <value>
             <AndroidTestResultsTableState>
@@ -11,6 +24,19 @@
                   <entry key="Duration" value="90" />
                   <entry key="Pixel_2_API_31" value="120" />
                   <entry key="Tests" value="360" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="-1840173953">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="forTest30" value="120" />
                 </map>
               </option>
             </AndroidTestResultsTableState>
@@ -57,6 +83,34 @@
             </AndroidTestResultsTableState>
           </value>
         </entry>
+        <entry key="-1357996788">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="adb-R3CN816HJ0N-o6wY6O._adb-tls-connect._tcp" value="120" />
+                  <entry key="forTest30" value="120" />
+                  <entry key="samsung&#10; SM-N986N" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="-1317720340">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="forTest30" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
         <entry key="-1199382235">
           <value>
             <AndroidTestResultsTableState>
@@ -96,6 +150,21 @@
             </AndroidTestResultsTableState>
           </value>
         </entry>
+        <entry key="-350670349">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="forTest30" value="120" />
+                  <entry key="samsung" value="120" />
+                  <entry key="samsung&#10; SM-N986N" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
         <entry key="-152577691">
           <value>
             <AndroidTestResultsTableState>
@@ -117,6 +186,22 @@
                   <entry key="Duration" value="90" />
                   <entry key="Pixel_2_API_31" value="120" />
                   <entry key="Tests" value="360" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="-64285037">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="adb-R3CN816HJ0N-o6wY6O._adb-tls-connect._tcp" value="120" />
+                  <entry key="forTest" value="120" />
+                  <entry key="forTest30" value="120" />
+                  <entry key="samsung&#10; SM-N986N" value="120" />
                 </map>
               </option>
             </AndroidTestResultsTableState>
@@ -187,6 +272,21 @@
             </AndroidTestResultsTableState>
           </value>
         </entry>
+        <entry key="689460931">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="adb-R3CN816HJ0N-o6wY6O._adb-tls-connect._tcp" value="120" />
+                  <entry key="forTest30" value="120" />
+                  <entry key="samsung&#10; SM-N986N" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
         <entry key="889658986">
           <value>
             <AndroidTestResultsTableState>
@@ -215,6 +315,35 @@
             </AndroidTestResultsTableState>
           </value>
         </entry>
+        <entry key="1098701907">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="forTest30" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="1430649767">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="adb-R3CN816HJ0N-o6wY6O._adb-tls-connect._tcp" value="120" />
+                  <entry key="forTest" value="120" />
+                  <entry key="forTest30" value="120" />
+                  <entry key="samsung&#10; SM-N986N" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
         <entry key="1604721183">
           <value>
             <AndroidTestResultsTableState>
@@ -225,6 +354,32 @@
                   <entry key="R3CN816HJ0N" value="120" />
                   <entry key="Tests" value="360" />
                   <entry key="samsung&#10; SM-N986N" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="1770938769">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="forTest30" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="1801083402">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="forTest30" value="120" />
                 </map>
               </option>
             </AndroidTestResultsTableState>

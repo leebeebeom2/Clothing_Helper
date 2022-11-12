@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.main.subcategory.content
 
-import androidx.compose.animation.core.Transition
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -9,8 +8,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.hapticfeedback.HapticFeedback
@@ -19,7 +18,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.main.subcategory.content.header.SubCategoryHeader
-import com.leebeebeom.clothinghelperdomain.model.SubCategory
+import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.repository.SortOrder
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
@@ -27,27 +26,21 @@ import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
 
-// TODO 이름 수정 다이얼로그 키보드 안나옴
-
 @Composable
 fun SubCategoryContent(
     parent: SubCategoryParent,
-    selectModeTransition: Transition<Boolean>,
     isAllExpand: () -> Boolean,
-    subCategories: () -> ImmutableList<SubCategory>,
+    subCategories: () -> ImmutableList<StableSubCategory>,
     sort: () -> SubCategorySortPreferences,
     state: SubCategoryContentState = rememberSubCategoryContentState(),
     allExpandIconClick: () -> Unit,
     onLongClick: (key: String) -> Unit,
-    onSubCategoryClick: (SubCategory) -> Unit,
+    onSubCategoryClick: (StableSubCategory) -> Unit,
     onSortClick: (SubCategorySort) -> Unit,
     onOrderClick: (SortOrder) -> Unit,
-    onAddCategoryPositiveButtonClick: (String, SubCategoryParent) -> Unit,
-    paddingValue: () -> PaddingValues, // 미사용, 사용 시 버벅임
     selectedSubCategoryKey: () -> ImmutableSet<String>,
     isSelectMode: () -> Boolean,
-    onSelect: (String) -> Unit,
-    subCategoryNames: () -> ImmutableList<String>
+    onSelect: (String) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -80,21 +73,19 @@ fun SubCategoryContent(
                 )
             }
             items(items = subCategories(), key = { it.key }) {
+                var isExpanded by rememberSaveable { mutableStateOf(false) }
                 SubCategoryCard(
                     subCategory = { it },
                     isAllExpand = isAllExpand,
-                    selectModeTransition = selectModeTransition,
                     onClick = { if (isSelectMode()) onSelect(it.key) else onSubCategoryClick(it) },
-                    selectedCategoryKeys = selectedSubCategoryKey
+                    selectedCategoryKeys = selectedSubCategoryKey,
+                    updateIsExpanded = { isExpanded = it },
+                    toggleIsExpanded = { isExpanded = !isExpanded },
+                    isExpanded = { isExpanded },
+                    isSelectMode = isSelectMode
                 )
             }
         }
-
-        AddSubcategoryDialogFab(
-            onPositiveButtonClick = { onAddCategoryPositiveButtonClick(it, parent) },
-            subCategoryNames = subCategoryNames,
-            isSelectMode = isSelectMode
-        )
     }
 }
 

@@ -162,8 +162,8 @@ data class SubCategoryContentState(
             val firstVisibleItemIndex =
                 lazyListState.layoutInfo.visibleItemsInfo.firstOrNull()?.index
             firstVisibleItemIndex?.also {
-                if (it < 2) lazyListState.animateScrollBy(-1000f, scrollAnimationSpec)
-                else if (it > 2) {
+                if (it <= 2) lazyListState.animateScrollBy(-1000f, scrollAnimationSpec)
+                else {
                     lazyListState.scrollToItem(2)
                     lazyListState.animateScrollBy(-1000f, scrollAnimationSpec)
                 }

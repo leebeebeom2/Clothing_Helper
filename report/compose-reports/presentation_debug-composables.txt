@@ -3,7 +3,7 @@ restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun SubCatego
   stable isAllExpand: Function0<Boolean>
   stable subCategories: Function0<ImmutableList<StableSubCategory>>
   stable sort: Function0<SubCategorySortPreferences>
-  unstable state: SubCategoryContentState? = @dynamic rememberSubCategoryContentState(null, null, null, $composer, 0, 0b0111)
+  unstable state: SubCategoryContentState? = @dynamic rememberSubCategoryContentState(null, null, null, null, null, $composer, 0, 0b00011111)
   stable allExpandIconClick: Function0<Unit>
   stable onLongClick: Function1<@[ParameterName(name = 'key')] String, Unit>
   stable onSubCategoryClick: Function1<StableSubCategory, Unit>
@@ -25,4 +25,6 @@ fun rememberSubCategoryContentState(
   MutableInteractionSource  (  )
 }
 , $composer, 0)
+  unstable configuration: Configuration? = @dynamic LocalConfiguration.current
+  unstable coroutineScope: CoroutineScope? = @dynamic rememberCoroutineScope(null, $composer, 0, 0b0001)
 ): SubCategoryContentState

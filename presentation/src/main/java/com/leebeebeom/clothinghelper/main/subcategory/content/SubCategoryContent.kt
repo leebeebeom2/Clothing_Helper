@@ -1,8 +1,9 @@
 package com.leebeebeom.clothinghelper.main.subcategory.content
 
+import android.content.res.Configuration
 import androidx.compose.animation.*
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -20,6 +21,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
@@ -32,7 +34,11 @@ import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+
+// TODO 모든 애니메이션 0에서 타겟으로 가지말고 특정 높이 혹은 상태에서 타겟으로
+// TODO 오토스크롤 구현
 
 @Composable
 fun SubCategoryContent(
@@ -65,6 +71,9 @@ fun SubCategoryContent(
                     }, onDragEnd = {
                         interceptOutOfBoundsChildEvents = false
                         state.onDragEnd()
+                    }, onDragCancel = {
+                        interceptOutOfBoundsChildEvents = false
+                        state.onDragEnd()
                     })
                 }, contentPadding = PaddingValues(
                 start = 16.dp, end = 16.dp, top = 16.dp, bottom = 120.dp
@@ -95,10 +104,7 @@ fun SubCategoryContent(
             }
         }
 
-        val coroutineScope = rememberCoroutineScope()
-        val toTopButtonClick =
-            remember<() -> Unit> { { coroutineScope.launch { state.scrollToTop() } } }
-        ScrollToTopFab(showFab = { state.showScrollToTopButton }, onClick = toTopButtonClick)
+        ScrollToTopFab(showFab = { state.showScrollToTopButton }, onClick = state::scrollToTop)
     }
 }
 
@@ -139,15 +145,30 @@ data class SubCategoryContentState(
     var initialSelectedTop: Int? = null,
     var initialSelectedBottom: Int? = null,
     val passedItemKeys: MutableSet<String> = mutableSetOf(),
-    val interactionSource: InteractionSource
+    val interactionSource: InteractionSource,
+    val configuration: Configuration,
+    val coroutineScope: CoroutineScope
 ) {
     enum class DragPosition {
         DragUp, DragDown, DragStop
     }
 
-    val showScrollToTopButton by derivedStateOf { lazyListState.firstVisibleItemIndex > 0 }
-    suspend fun scrollToTop() {
-        lazyListState.animateScrollToItem(1, -250)
+    private val scrollAnimationSpec = tween<Float>(300, easing = FastOutLinearInEasing)
+
+    val showScrollToTopButton by derivedStateOf { lazyListState.firstVisibleItemScrollOffset > 0 }
+
+    fun scrollToTop() {
+        coroutineScope.launch {
+            val firstVisibleItemIndex =
+                lazyListState.layoutInfo.visibleItemsInfo.firstOrNull()?.index
+            firstVisibleItemIndex?.also {
+                if (it < 2) lazyListState.animateScrollBy(-1000f, scrollAnimationSpec)
+                else if (it > 2) {
+                    lazyListState.scrollToItem(2)
+                    lazyListState.animateScrollBy(-1000f, scrollAnimationSpec)
+                }
+            }
+        }
     }
 
     fun currentDragPosition(touchOffset: Offset): DragPosition? {
@@ -254,13 +275,17 @@ data class SubCategoryContentState(
 fun rememberSubCategoryContentState(
     lazyListState: LazyListState = rememberLazyListState(),
     haptic: HapticFeedback = LocalHapticFeedback.current,
-    interactionSource: InteractionSource = remember { MutableInteractionSource() }
+    interactionSource: InteractionSource = remember { MutableInteractionSource() },
+    configuration: Configuration = LocalConfiguration.current,
+    coroutineScope: CoroutineScope = rememberCoroutineScope()
 ): SubCategoryContentState {
     return remember {
         SubCategoryContentState(
             lazyListState = lazyListState,
             haptic = haptic,
-            interactionSource = interactionSource
+            interactionSource = interactionSource,
+            configuration = configuration,
+            coroutineScope = coroutineScope
         )
     }
 }

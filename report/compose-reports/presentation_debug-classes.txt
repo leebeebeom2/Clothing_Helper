@@ -6,6 +6,11 @@ unstable class SubCategoryContentState {
   stable var initialSelectedBottom: Int?
   unstable val passedItemKeys: MutableSet<String>
   stable val interactionSource: InteractionSource
+  unstable val configuration: Configuration
+  unstable val coroutineScope: CoroutineScope
+  stable val scrollAnimationSpec: TweenSpec<Float>
+  stable var lastTouchOffset: Int
   stable val showScrollToTopButton$delegate: State<Boolean>
+  stable val screenBottom: Int
   <runtime stability> = Unstable
 }

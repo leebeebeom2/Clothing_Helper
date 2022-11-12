@@ -16,6 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.leebeebeom.clothinghelper.base.BackHandler
 import com.leebeebeom.clothinghelper.base.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelperdomain.usecase.signin.GetSignInLoadingStateUseCase
@@ -30,6 +31,7 @@ fun SignInRoot(
 ) {
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
+    val isLoading by viewModel.getSignInLoadingStateUseCase().collectAsStateWithLifecycle()
 
     ClothingHelperTheme {
         Scaffold {
@@ -44,14 +46,19 @@ fun SignInRoot(
                             indication = null,
                             onClick = focusManager::clearFocus
                         ),
-                    content = content
-                )
+                ){
+                    content()
+                    BlockBackButton { isLoading }
+                }
             }
         }
     }
-
-    val isLoading by viewModel.getSignInLoadingStateUseCase().collectAsStateWithLifecycle()
     CenterDotProgressIndicator(isLoading = { isLoading })
+}
+
+@Composable
+fun BlockBackButton(isLoading: () -> Boolean) {
+    BackHandler(enabled = isLoading) {}
 }
 
 @HiltViewModel

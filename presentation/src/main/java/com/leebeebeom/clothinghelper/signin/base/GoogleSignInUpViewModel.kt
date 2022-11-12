@@ -30,10 +30,15 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
             RESULT_OK -> {
                 viewModelScope.launch {
                     when (val result = googleSignInUseCase(getGoogleCredential(activityResult))) {
-                        is AuthResult.Success -> showToast(R.string.google_sign_in_complete)
+                        is AuthResult.Success -> {
+                            showToast(R.string.google_sign_in_complete)
+                            updateGoogleButtonEnabled(enabled = true)
+                        }
                         is AuthResult.Fail -> {
-                            if (result.exception?.message == PushInitialSubCategoriesFailed)
+                            if (result.exception?.message == PushInitialSubCategoriesFailed){
                                 showToast(R.string.initial_sub_category_push_failed)
+                                updateGoogleButtonEnabled(enabled = true)
+                            }
                             else {
                                 showToast(R.string.unknown_error)
                                 Log.e(TAG, "signInWithGoogleEmail: $result")

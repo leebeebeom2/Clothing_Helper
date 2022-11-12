@@ -36,11 +36,10 @@ class UserRepositoryImpl : UserRepository {
                 val user = authResult.user.toUser()!!
 
                 val isNewer = authResult.additionalUserInfo!!.isNewUser
-                if (isNewer) {
-                    val pushResult = pushNewUser(user)
-                    if (pushResult is FirebaseResult.Fail)
-                        return@withContext AuthResult.Fail(pushResult.exception)
-                } else updateUserAndUpdateSignIn(user)
+
+                if (isNewer) pushNewUser(user)
+                else updateUserAndUpdateSignIn(user)
+
                 AuthResult.Success(user, isNewer)
             } catch (e: Exception) {
                 AuthResult.Fail(e)
@@ -81,8 +80,8 @@ class UserRepositoryImpl : UserRepository {
 
                 val userObj = user.toUser()!!.copy(name = signUp.name)
 
-                val pushResult = pushNewUser(userObj)
-                if (pushResult is FirebaseResult.Fail) return@withContext AuthResult.Fail(pushResult.exception)
+                pushNewUser(userObj)
+
                 AuthResult.Success(user = userObj, isNewer = true)
             } catch (e: Exception) {
                 AuthResult.Fail(e)
@@ -113,16 +112,11 @@ class UserRepositoryImpl : UserRepository {
         updateUser(null)
     }
 
-    private suspend fun pushNewUser(user: User): FirebaseResult {
-        return withContext(Dispatchers.IO) {
-            try {
-                FirebaseDatabase.getInstance().reference.child(user.uid)
-                    .child(DatabasePath.USER_INFO).setValue(user).await()
-                updateUserAndUpdateSignIn(user)
-                FirebaseResult.Success
-            } catch (e: Exception) {
-                FirebaseResult.Fail(e)
-            }
+    private suspend fun pushNewUser(user: User) {
+        withContext(Dispatchers.IO) {
+            FirebaseDatabase.getInstance().reference.child(user.uid)
+                .child(DatabasePath.USER_INFO).setValue(user).await()
+            updateUserAndUpdateSignIn(user)
         }
     }
 

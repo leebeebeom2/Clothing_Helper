@@ -17,7 +17,11 @@ class SignInUseCaseModule {
         userRepository: UserRepositoryImpl,
         pushInitialSubCategoriesUseCase: PushInitialSubCategoriesUseCase,
         loadSubCategoriesUseCase: LoadSubCategoriesUseCase
-    ) = GoogleSignInUseCase(userRepository, pushInitialSubCategoriesUseCase, loadSubCategoriesUseCase)
+    ) = GoogleSignInUseCase(
+        userRepository,
+        pushInitialSubCategoriesUseCase,
+        loadSubCategoriesUseCase
+    )
 
     @Provides
     fun resetPasswordUseCase(userRepository: UserRepositoryImpl) =

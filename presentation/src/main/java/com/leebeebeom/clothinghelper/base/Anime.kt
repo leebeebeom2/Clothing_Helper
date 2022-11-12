@@ -32,14 +32,11 @@ object Anime {
     object SubCategoryCard {
         val expandIn = expandVertically()
         val shrinkOut = shrinkVertically()
-
-        val fadeIn = fadeIn()
-        val fadeOut = fadeOut()
     }
 
     @OptIn(ExperimentalAnimationApi::class)
     object CircleCheckBox {
-        val expandIn = expandHorizontally()+ scaleIn()
+        val expandIn = expandHorizontally() + scaleIn()
         val shrinkOut = shrinkHorizontally() + scaleOut()
     }
 }

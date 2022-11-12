@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.*
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.Anime.Error.errorIn
@@ -73,8 +74,8 @@ private fun TextField(
             .onFocusChanged(onFocusChanged = onFocusChanged),
         value = textFieldValue(),
         onValueChange = onValueChange,
-        label = { Text(text = stringResource(id = state.label)) },
-        placeholder = { Text(text = stringResource(id = state.placeholder)) },
+        label = { Text(text = stringResource(id = state.label), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        placeholder = { Text(text = stringResource(id = state.placeholder), maxLines = 1, overflow = TextOverflow.Ellipsis) },
         isError = error() != null,
         visualTransformation = if (isVisible()) VisualTransformation.None else PasswordVisualTransformation(),
         singleLine = true,

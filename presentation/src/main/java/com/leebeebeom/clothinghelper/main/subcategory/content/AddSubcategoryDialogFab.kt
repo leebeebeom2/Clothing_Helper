@@ -1,5 +1,9 @@
 package com.leebeebeom.clothinghelper.main.subcategory.content
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.VisibilityThreshold
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.SimpleIcon
@@ -94,13 +99,22 @@ fun BoxScope.AddSubCategoryFab(
     showDialog: () -> Unit,
     isSelectMode: () -> Boolean
 ) {
-    if (!isSelectMode())
-        FloatingActionButton(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(end = 16.dp, bottom = 16.dp)
-                .size(48.dp),
-            onClick = showDialog,
-            backgroundColor = MaterialTheme.colors.primary,
-        ) { SimpleIcon(drawable = R.drawable.ic_add) }
+    val dp by animateDpAsState(
+        targetValue = if (isSelectMode()) 72.dp else 16.dp,
+        animationSpec = spring(
+            stiffness = Spring.StiffnessMediumLow,
+            visibilityThreshold = Dp.VisibilityThreshold
+        )
+    )
+
+    FloatingActionButton(
+        modifier = Modifier
+            .align(Alignment.BottomEnd)
+            .padding(end = 16.dp, bottom = dp)
+            .size(48.dp),
+        onClick = showDialog,
+        backgroundColor = MaterialTheme.colors.primary,
+    ) {
+        SimpleIcon(drawable = R.drawable.ic_add)
+    }
 }

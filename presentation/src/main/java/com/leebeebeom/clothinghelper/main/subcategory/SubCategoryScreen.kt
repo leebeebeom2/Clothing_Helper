@@ -75,10 +75,6 @@ fun SubCategoryScreen(
     onSubCategoryClick: (StableSubCategory) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-        CenterDotProgressIndicator(
-            backGround = MaterialTheme.colors.background,
-            isLoading = { uiStates.isLoading })
-
         SubCategoryContent(
             allExpandIconClick = viewModel::toggleAllExpand,
             onLongClick = uiStates::selectModeOn,
@@ -119,6 +115,10 @@ fun SubCategoryScreen(
             onEditSubCategoryNameClick = states::showEditDialog,
             isSelectMode = { uiStates.isSelectMode }
         )
+
+        CenterDotProgressIndicator(
+            backGround = MaterialTheme.colors.background,
+            isLoading = { uiStates.isLoading })
     }
 
     BackHandler(enabled = uiStates.isSelectMode, onBack = {

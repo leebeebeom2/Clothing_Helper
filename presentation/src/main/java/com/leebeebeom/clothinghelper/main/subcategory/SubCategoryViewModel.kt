@@ -179,7 +179,7 @@ class SubCategoryUIState : BaseIsAllExpandState() {
 
     suspend fun selectModeOff() {
         isSelectMode = false
-        delay(300)
+        delay(200)
         clearSelectedSubCategories()
     }
 

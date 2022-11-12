@@ -8,7 +8,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.leebeebeom.clothinghelperdomain.model.*
 import com.leebeebeom.clothinghelperdomain.repository.UserRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.tasks.await
@@ -27,59 +26,55 @@ class UserRepositoryImpl : UserRepository {
     override val user: StateFlow<User?> get() = _user
 
     override suspend fun googleSignIn(credential: Any?): AuthResult {
-        loadingOn()
-
-        val result = withContext(Dispatchers.IO) {
+        return withContext(Dispatchers.IO) {
             try {
+                loadingOn()
                 val authCredential = credential as AuthCredential
 
                 val authResult = auth.signInWithCredential(authCredential).await()
 
-                val userObj = authResult.user.toUser()!!
+                val user = authResult.user.toUser()!!
 
                 val isNewer = authResult.additionalUserInfo!!.isNewUser
                 if (isNewer) {
-                    val pushResult = pushNewUser(userObj)
-                    if (pushResult is FirebaseResult.Fail) return@withContext AuthResult.Fail(
-                        pushResult.exception
-                    )
-                } else updateUserAndUpdateSignIn(userObj)
-                AuthResult.Success(userObj, isNewer)
+                    val pushResult = pushNewUser(user)
+                    if (pushResult is FirebaseResult.Fail)
+                        return@withContext AuthResult.Fail(pushResult.exception)
+                } else updateUserAndUpdateSignIn(user)
+                AuthResult.Success(user, isNewer)
             } catch (e: Exception) {
                 AuthResult.Fail(e)
+            } finally {
+                loadingOff()
             }
         }
-        loadingOff()
-        return result
     }
 
     override suspend fun signIn(signIn: SignIn): AuthResult {
-        loadingOn()
-
-        val result = withContext(Dispatchers.IO) {
+        return withContext(Dispatchers.IO) {
             try {
+                loadingOn()
+
                 val user = auth.signInWithEmailAndPassword(signIn.email, signIn.password)
                     .await().user.toUser()!!
                 updateUserAndUpdateSignIn(user)
                 AuthResult.Success(user, false)
             } catch (e: Exception) {
                 AuthResult.Fail(e)
+            } finally {
+                loadingOff()
+
             }
         }
-        loadingOff()
-
-        return result
     }
 
     override suspend fun signUp(signUp: SignUp): AuthResult {
-        loadingOn()
-
-        val result = withContext(Dispatchers.IO) {
+        return withContext(Dispatchers.IO) {
             try {
+                loadingOn()
 
-                val user =
-                    auth.createUserWithEmailAndPassword(signUp.email, signUp.password)
-                        .await().user!!
+                val user = auth.createUserWithEmailAndPassword(signUp.email, signUp.password)
+                    .await().user!!
 
                 val request = userProfileChangeRequest { displayName = signUp.name }
                 user.updateProfile(request).await()
@@ -91,27 +86,25 @@ class UserRepositoryImpl : UserRepository {
                 AuthResult.Success(user = userObj, isNewer = true)
             } catch (e: Exception) {
                 AuthResult.Fail(e)
+            } finally {
+                loadingOff()
             }
         }
-        loadingOff()
-        return result
     }
 
     override suspend fun resetPasswordEmail(email: String): FirebaseResult {
-        loadingOn()
-
-        val result = withContext(Dispatchers.IO) {
+        return withContext(Dispatchers.IO) {
             try {
+                loadingOn()
+
                 auth.sendPasswordResetEmail(email).await()
                 FirebaseResult.Success
             } catch (e: Exception) {
                 FirebaseResult.Fail(e)
             } finally {
-
+                loadingOff()
             }
         }
-        loadingOff()
-        return result
     }
 
     override suspend fun signOut() {
@@ -120,14 +113,16 @@ class UserRepositoryImpl : UserRepository {
         updateUser(null)
     }
 
-    private suspend fun pushNewUser(user: User) = withContext(Dispatchers.IO) {
-        try {
-            FirebaseDatabase.getInstance().reference.child(user.uid).child(DatabasePath.USER_INFO)
-                .setValue(user).await()
-            updateUserAndUpdateSignIn(user)
-            FirebaseResult.Success
-        } catch (e: Exception) {
-            FirebaseResult.Fail(e)
+    private suspend fun pushNewUser(user: User): FirebaseResult {
+        return withContext(Dispatchers.IO) {
+            try {
+                FirebaseDatabase.getInstance().reference.child(user.uid)
+                    .child(DatabasePath.USER_INFO).setValue(user).await()
+                updateUserAndUpdateSignIn(user)
+                FirebaseResult.Success
+            } catch (e: Exception) {
+                FirebaseResult.Fail(e)
+            }
         }
     }
 
@@ -144,13 +139,17 @@ class UserRepositoryImpl : UserRepository {
         this._user.value = user
     }
 
-    private suspend fun loadingOn() = withContext(Dispatchers.Main) {
-        _isLoading.value = true
+    private suspend fun loadingOn() {
+        withContext(Dispatchers.Main) {
+            _isLoading.value = true
+        }
     }
 
 
-    private suspend fun loadingOff() = withContext(Dispatchers.Main) {
-        _isLoading.value = false
+    private suspend fun loadingOff() {
+        withContext(Dispatchers.Main) {
+            _isLoading.value = false
+        }
     }
 }
 

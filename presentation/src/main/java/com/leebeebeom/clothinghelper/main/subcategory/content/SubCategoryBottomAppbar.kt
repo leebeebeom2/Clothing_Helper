@@ -17,7 +17,6 @@ import com.leebeebeom.clothinghelper.base.Anime.BottomAppbar.expandIn
 import com.leebeebeom.clothinghelper.base.Anime.BottomAppbar.shrinkOut
 import com.leebeebeom.clothinghelper.base.CircleCheckBox
 import com.leebeebeom.clothinghelper.base.CustomIconButton
-import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
 
 @Composable
@@ -66,27 +65,19 @@ fun BoxScope.SubCategoryBottomAppBar(
 
 @Composable
 fun BottomAppBarIcon(
-    visible: () -> Boolean,
-    onClick: () -> Unit,
-    @DrawableRes drawable: Int,
-    @StringRes text: Int
+    visible: () -> Boolean, onClick: () -> Unit, @DrawableRes drawable: Int, @StringRes text: Int
 ) {
-    if (visible())
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            CustomIconButton(onClick = onClick, drawable = drawable)
-            SimpleHeightSpacer(dp = 4)
-            Text(text = stringResource(id = text), style = MaterialTheme.typography.caption)
-        }
+    if (visible()) Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        CustomIconButton(onClick = onClick, drawable = drawable)
+        Text(text = stringResource(id = text), style = MaterialTheme.typography.caption)
+    }
 }
 
 @Composable
 fun SelectText(selectedSubCategoriesSize: () -> Int) {
     Text(
         text = stringResource(
-            id = R.string.count_selected,
-            formatArgs = arrayOf(selectedSubCategoriesSize())
+            id = R.string.count_selected, formatArgs = arrayOf(selectedSubCategoriesSize())
         ), modifier = Modifier.offset((-8).dp, 1.dp)
     )
 }

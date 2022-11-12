@@ -1,4 +1,11 @@
-stable class AddSubCategoryDialogState {
-  stable var showDialog$delegate: MutableState<Boolean>
-  <runtime stability> = Stable
+unstable class SubCategoryContentState {
+  stable val lazyListState: LazyListState
+  unstable val haptic: HapticFeedback
+  stable var initialSelectedKey: String?
+  stable var initialSelectedTop: Int?
+  stable var initialSelectedBottom: Int?
+  unstable val passedItemKeys: MutableSet<String>
+  stable val interactionSource: InteractionSource
+  stable val showScrollToTopButton$delegate: State<Boolean>
+  <runtime stability> = Unstable
 }

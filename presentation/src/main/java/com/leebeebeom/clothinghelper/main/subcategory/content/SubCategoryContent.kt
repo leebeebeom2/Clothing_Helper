@@ -1,22 +1,29 @@
 package com.leebeebeom.clothinghelper.main.subcategory.content
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.FloatingActionButtonDefaults
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
+import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelper.main.subcategory.content.header.SubCategoryHeader
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
@@ -25,6 +32,7 @@ import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
+import kotlinx.coroutines.launch
 
 @Composable
 fun SubCategoryContent(
@@ -86,6 +94,41 @@ fun SubCategoryContent(
                 )
             }
         }
+
+        val coroutineScope = rememberCoroutineScope()
+        val toTopButtonClick =
+            remember<() -> Unit> { { coroutineScope.launch { state.scrollToTop() } } }
+        ScrollToTopFab(showFab = { state.showScrollToTopButton }, onClick = toTopButtonClick)
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+private fun BoxScope.ScrollToTopFab(showFab: () -> Boolean, onClick: () -> Unit) {
+    AnimatedVisibility(
+        modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .padding(4.dp),
+        visible = showFab(),
+        enter = scaleIn(
+            spring(stiffness = Spring.StiffnessMedium),
+            transformOrigin = TransformOrigin(0.5f, 0.5f)
+        ),
+        exit = scaleOut(
+            animationSpec = spring(stiffness = Spring.StiffnessMedium),
+            transformOrigin = TransformOrigin(0.5f, 0.5f)
+        )
+    ) {
+        FloatingActionButton(
+            onClick = onClick,
+            backgroundColor = MaterialTheme.colors.surface,
+            modifier = Modifier
+                .padding(bottom = 16.dp)
+                .size(36.dp),
+            elevation = FloatingActionButtonDefaults.elevation(4.dp, 10.dp, 6.dp, 6.dp)
+        ) {
+            SimpleIcon(drawable = R.drawable.ic_expand_less)
+        }
     }
 }
 
@@ -100,6 +143,11 @@ data class SubCategoryContentState(
 ) {
     enum class DragPosition {
         DragUp, DragDown, DragStop
+    }
+
+    val showScrollToTopButton by derivedStateOf { lazyListState.firstVisibleItemIndex > 0 }
+    suspend fun scrollToTop() {
+        lazyListState.animateScrollToItem(1, -250)
     }
 
     fun currentDragPosition(touchOffset: Offset): DragPosition? {
@@ -210,7 +258,9 @@ fun rememberSubCategoryContentState(
 ): SubCategoryContentState {
     return remember {
         SubCategoryContentState(
-            lazyListState = lazyListState, haptic = haptic, interactionSource = interactionSource
+            lazyListState = lazyListState,
+            haptic = haptic,
+            interactionSource = interactionSource
         )
     }
 }

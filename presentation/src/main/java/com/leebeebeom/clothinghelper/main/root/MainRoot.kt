@@ -84,7 +84,8 @@ fun MainRoot(
                     },
                     allExpandIconClick = viewModel::toggleAllExpand,
                     subCategoryNames = uiStates::getSubCategoryNames,
-                    onAddSubCategoryPositiveButton = viewModel::addSubCategory
+                    onAddSubCategoryPositiveButtonClick = viewModel::addSubCategory,
+                    onEditSUbCategoryNamePositiveClick = viewModel::editSubCategoryName
                 )
             },
             drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),

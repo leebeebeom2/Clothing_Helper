@@ -61,8 +61,7 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
                     val subCategoryWithKey = getSubCategoryWithKey(subCategoryRef, subCategory)
                     val exception =
                         pushSubCategoryAsync(subCategoryRef, subCategoryWithKey).await().exception
-                    if (exception != null)
-                        return@withContext SubCategoryPushResult.Fail(exception)
+                    if (exception != null) return@withContext SubCategoryPushResult.Fail(exception)
                 }
 
                 SubCategoryPushResult.Success(SubCategory()) // dummy
@@ -76,16 +75,14 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
     }
 
     private fun getSubCategoryWithKey(
-        subCategoryRef: DatabaseReference,
-        subCategory: SubCategory
+        subCategoryRef: DatabaseReference, subCategory: SubCategory
     ): SubCategory {
         val key = subCategoryRef.push().key!!
         return subCategory.copy(key = key)
     }
 
     private suspend fun pushSubCategoryAsync(
-        subCategoryRef: DatabaseReference,
-        subCategory: SubCategory
+        subCategoryRef: DatabaseReference, subCategory: SubCategory
     ): Deferred<Task<Void>> {
         return withContext(Dispatchers.IO) {
             async { subCategoryRef.child(subCategory.key).setValue(subCategory) }
@@ -122,19 +119,22 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
     }
 
     override suspend fun editSubCategoryName(
-        parent: SubCategoryParent, key: String, newName: String, uid: String
-    ): FirebaseResult = withContext(Dispatchers.IO) {
-        try {
-            root.getSubCategoriesRef(uid).child(key).child("name").setValue(newName)
-                .await()
-            _allSubCategories.singleListUpdate(parent.ordinal) {
-                val subCategory = it.first { subCategory -> subCategory.key == key }
-                it.remove(subCategory)
-                it.add(subCategory.copy(name = newName))
+        newSubCategory: SubCategory, uid: String
+    ): FirebaseResult {
+        return withContext(Dispatchers.IO) {
+            try {
+                root.getSubCategoriesRef(uid).child(newSubCategory.key).setValue(newSubCategory)
+                    .await()
+                _allSubCategories.singleListUpdate(newSubCategory.parent.ordinal) {
+                    val oldSubCategory =
+                        it.first { subCategory -> subCategory.key == newSubCategory.key }
+                    it.remove(oldSubCategory)
+                    it.add(newSubCategory)
+                }
+                FirebaseResult.Success
+            } catch (e: Exception) {
+                FirebaseResult.Fail(e)
             }
-            FirebaseResult.Success
-        } catch (e: Exception) {
-            FirebaseResult.Fail(e)
         }
     }
 
@@ -219,8 +219,7 @@ object DatabasePath {
 }
 
 fun MutableStateFlow<List<List<SubCategory>>>.singleListUpdate(
-    index: Int,
-    task: (MutableList<SubCategory>) -> Unit
+    index: Int, task: (MutableList<SubCategory>) -> Unit
 ) {
     val temp = value.toMutableList()
     val temp2 = temp[index].toMutableList()

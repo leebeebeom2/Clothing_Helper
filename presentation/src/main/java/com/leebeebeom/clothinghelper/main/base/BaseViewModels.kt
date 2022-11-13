@@ -8,6 +8,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.map.StableUser
+import com.leebeebeom.clothinghelper.map.toUnstable
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.AddSubCategoryUseCase
@@ -18,13 +19,13 @@ abstract class EditSubCategoryNameViewModel(
     private val editSubCategoryNameUseCase: EditSubCategoryNameUseCase,
     addSubCategoryUseCase: AddSubCategoryUseCase
 ) : AddSubCategoryViewModel(addSubCategoryUseCase) {
-    fun editSubCategoryName( // TODO 카테고리 하나 받아서 셋 벨류로 변경
-        subCategory: StableSubCategory, newName: String, parent: SubCategoryParent
-    ) {
+
+    open fun editSubCategoryName(newSubCategory: StableSubCategory) {
         viewModelScope.launch {
             user?.let { user ->
                 val result = editSubCategoryNameUseCase(
-                    parent = parent, key = subCategory.key, newName = newName.trim(), uid = user.uid
+                    newSubCategory = newSubCategory.toUnstable(),
+                    uid = user.uid
                 )
 
                 if (result is FirebaseResult.Fail) {

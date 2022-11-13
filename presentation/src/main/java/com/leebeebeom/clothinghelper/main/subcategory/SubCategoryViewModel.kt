@@ -88,11 +88,11 @@ class SubCategoryViewModel @Inject constructor(
         viewModelScope.launch { subCategorySortUseCase.changeOrder(order) }
     }
 
-    fun editSubCategoryName(newName: String, subCategory: StableSubCategory) {
+    override fun editSubCategoryName(newSubCategory: StableSubCategory) {
         viewModelScope.launch {
             uiStates.selectModeOff()
+            super.editSubCategoryName(newSubCategory)
         }
-        super.editSubCategoryName(subCategory, newName, uiStates.parent)
     }
 }
 

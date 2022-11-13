@@ -1,8 +1,23 @@
-unstable class EditSubCategoryNameViewModel {
-  unstable val editSubCategoryNameUseCase: EditSubCategoryNameUseCase
+unstable class SubCategoryViewModel {
+  unstable val getUserUseCase: GetUserUseCase
+  unstable val getSubCategoryLoadingStateUseCase: GetSubCategoryLoadingStateUseCase
+  unstable val getSubCategoriesUseCase: GetSubCategoriesUseCase
+  unstable val subCategoryAllExpandUseCase: SubCategoryAllExpandUseCase
+  unstable val subCategorySortUseCase: SubCategorySortUseCase
+  unstable val uiStates: SubCategoryUIState
   <runtime stability> = Unstable
 }
-unstable class AddSubCategoryViewModel {
-  unstable val addSubCategoryUseCase: AddSubCategoryUseCase
+unstable class SubCategoryUIState {
+  stable var parent: SubCategoryParent
+  stable var sort$delegate: MutableState<SubCategorySortPreferences>
+  stable var isSelectMode$delegate: MutableState<Boolean>
+  stable var selectedSubCategoryKeys$delegate: MutableState<ImmutableSet<String>>
+  stable val selectedSubCategoryKeysSize$delegate: State<Int>
+  stable val firstSelectedSubCategory$delegate: State<StableSubCategory?>
+  stable var subCategories$delegate: MutableState<ImmutableList<StableSubCategory>>
+  stable var subCategoryNames$delegate: MutableState<ImmutableList<String>>
+  stable val isAllSelected$delegate: State<Boolean>
+  stable val showEditIcon$delegate: State<Boolean>
+  stable val showDeleteIcon$delegate: State<Boolean>
   <runtime stability> = Unstable
 }

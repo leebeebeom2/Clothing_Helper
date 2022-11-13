@@ -15,3 +15,7 @@ fun SubCategory.toStable(): StableSubCategory {
         parent = parent, key = key, name = name, createDate = createDate
     )
 }
+
+fun StableSubCategory.toUnstable(): SubCategory {
+    return SubCategory(parent = parent, key = key, name = name, createDate = createDate)
+}

@@ -19,7 +19,7 @@ class PushInitialSubCategoriesUseCase(private val subCategoryRepository: SubCate
 
 class LoadSubCategoriesUseCase(private val subCategoryRepository: SubCategoryRepository) {
     suspend operator fun invoke(user: User?): FirebaseResult {
-     return   subCategoryRepository.loadSubCategories(user)
+        return subCategoryRepository.loadSubCategories(user)
     }
 }
 
@@ -57,18 +57,17 @@ class AddSubCategoryUseCase(private val subCategoryRepository: SubCategoryReposi
         subCategoryParent: SubCategoryParent,
         name: String,
         uid: String
-    ) = subCategoryRepository.addSubCategory(
-        subCategoryParent = subCategoryParent,
-        name = name,
-        uid = uid
-    )
+    ): FirebaseResult {
+        return subCategoryRepository.addSubCategory(
+            subCategoryParent = subCategoryParent,
+            name = name,
+            uid = uid
+        )
+    }
 }
 
 class EditSubCategoryNameUseCase(private val subCategoryRepository: SubCategoryRepository) {
-    suspend operator fun invoke(
-        parent: SubCategoryParent,
-        key: String,
-        newName: String,
-        uid: String
-    ) = subCategoryRepository.editSubCategoryName(parent, key, newName, uid)
+    suspend operator fun invoke(newSubCategory: SubCategory, uid: String): FirebaseResult {
+        return subCategoryRepository.editSubCategoryName(newSubCategory, uid)
+    }
 }

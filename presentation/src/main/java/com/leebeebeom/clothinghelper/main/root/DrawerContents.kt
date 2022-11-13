@@ -50,7 +50,7 @@ fun DrawerContents(
     allExpandIconClick: () -> Unit,
     subCategoryNames: (SubCategoryParent) -> ImmutableList<String>,
     onAddSubCategoryPositiveButtonClick: (String, SubCategoryParent) -> Unit,
-    onEditSUbCategoryNamePositiveClick: (StableSubCategory, String, SubCategoryParent) -> Unit
+    onEditSUbCategoryNamePositiveClick: (StableSubCategory) -> Unit
 ) {
     Column {
         DrawerHeader(user = user, onSettingIconClick = onSettingIconClick)

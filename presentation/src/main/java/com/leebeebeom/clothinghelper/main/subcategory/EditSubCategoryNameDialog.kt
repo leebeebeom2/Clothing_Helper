@@ -18,13 +18,13 @@ fun EditSubCategoryNameDialog(
     showDialog: () -> Boolean,
     subCategory: () -> StableSubCategory?,
     subCategoryNames: () -> ImmutableList<String>,
-    onPositiveButtonClick: (String, StableSubCategory) -> Unit,
+    onPositiveButtonClick: (StableSubCategory) -> Unit,
     onDismiss: () -> Unit
 ) {
     if (showDialog()) {
         subCategory()?.let { selectedSubCategory ->
             val state = rememberSaveable(saver = EditSubCategoryNameDialogState.Saver) {
-                EditSubCategoryNameDialogState(selectedSubCategory.name,)
+                EditSubCategoryNameDialogState(selectedSubCategory.name)
             }
 
             SubCategoryTextFieldDialog(
@@ -33,7 +33,7 @@ fun EditSubCategoryNameDialog(
                 error = { state.error },
                 onDismiss = onDismiss,
                 textFieldValue = { state.textFieldValue },
-                onPositiveButtonClick = { onPositiveButtonClick(state.text, selectedSubCategory) },
+                onPositiveButtonClick = { onPositiveButtonClick(selectedSubCategory.copy(name = state.text.trim())) },
                 positiveButtonEnabled = { state.positiveButtonEnabled },
                 onValueChange = {
                     state.onValueChange(it)

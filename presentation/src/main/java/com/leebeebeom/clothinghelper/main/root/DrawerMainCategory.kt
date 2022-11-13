@@ -31,7 +31,7 @@ fun DrawerMainCategory(
     onSubCategoryClick: (StableSubCategory) -> Unit,
     subCategoryNames: (SubCategoryParent) -> ImmutableList<String>,
     onAddSubCategoryPositiveClick: (String, SubCategoryParent) -> Unit,
-    onEditSubCategoryNamePositiveClick: (StableSubCategory, String, SubCategoryParent) -> Unit
+    onEditSubCategoryNamePositiveClick: (StableSubCategory) -> Unit
 ) {
     var isExpand by rememberSaveable { mutableStateOf(false) }
     var showMainCategoryDropdownMenu by rememberSaveable { mutableStateOf(false) }
@@ -72,9 +72,7 @@ fun DrawerMainCategory(
             isExpand = { isExpand },
             subCategories = { subCategories(mainCategory.type) },
             onClick = onSubCategoryClick,
-            onEditSubCategoryNamePositiveClick = { newName, subCategory ->
-                onEditSubCategoryNamePositiveClick(subCategory, newName, mainCategory.type)
-            },
+            onEditSubCategoryNamePositiveClick = onEditSubCategoryNamePositiveClick,
             subCategoryNames = { subCategoryNames(mainCategory.type) }
         )
     }
@@ -107,7 +105,7 @@ private fun SubCategories(
     isExpand: () -> Boolean,
     subCategories: () -> ImmutableList<StableSubCategory>,
     onClick: (StableSubCategory) -> Unit,
-    onEditSubCategoryNamePositiveClick: (String, StableSubCategory) -> Unit,
+    onEditSubCategoryNamePositiveClick: (StableSubCategory) -> Unit,
     subCategoryNames: () -> ImmutableList<String>
 ) {
     AnimatedVisibility(
@@ -128,7 +126,7 @@ private fun SubCategories(
 private fun SubCategories(
     subCategories: () -> ImmutableList<StableSubCategory>,
     onClick: (StableSubCategory) -> Unit,
-    onEditSubCategoryNamePositiveClick: (String, StableSubCategory) -> Unit,
+    onEditSubCategoryNamePositiveClick: (StableSubCategory) -> Unit,
     subCategoryNames: () -> ImmutableList<String>
 ) {
     Surface(color = MaterialTheme.colors.primary) {

@@ -19,7 +19,7 @@ fun DrawerSubCategory(
     subCategory: () -> StableSubCategory,
     onClick: () -> Unit,
     subCategoryNames: () -> ImmutableList<String>,
-    onEditSubCategoryNamePositiveClick: (String, StableSubCategory) -> Unit
+    onEditSubCategoryNamePositiveClick: (StableSubCategory) -> Unit
 ) {
     var showDropDownMenu by rememberSaveable { mutableStateOf(false) }
 

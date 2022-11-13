@@ -3,8 +3,7 @@ package com.leebeebeom.clothinghelper.main.subcategory.content
 import android.content.res.Configuration
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.gestures.animateScrollBy
-import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -37,7 +36,6 @@ import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-// TODO 모든 애니메이션 0에서 타겟으로 가지말고 특정 높이 혹은 상태에서 타겟으로
 // TODO 오토스크롤 구현
 
 @Composable
@@ -56,12 +54,14 @@ fun SubCategoryContent(
     isSelectMode: () -> Boolean,
     onSelect: (String) -> Unit
 ) {
+    var dragSelectStart by rememberSaveable { mutableStateOf(false) }
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .pointerInput(Unit) {
                     detectDragGesturesAfterLongPress(onDragStart = { offset ->
+                        dragSelectStart = true
                         interceptOutOfBoundsChildEvents = true
                         state.dragSelectStart(offset, onLongClick)
                     }, onDrag = { change, _ ->
@@ -69,15 +69,21 @@ fun SubCategoryContent(
                         state.onDrag(change.position, onSelect)
                         state.onDragEndMove(change.position, onSelect)
                     }, onDragEnd = {
+                        dragSelectStart = false
                         interceptOutOfBoundsChildEvents = false
                         state.onDragEnd()
                     }, onDragCancel = {
+                        dragSelectStart = false
                         interceptOutOfBoundsChildEvents = false
                         state.onDragEnd()
                     })
-                }, contentPadding = PaddingValues(
+                },
+            contentPadding = PaddingValues(
                 start = 16.dp, end = 16.dp, top = 16.dp, bottom = 120.dp
-            ), verticalArrangement = Arrangement.spacedBy(8.dp), state = state.lazyListState
+            ),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            state = state.lazyListState,
+            userScrollEnabled = !dragSelectStart
         ) {
             item {
                 SubCategoryHeader(

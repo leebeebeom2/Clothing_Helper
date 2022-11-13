@@ -1,23 +1,18 @@
-unstable class SubCategoryViewModel {
-  unstable val getUserUseCase: GetUserUseCase
-  unstable val getSubCategoryLoadingStateUseCase: GetSubCategoryLoadingStateUseCase
-  unstable val getSubCategoriesUseCase: GetSubCategoriesUseCase
-  unstable val subCategoryAllExpandUseCase: SubCategoryAllExpandUseCase
-  unstable val subCategorySortUseCase: SubCategorySortUseCase
-  unstable val uiStates: SubCategoryUIState
-  <runtime stability> = Unstable
-}
-unstable class SubCategoryUIState {
-  stable var parent: SubCategoryParent
-  stable var sort$delegate: MutableState<SubCategorySortPreferences>
-  stable var isSelectMode$delegate: MutableState<Boolean>
-  stable var selectedSubCategoryKeys$delegate: MutableState<ImmutableSet<String>>
-  stable val selectedSubCategoryKeysSize$delegate: State<Int>
-  stable val firstSelectedSubCategory$delegate: State<StableSubCategory?>
-  stable var subCategories$delegate: MutableState<ImmutableList<StableSubCategory>>
-  stable var subCategoryNames$delegate: MutableState<ImmutableList<String>>
-  stable val isAllSelected$delegate: State<Boolean>
-  stable val showEditIcon$delegate: State<Boolean>
-  stable val showDeleteIcon$delegate: State<Boolean>
+unstable class SubCategoryContentState {
+  stable val lazyListState: LazyListState
+  unstable val haptic: HapticFeedback
+  stable var initialSelectedIndex: Int?
+  stable var initialSelectedTop: Int?
+  stable var initialSelectedBottom: Int?
+  stable var lastSelectedIndex: Int?
+  stable var lastSelectedTop: Int?
+  stable var lastSelectedBottom: Int?
+  stable var dragDirection: DragDirection
+  unstable val passedItemKeys: LinkedHashSet<String>{ kotlin.collections.TypeAliasesKt.LinkedHashSet<String> }
+  stable val interactionSource: InteractionSource
+  unstable val configuration: Configuration
+  unstable val coroutineScope: CoroutineScope
+  stable val scrollAnimationSpec: TweenSpec<Float>
+  stable val showScrollToTopButton$delegate: State<Boolean>
   <runtime stability> = Unstable
 }

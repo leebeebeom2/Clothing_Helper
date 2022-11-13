@@ -22,8 +22,8 @@ import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.Anime
 import com.leebeebeom.clothinghelper.base.SimpleIcon
+import com.leebeebeom.clothinghelper.main.base.AddSubCategoryDialog
 import com.leebeebeom.clothinghelper.main.subcategory.BaseSubCategoryDialogState
-import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryTextFieldDialog
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -37,20 +37,9 @@ fun BoxScope.AddSubcategoryDialogFab(
 
     AddSubCategoryFab(isSelectMode = isSelectMode, showDialog = state::showDialog)
 
-    SubCategoryTextFieldDialog(
-        title = R.string.add_category,
-        error = { state.error },
-        textFieldValue = { state.textFieldValue },
-        positiveButtonEnabled = { state.positiveButtonEnabled },
-        showDialog = { state.showDialog },
-        onValueChange = {
-            state.onValueChange(it)
-            if (subCategoryNames().contains(it.text.trim())) state.updateError(R.string.error_same_category_name)
-        },
-        onFocusChanged = state::onFocusChange,
-        onDismiss = state::onDismiss,
-        onPositiveButtonClick = { onPositiveButtonClick(state.text) }
-    )
+    AddSubCategoryDialog(state = state,
+        subCategoryNames = subCategoryNames,
+        onPositiveButtonClick = { onPositiveButtonClick(state.text) })
 }
 
 class AddSubCategoryDialogState(
@@ -73,28 +62,23 @@ class AddSubCategoryDialogState(
     }
 
     fun onFocusChange(newFocusState: FocusState) {
-        if (newFocusState.hasFocus)
-            textFieldValue = textFieldValue.copy(selection = TextRange(text.length))
+        if (newFocusState.hasFocus) textFieldValue =
+            textFieldValue.copy(selection = TextRange(text.length))
     }
 
     companion object {
-        val Saver: Saver<AddSubCategoryDialogState, *> = listSaver(
-            save = { listOf(it.text, it.error, it.showDialog) },
-            restore = {
+        val Saver: Saver<AddSubCategoryDialogState, *> =
+            listSaver(save = { listOf(it.text, it.error, it.showDialog) }, restore = {
                 AddSubCategoryDialogState(
-                    it[0] as String,
-                    it[1] as? Int,
-                    it[2] as Boolean
+                    it[0] as String, it[1] as? Int, it[2] as Boolean
                 )
-            }
-        )
+            })
     }
 }
 
 @Composable
 fun BoxScope.AddSubCategoryFab(
-    showDialog: () -> Unit,
-    isSelectMode: () -> Boolean
+    showDialog: () -> Unit, isSelectMode: () -> Boolean
 ) {
     AnimatedVisibility(
         modifier = Modifier.align(Alignment.BottomEnd),

@@ -141,16 +141,20 @@ private fun BoxScope.ScrollToTopFab(showFab: () -> Boolean, onClick: () -> Unit)
 data class SubCategoryContentState(
     val lazyListState: LazyListState,
     val haptic: HapticFeedback,
-    var initialSelectedKey: String? = null,
+    var initialSelectedIndex: Int? = null,
     var initialSelectedTop: Int? = null,
     var initialSelectedBottom: Int? = null,
-    val passedItemKeys: MutableSet<String> = mutableSetOf(),
+    var lastSelectedIndex: Int? = null,
+    var lastSelectedTop: Int? = null,
+    var lastSelectedBottom: Int? = null,
+    var dragDirection: DragDirection = DragDirection.None,
+    val passedItemKeys: LinkedHashSet<String> = linkedSetOf(),
     val interactionSource: InteractionSource,
     val configuration: Configuration,
     val coroutineScope: CoroutineScope
 ) {
-    enum class DragPosition {
-        DragUp, DragDown, DragStop
+    enum class DragDirection {
+        Up, Down, None
     }
 
     private val scrollAnimationSpec = tween<Float>(300, easing = FastOutLinearInEasing)
@@ -171,16 +175,6 @@ data class SubCategoryContentState(
         }
     }
 
-    fun currentDragPosition(touchOffset: Offset): DragPosition? {
-        return initialSelectedBottom?.let { bottom ->
-            initialSelectedTop?.let { top ->
-                if (touchOffset.y.toInt() < top) DragPosition.DragUp
-                else if (touchOffset.y.toInt() > bottom) DragPosition.DragDown
-                else DragPosition.DragStop
-            }
-        }
-    }
-
     fun performHaptic() {
         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
     }
@@ -188,14 +182,9 @@ data class SubCategoryContentState(
     inline fun dragSelectStart(
         touchOffset: Offset, crossinline onLongClick: (key: String) -> Unit
     ) {
-        lazyListState.getSelectedItem({
-            isSelectedItem(
-                touchOffset = touchOffset,
-                visibleItem = it
-            )
-        }) { selectedItem ->
+        lazyListState.getSelectedItem(touchOffset) { selectedItem ->
             (selectedItem.key as? String)?.let {
-                initialSelectedKey = it
+                initialSelectedIndex = selectedItem.index
                 initialSelectedTop = selectedItem.realOffset
                 initialSelectedBottom = selectedItem.offsetEnd
                 passedItemKeys.add(it)
@@ -205,68 +194,124 @@ data class SubCategoryContentState(
         }
     }
 
-    inline fun onDrag(
-        touchOffset: Offset, crossinline onSelect: (String) -> Unit
-    ) {
-        initialSelectedKey?.let { initialSelectedKey ->
-            lazyListState.getSelectedItem(
-                { initialSelectedKey != it.key as? String },
-                { !passedItemKeys.contains(it.key) },
-                { isSelectedItem(touchOffset = touchOffset, visibleItem = it) }) {
-                (it.key as? String)?.let { key ->
-                    onSelect(key)
-                    passedItemKeys.add(key)
+    inline fun onDrag(touchOffset: Offset, crossinline onSelect: (String) -> Unit) {
+        initialSelectedIndex?.let { index ->
+            initialSelectedTop?.let { top ->
+                initialSelectedBottom?.let { bottom ->
+                    dragDirection = getDragDirection(top, bottom, touchOffset)
+
+                    if (dragDirection == DragDirection.Down)
+                        onDragStart(
+                            touchOffset = touchOffset,
+                            range = { index..it },
+                            passedItemKeysContainsOrNot = { !passedItemKeys.contains(it) },
+                            onSelect = onSelect,
+                            passedItemKeysAddOrRemove = passedItemKeys::addAll,
+                            selectedItemFirstOrLast = { it.lastOrNull() }
+                        )
+                    else if (dragDirection == DragDirection.Up)
+                        onDragStart(
+                            touchOffset = touchOffset,
+                            range = { it..index },
+                            passedItemKeysContainsOrNot = { !passedItemKeys.contains(it) },
+                            onSelect = onSelect,
+                            passedItemKeysAddOrRemove = passedItemKeys::addAll,
+                            selectedItemFirstOrLast = { it.firstOrNull() }
+                        )
+                }
+            }
+        }
+
+    }
+
+    inline fun onDragEndMove(touchOffset: Offset, crossinline onSelect: (key: String) -> Unit) {
+        lastSelectedIndex?.let { index ->
+            lastSelectedTop?.let { top ->
+                lastSelectedBottom?.let { bottom ->
+                    val dragDirection = getDragEndDirection(top, bottom, touchOffset)
+                    println(dragDirection)
+                    if (dragDirection == DragDirection.Up)
+                        onDragStart(
+                            touchOffset = touchOffset,
+                            range = { it..index },
+                            passedItemKeysContainsOrNot = passedItemKeys::contains,
+                            onSelect = onSelect,
+                            passedItemKeysAddOrRemove = passedItemKeys::removeAll,
+                            selectedItemFirstOrLast = { it.lastOrNull() }
+                        )
+                    else if (dragDirection == DragDirection.Down)
+                        onDragStart(
+                            touchOffset = touchOffset,
+                            range = { index..it },
+                            passedItemKeysContainsOrNot = passedItemKeys::contains,
+                            onSelect = onSelect,
+                            passedItemKeysAddOrRemove = passedItemKeys::removeAll,
+                            selectedItemFirstOrLast = { it.firstOrNull() }
+                        )
                 }
             }
         }
     }
 
-    fun isSelectedItem(touchOffset: Offset, visibleItem: LazyListItemInfo): Boolean {
-        return touchOffset.y.toInt() in visibleItem.realOffset..visibleItem.offsetEnd
-    }
-
-    inline fun onDragEndMove(
-        touchOffset: Offset, crossinline onSelect: (key: String) -> Unit
+    inline fun onDragStart(
+        touchOffset: Offset,
+        crossinline range: (selectedItemIndex: Int) -> IntRange,
+        crossinline passedItemKeysContainsOrNot: (String) -> Boolean,
+        crossinline onSelect: (String) -> Unit,
+        crossinline passedItemKeysAddOrRemove: (Set<String>) -> Unit,
+        crossinline selectedItemFirstOrLast: (List<LazyListItemInfo>) -> LazyListItemInfo?
     ) {
-        when (currentDragPosition(touchOffset)) {
-            DragPosition.DragDown -> dragEndMove(
-                onSelect = onSelect,
-            ) { touchOffset.y.toInt() < it.realOffset }
-            DragPosition.DragUp -> dragEndMove(
-                onSelect = onSelect,
-            ) { touchOffset.y.toInt() > it.offsetEnd }
-            else -> {}
-        }
-    }
-
-    inline fun dragEndMove(
-        crossinline onSelect: (key: String) -> Unit,
-        crossinline condition: (selectedItem: LazyListItemInfo) -> Boolean
-    ) = lazyListState.getSelectedItem({ it.key == passedItemKeys.lastOrNull() }) { selectedItem ->
-        if (condition(selectedItem)) {
-            (selectedItem.key as? String)?.let { key ->
-                onSelect(key)
-                passedItemKeys.remove(key)
+        lazyListState.getSelectedItem(touchOffset) { selectedItem ->
+            val selectedItems = lazyListState.layoutInfo.visibleItemsInfo.filter {
+                (it.key as? String)?.let { key ->
+                    it.index != initialSelectedIndex &&
+                            it.index in range(selectedItem.index) &&
+                            passedItemKeysContainsOrNot(key)
+                } ?: false
+            }
+            val selectedKeys = selectedItems.map { it.key as String }
+            passedItemKeysAddOrRemove(selectedKeys.toSet())
+            selectedKeys.forEach(onSelect)
+            selectedItemFirstOrLast(selectedItems)?.let {
+                lastSelectedIndex = it.index
+                lastSelectedTop = it.realOffset
+                lastSelectedBottom = it.offsetEnd
             }
         }
     }
 
+    fun getDragEndDirection(lastTop: Int, lastBottom: Int, touchOffset: Offset): DragDirection {
+        val dragEndDirection = getDragDirection(lastTop, lastBottom, touchOffset)
+        return if ((dragDirection == DragDirection.Down || dragDirection == DragDirection.None) && dragEndDirection == DragDirection.Up
+        ) DragDirection.Up
+        else if ((dragDirection == DragDirection.Up || dragDirection == DragDirection.None) && dragEndDirection == DragDirection.Down
+        ) DragDirection.Down
+        else DragDirection.None
+    }
+
+    fun getDragDirection(top: Int, bottom: Int, touchOffset: Offset): DragDirection {
+        return if (top > touchOffset.y.toInt()) DragDirection.Up
+        else if (bottom < touchOffset.y.toInt()) DragDirection.Down
+        else DragDirection.None
+    }
+
     fun onDragEnd() {
-        initialSelectedKey = null
+        initialSelectedIndex = null
         initialSelectedTop = null
         initialSelectedBottom = null
+        lastSelectedIndex = null
+        lastSelectedTop = null
+        lastSelectedBottom = null
+        dragDirection = DragDirection.None
         passedItemKeys.clear()
     }
 
     inline fun LazyListState.getSelectedItem(
-        vararg conditions: (visibleItem: LazyListItemInfo) -> Boolean,
+        touchOffset: Offset,
         crossinline task: (LazyListItemInfo) -> Unit
     ) {
-        layoutInfo.visibleItemsInfo.firstOrNull { visibleItem ->
-            conditions.forEach { condition ->
-                if (!condition(visibleItem)) return@firstOrNull false
-            }
-            true
+        layoutInfo.visibleItemsInfo.firstOrNull {
+            touchOffset.y.toInt() in it.realOffset..it.offsetEnd
         }?.let { task(it) }
     }
 }

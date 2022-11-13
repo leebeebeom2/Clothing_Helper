@@ -18,8 +18,7 @@ fun DropDownMenuRoot(
     ) {
         Surface {
             DropdownMenu(
-                expanded = show(),
-                onDismissRequest = onDismiss
+                expanded = show(), onDismissRequest = onDismiss
             ) {
                 content()
             }

@@ -20,15 +20,36 @@ open class BaseMainUIState : BaseUIState() {
     var allSubCategories by mutableStateOf(List(4) { emptyList<SubCategory>() })
         private set
 
-    private val topSubCategories by derivedStateOf { allSubCategories[0].map { it.toStable() }.toImmutableList() }
-    private val bottomSubCategories by derivedStateOf { allSubCategories[1].map { it.toStable() }.toImmutableList() }
-    private val outerSubCategories by derivedStateOf { allSubCategories[2].map { it.toStable() }.toImmutableList() }
-    private val etcSubCategories by derivedStateOf { allSubCategories[3].map { it.toStable() }.toImmutableList() }
+    private val topSubCategories by derivedStateOf {
+        allSubCategories[0].map { it.toStable() }.toImmutableList()
+    }
+    private val bottomSubCategories by derivedStateOf {
+        allSubCategories[1].map { it.toStable() }.toImmutableList()
+    }
+    private val outerSubCategories by derivedStateOf {
+        allSubCategories[2].map { it.toStable() }.toImmutableList()
+    }
+    private val etcSubCategories by derivedStateOf {
+        allSubCategories[3].map { it.toStable() }.toImmutableList()
+    }
 
     private val topSubCategoriesSize by derivedStateOf { topSubCategories.size }
     private val bottomSubCategoriesSize by derivedStateOf { bottomSubCategories.size }
     private val outerSubCategoriesSize by derivedStateOf { outerSubCategories.size }
     private val etcSubCategoriesSize by derivedStateOf { etcSubCategories.size }
+
+    private val topSubCategoryNames by derivedStateOf {
+        topSubCategories.map { it.name }.toImmutableList()
+    }
+    private val bottomSubCategoryNames by derivedStateOf {
+        bottomSubCategories.map { it.name }.toImmutableList()
+    }
+    private val outerSubCategoryNames by derivedStateOf {
+        outerSubCategories.map { it.name }.toImmutableList()
+    }
+    private val etcSubCategoryNames by derivedStateOf {
+        etcSubCategories.map { it.name }.toImmutableList()
+    }
 
     fun getSubCategories(subCategoryParent: SubCategoryParent): ImmutableList<StableSubCategory> {
         return when (subCategoryParent) {
@@ -39,12 +60,21 @@ open class BaseMainUIState : BaseUIState() {
         }
     }
 
-    fun subCategoriesSize(subCategoryParent: SubCategoryParent): Int {
+    fun getSubCategoriesSize(subCategoryParent: SubCategoryParent): Int {
         return when (subCategoryParent) {
             SubCategoryParent.TOP -> topSubCategoriesSize
             SubCategoryParent.BOTTOM -> bottomSubCategoriesSize
             SubCategoryParent.OUTER -> outerSubCategoriesSize
             SubCategoryParent.ETC -> etcSubCategoriesSize
+        }
+    }
+
+    fun getSubCategoryNames(subCategoryParent: SubCategoryParent): ImmutableList<String> {
+        return when (subCategoryParent) {
+            SubCategoryParent.TOP -> topSubCategoryNames
+            SubCategoryParent.BOTTOM -> bottomSubCategoryNames
+            SubCategoryParent.OUTER -> outerSubCategoryNames
+            SubCategoryParent.ETC -> etcSubCategoryNames
         }
     }
 

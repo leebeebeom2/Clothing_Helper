@@ -5,10 +5,10 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
+import com.leebeebeom.clothinghelper.main.base.AddSubCategoryVIewModel
 import com.leebeebeom.clothinghelper.main.base.BaseIsAllExpandState
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.util.taskAndReturnSet
@@ -37,11 +37,11 @@ class SubCategoryViewModel @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
     private val getSubCategoryLoadingStateUseCase: GetSubCategoryLoadingStateUseCase,
     private val getSubCategoriesUseCase: GetSubCategoriesUseCase,
-    private val addSubCategoryUseCase: AddSubCategoryUseCase,
     private val editSubCategoryNameUseCase: EditSubCategoryNameUseCase,
     private val subCategoryAllExpandUseCase: SubCategoryAllExpandUseCase,
-    private val subCategorySortUseCase: SubCategorySortUseCase
-) : ViewModel() {
+    private val subCategorySortUseCase: SubCategorySortUseCase,
+    addSubCategoryUseCase: AddSubCategoryUseCase,
+) : AddSubCategoryVIewModel(addSubCategoryUseCase) {
 
     private val uiStates = SubCategoryUIState()
 
@@ -72,19 +72,10 @@ class SubCategoryViewModel @Inject constructor(
         }
     }
 
-    fun addSubCategory(name: String, subCategoryParent: SubCategoryParent) {
-        viewModelScope.launch {
-            uiStates.user?.let {
-                val result = addSubCategoryUseCase(
-                    subCategoryParent = subCategoryParent, name = name.trim(), uid = it.uid
-                )
+    override val user get() = uiStates.user
 
-                if (result is FirebaseResult.Fail) {
-                    uiStates.showToast(R.string.add_category_failed)
-                    Log.d(TAG, "taskFailed: $result")
-                }
-            } ?: uiStates.showToast(R.string.add_category_failed)
-        }
+    override fun showToast(text: Int) {
+        uiStates.showToast(text)
     }
 
     fun toggleAllExpand() {
@@ -143,7 +134,8 @@ class SubCategoryUIState : BaseIsAllExpandState() {
 
     var subCategories by mutableStateOf(emptyList<StableSubCategory>().toImmutableList())
         private set
-    val subCategoryNames by derivedStateOf { subCategories.map { it.name }.toImmutableList() }
+    var subCategoryNames by mutableStateOf(emptyList<String>().toImmutableList())
+        private set
     val selectedSubCategoryName by derivedStateOf {
         val firstKey = selectedSubCategoryKeys.firstOrNull()
         firstKey?.let { key -> subCategories.firstOrNull { it.key == key }?.name ?: "" } ?: ""
@@ -156,6 +148,7 @@ class SubCategoryUIState : BaseIsAllExpandState() {
     fun setSubCategories(parent: SubCategoryParent) {
         this.parent = parent
         subCategories = getSubCategories(parent)
+        subCategoryNames = getSubCategoryNames(parent)
     }
 
     fun toggleAllSelect() {

@@ -103,7 +103,7 @@ fun SubCategoryScreen(
             onPositiveButtonClick = viewModel::editSubCategoryName,
             onDismiss = states::dismissEditDialog,
             showDialog = { states.showEditDialog },
-            selectedSubCategoryName = { uiStates.selectedSubCategoryName }
+            subCategory = { uiStates.firstSelectedSubCategory }
         )
 
         SubCategoryBottomAppBar(

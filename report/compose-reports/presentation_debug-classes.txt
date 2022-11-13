@@ -1,4 +1,8 @@
-stable class SubCategoryState {
-  stable var showEditDialog$delegate: MutableState<Boolean>
-  <runtime stability> = Stable
+unstable class EditSubCategoryNameViewModel {
+  unstable val editSubCategoryNameUseCase: EditSubCategoryNameUseCase
+  <runtime stability> = Unstable
+}
+unstable class AddSubCategoryViewModel {
+  unstable val addSubCategoryUseCase: AddSubCategoryUseCase
+  <runtime stability> = Unstable
 }

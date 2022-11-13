@@ -135,15 +135,11 @@ private fun SubCategories(
         Column {
             for (subCategory in subCategories())
                 key(subCategory.key) {
-                    var showDropdownMenu by rememberSaveable { mutableStateOf(false) }
-
                     DrawerSubCategory(
                         subCategory = { subCategory },
                         onClick = { onClick(subCategory) },
                         onEditSubCategoryNamePositiveClick = onEditSubCategoryNamePositiveClick,
-                        subCategoryNames = subCategoryNames,
-                        showDropDownMenu = { showDropdownMenu },
-                        updateShowDropDownMenu = { showDropdownMenu = it }
+                        subCategoryNames = subCategoryNames
                     )
                 }
         }

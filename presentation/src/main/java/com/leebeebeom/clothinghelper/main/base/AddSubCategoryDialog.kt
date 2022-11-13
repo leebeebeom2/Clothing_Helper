@@ -1,7 +1,7 @@
 package com.leebeebeom.clothinghelper.main.base
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryTextFieldDialog
 import com.leebeebeom.clothinghelper.main.subcategory.content.AddSubCategoryDialogState
@@ -9,7 +9,7 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun AddSubCategoryDialog(
-    state: AddSubCategoryDialogState = remember { AddSubCategoryDialogState() },
+    state: AddSubCategoryDialogState = rememberSaveable(saver = AddSubCategoryDialogState.Saver) { AddSubCategoryDialogState() },
     subCategoryNames: () -> ImmutableList<String>,
     onPositiveButtonClick: (String) -> Unit,
 ) {

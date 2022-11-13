@@ -1,14 +1,15 @@
 package com.leebeebeom.clothinghelper.main.root
 
 import android.util.Log
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
+import com.leebeebeom.clothinghelper.main.base.AddSubCategoryViewModel
 import com.leebeebeom.clothinghelper.main.base.BaseIsAllExpandState
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.usecase.preferences.MainScreenRootAllExpandUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.signin.GetUserUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.subcategory.AddSubCategoryUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoriesUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoryLoadingStateUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.LoadSubCategoriesUseCase
@@ -22,8 +23,9 @@ class MainRootViewModel @Inject constructor(
     private val getSubCategoryLoadingStateUseCase: GetSubCategoryLoadingStateUseCase,
     private val getSubCategoriesUseCase: GetSubCategoriesUseCase,
     private val loadSubCategoriesUseCase: LoadSubCategoriesUseCase,
-    private val mainScreenRootAllExpandUseCase: MainScreenRootAllExpandUseCase
-) : ViewModel() {
+    private val mainScreenRootAllExpandUseCase: MainScreenRootAllExpandUseCase,
+    addSubCategoryUseCase: AddSubCategoryUseCase
+) : AddSubCategoryViewModel(addSubCategoryUseCase) {
 
     val uiStates = BaseIsAllExpandState()
 
@@ -59,5 +61,11 @@ class MainRootViewModel @Inject constructor(
         viewModelScope.launch {
             mainScreenRootAllExpandUseCase.toggleAllExpand()
         }
+    }
+
+    override val user get() = uiStates.user
+
+    override fun showToast(text: Int) {
+        uiStates.showToast(text)
     }
 }

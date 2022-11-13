@@ -35,8 +35,6 @@ import kotlinx.coroutines.launch
 메인 카테고리 익스팬드 아이콘 로테이션 및 동작 확인
 
 드로어가 열려있을때 뒤로 가기 시 드로어 닫히는지 확인
-
-TODO 메인 카테고리 롱클릭 시 서브카테고리 추가 컨텍스트 메뉴
  */
 
 @Composable
@@ -67,7 +65,7 @@ fun MainRoot(
                     isLoading = { uiStates.isLoading },
                     isAllExpand = { uiStates.isAllExpand },
                     subCategories = uiStates::getSubCategories,
-                    subCategoriesSize = uiStates::subCategoriesSize,
+                    subCategoriesSize = uiStates::getSubCategoriesSize,
                     onEssentialMenuClick = {
                         onEssentialMenuClick(it)
                         drawerClose()
@@ -85,6 +83,8 @@ fun MainRoot(
                         drawerClose()
                     },
                     allExpandIconClick = viewModel::toggleAllExpand,
+                    subCategoryNames = uiStates::getSubCategoryNames,
+                    onAddSubCategoryPositiveButton = viewModel::addSubCategory
                 )
             },
             drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),

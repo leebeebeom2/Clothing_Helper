@@ -12,7 +12,7 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.AddSubCategoryUseCase
 import kotlinx.coroutines.launch
 
-abstract class AddSubCategoryVIewModel(private val addSubCategoryUseCase: AddSubCategoryUseCase) :
+abstract class AddSubCategoryViewModel(private val addSubCategoryUseCase: AddSubCategoryUseCase) :
     ViewModel() {
     protected abstract val user: StableUser?
     protected abstract fun showToast(@StringRes text: Int)

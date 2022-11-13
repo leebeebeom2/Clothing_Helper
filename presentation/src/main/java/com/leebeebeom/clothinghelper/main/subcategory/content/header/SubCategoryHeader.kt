@@ -86,7 +86,7 @@ private fun SortIcon(
         )
 
         SortDropdownMenu(
-            showDropDownMenu = { showDropDownMenu },
+            show = { showDropDownMenu },
             sort = sort,
             onSortClick = onSortClick,
             onOrderClick = onOrderClick,

@@ -29,7 +29,7 @@ fun DrawerMainCategory(
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (StableSubCategory) -> Unit,
     subCategoryNames: () -> ImmutableList<String>,
-    onAddSubCategoryPositiveClick: (String) -> Unit
+    onAddSubCategoryPositiveClick: (String, SubCategoryParent) -> Unit
 ) {
     var isExpand by rememberSaveable { mutableStateOf(false) }
     var showDropdownMenu by rememberSaveable { mutableStateOf(false) }
@@ -50,7 +50,9 @@ fun DrawerMainCategory(
                 show = { showDropdownMenu },
                 onDismiss = { showDropdownMenu = false },
                 subCategoryNames = subCategoryNames,
-                onAddSubCategoryPositiveClick = onAddSubCategoryPositiveClick
+                onAddSubCategoryPositiveClick = {
+                    onAddSubCategoryPositiveClick(it, mainCategory.type)
+                }
             )
             TotalCount(
                 subCategoriesSize = { subCategoriesSize(mainCategory.type) },

@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
-        android:hardwareAccelerated="true"
         android:name=".ClothingHelper"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"

@@ -58,7 +58,7 @@ fun MainCategoryScreen(
                 MainCategoryCard(
                     modifier = modifier,
                     mainCategory = mainCategory,
-                    subCategoriesSize = uiStates::subCategoriesSize,
+                    subCategoriesSize = uiStates::getSubCategoriesSize,
                     isLoading = { uiStates.isLoading },
                     onMainContentClick = onMainCategoryClick
                 )

@@ -8,7 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
-import com.leebeebeom.clothinghelper.main.base.AddSubCategoryVIewModel
+import com.leebeebeom.clothinghelper.main.base.AddSubCategoryViewModel
 import com.leebeebeom.clothinghelper.main.base.BaseIsAllExpandState
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.util.taskAndReturnSet
@@ -41,7 +41,7 @@ class SubCategoryViewModel @Inject constructor(
     private val subCategoryAllExpandUseCase: SubCategoryAllExpandUseCase,
     private val subCategorySortUseCase: SubCategorySortUseCase,
     addSubCategoryUseCase: AddSubCategoryUseCase,
-) : AddSubCategoryVIewModel(addSubCategoryUseCase) {
+) : AddSubCategoryViewModel(addSubCategoryUseCase) {
 
     private val uiStates = SubCategoryUIState()
 

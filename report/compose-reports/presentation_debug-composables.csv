@@ -1,4 +1,3 @@
 package,name,composable,skippable,restartable,readonly,inline,isLambda,hasDefaults,defaultsGroup,groups,calls,
-com.leebeebeom.clothinghelper.main.subcategory.content.SubCategoryContent,SubCategoryContent,1,1,1,0,0,0,1,0,2,2,
-com.leebeebeom.clothinghelper.main.subcategory.content.ScrollToTopFab,ScrollToTopFab,1,1,1,0,0,0,0,0,1,1,
-com.leebeebeom.clothinghelper.main.subcategory.content.rememberSubCategoryContentState,rememberSubCategoryContentState,1,0,0,0,0,0,0,0,1,6,
+com.leebeebeom.clothinghelper.main.subcategory.SubCategoryScreen,SubCategoryScreen,1,1,1,0,0,0,1,0,2,5,
+com.leebeebeom.clothinghelper.main.subcategory.rememberSubCategoryState,rememberSubCategoryState,1,0,0,0,0,0,0,0,1,1,

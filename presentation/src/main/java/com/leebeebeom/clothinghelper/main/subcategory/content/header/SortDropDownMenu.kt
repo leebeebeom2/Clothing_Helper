@@ -9,9 +9,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Divider
+import androidx.compose.material.LocalContentColor
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -21,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.base.DropDownMenuRoot
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
 import com.leebeebeom.clothinghelperdomain.repository.SortOrder
@@ -29,79 +32,51 @@ import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
 
 @Composable
 fun SortDropdownMenu(
-    showDropDownMenu: () -> Boolean,
+    show: () -> Boolean,
     sort: () -> SubCategorySortPreferences,
     onSortClick: (SubCategorySort) -> Unit,
     onOrderClick: (SortOrder) -> Unit,
     onDismiss: () -> Unit
 ) {
-    MaterialTheme(shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(20.dp))) {
-        DropdownMenu(
-            expanded = showDropDownMenu(),
-            onDismissRequest = onDismiss
+    DropDownMenuRoot(show = show, onDismiss = onDismiss) {
+        Header()
+        Row(
+            modifier = Modifier
+                .height(IntrinsicSize.Min)
+                .padding(vertical = 8.dp, horizontal = 12.dp)
         ) {
-            Header()
-            Row(
+            Column {
+                SortButton(
+                    text = R.string.sort_name,
+                    isSelected = { sort().sort == SubCategorySort.NAME }
+                ) { onSortClick(SubCategorySort.NAME) }
+                SimpleHeightSpacer(dp = 8)
+                SortButton(
+                    text = R.string.sort_create_date,
+                    isSelected = { sort().sort == SubCategorySort.CREATE }
+                ) { onSortClick(SubCategorySort.CREATE) }
+            }
+
+            SimpleWidthSpacer(dp = 8)
+
+            Divider(
                 modifier = Modifier
-                    .height(IntrinsicSize.Min)
-                    .padding(vertical = 8.dp, horizontal = 12.dp)
-            ) {
+                    .width(1.dp)
+                    .fillMaxHeight()
+            )
 
-                Column {
-                    val selectedSortRes by remember {
-                        derivedStateOf {
-                            when (sort().sort) {
-                                SubCategorySort.NAME -> R.string.sort_name
-                                SubCategorySort.CREATE -> R.string.sort_create_date
-                            }
-                        }
-                    }
+            SimpleWidthSpacer(dp = 8)
 
-                    SortButton(
-                        text = R.string.sort_name,
-                        selectedRes = { selectedSortRes },
-                        onSortButtonClick = { onSortClick(SubCategorySort.NAME) }
-                    )
-                    SimpleHeightSpacer(dp = 8)
-                    SortButton(
-                        text = R.string.sort_create_date,
-                        selectedRes = { selectedSortRes },
-                        onSortButtonClick = { onSortClick(SubCategorySort.CREATE) }
-                    )
-                }
-
-                SimpleWidthSpacer(dp = 8)
-
-                Divider(
-                    modifier = Modifier
-                        .width(1.dp)
-                        .fillMaxHeight()
-                )
-
-                SimpleWidthSpacer(dp = 8)
-
-                Column {
-                    val selectedOrderRes by remember {
-                        derivedStateOf {
-                            when (sort().sortOrder) {
-                                SortOrder.ASCENDING -> R.string.sort_Ascending
-                                SortOrder.DESCENDING -> R.string.sort_Descending
-                            }
-                        }
-                    }
-
-                    SortButton(
-                        text = R.string.sort_Ascending,
-                        selectedRes = { selectedOrderRes },
-                        onSortButtonClick = { onOrderClick(SortOrder.ASCENDING) }
-                    )
-                    SimpleHeightSpacer(dp = 8)
-                    SortButton(
-                        text = R.string.sort_Descending,
-                        selectedRes = { selectedOrderRes },
-                        onSortButtonClick = { onOrderClick(SortOrder.DESCENDING) }
-                    )
-                }
+            Column {
+                SortButton(
+                    text = R.string.sort_Ascending,
+                    isSelected = { sort().sortOrder == SortOrder.ASCENDING }
+                ) { onOrderClick(SortOrder.ASCENDING) }
+                SimpleHeightSpacer(dp = 8)
+                SortButton(
+                    text = R.string.sort_Descending,
+                    isSelected = { sort().sortOrder == SortOrder.DESCENDING }
+                ) { onOrderClick(SortOrder.DESCENDING) }
             }
         }
     }
@@ -123,11 +98,11 @@ private fun Header() {
 @Composable
 fun SortButton(
     @StringRes text: Int,
-    @StringRes selectedRes: () -> Int,
+    isSelected: () -> Boolean,
     onSortButtonClick: () -> Unit
 ) {
     val strokeColor by animateColorAsState(
-        targetValue = if (text == selectedRes()) MaterialTheme.colors.primary.copy(0.8f) else Color.Transparent,
+        targetValue = if (isSelected()) MaterialTheme.colors.primary.copy(0.8f) else Color.Transparent,
         animationSpec = tween(durationMillis = 200)
     )
 

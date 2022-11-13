@@ -28,18 +28,29 @@ fun DrawerMainCategory(
     isAllExpand: () -> Boolean,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (StableSubCategory) -> Unit,
+    subCategoryNames: () -> ImmutableList<String>,
+    onAddSubCategoryPositiveClick: (String) -> Unit
 ) {
     var isExpand by rememberSaveable { mutableStateOf(false) }
+    var showDropdownMenu by rememberSaveable { mutableStateOf(false) }
 
     Column {
         DrawerContentRow(
-            modifier = Modifier.heightIn(44.dp),
-            onClick = { onMainCategoryClick(mainCategory.type) }
+            modifier = Modifier
+                .heightIn(44.dp),
+            onClick = { onMainCategoryClick(mainCategory.type) },
+            onLongClick = { showDropdownMenu = true }
         ) {
             DrawerContentText(
                 modifier = Modifier.padding(start = 8.dp),
                 text = stringResource(id = mainCategory.name),
                 style = MaterialTheme.typography.subtitle1
+            )
+            DrawerMainCategoryDropDownMenu(
+                show = { showDropdownMenu },
+                onDismiss = { showDropdownMenu = false },
+                subCategoryNames = subCategoryNames,
+                onAddSubCategoryPositiveClick = onAddSubCategoryPositiveClick
             )
             TotalCount(
                 subCategoriesSize = { subCategoriesSize(mainCategory.type) },

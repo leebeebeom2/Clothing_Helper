@@ -8,6 +8,8 @@ import com.google.firebase.database.FirebaseDatabase
 import com.leebeebeom.clothinghelperdomain.model.*
 import com.leebeebeom.clothinghelperdomain.repository.UserRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.tasks.await
@@ -29,6 +31,7 @@ class UserRepositoryImpl : UserRepository {
         return withContext(Dispatchers.IO) {
             try {
                 loadingOn()
+                delay(5000)
                 val authCredential = credential as AuthCredential
 
                 val authResult = auth.signInWithCredential(authCredential).await()
@@ -133,15 +136,13 @@ class UserRepositoryImpl : UserRepository {
         this._user.value = user
     }
 
-    private suspend fun loadingOn() {
-        withContext(Dispatchers.Main) {
-            _isLoading.value = true
-        }
+    private fun loadingOn() {
+        _isLoading.value = true
     }
 
 
     private suspend fun loadingOff() {
-        withContext(Dispatchers.Main) {
+        withContext(NonCancellable) {
             _isLoading.value = false
         }
     }

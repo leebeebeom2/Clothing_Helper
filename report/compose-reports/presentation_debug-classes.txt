@@ -1,18 +1,4 @@
-unstable class SubCategoryContentState {
-  stable val lazyListState: LazyListState
-  unstable val haptic: HapticFeedback
-  stable var initialSelectedIndex: Int?
-  stable var initialSelectedTop: Int?
-  stable var initialSelectedBottom: Int?
-  stable var lastSelectedIndex: Int?
-  stable var lastSelectedTop: Int?
-  stable var lastSelectedBottom: Int?
-  stable var dragDirection: DragDirection
-  unstable val passedItemKeys: LinkedHashSet<String>{ kotlin.collections.TypeAliasesKt.LinkedHashSet<String> }
-  stable val interactionSource: InteractionSource
-  unstable val configuration: Configuration
-  unstable val coroutineScope: CoroutineScope
-  stable val scrollAnimationSpec: TweenSpec<Float>
-  stable val showScrollToTopButton$delegate: State<Boolean>
+unstable class SignInRootViewModel {
+  unstable val getSignInLoadingStateUseCase: GetSignInLoadingStateUseCase
   <runtime stability> = Unstable
 }

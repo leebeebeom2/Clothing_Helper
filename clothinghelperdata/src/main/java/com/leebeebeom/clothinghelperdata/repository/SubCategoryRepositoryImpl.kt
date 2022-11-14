@@ -6,14 +6,11 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelperdomain.model.*
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
 class SubCategoryRepositoryImpl : SubCategoryRepository {
     private val root = Firebase.database.reference
@@ -201,12 +198,14 @@ class SubCategoryRepositoryImpl : SubCategoryRepository {
         )
     }
 
-    private suspend fun loadingOn() = withContext(Dispatchers.Main) {
+    private fun loadingOn() {
         _isLoading.value = true
     }
 
-    private suspend fun loadingOff() = withContext(Dispatchers.IO) {
-        _isLoading.value = false
+    private suspend fun loadingOff() {
+        withContext(NonCancellable) {
+            _isLoading.value = false
+        }
     }
 
     private fun DatabaseReference.getSubCategoriesRef(uid: String) =

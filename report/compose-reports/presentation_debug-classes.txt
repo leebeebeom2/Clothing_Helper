@@ -1,4 +1,319 @@
+stable class ClothingHelper {
+  <runtime stability> = Stable
+}
+stable class MainActivity {
+  <runtime stability> = Stable
+}
+unstable class MainActivityViewModel {
+  unstable val getSignInStateUseCase: GetSignInStateUseCase
+  <runtime stability> = Unstable
+}
+stable class MainActivityDestinations {
+  stable val MAIN: String
+  stable val SIGN_IN: String
+  <runtime stability> = Stable
+}
+stable class Error {
+  stable val errorIn: EnterTransition
+  stable val errorOut: ExitTransition
+  <runtime stability> = Stable
+}
+stable class List {
+  stable val listExpand: EnterTransition
+  stable val listShrink: ExitTransition
+  <runtime stability> = Stable
+}
+stable class BottomAppbar {
+  stable val duration: Int
+  stable val delay: Int
+  stable val expandIn: EnterTransition
+  stable val shrinkOut: ExitTransition
+  <runtime stability> = Stable
+}
+stable class SubCategoryCard {
+  stable val expandIn: EnterTransition
+  stable val shrinkOut: ExitTransition
+  <runtime stability> = Stable
+}
+stable class AddSubCategoryFab {
+  stable val fadeOut: ExitTransition
+  stable val fadeIn: EnterTransition
+  <runtime stability> = Stable
+}
+stable class CircleCheckBox {
+  stable val expandIn: EnterTransition
+  stable val shrinkOut: ExitTransition
+  <runtime stability> = Stable
+}
+stable class Anime {
+  <runtime stability> = Stable
+}
+stable class BaseUIState {
+  stable var toastText$delegate: MutableState<Int?>
+  <runtime stability> = Stable
+}
+runtime class MaxWidthTextFieldState {
+  stable val label: Int
+  stable val placeholder: Int
+  stable val showKeyboardEnabled: Boolean
+  stable val keyboardOptions: KeyboardOptions
+  runtime val focusRequester: FocusRequester
+  stable val keyboardController: SoftwareKeyboardController?
+  <runtime stability> = Runtime(FocusRequester)
+}
+stable class RepositoryModule {
+  <runtime stability> = Stable
+}
+stable class MainScreenRootModule {
+  <runtime stability> = Stable
+}
+stable class SignInUseCaseModule {
+  <runtime stability> = Stable
+}
+stable class SubCategoryPreferencesUseCaseModule {
+  <runtime stability> = Stable
+}
+stable class SubCategoryUseCaseModule {
+  <runtime stability> = Stable
+}
+stable class MainCategory {
+  <runtime stability> = Stable
+}
+unstable class SubCategory {
+  stable val mainCategoryName: String
+  stable val routeWithArg: String
+  unstable val arguments: List<NamedNavArgument>
+  <runtime stability> = Unstable
+}
+stable class Setting {
+  <runtime stability> = Stable
+}
+unstable class Detail {
+  stable val subCategoryName: String
+  stable val subCategoryKey: String
+  stable val routeWithArg: String
+  unstable val arguments: List<NamedNavArgument>
+  <runtime stability> = Unstable
+}
+stable class MainDestinations {
+  stable val route: String
+  <runtime stability> = Stable
+}
+unstable class MainNavHostState {
+  unstable val navController: NavHostController
+  stable val currentBackStack: State<NavBackStackEntry?>
+  <runtime stability> = Unstable
+}
+stable class BaseMainUIState {
+  stable var isLoading$delegate: MutableState<Boolean>
+  stable var allSubCategories$delegate: MutableState<List<List<SubCategory>>>
+  stable val topSubCategories$delegate: State<ImmutableList<StableSubCategory>>
+  stable val bottomSubCategories$delegate: State<ImmutableList<StableSubCategory>>
+  stable val outerSubCategories$delegate: State<ImmutableList<StableSubCategory>>
+  stable val etcSubCategories$delegate: State<ImmutableList<StableSubCategory>>
+  stable val topSubCategoriesSize$delegate: State<Int>
+  stable val bottomSubCategoriesSize$delegate: State<Int>
+  stable val outerSubCategoriesSize$delegate: State<Int>
+  stable val etcSubCategoriesSize$delegate: State<Int>
+  stable val topSubCategoryNames$delegate: State<ImmutableList<String>>
+  stable val bottomSubCategoryNames$delegate: State<ImmutableList<String>>
+  stable val outerSubCategoryNames$delegate: State<ImmutableList<String>>
+  stable val etcSubCategoryNames$delegate: State<ImmutableList<String>>
+  <runtime stability> = Stable
+}
+stable class BaseIsAllExpandState {
+  stable var isAllExpand$delegate: MutableState<Boolean>
+  <runtime stability> = Stable
+}
+unstable class EditSubCategoryNameViewModel {
+  unstable val editSubCategoryNameUseCase: EditSubCategoryNameUseCase
+  <runtime stability> = Unstable
+}
+unstable class AddSubCategoryViewModel {
+  unstable val addSubCategoryUseCase: AddSubCategoryUseCase
+  <runtime stability> = Unstable
+}
+stable class FolderShape {
+  <runtime stability> = Stable
+}
+unstable class MainCategoryViewModel {
+  unstable val getAllSubCategoriesUseCase: GetAllSubCategoriesUseCase
+  unstable val getSubCategoryLoadingStateUseCase: GetSubCategoryLoadingStateUseCase
+  stable val uiStates: BaseMainUIState
+  <runtime stability> = Unstable
+}
+stable class DrawerContentsState {
+  stable val essentialMenus: ImmutableList<EssentialMenu>
+  stable val mainCategories: ImmutableList<MainCategory>
+  <runtime stability> = 
+}
+stable class EssentialMenu {
+  stable val name: Int
+  stable val drawable: Int
+  stable val type: EssentialMenus
+  <runtime stability> = Stable
+}
+stable class MainCategory {
+  stable val name: Int
+  stable val type: SubCategoryParent
+  <runtime stability> = Stable
+}
+stable class MainRootState {
+  stable val scaffoldState: ScaffoldState
+  stable val drawerState: DrawerState
+  <runtime stability> = Stable
+}
+unstable class MainRootViewModel {
+  unstable val getSubCategoryLoadingStateUseCase: GetSubCategoryLoadingStateUseCase
+  unstable val updateSubCategoriesUseCase: UpdateSubCategoriesUseCase
+  unstable val mainScreenRootAllExpandUseCase: MainScreenRootAllExpandUseCase
+  unstable val getAllSubCategoriesUseCase: GetAllSubCategoriesUseCase
+  unstable val getUserUseCase: GetUserUseCase
+  stable val uiStates: MainRootUiState
+  <runtime stability> = Unstable
+}
+stable class MainRootUiState {
+  stable var user$delegate: MutableState<StableUser?>
+  <runtime stability> = Stable
+}
+unstable class SettingViewModel {
+  unstable val signOutUseCase: SignOutUseCase
+  <runtime stability> = Unstable
+}
+stable class EditSubCategoryNameDialogState {
+  stable val initialName: String
+  stable val positiveButtonEnabled$delegate: State<Boolean>
+  <runtime stability> = Stable
+}
+stable class BaseSubCategoryDialogState {
+  stable var text$delegate: MutableState<String>
+  stable var textFieldValue$delegate: MutableState<TextFieldValue>
+  stable var error$delegate: MutableState<Int?>
+  stable val positiveButtonEnabled$delegate: State<Boolean>
+  <runtime stability> = Stable
+}
+stable class SubCategoryState {
+  stable var showEditDialog$delegate: MutableState<Boolean>
+  <runtime stability> = Stable
+}
+unstable class SubCategoryViewModel {
+  unstable val getSubCategoryLoadingStateUseCase: GetSubCategoryLoadingStateUseCase
+  unstable val subCategoryAllExpandUseCase: SubCategoryAllExpandUseCase
+  unstable val subCategorySortUseCase: SubCategorySortUseCase
+  unstable val getAllSubCategoriesUseCase: GetAllSubCategoriesUseCase
+  unstable val uiStates: SubCategoryUIState
+  <runtime stability> = Unstable
+}
+unstable class SubCategoryUIState {
+  stable var parent: SubCategoryParent
+  stable var sort$delegate: MutableState<SubCategorySortPreferences>
+  stable var isSelectMode$delegate: MutableState<Boolean>
+  stable var selectedSubCategoryKeys$delegate: MutableState<ImmutableSet<String>>
+  stable val selectedSubCategoryKeysSize$delegate: State<Int>
+  stable val firstSelectedSubCategory$delegate: State<StableSubCategory?>
+  stable var subCategories$delegate: MutableState<ImmutableList<StableSubCategory>>
+  stable var subCategoryNames$delegate: MutableState<ImmutableList<String>>
+  stable val isAllSelected$delegate: State<Boolean>
+  stable val showEditIcon$delegate: State<Boolean>
+  stable val showDeleteIcon$delegate: State<Boolean>
+  <runtime stability> = Unstable
+}
+stable class AddSubCategoryDialogState {
+  stable var showDialog$delegate: MutableState<Boolean>
+  <runtime stability> = Stable
+}
+unstable class SubCategoryContentState {
+  stable val lazyListState: LazyListState
+  unstable val haptic: HapticFeedback
+  stable var initialSelectedIndex: Int?
+  stable var initialSelectedTop: Int?
+  stable var initialSelectedBottom: Int?
+  stable var lastSelectedIndex: Int?
+  stable var lastSelectedTop: Int?
+  stable var lastSelectedBottom: Int?
+  stable var dragDirection: DragDirection
+  unstable val passedItemKeys: LinkedHashSet<String>{ kotlin.collections.TypeAliasesKt.LinkedHashSet<String> }
+  stable val interactionSource: InteractionSource
+  unstable val configuration: Configuration
+  unstable val coroutineScope: CoroutineScope
+  stable val scrollAnimationSpec: TweenSpec<Float>
+  stable val showScrollToTopButton$delegate: State<Boolean>
+  <runtime stability> = Unstable
+}
+stable class StableSubCategory {
+  stable val parent: SubCategoryParent
+  stable val key: String
+  stable val name: String
+  stable val createDate: Long
+  <runtime stability> = Stable
+}
+stable class StableUser {
+  stable val email: String
+  stable val name: String
+  stable val uid: String
+  <runtime stability> = Stable
+}
+stable class SignInDestinations {
+  stable val SIGN_IN: String
+  stable val SIGN_UP: String
+  stable val RESET_PASSWORD: String
+  <runtime stability> = Stable
+}
+unstable class SignInNavHostState {
+  unstable val navController: NavHostController
+  <runtime stability> = Unstable
+}
 unstable class SignInRootViewModel {
   unstable val getSignInLoadingStateUseCase: GetSignInLoadingStateUseCase
   <runtime stability> = Unstable
+}
+stable class BaseEmailUIState {
+  stable var emailError$delegate: MutableState<Int?>
+  stable var email$delegate: MutableState<String>
+  stable val buttonEnabled$delegate: State<Boolean>
+  <runtime stability> = Stable
+}
+stable class BaseSignInUpUIState {
+  stable var passwordError$delegate: MutableState<Int?>
+  stable var googleButtonEnabled$delegate: MutableState<Boolean>
+  stable var password$delegate: MutableState<String>
+  stable val buttonEnabled$delegate: State<Boolean>
+  <runtime stability> = Stable
+}
+unstable class GoogleSignInUpViewModel {
+  unstable val googleSignInUseCase: GoogleSignInUseCase
+  <runtime stability> = Unstable
+}
+stable class FirebaseErrorCode {
+  stable val ERROR_INVALID_EMAIL: String
+  stable val ERROR_USER_NOT_FOUND: String
+  stable val ERROR_EMAIL_ALREADY_IN_USE: String
+  stable val ERROR_WRONG_PASSWORD: String
+  <runtime stability> = Stable
+}
+unstable class ResetPasswordViewModel {
+  unstable val resetPasswordUseCase: ResetPasswordUseCase
+  stable val uiStates: ResetPasswordUIState
+  <runtime stability> = Unstable
+}
+stable class ResetPasswordUIState {
+  stable var isTaskSuccess$delegate: MutableState<Boolean>
+  <runtime stability> = Stable
+}
+unstable class SignInViewModel {
+  unstable val signInUseCase: SignInUseCase
+  stable val uiState: BaseSignInUpUIState
+  <runtime stability> = Unstable
+}
+unstable class SignUpViewModel {
+  unstable val signUpUseCase: SignUpUseCase
+  stable val uiStates: SignUpUIState
+  <runtime stability> = Unstable
+}
+stable class SignUpUIState {
+  stable var passwordConfirmError$delegate: MutableState<Int?>
+  stable var name$delegate: MutableState<String>
+  stable var passwordConfirm$delegate: MutableState<String>
+  stable val buttonEnabled$delegate: State<Boolean>
+  <runtime stability> = Stable
 }

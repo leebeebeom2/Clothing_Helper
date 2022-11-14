@@ -1,18 +1,15 @@
 package com.leebeebeom.clothinghelper.main.base
 
-import android.util.Log
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelper.map.StableSubCategory
-import com.leebeebeom.clothinghelper.map.StableUser
 import com.leebeebeom.clothinghelper.map.toUnstable
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
-import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.AddSubCategoryUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.EditSubCategoryNameUseCase
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 
 abstract class EditSubCategoryNameViewModel(
@@ -22,17 +19,12 @@ abstract class EditSubCategoryNameViewModel(
 
     open fun editSubCategoryName(newSubCategory: StableSubCategory) {
         viewModelScope.launch {
-            user?.let { user ->
-                val result = editSubCategoryNameUseCase(
-                    newSubCategory = newSubCategory.toUnstable(),
-                    uid = user.uid
-                )
-
-                if (result is FirebaseResult.Fail) {
-                    showToast(R.string.add_category_failed)
-                    Log.d(TAG, "taskFailed: $result")
+            val result = editSubCategoryNameUseCase(newSubCategory = newSubCategory.toUnstable())
+            if (result is FirebaseResult.Fail)
+                when (result.exception) {
+                    is TimeoutCancellationException -> showToast(R.string.network_error_for_edit_sub_category)
+                    else -> showToast(R.string.edit_category_name_failed)
                 }
-            } ?: showToast(R.string.add_category_failed)
         }
     }
 }
@@ -40,22 +32,16 @@ abstract class EditSubCategoryNameViewModel(
 abstract class AddSubCategoryViewModel(
     private val addSubCategoryUseCase: AddSubCategoryUseCase,
 ) : ViewModel() {
-
-    protected abstract val user: StableUser?
     protected abstract fun showToast(@StringRes text: Int)
 
-    fun addSubCategory(name: String, subCategoryParent: SubCategoryParent) {
+    fun addSubCategory(subCategory: StableSubCategory) {
         viewModelScope.launch {
-            user?.let {
-                val result = addSubCategoryUseCase(
-                    subCategoryParent = subCategoryParent, name = name.trim(), uid = it.uid
-                )
-
-                if (result is FirebaseResult.Fail) {
-                    showToast(R.string.add_category_failed)
-                    Log.d(TAG, "taskFailed: $result")
+            val result = addSubCategoryUseCase(subCategory = subCategory.toUnstable())
+            if (result is FirebaseResult.Fail)
+                when (result.exception) {
+                    is TimeoutCancellationException -> showToast(R.string.network_error_for_add_sub_category)
+                    else -> showToast(R.string.add_category_failed)
                 }
-            } ?: showToast(R.string.add_category_failed)
         }
     }
 }

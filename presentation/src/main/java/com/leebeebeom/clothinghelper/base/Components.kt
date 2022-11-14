@@ -72,10 +72,10 @@ fun SimpleWidthSpacer(dp: Int) {
 }
 
 @Composable
-fun SimpleToast(@StringRes text: () -> Int?, shownToast: () -> Unit) {
+fun SimpleToast(@StringRes text: () -> Int?, toastShown: () -> Unit) {
     text()?.let {
         Toast.makeText(LocalContext.current, stringResource(id = it), Toast.LENGTH_SHORT).show()
-        shownToast()
+        toastShown()
     }
 }
 

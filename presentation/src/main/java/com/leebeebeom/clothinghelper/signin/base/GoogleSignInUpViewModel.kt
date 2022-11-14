@@ -13,9 +13,11 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.TAG
+import com.leebeebeom.clothinghelperdata.repository.A_NETWORK_ERROR
 import com.leebeebeom.clothinghelperdomain.model.AuthResult
-import com.leebeebeom.clothinghelperdomain.usecase.signin.GoogleSignInUseCase
-import com.leebeebeom.clothinghelperdomain.usecase.signin.PushInitialSubCategoriesFailed
+import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
+import com.leebeebeom.clothinghelperdomain.usecase.user.GoogleSignInUseCase
+import com.leebeebeom.clothinghelperdomain.util.logE
 import kotlinx.coroutines.launch
 
 abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSignInUseCase) :
@@ -29,21 +31,27 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
         when (activityResult.resultCode) {
             RESULT_OK -> {
                 viewModelScope.launch {
-                    when (val result = googleSignInUseCase(getGoogleCredential(activityResult))) {
+                    val result = googleSignInUseCase(getGoogleCredential(activityResult)) {
+                        if (it is FirebaseResult.Fail && it.exception !is NullPointerException) {
+                            showToast(R.string.sub_categories_load_failed)
+                            logE("signInWithGoogleEmail", it.exception)
+                        }
+                    }
+                    when (result) {
                         is AuthResult.Success -> {
                             showToast(R.string.google_sign_in_complete)
                             updateGoogleButtonEnabled(enabled = true)
                         }
                         is AuthResult.Fail -> {
-                            if (result.exception?.message == PushInitialSubCategoriesFailed){
-                                showToast(R.string.initial_sub_category_push_failed)
-                                updateGoogleButtonEnabled(enabled = true)
-                            }
+                            if (result.errorCode == A_NETWORK_ERROR)
+                                showToast(R.string.network_error)
                             else {
-                                showToast(R.string.unknown_error)
-                                Log.e(TAG, "signInWithGoogleEmail: $result")
-                                updateGoogleButtonEnabled(enabled = true)
+                                logE("signInWithGoogleEmail", Exception(result.errorCode))
+                                unknownFail()
                             }
+                        }
+                        is AuthResult.UnknownFail -> {
+                            unknownFail()
                         }
                     }
                 }
@@ -54,16 +62,14 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
             }
             else -> {
                 Log.e(TAG, "signInWithGoogleEmail: resultCode = ${activityResult.resultCode}")
-                showToast(R.string.unknown_error)
-                updateGoogleButtonEnabled(enabled = true)
+                unknownFail()
             }
         }
     }
 
     private fun getGoogleCredential(activityResult: ActivityResult): AuthCredential? {
         return if (activityResult.data == null) {
-            showToast(R.string.unknown_error)
-            updateGoogleButtonEnabled(enabled = true)
+            unknownFail()
             Log.e(TAG, "getGoogleCredential: activityResult.data = null")
             null
         } else {
@@ -71,5 +77,10 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
                 .getResult(ApiException::class.java)
             GoogleAuthProvider.getCredential(account.idToken, null)
         }
+    }
+
+    private fun unknownFail() {
+        showToast(R.string.unknown_error)
+        updateGoogleButtonEnabled(enabled = true)
     }
 }

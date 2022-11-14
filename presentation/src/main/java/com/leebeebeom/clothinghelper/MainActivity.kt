@@ -16,7 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import com.leebeebeom.clothinghelper.main.MainNavHost
 import com.leebeebeom.clothinghelper.signin.SignInNavHost
 import com.leebeebeom.clothinghelper.util.navigateSingleTop
-import com.leebeebeom.clothinghelperdomain.usecase.signin.GetSignInStateUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.user.GetSignInStateUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 import dagger.hilt.android.lifecycle.HiltViewModel

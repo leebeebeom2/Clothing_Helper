@@ -6,8 +6,8 @@ import com.leebeebeom.clothinghelper.signin.base.BaseSignInUpUIState
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
 import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
 import com.leebeebeom.clothinghelperdomain.model.AuthResult
-import com.leebeebeom.clothinghelperdomain.usecase.signin.GoogleSignInUseCase
-import com.leebeebeom.clothinghelperdomain.usecase.signin.SignInUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.user.GoogleSignInUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.user.SignInUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,12 +25,12 @@ class SignInViewModel @Inject constructor(
             when (val result = signInUseCase(uiState.email, uiState.password)) {
                 is AuthResult.Success -> showToast(R.string.sign_in_complete)
                 is AuthResult.Fail -> setFireBaseError(
-                    exception = result.exception,
+                    errorCode = result.errorCode,
                     updateEmailError = uiState::updateEmailError,
                     updatePasswordError = uiState::updatePasswordError,
                     showToast = ::showToast
                 )
-                else -> showToast(R.string.unknown_error)
+                is AuthResult.UnknownFail -> showToast(R.string.unknown_error)
             }
         }
     }

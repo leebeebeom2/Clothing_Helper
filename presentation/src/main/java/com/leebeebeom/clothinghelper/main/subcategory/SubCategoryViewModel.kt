@@ -15,10 +15,9 @@ import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
 import com.leebeebeom.clothinghelperdomain.usecase.preferences.SubCategoryAllExpandUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.preferences.SubCategorySortUseCase
-import com.leebeebeom.clothinghelperdomain.usecase.signin.GetUserUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.AddSubCategoryUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.EditSubCategoryNameUseCase
-import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoriesUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetAllSubCategoriesUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoryLoadingStateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
@@ -30,12 +29,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SubCategoryViewModel @Inject constructor(
-    private val getUserUseCase: GetUserUseCase,
     private val getSubCategoryLoadingStateUseCase: GetSubCategoryLoadingStateUseCase,
-    private val getSubCategoriesUseCase: GetSubCategoriesUseCase,
-    editSubCategoryNameUseCase: EditSubCategoryNameUseCase,
     private val subCategoryAllExpandUseCase: SubCategoryAllExpandUseCase,
     private val subCategorySortUseCase: SubCategorySortUseCase,
+    private val getAllSubCategoriesUseCase: GetAllSubCategoriesUseCase,
+    editSubCategoryNameUseCase: EditSubCategoryNameUseCase,
     addSubCategoryUseCase: AddSubCategoryUseCase,
 ) : EditSubCategoryNameViewModel(editSubCategoryNameUseCase, addSubCategoryUseCase) {
 
@@ -48,15 +46,11 @@ class SubCategoryViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getUserUseCase().collect(uiStates::updateUser)
-        }
-
-        viewModelScope.launch {
             getSubCategoryLoadingStateUseCase().collect(uiStates::updateIsLoading)
         }
 
         viewModelScope.launch {
-            getSubCategoriesUseCase().collect(uiStates::updateAllSubCategories)
+            getAllSubCategoriesUseCase().collect(uiStates::updateAllSubCategories)
         }
 
         viewModelScope.launch {
@@ -67,8 +61,6 @@ class SubCategoryViewModel @Inject constructor(
             subCategorySortUseCase.sortPreferences.collect(uiStates::updateSort)
         }
     }
-
-    override val user get() = uiStates.user
 
     override fun showToast(text: Int) {
         uiStates.showToast(text)

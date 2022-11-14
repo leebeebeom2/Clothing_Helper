@@ -8,8 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.signin.base.BaseEmailUIState
 import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
-import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
-import com.leebeebeom.clothinghelperdomain.usecase.signin.ResetPasswordUseCase
+import com.leebeebeom.clothinghelperdomain.model.AuthResult
+import com.leebeebeom.clothinghelperdomain.usecase.user.ResetPasswordUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,18 +23,19 @@ class ResetPasswordViewModel @Inject constructor(private val resetPasswordUseCas
     fun sendResetPasswordEmail() {
         viewModelScope.launch {
             when (val result = resetPasswordUseCase(uiStates.email)) {
-                is FirebaseResult.Success -> {
+                is AuthResult.Success -> {
                     uiStates.showToast(R.string.email_send_complete)
                     uiStates.updateIsTaskSuccess(true)
                 }
-                is FirebaseResult.Fail -> {
+                is AuthResult.Fail -> {
                     setFireBaseError(
-                        exception = result.exception,
+                        errorCode = result.errorCode,
                         updateEmailError = uiStates::updateEmailError,
                         updatePasswordError = {},
                         showToast = uiStates::showToast
                     )
                 }
+                is AuthResult.UnknownFail -> uiStates.showToast(R.string.unknown_error)
             }
         }
     }

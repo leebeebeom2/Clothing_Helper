@@ -90,5 +90,5 @@ fun SignUpScreen(
         SimpleHeightSpacer(dp = 150)
     }
 
-    SimpleToast(text = { uiStates.toastText }, shownToast = uiStates::toastShown)
+    SimpleToast(text = { uiStates.toastText }, toastShown = uiStates::toastShown)
 }

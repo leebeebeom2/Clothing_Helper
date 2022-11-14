@@ -1,7 +1,14 @@
 package com.leebeebeom.clothinghelperdomain.usecase.subcategory
 
-import com.leebeebeom.clothinghelperdomain.model.*
-import com.leebeebeom.clothinghelperdomain.repository.*
+import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
+import com.leebeebeom.clothinghelperdomain.model.SubCategory
+import com.leebeebeom.clothinghelperdomain.repository.SortOrder
+import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
+import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
+import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
+import com.leebeebeom.clothinghelperdomain.usecase.preferences.SubCategorySortUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.user.GetUserUseCase
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 
@@ -12,29 +19,25 @@ class GetSubCategoryLoadingStateUseCase(private val subCategoryRepository: SubCa
 }
 
 class PushInitialSubCategoriesUseCase(private val subCategoryRepository: SubCategoryRepository) {
-    suspend operator fun invoke(uid: String): SubCategoryPushResult {
-        return subCategoryRepository.pushInitialSubCategories(uid)
+    suspend operator fun invoke(uid: String, onUpdateSubCategoriesFail: (FirebaseResult) -> Unit) {
+        subCategoryRepository.pushInitialSubCategories(uid)
+        onUpdateSubCategoriesFail(subCategoryRepository.updateSubCategories(uid))
     }
 }
 
-class LoadSubCategoriesUseCase(private val subCategoryRepository: SubCategoryRepository) {
-    suspend operator fun invoke(user: User?): FirebaseResult {
-        return subCategoryRepository.loadSubCategories(user)
-    }
-}
-
-class GetSubCategoriesUseCase(
+class GetAllSubCategoriesUseCase(
     private val subCategoryRepository: SubCategoryRepository,
-    private val subCategoryPreferencesRepository: SubCategoryPreferencesRepository
+    private val subCategorySortUseCase: SubCategorySortUseCase
 ) {
-    operator fun invoke() =
-        subCategoryRepository.allSubCategories.combine(subCategoryPreferencesRepository.sort) { allSubCategories, sort ->
-            val temp = arrayListOf<List<SubCategory>>()
-            allSubCategories.forEach {
-                temp.add(getSortSubCategories(subCategories = it, preferences = sort))
-            }
-            temp.toList()
+    operator fun invoke(): Flow<List<List<SubCategory>>> {
+        return combine(
+            subCategoryRepository.allSubCategories,
+            subCategorySortUseCase.sortPreferences
+        ) { allSubCategories, sort ->
+            val temp = allSubCategories.toMutableList().map { it.toMutableList() }
+            temp.map { getSortSubCategories(it, sort) }
         }
+    }
 }
 
 private fun getSortSubCategories(
@@ -52,22 +55,27 @@ private fun getSortSubCategories(
     }
 }
 
+class UpdateSubCategoriesUseCase(
+    private val getUserUseCase: GetUserUseCase,
+    private val subCategoryRepository: SubCategoryRepository
+) {
+    operator fun invoke(): Flow<FirebaseResult> {
+        return combine(getUserUseCase()) {
+            it[0]?.let { user ->
+                subCategoryRepository.updateSubCategories(user.uid)
+            } ?: FirebaseResult.Fail(NullPointerException("user is null"))
+        }
+    }
+}
+
 class AddSubCategoryUseCase(private val subCategoryRepository: SubCategoryRepository) {
-    suspend operator fun invoke(
-        subCategoryParent: SubCategoryParent,
-        name: String,
-        uid: String
-    ): FirebaseResult {
-        return subCategoryRepository.addSubCategory(
-            subCategoryParent = subCategoryParent,
-            name = name,
-            uid = uid
-        )
+    suspend operator fun invoke(subCategory: SubCategory): FirebaseResult {
+        return subCategoryRepository.addSubCategory(subCategory)
     }
 }
 
 class EditSubCategoryNameUseCase(private val subCategoryRepository: SubCategoryRepository) {
-    suspend operator fun invoke(newSubCategory: SubCategory, uid: String): FirebaseResult {
-        return subCategoryRepository.editSubCategoryName(newSubCategory, uid)
+    suspend operator fun invoke(newSubCategory: SubCategory): FirebaseResult {
+        return subCategoryRepository.editSubCategoryName(newSubCategory)
     }
 }

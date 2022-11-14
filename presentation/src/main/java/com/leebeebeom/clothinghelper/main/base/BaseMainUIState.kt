@@ -6,11 +6,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.leebeebeom.clothinghelper.base.BaseUIState
 import com.leebeebeom.clothinghelper.map.StableSubCategory
-import com.leebeebeom.clothinghelper.map.StableUser
 import com.leebeebeom.clothinghelper.map.toStable
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
-import com.leebeebeom.clothinghelperdomain.model.User
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -88,14 +86,8 @@ open class BaseMainUIState : BaseUIState() {
 }
 
 open class BaseIsAllExpandState : BaseMainUIState() {
-    var user: StableUser? by mutableStateOf(null)
-        private set
     var isAllExpand by mutableStateOf(false)
         private set
-
-    fun updateUser(user: User?) {
-        this.user = user?.toStable()
-    }
 
     fun updateIsAllExpand(isAllExpand: Boolean) {
         this.isAllExpand = isAllExpand

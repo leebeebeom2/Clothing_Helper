@@ -49,7 +49,7 @@ fun DrawerContents(
     onSettingIconClick: () -> Unit,
     allExpandIconClick: () -> Unit,
     subCategoryNames: (SubCategoryParent) -> ImmutableList<String>,
-    onAddSubCategoryPositiveButtonClick: (String, SubCategoryParent) -> Unit,
+    onAddSubCategoryPositiveButtonClick: (StableSubCategory) -> Unit,
     onEditSUbCategoryNamePositiveClick: (StableSubCategory) -> Unit
 ) {
     Column {

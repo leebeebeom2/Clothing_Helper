@@ -65,7 +65,7 @@ fun ResetPasswordScreen(
         SimpleHeightSpacer(dp = 80)
     }
 
-    SimpleToast(text = { uiStates.toastText }, shownToast = uiStates::toastShown)
+    SimpleToast(text = { uiStates.toastText }, toastShown = uiStates::toastShown)
 }
 
 @Composable

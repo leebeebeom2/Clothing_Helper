@@ -11,9 +11,10 @@ import com.leebeebeom.clothinghelper.signin.base.BaseSignInUpUIState
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
 import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
 import com.leebeebeom.clothinghelperdomain.model.AuthResult
-import com.leebeebeom.clothinghelperdomain.usecase.signin.GoogleSignInUseCase
-import com.leebeebeom.clothinghelperdomain.usecase.signin.PushInitialSubCategoriesFailed
-import com.leebeebeom.clothinghelperdomain.usecase.signin.SignUpUseCase
+import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
+import com.leebeebeom.clothinghelperdomain.usecase.user.GoogleSignInUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.user.SignUpUseCase
+import com.leebeebeom.clothinghelperdomain.util.logE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,19 +28,25 @@ class SignUpViewModel @Inject constructor(
 
     fun signUpWithEmailAndPassword() {
         viewModelScope.launch {
-            when (val result = signUpUseCase(
-                email = uiStates.email, password = uiStates.password, name = uiStates.name
-            )) {
+            val result = signUpUseCase(
+                email = uiStates.email,
+                password = uiStates.password,
+                name = uiStates.name
+            ) {
+                if (it is FirebaseResult.Fail && it.exception !is NullPointerException) {
+                    uiStates.showToast(R.string.sub_categories_load_failed)
+                    logE("signUpWithEmailAndPassword", it.exception)
+                }
+            }
+            when (result) {
                 is AuthResult.Success -> showToast(R.string.sign_up_complete)
-                is AuthResult.Fail -> if (result.exception?.message == PushInitialSubCategoriesFailed) showToast(
-                    R.string.initial_sub_category_push_failed
-                )
-                else setFireBaseError(
-                    exception = result.exception,
+                is AuthResult.Fail -> setFireBaseError(
+                    errorCode = result.errorCode,
                     updateEmailError = uiStates::updateEmailError,
                     updatePasswordError = {},
                     showToast = ::showToast
                 )
+                is AuthResult.UnknownFail -> showToast(R.string.unknown_error)
             }
         }
     }

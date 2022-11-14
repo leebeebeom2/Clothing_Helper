@@ -14,7 +14,7 @@ interface UserRepository {
 
     suspend fun signUp(signUp: SignUp): AuthResult
 
-    suspend fun resetPasswordEmail(email: String) : FirebaseResult
+    suspend fun resetPasswordEmail(email: String) : AuthResult
 
     suspend fun signOut()
 }

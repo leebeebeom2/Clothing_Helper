@@ -75,7 +75,7 @@ fun SignInScreen(
         SimpleHeightSpacer(dp = 4)
         SignUpText(onEmailSignUpClick)
 
-        SimpleToast(text = { uiStates.toastText }, shownToast = uiStates::toastShown)
+        SimpleToast(text = { uiStates.toastText }, toastShown = uiStates::toastShown)
     }
 }
 

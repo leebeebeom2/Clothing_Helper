@@ -10,7 +10,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.base.BackHandler
 import com.leebeebeom.clothinghelper.base.SimpleToast
-import com.leebeebeom.clothinghelper.main.base.BaseIsAllExpandState
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
@@ -44,7 +43,7 @@ fun MainRoot(
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (StableSubCategory) -> Unit,
     viewModel: MainRootViewModel = hiltViewModel(),
-    uiStates: BaseIsAllExpandState = viewModel.uiStates,
+    uiStates: MainRootUiState = viewModel.uiStates,
     state: MainRootState = rememberMainRootState(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     content: @Composable (PaddingValues) -> Unit
@@ -94,7 +93,7 @@ fun MainRoot(
             content(it)
             BackHandler(enabled = { state.drawerState.isOpen }, task = drawerClose)
         }
-        SimpleToast(text = { uiStates.toastText }, shownToast = uiStates::toastShown)
+        SimpleToast(text = { uiStates.toastText }, toastShown = uiStates::toastShown)
     }
 }
 

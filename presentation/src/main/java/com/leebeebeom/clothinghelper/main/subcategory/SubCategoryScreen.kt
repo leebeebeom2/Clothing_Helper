@@ -11,6 +11,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.base.CenterDotProgressIndicator
+import com.leebeebeom.clothinghelper.base.SimpleToast
 import com.leebeebeom.clothinghelper.main.subcategory.content.AddSubcategoryDialogFab
 import com.leebeebeom.clothinghelper.main.subcategory.content.SubCategoryBottomAppBar
 import com.leebeebeom.clothinghelper.main.subcategory.content.SubCategoryContent
@@ -90,8 +91,9 @@ fun SubCategoryScreen(
             onSelect = uiStates::onSelect
         )
 
-        val addSubCategoryButtonClick =
-            remember<(String) -> Unit> { { viewModel.addSubCategory(it, parent) } }
+        val addSubCategoryButtonClick = remember<(String) -> Unit> {
+            { viewModel.addSubCategory(StableSubCategory(parent = parent, name = it)) }
+        }
         AddSubcategoryDialogFab(
             onPositiveButtonClick = addSubCategoryButtonClick,
             subCategoryNames = { uiStates.subCategoryNames },
@@ -120,6 +122,8 @@ fun SubCategoryScreen(
             backGround = MaterialTheme.colors.background,
             isLoading = { uiStates.isLoading })
     }
+
+    SimpleToast(text = { uiStates.toastText }, toastShown = uiStates::toastShown)
 
     BackHandler(enabled = uiStates.isSelectMode, onBack = {
         coroutineScope.launch { uiStates.selectModeOff() }

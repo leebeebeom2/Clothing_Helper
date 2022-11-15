@@ -59,7 +59,7 @@ fun HeaderText(parent: SubCategoryParent) {
 
 @Composable
 private fun AllExpandIcon(allExpandIconClick: () -> Unit, allExpand: () -> Boolean) {
-    Box(modifier = Modifier.offset(4.dp, 0.dp)) {
+    Box(modifier = Modifier.offset(0.dp, 0.dp)) {
         AllExpandIcon(
             size = 22.dp,
             onClick = allExpandIconClick,

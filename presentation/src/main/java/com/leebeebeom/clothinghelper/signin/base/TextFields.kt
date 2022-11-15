@@ -37,7 +37,8 @@ fun EmailTextField(
             if (it.hasFocus)
                 textFieldValue =
                     textFieldValue.copy(selection = TextRange(textFieldValue.text.length))
-        }
+        },
+        onCancelIconClick = { textFieldValue = textFieldValue.copy("") }
     )
 }
 
@@ -68,7 +69,8 @@ fun PasswordTextField(
                     textFieldValue.copy(selection = TextRange(textFieldValue.text.length))
         },
         trailingIcon = { VisibleIcon({ isVisible }, onClick = { isVisible = !isVisible }) },
-        isVisible = { isVisible }
+        isVisible = { isVisible },
+        onCancelIconClick = { textFieldValue = textFieldValue.copy("") }
     )
 }
 
@@ -94,6 +96,7 @@ fun NameTextField(
             if (it.hasFocus)
                 textFieldValue =
                     textFieldValue.copy(selection = TextRange(textFieldValue.text.length))
-        }
+        },
+        onCancelIconClick = { textFieldValue = textFieldValue.copy("") }
     )
 }

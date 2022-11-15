@@ -26,6 +26,7 @@ fun AddSubCategoryDialog(
         },
         onFocusChanged = state::onFocusChange,
         onDismiss = state::onDismiss,
-        onPositiveButtonClick = { onPositiveButtonClick(state.text) }
+        onPositiveButtonClick = { onPositiveButtonClick(state.text) },
+        onCancelIconClick = state::initTextFieldValue
     )
 }

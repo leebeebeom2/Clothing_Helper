@@ -19,7 +19,8 @@ fun SubCategoryTextFieldDialog(
     onValueChange: (TextFieldValue) -> Unit,
     onFocusChanged: (FocusState) -> Unit,
     onPositiveButtonClick: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onCancelIconClick: () -> Unit
 ) {
     if (showDialog())
         DialogRoot(onDismiss = onDismiss) {
@@ -36,7 +37,8 @@ fun SubCategoryTextFieldDialog(
                 state = textFieldState,
                 error = error,
                 onValueChange = onValueChange,
-                onFocusChanged = onFocusChanged
+                onFocusChanged = onFocusChanged,
+                onCancelIconClick = onCancelIconClick
             )
             SimpleHeightSpacer(dp = 12)
 
@@ -71,5 +73,9 @@ open class BaseSubCategoryDialogState(
         if (text != newTextFiled.text) error = null
         text = newTextFiled.text
         textFieldValue = newTextFiled
+    }
+
+    fun initTextFieldValue(){
+        textFieldValue = textFieldValue.copy("")
     }
 }

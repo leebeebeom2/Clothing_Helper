@@ -2,9 +2,10 @@ package com.leebeebeom.clothinghelper.base
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -34,7 +35,8 @@ fun MaxWidthTextField(
     onValueChange: (TextFieldValue) -> Unit,
     onFocusChanged: (FocusState) -> Unit,
     trailingIcon: @Composable (() -> Unit)? = null,
-    isVisible: () -> Boolean = { true }
+    isVisible: () -> Boolean = { true },
+    onCancelIconClick: () -> Unit
 ) {
     Column {
         TextField(
@@ -44,7 +46,8 @@ fun MaxWidthTextField(
             onValueChange = onValueChange,
             error = error,
             isVisible = isVisible,
-            trailingIcon = trailingIcon
+            trailingIcon = trailingIcon,
+            onCancelIconClick = onCancelIconClick
         )
         ErrorText(error)
     }
@@ -63,7 +66,8 @@ private fun TextField(
     onValueChange: (TextFieldValue) -> Unit,
     error: () -> Int?,
     isVisible: () -> Boolean,
-    trailingIcon: @Composable (() -> Unit)?
+    trailingIcon: @Composable (() -> Unit)?,
+    onCancelIconClick: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -74,14 +78,31 @@ private fun TextField(
             .onFocusChanged(onFocusChanged = onFocusChanged),
         value = textFieldValue(),
         onValueChange = onValueChange,
-        label = { Text(text = stringResource(id = state.label), maxLines = 1, overflow = TextOverflow.Ellipsis) },
-        placeholder = { Text(text = stringResource(id = state.placeholder), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        label = {
+            Text(
+                text = stringResource(id = state.label),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        },
+        placeholder = {
+            Text(
+                text = stringResource(id = state.placeholder),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        },
         isError = error() != null,
         visualTransformation = if (isVisible()) VisualTransformation.None else PasswordVisualTransformation(),
         singleLine = true,
         maxLines = 1,
         keyboardOptions = state.keyboardOptions,
-        trailingIcon = trailingIcon,
+        trailingIcon = {
+            trailingIcon?.run { invoke() } ?: CancelIcon(
+                show = { textFieldValue().text.isNotEmpty() },
+                onClick = onCancelIconClick
+            )
+        },
         keyboardActions = if (state.keyboardOptions.imeAction == ImeAction.Done) KeyboardActions(
             onDone = { focusManager.clearFocus() }
         )
@@ -179,11 +200,27 @@ fun rememberPasswordTextFieldState(
 }
 
 @Composable
-fun ShowKeyboard(showKeyboardEnabled: () -> Boolean, showKeyboard: suspend () -> Unit) {
+private fun ShowKeyboard(showKeyboardEnabled: () -> Boolean, showKeyboard: suspend () -> Unit) {
     var doesShowKeyboardState by rememberSaveable { mutableStateOf(false) }
 
     if (!doesShowKeyboardState && showKeyboardEnabled()) {
         LaunchedEffect(key1 = Unit) { showKeyboard() }
         doesShowKeyboardState = true
+    }
+}
+
+@Composable
+private fun CancelIcon(show: () -> Boolean, onClick: () -> Unit) {
+    AnimatedVisibility(
+        visible = show(),
+        enter = fadeIn(tween(150)),
+        exit = fadeOut(tween(150)),
+    ) {
+        CustomIconButton(
+            onClick = onClick,
+            drawable = R.drawable.ic_cancel,
+            tint = Color(0xFF555555),
+            modifier = Modifier.size(24.dp)
+        )
     }
 }

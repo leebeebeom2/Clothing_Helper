@@ -122,7 +122,7 @@ fun CustomIconButton(
         modifier = Modifier
             .clip(CircleShape)
             .clickable(onClick = onClick)
-            .padding(4.dp)
+            .padding(2.dp)
     ) {
         Icon(
             painter = painter,

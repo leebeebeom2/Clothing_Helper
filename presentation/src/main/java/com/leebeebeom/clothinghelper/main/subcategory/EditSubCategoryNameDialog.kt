@@ -40,7 +40,8 @@ fun EditSubCategoryNameDialog(
                     if (subCategoryNames().contains(it.text.trim())) state.updateError(R.string.error_same_category_name)
                     if (state.initialName == it.text) state.updateError(null)
                 },
-                onFocusChanged = state::onFocusChange
+                onFocusChanged = state::onFocusChange,
+                onCancelIconClick = state::initTextFieldValue
             )
         }
 

@@ -43,39 +43,39 @@ import com.leebeebeom.clothinghelper.signin.base.*
 @Composable
 fun SignUpScreen(
     viewModel: SignUpViewModel = hiltViewModel(),
-    uiStates: SignUpUIState = viewModel.uiStates
+    uiState: SignUpUIState = viewModel.uiState
 ) {
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
         EmailTextField(
-            email = { uiStates.email },
-            error = { uiStates.emailError },
-            updateError = uiStates::updateEmailError,
-            onEmailChange = uiStates::onEmailChange
+            email = { uiState.email },
+            error = { uiState.emailError },
+            updateError = uiState::updateEmailError,
+            onEmailChange = uiState::onEmailChange
         )
 
-        NameTextField(name = { uiStates.name }, onNameChange = uiStates::onNameChange)
+        NameTextField(name = { uiState.name }, onNameChange = uiState::onNameChange)
 
         PasswordTextField(
-            password = { uiStates.password },
-            error = { uiStates.passwordError },
+            password = { uiState.password },
+            error = { uiState.passwordError },
             imeAction = ImeAction.Next,
-            onPasswordChange = uiStates::onPasswordChange,
-            updateError = uiStates::updatePasswordError
+            onPasswordChange = uiState::onPasswordChange,
+            updateError = uiState::updatePasswordError
         )
 
         PasswordTextField(
             label = R.string.password_confirm,
-            password = { uiStates.passwordConfirm },
-            error = { uiStates.passwordConfirmError },
+            password = { uiState.passwordConfirm },
+            error = { uiState.passwordConfirmError },
             imeAction = ImeAction.Done,
-            onPasswordChange = uiStates::onPasswordConfirmChange,
-            updateError = uiStates::updatePasswordConfirmError
+            onPasswordChange = uiState::onPasswordConfirmChange,
+            updateError = uiState::updatePasswordConfirmError
         )
 
         SimpleHeightSpacer(dp = 12)
         MaxWidthButton(
             text = R.string.sign_up,
-            enabled = { uiStates.buttonEnabled },
+            enabled = { uiState.buttonEnabled },
             onClick = viewModel::signUpWithEmailAndPassword,
         )
         SimpleHeightSpacer(dp = 8)
@@ -83,12 +83,12 @@ fun SignUpScreen(
         SimpleHeightSpacer(dp = 8)
         // 프리뷰 시 주석처리
         GoogleSignInButton(
-            enabled = { uiStates.googleButtonEnabled },
+            enabled = { uiState.googleButtonEnabled },
             onActivityResult = viewModel::signInWithGoogleEmail,
             disabled = viewModel::disableGoogleButton
         )
         SimpleHeightSpacer(dp = 150)
     }
 
-    SimpleToast(text = { uiStates.toastText }, toastShown = uiStates::toastShown)
+    SimpleToast(text = { uiState.toastText }, toastShown = uiState::toastShown)
 }

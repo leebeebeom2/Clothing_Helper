@@ -1,57 +1,46 @@
-restartable skippable scheme("[androidx.compose.ui.UiComposable, [androidx.compose.ui.UiComposable]]") fun MaxWidthTextField(
-  state: MaxWidthTextFieldState
-  stable textFieldValue: Function0<TextFieldValue>
-  stable error: Function0<Int?>? = @static {
-  null
-}
-
-  stable onValueChange: Function1<TextFieldValue, Unit>
-  stable onFocusChanged: Function1<FocusState, Unit>
-  stable trailingIcon: Function2<Composer, Int, Unit>? = @static null
-  stable isVisible: Function0<Boolean>? = @static {
-  LiveLiterals$MaxWidthTextFieldKt  .  Boolean$fun-$anonymous$$param-isVisible$fun-MaxWidthTextField  (  )
-}
-
-  stable onCancelIconClick: Function0<Unit>
-)
-restartable skippable scheme("[androidx.compose.ui.UiComposable, [androidx.compose.ui.UiComposable]]") fun TextField(
-  state: MaxWidthTextFieldState
-  stable onFocusChanged: Function1<FocusState, Unit>
-  stable textFieldValue: Function0<TextFieldValue>
-  stable onValueChange: Function1<TextFieldValue, Unit>
-  stable error: Function0<Int?>
-  stable isVisible: Function0<Boolean>
-  stable trailingIcon: Function2<Composer, Int, Unit>?
-  stable onCancelIconClick: Function0<Unit>
-)
-restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun ErrorText(
-  stable error: Function0<Int?>
-)
-fun rememberMaxWidthTextFiledState(
-  stable label: Int
-  stable placeholder: Int = @dynamic string.empty
-  stable showKeyboardEnabled: Boolean = @dynamic LiveLiterals$MaxWidthTextFieldKt.Boolean$param-showKeyboardEnabled$fun-rememberMaxWidthTextFiledState()
-  stable keyboardOptions: KeyboardOptions? = @dynamic KeyboardOptions(
-  imeAction   =   Companion  .  Done
-)
-  focusRequester: FocusRequester? = @dynamic remember({
-  FocusRequester  (  )
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun DrawerContents(
+  stable user: Function0<StableUser?>
+  stable isLoading: Function0<Boolean>
+  stable isAllExpand: Function0<Boolean>
+  stable subCategories: Function1<SubCategoryParent, ImmutableList<StableSubCategory>>
+  stable subCategoriesSize: Function1<SubCategoryParent, Int>
+  stable state: DrawerContentsState? = @static remember({
+  DrawerContentsState  (  )
 }
 , $composer, 0)
-  stable keyboardController: SoftwareKeyboardController? = @dynamic LocalSoftwareKeyboardController.current
-): MaxWidthTextFieldState
-fun rememberEmailTextFieldState(
-  stable imeAction: ImeAction
-): MaxWidthTextFieldState
-fun rememberPasswordTextFieldState(
-  stable label: Int = @dynamic string.password
-  stable imeAction: ImeAction = @dynamic Companion.Done
-): MaxWidthTextFieldState
-restartable fun ShowKeyboard(
-  stable showKeyboardEnabled: Function0<Boolean>
-  unstable showKeyboard: SuspendFunction0<Unit>
+  stable onEssentialMenuClick: Function1<@[ParameterName(name = 'essentialMenu')] EssentialMenus, Unit>
+  stable onMainCategoryClick: Function1<SubCategoryParent, Unit>
+  stable onSubCategoryClick: Function1<StableSubCategory, Unit>
+  stable onSettingIconClick: Function0<Unit>
+  stable allExpandIconClick: Function0<Unit>
+  stable subCategoryNames: Function1<SubCategoryParent, ImmutableList<String>>
+  stable onAddSubCategoryPositiveButtonClick: Function1<StableSubCategory, Unit>
+  stable onEditSUbCategoryNamePositiveClick: Function1<StableSubCategory, Unit>
 )
-restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun CancelIcon(
-  stable show: Function0<Boolean>
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun IconWithDivider(
+  stable isAllExpand: Function0<Boolean>
+  stable onCLick: Function0<Unit>
+)
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun EssentialMenu(
+  stable essentialMenu: EssentialMenu
+  stable onClick: Function1<EssentialMenus, Unit>
+)
+restartable skippable scheme("[androidx.compose.ui.UiComposable, [androidx.compose.ui.UiComposable]]") fun DrawerContentRow(
+  stable modifier: Modifier
   stable onClick: Function0<Unit>
+  stable onLongClick: Function0<Unit>? = @static {
+
+}
+
+  stable content: @[ExtensionFunctionType] Function3<RowScope, Composer, Int, Unit>
+)
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun DrawerContentText(
+  stable modifier: Modifier? = @static Companion
+  stable text: Function0<String>
+  stable style: TextStyle
+)
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun DrawerContentText(
+  stable modifier: Modifier? = @static Companion
+  stable text: String
+  stable style: TextStyle
 )

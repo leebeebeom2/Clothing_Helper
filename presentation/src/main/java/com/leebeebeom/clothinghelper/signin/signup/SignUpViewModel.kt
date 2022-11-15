@@ -24,17 +24,17 @@ class SignUpViewModel @Inject constructor(
     private val signUpUseCase: SignUpUseCase, googleSignInUseCase: GoogleSignInUseCase
 ) : GoogleSignInUpViewModel(googleSignInUseCase) {
 
-    val uiStates = SignUpUIState()
+    val uiState = SignUpUIState()
 
     fun signUpWithEmailAndPassword() {
         viewModelScope.launch {
             val result = signUpUseCase(
-                email = uiStates.email,
-                password = uiStates.password,
-                name = uiStates.name
+                email = uiState.email,
+                password = uiState.password,
+                name = uiState.name
             ) {
                 if (it is FirebaseResult.Fail && it.exception !is NullPointerException) {
-                    uiStates.showToast(R.string.sub_categories_load_failed)
+                    uiState.showToast(R.string.sub_categories_load_failed)
                     logE("signUpWithEmailAndPassword", it.exception)
                 }
             }
@@ -42,7 +42,7 @@ class SignUpViewModel @Inject constructor(
                 is AuthResult.Success -> showToast(R.string.sign_up_complete)
                 is AuthResult.Fail -> setFireBaseError(
                     errorCode = result.errorCode,
-                    updateEmailError = uiStates::updateEmailError,
+                    updateEmailError = uiState::updateEmailError,
                     updatePasswordError = {},
                     showToast = ::showToast
                 )
@@ -52,15 +52,15 @@ class SignUpViewModel @Inject constructor(
     }
 
     override fun updateGoogleButtonEnabled(enabled: Boolean) {
-        uiStates.updateGoogleButtonEnabled(enabled)
+        uiState.updateGoogleButtonEnabled(enabled)
     }
 
     override fun showToast(text: Int) {
-        uiStates.showToast(text)
+        uiState.showToast(text)
     }
 
     override fun disableGoogleButton() {
-        uiStates.updateGoogleButtonEnabled(false)
+        uiState.updateGoogleButtonEnabled(false)
     }
 }
 

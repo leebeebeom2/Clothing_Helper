@@ -43,7 +43,7 @@ fun MainRoot(
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (StableSubCategory) -> Unit,
     viewModel: MainRootViewModel = hiltViewModel(),
-    uiStates: MainRootUiState = viewModel.uiStates,
+    uiState: MainRootUiState = viewModel.uiState,
     state: MainRootState = rememberMainRootState(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     content: @Composable (PaddingValues) -> Unit
@@ -60,11 +60,11 @@ fun MainRoot(
             scaffoldState = state.scaffoldState,
             drawerContent = {
                 DrawerContents(
-                    user = { uiStates.user },
-                    isLoading = { uiStates.isLoading },
-                    isAllExpand = { uiStates.isAllExpand },
-                    subCategories = uiStates::getSubCategories,
-                    subCategoriesSize = uiStates::getSubCategoriesSize,
+                    user = { uiState.user },
+                    isLoading = { uiState.isLoading },
+                    isAllExpand = { uiState.isAllExpand },
+                    subCategories = uiState::getSubCategories,
+                    subCategoriesSize = uiState::getSubCategoriesSize,
                     onEssentialMenuClick = {
                         onEssentialMenuClick(it)
                         drawerClose()
@@ -82,7 +82,7 @@ fun MainRoot(
                         drawerClose()
                     },
                     allExpandIconClick = viewModel::toggleAllExpand,
-                    subCategoryNames = uiStates::getSubCategoryNames,
+                    subCategoryNames = uiState::getSubCategoryNames,
                     onAddSubCategoryPositiveButtonClick = viewModel::addSubCategory,
                     onEditSUbCategoryNamePositiveClick = viewModel::editSubCategoryName
                 )
@@ -93,7 +93,7 @@ fun MainRoot(
             content(it)
             BackHandler(enabled = { state.drawerState.isOpen }, task = drawerClose)
         }
-        SimpleToast(text = { uiStates.toastText }, toastShown = uiStates::toastShown)
+        SimpleToast(text = { uiState.toastText }, toastShown = uiState::toastShown)
     }
 }
 

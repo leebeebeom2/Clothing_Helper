@@ -38,24 +38,24 @@ class SubCategoryViewModel @Inject constructor(
     addSubCategoryUseCase: AddSubCategoryUseCase,
 ) : EditSubCategoryNameViewModel(editSubCategoryNameUseCase, addSubCategoryUseCase) {
 
-    private val uiStates = SubCategoryUIState()
+    private val uiState = SubCategoryUIState()
 
-    fun getUiStates(parent: SubCategoryParent): SubCategoryUIState {
-        uiStates.setSubCategories(parent)
-        return uiStates
+    fun getUiState(parent: SubCategoryParent): SubCategoryUIState {
+        uiState.setSubCategories(parent)
+        return uiState
     }
 
     init {
         viewModelScope.launch {
-            launch { getSubCategoryLoadingStateUseCase().collectLatest(uiStates::updateIsLoading) }
-            launch { getAllSubCategoriesUseCase().collectLatest(uiStates::updateAllSubCategories) }
-            launch { subCategoryAllExpandUseCase.isAllExpand.collectLatest(uiStates::updateIsAllExpand) }
-            launch { subCategorySortUseCase.sortPreferences.collectLatest(uiStates::updateSort) }
+            launch { getSubCategoryLoadingStateUseCase().collectLatest(uiState::updateIsLoading) }
+            launch { getAllSubCategoriesUseCase().collectLatest(uiState::updateAllSubCategories) }
+            launch { subCategoryAllExpandUseCase.isAllExpand.collectLatest(uiState::updateIsAllExpand) }
+            launch { subCategorySortUseCase.sortPreferences.collectLatest(uiState::updateSort) }
         }
     }
 
     override fun showToast(text: Int) {
-        uiStates.showToast(text)
+        uiState.showToast(text)
     }
 
     fun toggleAllExpand() {
@@ -74,7 +74,7 @@ class SubCategoryViewModel @Inject constructor(
 
     override fun editSubCategoryName(newSubCategory: StableSubCategory) {
         viewModelScope.launch {
-            uiStates.selectModeOff()
+            uiState.selectModeOff()
             super.editSubCategoryName(newSubCategory)
         }
     }

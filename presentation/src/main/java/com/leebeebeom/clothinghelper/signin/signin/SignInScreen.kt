@@ -34,7 +34,7 @@ fun SignInScreen(
     onForgotPasswordClick: () -> Unit,
     onEmailSignUpClick: () -> Unit,
     viewModel: SignInViewModel = hiltViewModel(),
-    uiStates: BaseSignInUpUIState = viewModel.uiState
+    uiState: BaseSignInUpUIState = viewModel.uiState
 ) {
     Column(
         modifier = Modifier
@@ -42,17 +42,17 @@ fun SignInScreen(
             .verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.Center
     ) {
         EmailTextField(
-            email = { uiStates.email },
-            error = { uiStates.emailError },
-            updateError = uiStates::updateEmailError,
-            onEmailChange = uiStates::onEmailChange
+            email = { uiState.email },
+            error = { uiState.emailError },
+            updateError = uiState::updateEmailError,
+            onEmailChange = uiState::onEmailChange
         )
 
         PasswordTextField(
-            password = { uiStates.password },
-            error = { uiStates.passwordError },
-            updateError = uiStates::updatePasswordError,
-            onPasswordChange = uiStates::onPasswordChange,
+            password = { uiState.password },
+            error = { uiState.passwordError },
+            updateError = uiState::updatePasswordError,
+            onPasswordChange = uiState::onPasswordChange,
             imeAction = ImeAction.Done
         )
 
@@ -60,7 +60,7 @@ fun SignInScreen(
 
         MaxWidthButton(
             text = R.string.sign_in,
-            enabled = { uiStates.buttonEnabled },
+            enabled = { uiState.buttonEnabled },
             onClick = viewModel::signInWithEmailAndPassword
         )
         SimpleHeightSpacer(dp = 8)
@@ -68,14 +68,14 @@ fun SignInScreen(
         SimpleHeightSpacer(dp = 8)
         // 프리뷰 시 주석 처리
         GoogleSignInButton(
-            enabled = { uiStates.googleButtonEnabled },
+            enabled = { uiState.googleButtonEnabled },
             onActivityResult = viewModel::signInWithGoogleEmail,
             disabled = viewModel::disableGoogleButton
         )
         SimpleHeightSpacer(dp = 4)
         SignUpText(onEmailSignUpClick)
 
-        SimpleToast(text = { uiStates.toastText }, toastShown = uiStates::toastShown)
+        SimpleToast(text = { uiState.toastText }, toastShown = uiState::toastShown)
     }
 }
 

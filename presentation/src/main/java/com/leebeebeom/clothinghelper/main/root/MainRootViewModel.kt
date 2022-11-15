@@ -31,7 +31,7 @@ class MainRootViewModel @Inject constructor(
     editSubCategoryNameUseCase: EditSubCategoryNameUseCase
 ) : EditSubCategoryNameViewModel(editSubCategoryNameUseCase, addSubCategoryUseCase) {
 
-    val uiStates = MainRootUiState()
+    val uiState = MainRootUiState()
 
     init {
         viewModelScope.launch {
@@ -40,15 +40,15 @@ class MainRootViewModel @Inject constructor(
                     if (it is FirebaseResult.Fail)
                         when (it.exception) {
                             is TimeoutCancellationException -> showToast(R.string.network_error_for_load)
-                            else -> uiStates.showToast(R.string.sub_categories_load_failed)
+                            else -> uiState.showToast(R.string.sub_categories_load_failed)
                         }
                 }
             }
 
-            launch { getSubCategoryLoadingStateUseCase().collectLatest(uiStates::updateIsLoading) }
-            launch { getAllSubCategoriesUseCase().collectLatest(uiStates::updateAllSubCategories) }
-            launch { mainScreenRootAllExpandUseCase.isAllExpand.collectLatest(uiStates::updateIsAllExpand) }
-            launch { getUserUseCase().collectLatest(uiStates::updateUser) }
+            launch { getSubCategoryLoadingStateUseCase().collectLatest(uiState::updateIsLoading) }
+            launch { getAllSubCategoriesUseCase().collectLatest(uiState::updateAllSubCategories) }
+            launch { mainScreenRootAllExpandUseCase.isAllExpand.collectLatest(uiState::updateIsAllExpand) }
+            launch { getUserUseCase().collectLatest(uiState::updateUser) }
         }
     }
 
@@ -59,7 +59,7 @@ class MainRootViewModel @Inject constructor(
     }
 
     override fun showToast(text: Int) {
-        uiStates.showToast(text)
+        uiState.showToast(text)
     }
 }
 

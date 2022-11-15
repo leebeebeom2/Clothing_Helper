@@ -18,24 +18,24 @@ import javax.inject.Inject
 class ResetPasswordViewModel @Inject constructor(private val resetPasswordUseCase: ResetPasswordUseCase) :
     ViewModel() {
 
-    val uiStates = ResetPasswordUIState()
+    val uiState = ResetPasswordUIState()
 
     fun sendResetPasswordEmail() {
         viewModelScope.launch {
-            when (val result = resetPasswordUseCase(uiStates.email)) {
+            when (val result = resetPasswordUseCase(uiState.email)) {
                 is AuthResult.Success -> {
-                    uiStates.showToast(R.string.email_send_complete)
-                    uiStates.updateIsTaskSuccess(true)
+                    uiState.showToast(R.string.email_send_complete)
+                    uiState.updateIsTaskSuccess(true)
                 }
                 is AuthResult.Fail -> {
                     setFireBaseError(
                         errorCode = result.errorCode,
-                        updateEmailError = uiStates::updateEmailError,
+                        updateEmailError = uiState::updateEmailError,
                         updatePasswordError = {},
-                        showToast = uiStates::showToast
+                        showToast = uiState::showToast
                     )
                 }
-                is AuthResult.UnknownFail -> uiStates.showToast(R.string.unknown_error)
+                is AuthResult.UnknownFail -> uiState.showToast(R.string.unknown_error)
             }
         }
     }

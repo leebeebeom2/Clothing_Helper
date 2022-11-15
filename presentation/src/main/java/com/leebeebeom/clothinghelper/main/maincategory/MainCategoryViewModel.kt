@@ -16,12 +16,12 @@ class MainCategoryViewModel @Inject constructor(
     private val getSubCategoryLoadingStateUseCase: GetSubCategoryLoadingStateUseCase
 ) : ViewModel() {
 
-    val uiStates = BaseMainUIState()
+    val uiState = BaseMainUIState()
 
     init {
         viewModelScope.launch {
-            launch { getSubCategoryLoadingStateUseCase().collectLatest(uiStates::updateIsLoading) }
-            launch { getAllSubCategoriesUseCase().collectLatest(uiStates::updateAllSubCategories) }
+            launch { getSubCategoryLoadingStateUseCase().collectLatest(uiState::updateIsLoading) }
+            launch { getAllSubCategoriesUseCase().collectLatest(uiState::updateAllSubCategories) }
         }
     }
 }

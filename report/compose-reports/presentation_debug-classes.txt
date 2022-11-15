@@ -1,9 +1,16 @@
-runtime class MaxWidthTextFieldState {
-  stable val label: Int
-  stable val placeholder: Int
-  stable val showKeyboardEnabled: Boolean
-  stable val keyboardOptions: KeyboardOptions
-  runtime val focusRequester: FocusRequester
-  stable val keyboardController: SoftwareKeyboardController?
-  <runtime stability> = Runtime(FocusRequester)
+stable class DrawerContentsState {
+  stable val essentialMenus: ImmutableList<EssentialMenu>
+  stable val mainCategories: ImmutableList<MainCategory>
+  <runtime stability> = 
+}
+stable class EssentialMenu {
+  stable val name: Int
+  stable val drawable: Int
+  stable val type: EssentialMenus
+  <runtime stability> = Stable
+}
+stable class MainCategory {
+  stable val name: Int
+  stable val type: SubCategoryParent
+  <runtime stability> = Stable
 }

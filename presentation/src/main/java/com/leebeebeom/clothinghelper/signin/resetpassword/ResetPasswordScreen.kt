@@ -36,11 +36,11 @@ import com.leebeebeom.clothinghelper.signin.base.EmailTextField
 @Composable
 fun ResetPasswordScreen(
     viewModel: ResetPasswordViewModel = hiltViewModel(),
-    uiStates: ResetPasswordUIState = viewModel.uiStates
+    uiState: ResetPasswordUIState = viewModel.uiState
 ) {
     TaskSuccess(
-        taskSuccess = { uiStates.isTaskSuccess },
-        consumeIsTaskSuccess = uiStates::consumeIsTaskSuccess)
+        taskSuccess = { uiState.isTaskSuccess },
+        consumeIsTaskSuccess = uiState::consumeIsTaskSuccess)
 
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
         Text(
@@ -50,22 +50,22 @@ fun ResetPasswordScreen(
         )
 
         EmailTextField(
-            email = { uiStates.email },
-            error = { uiStates.emailError },
-            updateError = uiStates::updateEmailError,
-            onEmailChange = uiStates::onEmailChange
+            email = { uiState.email },
+            error = { uiState.emailError },
+            updateError = uiState::updateEmailError,
+            onEmailChange = uiState::onEmailChange
         )
 
         SimpleHeightSpacer(dp = 12)
         MaxWidthButton(
             text = R.string.check,
-            enabled = { uiStates.buttonEnabled },
+            enabled = { uiState.buttonEnabled },
             onClick = viewModel::sendResetPasswordEmail
         )
         SimpleHeightSpacer(dp = 80)
     }
 
-    SimpleToast(text = { uiStates.toastText }, toastShown = uiStates::toastShown)
+    SimpleToast(text = { uiState.toastText }, toastShown = uiState::toastShown)
 }
 
 @Composable

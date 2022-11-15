@@ -37,7 +37,7 @@ TODO 리프레쉬
 @Composable
 fun MainCategoryScreen(
     viewModel: MainCategoryViewModel = hiltViewModel(),
-    uiStates: BaseMainUIState = viewModel.uiStates,
+    uiState: BaseMainUIState = viewModel.uiState,
     onMainCategoryClick: (SubCategoryParent) -> Unit
 ) {
     Column(
@@ -58,8 +58,8 @@ fun MainCategoryScreen(
                 MainCategoryCard(
                     modifier = modifier,
                     mainCategory = mainCategory,
-                    subCategoriesSize = uiStates::getSubCategoriesSize,
-                    isLoading = { uiStates.isLoading },
+                    subCategoriesSize = uiState::getSubCategoriesSize,
+                    isLoading = { uiState.isLoading },
                     onMainContentClick = onMainCategoryClick
                 )
             }

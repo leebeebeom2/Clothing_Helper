@@ -70,25 +70,25 @@ TODO 리프레쉬
 fun SubCategoryScreen(
     parent: SubCategoryParent,
     viewModel: SubCategoryViewModel = hiltViewModel(),
-    uiStates: SubCategoryUIState = viewModel.getUiStates(parent),
-    states: SubCategoryState = rememberSubCategoryState(),
+    uiState: SubCategoryUIState = viewModel.getUiState(parent),
+    state: SubCategoryState = rememberSubCategoryState(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     onSubCategoryClick: (StableSubCategory) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         SubCategoryContent(
             allExpandIconClick = viewModel::toggleAllExpand,
-            onLongClick = uiStates::selectModeOn,
+            onLongClick = uiState::selectModeOn,
             onSubCategoryClick = onSubCategoryClick,
             onSortClick = viewModel::changeSort,
             onOrderClick = viewModel::changeOrder,
             parent = parent,
-            isAllExpand = { uiStates.isAllExpand },
-            subCategories = { uiStates.subCategories },
-            sort = { uiStates.sort },
-            selectedSubCategoryKey = { uiStates.selectedSubCategoryKeys },
-            isSelectMode = { uiStates.isSelectMode },
-            onSelect = uiStates::onSelect
+            isAllExpand = { uiState.isAllExpand },
+            subCategories = { uiState.subCategories },
+            sort = { uiState.sort },
+            selectedSubCategoryKey = { uiState.selectedSubCategoryKeys },
+            isSelectMode = { uiState.isSelectMode },
+            onSelect = uiState::onSelect
         )
 
         val addSubCategoryButtonClick = remember<(String) -> Unit> {
@@ -96,37 +96,37 @@ fun SubCategoryScreen(
         }
         AddSubcategoryDialogFab(
             onPositiveButtonClick = addSubCategoryButtonClick,
-            subCategoryNames = { uiStates.subCategoryNames },
-            isSelectMode = { uiStates.isSelectMode }
+            subCategoryNames = { uiState.subCategoryNames },
+            isSelectMode = { uiState.isSelectMode }
         )
 
         EditSubCategoryNameDialog(
-            subCategoryNames = { uiStates.subCategoryNames },
+            subCategoryNames = { uiState.subCategoryNames },
             onPositiveButtonClick = viewModel::editSubCategoryName,
-            onDismiss = states::dismissEditDialog,
-            showDialog = { states.showEditDialog },
-            subCategory = { uiStates.firstSelectedSubCategory }
+            onDismiss = state::dismissEditDialog,
+            showDialog = { state.showEditDialog },
+            subCategory = { uiState.firstSelectedSubCategory }
         )
 
         SubCategoryBottomAppBar(
-            selectedSubCategoriesSize = { uiStates.selectedSubCategoryKeysSize },
-            isAllSelected = { uiStates.isAllSelected },
-            showEditIcon = { uiStates.showEditIcon },
-            showDeleteIcon = { uiStates.showDeleteIcon },
-            onAllSelectCheckBoxClick = uiStates::toggleAllSelect,
-            onEditSubCategoryNameClick = states::showEditDialog,
-            isSelectMode = { uiStates.isSelectMode }
+            selectedSubCategoriesSize = { uiState.selectedSubCategoryKeysSize },
+            isAllSelected = { uiState.isAllSelected },
+            showEditIcon = { uiState.showEditIcon },
+            showDeleteIcon = { uiState.showDeleteIcon },
+            onAllSelectCheckBoxClick = uiState::toggleAllSelect,
+            onEditSubCategoryNameClick = state::showEditDialog,
+            isSelectMode = { uiState.isSelectMode }
         )
 
         CenterDotProgressIndicator(
             backGround = MaterialTheme.colors.background,
-            isLoading = { uiStates.isLoading })
+            isLoading = { uiState.isLoading })
     }
 
-    SimpleToast(text = { uiStates.toastText }, toastShown = uiStates::toastShown)
+    SimpleToast(text = { uiState.toastText }, toastShown = uiState::toastShown)
 
-    BackHandler(enabled = uiStates.isSelectMode, onBack = {
-        coroutineScope.launch { uiStates.selectModeOff() }
+    BackHandler(enabled = uiState.isSelectMode, onBack = {
+        coroutineScope.launch { uiState.selectModeOff() }
     })
 }
 

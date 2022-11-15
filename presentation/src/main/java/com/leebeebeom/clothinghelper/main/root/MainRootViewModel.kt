@@ -16,6 +16,7 @@ import com.leebeebeom.clothinghelperdomain.usecase.subcategory.*
 import com.leebeebeom.clothinghelperdomain.usecase.user.GetUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,29 +35,20 @@ class MainRootViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            updateSubCategoriesUseCase().collect {
-                if (it is FirebaseResult.Fail)
-                    when (it.exception) {
-                        is TimeoutCancellationException -> showToast(R.string.network_error_for_load)
-                        else -> uiStates.showToast(R.string.sub_categories_load_failed)
-                    }
+            launch {
+                updateSubCategoriesUseCase().collectLatest {
+                    if (it is FirebaseResult.Fail)
+                        when (it.exception) {
+                            is TimeoutCancellationException -> showToast(R.string.network_error_for_load)
+                            else -> uiStates.showToast(R.string.sub_categories_load_failed)
+                        }
+                }
             }
-        }
 
-        viewModelScope.launch {
-            getSubCategoryLoadingStateUseCase().collect(uiStates::updateIsLoading)
-        }
-
-        viewModelScope.launch {
-            getAllSubCategoriesUseCase().collect(uiStates::updateAllSubCategories)
-        }
-
-        viewModelScope.launch {
-            mainScreenRootAllExpandUseCase.isAllExpand.collect(uiStates::updateIsAllExpand)
-        }
-
-        viewModelScope.launch {
-            getUserUseCase().collect(uiStates::updateUser)
+            launch { getSubCategoryLoadingStateUseCase().collectLatest(uiStates::updateIsLoading) }
+            launch { getAllSubCategoriesUseCase().collectLatest(uiStates::updateAllSubCategories) }
+            launch { mainScreenRootAllExpandUseCase.isAllExpand.collectLatest(uiStates::updateIsAllExpand) }
+            launch { getUserUseCase().collectLatest(uiStates::updateUser) }
         }
     }
 

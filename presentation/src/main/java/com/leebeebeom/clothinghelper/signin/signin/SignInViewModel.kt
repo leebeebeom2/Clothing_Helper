@@ -21,7 +21,6 @@ class SignInViewModel @Inject constructor(
 
     fun signInWithEmailAndPassword() {
         viewModelScope.launch {
-
             when (val result = signInUseCase(uiState.email, uiState.password)) {
                 is AuthResult.Success -> showToast(R.string.sign_in_complete)
                 is AuthResult.Fail -> setFireBaseError(

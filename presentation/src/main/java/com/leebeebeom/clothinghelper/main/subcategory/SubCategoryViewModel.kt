@@ -23,6 +23,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -46,19 +47,10 @@ class SubCategoryViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getSubCategoryLoadingStateUseCase().collect(uiStates::updateIsLoading)
-        }
-
-        viewModelScope.launch {
-            getAllSubCategoriesUseCase().collect(uiStates::updateAllSubCategories)
-        }
-
-        viewModelScope.launch {
-            subCategoryAllExpandUseCase.isAllExpand.collect(uiStates::updateIsAllExpand)
-        }
-
-        viewModelScope.launch {
-            subCategorySortUseCase.sortPreferences.collect(uiStates::updateSort)
+            launch { getSubCategoryLoadingStateUseCase().collectLatest(uiStates::updateIsLoading) }
+            launch { getAllSubCategoriesUseCase().collectLatest(uiStates::updateAllSubCategories) }
+            launch { subCategoryAllExpandUseCase.isAllExpand.collectLatest(uiStates::updateIsAllExpand) }
+            launch { subCategorySortUseCase.sortPreferences.collectLatest(uiStates::updateSort) }
         }
     }
 

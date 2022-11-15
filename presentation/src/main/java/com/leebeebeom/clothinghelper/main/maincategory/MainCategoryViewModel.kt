@@ -6,6 +6,7 @@ import com.leebeebeom.clothinghelper.main.base.BaseMainUIState
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetAllSubCategoriesUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoryLoadingStateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,11 +20,8 @@ class MainCategoryViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getSubCategoryLoadingStateUseCase().collect(uiStates::updateIsLoading)
-        }
-
-        viewModelScope.launch {
-            getAllSubCategoriesUseCase().collect(uiStates::updateAllSubCategories)
+            launch { getSubCategoryLoadingStateUseCase().collectLatest(uiStates::updateIsLoading) }
+            launch { getAllSubCategoriesUseCase().collectLatest(uiStates::updateAllSubCategories) }
         }
     }
 }

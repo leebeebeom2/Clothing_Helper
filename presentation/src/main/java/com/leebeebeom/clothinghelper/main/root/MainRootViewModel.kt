@@ -47,7 +47,7 @@ class MainRootViewModel @Inject constructor(
 
             launch { getSubCategoryLoadingStateUseCase().collectLatest(uiState::updateIsLoading) }
             launch { getAllSubCategoriesUseCase().collectLatest(uiState::updateAllSubCategories) }
-            launch { mainScreenRootAllExpandUseCase.isAllExpand.collectLatest(uiState::updateIsAllExpand) }
+            launch { mainScreenRootAllExpandUseCase.isAllExpanded.collectLatest(uiState::updateIsAllExpand) }
             launch { getUserUseCase().collectLatest(uiState::updateUser) }
         }
     }

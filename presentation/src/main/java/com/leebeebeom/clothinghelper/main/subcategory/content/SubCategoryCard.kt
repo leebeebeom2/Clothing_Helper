@@ -32,7 +32,7 @@ import kotlinx.collections.immutable.ImmutableSet
 fun SubCategoryCard(
     isExpanded: () -> Boolean,
     subCategory: () -> StableSubCategory,
-    isAllExpand: () -> Boolean,
+    isAllExpanded: () -> Boolean,
     onClick: () -> Unit,
     selectedCategoryKeys: () -> ImmutableSet<String>,
     updateIsExpanded: (Boolean) -> Unit,
@@ -49,7 +49,7 @@ fun SubCategoryCard(
                 subCategory = subCategory,
                 isSelectMode = isSelectMode,
                 isExpanded = isExpanded,
-                isAllExpand = isAllExpand,
+                isAllExpanded = isAllExpanded,
                 updateIsExpand = updateIsExpanded,
                 onExpandIconClick = toggleIsExpanded,
                 onCheckBoxClick = onClick,
@@ -64,7 +64,7 @@ fun SubCategoryCard(
 private fun SubCategoryCardTitle(
     subCategory: () -> StableSubCategory,
     isExpanded: () -> Boolean,
-    isAllExpand: () -> Boolean,
+    isAllExpanded: () -> Boolean,
     updateIsExpand: (Boolean) -> Unit,
     onExpandIconClick: () -> Unit,
     onCheckBoxClick: () -> Unit,
@@ -98,7 +98,7 @@ private fun SubCategoryCardTitle(
                 isExpanded = isExpanded,
                 onClick = onExpandIconClick,
                 modifier = Modifier.size(24.dp),
-                isAllExpand = isAllExpand,
+                isAllExpanded = isAllExpanded,
                 updateIsExpand = updateIsExpand
             )
         }

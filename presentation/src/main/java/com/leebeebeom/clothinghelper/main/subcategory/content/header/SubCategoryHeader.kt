@@ -25,7 +25,7 @@ import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
 @Composable
 fun SubCategoryHeader(
     parent: SubCategoryParent,
-    isAllExpand: () -> Boolean,
+    isAllExpanded: () -> Boolean,
     sort: () -> SubCategorySortPreferences,
     allExpandIconClick: () -> Unit,
     onSortClick: (SubCategorySort) -> Unit,
@@ -38,7 +38,7 @@ fun SubCategoryHeader(
 
         AllExpandIcon(
             allExpandIconClick = allExpandIconClick,
-            isAllExpand = isAllExpand
+            isAllExpanded = isAllExpanded
         )
         SortIcon(
             sort = sort,
@@ -58,13 +58,13 @@ fun HeaderText(parent: SubCategoryParent) {
 }
 
 @Composable
-private fun AllExpandIcon(allExpandIconClick: () -> Unit, isAllExpand: () -> Boolean) {
+private fun AllExpandIcon(allExpandIconClick: () -> Unit, isAllExpanded: () -> Boolean) {
     Box(modifier = Modifier.offset(0.dp, 0.dp)) {
         AllExpandIcon(
             size = 22.dp,
             onClick = allExpandIconClick,
             tint = LocalContentColor.current.copy(0.5f),
-            isAllExpand = isAllExpand
+            isAllExpanded = isAllExpanded
         )
     }
 }

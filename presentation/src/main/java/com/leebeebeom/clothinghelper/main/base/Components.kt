@@ -22,12 +22,12 @@ fun AllExpandIcon(
     size: Dp,
     onClick: () -> Unit,
     tint: Color,
-    isAllExpand: () -> Boolean
+    isAllExpanded: () -> Boolean
 ) {
     val painter = rememberAnimatedVectorPainter(
         animatedImageVector = AnimatedImageVector.animatedVectorResource(
             id = R.drawable.all_expand_anim
-        ), atEnd = isAllExpand()
+        ), atEnd = isAllExpanded()
     )
 
     CustomIconButton(
@@ -43,10 +43,10 @@ fun ExpandIcon(
     modifier: Modifier = Modifier,
     isExpanded: () -> Boolean,
     onClick: () -> Unit,
-    isAllExpand: () -> Boolean,
+    isAllExpanded: () -> Boolean,
     updateIsExpand: (Boolean) -> Unit
 ) {
-    val isAllExpandVal = isAllExpand()
+    val isAllExpandVal = isAllExpanded()
     var rememberedIsAllExpand by rememberSaveable {
         updateIsExpand(isAllExpandVal)
         mutableStateOf(isAllExpandVal)

@@ -62,7 +62,7 @@ fun MainRoot(
                 DrawerContents(
                     user = { uiState.user },
                     isLoading = { uiState.isLoading },
-                    isAllExpand = { uiState.isAllExpand },
+                    isAllExpanded = { uiState.isAllExpanded },
                     subCategories = uiState::getSubCategories,
                     subCategoriesSize = uiState::getSubCategoriesSize,
                     onEssentialMenuClick = {

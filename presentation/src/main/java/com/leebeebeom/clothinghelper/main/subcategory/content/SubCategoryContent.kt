@@ -41,7 +41,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SubCategoryContent(
     parent: SubCategoryParent,
-    isAllExpand: () -> Boolean,
+    isAllExpanded: () -> Boolean,
     subCategories: () -> ImmutableList<StableSubCategory>,
     sort: () -> SubCategorySortPreferences,
     state: SubCategoryContentState = rememberSubCategoryContentState(),
@@ -88,7 +88,7 @@ fun SubCategoryContent(
             item {
                 SubCategoryHeader(
                     parent = parent,
-                    isAllExpand = isAllExpand,
+                    isAllExpanded = isAllExpanded,
                     sort = sort,
                     allExpandIconClick = allExpandIconClick,
                     onSortClick = onSortClick,
@@ -99,7 +99,7 @@ fun SubCategoryContent(
                 var isExpanded by rememberSaveable { mutableStateOf(false) }
                 SubCategoryCard(
                     subCategory = { it },
-                    isAllExpand = isAllExpand,
+                    isAllExpanded = isAllExpanded,
                     onClick = { if (isSelectMode()) onSelect(it.key) else onSubCategoryClick(it) },
                     selectedCategoryKeys = selectedSubCategoryKey,
                     updateIsExpanded = { isExpanded = it },

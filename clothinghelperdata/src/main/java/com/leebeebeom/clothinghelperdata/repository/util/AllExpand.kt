@@ -11,7 +11,7 @@ import java.io.IOException
 abstract class AllExpandPreference(protected val dataStore: DataStore<Preferences>) {
     abstract val allExpandKey: Preferences.Key<Boolean>
 
-    val isAllExpand = dataStore.data
+    val isAllExpanded = dataStore.data
         .catch {
             if (it is IOException) emit(emptyPreferences())
             else throw it

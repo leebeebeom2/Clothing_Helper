@@ -39,7 +39,7 @@ import kotlinx.collections.immutable.toImmutableList
 fun DrawerContents(
     user: () -> StableUser?,
     isLoading: () -> Boolean,
-    isAllExpand: () -> Boolean,
+    isAllExpanded: () -> Boolean,
     subCategories: (SubCategoryParent) -> ImmutableList<StableSubCategory>,
     subCategoriesSize: (SubCategoryParent) -> Int,
     state: DrawerContentsState = remember { DrawerContentsState() },
@@ -69,7 +69,7 @@ fun DrawerContents(
 
                 item {
                     IconWithDivider(
-                        isAllExpand = isAllExpand,
+                        isAllExpanded = isAllExpanded,
                         onCLick = allExpandIconClick
                     )
                 }
@@ -79,7 +79,7 @@ fun DrawerContents(
                         mainCategory = it,
                         subCategories = subCategories,
                         isLoading = isLoading,
-                        isAllExpand = isAllExpand,
+                        isAllExpanded = isAllExpanded,
                         onMainCategoryClick = onMainCategoryClick,
                         onSubCategoryClick = onSubCategoryClick,
                         subCategoriesSize = subCategoriesSize,
@@ -94,14 +94,14 @@ fun DrawerContents(
 }
 
 @Composable
-private fun IconWithDivider(isAllExpand: () -> Boolean, onCLick: () -> Unit) {
+private fun IconWithDivider(isAllExpanded: () -> Boolean, onCLick: () -> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(end = 4.dp)) {
         Divider(color = Disabled, modifier = Modifier.weight(1f))
         AllExpandIcon(
             size = 20.dp,
             onClick = onCLick,
             tint = LocalContentColor.current.copy(0.6f),
-            isAllExpand = isAllExpand
+            isAllExpanded = isAllExpanded
         )
     }
 }

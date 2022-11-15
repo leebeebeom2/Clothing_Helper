@@ -86,10 +86,10 @@ open class BaseMainUIState : BaseUIState() {
 }
 
 open class BaseIsAllExpandState : BaseMainUIState() {
-    var isAllExpand by mutableStateOf(false)
+    var isAllExpanded by mutableStateOf(false)
         private set
 
-    fun updateIsAllExpand(isAllExpand: Boolean) {
-        this.isAllExpand = isAllExpand
+    fun updateIsAllExpand(isAllExpanded: Boolean) {
+        this.isAllExpanded = isAllExpanded
     }
 }

@@ -49,7 +49,7 @@ class SubCategoryViewModel @Inject constructor(
         viewModelScope.launch {
             launch { getSubCategoryLoadingStateUseCase().collectLatest(uiState::updateIsLoading) }
             launch { getAllSubCategoriesUseCase().collectLatest(uiState::updateAllSubCategories) }
-            launch { subCategoryAllExpandUseCase.isAllExpand.collectLatest(uiState::updateIsAllExpand) }
+            launch { subCategoryAllExpandUseCase.isAllExpanded.collectLatest(uiState::updateIsAllExpand) }
             launch { subCategorySortUseCase.sortPreferences.collectLatest(uiState::updateSort) }
         }
     }

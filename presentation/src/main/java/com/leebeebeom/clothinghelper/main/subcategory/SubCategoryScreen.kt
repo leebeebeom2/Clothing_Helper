@@ -83,7 +83,7 @@ fun SubCategoryScreen(
             onSortClick = viewModel::changeSort,
             onOrderClick = viewModel::changeOrder,
             parent = parent,
-            isAllExpand = { uiState.isAllExpand },
+            isAllExpanded = { uiState.isAllExpanded },
             subCategories = { uiState.subCategories },
             sort = { uiState.sort },
             selectedSubCategoryKey = { uiState.selectedSubCategoryKeys },

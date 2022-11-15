@@ -26,7 +26,7 @@ fun DrawerMainCategory(
     subCategories: (SubCategoryParent) -> ImmutableList<StableSubCategory>,
     subCategoriesSize: (SubCategoryParent) -> Int,
     isLoading: () -> Boolean,
-    isAllExpand: () -> Boolean,
+    isAllExpanded: () -> Boolean,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (StableSubCategory) -> Unit,
     subCategoryNames: (SubCategoryParent) -> ImmutableList<String>,
@@ -68,7 +68,7 @@ fun DrawerMainCategory(
             ExpandIcon(
                 isLoading = isLoading,
                 isExpanded = { isExpanded },
-                isAllExpand = isAllExpand,
+                isAllExpanded = isAllExpanded,
                 onClick = { isExpanded = !isExpanded },
                 subCategoriesSize = { subCategoriesSize(mainCategory.type) },
                 updateIsExpand = { isExpanded = it }
@@ -89,7 +89,7 @@ private fun ExpandIcon(
     isLoading: () -> Boolean,
     isExpanded: () -> Boolean,
     onClick: () -> Unit,
-    isAllExpand: () -> Boolean,
+    isAllExpanded: () -> Boolean,
     subCategoriesSize: () -> Int,
     updateIsExpand: (Boolean) -> Unit
 ) {
@@ -102,7 +102,7 @@ private fun ExpandIcon(
     else if (subCategoriesSize() > 0) ExpandIcon(
         isExpanded = isExpanded,
         onClick = onClick,
-        isAllExpand = isAllExpand,
+        isAllExpanded = isAllExpanded,
         updateIsExpand = updateIsExpand
     )
 }

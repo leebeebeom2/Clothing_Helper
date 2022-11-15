@@ -38,7 +38,7 @@ fun SubCategoryHeader(
 
         AllExpandIcon(
             allExpandIconClick = allExpandIconClick,
-            allExpand = isAllExpand
+            isAllExpand = isAllExpand
         )
         SortIcon(
             sort = sort,
@@ -58,13 +58,13 @@ fun HeaderText(parent: SubCategoryParent) {
 }
 
 @Composable
-private fun AllExpandIcon(allExpandIconClick: () -> Unit, allExpand: () -> Boolean) {
+private fun AllExpandIcon(allExpandIconClick: () -> Unit, isAllExpand: () -> Boolean) {
     Box(modifier = Modifier.offset(0.dp, 0.dp)) {
         AllExpandIcon(
             size = 22.dp,
             onClick = allExpandIconClick,
             tint = LocalContentColor.current.copy(0.5f),
-            isAllExpand = allExpand
+            isAllExpand = isAllExpand
         )
     }
 }

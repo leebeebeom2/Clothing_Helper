@@ -3,7 +3,7 @@ package com.leebeebeom.clothinghelperdomain.repository
 import kotlinx.coroutines.flow.Flow
 
 interface SubCategoryPreferencesRepository {
-    val allExpand: Flow<Boolean>
+    val isAllExpand: Flow<Boolean>
     val sort: Flow<SubCategorySortPreferences>
 
     suspend fun toggleAllExpand()

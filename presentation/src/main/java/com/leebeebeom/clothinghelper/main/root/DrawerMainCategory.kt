@@ -33,7 +33,7 @@ fun DrawerMainCategory(
     onAddSubCategoryPositiveClick: (StableSubCategory) -> Unit,
     onEditSubCategoryNamePositiveClick: (StableSubCategory) -> Unit
 ) {
-    var isExpand by rememberSaveable { mutableStateOf(false) }
+    var isExpanded by rememberSaveable { mutableStateOf(false) }
     var showMainCategoryDropdownMenu by rememberSaveable { mutableStateOf(false) }
 
     Column {
@@ -67,15 +67,15 @@ fun DrawerMainCategory(
             )
             ExpandIcon(
                 isLoading = isLoading,
-                isExpand = { isExpand },
+                isExpanded = { isExpanded },
                 isAllExpand = isAllExpand,
-                onClick = { isExpand = !isExpand },
+                onClick = { isExpanded = !isExpanded },
                 subCategoriesSize = { subCategoriesSize(mainCategory.type) },
-                updateIsExpand = { isExpand = it }
+                updateIsExpand = { isExpanded = it }
             )
         }
         SubCategories(
-            isExpand = { isExpand },
+            isExpanded = { isExpanded },
             subCategories = { subCategories(mainCategory.type) },
             onClick = onSubCategoryClick,
             onEditSubCategoryNamePositiveClick = onEditSubCategoryNamePositiveClick,
@@ -87,7 +87,7 @@ fun DrawerMainCategory(
 @Composable
 private fun ExpandIcon(
     isLoading: () -> Boolean,
-    isExpand: () -> Boolean,
+    isExpanded: () -> Boolean,
     onClick: () -> Unit,
     isAllExpand: () -> Boolean,
     subCategoriesSize: () -> Int,
@@ -100,7 +100,7 @@ private fun ExpandIcon(
             color = MaterialTheme.colors.surface.copy(ContentAlpha.disabled)
         )
     else if (subCategoriesSize() > 0) ExpandIcon(
-        isExpanded = isExpand,
+        isExpanded = isExpanded,
         onClick = onClick,
         isAllExpand = isAllExpand,
         updateIsExpand = updateIsExpand
@@ -109,14 +109,14 @@ private fun ExpandIcon(
 
 @Composable
 private fun SubCategories(
-    isExpand: () -> Boolean,
+    isExpanded: () -> Boolean,
     subCategories: () -> ImmutableList<StableSubCategory>,
     onClick: (StableSubCategory) -> Unit,
     onEditSubCategoryNamePositiveClick: (StableSubCategory) -> Unit,
     subCategoryNames: () -> ImmutableList<String>
 ) {
     AnimatedVisibility(
-        visible = isExpand(),
+        visible = isExpanded(),
         enter = listExpand,
         exit = listShrink
     ) {

@@ -5,7 +5,7 @@ import com.leebeebeom.clothinghelperdomain.repository.SubCategoryPreferencesRepo
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
 
 class SubCategoryAllExpandUseCase(private val subCategoryPreferencesRepository: SubCategoryPreferencesRepository) {
-    val isAllExpand get() = subCategoryPreferencesRepository.allExpand
+    val isAllExpand get() = subCategoryPreferencesRepository.isAllExpand
 
     suspend fun toggleAllExpand() = subCategoryPreferencesRepository.toggleAllExpand()
 }

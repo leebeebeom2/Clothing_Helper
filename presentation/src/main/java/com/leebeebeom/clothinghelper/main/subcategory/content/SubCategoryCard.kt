@@ -157,9 +157,9 @@ private fun TitleCircleCheckBox(
 }
 
 @Composable
-private fun SubCategoryInfo(isExpand: () -> Boolean) {
+private fun SubCategoryInfo(isExpanded: () -> Boolean) {
     AnimatedVisibility(
-        visible = isExpand(),
+        visible = isExpanded(),
         enter = Anime.SubCategoryCard.expandIn,
         exit = Anime.SubCategoryCard.shrinkOut
     ) {

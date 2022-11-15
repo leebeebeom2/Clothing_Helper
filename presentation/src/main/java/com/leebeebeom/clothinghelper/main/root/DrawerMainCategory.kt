@@ -70,6 +70,7 @@ fun DrawerMainCategory(
                 isExpand = { isExpand },
                 isAllExpand = isAllExpand,
                 onClick = { isExpand = !isExpand },
+                subCategoriesSize = { subCategoriesSize(mainCategory.type) },
                 updateIsExpand = { isExpand = it }
             )
         }
@@ -89,6 +90,7 @@ private fun ExpandIcon(
     isExpand: () -> Boolean,
     onClick: () -> Unit,
     isAllExpand: () -> Boolean,
+    subCategoriesSize: () -> Int,
     updateIsExpand: (Boolean) -> Unit
 ) {
     if (isLoading())
@@ -97,7 +99,7 @@ private fun ExpandIcon(
             size = 4.dp,
             color = MaterialTheme.colors.surface.copy(ContentAlpha.disabled)
         )
-    else ExpandIcon(
+    else if (subCategoriesSize() > 0) ExpandIcon(
         isExpanded = isExpand,
         onClick = onClick,
         isAllExpand = isAllExpand,

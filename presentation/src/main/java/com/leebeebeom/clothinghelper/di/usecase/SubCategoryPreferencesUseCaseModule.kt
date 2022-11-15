@@ -1,6 +1,6 @@
 package com.leebeebeom.clothinghelper.di.usecase
 
-import com.leebeebeom.clothinghelperdata.repository.SubCategoryPreferencesRepositoryImpl
+import com.leebeebeom.clothinghelperdata.repository.preferences.SubCategoryPreferencesRepositoryImpl
 import com.leebeebeom.clothinghelperdomain.usecase.preferences.SubCategoryAllExpandUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.preferences.SubCategorySortUseCase
 import dagger.Module

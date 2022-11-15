@@ -1,7 +1,8 @@
-package com.leebeebeom.clothinghelperdata.repository
+package com.leebeebeom.clothinghelperdata.repository.preferences
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
+import com.leebeebeom.clothinghelperdata.repository.util.AllExpandPreference
 import com.leebeebeom.clothinghelperdomain.repository.SortOrder
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryPreferencesRepository
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
@@ -11,15 +12,10 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 
-class SubCategoryPreferencesRepositoryImpl(private val subCategoryDataStore: DataStore<Preferences>) :
-    SubCategoryPreferencesRepository {
-    override val isAllExpand: Flow<Boolean> = subCategoryDataStore.data
-        .catch {
-            if (it is IOException) emit(emptyPreferences())
-            else throw it
-        }.map { it[SubCategoryPreferenceKeys.ALL_EXPAND] ?: false }
+class SubCategoryPreferencesRepositoryImpl(dataStore: DataStore<Preferences>) :
+    AllExpandPreference(dataStore), SubCategoryPreferencesRepository {
 
-    override val sort: Flow<SubCategorySortPreferences> = subCategoryDataStore.data
+    override val sort: Flow<SubCategorySortPreferences> = dataStore.data
         .catch {
             if (it is IOException) emit(emptyPreferences())
             else throw it
@@ -30,24 +26,19 @@ class SubCategoryPreferencesRepositoryImpl(private val subCategoryDataStore: Dat
             SubCategorySortPreferences(enumValueOf(sort), enumValueOf(order))
         }
 
-    override suspend fun toggleAllExpand() {
-        subCategoryDataStore.edit {
-            val current = it[SubCategoryPreferenceKeys.ALL_EXPAND] ?: false
-            it[SubCategoryPreferenceKeys.ALL_EXPAND] = !current
-        }
-    }
-
     override suspend fun changeSort(subCategorySort: SubCategorySort) {
-        subCategoryDataStore.edit {
+        dataStore.edit {
             it[SubCategoryPreferenceKeys.SORT] = subCategorySort.name
         }
     }
 
     override suspend fun changeOrder(sortOrder: SortOrder) {
-        subCategoryDataStore.edit {
+        dataStore.edit {
             it[SubCategoryPreferenceKeys.ORDER] = sortOrder.name
         }
     }
+
+    override val allExpandKey = SubCategoryPreferenceKeys.ALL_EXPAND
 }
 
 private object SubCategoryPreferenceKeys {

@@ -17,7 +17,7 @@ import androidx.compose.ui.window.Dialog
 import com.leebeebeom.clothinghelper.R
 
 @Composable
-fun DialogRoot(onDismiss: () -> Unit, content: @Composable () -> Unit){
+fun DialogRoot(onDismiss: () -> Unit, content: @Composable () -> Unit) {
     Dialog(onDismissRequest = onDismiss) {
         Surface(color = MaterialTheme.colors.surface, shape = RoundedCornerShape(20.dp)) {
             Column(
@@ -33,7 +33,7 @@ fun DialogRoot(onDismiss: () -> Unit, content: @Composable () -> Unit){
 }
 
 @Composable
-fun DialogTitle(@StringRes text: Int){
+fun DialogTitle(@StringRes text: Int) {
     Text(
         text = stringResource(id = text),
         style = MaterialTheme.typography.subtitle1,

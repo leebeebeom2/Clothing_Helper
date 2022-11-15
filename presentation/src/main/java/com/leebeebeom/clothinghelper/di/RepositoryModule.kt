@@ -2,10 +2,10 @@ package com.leebeebeom.clothinghelper.di
 
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
-import com.leebeebeom.clothinghelperdata.repository.preferences.MainRootPreferencesRepositoryImpl
-import com.leebeebeom.clothinghelperdata.repository.preferences.SubCategoryPreferencesRepositoryImpl
 import com.leebeebeom.clothinghelperdata.repository.SubCategoryRepositoryImpl
 import com.leebeebeom.clothinghelperdata.repository.UserRepositoryImpl
+import com.leebeebeom.clothinghelperdata.repository.preferences.MainRootPreferencesRepositoryImpl
+import com.leebeebeom.clothinghelperdata.repository.preferences.SubCategoryPreferencesRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

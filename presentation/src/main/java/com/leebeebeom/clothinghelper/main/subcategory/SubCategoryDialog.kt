@@ -75,7 +75,7 @@ open class BaseSubCategoryDialogState(
         textFieldValue = newTextFiled
     }
 
-    fun initTextFieldValue(){
+    fun initTextFieldValue() {
         textFieldValue = textFieldValue.copy("")
     }
 }

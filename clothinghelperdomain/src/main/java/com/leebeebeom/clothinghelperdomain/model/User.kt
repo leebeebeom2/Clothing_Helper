@@ -12,7 +12,7 @@ data class SignIn(
 )
 
 data class SignUp(
-    val email:String,
+    val email: String,
     val password: String,
     val name: String
 )

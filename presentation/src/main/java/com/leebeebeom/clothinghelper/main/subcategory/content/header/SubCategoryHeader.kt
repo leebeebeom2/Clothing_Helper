@@ -95,7 +95,7 @@ private fun SortIcon(
     }
 }
 
-fun headerStringRes(parent: SubCategoryParent):Int {
+fun headerStringRes(parent: SubCategoryParent): Int {
     return when (parent) {
         SubCategoryParent.TOP -> R.string.top
         SubCategoryParent.BOTTOM -> R.string.bottom

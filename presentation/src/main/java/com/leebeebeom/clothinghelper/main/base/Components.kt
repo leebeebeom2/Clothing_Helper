@@ -26,7 +26,7 @@ fun AllExpandIcon(
 ) {
     val painter = rememberAnimatedVectorPainter(
         animatedImageVector = AnimatedImageVector.animatedVectorResource(
-            id = R.drawable.all_expand_anim
+            id = R.drawable.all_expanded_anim
         ), atEnd = isAllExpanded()
     )
 

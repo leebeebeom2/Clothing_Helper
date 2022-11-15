@@ -40,7 +40,8 @@ fun ResetPasswordScreen(
 ) {
     TaskSuccess(
         taskSuccess = { uiState.isTaskSuccess },
-        consumeIsTaskSuccess = uiState::consumeIsTaskSuccess)
+        consumeIsTaskSuccess = uiState::consumeIsTaskSuccess
+    )
 
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
         Text(

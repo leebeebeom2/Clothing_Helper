@@ -35,50 +35,50 @@ class UserRepositoryImpl : BaseRepository(false), UserRepository {
 
     override suspend fun googleSignIn(credential: Any?): AuthResult {
         return authTry("googleSignIn") {
-                val authCredential = credential as AuthCredential
+            val authCredential = credential as AuthCredential
 
-                val authResult = auth.signInWithCredential(authCredential).await()
+            val authResult = auth.signInWithCredential(authCredential).await()
 
-                val user = authResult.user.toUser()!!
+            val user = authResult.user.toUser()!!
 
-                val isNewer = authResult.additionalUserInfo!!.isNewUser
+            val isNewer = authResult.additionalUserInfo!!.isNewUser
 
-                if (isNewer) pushNewUser(user)
-                else updateUserAndUpdateSignIn(user)
+            if (isNewer) pushNewUser(user)
+            else updateUserAndUpdateSignIn(user)
 
-                AuthResult.Success(user, isNewer)
-            }
+            AuthResult.Success(user, isNewer)
         }
+    }
 
     override suspend fun signIn(signIn: SignIn): AuthResult {
         return authTry("signIn") {
-                val user = auth.signInWithEmailAndPassword(signIn.email, signIn.password)
-                    .await().user.toUser()!!
-                updateUserAndUpdateSignIn(user)
-                AuthResult.Success(user, false)
-            }
+            val user = auth.signInWithEmailAndPassword(signIn.email, signIn.password)
+                .await().user.toUser()!!
+            updateUserAndUpdateSignIn(user)
+            AuthResult.Success(user, false)
+        }
     }
 
     override suspend fun signUp(signUp: SignUp): AuthResult {
         return authTry("signUp") {
-                val user = auth.createUserWithEmailAndPassword(signUp.email, signUp.password)
-                    .await().user!!
+            val user = auth.createUserWithEmailAndPassword(signUp.email, signUp.password)
+                .await().user!!
 
-                val request = userProfileChangeRequest { displayName = signUp.name }
-                user.updateProfile(request).await()
+            val request = userProfileChangeRequest { displayName = signUp.name }
+            user.updateProfile(request).await()
 
-                val userObj = user.toUser()!!.copy(name = signUp.name)
+            val userObj = user.toUser()!!.copy(name = signUp.name)
 
-                pushNewUser(userObj)
+            pushNewUser(userObj)
 
-                AuthResult.Success(user = userObj, isNewer = true)
-            }
+            AuthResult.Success(user = userObj, isNewer = true)
+        }
     }
 
     override suspend fun resetPasswordEmail(email: String): AuthResult {
         return authTry("resetPasswordEmail") {
-                auth.sendPasswordResetEmail(email).await()
-                AuthResult.Success()
+            auth.sendPasswordResetEmail(email).await()
+            AuthResult.Success()
         }
     }
 

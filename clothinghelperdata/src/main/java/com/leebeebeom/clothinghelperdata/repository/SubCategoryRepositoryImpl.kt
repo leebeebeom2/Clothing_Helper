@@ -15,8 +15,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class SubCategoryRepositoryImpl : BaseRepository(true), SubCategoryRepository {
+@Singleton
+class SubCategoryRepositoryImpl @Inject constructor() : BaseRepository(true),
+    SubCategoryRepository {
     private val root = Firebase.database.reference
 
     private val _allSubCategories = MutableStateFlow(List(4) { emptyList<SubCategory>() })

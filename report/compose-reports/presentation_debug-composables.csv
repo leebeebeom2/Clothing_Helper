@@ -1,7 +1,1 @@
 package,name,composable,skippable,restartable,readonly,inline,isLambda,hasDefaults,defaultsGroup,groups,calls,
-com.leebeebeom.clothinghelper.main.root.DrawerContents,DrawerContents,1,1,1,0,0,0,0,0,1,2,
-com.leebeebeom.clothinghelper.main.root.IconWithDivider,IconWithDivider,1,1,1,0,0,0,0,0,1,1,
-com.leebeebeom.clothinghelper.main.root.EssentialMenu,EssentialMenu,1,1,1,0,0,0,0,0,1,2,
-com.leebeebeom.clothinghelper.main.root.DrawerContentRow,DrawerContentRow,1,1,1,0,0,0,0,0,1,4,
-com.leebeebeom.clothinghelper.main.root.DrawerContentText,DrawerContentText,1,1,1,0,0,0,0,0,1,1,
-com.leebeebeom.clothinghelper.main.root.DrawerContentText,DrawerContentText,1,1,1,0,0,0,0,0,1,1,

@@ -1,41 +1,31 @@
 package com.leebeebeom.clothinghelper.di
 
-import android.content.Context
-import androidx.datastore.preferences.preferencesDataStore
 import com.leebeebeom.clothinghelperdata.repository.SubCategoryRepositoryImpl
 import com.leebeebeom.clothinghelperdata.repository.UserRepositoryImpl
 import com.leebeebeom.clothinghelperdata.repository.preferences.MainRootPreferencesRepositoryImpl
 import com.leebeebeom.clothinghelperdata.repository.preferences.SubCategoryPreferencesRepositoryImpl
+import com.leebeebeom.clothinghelperdomain.repository.MainScreenRootPreferencesRepository
+import com.leebeebeom.clothinghelperdomain.repository.SubCategoryPreferencesRepository
+import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
+import com.leebeebeom.clothinghelperdomain.repository.UserRepository
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class RepositoryModule {
-    @Singleton
-    @Provides
-    fun subCategoryRepository() = SubCategoryRepositoryImpl()
+abstract class RepositoryModule {
 
-    @Singleton
-    @Provides
-    fun userRepository() = UserRepositoryImpl()
+    @Binds
+    abstract fun userRepository(impl: UserRepositoryImpl): UserRepository
 
-    @Singleton
-    @Provides
-    fun subCategoryPreferencesRepository(@ApplicationContext context: Context) =
-        SubCategoryPreferencesRepositoryImpl(context.subCategoryDatastore)
+    @Binds
+    abstract fun subCategoryRepository(impl: SubCategoryRepositoryImpl): SubCategoryRepository
 
-    @Singleton
-    @Provides
-    fun mainScreenRootPreferencesRepository(@ApplicationContext context: Context) =
-        MainRootPreferencesRepositoryImpl(context.mainScreenRootDatastore)
+    @Binds
+    abstract fun subCategoryPreferencesRepository(impl: SubCategoryPreferencesRepositoryImpl): SubCategoryPreferencesRepository
+
+    @Binds
+    abstract fun mainRootPreferencesRepository(impl: MainRootPreferencesRepositoryImpl): MainScreenRootPreferencesRepository
 }
-
-private const val SUBCATEGORY = "subCategory_preferences"
-private const val MAIN_SCREEN_ROO = "main_screen_root_preferences"
-private val Context.subCategoryDatastore by preferencesDataStore(name = SUBCATEGORY)
-private val Context.mainScreenRootDatastore by preferencesDataStore(name = MAIN_SCREEN_ROO)

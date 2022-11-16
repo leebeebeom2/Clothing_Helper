@@ -9,6 +9,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.CustomIconButton
@@ -38,6 +39,8 @@ private fun RowScope.HeaderText(name: () -> String, email: () -> String) {
             .padding(start = 4.dp)
             .weight(1f),
         style = MaterialTheme.typography.body1,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
         text = "${name()}(${email()})"
     )
 }

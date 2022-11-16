@@ -3,14 +3,18 @@ package com.leebeebeom.clothinghelperdomain.usecase.preferences
 import com.leebeebeom.clothinghelperdomain.repository.SortOrder
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryPreferencesRepository
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
+import dagger.hilt.android.scopes.ViewModelScoped
+import javax.inject.Inject
 
-class SubCategoryAllExpandUseCase(private val subCategoryPreferencesRepository: SubCategoryPreferencesRepository) {
+@ViewModelScoped
+class SubCategoryAllExpandUseCase @Inject constructor(private val subCategoryPreferencesRepository: SubCategoryPreferencesRepository) {
     val isAllExpanded get() = subCategoryPreferencesRepository.isAllExpanded
 
     suspend fun toggleAllExpand() = subCategoryPreferencesRepository.toggleAllExpand()
 }
 
-class SubCategorySortUseCase(private val subCategoryPreferencesRepository: SubCategoryPreferencesRepository) {
+@ViewModelScoped
+class SubCategorySortUseCase @Inject constructor(private val subCategoryPreferencesRepository: SubCategoryPreferencesRepository) {
     val sortPreferences get() = subCategoryPreferencesRepository.sort
 
     suspend fun changeSort(subCategorySort: SubCategorySort) =

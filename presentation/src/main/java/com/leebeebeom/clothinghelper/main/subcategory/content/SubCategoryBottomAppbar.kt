@@ -64,7 +64,7 @@ fun BoxScope.SubCategoryBottomAppBar(
 }
 
 @Composable
-fun BottomAppBarIcon(
+private fun BottomAppBarIcon(
     visible: () -> Boolean, onClick: () -> Unit, @DrawableRes drawable: Int, @StringRes text: Int
 ) {
     if (visible()) Column(horizontalAlignment = Alignment.CenterHorizontally) {

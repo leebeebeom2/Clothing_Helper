@@ -3,17 +3,22 @@ package com.leebeebeom.clothinghelperdomain.usecase.user
 import com.leebeebeom.clothinghelperdomain.model.*
 import com.leebeebeom.clothinghelperdomain.repository.UserRepository
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.PushInitialSubCategoriesUseCase
+import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
 
-class GetSignInLoadingStateUseCase(private val userRepository: UserRepository) {
+@ViewModelScoped
+class GetSignInLoadingStateUseCase @Inject constructor(private val userRepository: UserRepository) {
     operator fun invoke() = userRepository.isLoading
 }
 
-class GetSignInStateUseCase(private val userRepository: UserRepository) {
+@ViewModelScoped
+class GetSignInStateUseCase @Inject constructor(private val userRepository: UserRepository) {
     operator fun invoke() = userRepository.isSignIn
 }
 
-class GoogleSignInUseCase(
+@ViewModelScoped
+class GoogleSignInUseCase @Inject constructor(
     private val userRepository: UserRepository,
     private val pushInitialSubCategoriesUseCase: PushInitialSubCategoriesUseCase
 ) {
@@ -29,13 +34,15 @@ class GoogleSignInUseCase(
     }
 }
 
-class SignInUseCase(private val userRepository: UserRepository) {
+@ViewModelScoped
+class SignInUseCase @Inject constructor(private val userRepository: UserRepository) {
     suspend operator fun invoke(email: String, password: String): AuthResult {
         return userRepository.signIn(signIn = SignIn(email = email, password = password))
     }
 }
 
-class SignUpUseCase(
+@ViewModelScoped
+class SignUpUseCase @Inject constructor(
     private val userRepository: UserRepository,
     private val pushInitialSubCategoriesUseCase: PushInitialSubCategoriesUseCase
 ) {
@@ -54,19 +61,22 @@ class SignUpUseCase(
     }
 }
 
-class ResetPasswordUseCase(private val userRepository: UserRepository) {
+@ViewModelScoped
+class ResetPasswordUseCase @Inject constructor(private val userRepository: UserRepository) {
     suspend operator fun invoke(email: String): AuthResult {
         return userRepository.resetPasswordEmail(email = email)
     }
 }
 
-class GetUserUseCase(private val userRepository: UserRepository) {
+@ViewModelScoped
+class GetUserUseCase @Inject constructor(private val userRepository: UserRepository) {
     operator fun invoke(): StateFlow<User?> {
         return userRepository.user
     }
 }
 
-class SignOutUseCase(private val userRepository: UserRepository) {
+@ViewModelScoped
+class SignOutUseCase @Inject constructor(private val userRepository: UserRepository) {
     suspend operator fun invoke() {
         userRepository.signOut()
     }

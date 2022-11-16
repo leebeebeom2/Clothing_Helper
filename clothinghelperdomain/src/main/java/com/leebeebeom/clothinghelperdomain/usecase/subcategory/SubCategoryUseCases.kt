@@ -8,24 +8,29 @@ import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
 import com.leebeebeom.clothinghelperdomain.usecase.preferences.SubCategorySortUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.user.GetUserUseCase
+import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import javax.inject.Inject
 
-class GetSubCategoryLoadingStateUseCase(private val subCategoryRepository: SubCategoryRepository) {
+@ViewModelScoped
+class GetSubCategoryLoadingStateUseCase @Inject constructor(private val subCategoryRepository: SubCategoryRepository) {
     operator fun invoke(): StateFlow<Boolean> {
         return subCategoryRepository.isLoading
     }
 }
 
-class PushInitialSubCategoriesUseCase(private val subCategoryRepository: SubCategoryRepository) {
+@ViewModelScoped
+class PushInitialSubCategoriesUseCase @Inject constructor(private val subCategoryRepository: SubCategoryRepository) {
     suspend operator fun invoke(uid: String, onUpdateSubCategoriesFail: (FirebaseResult) -> Unit) {
         subCategoryRepository.pushInitialSubCategories(uid)
         onUpdateSubCategoriesFail(subCategoryRepository.updateSubCategories(uid))
     }
 }
 
-class GetAllSubCategoriesUseCase(
+@ViewModelScoped
+class GetAllSubCategoriesUseCase @Inject constructor(
     private val subCategoryRepository: SubCategoryRepository,
     private val subCategorySortUseCase: SubCategorySortUseCase
 ) {
@@ -55,7 +60,8 @@ private fun getSortSubCategories(
     }
 }
 
-class UpdateSubCategoriesUseCase(
+@ViewModelScoped
+class UpdateSubCategoriesUseCase @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
     private val subCategoryRepository: SubCategoryRepository
 ) {
@@ -68,13 +74,15 @@ class UpdateSubCategoriesUseCase(
     }
 }
 
-class AddSubCategoryUseCase(private val subCategoryRepository: SubCategoryRepository) {
+@ViewModelScoped
+class AddSubCategoryUseCase @Inject constructor(private val subCategoryRepository: SubCategoryRepository) {
     suspend operator fun invoke(subCategory: SubCategory): FirebaseResult {
         return subCategoryRepository.addSubCategory(subCategory)
     }
 }
 
-class EditSubCategoryNameUseCase(private val subCategoryRepository: SubCategoryRepository) {
+@ViewModelScoped
+class EditSubCategoryNameUseCase @Inject constructor(private val subCategoryRepository: SubCategoryRepository) {
     suspend operator fun invoke(newSubCategory: SubCategory): FirebaseResult {
         return subCategoryRepository.editSubCategoryName(newSubCategory)
     }

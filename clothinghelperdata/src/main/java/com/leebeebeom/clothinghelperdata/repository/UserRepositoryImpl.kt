@@ -20,11 +20,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
 const val A_NETWORK_ERROR = "A_NETWORK_ERROR"
 const val TOO_MANY_REQUEST = "TOO_MANY+REQUEST"
 
-class UserRepositoryImpl : BaseRepository(false), UserRepository {
+@Singleton
+class UserRepositoryImpl @Inject constructor() : BaseRepository(false), UserRepository {
     private val auth = FirebaseAuth.getInstance()
 
     private val _isSignIn = MutableStateFlow(auth.currentUser != null)

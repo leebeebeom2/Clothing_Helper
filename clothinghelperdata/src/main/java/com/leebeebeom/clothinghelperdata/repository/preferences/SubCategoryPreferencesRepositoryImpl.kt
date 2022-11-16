@@ -1,19 +1,28 @@
 package com.leebeebeom.clothinghelperdata.repository.preferences
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.*
+import android.content.Context
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import com.leebeebeom.clothinghelperdata.repository.util.AllExpandPreference
 import com.leebeebeom.clothinghelperdomain.repository.SortOrder
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryPreferencesRepository
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class SubCategoryPreferencesRepositoryImpl(dataStore: DataStore<Preferences>) :
-    AllExpandPreference(dataStore), SubCategoryPreferencesRepository {
+@Singleton
+class SubCategoryPreferencesRepositoryImpl @Inject constructor(
+    @ApplicationContext context: Context
+) : AllExpandPreference(context.subCategoryDatastore), SubCategoryPreferencesRepository {
 
     override val sort: Flow<SubCategorySortPreferences> = dataStore.data
         .catch {
@@ -46,3 +55,6 @@ private object SubCategoryPreferenceKeys {
     val SORT = stringPreferencesKey("sort")
     val ORDER = stringPreferencesKey("order")
 }
+
+private const val SUBCATEGORY = "subCategory_preferences"
+private val Context.subCategoryDatastore by preferencesDataStore(name = SUBCATEGORY)

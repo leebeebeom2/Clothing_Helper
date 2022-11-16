@@ -1,16 +1,13 @@
-stable class DrawerContentsState {
-  stable val essentialMenus: ImmutableList<EssentialMenu>
-  stable val mainCategories: ImmutableList<MainCategory>
-  <runtime stability> = 
+unstable class MainRootViewModel {
+  unstable val getSubCategoryLoadingStateUseCase: GetSubCategoryLoadingStateUseCase
+  unstable val updateSubCategoriesUseCase: UpdateSubCategoriesUseCase
+  unstable val mainScreenRootAllExpandUseCase: MainRootAllExpandUseCase
+  unstable val getAllSubCategoriesUseCase: GetAllSubCategoriesUseCase
+  unstable val getUserUseCase: GetUserUseCase
+  stable val uiState: MainRootUiState
+  <runtime stability> = Unstable
 }
-stable class EssentialMenu {
-  stable val name: Int
-  stable val drawable: Int
-  stable val type: EssentialMenus
-  <runtime stability> = Stable
-}
-stable class MainCategory {
-  stable val name: Int
-  stable val type: SubCategoryParent
+stable class MainRootUiState {
+  stable var user$delegate: MutableState<StableUser?>
   <runtime stability> = Stable
 }

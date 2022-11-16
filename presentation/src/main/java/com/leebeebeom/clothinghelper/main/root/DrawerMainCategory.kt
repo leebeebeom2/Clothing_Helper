@@ -5,7 +5,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
+import androidx.compose.material.ContentAlpha
+import androidx.compose.material.LocalContentColor
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -14,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.base.Anime.List.listExpand
 import com.leebeebeom.clothinghelper.base.Anime.List.listShrink
 import com.leebeebeom.clothinghelper.base.DotProgressIndicator
+import com.leebeebeom.clothinghelper.base.SingleLineText
 import com.leebeebeom.clothinghelper.main.base.ExpandIcon
 import com.leebeebeom.clothinghelper.main.root.dropmenus.DrawerMainCategoryDropDownMenu
 import com.leebeebeom.clothinghelper.map.StableSubCategory
@@ -156,7 +160,7 @@ private fun RowScope.TotalCount(
     subCategoriesSize: () -> Int,
     isLoading: () -> Boolean,
 ) {
-    Text(
+    SingleLineText(
         modifier = Modifier
             .weight(1f)
             .padding(start = 4.dp),

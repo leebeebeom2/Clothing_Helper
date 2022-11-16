@@ -10,7 +10,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.base.BackHandler
 import com.leebeebeom.clothinghelper.base.SimpleToast
-import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import kotlinx.coroutines.CoroutineScope
@@ -41,7 +40,7 @@ fun MainRoot(
     onSettingIconClick: () -> Unit,
     onEssentialMenuClick: (essentialMenu: EssentialMenus) -> Unit,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
-    onSubCategoryClick: (StableSubCategory) -> Unit,
+    onSubCategoryClick: (SubCategoryParent, name: String, key: String) -> Unit,
     viewModel: MainRootViewModel = hiltViewModel(),
     uiState: MainRootUiState = viewModel.uiState,
     state: MainRootState = rememberMainRootState(),
@@ -74,7 +73,7 @@ fun MainRoot(
                         drawerClose()
                     },
                     onSubCategoryClick = {
-                        onSubCategoryClick(it)
+                        onSubCategoryClick(it.parent, it.name, it.key)
                         drawerClose()
                     },
                     onSettingIconClick = {

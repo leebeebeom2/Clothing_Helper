@@ -5,14 +5,13 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.CustomIconButton
+import com.leebeebeom.clothinghelper.base.SingleLineText
 import com.leebeebeom.clothinghelper.map.StableUser
 
 @Composable
@@ -34,13 +33,11 @@ fun DrawerHeader(user: () -> StableUser?, onSettingIconClick: () -> Unit) {
 
 @Composable
 private fun RowScope.HeaderText(name: () -> String, email: () -> String) {
-    Text(
+    SingleLineText(
         modifier = Modifier
             .padding(start = 4.dp)
             .weight(1f),
         style = MaterialTheme.typography.body1,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
         text = "${name()}(${email()})"
     )
 }

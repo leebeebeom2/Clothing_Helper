@@ -16,14 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.Anime
-import com.leebeebeom.clothinghelper.base.CircleCheckBox
-import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
+import com.leebeebeom.clothinghelper.base.*
 import com.leebeebeom.clothinghelper.main.base.ExpandIcon
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import kotlinx.collections.immutable.ImmutableSet
@@ -114,21 +110,19 @@ private fun AnimateSpacer(isSelectMode: () -> Boolean) {
 
 @Composable
 private fun TotalCount() {
-    Text( // TODO total count
+    SingleLineText( // TODO total count
         text = "(10)", style = MaterialTheme.typography.caption.copy(
             color = LocalContentColor.current.copy(ContentAlpha.medium)
-        ), maxLines = 1, overflow = TextOverflow.Ellipsis
+        )
     )
 }
 
 @Composable
 private fun Name(name: () -> String) {
-    Text(
+    SingleLineText(
         modifier = Modifier.widthIn(max = 300.dp),
         text = name(),
-        style = MaterialTheme.typography.subtitle1,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
+        style = MaterialTheme.typography.subtitle1
     )
 }
 

@@ -12,20 +12,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.DropDownMenuRoot
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
+import com.leebeebeom.clothinghelper.base.SingleLineText
 import com.leebeebeom.clothinghelperdomain.repository.SortOrder
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
@@ -85,10 +84,10 @@ fun SortDropdownMenu(
 @Composable
 private fun Header() {
     Column(modifier = Modifier.padding(start = 12.dp, top = 8.dp)) {
-        Text(
-            text = stringResource(R.string.sort),
-            style = MaterialTheme.typography.subtitle2.copy(letterSpacing = 1.55.sp),
-            color = LocalContentColor.current.copy(0.8f)
+        SingleLineText(
+            text = R.string.sort,
+            style = MaterialTheme.typography.subtitle2.copy(letterSpacing = 1.55.sp)
+                .copy(color = LocalContentColor.current.copy(0.8f))
         )
         SimpleHeightSpacer(dp = 8)
         Divider()
@@ -114,10 +113,9 @@ fun SortButton(
             )
             .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
-        Text(
-            modifier = Modifier
-                .noRippleClickable(onSortButtonClick),
-            text = stringResource(id = text),
+        SingleLineText(
+            modifier = Modifier.noRippleClickable(onSortButtonClick),
+            text = text,
             style = MaterialTheme.typography.body2,
         )
     }

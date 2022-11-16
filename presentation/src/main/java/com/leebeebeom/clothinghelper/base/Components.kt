@@ -24,6 +24,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.theme.Disabled
@@ -141,4 +144,46 @@ fun FinishActivityBackHandler(activity: ComponentActivity = LocalContext.current
 @Composable
 fun BackHandler(enabled: () -> Boolean, task: () -> Unit) {
     BackHandler(enabled(), onBack = task)
+}
+
+@Composable
+fun SingleLineText(
+    modifier: Modifier = Modifier,
+    @StringRes text: () -> Int?,
+    style: TextStyle = LocalTextStyle.current,
+    textAlign: TextAlign? = null
+) {
+    SingleLineText(
+        modifier = modifier,
+        text = text() ?: R.string.empty,
+        style = style,
+        textAlign = textAlign
+    )
+}
+
+@Composable
+fun SingleLineText(
+    modifier: Modifier = Modifier,
+    @StringRes text: Int,
+    style: TextStyle = LocalTextStyle.current,
+    textAlign: TextAlign? = null
+) {
+    SingleLineText(modifier, stringResource(id = text), style, textAlign)
+}
+
+@Composable
+fun SingleLineText(
+    modifier: Modifier = Modifier,
+    text: String,
+    style: TextStyle = LocalTextStyle.current,
+    textAlign: TextAlign? = null
+) {
+    Text(
+        modifier = modifier,
+        text = text,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        style = style,
+        textAlign = textAlign
+    )
 }

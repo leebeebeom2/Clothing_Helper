@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,6 +17,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.MaxWidthButton
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleToast
+import com.leebeebeom.clothinghelper.base.SingleLineText
 import com.leebeebeom.clothinghelper.signin.base.*
 
 /*
@@ -86,12 +86,12 @@ private fun SignUpText(onClick: () -> Unit) {
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = stringResource(R.string.do_not_have_an_account),
+        SingleLineText(
+            text = R.string.do_not_have_an_account,
             style = MaterialTheme.typography.body2,
         )
         TextButton(onClick = onClick) {
-            Text(
+            SingleLineText(
                 text = stringResource(id = R.string.sign_up_with_email),
                 style = MaterialTheme.typography.body2.copy(
                     color = Color(0xFF35C2C1), fontWeight = FontWeight.Bold
@@ -108,8 +108,8 @@ private fun ForgotPasswordText(onClick: () -> Unit) {
         TextButton(
             modifier = Modifier.align(Alignment.CenterEnd), onClick = onClick
         ) {
-            Text(
-                text = stringResource(id = R.string.forgot_password),
+            SingleLineText(
+                text = R.string.forgot_password,
                 style = MaterialTheme.typography.caption
             )
         }

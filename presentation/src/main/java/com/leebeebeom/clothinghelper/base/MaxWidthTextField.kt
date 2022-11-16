@@ -18,9 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.*
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.Anime.Error.errorIn
@@ -78,20 +76,8 @@ private fun TextField(
             .onFocusChanged(onFocusChanged = onFocusChanged),
         value = textFieldValue(),
         onValueChange = onValueChange,
-        label = {
-            Text(
-                text = stringResource(id = state.label),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        },
-        placeholder = {
-            Text(
-                text = stringResource(id = state.placeholder),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        },
+        label = { SingleLineText(text = state.label) },
+        placeholder = { SingleLineText(text = state.placeholder) },
         isError = error() != null,
         visualTransformation = if (isVisible()) VisualTransformation.None else PasswordVisualTransformation(),
         singleLine = true,
@@ -123,11 +109,10 @@ private fun ErrorText(@StringRes error: () -> Int?) {
     AnimatedVisibility(
         visible = isError, enter = errorIn, exit = errorOut
     ) {
-        Text(
+        SingleLineText(
             modifier = Modifier.padding(start = 4.dp, top = 4.dp),
-            text = error()?.let { stringResource(id = it) } ?: "",
-            color = MaterialTheme.colors.error,
-            style = MaterialTheme.typography.caption,
+            text = error,
+            style = MaterialTheme.typography.caption.copy(color = MaterialTheme.colors.error),
         )
     }
 }

@@ -6,17 +6,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.MaxWidthButton
 import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.SimpleToast
+import com.leebeebeom.clothinghelper.base.SingleLineText
 import com.leebeebeom.clothinghelper.signin.base.EmailTextField
 
 /*
@@ -44,8 +43,8 @@ fun ResetPasswordScreen(
     )
 
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
-        Text(
-            text = stringResource(id = R.string.reset_password_text),
+        SingleLineText(
+            text = R.string.reset_password_text,
             style = MaterialTheme.typography.body2,
             modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
         )

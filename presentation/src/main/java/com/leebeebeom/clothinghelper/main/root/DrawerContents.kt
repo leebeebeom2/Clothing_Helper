@@ -9,7 +9,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Divider
+import androidx.compose.material.LocalContentColor
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -21,12 +24,12 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.SimpleIcon
 import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
+import com.leebeebeom.clothinghelper.base.SingleLineText
 import com.leebeebeom.clothinghelper.main.base.AllExpandIcon
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.map.StableUser
@@ -168,12 +171,10 @@ fun DrawerContentText(modifier: Modifier = Modifier, text: () -> String, style: 
 
 @Composable
 fun DrawerContentText(modifier: Modifier = Modifier, text: String, style: TextStyle) {
-    Text(
+    SingleLineText(
         modifier = modifier,
         text = text,
-        style = style,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
+        style = style
     )
 }
 

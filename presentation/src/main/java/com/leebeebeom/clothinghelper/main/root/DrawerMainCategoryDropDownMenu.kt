@@ -4,7 +4,6 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.DropDownMenuRoot
+import com.leebeebeom.clothinghelper.base.SingleLineText
 import com.leebeebeom.clothinghelper.main.base.AddSubCategoryDialog
 import com.leebeebeom.clothinghelper.main.subcategory.EditSubCategoryNameDialog
 import com.leebeebeom.clothinghelper.main.subcategory.content.AddSubCategoryDialogState
@@ -84,7 +84,7 @@ private fun DrawerDropdownMenuItem(
             onDismiss()
         }, contentPadding = PaddingValues(horizontal = 12.dp)
     ) {
-        Text(
+        SingleLineText(
             text = stringResource(id = text),
             style = MaterialTheme.typography.body2
         )

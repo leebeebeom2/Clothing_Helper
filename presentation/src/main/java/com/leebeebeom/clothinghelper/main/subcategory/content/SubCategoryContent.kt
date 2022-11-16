@@ -47,7 +47,7 @@ fun SubCategoryContent(
     state: SubCategoryContentState = rememberSubCategoryContentState(),
     allExpandIconClick: () -> Unit,
     onLongClick: (key: String) -> Unit,
-    onSubCategoryClick: (StableSubCategory) -> Unit,
+    onSubCategoryClick: (SubCategoryParent, name: String, key: String) -> Unit,
     onSortClick: (SubCategorySort) -> Unit,
     onOrderClick: (SortOrder) -> Unit,
     selectedSubCategoryKey: () -> ImmutableSet<String>,
@@ -65,7 +65,6 @@ fun SubCategoryContent(
                         interceptOutOfBoundsChildEvents = true
                         state.dragSelectStart(offset, onLongClick)
                     }, onDrag = { change, _ ->
-                        change.consume()
                         state.onDrag(change.position, onSelect)
                         state.onDragEndMove(change.position, onSelect)
                     }, onDragEnd = {
@@ -100,7 +99,10 @@ fun SubCategoryContent(
                 SubCategoryCard(
                     subCategory = { it },
                     isAllExpanded = isAllExpanded,
-                    onClick = { if (isSelectMode()) onSelect(it.key) else onSubCategoryClick(it) },
+                    onClick = {
+                        if (isSelectMode()) onSelect(it.key) else
+                            onSubCategoryClick(it.parent, it.name, it.key)
+                    },
                     selectedCategoryKeys = selectedSubCategoryKey,
                     updateIsExpanded = { isExpanded = it },
                     toggleIsExpanded = { isExpanded = !isExpanded },

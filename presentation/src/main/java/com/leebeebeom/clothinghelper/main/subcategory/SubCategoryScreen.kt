@@ -73,7 +73,7 @@ fun SubCategoryScreen(
     uiState: SubCategoryUIState = viewModel.getUiState(parent),
     state: SubCategoryState = rememberSubCategoryState(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    onSubCategoryClick: (StableSubCategory) -> Unit
+    onSubCategoryClick: (SubCategoryParent, name: String, key: String) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         SubCategoryContent(

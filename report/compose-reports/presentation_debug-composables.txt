@@ -1,0 +1,46 @@
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun AllExpandIcon(
+  stable size: Dp
+  stable onClick: Function0<Unit>
+  stable tint: Color
+  stable isAllExpanded: Function0<Boolean>
+)
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun ExpandIcon(
+  stable modifier: Modifier? = @static Companion
+  stable isExpanded: Function0<Boolean>
+  stable onClick: Function0<Unit>
+  stable isAllExpanded: Function0<Boolean>
+  stable updateIsExpand: Function1<Boolean, Unit>
+)
+restartable skippable scheme("[androidx.compose.ui.UiComposable, [androidx.compose.ui.UiComposable]]") fun Fab(
+  stable <this>: BoxScope
+  stable modifier: Modifier? = @static Companion
+  stable paddingValues: PaddingValues? = @dynamic PaddingValues(
+  end   =   LiveLiterals$ComponentsKt  .  Int$$$this$call-$get-dp$$arg-2$call-PaddingValues$param-paddingValues$fun-Fab  (  )  .  dp  , 
+  bottom   =   LiveLiterals$ComponentsKt  .  Int$$$this$call-$get-dp$$arg-3$call-PaddingValues$param-paddingValues$fun-Fab  (  )  .  dp
+)
+  stable align: Alignment? = @static Companion.BottomEnd
+  stable size: Dp = @dynamic LiveLiterals$ComponentsKt.Int$$$this$call-$get-dp$$param-size$fun-Fab().dp
+  stable visible: Function0<Boolean>
+  stable onClick: Function0<Unit>
+  stable content: Function2<Composer, Int, Unit>
+)
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun DetailScreen(
+  stable parent: SubCategoryParent
+  stable title: String
+  unused stable parentKey: String
+)
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun AddFab(
+  stable <this>: BoxScope
+)
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun AddFolderFab(
+  stable <this>: BoxScope
+  stable isClicked: Function0<Boolean>
+)
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun AddContentFab(
+  stable <this>: BoxScope
+  stable isClicked: Function0<Boolean>
+)
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun Header(
+  stable parent: SubCategoryParent
+  stable title: String
+)

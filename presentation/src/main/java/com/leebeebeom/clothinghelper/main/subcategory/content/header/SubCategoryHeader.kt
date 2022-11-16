@@ -7,16 +7,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.Divider
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.CustomIconButton
+import com.leebeebeom.clothinghelper.base.SingleLineText
 import com.leebeebeom.clothinghelper.main.base.AllExpandIcon
+import com.leebeebeom.clothinghelper.util.getHeaderStringRes
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.repository.SortOrder
 import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
@@ -50,10 +50,9 @@ fun SubCategoryHeader(
 
 @Composable
 fun HeaderText(parent: SubCategoryParent) {
-    Text(
-        text = stringResource(id = headerStringRes(parent)),
-        style = MaterialTheme.typography.h2,
-        fontSize = 32.sp
+    SingleLineText(
+        text = getHeaderStringRes(parent),
+        style = MaterialTheme.typography.h2.copy(fontSize = 32.sp)
     )
 }
 
@@ -92,14 +91,5 @@ private fun SortIcon(
             onOrderClick = onOrderClick,
             onDismiss = { showDropDownMenu = false }
         )
-    }
-}
-
-fun headerStringRes(parent: SubCategoryParent): Int {
-    return when (parent) {
-        SubCategoryParent.TOP -> R.string.top
-        SubCategoryParent.BOTTOM -> R.string.bottom
-        SubCategoryParent.OUTER -> R.string.outer
-        SubCategoryParent.ETC -> R.string.etc
     }
 }

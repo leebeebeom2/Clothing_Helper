@@ -6,7 +6,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.BottomAppBar
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,6 +17,7 @@ import com.leebeebeom.clothinghelper.base.Anime.BottomAppbar.shrinkOut
 import com.leebeebeom.clothinghelper.base.CircleCheckBox
 import com.leebeebeom.clothinghelper.base.CustomIconButton
 import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
+import com.leebeebeom.clothinghelper.base.SingleLineText
 
 @Composable
 fun BoxScope.SubCategoryBottomAppBar(
@@ -69,13 +69,13 @@ private fun BottomAppBarIcon(
 ) {
     if (visible()) Column(horizontalAlignment = Alignment.CenterHorizontally) {
         CustomIconButton(onClick = onClick, drawable = drawable)
-        Text(text = stringResource(id = text), style = MaterialTheme.typography.caption)
+        SingleLineText(text = text, style = MaterialTheme.typography.caption)
     }
 }
 
 @Composable
 fun SelectText(selectedSubCategoriesSize: () -> Int) {
-    Text(
+    SingleLineText(
         text = stringResource(
             id = R.string.count_selected, formatArgs = arrayOf(selectedSubCategoriesSize())
         ), modifier = Modifier.offset((-8).dp, 1.dp)

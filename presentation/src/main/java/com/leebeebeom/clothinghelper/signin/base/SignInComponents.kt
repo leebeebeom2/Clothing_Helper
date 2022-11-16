@@ -24,6 +24,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.CustomIconButton
 import com.leebeebeom.clothinghelper.base.MaxWidthButton
+import com.leebeebeom.clothinghelper.base.SingleLineText
 
 @Composable
 fun VisibleIcon(isVisible: () -> Boolean, onClick: () -> Unit) {
@@ -85,11 +86,10 @@ fun OrDivider() {
         val weightModifier = Modifier.weight(1f)
 
         Divider(modifier = weightModifier)
-        Text(
-            text = stringResource(id = R.string.or),
+        SingleLineText(
+            text = R.string.or,
             modifier = Modifier.padding(horizontal = 14.dp),
-            style = MaterialTheme.typography.body2,
-            color = LocalContentColor.current.copy(ContentAlpha.medium)
+            style = MaterialTheme.typography.body2.copy(LocalContentColor.current.copy(ContentAlpha.medium))
         )
         Divider(modifier = weightModifier)
     }

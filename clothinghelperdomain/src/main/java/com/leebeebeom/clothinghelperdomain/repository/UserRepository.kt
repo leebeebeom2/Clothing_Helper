@@ -1,8 +1,6 @@
 package com.leebeebeom.clothinghelperdomain.repository
 
 import com.leebeebeom.clothinghelperdomain.model.AuthResult
-import com.leebeebeom.clothinghelperdomain.model.SignIn
-import com.leebeebeom.clothinghelperdomain.model.SignUp
 import com.leebeebeom.clothinghelperdomain.model.User
 import kotlinx.coroutines.flow.StateFlow
 
@@ -13,11 +11,11 @@ interface UserRepository {
 
     suspend fun googleSignIn(credential: Any?): AuthResult
 
-    suspend fun signIn(signIn: SignIn): AuthResult
+    suspend fun signIn(email: String, password: String): AuthResult
 
-    suspend fun signUp(signUp: SignUp): AuthResult
+    suspend fun signUp(email: String, password: String, name: String): AuthResult
 
     suspend fun resetPasswordEmail(email: String): AuthResult
 
-    suspend fun signOut()
+    suspend fun signOut(): AuthResult
 }

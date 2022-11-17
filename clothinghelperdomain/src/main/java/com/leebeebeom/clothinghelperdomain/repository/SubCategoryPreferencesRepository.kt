@@ -1,5 +1,8 @@
 package com.leebeebeom.clothinghelperdomain.repository
 
+import com.leebeebeom.clothinghelperdomain.model.SortOrder
+import com.leebeebeom.clothinghelperdomain.model.SubCategorySort
+import com.leebeebeom.clothinghelperdomain.model.SubCategorySortPreferences
 import kotlinx.coroutines.flow.Flow
 
 interface SubCategoryPreferencesRepository {
@@ -10,16 +13,3 @@ interface SubCategoryPreferencesRepository {
     suspend fun changeSort(subCategorySort: SubCategorySort)
     suspend fun changeOrder(sortOrder: SortOrder)
 }
-
-enum class SubCategorySort {
-    NAME, CREATE
-}
-
-enum class SortOrder {
-    ASCENDING, DESCENDING
-}
-
-data class SubCategorySortPreferences(
-    val sort: SubCategorySort = SubCategorySort.NAME,
-    val sortOrder: SortOrder = SortOrder.ASCENDING
-)

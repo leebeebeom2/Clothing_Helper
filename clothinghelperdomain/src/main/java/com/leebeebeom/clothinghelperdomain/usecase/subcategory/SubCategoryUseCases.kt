@@ -1,16 +1,13 @@
 package com.leebeebeom.clothinghelperdomain.usecase.subcategory
 
-import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
-import com.leebeebeom.clothinghelperdomain.model.SubCategory
-import com.leebeebeom.clothinghelperdomain.repository.SortOrder
+import com.leebeebeom.clothinghelperdomain.model.*
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
-import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
-import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
 import com.leebeebeom.clothinghelperdomain.usecase.preferences.SubCategorySortUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.user.GetUserUseCase
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
@@ -46,10 +43,10 @@ class GetAllSubCategoriesUseCase @Inject constructor(
 }
 
 private fun getSortSubCategories(
-    subCategories: List<SubCategory>, preferences: SubCategorySortPreferences
+    subCategories: List<SubCategory>, sortPreferences: SubCategorySortPreferences
 ): List<SubCategory> {
-    val sort = preferences.sort
-    val order = preferences.sortOrder
+    val sort = sortPreferences.sort
+    val order = sortPreferences.sortOrder
 
     return when {
         sort == SubCategorySort.NAME && order == SortOrder.ASCENDING -> subCategories.sortedBy { it.name }
@@ -65,11 +62,11 @@ class UpdateSubCategoriesUseCase @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
     private val subCategoryRepository: SubCategoryRepository
 ) {
-    operator fun invoke(): Flow<FirebaseResult> {
-        return combine(getUserUseCase()) {
-            it[0]?.let { user ->
-                subCategoryRepository.updateSubCategories(user.uid)
-            } ?: FirebaseResult.Fail(NullPointerException("user is null"))
+    suspend operator fun invoke(onUpdateSubCategoriesFail: (FirebaseResult) -> Unit) {
+        getUserUseCase().collectLatest {
+            it?.let { user ->
+                onUpdateSubCategoriesFail(subCategoryRepository.updateSubCategories(user.uid))
+            }
         }
     }
 }

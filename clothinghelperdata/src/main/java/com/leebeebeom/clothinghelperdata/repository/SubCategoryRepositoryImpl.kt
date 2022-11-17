@@ -1,105 +1,48 @@
 package com.leebeebeom.clothinghelperdata.repository
 
-import com.google.android.gms.tasks.Task
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import com.leebeebeom.clothinghelperdata.repository.base.BaseRepository
-import com.leebeebeom.clothinghelperdata.repository.util.logE
+import com.leebeebeom.clothinghelperdata.repository.base.BaseContainerRepository
+import com.leebeebeom.clothinghelperdata.repository.base.DatabasePath
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SubCategoryRepositoryImpl @Inject constructor() : BaseRepository(true),
+class SubCategoryRepositoryImpl @Inject constructor() : BaseContainerRepository<SubCategory>(),
     SubCategoryRepository {
-    private val root = Firebase.database.reference
 
-    private val _allSubCategories = MutableStateFlow(List(4) { emptyList<SubCategory>() })
-    override val allSubCategories get() = _allSubCategories.asStateFlow()
-
-    private var uid: String = ""
+    override val allSubCategories get() = allContainers.asStateFlow()
 
     override suspend fun updateSubCategories(uid: String): FirebaseResult {
-        return firebaseTry(3000, "updateSubCategories") {
-            this@SubCategoryRepositoryImpl.uid = uid
+        return load(uid, SubCategory::class.java)
+    }
 
-            val temp = MutableList(4) { mutableListOf<SubCategory>() }
+    override suspend fun addSubCategory(subCategory: SubCategory): FirebaseResult {
+        return add(subCategory)
+    }
 
-            root.getSubCategoriesRef(uid).get().await().children.forEach { data ->
-                val subCategory = data.getValue(SubCategory::class.java)!!
-                temp[subCategory.parent.ordinal].add(subCategory)
-            }
-
-            _allSubCategories.update { temp }
-            FirebaseResult.Success
-        }
+    override suspend fun editSubCategoryName(newSubCategory: SubCategory): FirebaseResult {
+        return edit(newSubCategory)
     }
 
     override suspend fun pushInitialSubCategories(uid: String) {
         return withContext(Dispatchers.IO) {
-            val subCategoryRef = root.getSubCategoriesRef(uid)
+            val subCategoryRef = root.getContainerRef(uid, refPath)
 
             getInitialSubCategories().forEach {
-                val subCategoryWithKey = getSubCategoryWithKey(subCategoryRef, it)
-                val result = async { pushSubCategory(subCategoryRef, subCategoryWithKey) }
+                val subCategoryWithKey = getContainerWithKey(it, getKey(subCategoryRef))
+                val result = async { push(subCategoryRef, subCategoryWithKey) }
                 result.await()
             }
 
-            FirebaseResult.Success
-        }
-    }
-
-    private fun getSubCategoryWithKey(
-        subCategoryRef: DatabaseReference, subCategory: SubCategory
-    ): SubCategory {
-        val key = subCategoryRef.push().key!!
-        return subCategory.copy(key = key)
-    }
-
-    private suspend fun pushSubCategory(
-        subCategoryRef: DatabaseReference, subCategory: SubCategory
-    ): Task<Void> {
-        return withContext(Dispatchers.IO) {
-            subCategoryRef.child(subCategory.key).setValue(subCategory)
-        }
-    }
-
-    override suspend fun addSubCategory(subCategory: SubCategory): FirebaseResult {
-        return firebaseTryWithOutLoading(1000, "addSubCategory") {
-            val subCategoryRef = root.getSubCategoriesRef(uid)
-
-            val subCategoryWithKey =
-                getSubCategoryWithKey(
-                    subCategoryRef,
-                    subCategory
-                ).copy(createDate = System.currentTimeMillis())
-
-            pushSubCategory(subCategoryRef, subCategoryWithKey).await()
-            _allSubCategories.singleListUpdate(subCategory.parent.ordinal) {
-                it.add(subCategoryWithKey)
-            }
-            FirebaseResult.Success
-        }
-    }
-
-    override suspend fun editSubCategoryName(newSubCategory: SubCategory): FirebaseResult {
-        return firebaseTryWithOutLoading(1000, "editSubCategoryName") {
-            root.getSubCategoriesRef(uid).child(newSubCategory.key).setValue(newSubCategory).await()
-            _allSubCategories.singleListUpdate(newSubCategory.parent.ordinal) {
-                val oldSubCategory =
-                    it.first { subCategory -> subCategory.key == newSubCategory.key }
-                it.remove(oldSubCategory)
-                it.add(newSubCategory)
-            }
             FirebaseResult.Success
         }
     }
@@ -167,58 +110,23 @@ class SubCategoryRepositoryImpl @Inject constructor() : BaseRepository(true),
         )
     }
 
-    private fun DatabaseReference.getSubCategoriesRef(uid: String): DatabaseReference {
-        return child(uid).child(DatabasePath.SUB_CATEGORIES)
+    override val refPath = DatabasePath.SUB_CATEGORIES
+
+    override fun getContainerWithKey(
+        value: SubCategory,
+        key: String,
+        createDate: Long
+    ): SubCategory {
+        return value.copy(key = key, createDate = createDate)
     }
 
-    private suspend fun firebaseTryWithOutLoading(
-        time: Long,
-        site: String,
-        task: suspend () -> FirebaseResult
-    ): FirebaseResult {
-        return withContext(Dispatchers.IO) {
-            try {
-                withTimeout(time) { task() }
-            } catch (e: TimeoutCancellationException) {
-                logE(site, e)
-                FirebaseResult.Fail(e)
-            } catch (e: Exception) {
-                logE(site, e)
-                FirebaseResult.Fail(e)
-            }
-        }
-    }
-
-    private suspend fun firebaseTry(
-        time: Long,
-        site: String,
-        task: suspend () -> FirebaseResult
-    ): FirebaseResult {
-        return withContext(Dispatchers.IO) {
-            try {
-                loadingOn()
-                withTimeout(time) { task() }
-            } catch (e: Exception) {
-                logE(site, e)
-                FirebaseResult.Fail(e)
-            } finally {
-                loadingOff()
-            }
-        }
+    override fun getContainerWithKey(value: SubCategory, key: String): SubCategory {
+        return value.copy(key = key)
     }
 }
 
-object DatabasePath {
-    const val SUB_CATEGORIES = "sub categories"
-    const val USER_INFO = "user info"
-}
-
-fun MutableStateFlow<List<List<SubCategory>>>.singleListUpdate(
-    index: Int, task: (MutableList<SubCategory>) -> Unit
-) {
+fun <T> MutableStateFlow<List<T>>.updateMutable(task: (MutableList<T>) -> Unit) {
     val temp = value.toMutableList()
-    val temp2 = temp[index].toMutableList()
-    task(temp2)
-    temp[index] = temp2
+    task(temp)
     update { temp }
 }

@@ -118,3 +118,9 @@ abstract class BaseContainerRepository<T : BaseContainer> : BaseRepository(true)
         return child(uid).child(path)
     }
 }
+
+object DatabasePath {
+    const val SUB_CATEGORIES = "sub categories"
+    const val USER_INFO = "user info"
+    const val FOLDERS = "folders"
+}

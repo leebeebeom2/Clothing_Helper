@@ -7,10 +7,10 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.leebeebeom.clothinghelperdata.repository.util.AllExpandPreference
-import com.leebeebeom.clothinghelperdomain.repository.SortOrder
+import com.leebeebeom.clothinghelperdomain.model.SortOrder
+import com.leebeebeom.clothinghelperdomain.model.SubCategorySort
+import com.leebeebeom.clothinghelperdomain.model.SubCategorySortPreferences
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryPreferencesRepository
-import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
-import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

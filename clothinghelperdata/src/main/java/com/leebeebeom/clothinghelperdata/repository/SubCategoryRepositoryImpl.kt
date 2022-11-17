@@ -48,11 +48,12 @@ class SubCategoryRepositoryImpl @Inject constructor() : BaseRepository(true),
         return withContext(Dispatchers.IO) {
             val subCategoryRef = root.getSubCategoriesRef(uid)
 
-            for (subCategory in getInitialSubCategories()) {
-                val subCategoryWithKey = getSubCategoryWithKey(subCategoryRef, subCategory)
+            getInitialSubCategories().forEach {
+                val subCategoryWithKey = getSubCategoryWithKey(subCategoryRef, it)
                 val result = async { pushSubCategory(subCategoryRef, subCategoryWithKey) }
                 result.await()
             }
+
             FirebaseResult.Success
         }
     }
@@ -197,9 +198,6 @@ class SubCategoryRepositoryImpl @Inject constructor() : BaseRepository(true),
             try {
                 loadingOn()
                 withTimeout(time) { task() }
-            } catch (e: TimeoutCancellationException) {
-                logE(site, e)
-                FirebaseResult.Fail(e)
             } catch (e: Exception) {
                 logE(site, e)
                 FirebaseResult.Fail(e)

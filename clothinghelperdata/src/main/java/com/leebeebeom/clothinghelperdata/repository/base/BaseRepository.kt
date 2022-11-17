@@ -5,8 +5,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 
-abstract class BaseRepository(initialIsLoading: Boolean) {
-    private val _isLoading = MutableStateFlow(initialIsLoading)
+abstract class BaseRepository(isLoading: Boolean) {
+    private val _isLoading = MutableStateFlow(isLoading)
     val isLoading get() = _isLoading.asStateFlow()
 
     fun loadingOn() {

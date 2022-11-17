@@ -10,8 +10,6 @@ import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
 import com.leebeebeom.clothinghelperdata.repository.base.BaseRepository
 import com.leebeebeom.clothinghelperdomain.model.AuthResult
-import com.leebeebeom.clothinghelperdomain.model.SignIn
-import com.leebeebeom.clothinghelperdomain.model.SignUp
 import com.leebeebeom.clothinghelperdomain.model.User
 import com.leebeebeom.clothinghelperdomain.repository.UserRepository
 import com.leebeebeom.clothinghelperdomain.util.logE
@@ -53,28 +51,28 @@ class UserRepositoryImpl @Inject constructor() : BaseRepository(false), UserRepo
         }
     }
 
-    override suspend fun signIn(signIn: SignIn): AuthResult {
+    override suspend fun signIn(email: String, password: String): AuthResult {
         return authTry("signIn") {
-            val user = auth.signInWithEmailAndPassword(signIn.email, signIn.password)
+            val user = auth.signInWithEmailAndPassword(email, password)
                 .await().user.toUser()!!
             updateUserAndUpdateSignIn(user)
             AuthResult.Success(user, false)
         }
     }
 
-    override suspend fun signUp(signUp: SignUp): AuthResult {
+    override suspend fun signUp(email: String, password: String, name: String): AuthResult {
         return authTry("signUp") {
-            val user = auth.createUserWithEmailAndPassword(signUp.email, signUp.password)
+            val user = auth.createUserWithEmailAndPassword(email, password)
                 .await().user!!
 
-            val request = userProfileChangeRequest { displayName = signUp.name }
+            val request = userProfileChangeRequest { displayName = name }
             user.updateProfile(request).await()
 
-            val userObj = user.toUser()!!.copy(name = signUp.name)
+            val userObj = user.toUser()!!.copy(name = name)
 
             pushNewUser(userObj)
 
-            AuthResult.Success(user = userObj, isNewer = true)
+            AuthResult.Success(userObj, true)
         }
     }
 
@@ -85,25 +83,24 @@ class UserRepositoryImpl @Inject constructor() : BaseRepository(false), UserRepo
         }
     }
 
-    override suspend fun signOut() {
-        withContext(Dispatchers.IO) { auth.signOut() }
-        updateSignIn(false)
-        updateUser(null)
+    override suspend fun signOut(): AuthResult {
+        return authTry("signOut") {
+            auth.signOut()
+            updateSignIn(false)
+            updateUser(null)
+            AuthResult.Success()
+        }
     }
 
     private suspend fun pushNewUser(user: User) {
-        withContext(Dispatchers.IO) {
-            FirebaseDatabase.getInstance().reference.child(user.uid).child(DatabasePath.USER_INFO)
-                .setValue(user).await()
-            updateUserAndUpdateSignIn(user)
-        }
+        FirebaseDatabase.getInstance().reference.child(user.uid).child(DatabasePath.USER_INFO)
+            .setValue(user).await()
+        updateUserAndUpdateSignIn(user)
     }
 
-    private suspend fun updateUserAndUpdateSignIn(userObj: User) {
-        withContext(Dispatchers.Main) {
-            updateUser(user = userObj)
-            updateSignIn(state = true)
-        }
+    private fun updateUserAndUpdateSignIn(userObj: User) {
+        updateUser(user = userObj)
+        updateSignIn(state = true)
     }
 
     private fun updateSignIn(state: Boolean) {
@@ -136,4 +133,4 @@ class UserRepositoryImpl @Inject constructor() : BaseRepository(false), UserRepo
     }
 }
 
-fun FirebaseUser?.toUser() = this?.let { User(email!!, displayName ?: "", uid) }
+private fun FirebaseUser?.toUser() = this?.let { User(email!!, displayName ?: "", uid) }

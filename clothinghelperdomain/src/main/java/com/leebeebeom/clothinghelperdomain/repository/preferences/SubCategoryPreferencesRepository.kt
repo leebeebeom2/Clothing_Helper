@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelperdomain.repository
+package com.leebeebeom.clothinghelperdomain.repository.preferences
 
 import com.leebeebeom.clothinghelperdomain.model.Order
 import com.leebeebeom.clothinghelperdomain.model.Sort

@@ -1,20 +1,27 @@
 package com.leebeebeom.clothinghelperdata.repository.container
 
+import com.leebeebeom.clothinghelperdata.repository.util.getSorted
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.repository.SubCategoryPreferencesRepository
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SubCategoryRepositoryImpl @Inject constructor() : BaseContainerRepository<SubCategory>(),
-    SubCategoryRepository {
+class SubCategoryRepositoryImpl @Inject constructor(
+    subCategoryPreferencesRepository: SubCategoryPreferencesRepository
+) : BaseContainerRepository<SubCategory>(), SubCategoryRepository {
 
-    override val allSubCategories get() = allContainers.asStateFlow()
+    override val allSubCategories = combine(
+        allContainers, subCategoryPreferencesRepository.sort
+    ) { allSubCategories, sort ->
+        getSorted(allSubCategories, sort)
+    }
 
     override suspend fun loadSubCategories(uid: String) = load(uid, SubCategory::class.java)
 
@@ -24,16 +31,15 @@ class SubCategoryRepositoryImpl @Inject constructor() : BaseContainerRepository<
     override suspend fun editSubCategoryName(newSubCategory: SubCategory, uid: String) =
         edit(newSubCategory, uid)
 
-    override suspend fun pushInitialSubCategories(uid: String) =
-        withContext(Dispatchers.IO) {
-            val subCategoryRef = root.getContainerRef(uid, refPath)
+    override suspend fun pushInitialSubCategories(uid: String) = withContext(Dispatchers.IO) {
+        val subCategoryRef = root.getContainerRef(uid, refPath)
 
-            getInitialSubCategories().forEach {
-                val subCategoryWithKey = it.copy(key = getKey(subCategoryRef))
-                val result = async { push(subCategoryRef, subCategoryWithKey) }
-                result.await()
-            }
+        getInitialSubCategories().forEach {
+            val subCategoryWithKey = it.copy(key = getKey(subCategoryRef))
+            val result = async { push(subCategoryRef, subCategoryWithKey) }
+            result.await()
         }
+    }
 
     private fun getInitialSubCategories(): List<SubCategory> {
         var timeStamp = System.currentTimeMillis()
@@ -101,9 +107,7 @@ class SubCategoryRepositoryImpl @Inject constructor() : BaseContainerRepository<
     override val refPath = DatabasePath.SUB_CATEGORIES
 
     override fun getNewContainer(
-        value: SubCategory,
-        key: String,
-        date: Long
+        value: SubCategory, key: String, date: Long
     ) = value.copy(key = key, createDate = date)
 
     override fun getContainerWithNewEditDate(value: SubCategory, editDate: Long) =

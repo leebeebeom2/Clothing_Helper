@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.subcategory
+package com.leebeebeom.clothinghelper.main.subcategory.dialogs
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.rememberSaveable

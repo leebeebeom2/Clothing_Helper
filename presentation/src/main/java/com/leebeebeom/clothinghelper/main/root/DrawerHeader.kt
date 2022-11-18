@@ -10,8 +10,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.CustomIconButton
-import com.leebeebeom.clothinghelper.base.SingleLineText
+import com.leebeebeom.clothinghelper.base.composables.CustomIconButton
+import com.leebeebeom.clothinghelper.base.composables.SingleLineText
 import com.leebeebeom.clothinghelper.map.StableUser
 
 @Composable
@@ -25,8 +25,7 @@ fun DrawerHeader(user: () -> StableUser?, onSettingIconClick: () -> Unit) {
         HeaderText(name = { user()?.name ?: "" }, email = { user()?.email ?: "" })
         CustomIconButton(
             drawable = R.drawable.ic_settings,
-            onClick = onSettingIconClick,
-            contentDescription = "settingIcon"
+            onClick = onSettingIconClick
         )
     }
 }

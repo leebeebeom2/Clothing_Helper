@@ -135,6 +135,7 @@ data class MaxWidthTextFieldState @OptIn(ExperimentalComposeUiApi::class) constr
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
+@NonRestartableComposable
 fun rememberMaxWidthTextFieldState(
     @StringRes label: Int,
     @StringRes placeholder: Int = R.string.empty,
@@ -142,17 +143,15 @@ fun rememberMaxWidthTextFieldState(
     keyboardOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
     focusRequester: FocusRequester = remember { FocusRequester() },
     keyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
-): MaxWidthTextFieldState {
-    return remember {
-        MaxWidthTextFieldState(
-            label = label,
-            placeholder = placeholder,
-            showKeyboardEnabled = showKeyboardEnabled,
-            keyboardOptions = keyboardOptions,
-            focusRequester = focusRequester,
-            keyboardController = keyboardController
-        )
-    }
+) = remember {
+    MaxWidthTextFieldState(
+        label = label,
+        placeholder = placeholder,
+        showKeyboardEnabled = showKeyboardEnabled,
+        keyboardOptions = keyboardOptions,
+        focusRequester = focusRequester,
+        keyboardController = keyboardController
+    )
 }
 
 @Composable

@@ -1,7 +1,7 @@
 package com.leebeebeom.clothinghelperdata.repository.container
 
-import com.leebeebeom.clothinghelperdomain.model.SubCategory
-import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.model.container.SubCategory
+import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -27,7 +27,7 @@ class SubCategoryRepositoryImpl @Inject constructor() : BaseContainerRepository<
             val subCategoryRef = root.getContainerRef(uid, refPath)
 
             getInitialSubCategories().forEach {
-                val subCategoryWithKey = getContainerWithKey(it, getKey(subCategoryRef))
+                val subCategoryWithKey = it.copy(key = getKey(subCategoryRef))
                 val result = async { push(subCategoryRef, subCategoryWithKey) }
                 result.await()
             }
@@ -98,11 +98,12 @@ class SubCategoryRepositoryImpl @Inject constructor() : BaseContainerRepository<
 
     override val refPath = DatabasePath.SUB_CATEGORIES
 
-    override fun getContainerWithKey(
+    override fun getNewContainer(
         value: SubCategory,
         key: String,
-        createDate: Long
-    ) = value.copy(key = key, createDate = createDate)
+        date: Long
+    ) = value.copy(key = key, createDate = date)
 
-    override fun getContainerWithKey(value: SubCategory, key: String) = value.copy(key = key)
+    override fun getContainerWithNewEditDate(value: SubCategory, editDate: Long) =
+        value.copy(editDate = editDate)
 }

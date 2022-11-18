@@ -1,6 +1,6 @@
 package com.leebeebeom.clothinghelperdata.repository.container
 
-import com.leebeebeom.clothinghelperdomain.model.Folder
+import com.leebeebeom.clothinghelperdomain.model.container.Folder
 import com.leebeebeom.clothinghelperdomain.repository.FolderRepository
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
@@ -19,8 +19,8 @@ class FolderRepositoryImpl @Inject constructor() : BaseContainerRepository<Folde
 
     override val refPath = DatabasePath.FOLDERS
 
-    override fun getContainerWithKey(value: Folder, key: String, createDate: Long) =
-        value.copy(key = key, createDate = createDate)
-
-    override fun getContainerWithKey(value: Folder, key: String) = value.copy(key = key)
+    override fun getNewContainer(value: Folder, key: String, date: Long) =
+        value.copy(key = key, createDate = date, editDate = date)
+    override fun getContainerWithNewEditDate(value: Folder, editDate: Long) =
+        value.copy(editDate = editDate)
 }

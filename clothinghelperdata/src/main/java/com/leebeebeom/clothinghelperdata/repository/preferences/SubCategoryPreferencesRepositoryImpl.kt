@@ -7,8 +7,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.leebeebeom.clothinghelperdomain.model.SortOrder
-import com.leebeebeom.clothinghelperdomain.model.SubCategorySort
+import com.leebeebeom.clothinghelperdomain.model.Order
+import com.leebeebeom.clothinghelperdomain.model.Sort
 import com.leebeebeom.clothinghelperdomain.model.SubCategorySortPreferences
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryPreferencesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -31,20 +31,20 @@ class SubCategoryPreferencesRepositoryImpl @Inject constructor(
             else throw it
         }
         .map {
-            val sort = it[SubCategoryPreferenceKeys.SORT] ?: SubCategorySort.NAME.name
-            val order = it[SubCategoryPreferenceKeys.ORDER] ?: SortOrder.ASCENDING.name
+            val sort = it[SubCategoryPreferenceKeys.SORT] ?: Sort.NAME.name
+            val order = it[SubCategoryPreferenceKeys.ORDER] ?: Order.ASCENDING.name
             SubCategorySortPreferences(enumValueOf(sort), enumValueOf(order))
         }
 
-    override suspend fun changeSort(subCategorySort: SubCategorySort) {
+    override suspend fun changeSort(sort: Sort) {
         dataStore.edit {
-            it[SubCategoryPreferenceKeys.SORT] = subCategorySort.name
+            it[SubCategoryPreferenceKeys.SORT] = sort.name
         }
     }
 
-    override suspend fun changeOrder(sortOrder: SortOrder) {
+    override suspend fun changeOrder(order: Order) {
         dataStore.edit {
-            it[SubCategoryPreferenceKeys.ORDER] = sortOrder.name
+            it[SubCategoryPreferenceKeys.ORDER] = order.name
         }
     }
 }

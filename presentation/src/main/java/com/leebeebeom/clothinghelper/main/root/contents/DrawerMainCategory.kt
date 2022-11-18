@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.root
+package com.leebeebeom.clothinghelper.main.root.contents
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
@@ -16,12 +16,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.base.Anime.List.listExpand
 import com.leebeebeom.clothinghelper.base.Anime.List.listShrink
-import com.leebeebeom.clothinghelper.base.DotProgressIndicator
-import com.leebeebeom.clothinghelper.base.SingleLineText
-import com.leebeebeom.clothinghelper.main.base.ExpandIcon
-import com.leebeebeom.clothinghelper.main.root.dropmenus.DrawerMainCategoryDropDownMenu
+import com.leebeebeom.clothinghelper.base.composables.DotProgressIndicator
+import com.leebeebeom.clothinghelper.base.composables.SingleLineText
+import com.leebeebeom.clothinghelper.main.base.components.ExpandIcon
+import com.leebeebeom.clothinghelper.main.root.DrawerSubCategory
+import com.leebeebeom.clothinghelper.main.root.components.DrawerContentRow
+import com.leebeebeom.clothinghelper.main.root.components.DrawerContentText
+import com.leebeebeom.clothinghelper.main.root.contents.dropdownmenus.DrawerMainCategoryDropDownMenu
+import com.leebeebeom.clothinghelper.main.root.model.MainCategory
 import com.leebeebeom.clothinghelper.map.StableSubCategory
-import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -30,7 +34,6 @@ fun DrawerMainCategory(
     subCategories: (SubCategoryParent) -> ImmutableList<StableSubCategory>,
     subCategoriesSize: (SubCategoryParent) -> Int,
     isLoading: () -> Boolean,
-    isAllExpanded: () -> Boolean,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (StableSubCategory) -> Unit,
     subCategoryNames: (SubCategoryParent) -> ImmutableList<String>,
@@ -38,27 +41,23 @@ fun DrawerMainCategory(
     onEditSubCategoryNamePositiveClick: (StableSubCategory) -> Unit
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
-    var showMainCategoryDropdownMenu by rememberSaveable { mutableStateOf(false) }
+    var showDropdownMenu by rememberSaveable { mutableStateOf(false) }
 
     Column {
         DrawerContentRow(
             modifier = Modifier
                 .heightIn(44.dp),
             onClick = { onMainCategoryClick(mainCategory.type) },
-            onLongClick = { showMainCategoryDropdownMenu = true }
+            onLongClick = { showDropdownMenu = true }
         ) {
             DrawerContentText(
                 modifier = Modifier.padding(start = 8.dp),
                 text = stringResource(id = mainCategory.name),
                 style = MaterialTheme.typography.subtitle1
             )
-            TotalCount(
-                subCategoriesSize = { subCategoriesSize(mainCategory.type) },
-                isLoading = isLoading
-            )
             DrawerMainCategoryDropDownMenu(
-                show = { showMainCategoryDropdownMenu },
-                onDismiss = { showMainCategoryDropdownMenu = false },
+                show = { showDropdownMenu },
+                onDismiss = { showDropdownMenu = false },
                 subCategoryNames = { subCategoryNames(mainCategory.type) },
                 onAddSubCategoryPositiveClick = {
                     onAddSubCategoryPositiveClick(
@@ -69,14 +68,15 @@ fun DrawerMainCategory(
                     )
                 }
             )
+            TotalCount(
+                subCategoriesSize = { subCategoriesSize(mainCategory.type) },
+                isLoading = isLoading
+            )
             ExpandIcon(
                 isLoading = isLoading,
                 isExpanded = { isExpanded },
-                isAllExpanded = isAllExpanded,
-                onClick = { isExpanded = !isExpanded },
-                subCategoriesSize = { subCategoriesSize(mainCategory.type) },
-                updateIsExpand = { isExpanded = it }
-            )
+                onClick = { isExpanded = !isExpanded }
+            ) { subCategoriesSize(mainCategory.type) }
         }
         SubCategories(
             isExpanded = { isExpanded },
@@ -93,22 +93,21 @@ private fun ExpandIcon(
     isLoading: () -> Boolean,
     isExpanded: () -> Boolean,
     onClick: () -> Unit,
-    isAllExpanded: () -> Boolean,
-    subCategoriesSize: () -> Int,
-    updateIsExpand: (Boolean) -> Unit
+    subCategoriesSize: () -> Int
 ) {
+    val show by rememberSaveable { derivedStateOf { subCategoriesSize() > 0 } }
+
     if (isLoading())
         DotProgressIndicator(
             modifier = Modifier.padding(end = 4.dp),
             size = 4.dp,
             color = MaterialTheme.colors.surface.copy(ContentAlpha.disabled)
         )
-    else if (subCategoriesSize() > 0) ExpandIcon(
-        isExpanded = isExpanded,
-        onClick = onClick,
-        isAllExpanded = isAllExpanded,
-        updateIsExpand = updateIsExpand
-    )
+    else if (show)
+        ExpandIcon(
+            isExpanded = isExpanded,
+            onClick = onClick
+        )
 }
 
 @Composable
@@ -124,33 +123,18 @@ private fun SubCategories(
         enter = listExpand,
         exit = listShrink
     ) {
-        SubCategories(
-            subCategories = subCategories,
-            onClick = onClick,
-            onEditSubCategoryNamePositiveClick = onEditSubCategoryNamePositiveClick,
-            subCategoryNames = subCategoryNames
-        )
-    }
-}
-
-@Composable
-private fun SubCategories(
-    subCategories: () -> ImmutableList<StableSubCategory>,
-    onClick: (StableSubCategory) -> Unit,
-    onEditSubCategoryNamePositiveClick: (StableSubCategory) -> Unit,
-    subCategoryNames: () -> ImmutableList<String>
-) {
-    Surface(color = MaterialTheme.colors.primary) {
-        Column {
-            for (subCategory in subCategories())
-                key(subCategory.key) {
-                    DrawerSubCategory(
-                        subCategory = { subCategory },
-                        onClick = { onClick(subCategory) },
-                        onEditSubCategoryNamePositiveClick = onEditSubCategoryNamePositiveClick,
-                        subCategoryNames = subCategoryNames
-                    )
-                }
+        Surface(color = MaterialTheme.colors.primary) {
+            Column {
+                for (subCategory in subCategories())
+                    key(subCategory.key) {
+                        DrawerSubCategory(
+                            subCategory = { subCategory },
+                            onClick = { onClick(subCategory) },
+                            onEditSubCategoryNamePositiveClick = onEditSubCategoryNamePositiveClick,
+                            subCategoryNames = subCategoryNames
+                        )
+                    }
+            }
         }
     }
 }

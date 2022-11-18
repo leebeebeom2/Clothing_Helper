@@ -1,0 +1,3 @@
+package com.leebeebeom.clothinghelperdomain.repository.preferences
+
+interface FolderPreferencesRepository : SortPreferenceRepository

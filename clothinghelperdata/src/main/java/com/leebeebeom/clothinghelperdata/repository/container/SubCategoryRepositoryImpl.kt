@@ -3,7 +3,7 @@ package com.leebeebeom.clothinghelperdata.repository.container
 import com.leebeebeom.clothinghelperdata.repository.util.getSorted
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
-import com.leebeebeom.clothinghelperdomain.repository.SubCategoryPreferencesRepository
+import com.leebeebeom.clothinghelperdomain.repository.preferences.SubCategoryPreferencesRepository
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

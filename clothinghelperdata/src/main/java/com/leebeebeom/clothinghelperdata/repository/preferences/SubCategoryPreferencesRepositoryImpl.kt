@@ -8,7 +8,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.leebeebeom.clothinghelperdomain.model.Order
 import com.leebeebeom.clothinghelperdomain.model.Sort
 import com.leebeebeom.clothinghelperdomain.model.SortPreferences
-import com.leebeebeom.clothinghelperdomain.repository.SubCategoryPreferencesRepository
+import com.leebeebeom.clothinghelperdomain.repository.preferences.SubCategoryPreferencesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

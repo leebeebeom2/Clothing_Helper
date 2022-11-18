@@ -2,7 +2,6 @@ package com.leebeebeom.clothinghelper.main.subcategory.content
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.Divider
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
@@ -17,9 +16,9 @@ import com.leebeebeom.clothinghelper.base.composables.SingleLineText
 import com.leebeebeom.clothinghelper.main.base.SortDropdownMenu
 import com.leebeebeom.clothinghelper.util.getHeaderStringRes
 import com.leebeebeom.clothinghelperdomain.model.Order
-import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.model.Sort
 import com.leebeebeom.clothinghelperdomain.model.SortPreferences
+import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 
 @Composable
 fun SubCategoryHeader(
@@ -54,10 +53,10 @@ private fun SortIcon(
 
     Box {
         CustomIconButton(
-            modifier = Modifier.size(22.dp),
             onClick = { showDropDownMenu = true },
             drawable = R.drawable.ic_sort,
             tint = LocalContentColor.current.copy(0.5f),
+            size = 22.dp
         )
 
         SortDropdownMenu(

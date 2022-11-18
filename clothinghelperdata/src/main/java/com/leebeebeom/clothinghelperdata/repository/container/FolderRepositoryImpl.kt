@@ -2,14 +2,16 @@ package com.leebeebeom.clothinghelperdata.repository.container
 
 import com.leebeebeom.clothinghelperdomain.model.container.Folder
 import com.leebeebeom.clothinghelperdomain.repository.FolderRepository
-import kotlinx.coroutines.flow.asStateFlow
+import com.leebeebeom.clothinghelperdomain.repository.preferences.FolderPreferencesRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class FolderRepositoryImpl @Inject constructor() : BaseContainerRepository<Folder>(),
+class FolderRepositoryImpl @Inject constructor(
+    folderPreferencesRepository: FolderPreferencesRepository
+) : BaseContainerRepository<Folder>(),
     FolderRepository {
-    override val allFolders get() = allContainers.asStateFlow()
+    override val allFolders = getSortedContainers(folderPreferencesRepository.sort)
 
     override suspend fun loadFolders(uid: String) = load(uid, Folder::class.java)
 

@@ -1,13 +1,11 @@
 package com.leebeebeom.clothinghelperdata.repository.container
 
-import com.leebeebeom.clothinghelperdata.repository.util.getSorted
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
-import com.leebeebeom.clothinghelperdomain.repository.preferences.SubCategoryPreferencesRepository
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
+import com.leebeebeom.clothinghelperdomain.repository.preferences.SubCategoryPreferencesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,11 +15,7 @@ class SubCategoryRepositoryImpl @Inject constructor(
     subCategoryPreferencesRepository: SubCategoryPreferencesRepository
 ) : BaseContainerRepository<SubCategory>(), SubCategoryRepository {
 
-    override val allSubCategories = combine(
-        allContainers, subCategoryPreferencesRepository.sort
-    ) { allSubCategories, sort ->
-        getSorted(allSubCategories, sort)
-    }
+    override val allSubCategories = getSortedContainers(subCategoryPreferencesRepository.sort)
 
     override suspend fun loadSubCategories(uid: String) = load(uid, SubCategory::class.java)
 

@@ -4,12 +4,16 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelperdata.repository.base.BaseRepository
+import com.leebeebeom.clothinghelperdata.repository.util.getSorted
 import com.leebeebeom.clothinghelperdata.repository.util.logE
 import com.leebeebeom.clothinghelperdata.repository.util.updateMutable
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
+import com.leebeebeom.clothinghelperdomain.model.SortPreferences
 import com.leebeebeom.clothinghelperdomain.model.container.BaseContainer
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -18,8 +22,15 @@ import kotlinx.coroutines.withTimeout
 abstract class BaseContainerRepository<T : BaseContainer> : BaseRepository(true) {
     protected val root = Firebase.database.reference
 
-    protected val allContainers = MutableStateFlow(emptyList<T>())
+    private val allContainers = MutableStateFlow(emptyList<T>())
     abstract val refPath: String
+
+    protected fun getSortedContainers(sortFlow: Flow<SortPreferences>) =
+        combine(
+            allContainers, sortFlow
+        ) { allSubCategories, sort ->
+            getSorted(allSubCategories, sort)
+        }
 
     protected suspend fun load(uid: String, type: Class<T>) =
         databaseTry(3000, "update") {

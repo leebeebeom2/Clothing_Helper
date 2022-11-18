@@ -9,7 +9,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.leebeebeom.clothinghelperdomain.model.Order
 import com.leebeebeom.clothinghelperdomain.model.Sort
-import com.leebeebeom.clothinghelperdomain.model.SubCategorySortPreferences
+import com.leebeebeom.clothinghelperdomain.model.SortPreferences
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryPreferencesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -25,7 +25,7 @@ class SubCategoryPreferencesRepositoryImpl @Inject constructor(
     private val dataStore: DataStore<Preferences> = context.subCategoryDatastore
 ) : SubCategoryPreferencesRepository {
 
-    override val sort: Flow<SubCategorySortPreferences> = dataStore.data
+    override val sort: Flow<SortPreferences> = dataStore.data
         .catch {
             if (it is IOException) emit(emptyPreferences())
             else throw it
@@ -33,7 +33,7 @@ class SubCategoryPreferencesRepositoryImpl @Inject constructor(
         .map {
             val sort = it[SubCategoryPreferenceKeys.SORT] ?: Sort.NAME.name
             val order = it[SubCategoryPreferenceKeys.ORDER] ?: Order.ASCENDING.name
-            SubCategorySortPreferences(enumValueOf(sort), enumValueOf(order))
+            SortPreferences(enumValueOf(sort), enumValueOf(order))
         }
 
     override suspend fun changeSort(sort: Sort) {

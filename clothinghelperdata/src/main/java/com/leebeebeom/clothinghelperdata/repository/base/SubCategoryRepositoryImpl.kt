@@ -1,7 +1,5 @@
-package com.leebeebeom.clothinghelperdata.repository
+package com.leebeebeom.clothinghelperdata.repository.base
 
-import com.leebeebeom.clothinghelperdata.repository.base.BaseContainerRepository
-import com.leebeebeom.clothinghelperdata.repository.base.DatabasePath
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent

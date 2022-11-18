@@ -1,13 +1,15 @@
-package com.leebeebeom.clothinghelperdata.repository
+package com.leebeebeom.clothinghelperdata.repository.base
 
-import com.leebeebeom.clothinghelperdata.repository.base.BaseContainerRepository
-import com.leebeebeom.clothinghelperdata.repository.base.DatabasePath
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.model.Folder
 import com.leebeebeom.clothinghelperdomain.repository.FolderRepository
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class FolderRepositoryImpl : BaseContainerRepository<Folder>(), FolderRepository {
+@Singleton
+class FolderRepositoryImpl @Inject constructor() : BaseContainerRepository<Folder>(),
+    FolderRepository {
     override val allFolders get() = allContainers.asStateFlow()
 
     override suspend fun updateFolders(uid: String): FirebaseResult {

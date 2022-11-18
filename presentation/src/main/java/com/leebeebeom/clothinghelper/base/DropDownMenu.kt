@@ -13,13 +13,9 @@ fun DropDownMenuRoot(
     onDismiss: () -> Unit,
     content: @Composable () -> Unit,
 ) {
-    MaterialTheme(
-        shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(20.dp))
-    ) {
+    MaterialTheme(shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(20.dp))) {
         Surface {
-            DropdownMenu(
-                expanded = show(), onDismissRequest = onDismiss
-            ) {
+            DropdownMenu(expanded = show(), onDismissRequest = onDismiss) {
                 content()
             }
         }

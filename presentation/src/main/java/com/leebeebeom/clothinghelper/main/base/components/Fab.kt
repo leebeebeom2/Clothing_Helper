@@ -17,7 +17,7 @@ import com.leebeebeom.clothinghelper.base.Anime
 @Composable
 fun BoxScope.Fab(
     modifier: Modifier = Modifier,
-    paddingValues: PaddingValues = PaddingValues(end = 24.dp, bottom = 32.dp),
+    paddingValues: PaddingValues = PaddingValues(end = 20.dp, bottom = 24.dp),
     align: Alignment = Alignment.BottomEnd,
     size: Dp = 48.dp,
     visible: () -> Boolean,

@@ -10,6 +10,6 @@ interface SubCategoryRepository {
 
     suspend fun loadSubCategories(uid: String): FirebaseResult
     suspend fun pushInitialSubCategories(uid: String)
-    suspend fun addSubCategory(subCategory: SubCategory): FirebaseResult
-    suspend fun editSubCategoryName(newSubCategory: SubCategory): FirebaseResult
+    suspend fun addSubCategory(subCategory: SubCategory, uid: String): FirebaseResult
+    suspend fun editSubCategoryName(newSubCategory: SubCategory, uid: String): FirebaseResult
 }

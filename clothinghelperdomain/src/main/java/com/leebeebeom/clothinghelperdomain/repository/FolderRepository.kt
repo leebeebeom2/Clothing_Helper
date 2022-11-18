@@ -8,6 +8,6 @@ interface FolderRepository {
     val allFolders: StateFlow<List<Folder>>
 
     suspend fun loadFolders(uid: String): FirebaseResult
-    suspend fun addFolder(folder: Folder): FirebaseResult
-    suspend fun editFolderName(newFolder: Folder): FirebaseResult
+    suspend fun addFolder(folder: Folder, uid: String): FirebaseResult
+    suspend fun editFolderName(newFolder: Folder, uid: String): FirebaseResult
 }

@@ -3,7 +3,7 @@ package com.leebeebeom.clothinghelper.signin.base
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelperdata.repository.A_NETWORK_ERROR
 import com.leebeebeom.clothinghelperdata.repository.TOO_MANY_REQUEST
-import com.leebeebeom.clothinghelperdomain.util.logE
+import com.leebeebeom.clothinghelperdata.repository.util.logE
 
 object FirebaseErrorCode {
     const val ERROR_INVALID_EMAIL = "ERROR_INVALID_EMAIL"

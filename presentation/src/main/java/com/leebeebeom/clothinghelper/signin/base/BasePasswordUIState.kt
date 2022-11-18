@@ -25,7 +25,7 @@ open class BaseEmailUIState : BaseUIState() {
     open val buttonEnabled by derivedStateOf { email.isNotBlank() && emailError == null }
 }
 
-open class BaseSignInUpUIState : BaseEmailUIState() {
+open class BasePasswordUIState : BaseEmailUIState() {
     var passwordError: Int? by mutableStateOf(null)
         private set
 

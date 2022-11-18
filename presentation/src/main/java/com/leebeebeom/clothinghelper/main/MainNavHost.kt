@@ -13,7 +13,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.leebeebeom.clothinghelper.base.FinishActivityBackHandler
 import com.leebeebeom.clothinghelper.main.detail.DetailScreen
 import com.leebeebeom.clothinghelper.main.maincategory.MainCategoryScreen
 import com.leebeebeom.clothinghelper.main.root.EssentialMenus
@@ -21,7 +20,7 @@ import com.leebeebeom.clothinghelper.main.root.MainRoot
 import com.leebeebeom.clothinghelper.main.setting.SettingScreen
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryScreen
 import com.leebeebeom.clothinghelper.util.navigateSingleTop
-import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 
 sealed class MainDestinations(val route: String) {
     object MainCategory : MainDestinations("mainCategory")
@@ -85,8 +84,6 @@ fun MainNavHost(state: MainNavHostState = rememberMainNavHostState()) {
             }
         }
     }
-
-    FinishActivityBackHandler()
 }
 
 data class MainNavHostState(
@@ -130,8 +127,4 @@ data class MainNavHostState(
 fun rememberMainNavHostState(
     navController: NavHostController = rememberNavController(),
     currentBackStack: State<NavBackStackEntry?> = navController.currentBackStackEntryAsState()
-): MainNavHostState {
-    return remember {
-        MainNavHostState(navController, currentBackStack)
-    }
-}
+) = remember { MainNavHostState(navController, currentBackStack) }

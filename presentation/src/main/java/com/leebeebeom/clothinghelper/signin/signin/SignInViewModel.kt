@@ -2,7 +2,7 @@ package com.leebeebeom.clothinghelper.signin.signin
 
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.signin.base.BaseSignInUpUIState
+import com.leebeebeom.clothinghelper.signin.base.BasePasswordUIState
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
 import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
 import com.leebeebeom.clothinghelperdomain.model.AuthResult
@@ -17,11 +17,11 @@ class SignInViewModel @Inject constructor(
     private val signInUseCase: SignInUseCase, googleSignInUseCase: GoogleSignInUseCase
 ) : GoogleSignInUpViewModel(googleSignInUseCase) {
 
-    val uiState = BaseSignInUpUIState()
+    val uiState = BasePasswordUIState()
 
     fun signInWithEmailAndPassword() {
         viewModelScope.launch {
-            when (val result = signInUseCase(uiState.email, uiState.password)) {
+            when (val result = signInUseCase.signIn(uiState.email, uiState.password)) {
                 is AuthResult.Success -> showToast(R.string.sign_in_complete)
                 is AuthResult.Fail -> setFireBaseError(
                     errorCode = result.errorCode,
@@ -34,15 +34,9 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    override fun updateGoogleButtonEnabled(enabled: Boolean) {
+    override fun updateGoogleButtonEnabled(enabled: Boolean) =
         uiState.updateGoogleButtonEnabled(enabled)
-    }
 
-    override fun disableGoogleButton() {
-        uiState.updateGoogleButtonEnabled(false)
-    }
-
-    override fun showToast(text: Int) {
-        uiState.showToast(text)
-    }
+    override fun disableGoogleButton() = uiState.updateGoogleButtonEnabled(false)
+    override fun showToast(text: Int) = uiState.showToast(text)
 }

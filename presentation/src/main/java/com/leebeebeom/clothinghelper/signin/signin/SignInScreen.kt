@@ -14,11 +14,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.MaxWidthButton
-import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.base.SimpleToast
-import com.leebeebeom.clothinghelper.base.SingleLineText
+import com.leebeebeom.clothinghelper.base.*
+import com.leebeebeom.clothinghelper.base.composables.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.base.composables.SimpleToast
+import com.leebeebeom.clothinghelper.base.composables.SingleLineText
 import com.leebeebeom.clothinghelper.signin.base.*
+import com.leebeebeom.clothinghelper.signin.base.composables.GoogleSignInButton
+import com.leebeebeom.clothinghelper.signin.base.composables.OrDivider
+import com.leebeebeom.clothinghelper.signin.base.textfields.EmailTextField
+import com.leebeebeom.clothinghelper.signin.base.textfields.PasswordTextField
 
 /*
 에러 애니메이션, 로딩, 스크린 아웃, 로그인 토스트, 구글 로그인 토스트, 테스트
@@ -34,7 +38,7 @@ fun SignInScreen(
     onForgotPasswordClick: () -> Unit,
     onEmailSignUpClick: () -> Unit,
     viewModel: SignInViewModel = hiltViewModel(),
-    uiState: BaseSignInUpUIState = viewModel.uiState
+    uiState: BasePasswordUIState = viewModel.uiState
 ) {
     Column(
         modifier = Modifier

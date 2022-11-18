@@ -10,8 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.leebeebeom.clothinghelper.main.root.DrawerHeader
-import com.leebeebeom.clothinghelper.main.root.DrawerMainCategory
+import com.leebeebeom.clothinghelper.main.root.contents.header.DrawerHeader
 import com.leebeebeom.clothinghelper.main.root.model.*
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.map.StableUser

@@ -6,7 +6,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.leebeebeom.clothinghelper.base.FinishActivityBackHandler
 import com.leebeebeom.clothinghelper.signin.resetpassword.ResetPasswordScreen
 import com.leebeebeom.clothinghelper.signin.signin.SignInScreen
 import com.leebeebeom.clothinghelper.signin.signup.SignUpScreen
@@ -20,7 +19,6 @@ object SignInDestinations {
 
 @Composable
 fun SignInNavHost(state: SignInNavHostState = rememberSignInNavHostState()) {
-
     SignInRoot {
         NavHost(
             navController = state.navController,
@@ -36,8 +34,6 @@ fun SignInNavHost(state: SignInNavHostState = rememberSignInNavHostState()) {
             composable(route = SignInDestinations.RESET_PASSWORD) { ResetPasswordScreen() }
         }
     }
-
-    FinishActivityBackHandler()
 }
 
 data class SignInNavHostState(val navController: NavHostController) {

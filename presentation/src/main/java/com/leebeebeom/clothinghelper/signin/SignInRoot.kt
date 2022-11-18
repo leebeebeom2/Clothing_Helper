@@ -16,7 +16,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.leebeebeom.clothinghelper.base.CenterDotProgressIndicator
+import com.leebeebeom.clothinghelper.base.composables.BlockBacKPressWhenIsLoading
+import com.leebeebeom.clothinghelper.base.composables.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelperdomain.usecase.user.GetSignInLoadingStateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,7 +31,7 @@ fun SignInRoot(
 ) {
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
-    val isLoading by viewModel.getSignInLoadingStateUseCase().collectAsStateWithLifecycle()
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
 
     ClothingHelperTheme {
         Scaffold {
@@ -47,6 +48,7 @@ fun SignInRoot(
                         ),
                 ) {
                     content()
+                    BlockBacKPressWhenIsLoading { isLoading }
                 }
             }
         }
@@ -55,5 +57,7 @@ fun SignInRoot(
 }
 
 @HiltViewModel
-class SignInRootViewModel @Inject constructor(val getSignInLoadingStateUseCase: GetSignInLoadingStateUseCase) :
-    ViewModel()
+class SignInRootViewModel @Inject constructor(private val getSignInLoadingStateUseCase: GetSignInLoadingStateUseCase) :
+    ViewModel() {
+    val isLoading get() = getSignInLoadingStateUseCase.isLoading
+}

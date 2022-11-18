@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.root
+package com.leebeebeom.clothinghelper.main.root.contents
 
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -10,7 +10,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.leebeebeom.clothinghelper.main.root.dropmenus.DrawerSubCategoryDropDownMenu
+import com.leebeebeom.clothinghelper.main.root.components.DrawerContentRow
+import com.leebeebeom.clothinghelper.main.root.components.DrawerContentText
+import com.leebeebeom.clothinghelper.main.root.contents.dropdownmenus.DrawerSubCategoryDropDownMenu
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import kotlinx.collections.immutable.ImmutableList
 

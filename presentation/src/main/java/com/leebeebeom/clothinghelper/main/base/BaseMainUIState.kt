@@ -7,28 +7,27 @@ import androidx.compose.runtime.setValue
 import com.leebeebeom.clothinghelper.base.BaseUIState
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.map.toStable
-import com.leebeebeom.clothinghelperdomain.model.SubCategory
-import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.model.container.SubCategory
+import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
-open class BaseMainUIState : BaseUIState() {
+abstract class BaseMainUIState : BaseUIState() {
     var isLoading by mutableStateOf(false)
         private set
-    var allSubCategories by mutableStateOf(List(4) { emptyList<SubCategory>() })
-        private set
+    private var allSubCategories by mutableStateOf(emptyList<StableSubCategory>())
 
     private val topSubCategories by derivedStateOf {
-        allSubCategories[0].map { it.toStable() }.toImmutableList()
+        allSubCategories.filter { it.parent == SubCategoryParent.TOP }.toImmutableList()
     }
     private val bottomSubCategories by derivedStateOf {
-        allSubCategories[1].map { it.toStable() }.toImmutableList()
+        allSubCategories.filter { it.parent == SubCategoryParent.BOTTOM }.toImmutableList()
     }
     private val outerSubCategories by derivedStateOf {
-        allSubCategories[2].map { it.toStable() }.toImmutableList()
+        allSubCategories.filter { it.parent == SubCategoryParent.OUTER }.toImmutableList()
     }
     private val etcSubCategories by derivedStateOf {
-        allSubCategories[3].map { it.toStable() }.toImmutableList()
+        allSubCategories.filter { it.parent == SubCategoryParent.ETC }.toImmutableList()
     }
 
     private val topSubCategoriesSize by derivedStateOf { topSubCategories.size }
@@ -80,16 +79,7 @@ open class BaseMainUIState : BaseUIState() {
         this.isLoading = isLoading
     }
 
-    fun updateAllSubCategories(allSubCategories: List<List<SubCategory>>) {
-        this.allSubCategories = allSubCategories
-    }
-}
-
-open class BaseIsAllExpandState : BaseMainUIState() {
-    var isAllExpanded by mutableStateOf(false)
-        private set
-
-    fun updateIsAllExpand(isAllExpanded: Boolean) {
-        this.isAllExpanded = isAllExpanded
+    fun loadAllSubCategories(allSubCategories: List<SubCategory>) {
+        this.allSubCategories = allSubCategories.map { it.toStable() }
     }
 }

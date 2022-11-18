@@ -9,6 +9,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 
 open class TextFieldState(initialText: String) {
     var textFieldValue by mutableStateOf(TextFieldValue(initialText))
+        protected set
 
     open fun onValueChange(
         newTextFieldValue: TextFieldValue,

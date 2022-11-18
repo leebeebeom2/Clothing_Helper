@@ -1,15 +1,13 @@
 package com.leebeebeom.clothinghelperdomain.repository
 
-import com.leebeebeom.clothinghelperdomain.model.SortOrder
-import com.leebeebeom.clothinghelperdomain.model.SubCategorySort
-import com.leebeebeom.clothinghelperdomain.model.SubCategorySortPreferences
+import com.leebeebeom.clothinghelperdomain.model.Order
+import com.leebeebeom.clothinghelperdomain.model.Sort
+import com.leebeebeom.clothinghelperdomain.model.SortPreferences
 import kotlinx.coroutines.flow.Flow
 
 interface SubCategoryPreferencesRepository {
-    val isAllExpanded: Flow<Boolean>
-    val sort: Flow<SubCategorySortPreferences>
+    val sort: Flow<SortPreferences>
 
-    suspend fun toggleAllExpand()
-    suspend fun changeSort(subCategorySort: SubCategorySort)
-    suspend fun changeOrder(sortOrder: SortOrder)
+    suspend fun changeSort(sort: Sort)
+    suspend fun changeOrder(order: Order)
 }

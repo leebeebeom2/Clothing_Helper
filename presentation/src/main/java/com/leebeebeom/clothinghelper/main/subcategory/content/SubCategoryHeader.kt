@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.subcategory.content.header
+package com.leebeebeom.clothinghelper.main.subcategory.content
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.composables.CustomIconButton
 import com.leebeebeom.clothinghelper.base.composables.SingleLineText
+import com.leebeebeom.clothinghelper.main.base.SortDropdownMenu
 import com.leebeebeom.clothinghelper.util.getHeaderStringRes
 import com.leebeebeom.clothinghelperdomain.model.Order
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent

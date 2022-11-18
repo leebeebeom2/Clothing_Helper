@@ -13,10 +13,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.MaxWidthButton
-import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.base.SimpleToast
-import com.leebeebeom.clothinghelper.base.SingleLineText
-import com.leebeebeom.clothinghelper.signin.base.EmailTextField
+import com.leebeebeom.clothinghelper.base.composables.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.base.composables.SimpleToast
+import com.leebeebeom.clothinghelper.base.composables.SingleLineText
+import com.leebeebeom.clothinghelper.signin.base.textfields.EmailTextField
 
 /*
 이메일 필드가 비어있거나 에러 메세지 표시 중일 경우 확인 버튼 비활성화

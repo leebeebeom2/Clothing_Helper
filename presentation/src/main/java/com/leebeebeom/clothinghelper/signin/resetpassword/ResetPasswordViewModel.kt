@@ -22,19 +22,17 @@ class ResetPasswordViewModel @Inject constructor(private val resetPasswordUseCas
 
     fun sendResetPasswordEmail() {
         viewModelScope.launch {
-            when (val result = resetPasswordUseCase(uiState.email)) {
+            when (val result = resetPasswordUseCase.sendResetPasswordEmail(uiState.email)) {
                 is AuthResult.Success -> {
                     uiState.showToast(R.string.email_send_complete)
                     uiState.updateIsTaskSuccess(true)
                 }
-                is AuthResult.Fail -> {
-                    setFireBaseError(
-                        errorCode = result.errorCode,
-                        updateEmailError = uiState::updateEmailError,
-                        updatePasswordError = {},
-                        showToast = uiState::showToast
-                    )
-                }
+                is AuthResult.Fail -> setFireBaseError(
+                    errorCode = result.errorCode,
+                    updateEmailError = uiState::updateEmailError,
+                    updatePasswordError = {},
+                    showToast = uiState::showToast
+                )
                 is AuthResult.UnknownFail -> uiState.showToast(R.string.unknown_error)
             }
         }

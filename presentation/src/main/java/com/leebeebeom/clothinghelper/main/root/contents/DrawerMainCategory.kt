@@ -124,15 +124,16 @@ private fun SubCategories(
     ) {
         Surface(color = MaterialTheme.colors.primary) {
             Column {
-                for (subCategory in subCategories())
-                    key(subCategory.key) {
+                subCategories().forEach {
+                    key(it.key) {
                         DrawerSubCategory(
-                            subCategory = { subCategory },
-                            onClick = { onClick(subCategory) },
+                            subCategory = { it },
+                            onClick = { onClick(it) },
                             onEditSubCategoryNamePositiveClick = onEditSubCategoryNamePositiveClick,
                             subCategoryNames = subCategoryNames
                         )
                     }
+                }
             }
         }
     }

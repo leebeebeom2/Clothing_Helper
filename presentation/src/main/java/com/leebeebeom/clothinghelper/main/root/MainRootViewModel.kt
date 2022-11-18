@@ -5,13 +5,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.main.base.BaseIsAllExpandState
-import com.leebeebeom.clothinghelper.main.base.EditSubCategoryNameViewModel
+import com.leebeebeom.clothinghelper.main.base.BaseMainUIState
+import com.leebeebeom.clothinghelper.main.subcategory.EditSubCategoryNameViewModel
 import com.leebeebeom.clothinghelper.map.StableUser
 import com.leebeebeom.clothinghelper.map.toStable
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.model.User
-import com.leebeebeom.clothinghelperdomain.usecase.preferences.MainRootAllExpandUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.*
 import com.leebeebeom.clothinghelperdomain.usecase.user.GetUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,8 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainRootViewModel @Inject constructor(
     private val getSubCategoryLoadingStateUseCase: GetSubCategoryLoadingStateUseCase,
-    private val updateSubCategoriesUseCase: UpdateSubCategoriesUseCase,
-    private val mainScreenRootAllExpandUseCase: MainRootAllExpandUseCase,
+    private val loadSubCategoriesUseCase: LoadSubCategoriesUseCase,
     private val getAllSubCategoriesUseCase: GetAllSubCategoriesUseCase,
     private val getUserUseCase: GetUserUseCase,
     addSubCategoryUseCase: AddSubCategoryUseCase,
@@ -36,7 +34,7 @@ class MainRootViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             launch {
-                updateSubCategoriesUseCase().collectLatest {
+                loadSubCategoriesUseCase.load {
                     if (it is FirebaseResult.Fail)
                         when (it.exception) {
                             is TimeoutCancellationException -> showToast(R.string.network_error_for_load)
@@ -45,25 +43,16 @@ class MainRootViewModel @Inject constructor(
                 }
             }
 
-            launch { getSubCategoryLoadingStateUseCase().collectLatest(uiState::updateIsLoading) }
-            launch { getAllSubCategoriesUseCase().collectLatest(uiState::updateAllSubCategories) }
-            launch { mainScreenRootAllExpandUseCase.isAllExpanded.collectLatest(uiState::updateIsAllExpand) }
-            launch { getUserUseCase().collectLatest(uiState::updateUser) }
+            launch { getSubCategoryLoadingStateUseCase.isLoading.collectLatest(uiState::updateIsLoading) }
+            launch { getAllSubCategoriesUseCase.allSubCategories.collectLatest(uiState::loadAllSubCategories) }
+            launch { getUserUseCase.user.collectLatest(uiState::updateUser) }
         }
     }
 
-    fun toggleAllExpand() {
-        viewModelScope.launch {
-            mainScreenRootAllExpandUseCase.toggleAllExpand()
-        }
-    }
-
-    override fun showToast(text: Int) {
-        uiState.showToast(text)
-    }
+    override fun showToast(text: Int) = uiState.showToast(text)
 }
 
-class MainRootUiState : BaseIsAllExpandState() {
+class MainRootUiState : BaseMainUIState() {
     var user: StableUser? by mutableStateOf(null)
         private set
 

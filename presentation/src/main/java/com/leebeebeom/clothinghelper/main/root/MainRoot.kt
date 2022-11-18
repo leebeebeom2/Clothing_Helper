@@ -8,10 +8,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.leebeebeom.clothinghelper.base.BackHandler
-import com.leebeebeom.clothinghelper.base.SimpleToast
+import com.leebeebeom.clothinghelper.base.composables.BackHandler
+import com.leebeebeom.clothinghelper.base.composables.BlockBacKPressWhenIsLoading
+import com.leebeebeom.clothinghelper.base.composables.SimpleToast
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
-import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -33,6 +34,8 @@ import kotlinx.coroutines.launch
 메인 카테고리 익스팬드 아이콘 로테이션 및 동작 확인
 
 드로어가 열려있을때 뒤로 가기 시 드로어 닫히는지 확인
+
+TODO 마지막 열림 상태 유지
  */
 
 @Composable
@@ -61,7 +64,6 @@ fun MainRoot(
                 DrawerContents(
                     user = { uiState.user },
                     isLoading = { uiState.isLoading },
-                    isAllExpanded = { uiState.isAllExpanded },
                     subCategories = uiState::getSubCategories,
                     subCategoriesSize = uiState::getSubCategoriesSize,
                     onEssentialMenuClick = {
@@ -80,7 +82,6 @@ fun MainRoot(
                         onSettingIconClick()
                         drawerClose()
                     },
-                    allExpandIconClick = viewModel::toggleAllExpand,
                     subCategoryNames = uiState::getSubCategoryNames,
                     onAddSubCategoryPositiveButtonClick = viewModel::addSubCategory,
                     onEditSUbCategoryNamePositiveClick = viewModel::editSubCategoryName
@@ -91,6 +92,7 @@ fun MainRoot(
         ) {
             content(it)
             BackHandler(enabled = { state.drawerState.isOpen }, task = drawerClose)
+            BlockBacKPressWhenIsLoading { uiState.isLoading }
         }
         SimpleToast(text = { uiState.toastText }, toastShown = uiState::toastShown)
     }
@@ -106,6 +108,5 @@ data class MainRootState(
 }
 
 @Composable
-fun rememberMainRootState(scaffoldState: ScaffoldState = rememberScaffoldState()): MainRootState {
-    return remember { MainRootState(scaffoldState = scaffoldState) }
-}
+fun rememberMainRootState(scaffoldState: ScaffoldState = rememberScaffoldState()) =
+    remember { MainRootState(scaffoldState = scaffoldState) }

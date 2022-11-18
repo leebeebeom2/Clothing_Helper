@@ -22,19 +22,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.DropDownMenuRoot
-import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.base.SimpleWidthSpacer
-import com.leebeebeom.clothinghelper.base.SingleLineText
-import com.leebeebeom.clothinghelperdomain.repository.SortOrder
-import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
-import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
+import com.leebeebeom.clothinghelper.base.composables.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.base.composables.SimpleWidthSpacer
+import com.leebeebeom.clothinghelper.base.composables.SingleLineText
+import com.leebeebeom.clothinghelperdomain.model.Order
+import com.leebeebeom.clothinghelperdomain.model.Sort
+import com.leebeebeom.clothinghelperdomain.model.SortPreferences
 
 @Composable
 fun SortDropdownMenu(
     show: () -> Boolean,
-    sort: () -> SubCategorySortPreferences,
-    onSortClick: (SubCategorySort) -> Unit,
-    onOrderClick: (SortOrder) -> Unit,
+    sort: () -> SortPreferences,
+    onSortClick: (Sort) -> Unit,
+    onOrderClick: (Order) -> Unit,
     onDismiss: () -> Unit
 ) {
     DropDownMenuRoot(show = show, onDismiss = onDismiss) {
@@ -44,40 +44,57 @@ fun SortDropdownMenu(
                 .height(IntrinsicSize.Min)
                 .padding(vertical = 8.dp, horizontal = 12.dp)
         ) {
-            Column {
-                SortButton(
-                    text = R.string.sort_name,
-                    isSelected = { sort().sort == SubCategorySort.NAME }
-                ) { onSortClick(SubCategorySort.NAME) }
-                SimpleHeightSpacer(dp = 8)
-                SortButton(
-                    text = R.string.sort_create_date,
-                    isSelected = { sort().sort == SubCategorySort.CREATE }
-                ) { onSortClick(SubCategorySort.CREATE) }
-            }
-
+            SortButtons(sort, onSortClick)
             SimpleWidthSpacer(dp = 8)
-
             Divider(
                 modifier = Modifier
                     .width(1.dp)
                     .fillMaxHeight()
             )
-
             SimpleWidthSpacer(dp = 8)
-
-            Column {
-                SortButton(
-                    text = R.string.sort_Ascending,
-                    isSelected = { sort().sortOrder == SortOrder.ASCENDING }
-                ) { onOrderClick(SortOrder.ASCENDING) }
-                SimpleHeightSpacer(dp = 8)
-                SortButton(
-                    text = R.string.sort_Descending,
-                    isSelected = { sort().sortOrder == SortOrder.DESCENDING }
-                ) { onOrderClick(SortOrder.DESCENDING) }
-            }
+            OrderButtons(sort, onOrderClick)
         }
+    }
+}
+
+@Composable
+private fun OrderButtons(
+    sort: () -> SortPreferences,
+    onOrderClick: (Order) -> Unit
+) {
+    Column {
+        SortButton(
+            text = R.string.sort_Ascending,
+            isSelected = { sort().order == Order.ASCENDING }
+        ) { onOrderClick(Order.ASCENDING) }
+        SimpleHeightSpacer(dp = 8)
+        SortButton(
+            text = R.string.sort_Descending,
+            isSelected = { sort().order == Order.DESCENDING }
+        ) { onOrderClick(Order.DESCENDING) }
+    }
+}
+
+@Composable
+private fun SortButtons(
+    sort: () -> SortPreferences,
+    onSortClick: (Sort) -> Unit
+) {
+    Column {
+        SortButton(
+            text = R.string.sort_name,
+            isSelected = { sort().sort == Sort.NAME }
+        ) { onSortClick(Sort.NAME) }
+        SimpleHeightSpacer(dp = 8)
+        SortButton(
+            text = R.string.sort_create_date,
+            isSelected = { sort().sort == Sort.CREATE }
+        ) { onSortClick(Sort.CREATE) }
+        SimpleHeightSpacer(dp = 8)
+        SortButton(
+            text = R.string.sort_create_date,
+            isSelected = { sort().sort == Sort.EDIT }
+        ) { onSortClick(Sort.EDIT) }
     }
 }
 

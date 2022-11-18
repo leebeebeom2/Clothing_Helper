@@ -4,6 +4,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.main.base.BaseMainUIState
 import com.leebeebeom.clothinghelper.map.StableSubCategory
@@ -33,9 +34,9 @@ class SubCategoryViewModel @Inject constructor(
     private val subCategorySortUseCase: SubCategorySortUseCase,
     private val getAllSubCategoriesUseCase: GetAllSubCategoriesUseCase,
     private val getUserUseCase: GetUserUseCase,
-    editSubCategoryNameUseCase: EditSubCategoryNameUseCase,
-    addSubCategoryUseCase: AddSubCategoryUseCase,
-) : EditSubCategoryNameViewModel(editSubCategoryNameUseCase, addSubCategoryUseCase) {
+    override val addSubCategoryUseCase: AddSubCategoryUseCase,
+    override val editSubCategoryNameUseCase: EditSubCategoryNameUseCase,
+) : AddSubCategory, EditSubCategoryName, ViewModel() {
 
     private val uiState = SubCategoryUIState()
 
@@ -59,10 +60,16 @@ class SubCategoryViewModel @Inject constructor(
     fun changeOrder(order: Order) =
         viewModelScope.launch { subCategorySortUseCase.changeOrder(order) }
 
-    override fun editSubCategoryName(newSubCategory: StableSubCategory) {
+    fun addSubCategory(subCategory: StableSubCategory) {
+        viewModelScope.launch {
+            super.add(subCategory = subCategory)
+        }
+    }
+
+    fun editSubCategoryName(newSubCategory: StableSubCategory) {
         viewModelScope.launch {
             uiState.selectModeOff()
-            super.editSubCategoryName(newSubCategory)
+            super.edit(newSubCategory)
         }
     }
 }

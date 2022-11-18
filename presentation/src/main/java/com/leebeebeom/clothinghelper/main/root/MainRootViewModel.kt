@@ -1,9 +1,12 @@
 package com.leebeebeom.clothinghelper.main.root
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.main.base.BaseMainUIState
-import com.leebeebeom.clothinghelper.main.subcategory.EditSubCategoryNameViewModel
+import com.leebeebeom.clothinghelper.main.subcategory.AddSubCategory
+import com.leebeebeom.clothinghelper.main.subcategory.EditSubCategoryName
+import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.*
 import com.leebeebeom.clothinghelperdomain.usecase.user.GetUserUseCase
@@ -19,9 +22,9 @@ class MainRootViewModel @Inject constructor(
     private val loadSubCategoriesUseCase: LoadSubCategoriesUseCase,
     private val getAllSubCategoriesUseCase: GetAllSubCategoriesUseCase,
     private val getUserUseCase: GetUserUseCase,
-    addSubCategoryUseCase: AddSubCategoryUseCase,
-    editSubCategoryNameUseCase: EditSubCategoryNameUseCase
-) : EditSubCategoryNameViewModel(editSubCategoryNameUseCase, addSubCategoryUseCase) {
+    override val addSubCategoryUseCase: AddSubCategoryUseCase,
+    override val editSubCategoryNameUseCase: EditSubCategoryNameUseCase
+) : AddSubCategory, EditSubCategoryName, ViewModel() {
 
     val uiState = BaseMainUIState()
 
@@ -40,6 +43,18 @@ class MainRootViewModel @Inject constructor(
             launch { getSubCategoryLoadingStateUseCase.isLoading.collectLatest(uiState::updateIsLoading) }
             launch { getAllSubCategoriesUseCase.allSubCategories.collectLatest(uiState::loadAllSubCategories) }
             launch { getUserUseCase.user.collectLatest(uiState::updateUser) }
+        }
+    }
+
+    fun addSubCategory(subCategory:StableSubCategory){
+        viewModelScope.launch {
+            super.add(subCategory)
+        }
+    }
+
+    fun editSubCategoryName(subCategory: StableSubCategory){
+        viewModelScope.launch {
+            super.edit(subCategory)
         }
     }
 

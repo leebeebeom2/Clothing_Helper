@@ -26,7 +26,7 @@ class SignUpViewModel @Inject constructor(
 
     val uiState = SignUpUIState()
 
-    fun signUpWithEmailAndPassword() {
+    fun signUpWithEmailAndPassword() =
         viewModelScope.launch {
             val result = signUpUseCase.signUp(
                 email = uiState.email,
@@ -49,7 +49,6 @@ class SignUpViewModel @Inject constructor(
                 is AuthResult.UnknownFail -> showToast(R.string.unknown_error)
             }
         }
-    }
 
     override fun updateGoogleButtonEnabled(enabled: Boolean) =
         uiState.updateGoogleButtonEnabled(enabled)

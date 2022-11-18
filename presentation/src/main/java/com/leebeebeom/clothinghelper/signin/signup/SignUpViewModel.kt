@@ -7,14 +7,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.signin.base.BaseSignInUpUIState
+import com.leebeebeom.clothinghelper.signin.base.BasePasswordUIState
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
 import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
+import com.leebeebeom.clothinghelperdata.repository.util.logE
 import com.leebeebeom.clothinghelperdomain.model.AuthResult
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.user.SignUpUseCase
-import com.leebeebeom.clothinghelperdomain.util.logE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,12 +28,12 @@ class SignUpViewModel @Inject constructor(
 
     fun signUpWithEmailAndPassword() {
         viewModelScope.launch {
-            val result = signUpUseCase(
+            val result = signUpUseCase.signUp(
                 email = uiState.email,
                 password = uiState.password,
                 name = uiState.name
             ) {
-                if (it is FirebaseResult.Fail && it.exception !is NullPointerException) {
+                if (it is FirebaseResult.Fail) {
                     uiState.showToast(R.string.sub_categories_load_failed)
                     logE("signUpWithEmailAndPassword", it.exception)
                 }
@@ -51,20 +51,14 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    override fun updateGoogleButtonEnabled(enabled: Boolean) {
+    override fun updateGoogleButtonEnabled(enabled: Boolean) =
         uiState.updateGoogleButtonEnabled(enabled)
-    }
 
-    override fun showToast(text: Int) {
-        uiState.showToast(text)
-    }
-
-    override fun disableGoogleButton() {
-        uiState.updateGoogleButtonEnabled(false)
-    }
+    override fun showToast(text: Int) = uiState.showToast(text)
+    override fun disableGoogleButton() = uiState.updateGoogleButtonEnabled(false)
 }
 
-class SignUpUIState : BaseSignInUpUIState() {
+class SignUpUIState : BasePasswordUIState() {
     var passwordConfirmError: Int? by mutableStateOf(null)
         private set
 
@@ -81,18 +75,16 @@ class SignUpUIState : BaseSignInUpUIState() {
         super.onPasswordChange(password)
         if (password.isNotBlank()) {
             if (password.length < 6) updatePasswordError(R.string.error_weak_password)
-            if (passwordConfirm.isNotBlank() && password != passwordConfirm) updatePasswordConfirmError(
-                R.string.error_password_confirm_not_same
-            )
+            if (passwordConfirm.isNotBlank() && password != passwordConfirm)
+                updatePasswordConfirmError(R.string.error_password_confirm_not_same)
             else updatePasswordConfirmError(null)
         }
     }
 
     fun onPasswordConfirmChange(passwordConfirm: String) {
         this.passwordConfirm = passwordConfirm
-        if (passwordConfirm.isNotBlank() && password.isNotBlank() && passwordConfirm != password) updatePasswordConfirmError(
-            R.string.error_password_confirm_not_same
-        )
+        if (passwordConfirm.isNotBlank() && password.isNotBlank() && passwordConfirm != password)
+            updatePasswordConfirmError(R.string.error_password_confirm_not_same)
     }
 
     fun updatePasswordConfirmError(@StringRes error: Int?) {

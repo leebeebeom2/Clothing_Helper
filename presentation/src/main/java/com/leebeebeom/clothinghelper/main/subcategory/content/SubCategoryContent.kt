@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.main.base.components.ScrollToTopFab
-import com.leebeebeom.clothinghelper.main.subcategory.content.header.SubCategoryHeader
+import com.leebeebeom.clothinghelper.main.subcategory.content.subcategorycard.SubCategoryCard
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.util.dragSelect
 import com.leebeebeom.clothinghelper.util.scrollToTop
@@ -74,14 +74,13 @@ fun SubCategoryContent(
                 )
             }
             items(items = subCategories(), key = { it.key }) {
-                SubCategoryCard(
-                    subCategory = { it },
-                    onClick = {
-                        if (isSelectMode()) onSelect(it.key) else
-                            onSubCategoryClick(it.parent, it.name, it.key)
-                    },
-                    selectedCategoryKeys = selectedSubCategoryKey,
-                    isSelectMode = isSelectMode
+                SubCategoryCard(subCategory = { it }, onClick = {
+                    if (isSelectMode()) onSelect(it.key) else onSubCategoryClick(
+                        it.parent,
+                        it.name,
+                        it.key
+                    )
+                }, selectedCategoryKeys = selectedSubCategoryKey, isSelectMode = isSelectMode
                 )
             }
         }

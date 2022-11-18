@@ -1,14 +1,11 @@
-package com.leebeebeom.clothinghelperdata.repository.base
+package com.leebeebeom.clothinghelperdata.repository.container
 
-import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.model.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -19,20 +16,14 @@ class SubCategoryRepositoryImpl @Inject constructor() : BaseContainerRepository<
 
     override val allSubCategories get() = allContainers.asStateFlow()
 
-    override suspend fun updateSubCategories(uid: String): FirebaseResult {
-        return load(uid, SubCategory::class.java)
-    }
+    override suspend fun loadSubCategories(uid: String) = load(uid, SubCategory::class.java)
 
-    override suspend fun addSubCategory(subCategory: SubCategory): FirebaseResult {
-        return add(subCategory)
-    }
+    override suspend fun addSubCategory(subCategory: SubCategory) = add(subCategory)
 
-    override suspend fun editSubCategoryName(newSubCategory: SubCategory): FirebaseResult {
-        return edit(newSubCategory)
-    }
+    override suspend fun editSubCategoryName(newSubCategory: SubCategory) = edit(newSubCategory)
 
-    override suspend fun pushInitialSubCategories(uid: String) {
-        return withContext(Dispatchers.IO) {
+    override suspend fun pushInitialSubCategories(uid: String) =
+        withContext(Dispatchers.IO) {
             val subCategoryRef = root.getContainerRef(uid, refPath)
 
             getInitialSubCategories().forEach {
@@ -40,10 +31,7 @@ class SubCategoryRepositoryImpl @Inject constructor() : BaseContainerRepository<
                 val result = async { push(subCategoryRef, subCategoryWithKey) }
                 result.await()
             }
-
-            FirebaseResult.Success
         }
-    }
 
     private fun getInitialSubCategories(): List<SubCategory> {
         var timeStamp = System.currentTimeMillis()
@@ -114,17 +102,7 @@ class SubCategoryRepositoryImpl @Inject constructor() : BaseContainerRepository<
         value: SubCategory,
         key: String,
         createDate: Long
-    ): SubCategory {
-        return value.copy(key = key, createDate = createDate)
-    }
+    ) = value.copy(key = key, createDate = createDate)
 
-    override fun getContainerWithKey(value: SubCategory, key: String): SubCategory {
-        return value.copy(key = key)
-    }
-}
-
-fun <T> MutableStateFlow<List<T>>.updateMutable(task: (MutableList<T>) -> Unit) {
-    val temp = value.toMutableList()
-    task(temp)
-    update { temp }
+    override fun getContainerWithKey(value: SubCategory, key: String) = value.copy(key = key)
 }

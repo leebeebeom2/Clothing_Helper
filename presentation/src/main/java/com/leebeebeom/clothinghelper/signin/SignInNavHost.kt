@@ -47,6 +47,5 @@ data class SignInNavHostState(val navController: NavHostController) {
 }
 
 @Composable
-fun rememberSignInNavHostState(navController: NavHostController = rememberNavController()): SignInNavHostState {
-    return remember { SignInNavHostState(navController) }
-}
+fun rememberSignInNavHostState(navController: NavHostController = rememberNavController()) =
+    remember { SignInNavHostState(navController) }

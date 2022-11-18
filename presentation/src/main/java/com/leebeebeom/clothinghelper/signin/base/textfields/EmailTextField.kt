@@ -7,7 +7,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.MaxWidthTextField
-import com.leebeebeom.clothinghelper.base.MaxWidthTextFieldState
 import com.leebeebeom.clothinghelper.base.rememberMaxWidthTextFieldState
 
 @Composable
@@ -34,11 +33,9 @@ fun EmailTextField(
 @Composable
 private fun rememberEmailTextFieldState(
     imeAction: ImeAction,
-): MaxWidthTextFieldState {
-    return rememberMaxWidthTextFieldState(
-        label = R.string.email,
-        placeholder = R.string.email_place_holder,
-        showKeyboardEnabled = true,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = imeAction),
-    )
-}
+) = rememberMaxWidthTextFieldState(
+    label = R.string.email,
+    placeholder = R.string.email_place_holder,
+    showKeyboardEnabled = true,
+    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = imeAction),
+)

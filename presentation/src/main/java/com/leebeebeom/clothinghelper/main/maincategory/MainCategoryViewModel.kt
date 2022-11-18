@@ -20,8 +20,8 @@ class MainCategoryViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            launch { getSubCategoryLoadingStateUseCase().collectLatest(uiState::updateIsLoading) }
-            launch { getAllSubCategoriesUseCase().collectLatest(uiState::updateAllSubCategories) }
+            launch { getSubCategoryLoadingStateUseCase.isLoading.collectLatest(uiState::updateIsLoading) }
+            launch { getAllSubCategoriesUseCase.allSubCategories.collectLatest(uiState::loadAllSubCategories) }
         }
     }
 }

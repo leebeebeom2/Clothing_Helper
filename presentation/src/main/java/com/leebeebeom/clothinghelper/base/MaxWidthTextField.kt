@@ -175,7 +175,7 @@ private fun CancelIcon(show: () -> Boolean, onClick: () -> Unit) {
             onClick = onClick,
             drawable = R.drawable.ic_cancel,
             tint = Color(0xFF555555),
-            modifier = Modifier.size(24.dp)
+            size = 24.dp
         )
     }
 }

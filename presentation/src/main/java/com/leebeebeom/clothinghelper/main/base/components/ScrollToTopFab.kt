@@ -13,16 +13,20 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.FloatingActionButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.composables.SimpleIcon
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun BoxScope.ScrollToTopFab(showFab: () -> Boolean, onClick: () -> Unit) {
+fun BoxScope.ScrollToTopFab(showFab: () -> Boolean, onClick: suspend () -> Unit) {
+    val coroutineScope = rememberCoroutineScope()
+
     AnimatedVisibility(
         modifier = Modifier
             .align(Alignment.BottomCenter)
@@ -38,7 +42,7 @@ fun BoxScope.ScrollToTopFab(showFab: () -> Boolean, onClick: () -> Unit) {
         )
     ) {
         FloatingActionButton(
-            onClick = onClick,
+            onClick = { coroutineScope.launch { onClick() } },
             backgroundColor = MaterialTheme.colors.surface,
             modifier = Modifier
                 .padding(bottom = 16.dp)

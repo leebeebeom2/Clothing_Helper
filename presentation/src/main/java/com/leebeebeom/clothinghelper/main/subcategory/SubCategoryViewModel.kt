@@ -5,20 +5,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
-import com.leebeebeom.clothinghelper.main.base.BaseIsAllExpandState
-import com.leebeebeom.clothinghelper.main.base.EditSubCategoryNameViewModel
+import com.leebeebeom.clothinghelper.main.base.BaseMainUIState
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.util.taskAndReturnSet
-import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
-import com.leebeebeom.clothinghelperdomain.repository.SortOrder
-import com.leebeebeom.clothinghelperdomain.repository.SubCategorySort
-import com.leebeebeom.clothinghelperdomain.repository.SubCategorySortPreferences
-import com.leebeebeom.clothinghelperdomain.usecase.preferences.SubCategoryAllExpandUseCase
+import com.leebeebeom.clothinghelperdomain.model.Order
+import com.leebeebeom.clothinghelperdomain.model.Sort
+import com.leebeebeom.clothinghelperdomain.model.SortPreferences
+import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.usecase.preferences.SubCategorySortUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.AddSubCategoryUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.EditSubCategoryNameUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetAllSubCategoriesUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoryLoadingStateUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.user.GetUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableSet
@@ -31,9 +30,9 @@ import javax.inject.Inject
 @HiltViewModel
 class SubCategoryViewModel @Inject constructor(
     private val getSubCategoryLoadingStateUseCase: GetSubCategoryLoadingStateUseCase,
-    private val subCategoryAllExpandUseCase: SubCategoryAllExpandUseCase,
     private val subCategorySortUseCase: SubCategorySortUseCase,
     private val getAllSubCategoriesUseCase: GetAllSubCategoriesUseCase,
+    private val getUserUseCase: GetUserUseCase,
     editSubCategoryNameUseCase: EditSubCategoryNameUseCase,
     addSubCategoryUseCase: AddSubCategoryUseCase,
 ) : EditSubCategoryNameViewModel(editSubCategoryNameUseCase, addSubCategoryUseCase) {
@@ -41,36 +40,24 @@ class SubCategoryViewModel @Inject constructor(
     private val uiState = SubCategoryUIState()
 
     fun getUiState(parent: SubCategoryParent): SubCategoryUIState {
-        uiState.setSubCategories(parent)
+        uiState.setParent(parent)
         return uiState
     }
 
     init {
         viewModelScope.launch {
-            launch { getSubCategoryLoadingStateUseCase().collectLatest(uiState::updateIsLoading) }
-            launch { getAllSubCategoriesUseCase().collectLatest(uiState::updateAllSubCategories) }
-            launch { subCategoryAllExpandUseCase.isAllExpanded.collectLatest(uiState::updateIsAllExpand) }
+            launch { getSubCategoryLoadingStateUseCase.isLoading.collectLatest(uiState::updateIsLoading) }
+            launch { getAllSubCategoriesUseCase.allSubCategories.collectLatest(uiState::loadAllSubCategories) }
             launch { subCategorySortUseCase.sortPreferences.collectLatest(uiState::updateSort) }
+            launch { getUserUseCase.user.collectLatest(uiState::updateUser) }
         }
     }
 
-    override fun showToast(text: Int) {
-        uiState.showToast(text)
-    }
-
-    fun toggleAllExpand() {
-        viewModelScope.launch {
-            subCategoryAllExpandUseCase.toggleAllExpand()
-        }
-    }
-
-    fun changeSort(sort: SubCategorySort) {
-        viewModelScope.launch { subCategorySortUseCase.changeSort(sort) }
-    }
-
-    fun changeOrder(order: SortOrder) {
+    override fun showToast(text: Int) = uiState.showToast(text)
+    override val uid get() = uiState.user?.uid
+    fun changeSort(sort: Sort) = viewModelScope.launch { subCategorySortUseCase.changeSort(sort) }
+    fun changeOrder(order: Order) =
         viewModelScope.launch { subCategorySortUseCase.changeOrder(order) }
-    }
 
     override fun editSubCategoryName(newSubCategory: StableSubCategory) {
         viewModelScope.launch {
@@ -80,13 +67,13 @@ class SubCategoryViewModel @Inject constructor(
     }
 }
 
-class SubCategoryUIState : BaseIsAllExpandState() {
+class SubCategoryUIState : BaseMainUIState() {
     var parent = SubCategoryParent.TOP
         private set
-    var sort by mutableStateOf(SubCategorySortPreferences())
+    var sort by mutableStateOf(SortPreferences())
         private set
 
-    fun updateSort(sort: SubCategorySortPreferences) {
+    fun updateSort(sort: SortPreferences) {
         this.sort = sort
     }
 
@@ -95,7 +82,7 @@ class SubCategoryUIState : BaseIsAllExpandState() {
 
     var selectedSubCategoryKeys by mutableStateOf(linkedSetOf<String>().toImmutableSet())
         private set
-    val selectedSubCategoryKeysSize by derivedStateOf { selectedSubCategoryKeys.size }
+    val selectedSubCategoriesSize by derivedStateOf { selectedSubCategoryKeys.size }
 
     val firstSelectedSubCategory by derivedStateOf {
         selectedSubCategoryKeys.firstOrNull()
@@ -108,10 +95,10 @@ class SubCategoryUIState : BaseIsAllExpandState() {
         private set
 
     val isAllSelected by derivedStateOf { selectedSubCategoryKeys.size == subCategories.size }
-    val showEditIcon by derivedStateOf { selectedSubCategoryKeysSize == 1 }
-    val showDeleteIcon by derivedStateOf { selectedSubCategoryKeysSize > 0 }
+    val showEditIcon by derivedStateOf { selectedSubCategoriesSize == 1 }
+    val showDeleteIcon by derivedStateOf { selectedSubCategoriesSize > 0 }
 
-    fun setSubCategories(parent: SubCategoryParent) {
+    fun setParent(parent: SubCategoryParent) {
         this.parent = parent
         subCategories = getSubCategories(parent)
         subCategoryNames = getSubCategoryNames(parent)
@@ -119,7 +106,7 @@ class SubCategoryUIState : BaseIsAllExpandState() {
 
     fun toggleAllSelect() {
         selectedSubCategoryKeys =
-            if (selectedSubCategoryKeysSize == subCategories.size) emptySet<String>().toImmutableSet()
+            if (selectedSubCategoriesSize == subCategories.size) emptySet<String>().toImmutableSet()
             else subCategories.map { it.key }.toImmutableSet()
 
     }
@@ -140,10 +127,6 @@ class SubCategoryUIState : BaseIsAllExpandState() {
     suspend fun selectModeOff() {
         isSelectMode = false
         delay(200)
-        clearSelectedSubCategories()
-    }
-
-    private fun clearSelectedSubCategories() {
         selectedSubCategoryKeys = selectedSubCategoryKeys.taskAndReturnSet { it.clear() }
     }
 }

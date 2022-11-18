@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.subcategory.content.header
+package com.leebeebeom.clothinghelper.main.base
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateColorAsState
@@ -92,7 +92,7 @@ private fun SortButtons(
         ) { onSortClick(Sort.CREATE) }
         SimpleHeightSpacer(dp = 8)
         SortButton(
-            text = R.string.sort_create_date,
+            text = R.string.sort_edit_date,
             isSelected = { sort().sort == Sort.EDIT }
         ) { onSortClick(Sort.EDIT) }
     }

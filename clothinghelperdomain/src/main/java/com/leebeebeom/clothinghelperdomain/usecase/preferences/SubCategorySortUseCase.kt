@@ -2,7 +2,7 @@ package com.leebeebeom.clothinghelperdomain.usecase.preferences
 
 import com.leebeebeom.clothinghelperdomain.model.Order
 import com.leebeebeom.clothinghelperdomain.model.Sort
-import com.leebeebeom.clothinghelperdomain.repository.SubCategoryPreferencesRepository
+import com.leebeebeom.clothinghelperdomain.repository.preferences.SubCategoryPreferencesRepository
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 

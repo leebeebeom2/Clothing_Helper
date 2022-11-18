@@ -8,6 +8,4 @@ data class StableUser(
     val uid: String
 )
 
-fun User.toStable(): StableUser {
-    return StableUser(email = email, name = name, uid = uid)
-}
+fun User.toStable() = StableUser(email = email, name = name, uid = uid)

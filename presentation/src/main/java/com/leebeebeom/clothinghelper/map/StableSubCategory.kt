@@ -1,7 +1,7 @@
 package com.leebeebeom.clothinghelper.map
 
-import com.leebeebeom.clothinghelperdomain.model.SubCategory
-import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.model.container.SubCategory
+import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 
 data class StableSubCategory(
     val parent: SubCategoryParent = SubCategoryParent.TOP,
@@ -10,12 +10,8 @@ data class StableSubCategory(
     val createDate: Long = 0
 )
 
-fun SubCategory.toStable(): StableSubCategory {
-    return StableSubCategory(
-        parent = parent, key = key, name = name, createDate = createDate
-    )
-}
+fun SubCategory.toStable() =
+    StableSubCategory(parent = parent, key = key, name = name, createDate = createDate)
 
-fun StableSubCategory.toUnstable(): SubCategory {
-    return SubCategory(parent = parent, key = key, name = name, createDate = createDate)
-}
+fun StableSubCategory.toUnstable() =
+    SubCategory(parent = parent, key = key, name = name, createDate = createDate)

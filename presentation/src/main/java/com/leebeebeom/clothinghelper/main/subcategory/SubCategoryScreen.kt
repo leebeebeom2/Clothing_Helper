@@ -10,13 +10,13 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.leebeebeom.clothinghelper.base.CenterDotProgressIndicator
-import com.leebeebeom.clothinghelper.base.SimpleToast
-import com.leebeebeom.clothinghelper.main.subcategory.content.AddSubcategoryDialogFab
+import com.leebeebeom.clothinghelper.base.composables.CenterDotProgressIndicator
+import com.leebeebeom.clothinghelper.base.composables.SimpleToast
 import com.leebeebeom.clothinghelper.main.subcategory.content.SubCategoryBottomAppBar
 import com.leebeebeom.clothinghelper.main.subcategory.content.SubCategoryContent
+import com.leebeebeom.clothinghelper.main.subcategory.content.SubCategoryFab
 import com.leebeebeom.clothinghelper.map.StableSubCategory
-import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -77,25 +77,23 @@ fun SubCategoryScreen(
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         SubCategoryContent(
-            allExpandIconClick = viewModel::toggleAllExpand,
+            parent = parent,
+            subCategories = { uiState.subCategories },
+            sort = { uiState.sort },
             onLongClick = uiState::selectModeOn,
             onSubCategoryClick = onSubCategoryClick,
             onSortClick = viewModel::changeSort,
             onOrderClick = viewModel::changeOrder,
-            parent = parent,
-            isAllExpanded = { uiState.isAllExpanded },
-            subCategories = { uiState.subCategories },
-            sort = { uiState.sort },
             selectedSubCategoryKey = { uiState.selectedSubCategoryKeys },
             isSelectMode = { uiState.isSelectMode },
             onSelect = uiState::onSelect
         )
 
-        val addSubCategoryButtonClick = remember<(String) -> Unit> {
+        val addSubCategoryPositiveButtonClick = remember<(String) -> Unit> {
             { viewModel.addSubCategory(StableSubCategory(parent = parent, name = it)) }
         }
-        AddSubcategoryDialogFab(
-            onPositiveButtonClick = addSubCategoryButtonClick,
+        SubCategoryFab(
+            onPositiveButtonClick = addSubCategoryPositiveButtonClick,
             subCategoryNames = { uiState.subCategoryNames },
             isSelectMode = { uiState.isSelectMode }
         )
@@ -109,7 +107,7 @@ fun SubCategoryScreen(
         )
 
         SubCategoryBottomAppBar(
-            selectedSubCategoriesSize = { uiState.selectedSubCategoryKeysSize },
+            selectedSubCategoriesSize = { uiState.selectedSubCategoriesSize },
             isAllSelected = { uiState.isAllSelected },
             showEditIcon = { uiState.showEditIcon },
             showDeleteIcon = { uiState.showDeleteIcon },

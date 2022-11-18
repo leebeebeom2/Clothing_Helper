@@ -8,11 +8,11 @@ import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @ViewModelScoped
-class UpdateSubCategoriesUseCase @Inject constructor(
+class LoadSubCategoriesUseCase @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
     private val subCategoryRepository: SubCategoryRepository
 ) {
-    suspend fun update(onUpdateSubCategoriesFail: (FirebaseResult) -> Unit) =
+    suspend fun load(onUpdateSubCategoriesFail: (FirebaseResult) -> Unit) =
         getUserUseCase.user.collectLatest {
             it?.let { onUpdateSubCategoriesFail(subCategoryRepository.loadSubCategories(it.uid)) }
         }

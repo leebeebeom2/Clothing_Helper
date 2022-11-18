@@ -1,8 +1,6 @@
 package com.leebeebeom.clothinghelperdata.repository.preferences
 
 import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -20,10 +18,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SubCategoryPreferencesRepositoryImpl @Inject constructor(
-    @ApplicationContext context: Context,
-    private val dataStore: DataStore<Preferences> = context.subCategoryDatastore
-) : SubCategoryPreferencesRepository {
+class SubCategoryPreferencesRepositoryImpl @Inject constructor(@ApplicationContext context: Context) :
+    SubCategoryPreferencesRepository {
+    private val dataStore = context.subCategoryDatastore
 
     override val sort: Flow<SortPreferences> = dataStore.data
         .catch {

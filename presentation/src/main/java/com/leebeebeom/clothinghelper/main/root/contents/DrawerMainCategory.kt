@@ -19,7 +19,6 @@ import com.leebeebeom.clothinghelper.base.Anime.List.listShrink
 import com.leebeebeom.clothinghelper.base.composables.DotProgressIndicator
 import com.leebeebeom.clothinghelper.base.composables.SingleLineText
 import com.leebeebeom.clothinghelper.main.base.components.ExpandIcon
-import com.leebeebeom.clothinghelper.main.root.DrawerSubCategory
 import com.leebeebeom.clothinghelper.main.root.components.DrawerContentRow
 import com.leebeebeom.clothinghelper.main.root.components.DrawerContentText
 import com.leebeebeom.clothinghelper.main.root.contents.dropdownmenus.DrawerMainCategoryDropDownMenu

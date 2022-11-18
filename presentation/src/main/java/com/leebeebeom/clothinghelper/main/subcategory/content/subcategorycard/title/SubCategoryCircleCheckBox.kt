@@ -2,7 +2,6 @@ package com.leebeebeom.clothinghelper.main.subcategory.content.subcategorycard.t
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -30,10 +29,9 @@ fun SubCategoryCircleCheckBox(
     ) {
         CircleCheckBox(
             isChecked = { isChecked },
-            modifier = Modifier
-                .padding(start = 4.dp)
-                .size(18.dp),
-            onClick = onClick
+            modifier = Modifier.padding(start = 4.dp),
+            onClick = onClick,
+            size = 18.dp
         )
     }
 }

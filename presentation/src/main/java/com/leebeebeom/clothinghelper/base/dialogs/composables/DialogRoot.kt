@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.base.composables.SimpleHeightSpacer
 
 @Composable
 fun DialogRoot(onDismiss: () -> Unit, content: @Composable () -> Unit) {

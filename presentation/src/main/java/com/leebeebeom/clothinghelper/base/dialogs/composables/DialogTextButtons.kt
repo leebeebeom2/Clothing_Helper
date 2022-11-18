@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.SingleLineText
+import com.leebeebeom.clothinghelper.base.composables.SingleLineText
 
 @Composable
 fun DialogTextButtons(

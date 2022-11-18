@@ -6,7 +6,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.leebeebeom.clothinghelper.base.SingleLineText
+import com.leebeebeom.clothinghelper.base.composables.SingleLineText
 
 @Composable
 fun DialogTitle(@StringRes text: Int) {

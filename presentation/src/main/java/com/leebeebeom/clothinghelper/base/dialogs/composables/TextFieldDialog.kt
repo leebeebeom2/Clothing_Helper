@@ -7,7 +7,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.text.input.TextFieldValue
 import com.leebeebeom.clothinghelper.base.MaxWidthTextField
-import com.leebeebeom.clothinghelper.base.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.base.composables.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.rememberMaxWidthTextFieldState
 
 @OptIn(ExperimentalComposeUiApi::class)

@@ -7,6 +7,6 @@ import javax.inject.Inject
 
 @ViewModelScoped
 class EditSubCategoryNameUseCase @Inject constructor(private val subCategoryRepository: SubCategoryRepository) {
-    suspend fun edit(newSubCategory: SubCategory) =
-        subCategoryRepository.editSubCategoryName(newSubCategory)
+    suspend fun edit(newSubCategory: SubCategory, uid: String) =
+        subCategoryRepository.editSubCategoryName(newSubCategory, uid)
 }

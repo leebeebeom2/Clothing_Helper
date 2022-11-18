@@ -8,7 +8,7 @@ enum class Order {
     ASCENDING, DESCENDING
 }
 
-data class SubCategorySortPreferences(
+data class SortPreferences(
     val sort: Sort = Sort.NAME,
     val order: Order = Order.ASCENDING
 )

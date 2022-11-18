@@ -16,13 +16,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.DotProgressIndicator
-import com.leebeebeom.clothinghelper.base.SimpleIcon
-import com.leebeebeom.clothinghelper.base.SingleLineText
+import com.leebeebeom.clothinghelper.base.composables.DotProgressIndicator
+import com.leebeebeom.clothinghelper.base.composables.SimpleIcon
+import com.leebeebeom.clothinghelper.base.composables.SingleLineText
 import com.leebeebeom.clothinghelper.main.base.BaseMainUIState
-import com.leebeebeom.clothinghelper.main.root.MainCategory
-import com.leebeebeom.clothinghelper.main.root.getMainCategories
-import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
+import com.leebeebeom.clothinghelper.main.root.model.MainCategory
+import com.leebeebeom.clothinghelper.main.root.model.getMainCategories
+import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 
 /*
 최초 구동 시 로딩 확인
@@ -31,7 +31,7 @@ import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
 
 서브 카테고리 갯수 일치 확인
 
-TODO 리프레쉬
+TODO 스와이프 투 리프레쉬
  */
 
 @Composable
@@ -53,11 +53,11 @@ fun MainCategoryScreen(
             else Modifier.heightIn(160.dp)
 
         val mainCategories = remember { getMainCategories() }
-        for (mainCategory in mainCategories) {
-            key(mainCategory.type.name) {
+        mainCategories.forEach {
+            key(it.type.name) {
                 MainCategoryCard(
                     modifier = modifier,
-                    mainCategory = mainCategory,
+                    mainCategory = it,
                     subCategoriesSize = uiState::getSubCategoriesSize,
                     isLoading = { uiState.isLoading },
                     onMainContentClick = onMainCategoryClick
@@ -68,68 +68,3 @@ fun MainCategoryScreen(
 }
 
 
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-private fun MainCategoryCard(
-    modifier: Modifier,
-    mainCategory: MainCategory,
-    subCategoriesSize: (SubCategoryParent) -> Int,
-    isLoading: () -> Boolean,
-    onMainContentClick: (SubCategoryParent) -> Unit,
-) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        elevation = 2.dp,
-        onClick = { onMainContentClick(mainCategory.type) }
-    ) {
-        Box(
-            modifier = Modifier
-                .padding(start = 16.dp, end = 8.dp)
-                .padding(vertical = 16.dp)
-        ) {
-            SingleLineText(
-                text = mainCategory.name,
-                style = MaterialTheme.typography.h2.copy(fontSize = 32.sp)
-            )
-
-            SimpleIcon(
-                modifier = Modifier.align(Alignment.CenterEnd),
-                drawable = R.drawable.ic_navigate_next,
-                tint = LocalContentColor.current.copy(ContentAlpha.medium)
-            )
-
-            SubCategoryCountText(
-                mainCategory = mainCategory,
-                isLoading = isLoading,
-                subCategoriesSize = subCategoriesSize
-            )
-        }
-    }
-}
-
-@Composable
-private fun BoxScope.SubCategoryCountText(
-    mainCategory: MainCategory,
-    isLoading: () -> Boolean,
-    subCategoriesSize: (SubCategoryParent) -> Int
-) {
-    if (isLoading())
-        DotProgressIndicator(
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(bottom = 4.dp, start = 4.dp),
-            size = 4.dp
-        )
-    else SingleLineText(
-        text = stringResource(
-            id = R.string.categories,
-            formatArgs = arrayOf(subCategoriesSize(mainCategory.type))
-        ),
-        modifier = Modifier.align(Alignment.BottomStart),
-        style = MaterialTheme.typography.caption.copy(
-            fontWeight = FontWeight.Bold,
-            color = LocalContentColor.current.copy(ContentAlpha.medium)
-        )
-    )
-}

@@ -94,7 +94,7 @@ private fun ExpandIcon(
     onClick: () -> Unit,
     subCategoriesSize: () -> Int
 ) {
-    val show by rememberSaveable { derivedStateOf { subCategoriesSize() > 0 } }
+    val show by remember { derivedStateOf { subCategoriesSize() > 0 } }
 
     if (isLoading())
         DotProgressIndicator(

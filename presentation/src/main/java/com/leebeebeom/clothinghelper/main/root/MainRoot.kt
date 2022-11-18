@@ -11,6 +11,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.base.composables.BackHandler
 import com.leebeebeom.clothinghelper.base.composables.BlockBacKPressWhenIsLoading
 import com.leebeebeom.clothinghelper.base.composables.SimpleToast
+import com.leebeebeom.clothinghelper.main.root.contents.DrawerContents
+import com.leebeebeom.clothinghelper.main.root.model.EssentialMenus
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 import kotlinx.coroutines.CoroutineScope

@@ -14,11 +14,10 @@ fun NameTextField(
     name: () -> String,
     onNameChange: (String) -> Unit
 ) {
-    val textFieldValue by remember { mutableStateOf(TextFieldValue(name())) }
     val state = remember { NameTextFieldState(name()) }
 
     MaxWidthTextField(
-        textFieldValue = { textFieldValue },
+        textFieldValue = { state.textFieldValue },
         state = rememberMaxWidthTextFieldState(
             label = R.string.name,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)

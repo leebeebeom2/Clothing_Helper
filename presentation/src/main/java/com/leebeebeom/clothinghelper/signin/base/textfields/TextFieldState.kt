@@ -18,7 +18,7 @@ open class TextFieldState(initialText: String) {
     ) {
         val text = newTextFieldValue.text.trim()
         if (textFieldValue.text != text) updateError(null)
-        textFieldValue = newTextFieldValue.copy(text)
+        textFieldValue = newTextFieldValue
         onValueChange(text)
     }
 

@@ -44,4 +44,5 @@ class MainRootViewModel @Inject constructor(
     }
 
     override fun showToast(text: Int) = uiState.showToast(text)
+    override val uid get() = uiState.user?.uid
 }

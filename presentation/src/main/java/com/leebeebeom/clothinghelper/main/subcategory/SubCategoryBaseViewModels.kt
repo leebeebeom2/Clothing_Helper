@@ -18,8 +18,8 @@ abstract class EditSubCategoryNameViewModel(
 ) : AddSubCategoryViewModel(addSubCategoryUseCase) {
 
     open fun editSubCategoryName(newSubCategory: StableSubCategory) {
-        uid?.let {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            uid?.let {
                 val result = editSubCategoryNameUseCase.edit(newSubCategory.toUnstable(), it)
                 if (result is FirebaseResult.Fail)
                     when (result.exception) {
@@ -38,8 +38,8 @@ abstract class AddSubCategoryViewModel(
     protected abstract val uid: String?
 
     fun addSubCategory(subCategory: StableSubCategory) {
-        uid?.let {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            uid?.let {
                 val result = addSubCategoryUseCase.add(subCategory.toUnstable(), it)
                 if (result is FirebaseResult.Fail)
                     when (result.exception) {

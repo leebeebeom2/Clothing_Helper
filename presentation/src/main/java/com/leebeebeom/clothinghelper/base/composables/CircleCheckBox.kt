@@ -7,18 +7,20 @@ import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.material.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import com.leebeebeom.clothinghelper.R
 
 @OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
 fun CircleCheckBox(
-    modifier: Modifier = Modifier, isChecked: () -> Boolean, onClick: () -> Unit
+    modifier: Modifier = Modifier, isChecked: () -> Boolean, onClick: () -> Unit, size: Dp
 ) {
     CustomIconButton(
         modifier = modifier, onClick = onClick, painter = rememberAnimatedVectorPainter(
             animatedImageVector = AnimatedImageVector.animatedVectorResource(
                 id = R.drawable.check_anim
             ), atEnd = isChecked()
-        ), tint = LocalContentColor.current.copy(0.7f)
+        ), tint = LocalContentColor.current.copy(0.7f),
+        size = size
     )
 }

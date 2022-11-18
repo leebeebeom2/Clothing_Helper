@@ -13,14 +13,15 @@ class FolderRepositoryImpl @Inject constructor() : BaseContainerRepository<Folde
 
     override suspend fun loadFolders(uid: String) = load(uid, Folder::class.java)
 
-    override suspend fun addFolder(folder: Folder) = add(folder)
+    override suspend fun addFolder(folder: Folder, uid: String) = add(folder, uid)
 
-    override suspend fun editFolderName(newFolder: Folder) = edit(newFolder)
+    override suspend fun editFolderName(newFolder: Folder, uid: String) = edit(newFolder, uid)
 
     override val refPath = DatabasePath.FOLDERS
 
     override fun getNewContainer(value: Folder, key: String, date: Long) =
         value.copy(key = key, createDate = date, editDate = date)
+
     override fun getContainerWithNewEditDate(value: Folder, editDate: Long) =
         value.copy(editDate = editDate)
 }

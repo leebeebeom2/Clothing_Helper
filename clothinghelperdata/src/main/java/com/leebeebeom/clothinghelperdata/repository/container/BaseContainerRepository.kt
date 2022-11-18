@@ -19,7 +19,6 @@ abstract class BaseContainerRepository<T : BaseContainer> : BaseRepository(true)
     protected val root = Firebase.database.reference
 
     protected val allContainers = MutableStateFlow(emptyList<T>())
-    private var uid: String = ""
     abstract val refPath: String
 
     protected suspend fun load(uid: String, type: Class<T>) =
@@ -34,7 +33,7 @@ abstract class BaseContainerRepository<T : BaseContainer> : BaseRepository(true)
             FirebaseResult.Success
         }
 
-    protected suspend fun add(value: T) =
+    protected suspend fun add(value: T, uid: String) =
         databaseTryWithoutLoading(100000, "add") {
             val containerRef = root.getContainerRef(uid, refPath)
 
@@ -49,7 +48,7 @@ abstract class BaseContainerRepository<T : BaseContainer> : BaseRepository(true)
             FirebaseResult.Success
         }
 
-    protected suspend fun edit(newValue: T): FirebaseResult =
+    protected suspend fun edit(newValue: T, uid: String): FirebaseResult =
         databaseTryWithoutLoading(1000, "edit") {
             val newContainerWithNewEditDate =
                 getContainerWithNewEditDate(newValue, System.currentTimeMillis())
@@ -57,7 +56,8 @@ abstract class BaseContainerRepository<T : BaseContainer> : BaseRepository(true)
                 .setValue(newContainerWithNewEditDate).await()
 
             allContainers.updateMutable {
-                val oldContainer = it.first { value -> value.key == newContainerWithNewEditDate.key }
+                val oldContainer =
+                    it.first { value -> value.key == newContainerWithNewEditDate.key }
                 it.remove(oldContainer)
                 it.add(newContainerWithNewEditDate)
             }

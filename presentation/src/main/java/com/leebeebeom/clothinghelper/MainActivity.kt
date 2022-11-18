@@ -4,18 +4,14 @@ import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.Crossfade
 import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.leebeebeom.clothinghelper.main.MainNavHost
 import com.leebeebeom.clothinghelper.signin.SignInNavHost
-import com.leebeebeom.clothinghelper.util.navigateSingleTop
 import com.leebeebeom.clothinghelperdomain.usecase.user.GetSignInStateUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
@@ -31,43 +27,20 @@ class ClothingHelper : Application()
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent { MainActivityNavHost() }
+        setContent { MainActivityScreen() }
     }
 }
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
-fun MainActivityNavHost(
-    viewModel: MainActivityViewModel = hiltViewModel(),
-    navController: NavHostController = rememberNavController()
-) {
-    val isSignIn by viewModel.getSignInStateUseCase().collectAsStateWithLifecycle()
+fun MainActivityScreen(viewModel: MainActivityViewModel = hiltViewModel()) {
+    val isSignIn by viewModel.isSignIn.collectAsStateWithLifecycle()
 
-    NavHost(navController = navController, startDestination = MainActivityDestinations.MAIN) {
-        composable(route = MainActivityDestinations.MAIN) { MainNavHost() }
-        composable(route = MainActivityDestinations.SIGN_IN) { SignInNavHost() }
-    }
-
-    Transition(
-        isSignIn = { isSignIn },
-        navigateToMain = { navController.navigateSingleTop(MainActivityDestinations.MAIN) },
-        navigateToSignIn = { navController.navigateSingleTop(MainActivityDestinations.SIGN_IN) })
-}
-
-@Composable
-private fun Transition(
-    isSignIn: () -> Boolean,
-    navigateToMain: () -> Unit,
-    navigateToSignIn: () -> Unit
-) {
-    if (isSignIn()) navigateToMain() else navigateToSignIn()
+    Crossfade(targetState = isSignIn) { if (it) MainNavHost() else SignInNavHost() }
 }
 
 @HiltViewModel
-class MainActivityViewModel @Inject constructor(val getSignInStateUseCase: GetSignInStateUseCase) :
-    ViewModel()
-
-object MainActivityDestinations {
-    const val MAIN = "main"
-    const val SIGN_IN = "signIn"
+class MainActivityViewModel @Inject constructor(private val getSignInStateUseCase: GetSignInStateUseCase) :
+    ViewModel() {
+    val isSignIn get() = getSignInStateUseCase.isSignIn
 }

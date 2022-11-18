@@ -1,13 +1,9 @@
 package com.leebeebeom.clothinghelper.di
 
-import com.leebeebeom.clothinghelperdata.repository.SubCategoryRepositoryImpl
 import com.leebeebeom.clothinghelperdata.repository.UserRepositoryImpl
-import com.leebeebeom.clothinghelperdata.repository.preferences.MainRootPreferencesRepositoryImpl
+import com.leebeebeom.clothinghelperdata.repository.container.SubCategoryRepositoryImpl
 import com.leebeebeom.clothinghelperdata.repository.preferences.SubCategoryPreferencesRepositoryImpl
-import com.leebeebeom.clothinghelperdomain.repository.MainScreenRootPreferencesRepository
-import com.leebeebeom.clothinghelperdomain.repository.SubCategoryPreferencesRepository
-import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
-import com.leebeebeom.clothinghelperdomain.repository.UserRepository
+import com.leebeebeom.clothinghelperdomain.repository.*
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -25,7 +21,4 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun subCategoryPreferencesRepository(impl: SubCategoryPreferencesRepositoryImpl): SubCategoryPreferencesRepository
-
-    @Binds
-    abstract fun mainRootPreferencesRepository(impl: MainRootPreferencesRepositoryImpl): MainScreenRootPreferencesRepository
 }

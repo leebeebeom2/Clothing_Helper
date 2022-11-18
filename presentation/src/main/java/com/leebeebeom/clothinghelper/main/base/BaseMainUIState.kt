@@ -6,13 +6,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.leebeebeom.clothinghelper.base.BaseUIState
 import com.leebeebeom.clothinghelper.map.StableSubCategory
+import com.leebeebeom.clothinghelper.map.StableUser
 import com.leebeebeom.clothinghelper.map.toStable
+import com.leebeebeom.clothinghelperdomain.model.User
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
 open class BaseMainUIState : BaseUIState() {
+    var user: StableUser? by mutableStateOf(null)
+        private set
+
+    fun updateUser(user: User?) {
+        this.user = user?.toStable()
+    }
+
     var isLoading by mutableStateOf(false)
         private set
     private var allSubCategories by mutableStateOf(emptyList<StableSubCategory>())

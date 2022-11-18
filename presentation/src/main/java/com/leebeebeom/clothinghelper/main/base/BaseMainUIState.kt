@@ -12,7 +12,7 @@ import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
-abstract class BaseMainUIState : BaseUIState() {
+open class BaseMainUIState : BaseUIState() {
     var isLoading by mutableStateOf(false)
         private set
     private var allSubCategories by mutableStateOf(emptyList<StableSubCategory>())

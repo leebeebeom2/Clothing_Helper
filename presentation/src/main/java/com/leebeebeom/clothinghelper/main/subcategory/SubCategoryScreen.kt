@@ -12,9 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.base.composables.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelper.base.composables.SimpleToast
-import com.leebeebeom.clothinghelper.main.subcategory.content.SubCategoryBottomAppBar
+import com.leebeebeom.clothinghelper.main.base.selectmodebottomappbar.SelectModeBottomAppBar
 import com.leebeebeom.clothinghelper.main.subcategory.content.SubCategoryContent
-import com.leebeebeom.clothinghelper.main.subcategory.content.SubCategoryFab
+import com.leebeebeom.clothinghelper.main.subcategory.dialogs.EditSubCategoryNameDialog
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 import kotlinx.coroutines.CoroutineScope
@@ -106,7 +106,7 @@ fun SubCategoryScreen(
             subCategory = { uiState.firstSelectedSubCategory }
         )
 
-        SubCategoryBottomAppBar(
+        SelectModeBottomAppBar(
             selectedSubCategoriesSize = { uiState.selectedSubCategoriesSize },
             isAllSelected = { uiState.isAllSelected },
             showEditIcon = { uiState.showEditIcon },

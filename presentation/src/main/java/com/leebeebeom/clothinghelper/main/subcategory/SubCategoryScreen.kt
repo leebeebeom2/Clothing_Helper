@@ -78,13 +78,13 @@ fun SubCategoryScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         SubCategoryContent(
             parent = parent,
-            subCategories = { uiState.subCategories },
+            subCategories = { uiState.list },
             sort = { uiState.sort },
             onLongClick = uiState::selectModeOn,
             onSubCategoryClick = onSubCategoryClick,
             onSortClick = viewModel::changeSort,
             onOrderClick = viewModel::changeOrder,
-            selectedSubCategoryKey = { uiState.selectedSubCategoryKeys },
+            selectedSubCategoryKey = { uiState.selectedKeys },
             isSelectMode = { uiState.isSelectMode },
             onSelect = uiState::onSelect
         )
@@ -94,23 +94,21 @@ fun SubCategoryScreen(
         }
         SubCategoryFab(
             onPositiveButtonClick = addSubCategoryPositiveButtonClick,
-            subCategories = { uiState.subCategories },
+            subCategories = { uiState.list },
             isSelectMode = { uiState.isSelectMode }
         )
 
         EditSubCategoryNameDialog(
-            subCategories = { uiState.subCategories },
+            subCategories = { uiState.list },
             onPositiveButtonClick = viewModel::editSubCategoryName,
             onDismiss = state::dismissEditDialog,
             showDialog = { state.showEditDialog },
-            subCategory = { uiState.firstSelectedSubCategory }
+            subCategory = { uiState.firstSelectedItem }
         )
 
         SelectModeBottomAppBar(
-            selectedSize = { uiState.selectedSubCategoriesSize },
+            selectedSize = { uiState.selectedSize },
             isAllSelected = { uiState.isAllSelected },
-            showEditIcon = { uiState.showEditIcon },
-            showDeleteIcon = { uiState.showDeleteIcon },
             onAllSelectCheckBoxClick = uiState::toggleAllSelect,
             onEditIconClick = state::showEditDialog,
             isSelectMode = { uiState.isSelectMode }

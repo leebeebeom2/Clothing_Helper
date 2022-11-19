@@ -2,7 +2,9 @@ package com.leebeebeom.clothinghelper.util.dragSelect
 
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.lazy.LazyListItemInfo
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.input.pointer.pointerInput
 
 enum class DragDirection {
@@ -14,10 +16,10 @@ fun Modifier.dragSelect(
     onDragStart: (Boolean) -> Unit,
     onSelect: (key: String) -> Unit,
     onLongClick: (key: String) -> Unit
-): Modifier {
-    val realDragSelector = dragSelector as ListDragSelector
+): Modifier = composed {
+    val realDragSelector = remember { dragSelector as ListDragSelector }
 
-    return this.then(Modifier.pointerInput(Unit) {
+    this.then(Modifier.pointerInput(Unit) {
         detectDragGesturesAfterLongPress(onDragStart = { offset ->
             onDragStart(true)
             interceptOutOfBoundsChildEvents = true

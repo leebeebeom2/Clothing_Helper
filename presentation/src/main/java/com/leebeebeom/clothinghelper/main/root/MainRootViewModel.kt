@@ -10,6 +10,7 @@ import com.leebeebeom.clothinghelper.main.subcategory.interfaces.AddSubCategory
 import com.leebeebeom.clothinghelper.main.subcategory.interfaces.EditSubCategoryName
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
+import com.leebeebeom.clothinghelperdomain.usecase.GetDataLoadingStateUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.LoadDataUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.*
 import com.leebeebeom.clothinghelperdomain.usecase.user.GetUserUseCase
@@ -21,7 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainRootViewModel @Inject constructor(
-    private val getSubCategoryLoadingStateUseCase: GetSubCategoryLoadingStateUseCase,
+    private val getDataLoadingStateUseCase: GetDataLoadingStateUseCase,
     private val loadDataUseCase: LoadDataUseCase,
     private val getAllSubCategoriesUseCase: GetAllSubCategoriesUseCase,
     private val getUserUseCase: GetUserUseCase,
@@ -43,7 +44,7 @@ class MainRootViewModel @Inject constructor(
                 }
             }
 
-            launch { getSubCategoryLoadingStateUseCase.isLoading.collectLatest(uiState::updateIsLoading) }
+            launch { getDataLoadingStateUseCase.isLoading.collectLatest(uiState::updateIsLoading) }
             launch { getAllSubCategoriesUseCase.allSubCategories.collectLatest(uiState::loadAllSubCategories) }
             launch { getUserUseCase.user.collectLatest(uiState::updateUser) }
         }

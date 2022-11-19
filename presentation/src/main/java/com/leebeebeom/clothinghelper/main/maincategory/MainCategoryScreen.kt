@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.leebeebeom.clothinghelper.main.base.BaseMainUIState
 import com.leebeebeom.clothinghelper.main.root.model.getMainCategories
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 
@@ -28,7 +27,7 @@ TODO 스와이프 투 리프레쉬
 @Composable
 fun MainCategoryScreen(
     viewModel: MainCategoryViewModel = hiltViewModel(),
-    uiState: BaseMainUIState = viewModel.uiState,
+    uiState: MainCategoryUIState = viewModel.uiState,
     onMainCategoryClick: (SubCategoryParent) -> Unit
 ) {
     Column(

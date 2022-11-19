@@ -9,7 +9,7 @@ import com.leebeebeom.clothinghelperdomain.usecase.subcategory.EditSubCategoryNa
 interface EditSubCategoryName : AddAndEditContainer {
     val editSubCategoryNameUseCase: EditSubCategoryNameUseCase
 
-    suspend fun edit(newSubCategory: StableSubCategory) {
+    suspend fun baseEditSubCategoryName(newSubCategory: StableSubCategory) {
         uid?.let {
             val result = editSubCategoryNameUseCase.edit(newSubCategory.toUnstable(), it)
             showToastWhenFail(

@@ -1,6 +1,7 @@
 package com.leebeebeom.clothinghelper.di
 
 import com.leebeebeom.clothinghelperdata.repository.UserRepositoryImpl
+import com.leebeebeom.clothinghelperdata.repository.container.FolderRepositoryImpl
 import com.leebeebeom.clothinghelperdata.repository.container.SubCategoryRepositoryImpl
 import com.leebeebeom.clothinghelperdata.repository.preferences.FolderPreferencesRepositoryImpl
 import com.leebeebeom.clothinghelperdata.repository.preferences.SubCategoryPreferencesRepositoryImpl
@@ -21,6 +22,9 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun subCategoryRepository(impl: SubCategoryRepositoryImpl): SubCategoryRepository
+
+    @Binds
+    abstract fun folderRepository(impl: FolderRepositoryImpl): FolderRepository
 
     @Binds
     abstract fun subCategoryPreferencesRepository(impl: SubCategoryPreferencesRepositoryImpl): SubCategoryPreferencesRepository

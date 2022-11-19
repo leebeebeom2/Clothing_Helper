@@ -70,7 +70,7 @@ TODO 리프레쉬
 fun SubCategoryScreen(
     parent: SubCategoryParent,
     viewModel: SubCategoryViewModel = hiltViewModel(),
-    uiState: SubCategoryUIState = viewModel.getUiState(parent),
+    uiState: SubCategoryScreenUIState = viewModel.getUiState(parent),
     state: SubCategoryState = rememberSubCategoryState(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     onSubCategoryClick: (SubCategoryParent, name: String, key: String) -> Unit

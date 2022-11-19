@@ -6,7 +6,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.leebeebeom.clothinghelper.main.base.BaseMainUIState
+import com.leebeebeom.clothinghelper.base.ToastUIState
+import com.leebeebeom.clothinghelper.base.ToastUIStateImpl
+import com.leebeebeom.clothinghelper.main.base.*
 import com.leebeebeom.clothinghelper.main.subcategory.interfaces.AddSubCategory
 import com.leebeebeom.clothinghelper.main.subcategory.interfaces.EditSubCategoryName
 import com.leebeebeom.clothinghelper.map.StableSubCategory
@@ -40,9 +42,9 @@ class SubCategoryViewModel @Inject constructor(
     override val editSubCategoryNameUseCase: EditSubCategoryNameUseCase,
 ) : AddSubCategory, EditSubCategoryName, ViewModel() {
 
-    private val uiState = SubCategoryUIState()
+    private val uiState = SubCategoryScreenUIState()
 
-    fun getUiState(parent: SubCategoryParent): SubCategoryUIState {
+    fun getUiState(parent: SubCategoryParent): SubCategoryScreenUIState {
         uiState.setParent(parent)
         return uiState
     }
@@ -64,19 +66,23 @@ class SubCategoryViewModel @Inject constructor(
 
     fun addSubCategory(subCategory: StableSubCategory) {
         viewModelScope.launch {
-            super.add(subCategory = subCategory)
+            super.baseAddSubCategory(subCategory = subCategory)
         }
     }
 
     fun editSubCategoryName(newSubCategory: StableSubCategory) {
         viewModelScope.launch {
             uiState.selectModeOff()
-            super.edit(newSubCategory)
+            super.baseEditSubCategoryName(newSubCategory)
         }
     }
 }
 
-class SubCategoryUIState : BaseMainUIState() {
+class SubCategoryScreenUIState :
+    ToastUIState by ToastUIStateImpl(),
+    LoadingUIState by LoadingUIStateImpl(),
+    UserUIState by UserUIStateImpl(),
+    SubCategoryUIState by SubCategoryUIStateImpl() {
     var parent = SubCategoryParent.TOP
         private set
     var sort by mutableStateOf(SortPreferences())

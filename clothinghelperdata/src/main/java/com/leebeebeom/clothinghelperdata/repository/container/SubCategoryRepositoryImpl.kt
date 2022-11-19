@@ -102,7 +102,7 @@ class SubCategoryRepositoryImpl @Inject constructor(
 
     override fun getNewContainer(
         value: SubCategory, key: String, date: Long
-    ) = value.copy(key = key, createDate = date)
+    ) = value.copy(key = key, createDate = date, editDate = date)
 
     override fun getContainerWithNewEditDate(value: SubCategory, editDate: Long) =
         value.copy(editDate = editDate)

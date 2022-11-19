@@ -31,11 +31,9 @@ import kotlinx.collections.immutable.ImmutableList
 fun DrawerMainCategory(
     mainCategory: MainCategory,
     subCategories: (SubCategoryParent) -> ImmutableList<StableSubCategory>,
-    subCategoriesSize: (SubCategoryParent) -> Int,
     isLoading: () -> Boolean,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (StableSubCategory) -> Unit,
-    subCategoryNames: (SubCategoryParent) -> ImmutableList<String>,
     onAddSubCategoryPositiveClick: (StableSubCategory) -> Unit,
     onEditSubCategoryNamePositiveClick: (StableSubCategory) -> Unit
 ) {
@@ -57,7 +55,7 @@ fun DrawerMainCategory(
             DrawerMainCategoryDropDownMenu(
                 show = { showDropdownMenu },
                 onDismiss = { showDropdownMenu = false },
-                subCategoryNames = { subCategoryNames(mainCategory.type) },
+                subCategories = { subCategories(mainCategory.type) },
                 onAddSubCategoryPositiveClick = {
                     onAddSubCategoryPositiveClick(
                         StableSubCategory(
@@ -68,21 +66,21 @@ fun DrawerMainCategory(
                 }
             )
             TotalCount(
-                subCategoriesSize = { subCategoriesSize(mainCategory.type) },
+                subCategories = { subCategories(mainCategory.type) },
                 isLoading = isLoading
             )
             ExpandIcon(
                 isLoading = isLoading,
                 isExpanded = { isExpanded },
-                onClick = { isExpanded = !isExpanded }
-            ) { subCategoriesSize(mainCategory.type) }
+                onClick = { isExpanded = !isExpanded },
+                subCategories = {subCategories(mainCategory.type)}
+            )
         }
         SubCategories(
             isExpanded = { isExpanded },
             subCategories = { subCategories(mainCategory.type) },
             onClick = onSubCategoryClick,
             onEditSubCategoryNamePositiveClick = onEditSubCategoryNamePositiveClick,
-            subCategoryNames = { subCategoryNames(mainCategory.type) }
         )
     }
 }
@@ -92,9 +90,9 @@ private fun ExpandIcon(
     isLoading: () -> Boolean,
     isExpanded: () -> Boolean,
     onClick: () -> Unit,
-    subCategoriesSize: () -> Int
+    subCategories: () -> ImmutableList<StableSubCategory>
 ) {
-    val show by remember { derivedStateOf { subCategoriesSize() > 0 } }
+    val show by remember { derivedStateOf { subCategories().size > 0 } }
 
     if (isLoading())
         DotProgressIndicator(
@@ -114,8 +112,7 @@ private fun SubCategories(
     isExpanded: () -> Boolean,
     subCategories: () -> ImmutableList<StableSubCategory>,
     onClick: (StableSubCategory) -> Unit,
-    onEditSubCategoryNamePositiveClick: (StableSubCategory) -> Unit,
-    subCategoryNames: () -> ImmutableList<String>
+    onEditSubCategoryNamePositiveClick: (StableSubCategory) -> Unit
 ) {
     AnimatedVisibility(
         visible = isExpanded(),
@@ -130,7 +127,7 @@ private fun SubCategories(
                             subCategory = { it },
                             onClick = { onClick(it) },
                             onEditSubCategoryNamePositiveClick = onEditSubCategoryNamePositiveClick,
-                            subCategoryNames = subCategoryNames
+                            subCategories = subCategories
                         )
                     }
                 }
@@ -141,14 +138,16 @@ private fun SubCategories(
 
 @Composable
 private fun RowScope.TotalCount(
-    subCategoriesSize: () -> Int,
+    subCategories: () -> ImmutableList<StableSubCategory>,
     isLoading: () -> Boolean,
 ) {
+    val count by remember { derivedStateOf { subCategories().size } }
+
     SingleLineText(
         modifier = Modifier
             .weight(1f)
             .padding(start = 4.dp),
-        text = if (isLoading()) "" else "(${subCategoriesSize()})",
+        text = if (isLoading()) "" else "($count)",
         style = MaterialTheme.typography.caption.copy(
             LocalContentColor.current.copy(
                 ContentAlpha.disabled

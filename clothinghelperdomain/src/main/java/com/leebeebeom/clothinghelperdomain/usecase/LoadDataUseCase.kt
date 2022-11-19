@@ -26,7 +26,9 @@ class LoadDataUseCase @Inject constructor(
                 val folderResult = folderDeferred.await()
 
                 when {
-                    subCategoryResult is FirebaseResult.Fail -> onUpdateSubCategoriesFail(subCategoryResult)
+                    subCategoryResult is FirebaseResult.Fail -> onUpdateSubCategoriesFail(
+                        subCategoryResult
+                    )
                     folderResult is FirebaseResult.Fail -> onUpdateSubCategoriesFail(folderResult)
                 }
             }

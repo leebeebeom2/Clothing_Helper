@@ -100,7 +100,7 @@ private fun SortButtons(
 
 @Composable
 private fun Header() {
-    Column(modifier = Modifier.padding(start = 12.dp, top = 8.dp)) {
+    Column(modifier = Modifier.padding(start = 12.dp, end = 12.dp, top = 8.dp)) {
         SingleLineText(
             text = R.string.sort,
             style = MaterialTheme.typography.subtitle2.copy(letterSpacing = 1.55.sp)

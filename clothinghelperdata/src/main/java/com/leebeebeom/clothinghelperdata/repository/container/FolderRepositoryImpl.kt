@@ -13,7 +13,7 @@ class FolderRepositoryImpl @Inject constructor(
     FolderRepository {
     override val allFolders = getSortedContainers(folderPreferencesRepository.sort)
 
-    override suspend fun loadFolders(uid: String) = load(uid, Folder::class.java)
+    override suspend fun loadFolders(uid: String?) = load(uid, Folder::class.java)
 
     override suspend fun addFolder(folder: Folder, uid: String) = add(folder, uid)
 

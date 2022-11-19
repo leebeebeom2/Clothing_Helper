@@ -14,8 +14,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 
-abstract class BaseSortPreferencesRepositoryImpl(private val dataStore: DataStore<Preferences>) :
-    SortPreferenceRepository {
+class SortPreferenceRepositoryImpl(private val dataStore: DataStore<Preferences>) : SortPreferenceRepository{
     override val sort: Flow<SortPreferences> = dataStore.data
         .catch {
             if (it is IOException) emit(emptyPreferences())

@@ -5,7 +5,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.DropDownMenuRoot
 import com.leebeebeom.clothinghelper.base.dialogs.AddDialogState
-import com.leebeebeom.clothinghelper.main.subcategory.AddSubCategoryDialog
+import com.leebeebeom.clothinghelper.main.subcategory.dialogs.AddSubCategoryDialog
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable

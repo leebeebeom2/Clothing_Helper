@@ -7,7 +7,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.DropDownMenuRoot
-import com.leebeebeom.clothinghelper.main.subcategory.EditSubCategoryNameDialog
+import com.leebeebeom.clothinghelper.main.subcategory.dialogs.EditSubCategoryNameDialog
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import kotlinx.collections.immutable.ImmutableList
 

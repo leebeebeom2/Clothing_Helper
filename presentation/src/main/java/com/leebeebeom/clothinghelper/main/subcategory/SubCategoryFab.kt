@@ -8,12 +8,13 @@ import com.leebeebeom.clothinghelper.base.composables.SimpleIcon
 import com.leebeebeom.clothinghelper.base.dialogs.AddDialogState
 import com.leebeebeom.clothinghelper.main.base.components.Fab
 import com.leebeebeom.clothinghelper.main.subcategory.dialogs.AddSubCategoryDialog
+import com.leebeebeom.clothinghelper.map.StableSubCategory
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun BoxScope.SubCategoryFab(
     onPositiveButtonClick: (newName: String) -> Unit,
-    subCategoryNames: () -> ImmutableList<String>,
+    subCategories: () -> ImmutableList<StableSubCategory>,
     isSelectMode: () -> Boolean,
 ) {
     val state =
@@ -22,7 +23,7 @@ fun BoxScope.SubCategoryFab(
     SubCategoryFab(isSelectMode = isSelectMode, showDialog = state::showDialog)
 
     AddSubCategoryDialog(state = state,
-        subCategoryNames = subCategoryNames,
+        subCategories = subCategories,
         onPositiveButtonClick = { onPositiveButtonClick(state.text) })
 }
 

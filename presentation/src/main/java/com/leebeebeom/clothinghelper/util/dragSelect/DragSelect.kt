@@ -17,7 +17,8 @@ fun Modifier.dragSelect(
     onSelect: (key: String) -> Unit,
     onLongClick: (key: String) -> Unit
 ): Modifier = composed {
-    val realDragSelector = remember { dragSelector as ListDragSelector }
+    val realDragSelector =
+        remember { dragSelector as? ListDragSelector ?: dragSelector as GridDragSelector }
 
     this.then(Modifier.pointerInput(Unit) {
         detectDragGesturesAfterLongPress(onDragStart = { offset ->

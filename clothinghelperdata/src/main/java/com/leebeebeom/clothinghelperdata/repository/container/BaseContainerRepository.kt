@@ -20,7 +20,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 
 abstract class BaseContainerRepository<T : BaseContainer> : BaseRepository(true) {
-    protected val root = Firebase.database.reference
+    protected val root = Firebase.database.apply { setPersistenceEnabled(true) }.reference
 
     private val allContainers = MutableStateFlow(emptyList<T>())
     abstract val refPath: String
@@ -33,7 +33,7 @@ abstract class BaseContainerRepository<T : BaseContainer> : BaseRepository(true)
         }
 
     protected suspend fun load(uid: String, type: Class<T>) =
-        databaseTry(3000, "update") {
+        databaseTryWithLoading("update") {
             val temp = mutableListOf<T>()
 
             root.child(uid).child(refPath).get().await().children.forEach {
@@ -45,7 +45,7 @@ abstract class BaseContainerRepository<T : BaseContainer> : BaseRepository(true)
         }
 
     protected suspend fun add(value: T, uid: String) =
-        databaseTryWithoutLoading(100000, "add") {
+        databaseTryWithTimeOut(1000, "add") {
             val containerRef = root.getContainerRef(uid, refPath)
 
             val newContainer = getNewContainer(
@@ -60,7 +60,7 @@ abstract class BaseContainerRepository<T : BaseContainer> : BaseRepository(true)
         }
 
     protected suspend fun edit(newValue: T, uid: String): FirebaseResult =
-        databaseTryWithoutLoading(1000, "edit") {
+        databaseTryWithTimeOut(1000, "edit") {
             val newContainerWithNewEditDate =
                 getContainerWithNewEditDate(newValue, System.currentTimeMillis())
             root.getContainerRef(uid, refPath).child(newContainerWithNewEditDate.key)
@@ -75,7 +75,7 @@ abstract class BaseContainerRepository<T : BaseContainer> : BaseRepository(true)
             FirebaseResult.Success
         }
 
-    private suspend fun databaseTryWithoutLoading(
+    private suspend fun databaseTryWithTimeOut(
         time: Long,
         site: String,
         task: suspend () -> FirebaseResult
@@ -88,14 +88,13 @@ abstract class BaseContainerRepository<T : BaseContainer> : BaseRepository(true)
         }
     }
 
-    private suspend fun databaseTry(
-        time: Long,
+    private suspend fun databaseTryWithLoading(
         site: String,
         task: suspend () -> FirebaseResult
     ) = withContext(Dispatchers.IO) {
         try {
             loadingOn()
-            withTimeout(time) { task() }
+            task()
         } catch (e: Exception) {
             logE(site, e)
             FirebaseResult.Fail(e)

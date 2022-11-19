@@ -14,10 +14,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.base.Anime
 
+const val fabEndPadding = 20
+const val fabBottomPadding = 24
+
 @Composable
 fun BoxScope.Fab(
     modifier: Modifier = Modifier,
-    paddingValues: PaddingValues = PaddingValues(end = 20.dp, bottom = 24.dp),
+    paddingValues: PaddingValues = PaddingValues(end = fabEndPadding.dp, bottom = fabBottomPadding.dp),
     align: Alignment = Alignment.BottomEnd,
     size: Dp = 48.dp,
     visible: () -> Boolean,

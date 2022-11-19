@@ -8,18 +8,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.main.base.components.ScrollToTopFab
 import com.leebeebeom.clothinghelper.main.subcategory.content.subcategorycard.SubCategoryCard
 import com.leebeebeom.clothinghelper.map.StableSubCategory
-import com.leebeebeom.clothinghelper.util.dragSelect
+import com.leebeebeom.clothinghelper.util.dragSelect.ListDragSelector
+import com.leebeebeom.clothinghelper.util.dragSelect.dragSelect
 import com.leebeebeom.clothinghelper.util.scrollToTop
 import com.leebeebeom.clothinghelper.util.showScrollToTopButton
 import com.leebeebeom.clothinghelperdomain.model.Order
@@ -43,7 +42,8 @@ fun SubCategoryContent(
     onOrderClick: (Order) -> Unit,
     selectedSubCategoryKey: () -> ImmutableSet<String>,
     isSelectMode: () -> Boolean,
-    onSelect: (String) -> Unit
+    onSelect: (String) -> Unit,
+    haptic: HapticFeedback = LocalHapticFeedback.current
 ) {
     var dragSelectStart by rememberSaveable { mutableStateOf(false) }
 
@@ -52,11 +52,10 @@ fun SubCategoryContent(
             modifier = Modifier
                 .fillMaxSize()
                 .dragSelect(
-                    state,
-                    { dragSelectStart = it },
-                    onSelect,
-                    onLongClick,
-                    LocalHapticFeedback.current
+                    dragSelector = remember { ListDragSelector(state, haptic) },
+                    onDragStart = { dragSelectStart = it },
+                    onSelect = onSelect,
+                    onLongClick = onLongClick
                 ),
             contentPadding = PaddingValues(
                 start = 16.dp, end = 16.dp, top = 16.dp, bottom = 120.dp

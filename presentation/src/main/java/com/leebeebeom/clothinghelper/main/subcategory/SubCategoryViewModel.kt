@@ -15,13 +15,12 @@ import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.util.taskAndReturnSet
 import com.leebeebeom.clothinghelperdomain.model.Order
 import com.leebeebeom.clothinghelperdomain.model.Sort
-import com.leebeebeom.clothinghelperdomain.model.SortPreferences
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
-import com.leebeebeom.clothinghelperdomain.usecase.preferences.SubCategorySortUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.preferences.sort.SubCategorySortUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.AddSubCategoryUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.EditSubCategoryNameUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetAllSubCategoriesUseCase
-import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetSubCategoryLoadingStateUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.GetDataLoadingStateUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.user.GetUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
@@ -34,7 +33,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SubCategoryViewModel @Inject constructor(
-    private val getSubCategoryLoadingStateUseCase: GetSubCategoryLoadingStateUseCase,
+    private val getDataLoadingStateUseCase: GetDataLoadingStateUseCase,
     private val subCategorySortUseCase: SubCategorySortUseCase,
     private val getAllSubCategoriesUseCase: GetAllSubCategoriesUseCase,
     private val getUserUseCase: GetUserUseCase,
@@ -51,7 +50,7 @@ class SubCategoryViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            launch { getSubCategoryLoadingStateUseCase.isLoading.collectLatest(uiState::updateIsLoading) }
+            launch { getDataLoadingStateUseCase.isLoading.collectLatest(uiState::updateIsLoading) }
             launch { getAllSubCategoriesUseCase.allSubCategories.collectLatest(uiState::loadAllSubCategories) }
             launch { subCategorySortUseCase.sortPreferences.collectLatest(uiState::updateSort) }
             launch { getUserUseCase.user.collectLatest(uiState::updateUser) }
@@ -82,15 +81,10 @@ class SubCategoryScreenUIState :
     ToastUIState by ToastUIStateImpl(),
     LoadingUIState by LoadingUIStateImpl(),
     UserUIState by UserUIStateImpl(),
-    SubCategoryUIState by SubCategoryUIStateImpl() {
+    SubCategoryUIState by SubCategoryUIStateImpl(),
+    SortUIState by SortUIStateImpl() {
     var parent = SubCategoryParent.TOP
         private set
-    var sort by mutableStateOf(SortPreferences())
-        private set
-
-    fun updateSort(sort: SortPreferences) {
-        this.sort = sort
-    }
 
     var isSelectMode by mutableStateOf(false)
         private set
@@ -106,8 +100,6 @@ class SubCategoryScreenUIState :
 
     var subCategories by mutableStateOf(emptyList<StableSubCategory>().toImmutableList())
         private set
-    var subCategoryNames by mutableStateOf(emptyList<String>().toImmutableList())
-        private set
 
     val isAllSelected by derivedStateOf { selectedSubCategoryKeys.size == subCategories.size }
     val showEditIcon by derivedStateOf { selectedSubCategoriesSize == 1 }
@@ -116,7 +108,6 @@ class SubCategoryScreenUIState :
     fun setParent(parent: SubCategoryParent) {
         this.parent = parent
         subCategories = getSubCategories(parent)
-        subCategoryNames = getSubCategoryNames(parent)
     }
 
     fun toggleAllSelect() {

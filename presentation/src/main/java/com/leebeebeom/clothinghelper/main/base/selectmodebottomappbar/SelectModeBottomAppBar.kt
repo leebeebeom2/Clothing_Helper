@@ -15,12 +15,12 @@ import com.leebeebeom.clothinghelper.base.composables.SimpleWidthSpacer
 
 @Composable
 fun BoxScope.SelectModeBottomAppBar(
-    selectedSubCategoriesSize: () -> Int,
+    selectedSize: () -> Int,
     isAllSelected: () -> Boolean,
     showEditIcon: () -> Boolean,
     showDeleteIcon: () -> Boolean,
     onAllSelectCheckBoxClick: () -> Unit,
-    onEditSubCategoryNameClick: () -> Unit,
+    onEditIconClick: () -> Unit,
     isSelectMode: () -> Boolean
 ) {
     AnimatedVisibility(
@@ -33,13 +33,13 @@ fun BoxScope.SelectModeBottomAppBar(
             SelectModeBottomAppBarAllSelect(
                 isAllSelected,
                 onAllSelectCheckBoxClick,
-                selectedSubCategoriesSize
+                selectedSize
             )
 
             Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.End) {
                 SelectModeBottomAppBarIcon(
                     visible = showEditIcon,
-                    onClick = onEditSubCategoryNameClick,
+                    onClick = onEditIconClick,
                     drawable = R.drawable.ic_edit,
                     text = R.string.change_name
                 )

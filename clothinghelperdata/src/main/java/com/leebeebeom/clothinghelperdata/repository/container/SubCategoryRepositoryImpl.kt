@@ -17,7 +17,7 @@ class SubCategoryRepositoryImpl @Inject constructor(
 
     override val allSubCategories = getSortedContainers(subCategoryPreferencesRepository.sort)
 
-    override suspend fun loadSubCategories(uid: String) = load(uid, SubCategory::class.java)
+    override suspend fun loadSubCategories(uid: String?) = load(uid, SubCategory::class.java)
 
     override suspend fun addSubCategory(subCategory: SubCategory, uid: String) =
         add(subCategory, uid)

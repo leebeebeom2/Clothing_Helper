@@ -1,10 +1,9 @@
-package com.leebeebeom.clothinghelper.util
+package com.leebeebeom.clothinghelper.util.dragSelect
 
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import com.leebeebeom.clothinghelper.util.dragSelect.ListDragSelector
 
 enum class DragDirection {
     Up, Down, None

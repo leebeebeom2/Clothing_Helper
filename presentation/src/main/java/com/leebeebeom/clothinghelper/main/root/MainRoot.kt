@@ -67,7 +67,6 @@ fun MainRoot(
                     user = { uiState.user },
                     isLoading = { uiState.isLoading },
                     subCategories = uiState::getSubCategories,
-                    subCategoriesSize = uiState::getSubCategoriesSize,
                     onEssentialMenuClick = {
                         onEssentialMenuClick(it)
                         drawerClose()
@@ -84,7 +83,6 @@ fun MainRoot(
                         onSettingIconClick()
                         drawerClose()
                     },
-                    subCategoryNames = uiState::getSubCategoryNames,
                     onAddSubCategoryPositiveButtonClick = viewModel::addSubCategory,
                     onEditSUbCategoryNamePositiveClick = viewModel::editSubCategoryName
                 )

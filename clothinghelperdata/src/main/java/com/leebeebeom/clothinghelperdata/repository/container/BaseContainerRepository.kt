@@ -19,8 +19,10 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 
+private val db = Firebase.database.apply { setPersistenceEnabled(true) }
+
 abstract class BaseContainerRepository<T : BaseContainer> : BaseRepository(true) {
-    protected val root = Firebase.database.apply { setPersistenceEnabled(true) }.reference
+    protected val root = db.reference
 
     private val allContainers = MutableStateFlow(emptyList<T>())
     abstract val refPath: String

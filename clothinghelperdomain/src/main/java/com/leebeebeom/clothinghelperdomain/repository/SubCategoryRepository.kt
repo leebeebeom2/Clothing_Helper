@@ -9,7 +9,7 @@ interface SubCategoryRepository {
     val isLoading: StateFlow<Boolean>
     val allSubCategories: Flow<List<SubCategory>>
 
-    suspend fun loadSubCategories(uid: String): FirebaseResult
+    suspend fun loadSubCategories(uid: String?): FirebaseResult
     suspend fun pushInitialSubCategories(uid: String)
     suspend fun addSubCategory(subCategory: SubCategory, uid: String): FirebaseResult
     suspend fun editSubCategoryName(newSubCategory: SubCategory, uid: String): FirebaseResult

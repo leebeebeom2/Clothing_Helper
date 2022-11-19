@@ -7,9 +7,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.signin.base.BasePasswordUIState
-import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
-import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
+import com.leebeebeom.clothinghelper.base.ToastUIState
+import com.leebeebeom.clothinghelper.base.ToastUIStateImpl
+import com.leebeebeom.clothinghelper.signin.base.*
+import com.leebeebeom.clothinghelper.signin.base.interfaces.EmailUIState
+import com.leebeebeom.clothinghelper.signin.base.interfaces.EmailUIStateImpl
+import com.leebeebeom.clothinghelper.signin.base.interfaces.PasswordUIState
+import com.leebeebeom.clothinghelper.signin.base.interfaces.PasswordUIStateImpl
 import com.leebeebeom.clothinghelperdata.repository.util.logE
 import com.leebeebeom.clothinghelperdomain.model.AuthResult
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
@@ -57,7 +61,12 @@ class SignUpViewModel @Inject constructor(
     override fun disableGoogleButton() = uiState.updateGoogleButtonEnabled(false)
 }
 
-class SignUpUIState : BasePasswordUIState() {
+class SignUpUIState(
+    private val basePasswordUIStateImpl: PasswordUIStateImpl = PasswordUIStateImpl()
+) :
+    ToastUIState by ToastUIStateImpl(),
+    EmailUIState by EmailUIStateImpl(),
+    PasswordUIState by basePasswordUIStateImpl {
     var passwordConfirmError: Int? by mutableStateOf(null)
         private set
 
@@ -71,7 +80,7 @@ class SignUpUIState : BasePasswordUIState() {
     }
 
     override fun onPasswordChange(password: String) {
-        super.onPasswordChange(password)
+        basePasswordUIStateImpl.onPasswordChange(password)
         if (password.isNotBlank()) {
             if (password.length < 6) updatePasswordError(R.string.error_weak_password)
             if (passwordConfirm.isNotBlank() && password != passwordConfirm)
@@ -90,5 +99,5 @@ class SignUpUIState : BasePasswordUIState() {
         passwordConfirmError = error
     }
 
-    override val buttonEnabled by derivedStateOf { super.buttonEnabled && passwordConfirm.isNotBlank() && this.passwordConfirmError == null }
+    override val buttonEnabled by derivedStateOf { basePasswordUIStateImpl.buttonEnabled && passwordConfirm.isNotBlank() && this.passwordConfirmError == null }
 }

@@ -107,12 +107,12 @@ fun SubCategoryScreen(
         )
 
         SelectModeBottomAppBar(
-            selectedSubCategoriesSize = { uiState.selectedSubCategoriesSize },
+            selectedSize = { uiState.selectedSubCategoriesSize },
             isAllSelected = { uiState.isAllSelected },
             showEditIcon = { uiState.showEditIcon },
             showDeleteIcon = { uiState.showDeleteIcon },
             onAllSelectCheckBoxClick = uiState::toggleAllSelect,
-            onEditSubCategoryNameClick = state::showEditDialog,
+            onEditIconClick = state::showEditDialog,
             isSelectMode = { uiState.isSelectMode }
         )
 

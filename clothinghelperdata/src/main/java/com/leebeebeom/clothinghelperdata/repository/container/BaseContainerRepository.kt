@@ -32,16 +32,21 @@ abstract class BaseContainerRepository<T : BaseContainer> : BaseRepository(true)
             getSorted(allSubCategories, sort)
         }
 
-    protected suspend fun load(uid: String, type: Class<T>) =
+    protected suspend fun load(uid: String?, type: Class<T>) =
         databaseTryWithLoading("update") {
-            val temp = mutableListOf<T>()
+            uid?.let {
+                val temp = mutableListOf<T>()
 
-            root.child(uid).child(refPath).get().await().children.forEach {
-                temp.add((it.getValue(type))!!)
+                root.child(uid).child(refPath).get().await().children.forEach {
+                    temp.add((it.getValue(type))!!)
+                }
+
+                allContainers.update { temp }
+                FirebaseResult.Success
+            } ?: let {
+                allContainers.update { emptyList() }
+                FirebaseResult.Success
             }
-
-            allContainers.update { temp }
-            FirebaseResult.Success
         }
 
     protected suspend fun add(value: T, uid: String) =

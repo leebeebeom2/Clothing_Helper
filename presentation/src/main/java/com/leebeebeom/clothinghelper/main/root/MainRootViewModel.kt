@@ -3,9 +3,11 @@ package com.leebeebeom.clothinghelper.main.root
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.main.base.BaseMainUIState
-import com.leebeebeom.clothinghelper.main.subcategory.AddSubCategory
-import com.leebeebeom.clothinghelper.main.subcategory.EditSubCategoryName
+import com.leebeebeom.clothinghelper.base.ToastUIState
+import com.leebeebeom.clothinghelper.base.ToastUIStateImpl
+import com.leebeebeom.clothinghelper.main.base.*
+import com.leebeebeom.clothinghelper.main.subcategory.interfaces.AddSubCategory
+import com.leebeebeom.clothinghelper.main.subcategory.interfaces.EditSubCategoryName
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.*
@@ -26,7 +28,7 @@ class MainRootViewModel @Inject constructor(
     override val editSubCategoryNameUseCase: EditSubCategoryNameUseCase
 ) : AddSubCategory, EditSubCategoryName, ViewModel() {
 
-    val uiState = BaseMainUIState()
+    val uiState = MainRootUIState()
 
     init {
         viewModelScope.launch {
@@ -46,18 +48,24 @@ class MainRootViewModel @Inject constructor(
         }
     }
 
-    fun addSubCategory(subCategory:StableSubCategory){
+    fun addSubCategory(subCategory: StableSubCategory) {
         viewModelScope.launch {
-            super.add(subCategory)
+            super.baseAddSubCategory(subCategory)
         }
     }
 
-    fun editSubCategoryName(subCategory: StableSubCategory){
+    fun editSubCategoryName(subCategory: StableSubCategory) {
         viewModelScope.launch {
-            super.edit(subCategory)
+            super.baseEditSubCategoryName(subCategory)
         }
     }
 
     override fun showToast(text: Int) = uiState.showToast(text)
     override val uid get() = uiState.user?.uid
 }
+
+class MainRootUIState :
+    ToastUIState by ToastUIStateImpl(),
+    UserUIState by UserUIStateImpl(),
+    LoadingUIState by LoadingUIStateImpl(),
+    SubCategoryUIState by SubCategoryUIStateImpl()

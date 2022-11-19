@@ -15,7 +15,7 @@ import kotlinx.collections.immutable.ImmutableList
 fun DrawerSubCategoryDropDownMenu(
     show: () -> Boolean,
     onDismiss: () -> Unit,
-    subCategoryNames: () -> ImmutableList<String>,
+    subCategories: () -> ImmutableList<StableSubCategory>,
     subCategory: () -> StableSubCategory,
     onEditSubCategoryNamePositiveClick: (StableSubCategory) -> Unit
 ) {
@@ -32,7 +32,7 @@ fun DrawerSubCategoryDropDownMenu(
     EditSubCategoryNameDialog(
         showDialog = { showDialog },
         subCategory = subCategory,
-        subCategoryNames = subCategoryNames,
+        subCategories = subCategories,
         onPositiveButtonClick = onEditSubCategoryNamePositiveClick,
         onDismiss = { showDialog = false }
     )

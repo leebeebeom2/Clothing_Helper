@@ -38,7 +38,7 @@ class MainRootViewModel @Inject constructor(
                     if (it is FirebaseResult.Fail)
                         when (it.exception) {
                             is TimeoutCancellationException -> showToast(R.string.network_error_for_load)
-                            !is NullPointerException -> uiState.showToast(R.string.data_load_failed)
+                            else -> uiState.showToast(R.string.data_load_failed)
                         }
                 }
             }

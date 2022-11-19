@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.base.ToastUIState
 import com.leebeebeom.clothinghelper.base.ToastUIStateImpl
-import com.leebeebeom.clothinghelper.main.base.*
+import com.leebeebeom.clothinghelper.main.base.interfaces.*
 import com.leebeebeom.clothinghelper.main.subcategory.interfaces.AddSubCategory
 import com.leebeebeom.clothinghelper.main.subcategory.interfaces.EditSubCategoryName
 import com.leebeebeom.clothinghelper.map.StableSubCategory

@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.base
+package com.leebeebeom.clothinghelper.main.base.interfaces
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

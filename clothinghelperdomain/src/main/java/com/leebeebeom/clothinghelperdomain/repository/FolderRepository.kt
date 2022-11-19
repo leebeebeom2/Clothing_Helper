@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface FolderRepository {
     val allFolders: Flow<List<Folder>>
+    val isLoading: Flow<Boolean>
 
     suspend fun loadFolders(uid: String?): FirebaseResult
     suspend fun addFolder(folder: Folder, uid: String): FirebaseResult

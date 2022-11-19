@@ -5,15 +5,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 
-open class BaseUIState {
-    var toastText: Int? by mutableStateOf(null)
+interface ToastUIState {
+    val toastText: Int?
+    fun showToast(@StringRes text: Int?)
+    fun toastShown()
+}
+
+class ToastUIStateImpl : ToastUIState {
+    override var toastText: Int? by mutableStateOf(null)
         private set
 
-    fun showToast(@StringRes text: Int?) {
+    override fun showToast(@StringRes text: Int?) {
         toastText = text
     }
 
-    fun toastShown() {
+    override fun toastShown() {
         toastText = null
     }
 }

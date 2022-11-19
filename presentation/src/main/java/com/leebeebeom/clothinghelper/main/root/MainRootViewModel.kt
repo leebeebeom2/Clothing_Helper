@@ -10,6 +10,7 @@ import com.leebeebeom.clothinghelper.main.subcategory.interfaces.AddSubCategory
 import com.leebeebeom.clothinghelper.main.subcategory.interfaces.EditSubCategoryName
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
+import com.leebeebeom.clothinghelperdomain.usecase.LoadDataUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.*
 import com.leebeebeom.clothinghelperdomain.usecase.user.GetUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainRootViewModel @Inject constructor(
     private val getSubCategoryLoadingStateUseCase: GetSubCategoryLoadingStateUseCase,
-    private val loadSubCategoriesUseCase: LoadSubCategoriesUseCase,
+    private val loadDataUseCase: LoadDataUseCase,
     private val getAllSubCategoriesUseCase: GetAllSubCategoriesUseCase,
     private val getUserUseCase: GetUserUseCase,
     override val addSubCategoryUseCase: AddSubCategoryUseCase,
@@ -33,11 +34,11 @@ class MainRootViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             launch {
-                loadSubCategoriesUseCase.load {
+                loadDataUseCase.load {
                     if (it is FirebaseResult.Fail)
                         when (it.exception) {
                             is TimeoutCancellationException -> showToast(R.string.network_error_for_load)
-                            !is NullPointerException -> uiState.showToast(R.string.sub_categories_load_failed)
+                            !is NullPointerException -> uiState.showToast(R.string.data_load_failed)
                         }
                 }
             }

@@ -5,6 +5,8 @@ import com.leebeebeom.clothinghelperdomain.repository.FolderRepository
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
 import com.leebeebeom.clothinghelperdomain.usecase.user.GetUserUseCase
 import dagger.hilt.android.scopes.ViewModelScoped
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
@@ -16,12 +18,17 @@ class LoadDataUseCase @Inject constructor(
 ) {
     suspend fun load(onUpdateSubCategoriesFail: (FirebaseResult) -> Unit) =
         getUserUseCase.user.collectLatest {
-            val subCategoryResult = subCategoryRepository.loadSubCategories(it?.uid)
-            val folderResult = folderRepository.loadFolders(it?.uid)
-            when {
-                subCategoryResult is FirebaseResult.Fail ->
-                    onUpdateSubCategoriesFail(subCategoryResult)
-                folderResult is FirebaseResult.Fail -> onUpdateSubCategoriesFail(folderResult)
+            coroutineScope {
+                val subCategoryDeferred = async { subCategoryRepository.loadSubCategories(it?.uid) }
+                val folderDeferred = async { folderRepository.loadFolders(it?.uid) }
+
+                val subCategoryResult = subCategoryDeferred.await()
+                val folderResult = folderDeferred.await()
+
+                when {
+                    subCategoryResult is FirebaseResult.Fail -> onUpdateSubCategoriesFail(subCategoryResult)
+                    folderResult is FirebaseResult.Fail -> onUpdateSubCategoriesFail(folderResult)
+                }
             }
         }
 }

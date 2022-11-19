@@ -18,8 +18,6 @@ import dagger.hilt.android.HiltAndroidApp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-const val TAG = "TAG"
-
 @HiltAndroidApp
 class ClothingHelper : Application()
 

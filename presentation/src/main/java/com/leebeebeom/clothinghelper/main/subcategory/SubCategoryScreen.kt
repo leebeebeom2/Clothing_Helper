@@ -94,12 +94,12 @@ fun SubCategoryScreen(
         }
         SubCategoryFab(
             onPositiveButtonClick = addSubCategoryPositiveButtonClick,
-            subCategoryNames = { uiState.subCategoryNames },
+            subCategories = { uiState.subCategories },
             isSelectMode = { uiState.isSelectMode }
         )
 
         EditSubCategoryNameDialog(
-            subCategoryNames = { uiState.subCategoryNames },
+            subCategories = { uiState.subCategories },
             onPositiveButtonClick = viewModel::editSubCategoryName,
             onDismiss = state::dismissEditDialog,
             showDialog = { state.showEditDialog },

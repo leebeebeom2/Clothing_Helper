@@ -9,7 +9,7 @@ import com.leebeebeom.clothinghelperdomain.usecase.subcategory.AddSubCategoryUse
 interface AddSubCategory : AddAndEditContainer {
     val addSubCategoryUseCase: AddSubCategoryUseCase
 
-    suspend fun add(subCategory: StableSubCategory) {
+    suspend fun baseAddSubCategory(subCategory: StableSubCategory) {
         uid?.let {
             val result = addSubCategoryUseCase.add(subCategory.toUnstable(), it)
             showToastWhenFail(

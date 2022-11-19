@@ -5,7 +5,9 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.leebeebeom.clothinghelperdomain.repository.preferences.FolderPreferencesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class FolderPreferencesRepositoryImpl @Inject constructor(@ApplicationContext context: Context) :
     BaseSortPreferencesRepositoryImpl(context.folderDatastore), FolderPreferencesRepository
 

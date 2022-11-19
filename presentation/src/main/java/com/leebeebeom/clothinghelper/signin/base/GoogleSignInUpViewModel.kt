@@ -12,13 +12,13 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.TAG
 import com.leebeebeom.clothinghelperdata.repository.A_NETWORK_ERROR
 import com.leebeebeom.clothinghelperdata.repository.util.logE
 import com.leebeebeom.clothinghelperdomain.model.AuthResult
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.usecase.user.GoogleSignInUseCase
 import kotlinx.coroutines.launch
+import com.leebeebeom.clothinghelperdata.repository.util.TAG
 
 abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSignInUseCase) :
     ViewModel() {
@@ -47,7 +47,7 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
         viewModelScope.launch {
             val result = googleSignInUseCase.googleSignIn(getGoogleCredential(activityResult)) {
                 if (it is FirebaseResult.Fail) {
-                    showToast(R.string.sub_categories_load_failed)
+                    showToast(R.string.data_load_failed)
                     logE("signInWithGoogleEmail", it.exception)
                 }
             }

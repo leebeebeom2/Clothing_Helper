@@ -1,6 +1,8 @@
 package com.leebeebeom.clothinghelper.main.root.contents
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Divider
@@ -23,13 +25,11 @@ fun DrawerContents(
     user: () -> StableUser?,
     isLoading: () -> Boolean,
     subCategories: (SubCategoryParent) -> ImmutableList<StableSubCategory>,
-    subCategoriesSize: (SubCategoryParent) -> Int,
     state: DrawerContentsState = remember { DrawerContentsState() },
     onEssentialMenuClick: (essentialMenu: EssentialMenus) -> Unit,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (StableSubCategory) -> Unit,
     onSettingIconClick: () -> Unit,
-    subCategoryNames: (SubCategoryParent) -> ImmutableList<String>,
     onAddSubCategoryPositiveButtonClick: (StableSubCategory) -> Unit,
     onEditSUbCategoryNamePositiveClick: (StableSubCategory) -> Unit
 ) {
@@ -57,8 +57,6 @@ fun DrawerContents(
                         isLoading = isLoading,
                         onMainCategoryClick = onMainCategoryClick,
                         onSubCategoryClick = onSubCategoryClick,
-                        subCategoriesSize = subCategoriesSize,
-                        subCategoryNames = subCategoryNames,
                         onAddSubCategoryPositiveClick = onAddSubCategoryPositiveButtonClick,
                         onEditSubCategoryNamePositiveClick = onEditSUbCategoryNamePositiveClick
                     )

@@ -31,6 +31,7 @@ const val TOO_MANY_REQUEST = "TOO_MANY_REQUEST"
 private val loadingRepositoryImpl = LoadingRepositoryImpl(false)
 
 /**
+ * 로그인 시도 혹은 종료 시 [isLoading] 상태 변경 
  * 모든 로그인 혹은 가입 성공 시 [user], [isSignIn] 상태 변경
  * 로그인 만료등의 상태 변경 시 [user], [isSignIn] 상태 변경
  */

@@ -8,11 +8,12 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
-import com.leebeebeom.clothinghelperdata.repository.base.BaseRepository
+import com.leebeebeom.clothinghelperdata.repository.base.LoadingRepositoryImpl
 import com.leebeebeom.clothinghelperdata.repository.container.DatabasePath
 import com.leebeebeom.clothinghelperdata.repository.util.logE
 import com.leebeebeom.clothinghelperdomain.model.AuthResult
 import com.leebeebeom.clothinghelperdomain.model.User
+import com.leebeebeom.clothinghelperdomain.repository.LoadingRepository
 import com.leebeebeom.clothinghelperdomain.repository.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,8 +27,11 @@ import javax.inject.Singleton
 const val A_NETWORK_ERROR = "A_NETWORK_ERROR"
 const val TOO_MANY_REQUEST = "TOO_MANY_REQUEST"
 
+private val loadingRepositoryImpl = LoadingRepositoryImpl(false)
+
 @Singleton
-class UserRepositoryImpl @Inject constructor() : BaseRepository(false), UserRepository {
+class UserRepositoryImpl @Inject constructor() :
+    LoadingRepository by loadingRepositoryImpl, UserRepository {
     private val auth = FirebaseAuth.getInstance()
 
     private val _isSignIn = MutableStateFlow(auth.currentUser != null)
@@ -115,7 +119,7 @@ class UserRepositoryImpl @Inject constructor() : BaseRepository(false), UserRepo
     private suspend fun authTry(site: String, task: suspend () -> AuthResult) =
         withContext(Dispatchers.IO) {
             try {
-                loadingOn()
+                loadingRepositoryImpl.loadingOn()
                 task()
             } catch (e: FirebaseAuthException) {
                 logE(site, e)
@@ -128,7 +132,7 @@ class UserRepositoryImpl @Inject constructor() : BaseRepository(false), UserRepo
                 logE(site, e)
                 AuthResult.UnknownFail
             } finally {
-                loadingOff()
+                loadingRepositoryImpl.loadingOff()
             }
         }
 }

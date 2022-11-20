@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.main.subcategory
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
@@ -12,13 +11,12 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.base.composables.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelper.base.composables.SimpleToast
+import com.leebeebeom.clothinghelper.main.base.components.SelectModeBackHandler
 import com.leebeebeom.clothinghelper.main.base.selectmodebottomappbar.SelectModeBottomAppBar
 import com.leebeebeom.clothinghelper.main.subcategory.content.SubCategoryContent
 import com.leebeebeom.clothinghelper.main.subcategory.dialogs.EditSubCategoryNameDialog
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 /*
 최초 구동 시 로딩 확인
@@ -72,7 +70,6 @@ fun SubCategoryScreen(
     viewModel: SubCategoryViewModel = hiltViewModel(),
     uiState: SubCategoryScreenUIState = viewModel.getUiState(parent),
     state: SubCategoryState = rememberSubCategoryState(),
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
     onSubCategoryClick: (SubCategoryParent, name: String, key: String) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -121,9 +118,10 @@ fun SubCategoryScreen(
 
     SimpleToast(text = { uiState.toastText }, toastShown = uiState::toastShown)
 
-    BackHandler(enabled = uiState.isSelectMode, onBack = {
-        coroutineScope.launch { uiState.selectModeOff() }
-    })
+    SelectModeBackHandler(
+        isSelectMode = { uiState.isSelectMode },
+        selectModeOff = uiState::selectModeOff
+    )
 }
 
 class SubCategoryState(initialShowDialog: Boolean = false) {

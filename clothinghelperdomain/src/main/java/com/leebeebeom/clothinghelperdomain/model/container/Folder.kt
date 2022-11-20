@@ -11,5 +11,3 @@ data class Folder(
     override val key: String = "",
     override val editDate: Long = 0
 ) : BaseContainer(), Parcelable
-
-fun getDummyFolders() = List(100) { Folder(name = "이름") }

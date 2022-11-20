@@ -10,6 +10,7 @@ import com.leebeebeom.clothinghelperdata.repository.util.updateMutable
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.model.SortPreferences
 import com.leebeebeom.clothinghelperdomain.model.container.BaseContainer
+import com.leebeebeom.clothinghelperdomain.repository.ContainerRepository
 import com.leebeebeom.clothinghelperdomain.repository.LoadingRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
@@ -21,8 +22,8 @@ import kotlinx.coroutines.tasks.await
 private val db = Firebase.database.apply { setPersistenceEnabled(true) }
 private val loadingRepositoryImpl = LoadingRepositoryImpl(true)
 
-abstract class ContainerRepository<T : BaseContainer> :
-    LoadingRepository by loadingRepositoryImpl {
+abstract class ContainerRepositoryImpl<T : BaseContainer> :
+    LoadingRepository by loadingRepositoryImpl, ContainerRepository<T> {
     protected val root = db.reference
 
     private val allContainers = MutableStateFlow(emptyList<T>())
@@ -37,7 +38,7 @@ abstract class ContainerRepository<T : BaseContainer> :
     /**
      * uid가 null이면 [allContainers]를 빈 리스트로 [update]
      */
-    protected suspend fun load(uid: String?, type: Class<T>) =
+    override suspend fun load(uid: String?, type: Class<T>) =
         databaseTryWithLoading("update") {
             uid?.let {
                 val temp = mutableListOf<T>()
@@ -59,12 +60,12 @@ abstract class ContainerRepository<T : BaseContainer> :
      *
      * [TimeoutCancellationException]이 포함된 [FirebaseResult.Fail] 반환
      */
-    protected suspend fun add(value: T, uid: String) =
+    override suspend fun add(t: T, uid: String) =
         databaseTryWithTimeOut(1000, "add") {
             val containerRef = root.getContainerRef(uid, refPath)
 
             val newContainer = getNewContainer(
-                value = value,
+                value = t,
                 key = getKey(containerRef),
                 createDate = System.currentTimeMillis()
             )
@@ -79,10 +80,10 @@ abstract class ContainerRepository<T : BaseContainer> :
      *
      * [TimeoutCancellationException]이 포함된 [FirebaseResult.Fail] 반환
      */
-    protected suspend fun edit(newValue: T, uid: String): FirebaseResult =
+    override suspend fun edit(t: T, uid: String): FirebaseResult =
         databaseTryWithTimeOut(1000, "edit") {
             val newContainerWithNewEditDate =
-                getContainerWithNewEditDate(newValue, System.currentTimeMillis())
+                getContainerWithNewEditDate(t, System.currentTimeMillis())
             root.getContainerRef(uid, refPath).child(newContainerWithNewEditDate.key)
                 .setValue(newContainerWithNewEditDate).await()
 

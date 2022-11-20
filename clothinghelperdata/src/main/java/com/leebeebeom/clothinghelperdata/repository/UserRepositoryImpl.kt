@@ -128,7 +128,7 @@ class UserRepositoryImpl @Inject constructor() :
     /**
      *  인터넷이 끊겨도 인터넷 복구 시 푸
      *
-     *  앱이 종료될 경우 따로 처리해주어야 함 
+     *  앱이 종료될 경우 따로 처리해주어야 함
      */
     private suspend fun pushNewUser(user: User) =
         withContext(Dispatchers.IO) {
@@ -137,7 +137,10 @@ class UserRepositoryImpl @Inject constructor() :
             updateUserAndUpdateSignIn(user)
         }
 
-    private fun updateUserAndUpdateSignIn(userObj: User) {
+    /**
+     * [NonCancellable]로 동작 보장
+     */
+    private suspend fun updateUserAndUpdateSignIn(userObj: User) = withContext(NonCancellable) {
         updateUser(user = userObj)
         updateSignIn(state = true)
     }
@@ -153,6 +156,8 @@ class UserRepositoryImpl @Inject constructor() :
      * 로딩 오프는 [NonCancellable]로 동작 보장
      *
      * 에러 발생 시 로그 설정
+     * 
+     * [task]는 [NonCancellable]로 동작 보장
      *
      * @param [site] 로그에 찍힐 콜 사이트
      * @param [task] try 안에서 실행할 동작
@@ -166,7 +171,7 @@ class UserRepositoryImpl @Inject constructor() :
         withContext(Dispatchers.IO) {
             try {
                 loadingRepositoryImpl.loadingOn()
-                task()
+               withContext(NonCancellable) { task() }
             } catch (e: FirebaseAuthException) {
                 logE(site, e)
                 AuthResult.Fail(e.errorCode)

@@ -3,37 +3,40 @@ package com.leebeebeom.clothinghelperdata.repository.container
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.leebeebeom.clothinghelperdata.repository.base.BaseRepository
+import com.leebeebeom.clothinghelperdata.repository.base.LoadingRepositoryImpl
 import com.leebeebeom.clothinghelperdata.repository.util.getSorted
 import com.leebeebeom.clothinghelperdata.repository.util.logE
 import com.leebeebeom.clothinghelperdata.repository.util.updateMutable
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.model.SortPreferences
 import com.leebeebeom.clothinghelperdomain.model.container.BaseContainer
-import kotlinx.coroutines.Dispatchers
+import com.leebeebeom.clothinghelperdomain.repository.LoadingRepository
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeout
 
 private val db = Firebase.database.apply { setPersistenceEnabled(true) }
+private val loadingRepositoryImpl = LoadingRepositoryImpl(true)
 
-abstract class BaseContainerRepository<T : BaseContainer> : BaseRepository(true) {
+abstract class ContainerRepository<T : BaseContainer> :
+    LoadingRepository by loadingRepositoryImpl {
     protected val root = db.reference
 
     private val allContainers = MutableStateFlow(emptyList<T>())
-    abstract val refPath: String
+    protected abstract val refPath: String
 
+    /**
+     * [T]리스트의 상태가 변하거나 정렬이 변할 시 정렬된 [T] 리스트 [Flow] 반환
+     */
     protected fun getSortedContainers(sortFlow: Flow<SortPreferences>) =
-        combine(
-            allContainers, sortFlow
-        ) { allSubCategories, sort ->
-            getSorted(allSubCategories, sort)
-        }
+        combine(allContainers, sortFlow) { allContainers, sort -> getSorted(allContainers, sort) }
 
+    /**
+     * uid가 null이면 [allContainers]를 빈 리스트로 [update]
+     */
     protected suspend fun load(uid: String?, type: Class<T>) =
         databaseTryWithLoading("update") {
             uid?.let {
@@ -51,6 +54,11 @@ abstract class BaseContainerRepository<T : BaseContainer> : BaseRepository(true)
             }
         }
 
+    /**
+     * 1초간 응답없을 시 네트워크 미 연결로 간주
+     *
+     * [TimeoutCancellationException]이 포함된 [FirebaseResult.Fail] 반환
+     */
     protected suspend fun add(value: T, uid: String) =
         databaseTryWithTimeOut(1000, "add") {
             val containerRef = root.getContainerRef(uid, refPath)
@@ -58,7 +66,7 @@ abstract class BaseContainerRepository<T : BaseContainer> : BaseRepository(true)
             val newContainer = getNewContainer(
                 value = value,
                 key = getKey(containerRef),
-                date = System.currentTimeMillis()
+                createDate = System.currentTimeMillis()
             )
 
             push(containerRef, newContainer).await()
@@ -66,6 +74,11 @@ abstract class BaseContainerRepository<T : BaseContainer> : BaseRepository(true)
             FirebaseResult.Success
         }
 
+    /**
+     * 1초간 응답없을 시 네트워크 미 연결로 간주
+     *
+     * [TimeoutCancellationException]이 포함된 [FirebaseResult.Fail] 반환
+     */
     protected suspend fun edit(newValue: T, uid: String): FirebaseResult =
         databaseTryWithTimeOut(1000, "edit") {
             val newContainerWithNewEditDate =
@@ -88,7 +101,7 @@ abstract class BaseContainerRepository<T : BaseContainer> : BaseRepository(true)
         task: suspend () -> FirebaseResult
     ) = withContext(Dispatchers.IO) {
         try {
-            withTimeout(time) { task() }
+            withContext(NonCancellable) { withTimeout(time) { task() } }
         } catch (e: Exception) {
             logE(site, e)
             FirebaseResult.Fail(e)
@@ -100,13 +113,13 @@ abstract class BaseContainerRepository<T : BaseContainer> : BaseRepository(true)
         task: suspend () -> FirebaseResult
     ) = withContext(Dispatchers.IO) {
         try {
-            loadingOn()
-            task()
+            loadingRepositoryImpl.loadingOn()
+            withContext(NonCancellable) { task() }
         } catch (e: Exception) {
             logE(site, e)
             FirebaseResult.Fail(e)
         } finally {
-            loadingOff()
+            loadingRepositoryImpl.loadingOff()
         }
     }
 
@@ -119,21 +132,16 @@ abstract class BaseContainerRepository<T : BaseContainer> : BaseRepository(true)
 
     /**
      * 추가될 객체
-     * createDate와 editDate 복사
+     *
+     * [createDate]를 createDate와 editDate에 할당하여 반환 바람
      */
-    protected abstract fun getNewContainer(value: T, key: String, date: Long): T
+    protected abstract fun getNewContainer(value: T, key: String, createDate: Long): T
     protected fun DatabaseReference.getContainerRef(uid: String, path: String) =
         child(uid).child(path)
 
     /**
      * 수정될 객체
-     * editDate만 복사
+     * [editDate]를 editDate에 할당하여 반환 바람
      */
     protected abstract fun getContainerWithNewEditDate(value: T, editDate: Long): T
-}
-
-object DatabasePath {
-    const val SUB_CATEGORIES = "sub categories"
-    const val USER_INFO = "user info"
-    const val FOLDERS = "folders"
 }

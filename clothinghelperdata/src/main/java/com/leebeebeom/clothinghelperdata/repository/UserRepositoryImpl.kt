@@ -8,8 +8,8 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
+import com.leebeebeom.clothinghelperdata.repository.base.DatabasePath
 import com.leebeebeom.clothinghelperdata.repository.base.LoadingRepositoryImpl
-import com.leebeebeom.clothinghelperdata.repository.container.DatabasePath
 import com.leebeebeom.clothinghelperdata.repository.util.logE
 import com.leebeebeom.clothinghelperdomain.model.AuthResult
 import com.leebeebeom.clothinghelperdomain.model.User
@@ -101,6 +101,7 @@ class UserRepositoryImpl @Inject constructor() :
             AuthResult.Success()
         }
 
+    // 이 단계에서 인터넷이 끊겨도 인터넷 복구 시 푸쉬 됨
     private suspend fun pushNewUser(user: User) =
         withContext(Dispatchers.IO) {
             FirebaseDatabase.getInstance().reference.child(user.uid).child(DatabasePath.USER_INFO)

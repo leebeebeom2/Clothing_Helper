@@ -7,6 +7,7 @@ import com.leebeebeom.clothinghelperdomain.model.SortPreferences
 
 interface SortUIState {
     val sort: SortPreferences
+
     fun updateSort(sort: SortPreferences)
 }
 

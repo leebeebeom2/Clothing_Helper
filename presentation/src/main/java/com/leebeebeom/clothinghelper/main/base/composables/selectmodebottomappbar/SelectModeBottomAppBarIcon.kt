@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.base.selectmodebottomappbar
+package com.leebeebeom.clothinghelper.main.base.composables.selectmodebottomappbar
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -13,8 +13,9 @@ import com.leebeebeom.clothinghelper.base.composables.SingleLineText
 fun SelectModeBottomAppBarIcon(
     visible: () -> Boolean, onClick: () -> Unit, @DrawableRes drawable: Int, @StringRes text: Int
 ) {
-    if (visible()) Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        CustomIconButton(onClick = onClick, drawable = drawable)
-        SingleLineText(text = text, style = MaterialTheme.typography.caption)
-    }
+    if (visible())
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            CustomIconButton(onClick = onClick, drawable = drawable)
+            SingleLineText(text = text, style = MaterialTheme.typography.caption)
+        }
 }

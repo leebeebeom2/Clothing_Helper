@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.base.selectmodebottomappbar
+package com.leebeebeom.clothinghelper.main.base.composables.selectmodebottomappbar
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
@@ -9,8 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.Anime.BottomAppbar.expandIn
-import com.leebeebeom.clothinghelper.base.Anime.BottomAppbar.shrinkOut
+import com.leebeebeom.clothinghelper.base.Anime.SelectModeBottomAppbar.expandIn
+import com.leebeebeom.clothinghelper.base.Anime.SelectModeBottomAppbar.shrinkOut
 import com.leebeebeom.clothinghelper.base.composables.SimpleWidthSpacer
 
 @Composable
@@ -19,7 +19,8 @@ fun BoxScope.SelectModeBottomAppBar(
     isAllSelected: () -> Boolean,
     onAllSelectCheckBoxClick: () -> Unit,
     onEditIconClick: () -> Unit,
-    isSelectMode: () -> Boolean
+    onDeleteIconClick: () -> Unit = {}, // TODO
+    isSelectMode: () -> Boolean,
 ) {
     AnimatedVisibility(
         modifier = Modifier.align(Alignment.BottomCenter),
@@ -43,7 +44,7 @@ fun BoxScope.SelectModeBottomAppBar(
                 )
                 SelectModeBottomAppBarIcon(
                     visible = { selectedSize() > 0 },
-                    onClick = { /*TODO*/ },
+                    onClick = onDeleteIconClick,
                     drawable = R.drawable.ic_delete2,
                     text = R.string.delete
                 )

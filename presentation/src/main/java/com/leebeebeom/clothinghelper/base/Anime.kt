@@ -19,12 +19,12 @@ object Anime {
         )
     }
 
-    object List {
+    object DrawerList {
         val listExpand = expandVertically()
         val listShrink = shrinkVertically()
     }
 
-    object BottomAppbar {
+    object SelectModeBottomAppbar {
         const val duration = 250
         const val delay = 150
 
@@ -34,14 +34,14 @@ object Anime {
             shrinkVertically(shrinkTowards = Alignment.Top, animationSpec = tween(duration))
     }
 
-    object SubCategoryCard {
+    object SubCategoryCardInfo {
         val expandIn = expandVertically()
         val shrinkOut = shrinkVertically()
     }
 
-    object AddSubCategoryFab {
-        val fadeOut = fadeOut(tween(BottomAppbar.duration))
-        val fadeIn = fadeIn(tween(BottomAppbar.duration, BottomAppbar.delay))
+    object SelectModeFabFade {
+        val fadeOut = fadeOut(tween(SelectModeBottomAppbar.duration))
+        val fadeIn = fadeIn(tween(SelectModeBottomAppbar.duration, SelectModeBottomAppbar.delay))
     }
 
     @OptIn(ExperimentalAnimationApi::class)

@@ -25,9 +25,9 @@ import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 sealed class MainDestinations(val route: String) {
     object MainCategory : MainDestinations("mainCategory")
     object SubCategory : MainDestinations("subCategory") {
-        const val mainCategoryName = "mainCategoryName"
-        val routeWithArg = "$route/{$mainCategoryName}"
-        val arguments = listOf(navArgument(mainCategoryName) { type = NavType.StringType })
+        const val parent = "parent"
+        val routeWithArg = "$route/{$parent}"
+        val arguments = listOf(navArgument(parent) { type = NavType.StringType })
     }
 
     object Setting : MainDestinations("setting")
@@ -64,7 +64,7 @@ fun MainNavHost(state: MainNavHostState = rememberMainNavHostState()) {
                 arguments = MainDestinations.SubCategory.arguments
             ) { entry ->
                 SubCategoryScreen(
-                    parent = enumValueOf(entry.arguments?.getString(MainDestinations.SubCategory.mainCategoryName)!!),
+                    parent = enumValueOf(entry.arguments?.getString(MainDestinations.SubCategory.parent)!!),
                     onSubCategoryClick = state::navigateToDetail
                 )
             }
@@ -98,25 +98,29 @@ data class MainNavHostState(
     }
 
     fun navigateToSubCategory(subCategoryParent: SubCategoryParent) {
-        if (currentBackStack.value?.arguments?.getString(MainDestinations.SubCategory.mainCategoryName) != subCategoryParent.name)
+        val currentParent =
+            currentBackStack.value?.arguments?.getString(MainDestinations.SubCategory.parent)
+        if (currentParent != subCategoryParent.name)
             navController.navigate("${MainDestinations.SubCategory.route}/${subCategoryParent.name}")
     }
 
     private fun navigateToMain() {
-        if (currentBackStack.value?.destination?.route != MainDestinations.MainCategory.route)
+        val currentRoute = currentBackStack.value?.destination?.route
+        if (currentRoute != MainDestinations.MainCategory.route)
             navController.navigateSingleTop(route = MainDestinations.MainCategory.route)
     }
 
     fun navigateToSetting() {
-        if (currentBackStack.value?.destination?.route != MainDestinations.Setting.route)
+        val currentRoute = currentBackStack.value?.destination?.route
+        if (currentRoute != MainDestinations.Setting.route)
             navController.navigateSingleTop(route = MainDestinations.Setting.route)
     }
 
     fun navigateToDetail(parent: SubCategoryParent, title: String, parentKey: String) {
         val currentArgument = currentBackStack.value?.arguments
-        val currentKey = currentArgument?.getString(MainDestinations.Detail.parentKey)
+        val currentParentKey = currentArgument?.getString(MainDestinations.Detail.parentKey)
         val currentTitle = currentArgument?.getString(MainDestinations.Detail.title) ?: ""
-        if (currentKey != parentKey) {
+        if (currentParentKey != parentKey) {
             val titleWithDash = "$currentTitle - $title"
             navController.navigate(route = "${MainDestinations.Detail.route}/${parent.name}/${titleWithDash}/${parentKey}")
         }

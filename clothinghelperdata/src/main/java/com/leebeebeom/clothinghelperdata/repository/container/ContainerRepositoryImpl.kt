@@ -65,7 +65,7 @@ abstract class ContainerRepositoryImpl<T : BaseContainer> :
             val containerRef = root.getContainerRef(uid, refPath)
 
             val newContainer = getNewContainer(
-                value = t,
+                t = t,
                 key = getKey(containerRef),
                 createDate = System.currentTimeMillis()
             )
@@ -80,10 +80,10 @@ abstract class ContainerRepositoryImpl<T : BaseContainer> :
      *
      * [TimeoutCancellationException]이 포함된 [FirebaseResult.Fail] 반환
      */
-    override suspend fun edit(t: T, uid: String): FirebaseResult =
+    override suspend fun edit(newT: T, uid: String): FirebaseResult =
         databaseTryWithTimeOut(1000, "edit") {
             val newContainerWithNewEditDate =
-                getContainerWithNewEditDate(t, System.currentTimeMillis())
+                getContainerWithNewEditDate(newT, System.currentTimeMillis())
             root.getContainerRef(uid, refPath).child(newContainerWithNewEditDate.key)
                 .setValue(newContainerWithNewEditDate).await()
 
@@ -124,9 +124,9 @@ abstract class ContainerRepositoryImpl<T : BaseContainer> :
         }
     }
 
-    protected suspend fun push(containerRef: DatabaseReference, value: T) =
+    protected suspend fun push(containerRef: DatabaseReference, t: T) =
         withContext(Dispatchers.IO) {
-            containerRef.child(value.key).setValue(value)
+            containerRef.child(t.key).setValue(t)
         }
 
     protected fun getKey(containerRef: DatabaseReference) = containerRef.push().key!!
@@ -136,7 +136,7 @@ abstract class ContainerRepositoryImpl<T : BaseContainer> :
      *
      * [createDate]를 createDate와 editDate에 할당하여 반환 바람
      */
-    protected abstract fun getNewContainer(value: T, key: String, createDate: Long): T
+    protected abstract fun getNewContainer(t: T, key: String, createDate: Long): T
     protected fun DatabaseReference.getContainerRef(uid: String, path: String) =
         child(uid).child(path)
 
@@ -144,5 +144,5 @@ abstract class ContainerRepositoryImpl<T : BaseContainer> :
      * 수정될 객체
      * [editDate]를 editDate에 할당하여 반환 바람
      */
-    protected abstract fun getContainerWithNewEditDate(value: T, editDate: Long): T
+    protected abstract fun getContainerWithNewEditDate(newT: T, editDate: Long): T
 }

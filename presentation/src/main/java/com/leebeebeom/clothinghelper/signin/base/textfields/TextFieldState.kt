@@ -26,9 +26,4 @@ open class TextFieldState(initialText: String) {
         if (focusState.hasFocus)
             textFieldValue = textFieldValue.copy(selection = TextRange(textFieldValue.text.length))
     }
-
-    fun onCancelIconClick(onValueChange: (String) -> Unit) {
-        textFieldValue = TextFieldValue("")
-        onValueChange("")
-    }
 }

@@ -12,7 +12,7 @@ import com.leebeebeom.clothinghelper.base.composables.BackHandler
 import com.leebeebeom.clothinghelper.base.composables.BlockBacKPressWhenIsLoading
 import com.leebeebeom.clothinghelper.base.composables.SimpleToast
 import com.leebeebeom.clothinghelper.main.root.contents.DrawerContents
-import com.leebeebeom.clothinghelper.main.root.model.EssentialMenus
+import com.leebeebeom.clothinghelper.main.root.model.EssentialMenuType
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 import kotlinx.coroutines.CoroutineScope
@@ -43,7 +43,7 @@ TODO 마지막 열림 상태 유지
 @Composable
 fun MainRoot(
     onSettingIconClick: () -> Unit,
-    onEssentialMenuClick: (essentialMenu: EssentialMenus) -> Unit,
+    onEssentialMenuClick: (type: EssentialMenuType) -> Unit,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (SubCategoryParent, name: String, key: String) -> Unit,
     viewModel: MainRootViewModel = hiltViewModel(),

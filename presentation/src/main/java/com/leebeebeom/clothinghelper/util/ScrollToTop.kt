@@ -7,7 +7,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.derivedStateOf
 
 val LazyListState.showScrollToTopButton
-    get() = run { derivedStateOf { firstVisibleItemScrollOffset > 0 }.value }
+    get() = let { derivedStateOf { firstVisibleItemScrollOffset > 0 }.value }
 
 suspend fun LazyListState.scrollToTop() {
     val scrollAnimationSpec = tween<Float>(300, easing = FastOutLinearInEasing)

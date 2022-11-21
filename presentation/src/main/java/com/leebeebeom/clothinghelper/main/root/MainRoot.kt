@@ -102,9 +102,7 @@ data class MainRootState(
     val scaffoldState: ScaffoldState,
     val drawerState: DrawerState = scaffoldState.drawerState
 ) {
-    suspend fun onDrawerClose() {
-        drawerState.close()
-    }
+    suspend fun onDrawerClose() = drawerState.close()
 }
 
 @Composable

@@ -2,11 +2,7 @@ package com.leebeebeom.clothinghelper.signin.signin
 
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.ToastUIState
-import com.leebeebeom.clothinghelper.base.ToastUIStateImpl
 import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
-import com.leebeebeom.clothinghelper.signin.base.interfaces.EmailUIState
-import com.leebeebeom.clothinghelper.signin.base.interfaces.EmailUIStateImpl
 import com.leebeebeom.clothinghelper.signin.base.interfaces.PasswordUIState
 import com.leebeebeom.clothinghelper.signin.base.interfaces.PasswordUIStateImpl
 import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
@@ -45,7 +41,4 @@ class SignInViewModel @Inject constructor(
     override fun showToast(text: Int) = uiState.showToast(text)
 }
 
-class SignInUIState :
-    ToastUIState by ToastUIStateImpl(),
-    EmailUIState by EmailUIStateImpl(),
-    PasswordUIState by PasswordUIStateImpl()
+class SignInUIState : PasswordUIState by PasswordUIStateImpl()

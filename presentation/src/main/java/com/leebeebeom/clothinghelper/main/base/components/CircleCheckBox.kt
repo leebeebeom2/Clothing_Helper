@@ -15,12 +15,16 @@ import com.leebeebeom.clothinghelper.R
 fun CircleCheckBox(
     modifier: Modifier = Modifier, isChecked: () -> Boolean, onClick: () -> Unit, size: Dp
 ) {
+    val painter = rememberAnimatedVectorPainter(
+        animatedImageVector = AnimatedImageVector.animatedVectorResource(
+            id = R.drawable.check_anim
+        ), atEnd = isChecked()
+    )
     CustomIconButton(
-        modifier = modifier, onClick = onClick, painter = rememberAnimatedVectorPainter(
-            animatedImageVector = AnimatedImageVector.animatedVectorResource(
-                id = R.drawable.check_anim
-            ), atEnd = isChecked()
-        ), tint = LocalContentColor.current.copy(0.7f),
+        modifier = modifier,
+        onClick = onClick,
+        painter = painter,
+        tint = LocalContentColor.current.copy(0.7f),
         size = size
     )
 }

@@ -6,8 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.DropDownMenuRoot
-import com.leebeebeom.clothinghelper.main.subcategory.dialogs.EditSubCategoryNameDialog
+import com.leebeebeom.clothinghelper.main.base.composables.DropDownMenuRoot
+import com.leebeebeom.clothinghelper.main.subcategory.dialogs.EditSubCategoryDialog
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import kotlinx.collections.immutable.ImmutableList
 
@@ -17,23 +17,23 @@ fun DrawerSubCategoryDropDownMenu(
     onDismiss: () -> Unit,
     subCategories: () -> ImmutableList<StableSubCategory>,
     subCategory: () -> StableSubCategory,
-    onEditSubCategoryNamePositiveClick: (StableSubCategory) -> Unit
+    onEditSubCategoryPositiveClick: (StableSubCategory) -> Unit
 ) {
     var showDialog by rememberSaveable { mutableStateOf(false) }
 
     DropDownMenuRoot(show = show, onDismiss = onDismiss) {
         DrawerDropdownMenuItem(
-            text = R.string.edit_category_name,
+            text = R.string.edit_category,
             onClick = { showDialog = true },
             onDismiss = onDismiss
         )
     }
 
-    EditSubCategoryNameDialog(
-        showDialog = { showDialog },
+    EditSubCategoryDialog(
+        show = { showDialog },
         subCategory = subCategory,
         subCategories = subCategories,
-        onPositiveButtonClick = onEditSubCategoryNamePositiveClick,
+        onPositiveButtonClick = onEditSubCategoryPositiveClick,
         onDismiss = { showDialog = false }
     )
 }

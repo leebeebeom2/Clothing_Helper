@@ -2,27 +2,26 @@ package com.leebeebeom.clothinghelper.main.detail.dialogs
 
 import androidx.compose.runtime.Composable
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.dialogs.EditDialog
-import com.leebeebeom.clothinghelper.base.dialogs.EditDialogState
+import com.leebeebeom.clothinghelper.main.base.dialogs.EditDialog
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
-fun EditFolderNameDialog(
-    state: EditDialogState,
+fun EditFolderDialog(
     folderNames: () -> ImmutableList<String>,
-    showDialog: () -> Boolean,
+    show: () -> Boolean,
     onDismiss: () -> Unit,
-    onPositiveButtonClick: () -> Unit
+    onPositiveButtonClick: (String) -> Unit,
+    initialName: String
 ) {
     EditDialog(
         label = R.string.edit_folder_name,
         placeHolder = R.string.folder_place_holder,
         title = R.string.edit_folder_name,
-        state = state,
         names = folderNames,
         existNameError = R.string.error_exist_folder_name,
-        showDialog = showDialog,
         onDismiss = onDismiss,
-        onPositiveButtonClick = onPositiveButtonClick
+        onPositiveButtonClick = onPositiveButtonClick,
+        show = show,
+        initialName = initialName
     )
 }

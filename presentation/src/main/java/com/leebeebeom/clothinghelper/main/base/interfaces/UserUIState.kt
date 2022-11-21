@@ -9,6 +9,7 @@ import com.leebeebeom.clothinghelperdomain.model.User
 
 interface UserUIState {
     val user: StableUser?
+
     fun updateUser(user: User?)
 }
 

@@ -26,7 +26,7 @@ fun DrawerContents(
     isLoading: () -> Boolean,
     subCategories: (SubCategoryParent) -> ImmutableList<StableSubCategory>,
     state: DrawerContentsState = remember { DrawerContentsState() },
-    onEssentialMenuClick: (essentialMenu: EssentialMenus) -> Unit,
+    onEssentialMenuClick: (essentialMenu: EssentialMenuType) -> Unit,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (StableSubCategory) -> Unit,
     onSettingIconClick: () -> Unit,

@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.base.dialogs.composables
+package com.leebeebeom.clothinghelper.main.base.dialogs.composables
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box

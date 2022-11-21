@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.base.dialogs.composables
+package com.leebeebeom.clothinghelper.main.base.dialogs.composables
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth

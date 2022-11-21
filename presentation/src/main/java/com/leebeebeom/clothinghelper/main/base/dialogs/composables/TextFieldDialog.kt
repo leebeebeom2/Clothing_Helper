@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.base.dialogs.composables
+package com.leebeebeom.clothinghelper.main.base.dialogs.composables
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
@@ -6,9 +6,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.text.input.TextFieldValue
-import com.leebeebeom.clothinghelper.base.MaxWidthTextField
+import com.leebeebeom.clothinghelper.base.composables.MaxWidthTextField
 import com.leebeebeom.clothinghelper.base.composables.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.base.rememberMaxWidthTextFieldState
+import com.leebeebeom.clothinghelper.base.composables.rememberMaxWidthTextFieldState
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -23,8 +23,7 @@ fun TextFieldDialog(
     onValueChange: (TextFieldValue) -> Unit,
     onFocusChanged: (FocusState) -> Unit,
     onPositiveButtonClick: () -> Unit,
-    onDismiss: () -> Unit,
-    onCancelIconClick: () -> Unit
+    onDismiss: () -> Unit
 ) {
     if (showDialog())
         DialogRoot(onDismiss = onDismiss) {
@@ -35,12 +34,11 @@ fun TextFieldDialog(
             )
 
             MaxWidthTextField(
-                textFieldValue = textFieldValue,
                 state = state,
+                textFieldValue = textFieldValue,
                 error = error,
                 onValueChange = onValueChange,
-                onFocusChanged = onFocusChanged,
-                onCancelIconClick = onCancelIconClick
+                onFocusChanged = onFocusChanged
             )
             SimpleHeightSpacer(dp = 12)
 
@@ -75,9 +73,5 @@ abstract class BaseTextFieldDialogState(
         if (text != newTextFiled.text) error = null
         text = newTextFiled.text
         textFieldValue = newTextFiled
-    }
-
-    fun initTextFieldValue() {
-        textFieldValue = textFieldValue.copy("")
     }
 }

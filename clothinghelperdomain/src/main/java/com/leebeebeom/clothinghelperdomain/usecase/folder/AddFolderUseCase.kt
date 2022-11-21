@@ -7,5 +7,5 @@ import javax.inject.Inject
 
 @ViewModelScoped
 class AddFolderUseCase @Inject constructor(private val folderRepository: FolderRepository) {
-    suspend fun add(folder: Folder, uid: String) = folderRepository.addFolder(folder, uid)
+    suspend fun add(folder: Folder, uid: String) = folderRepository.add(folder, uid)
 }

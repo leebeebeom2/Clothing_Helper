@@ -49,4 +49,11 @@ object Anime {
         val expandIn = expandHorizontally() + scaleIn()
         val shrinkOut = shrinkHorizontally() + scaleOut()
     }
+
+    object CancelIcon {
+        private const val duration = 150
+
+        val fadeIn = fadeIn(tween(duration))
+        val fadeOut = fadeOut(tween(duration))
+    }
 }

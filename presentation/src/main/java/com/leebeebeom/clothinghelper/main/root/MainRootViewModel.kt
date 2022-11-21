@@ -7,7 +7,7 @@ import com.leebeebeom.clothinghelper.base.ToastUIState
 import com.leebeebeom.clothinghelper.base.ToastUIStateImpl
 import com.leebeebeom.clothinghelper.main.base.interfaces.*
 import com.leebeebeom.clothinghelper.main.base.interfaces.addandedit.subcategory.AddSubCategory
-import com.leebeebeom.clothinghelper.main.base.interfaces.addandedit.subcategory.EditSubCategoryName
+import com.leebeebeom.clothinghelper.main.base.interfaces.addandedit.subcategory.EditSubCategory
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.usecase.GetDataLoadingStateUseCase
@@ -32,7 +32,7 @@ class MainRootViewModel @Inject constructor(
     private val getAllFoldersUseCase: GetAllFoldersUseCase,
     override val addSubCategoryUseCase: AddSubCategoryUseCase,
     override val editSubCategoryUseCase: EditSubCategoryUseCase
-) : AddSubCategory, EditSubCategoryName, ViewModel() {
+) : AddSubCategory, EditSubCategory, ViewModel() {
 
     val uiState = MainRootUIState()
 

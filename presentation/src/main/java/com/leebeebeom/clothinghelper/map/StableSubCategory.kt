@@ -10,8 +10,7 @@ data class StableSubCategory(
     override val name: String = "",
     override val createDate: Long = 0,
     override val editDate: Long = 0
-) : BaseContainer() {
-}
+) : BaseContainer()
 
 fun SubCategory.toStable() =
     StableSubCategory(

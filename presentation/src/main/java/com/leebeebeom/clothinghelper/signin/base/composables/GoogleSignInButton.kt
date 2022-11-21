@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.MaxWidthButton
+import com.leebeebeom.clothinghelper.base.composables.MaxWidthButton
 
 @Composable
 fun GoogleSignInButton(
@@ -35,19 +35,15 @@ fun GoogleSignInButton(
 
     val intent = GoogleSignIn.getClient(LocalContext.current, gso()).signInIntent
 
-    val rememberedOnClick by remember {
-        mutableStateOf({
-            disabled()
-            launcher.launch(intent)
-        })
-    }
-
     MaxWidthButton(
         text = R.string.starts_with_google_email,
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
         icon = { GoogleIcon() },
-        onClick = rememberedOnClick
+        onClick = {
+            disabled()
+            launcher.launch(intent)
+        }
     )
 }
 

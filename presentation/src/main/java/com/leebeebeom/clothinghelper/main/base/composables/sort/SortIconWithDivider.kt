@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.base.composables
+package com.leebeebeom.clothinghelper.main.base.composables.sort
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.main.base.SortDropdownMenu
+import com.leebeebeom.clothinghelper.base.composables.CustomIconButton
 import com.leebeebeom.clothinghelperdomain.model.Order
 import com.leebeebeom.clothinghelperdomain.model.Sort
 import com.leebeebeom.clothinghelperdomain.model.SortPreferences

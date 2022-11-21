@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.base
+package com.leebeebeom.clothinghelper.main.base.composables
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DropdownMenu

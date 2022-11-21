@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.base.components
+package com.leebeebeom.clothinghelper.main.base.composables
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween

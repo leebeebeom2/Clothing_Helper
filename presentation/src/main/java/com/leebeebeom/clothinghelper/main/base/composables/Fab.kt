@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.base.components
+package com.leebeebeom.clothinghelper.main.base.composables
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.BoxScope
@@ -30,8 +30,8 @@ fun BoxScope.Fab(
     AnimatedVisibility(
         visible = visible(),
         modifier = Modifier.align(align),
-        enter = Anime.AddSubCategoryFab.fadeIn,
-        exit = Anime.AddSubCategoryFab.fadeOut
+        enter = Anime.SelectModeFabFade.fadeIn,
+        exit = Anime.SelectModeFabFade.fadeOut
     ) {
         FloatingActionButton(
             modifier = modifier

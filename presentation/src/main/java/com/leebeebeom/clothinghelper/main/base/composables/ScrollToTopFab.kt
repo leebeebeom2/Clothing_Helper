@@ -1,11 +1,7 @@
-package com.leebeebeom.clothinghelper.main.base.components
+package com.leebeebeom.clothinghelper.main.base.composables
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -16,15 +12,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.base.Anime
 import com.leebeebeom.clothinghelper.base.composables.SimpleIcon
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun BoxScope.ScrollToTopFab(showFab: () -> Boolean, onClick: suspend () -> Unit) {
+fun BoxScope.ScrollToTopFab(showFab: () -> Boolean, toTop: suspend () -> Unit) {
     val coroutineScope = rememberCoroutineScope()
 
     AnimatedVisibility(
@@ -32,24 +27,16 @@ fun BoxScope.ScrollToTopFab(showFab: () -> Boolean, onClick: suspend () -> Unit)
             .align(Alignment.BottomCenter)
             .padding(4.dp),
         visible = showFab(),
-        enter = scaleIn(
-            spring(stiffness = Spring.StiffnessMedium),
-            transformOrigin = TransformOrigin(0.5f, 0.5f)
-        ),
-        exit = scaleOut(
-            animationSpec = spring(stiffness = Spring.StiffnessMedium),
-            transformOrigin = TransformOrigin(0.5f, 0.5f)
-        )
+        enter = Anime.ScrollToTopFab.scaleIn,
+        exit = Anime.ScrollToTopFab.scaleOut
     ) {
         FloatingActionButton(
-            onClick = { coroutineScope.launch { onClick() } },
+            onClick = { coroutineScope.launch { toTop() } },
             backgroundColor = MaterialTheme.colors.surface,
             modifier = Modifier
                 .padding(bottom = 16.dp)
                 .size(36.dp),
             elevation = FloatingActionButtonDefaults.elevation(4.dp, 10.dp, 6.dp, 6.dp)
-        ) {
-            SimpleIcon(drawable = R.drawable.ic_expand_less)
-        }
+        ) { SimpleIcon(drawable = R.drawable.ic_expand_less) }
     }
 }

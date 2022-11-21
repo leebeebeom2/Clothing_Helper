@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.base
+package com.leebeebeom.clothinghelper.main.base.interfaces
 
 import androidx.annotation.StringRes
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
@@ -8,7 +8,7 @@ interface BaseContainerAddAndEdit {
     fun showToast(@StringRes text: Int)
     val uid: String?
 
-    fun showToastWhenFail(
+    fun showFailToast(
         result: FirebaseResult,
         @StringRes networkFail: Int,
         @StringRes fail: Int

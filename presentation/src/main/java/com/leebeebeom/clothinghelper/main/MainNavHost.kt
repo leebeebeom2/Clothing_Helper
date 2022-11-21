@@ -16,7 +16,7 @@ import androidx.navigation.navArgument
 import com.leebeebeom.clothinghelper.main.detail.DetailScreen
 import com.leebeebeom.clothinghelper.main.maincategory.MainCategoryScreen
 import com.leebeebeom.clothinghelper.main.root.MainRoot
-import com.leebeebeom.clothinghelper.main.root.model.EssentialMenus
+import com.leebeebeom.clothinghelper.main.root.model.EssentialMenuType
 import com.leebeebeom.clothinghelper.main.setting.SettingScreen
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryScreen
 import com.leebeebeom.clothinghelper.util.navigateSingleTop
@@ -90,11 +90,11 @@ data class MainNavHostState(
     val navController: NavHostController,
     val currentBackStack: State<NavBackStackEntry?>
 ) {
-    fun onEssentialMenuClick(essentialMenu: EssentialMenus) = when (essentialMenu) {
-        EssentialMenus.MainScreen -> navigateToMain()
-        EssentialMenus.Favorite -> {} // TODO
-        EssentialMenus.SeeAll -> {} // TODO
-        EssentialMenus.Trash -> {} // TODO
+    fun onEssentialMenuClick(type: EssentialMenuType) = when (type) {
+        EssentialMenuType.MainScreen -> navigateToMain()
+        EssentialMenuType.Favorite -> {} // TODO
+        EssentialMenuType.SeeAll -> {} // TODO
+        EssentialMenuType.Trash -> {} // TODO
     }
 
     fun navigateToSubCategory(subCategoryParent: SubCategoryParent) {

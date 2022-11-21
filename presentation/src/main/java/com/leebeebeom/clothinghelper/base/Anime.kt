@@ -5,6 +5,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.TransformOrigin
 
 object Anime {
     object Error {
@@ -55,5 +56,17 @@ object Anime {
 
         val fadeIn = fadeIn(tween(duration))
         val fadeOut = fadeOut(tween(duration))
+    }
+
+    @OptIn(ExperimentalAnimationApi::class)
+    object ScrollToTopFab {
+        val scaleIn = scaleIn(
+            animationSpec = spring(stiffness = Spring.StiffnessMedium),
+            transformOrigin = TransformOrigin(0.5f, 0.5f)
+        )
+        val scaleOut = scaleOut(
+            animationSpec = spring(stiffness = Spring.StiffnessMedium),
+            transformOrigin = TransformOrigin(0.5f, 0.5f)
+        )
     }
 }

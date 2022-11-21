@@ -40,7 +40,7 @@ fun BoxScope.SelectModeBottomAppBar(
                     visible = { selectedSize() == 1 },
                     onClick = onEditIconClick,
                     drawable = R.drawable.ic_edit,
-                    text = R.string.change_name
+                    text = R.string.edit
                 )
                 SelectModeBottomAppBarIcon(
                     visible = { selectedSize() > 0 },

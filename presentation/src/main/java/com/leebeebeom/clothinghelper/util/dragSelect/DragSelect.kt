@@ -4,6 +4,7 @@ import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 
 enum class DragDirection {
@@ -25,19 +26,21 @@ fun Modifier.dragSelect(
             interceptOutOfBoundsChildEvents = true
             realDragSelector.dragSelectStart(offset, onLongClick)
         }, onDrag = { change, _ ->
-            val touchY = change.position.y.toInt()
-            val touchX = change.position.x.toInt()
-            println("터치 y = $touchY, 터치 x = $touchX")
             realDragSelector.onDrag(change.position, onSelect)
             realDragSelector.onDragEndMove(change.position, onSelect)
         }, onDragEnd = {
-            onDragStart(false)
-            interceptOutOfBoundsChildEvents = false
-            realDragSelector.onDragEnd()
+            dragEnd(onDragStart, realDragSelector)
         }, onDragCancel = {
-            onDragStart(false)
-            interceptOutOfBoundsChildEvents = false
-            realDragSelector.onDragEnd()
+            dragEnd(onDragStart, realDragSelector)
         })
     })
+}
+
+private fun PointerInputScope.dragEnd(
+    onDragStart: (Boolean) -> Unit,
+    realDragSelector: BaseDragSelector<out Any>
+) {
+    onDragStart(false)
+    interceptOutOfBoundsChildEvents = false
+    realDragSelector.onDragEnd()
 }

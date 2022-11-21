@@ -13,12 +13,12 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelperdata.repository.A_NETWORK_ERROR
+import com.leebeebeom.clothinghelperdata.repository.util.TAG
 import com.leebeebeom.clothinghelperdata.repository.util.logE
 import com.leebeebeom.clothinghelperdomain.model.AuthResult
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.usecase.user.GoogleSignInUseCase
 import kotlinx.coroutines.launch
-import com.leebeebeom.clothinghelperdata.repository.util.TAG
 
 abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSignInUseCase) :
     ViewModel() {
@@ -29,9 +29,7 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
 
     fun signInWithGoogleEmail(activityResult: ActivityResult) {
         when (activityResult.resultCode) {
-            RESULT_OK -> {
-                googleSignIn(activityResult)
-            }
+            RESULT_OK -> googleSignIn(activityResult)
             RESULT_CANCELED -> {
                 showToast(R.string.canceled)
                 updateGoogleButtonEnabled(enabled = true)
@@ -62,9 +60,7 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
                         logE("signInWithGoogleEmail", Exception(result.errorCode))
                         unknownFail()
                     }
-                is AuthResult.UnknownFail -> {
-                    unknownFail()
-                }
+                is AuthResult.UnknownFail -> unknownFail()
             }
         }
     }

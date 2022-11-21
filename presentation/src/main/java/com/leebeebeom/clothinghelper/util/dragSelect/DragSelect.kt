@@ -1,7 +1,6 @@
 package com.leebeebeom.clothinghelper.util.dragSelect
 
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
-import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed

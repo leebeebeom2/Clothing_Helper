@@ -31,8 +31,7 @@ fun MaxWidthTextField(
     onValueChange: (TextFieldValue) -> Unit,
     onFocusChanged: (FocusState) -> Unit,
     trailingIcon: @Composable (() -> Unit)? = null,
-    isVisible: () -> Boolean = { true },
-    onCancelIconClick: () -> Unit
+    isVisible: () -> Boolean = { true }
 ) {
     Column {
         TextField(
@@ -42,8 +41,7 @@ fun MaxWidthTextField(
             onValueChange = onValueChange,
             error = error,
             isVisible = isVisible,
-            trailingIcon = trailingIcon,
-            onCancelIconClick = onCancelIconClick
+            trailingIcon = trailingIcon
         )
         ErrorText(error)
     }
@@ -61,8 +59,7 @@ private fun TextField(
     onValueChange: (TextFieldValue) -> Unit,
     error: () -> Int?,
     isVisible: () -> Boolean,
-    trailingIcon: @Composable (() -> Unit)?,
-    onCancelIconClick: () -> Unit
+    trailingIcon: @Composable (() -> Unit)?
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -80,7 +77,7 @@ private fun TextField(
         keyboardOptions = state.keyboardOptions,
         trailingIcon = {
             trailingIcon?.run { invoke() } ?: CancelIcon(
-                show = { textFieldValue().text.isNotEmpty() }, onClick = onCancelIconClick
+                show = { textFieldValue().text.isNotEmpty() }, onValueChange = onValueChange
             )
         },
         keyboardActions = if (state.keyboardOptions.imeAction == ImeAction.Done) KeyboardActions(
@@ -156,14 +153,14 @@ private fun ShowKeyboard(showKeyboardEnabled: () -> Boolean, showKeyboard: suspe
 }
 
 @Composable
-private fun CancelIcon(show: () -> Boolean, onClick: () -> Unit) {
+private fun CancelIcon(show: () -> Boolean, onValueChange: (TextFieldValue) -> Unit) {
     AnimatedVisibility(
         visible = show(),
         enter = Anime.CancelIcon.fadeIn,
         exit = Anime.CancelIcon.fadeOut,
     ) {
         CustomIconButton(
-            onClick = onClick,
+            onClick = { onValueChange(TextFieldValue()) },
             drawable = R.drawable.ic_cancel,
             tint = Color(0xFF555555),
             size = 24.dp

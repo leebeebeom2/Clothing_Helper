@@ -26,6 +26,9 @@ fun Modifier.dragSelect(
             interceptOutOfBoundsChildEvents = true
             realDragSelector.dragSelectStart(offset, onLongClick)
         }, onDrag = { change, _ ->
+            val touchY = change.position.y.toInt()
+            val touchX = change.position.x.toInt()
+            println("터치 y = $touchY, 터치 x = $touchX")
             realDragSelector.onDrag(change.position, onSelect)
             realDragSelector.onDragEndMove(change.position, onSelect)
         }, onDragEnd = {
@@ -39,9 +42,3 @@ fun Modifier.dragSelect(
         })
     })
 }
-
-val LazyListItemInfo.top: Int
-    get() = offset + 50
-
-val LazyListItemInfo.bottom: Int
-    get() = offset + size + 43

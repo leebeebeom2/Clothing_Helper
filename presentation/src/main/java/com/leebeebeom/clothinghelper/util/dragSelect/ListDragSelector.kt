@@ -82,3 +82,9 @@ class ListDragSelector(
         lastSelectedBottom = null
     }
 }
+
+val LazyListItemInfo.top: Int
+    get() = offset + 50
+
+val LazyListItemInfo.bottom: Int
+    get() = offset + size + 43

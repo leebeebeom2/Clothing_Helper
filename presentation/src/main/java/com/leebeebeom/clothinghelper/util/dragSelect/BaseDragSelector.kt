@@ -8,7 +8,7 @@ abstract class BaseDragSelector<T>(
     private val haptic: HapticFeedback
 ) {
     protected var dragDirection: DragDirection? = DragDirection.None
-    protected val passedItemKeys: LinkedHashSet<String> = linkedSetOf()
+    private val passedItemKeys: LinkedHashSet<String> = linkedSetOf()
     protected var lastSelectedIndex: Int? = null
     protected var initialSelectedIndex: Int? = null
 

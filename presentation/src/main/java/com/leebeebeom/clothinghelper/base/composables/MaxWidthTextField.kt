@@ -1,10 +1,7 @@
-package com.leebeebeom.clothinghelper.base
+package com.leebeebeom.clothinghelper.base.composables
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,10 +18,9 @@ import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.base.Anime
 import com.leebeebeom.clothinghelper.base.Anime.Error.errorIn
 import com.leebeebeom.clothinghelper.base.Anime.Error.errorOut
-import com.leebeebeom.clothinghelper.base.composables.CustomIconButton
-import com.leebeebeom.clothinghelper.base.composables.SingleLineText
 import kotlinx.coroutines.delay
 
 @Composable
@@ -53,8 +49,7 @@ fun MaxWidthTextField(
     }
 
     ShowKeyboard(
-        showKeyboardEnabled = { state.showKeyboardEnabled },
-        showKeyboard = state::showKeyboard
+        showKeyboardEnabled = { state.showKeyboardEnabled }, showKeyboard = state::showKeyboard
     )
 }
 
@@ -74,26 +69,22 @@ private fun TextField(
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
-            .focusRequester(focusRequester = state.focusRequester)
-            .onFocusChanged(onFocusChanged = onFocusChanged),
+            .focusRequester(state.focusRequester)
+            .onFocusChanged(onFocusChanged),
         value = textFieldValue(),
         onValueChange = onValueChange,
         label = { SingleLineText(text = state.label) },
         placeholder = { SingleLineText(text = state.placeholder) },
         isError = error() != null,
         visualTransformation = if (isVisible()) VisualTransformation.None else PasswordVisualTransformation(),
-        singleLine = true,
-        maxLines = 1,
         keyboardOptions = state.keyboardOptions,
         trailingIcon = {
             trailingIcon?.run { invoke() } ?: CancelIcon(
-                show = { textFieldValue().text.isNotEmpty() },
-                onClick = onCancelIconClick
+                show = { textFieldValue().text.isNotEmpty() }, onClick = onCancelIconClick
             )
         },
-        keyboardActions =
-        if (state.keyboardOptions.imeAction == ImeAction.Done)
-            KeyboardActions(onDone = { focusManager.clearFocus() })
+        keyboardActions = if (state.keyboardOptions.imeAction == ImeAction.Done) KeyboardActions(
+            onDone = { focusManager.clearFocus() })
         else KeyboardActions.Default,
         colors = TextFieldDefaults.outlinedTextFieldColors(
             unfocusedBorderColor = Color(0xFFDADADA),
@@ -156,11 +147,11 @@ fun rememberMaxWidthTextFieldState(
 
 @Composable
 private fun ShowKeyboard(showKeyboardEnabled: () -> Boolean, showKeyboard: suspend () -> Unit) {
-    var shownKeyboard by rememberSaveable { mutableStateOf(false) }
+    var keyboardShown by rememberSaveable { mutableStateOf(false) }
 
-    if (!shownKeyboard && showKeyboardEnabled()) {
+    if (!keyboardShown && showKeyboardEnabled()) {
         LaunchedEffect(key1 = Unit) { showKeyboard() }
-        shownKeyboard = true
+        keyboardShown = true
     }
 }
 
@@ -168,8 +159,8 @@ private fun ShowKeyboard(showKeyboardEnabled: () -> Boolean, showKeyboard: suspe
 private fun CancelIcon(show: () -> Boolean, onClick: () -> Unit) {
     AnimatedVisibility(
         visible = show(),
-        enter = fadeIn(tween(150)),
-        exit = fadeOut(tween(150)),
+        enter = Anime.CancelIcon.fadeIn,
+        exit = Anime.CancelIcon.fadeOut,
     ) {
         CustomIconButton(
             onClick = onClick,

@@ -6,8 +6,8 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.MaxWidthTextField
-import com.leebeebeom.clothinghelper.base.rememberMaxWidthTextFieldState
+import com.leebeebeom.clothinghelper.base.composables.MaxWidthTextField
+import com.leebeebeom.clothinghelper.base.composables.rememberMaxWidthTextFieldState
 
 @Composable
 fun EmailTextField(
@@ -20,12 +20,11 @@ fun EmailTextField(
     val state = remember { TextFieldState(email()) }
 
     MaxWidthTextField(
-        textFieldValue = { state.textFieldValue },
         state = rememberEmailTextFieldState(imeAction = imeAction),
+        textFieldValue = { state.textFieldValue },
         error = error,
         onValueChange = { state.onValueChange(it, onEmailChange, updateError) },
-        onFocusChanged = state::onFocusChange,
-        onCancelIconClick = { state.onCancelIconClick(onEmailChange) }
+        onFocusChanged = state::onFocusChange
     )
 }
 

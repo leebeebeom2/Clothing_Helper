@@ -37,13 +37,11 @@ fun SignInNavHost(state: SignInNavHostState = rememberSignInNavHostState()) {
 }
 
 data class SignInNavHostState(val navController: NavHostController) {
-    fun navigateToSignUp() {
+    fun navigateToSignUp() =
         navController.navigateSingleTop(SignInDestinations.SIGN_UP)
-    }
 
-    fun navigateToResetPassword() {
+    fun navigateToResetPassword() =
         navController.navigateSingleTop(SignInDestinations.RESET_PASSWORD)
-    }
 }
 
 @Composable

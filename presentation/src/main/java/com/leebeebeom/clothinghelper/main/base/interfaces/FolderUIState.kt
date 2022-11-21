@@ -12,6 +12,7 @@ import kotlinx.collections.immutable.toImmutableList
 
 interface FolderUIState {
     val allFolders: List<StableFolder>
+
     fun getFolders(parentKey: String): ImmutableList<StableFolder>
     fun updateAllFolders(folders: List<Folder>)
 }
@@ -28,5 +29,4 @@ class FolderUIStateImpl : FolderUIState {
     override fun updateAllFolders(folders: List<Folder>) {
         allFolders = folders.map { it.toStable() }
     }
-
 }

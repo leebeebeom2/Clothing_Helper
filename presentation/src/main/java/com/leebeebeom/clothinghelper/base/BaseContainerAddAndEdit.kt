@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import kotlinx.coroutines.TimeoutCancellationException
 
-interface AddAndEditContainer {
+interface BaseContainerAddAndEdit {
     fun showToast(@StringRes text: Int)
     val uid: String?
 

@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.base.dialogs
+package com.leebeebeom.clothinghelper.main.base.dialogs
 
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
@@ -6,11 +6,12 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
-import com.leebeebeom.clothinghelper.base.dialogs.composables.BaseTextFieldDialogState
-import com.leebeebeom.clothinghelper.base.dialogs.composables.TextFieldDialog
+import com.leebeebeom.clothinghelper.main.base.dialogs.composables.BaseTextFieldDialogState
+import com.leebeebeom.clothinghelper.main.base.dialogs.composables.TextFieldDialog
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -18,34 +19,42 @@ fun EditDialog(
     @StringRes label: Int,
     @StringRes placeHolder: Int,
     @StringRes title: Int,
-    state: EditDialogState,
     names: () -> ImmutableList<String>,
     @StringRes existNameError: Int,
-    showDialog: () -> Boolean,
     onDismiss: () -> Unit,
     onPositiveButtonClick: () -> Unit,
+    show: () -> Boolean,
+    initialName: String
 ) {
-    TextFieldDialog(
-        label = label,
-        placeHolder = placeHolder,
-        showDialog = showDialog,
-        title = title,
-        error = { state.error },
-        onDismiss = onDismiss,
-        textFieldValue = { state.textFieldValue },
-        onPositiveButtonClick = onPositiveButtonClick,
-        positiveButtonEnabled = { state.positiveButtonEnabled },
-        onValueChange = {
-            state.onValueChange(it)
-            if (names().contains(it.text.trim())) state.updateError(existNameError)
-            if (state.initialName == it.text) state.updateError(null)
-        },
-        onFocusChanged = state::onFocusChange,
-        onCancelIconClick = state::initTextFieldValue
-    )
+    if (show()) {
+        val state =
+            rememberSaveable(saver = EditDialogState.Saver) { EditDialogState(initialName = initialName) }
+
+        TextFieldDialog(
+            label = label,
+            placeHolder = placeHolder,
+            title = title,
+            error = { state.error },
+            textFieldValue = { state.textFieldValue },
+            positiveButtonEnabled = { state.positiveButtonEnabled },
+            onValueChange = {
+                state.onValueChange(it)
+                if (names().contains(it.text.trim())) state.updateError(existNameError)
+                if (state.initialName == it.text) state.updateError(null)
+            },
+            onFocusChanged = state::onFocusChange,
+            onPositiveButtonClick = onPositiveButtonClick,
+            onDismiss = onDismiss
+        )
+    }
+
 }
 
-class EditDialogState(val initialName: String, initialText: String = initialName, initialError: Int? = null) :
+class EditDialogState(
+    val initialName: String,
+    initialText: String = initialName,
+    initialError: Int? = null
+) :
     BaseTextFieldDialogState(initialText, initialError) {
     override fun onValueChange(newTextFiled: TextFieldValue) {
         super.onValueChange(newTextFiled)

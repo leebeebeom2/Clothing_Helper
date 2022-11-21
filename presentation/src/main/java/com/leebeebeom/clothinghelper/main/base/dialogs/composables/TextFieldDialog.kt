@@ -19,35 +19,33 @@ fun TextFieldDialog(
     @StringRes error: () -> Int?,
     textFieldValue: () -> TextFieldValue,
     positiveButtonEnabled: () -> Boolean,
-    showDialog: () -> Boolean,
     onValueChange: (TextFieldValue) -> Unit,
     onFocusChanged: (FocusState) -> Unit,
     onPositiveButtonClick: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    if (showDialog())
-        DialogRoot(onDismiss = onDismiss) {
-            DialogTitle(text = title)
+    DialogRoot(onDismiss = onDismiss) {
+        DialogTitle(text = title)
 
-            val state = rememberMaxWidthTextFieldState(
-                label = label, placeholder = placeHolder, showKeyboardEnabled = true
-            )
+        val state = rememberMaxWidthTextFieldState(
+            label = label, placeholder = placeHolder, showKeyboardEnabled = true
+        )
 
-            MaxWidthTextField(
-                state = state,
-                textFieldValue = textFieldValue,
-                error = error,
-                onValueChange = onValueChange,
-                onFocusChanged = onFocusChanged
-            )
-            SimpleHeightSpacer(dp = 12)
+        MaxWidthTextField(
+            state = state,
+            textFieldValue = textFieldValue,
+            error = error,
+            onValueChange = onValueChange,
+            onFocusChanged = onFocusChanged
+        )
+        SimpleHeightSpacer(dp = 12)
 
-            DialogTextButtons(
-                positiveButtonEnabled = positiveButtonEnabled,
-                onPositiveButtonClick = onPositiveButtonClick,
-                onDismiss = onDismiss
-            )
-        }
+        DialogTextButtons(
+            positiveButtonEnabled = positiveButtonEnabled,
+            onPositiveButtonClick = onPositiveButtonClick,
+            onDismiss = onDismiss
+        )
+    }
 }
 
 abstract class BaseTextFieldDialogState(

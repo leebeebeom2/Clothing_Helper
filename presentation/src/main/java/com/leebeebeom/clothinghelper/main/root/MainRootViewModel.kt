@@ -6,13 +6,16 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.ToastUIState
 import com.leebeebeom.clothinghelper.base.ToastUIStateImpl
 import com.leebeebeom.clothinghelper.main.base.interfaces.*
-import com.leebeebeom.clothinghelper.main.subcategory.interfaces.AddSubCategory
-import com.leebeebeom.clothinghelper.main.subcategory.interfaces.EditSubCategoryName
+import com.leebeebeom.clothinghelper.main.base.interfaces.addandedit.subcategory.AddSubCategory
+import com.leebeebeom.clothinghelper.main.base.interfaces.addandedit.subcategory.EditSubCategoryName
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.usecase.GetDataLoadingStateUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.LoadDataUseCase
-import com.leebeebeom.clothinghelperdomain.usecase.subcategory.*
+import com.leebeebeom.clothinghelperdomain.usecase.folder.GetAllFoldersUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.subcategory.AddSubCategoryUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.subcategory.EditSubCategoryUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetAllSubCategoriesUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.user.GetUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.TimeoutCancellationException
@@ -26,8 +29,9 @@ class MainRootViewModel @Inject constructor(
     private val loadDataUseCase: LoadDataUseCase,
     private val getAllSubCategoriesUseCase: GetAllSubCategoriesUseCase,
     private val getUserUseCase: GetUserUseCase,
+    private val getAllFoldersUseCase: GetAllFoldersUseCase,
     override val addSubCategoryUseCase: AddSubCategoryUseCase,
-    override val editSubCategoryNameUseCase: EditSubCategoryNameUseCase
+    override val editSubCategoryUseCase: EditSubCategoryUseCase
 ) : AddSubCategory, EditSubCategoryName, ViewModel() {
 
     val uiState = MainRootUIState()
@@ -47,6 +51,7 @@ class MainRootViewModel @Inject constructor(
             launch { getDataLoadingStateUseCase.isLoading.collectLatest(uiState::updateIsLoading) }
             launch { getAllSubCategoriesUseCase.allSubCategories.collectLatest(uiState::loadAllSubCategories) }
             launch { getUserUseCase.user.collectLatest(uiState::updateUser) }
+            launch { getAllFoldersUseCase.allFolders.collectLatest(uiState::loadAllFolders) }
         }
     }
 
@@ -70,4 +75,5 @@ class MainRootUIState :
     ToastUIState by ToastUIStateImpl(),
     UserUIState by UserUIStateImpl(),
     LoadingUIState by LoadingUIStateImpl(),
-    SubCategoryUIState by SubCategoryUIStateImpl()
+    SubCategoryUIState by SubCategoryUIStateImpl(),
+    FolderUIState by FolderUIStateImpl()

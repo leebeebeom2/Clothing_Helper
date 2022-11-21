@@ -6,7 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 
-interface PasswordUIState {
+interface PasswordUIState : EmailUIState {
     val passwordError: Int?
     val googleButtonEnabled: Boolean
     val password: String
@@ -15,8 +15,8 @@ interface PasswordUIState {
     fun onPasswordChange(password: String)
 }
 
-class PasswordUIStateImpl(baseEmailUIStateImpl: EmailUIStateImpl = EmailUIStateImpl()) :
-    PasswordUIState {
+class PasswordUIStateImpl(emailUIStateImpl: EmailUIStateImpl = EmailUIStateImpl()) :
+    EmailUIState by emailUIStateImpl, PasswordUIState {
 
     override var passwordError: Int? by mutableStateOf(null)
         private set
@@ -39,7 +39,7 @@ class PasswordUIStateImpl(baseEmailUIStateImpl: EmailUIStateImpl = EmailUIStateI
         this.password = password
     }
 
-    val buttonEnabled by derivedStateOf {
-        baseEmailUIStateImpl.buttonEnabled && passwordError == null && password.isNotBlank()
+    override val buttonEnabled by derivedStateOf {
+        emailUIStateImpl.buttonEnabled && passwordError == null && password.isNotBlank()
     }
 }

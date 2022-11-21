@@ -1,7 +1,5 @@
 package com.leebeebeom.clothinghelper.signin
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +17,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leebeebeom.clothinghelper.base.composables.BlockBacKPressWhenIsLoading
 import com.leebeebeom.clothinghelper.base.composables.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
+import com.leebeebeom.clothinghelper.util.noRippleClickable
 import com.leebeebeom.clothinghelperdomain.usecase.user.GetSignInLoadingStateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -30,7 +29,6 @@ fun SignInRoot(
     content: @Composable (BoxScope.() -> Unit)
 ) {
     val focusManager = LocalFocusManager.current
-    val interactionSource = remember { MutableInteractionSource() }
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
 
     ClothingHelperTheme {
@@ -41,11 +39,7 @@ fun SignInRoot(
                         .fillMaxSize()
                         .padding(it)
                         .padding(horizontal = 20.dp)
-                        .clickable(
-                            interactionSource = interactionSource,
-                            indication = null,
-                            onClick = focusManager::clearFocus
-                        ),
+                        .noRippleClickable(onClick = focusManager::clearFocus),
                 ) {
                     content()
                     BlockBacKPressWhenIsLoading { isLoading }

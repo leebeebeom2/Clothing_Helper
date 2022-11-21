@@ -38,7 +38,7 @@ class SignUpViewModel @Inject constructor(
                 name = uiState.name
             ) {
                 if (it is FirebaseResult.Fail) {
-                    uiState.showToast(R.string.sub_categories_load_failed)
+                    uiState.showToast(R.string.data_load_failed)
                     logE("signUpWithEmailAndPassword", it.exception)
                 }
             }

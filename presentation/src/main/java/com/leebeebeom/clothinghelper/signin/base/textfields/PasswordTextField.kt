@@ -8,8 +8,8 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.MaxWidthTextField
-import com.leebeebeom.clothinghelper.base.rememberMaxWidthTextFieldState
+import com.leebeebeom.clothinghelper.base.composables.MaxWidthTextField
+import com.leebeebeom.clothinghelper.base.composables.rememberMaxWidthTextFieldState
 import com.leebeebeom.clothinghelper.signin.base.composables.VisibleIcon
 
 @Composable
@@ -24,14 +24,14 @@ fun PasswordTextField(
     var isVisible by rememberSaveable { mutableStateOf(false) }
     val state = remember { TextFieldState(password()) }
 
-    MaxWidthTextField(textFieldValue = { state.textFieldValue },
-        state = rememberPasswordTextFieldState(label = label, imeAction = imeAction),
+    MaxWidthTextField(state = rememberPasswordTextFieldState(label = label, imeAction = imeAction),
+        textFieldValue = { state.textFieldValue },
         error = error,
         onValueChange = { state.onValueChange(it, onPasswordChange, updateError) },
         onFocusChanged = state::onFocusChange,
         trailingIcon = { VisibleIcon({ isVisible }, onClick = { isVisible = !isVisible }) },
-        isVisible = { isVisible },
-        onCancelIconClick = { state.onCancelIconClick(onPasswordChange) })
+        isVisible = { isVisible }
+    )
 }
 
 @OptIn(ExperimentalComposeUiApi::class)

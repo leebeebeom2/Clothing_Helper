@@ -22,7 +22,7 @@ fun EditDialog(
     names: () -> ImmutableList<String>,
     @StringRes existNameError: Int,
     onDismiss: () -> Unit,
-    onPositiveButtonClick: () -> Unit,
+    onPositiveButtonClick: (String) -> Unit,
     show: () -> Boolean,
     initialName: String
 ) {
@@ -43,7 +43,7 @@ fun EditDialog(
                 if (state.initialName == it.text) state.updateError(null)
             },
             onFocusChanged = state::onFocusChange,
-            onPositiveButtonClick = onPositiveButtonClick,
+            onPositiveButtonClick = { onPositiveButtonClick(state.text.trim()) },
             onDismiss = onDismiss
         )
     }

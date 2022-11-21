@@ -14,7 +14,7 @@ interface FolderUIState {
     val allFolders: List<StableFolder>
 
     fun getFolders(parentKey: String): ImmutableList<StableFolder>
-    fun updateAllFolders(folders: List<Folder>)
+    fun loadAllFolders(folders: List<Folder>)
 }
 
 class FolderUIStateImpl : FolderUIState {
@@ -26,7 +26,7 @@ class FolderUIStateImpl : FolderUIState {
             allFolders.filter { it.parentKey == parentKey }.toImmutableList()
         }.value
 
-    override fun updateAllFolders(folders: List<Folder>) {
+    override fun loadAllFolders(folders: List<Folder>) {
         allFolders = folders.map { it.toStable() }
     }
 }

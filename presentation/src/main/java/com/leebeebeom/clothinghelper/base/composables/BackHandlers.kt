@@ -4,7 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 
 @Composable
-fun BlockBacKPressWhenIsLoading(isLoading: () -> Boolean) {
+fun BlockBacKPressWhenLoading(isLoading: () -> Boolean) {
     BackHandler(enabled = isLoading) {}
 }
 

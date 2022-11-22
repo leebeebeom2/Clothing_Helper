@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.signin.base.textfields
+package com.leebeebeom.clothinghelper.base
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

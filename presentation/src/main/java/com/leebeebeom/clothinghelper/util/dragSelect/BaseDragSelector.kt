@@ -7,7 +7,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 abstract class BaseDragSelector<T>(
     private val haptic: HapticFeedback
 ) {
-    protected var dragDirection: DragDirection? = DragDirection.None
+    protected var currentDragDirection: DragDirection? = DragDirection.None
     private val passedItemKeys: LinkedHashSet<String> = linkedSetOf()
     protected var lastSelectedIndex: Int? = null
     protected var initialSelectedIndex: Int? = null
@@ -33,9 +33,9 @@ abstract class BaseDragSelector<T>(
         onSelect: (String) -> Unit
     ) {
         initialSelectedIndex?.let { index ->
-            dragDirection = getDragDirection(touchOffset)
+            currentDragDirection = getDragDirection(touchOffset)
 
-            if (dragDirection == DragDirection.Down) // 정방향 아래로 드래그
+            if (currentDragDirection == DragDirection.Down) // 정방향 아래로 드래그
                 onDragStart(
                     touchOffset = touchOffset,
                     indexRange = { index..it },
@@ -44,7 +44,7 @@ abstract class BaseDragSelector<T>(
                     passedItemKeysAddOrRemove = passedItemKeys::addAll,
                     selectedItemFirstOrLast = { it.lastOrNull() }
                 )
-            else if (dragDirection == DragDirection.Up) // 정방향 위로 드래그
+            else if (currentDragDirection == DragDirection.Up) // 정방향 위로 드래그
                 onDragStart(
                     touchOffset = touchOffset,
                     indexRange = { it..index },
@@ -112,7 +112,7 @@ abstract class BaseDragSelector<T>(
         dragEnd()
         initialSelectedIndex = null
         lastSelectedIndex = null
-        dragDirection = DragDirection.None
+        currentDragDirection = DragDirection.None
         passedItemKeys.clear()
     }
 

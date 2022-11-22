@@ -68,8 +68,8 @@ class GridDragSelector(
             }
         }
 
-        return if ((dragDirection == DragDirection.Down || dragDirection == DragDirection.None) && dragEndDirection == DragDirection.Up) DragDirection.Up
-        else if ((dragDirection == DragDirection.Up || dragDirection == DragDirection.None) && dragEndDirection == DragDirection.Down) DragDirection.Down
+        return if ((currentDragDirection == DragDirection.Down || currentDragDirection == DragDirection.None) && dragEndDirection == DragDirection.Up) DragDirection.Up
+        else if ((currentDragDirection == DragDirection.Up || currentDragDirection == DragDirection.None) && dragEndDirection == DragDirection.Down) DragDirection.Down
         else DragDirection.None
     }
 

@@ -35,7 +35,7 @@ fun DrawerSubCategoryDropDownMenu(
 
         DrawerDropdownMenuItem(
             text = R.string.add_folder,
-            onClick = { showSubCategoryEditDialog = true },
+            onClick = { showAddFolderDialog = true },
             onDismiss = onDismiss
         )
     }

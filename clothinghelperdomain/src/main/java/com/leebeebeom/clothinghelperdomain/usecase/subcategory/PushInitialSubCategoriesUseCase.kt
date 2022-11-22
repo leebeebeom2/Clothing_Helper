@@ -10,9 +10,10 @@ import javax.inject.Inject
 class PushInitialSubCategoriesUseCase @Inject constructor(private val subCategoryRepository: SubCategoryRepository) {
     suspend fun pushInitialSubCategories(
         uid: String,
-        onUpdateSubCategoriesFail: (FirebaseResult) -> Unit
+        onLoadSubCategoriesFail: (FirebaseResult.Fail) -> Unit
     ) {
         subCategoryRepository.pushInitialSubCategories(uid)
-        onUpdateSubCategoriesFail(subCategoryRepository.load(uid, SubCategory::class.java))
+        val result = subCategoryRepository.load(uid, SubCategory::class.java)
+        if (result is FirebaseResult.Fail) onLoadSubCategoriesFail(result)
     }
 }

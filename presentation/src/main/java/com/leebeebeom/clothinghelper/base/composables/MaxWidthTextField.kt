@@ -46,18 +46,16 @@ fun MaxWidthTextField(
         ErrorText(error)
     }
 
-    ShowKeyboard(
-        showKeyboardEnabled = { state.showKeyboardEnabled }, showKeyboard = state::showKeyboard
-    )
+    ShowKeyboard(showKeyboardEnabled = state.showKeyboard, showKeyboard = state::showKeyboard)
 }
 
 @Composable
 private fun TextField(
     state: MaxWidthTextFieldState,
-    onFocusChanged: (FocusState) -> Unit,
     textFieldValue: () -> TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit,
     error: () -> Int?,
+    onValueChange: (TextFieldValue) -> Unit,
+    onFocusChanged: (FocusState) -> Unit,
     isVisible: () -> Boolean,
     trailingIcon: @Composable (() -> Unit)?
 ) {
@@ -108,7 +106,7 @@ private fun ErrorText(@StringRes error: () -> Int?) {
 data class MaxWidthTextFieldState @OptIn(ExperimentalComposeUiApi::class) constructor(
     @StringRes val label: Int,
     @StringRes val placeholder: Int,
-    val showKeyboardEnabled: Boolean,
+    val showKeyboard: Boolean,
     val keyboardOptions: KeyboardOptions,
     val focusRequester: FocusRequester,
     val keyboardController: SoftwareKeyboardController?
@@ -127,7 +125,7 @@ data class MaxWidthTextFieldState @OptIn(ExperimentalComposeUiApi::class) constr
 fun rememberMaxWidthTextFieldState(
     @StringRes label: Int,
     @StringRes placeholder: Int = R.string.empty,
-    showKeyboardEnabled: Boolean = false,
+    showKeyboard: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
     focusRequester: FocusRequester = remember { FocusRequester() },
     keyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
@@ -135,7 +133,7 @@ fun rememberMaxWidthTextFieldState(
     MaxWidthTextFieldState(
         label = label,
         placeholder = placeholder,
-        showKeyboardEnabled = showKeyboardEnabled,
+        showKeyboard = showKeyboard,
         keyboardOptions = keyboardOptions,
         focusRequester = focusRequester,
         keyboardController = keyboardController
@@ -143,10 +141,10 @@ fun rememberMaxWidthTextFieldState(
 }
 
 @Composable
-private fun ShowKeyboard(showKeyboardEnabled: () -> Boolean, showKeyboard: suspend () -> Unit) {
+private fun ShowKeyboard(showKeyboardEnabled: Boolean, showKeyboard: suspend () -> Unit) {
     var keyboardShown by rememberSaveable { mutableStateOf(false) }
 
-    if (!keyboardShown && showKeyboardEnabled()) {
+    if (!keyboardShown && showKeyboardEnabled) {
         LaunchedEffect(key1 = Unit) { showKeyboard() }
         keyboardShown = true
     }

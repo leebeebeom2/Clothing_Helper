@@ -23,7 +23,7 @@ fun DrawerDropdownMenuItem(
     ) {
         SingleLineText(
             text = stringResource(id = text),
-            style = MaterialTheme.typography.body2
+            style = MaterialTheme.typography.subtitle2
         )
     }
 }

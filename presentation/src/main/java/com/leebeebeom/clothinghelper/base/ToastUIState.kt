@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 
 interface ToastUIState {
     val toastText: Int?
+
     fun showToast(@StringRes text: Int?)
     fun toastShown()
 }

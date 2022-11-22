@@ -17,7 +17,7 @@ import com.leebeebeom.clothinghelper.util.noRippleClickable
 fun SelectModeBottomAppBarAllSelect(
     isAllSelected: () -> Boolean,
     onClick: () -> Unit,
-    selectedSubCategoriesSize: () -> Int
+    selectedSize: () -> Int
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -26,7 +26,7 @@ fun SelectModeBottomAppBarAllSelect(
         SimpleWidthSpacer(dp = 4)
         CircleCheckBox(isChecked = isAllSelected, onClick = onClick, size = 22.dp)
         SimpleWidthSpacer(dp = 10)
-        SelectText(selectedSize = selectedSubCategoriesSize)
+        SelectText(selectedSize = selectedSize)
     }
 }
 
@@ -35,6 +35,6 @@ private fun SelectText(selectedSize: () -> Int) {
     SingleLineText(
         text = stringResource(
             id = R.string.count_selected, formatArgs = arrayOf(selectedSize())
-        ), modifier = Modifier.offset((-8).dp, 1.dp)
+        ), modifier = Modifier.offset((-8).dp, 0.dp)
     )
 }

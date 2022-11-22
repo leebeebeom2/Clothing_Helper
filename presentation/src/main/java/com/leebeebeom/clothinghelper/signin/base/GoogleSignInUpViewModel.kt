@@ -23,7 +23,6 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
 
     abstract fun updateGoogleButtonEnabled(enabled: Boolean)
     abstract fun showToast(@StringRes text: Int)
-    abstract fun disableGoogleButton()
 
     fun signInWithGoogleEmail(activityResult: ActivityResult) {
         when (activityResult.resultCode) {

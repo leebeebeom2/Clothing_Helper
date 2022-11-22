@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 
 interface GoogleButtonUIState : PasswordUIState {
     val googleButtonEnabled: Boolean
+
     fun updateGoogleButtonEnabled(enabled: Boolean)
 }
 

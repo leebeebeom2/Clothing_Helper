@@ -25,7 +25,7 @@ fun EssentialMenu(
         onClick = { onClick(essentialMenu.type) }
     ) {
         SimpleIcon(modifier = Modifier.size(22.dp), drawable = essentialMenu.drawable)
-        SimpleWidthSpacer(dp = 12)
+        SimpleWidthSpacer(dp = 8)
         SingleLineText(
             text = stringResource(id = essentialMenu.name),
             style = MaterialTheme.typography.body1.copy(letterSpacing = 0.75.sp)

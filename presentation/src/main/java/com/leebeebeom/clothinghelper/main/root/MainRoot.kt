@@ -9,10 +9,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.base.composables.BackHandler
-import com.leebeebeom.clothinghelper.base.composables.BlockBacKPressWhenIsLoading
+import com.leebeebeom.clothinghelper.base.composables.BlockBacKPressWhenLoading
 import com.leebeebeom.clothinghelper.base.composables.SimpleToast
 import com.leebeebeom.clothinghelper.main.root.contents.DrawerContents
 import com.leebeebeom.clothinghelper.main.root.model.EssentialMenuType
+import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 import kotlinx.coroutines.CoroutineScope
@@ -45,7 +46,7 @@ fun MainRoot(
     onSettingIconClick: () -> Unit,
     onEssentialMenuClick: (type: EssentialMenuType) -> Unit,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
-    onSubCategoryClick: (SubCategoryParent, name: String, key: String) -> Unit,
+    onSubCategoryClick: (StableSubCategory) -> Unit,
     viewModel: MainRootViewModel = hiltViewModel(),
     uiState: MainRootUIState = viewModel.uiState,
     state: MainRootState = rememberMainRootState(),
@@ -76,7 +77,7 @@ fun MainRoot(
                         drawerClose()
                     },
                     onSubCategoryClick = {
-                        onSubCategoryClick(it.parent, it.name, it.key)
+                        onSubCategoryClick(it)
                         drawerClose()
                     },
                     onSettingIconClick = {
@@ -92,7 +93,7 @@ fun MainRoot(
         ) {
             content(it)
             BackHandler(enabled = { state.drawerState.isOpen }, task = drawerClose)
-            BlockBacKPressWhenIsLoading { uiState.isLoading }
+            BlockBacKPressWhenLoading { uiState.isLoading }
         }
         SimpleToast(text = { uiState.toastText }, toastShown = uiState::toastShown)
     }

@@ -11,9 +11,7 @@ import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
 import com.leebeebeom.clothinghelper.signin.base.interfaces.GoogleButtonUIState
 import com.leebeebeom.clothinghelper.signin.base.interfaces.GoogleButtonUIStateImpl
 import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
-import com.leebeebeom.clothinghelperdata.repository.util.logE
 import com.leebeebeom.clothinghelperdomain.model.AuthResult
-import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.user.SignUpUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,13 +30,9 @@ class SignUpViewModel @Inject constructor(
             val result = signUpUseCase.signUp(
                 email = uiState.email,
                 password = uiState.password,
-                name = uiState.name
-            ) {
-                if (it is FirebaseResult.Fail) {
-                    uiState.showToast(R.string.data_load_failed)
-                    logE("signUpWithEmailAndPassword", it.exception)
-                }
-            }
+                name = uiState.name.trim(),
+                onSubCategoryLoadFail = { uiState.showToast(R.string.data_load_failed) }
+            )
             when (result) {
                 is AuthResult.Success -> showToast(R.string.sign_up_complete)
                 is AuthResult.Fail -> setFireBaseError(
@@ -55,7 +49,6 @@ class SignUpViewModel @Inject constructor(
         uiState.updateGoogleButtonEnabled(enabled)
 
     override fun showToast(text: Int) = uiState.showToast(text)
-    override fun disableGoogleButton() = uiState.updateGoogleButtonEnabled(false)
 }
 
 class SignUpUIState(
@@ -75,8 +68,10 @@ class SignUpUIState(
 
     override fun onPasswordChange(password: String) {
         googleButtonUIStateImpl.onPasswordChange(password)
+
         if (password.isNotBlank()) {
             if (password.length < 6) updatePasswordError(R.string.error_weak_password)
+
             if (passwordConfirm.isNotBlank() && password != passwordConfirm)
                 updatePasswordConfirmError(R.string.error_password_confirm_not_same)
             else updatePasswordConfirmError(null)
@@ -85,6 +80,7 @@ class SignUpUIState(
 
     fun onPasswordConfirmChange(passwordConfirm: String) {
         this.passwordConfirm = passwordConfirm
+
         if (passwordConfirm.isNotBlank() && password.isNotBlank() && passwordConfirm != password)
             updatePasswordConfirmError(R.string.error_password_confirm_not_same)
     }
@@ -93,5 +89,7 @@ class SignUpUIState(
         passwordConfirmError = error
     }
 
-    override val buttonEnabled by derivedStateOf { googleButtonUIStateImpl.buttonEnabled && passwordConfirm.isNotBlank() && this.passwordConfirmError == null }
+    override val buttonEnabled by derivedStateOf {
+        googleButtonUIStateImpl.buttonEnabled && passwordConfirm.isNotBlank() && this.passwordConfirmError == null && name.isNotBlank()
+    }
 }

@@ -41,8 +41,13 @@ object Anime {
     }
 
     object SelectModeFabFade {
-        val fadeOut = fadeOut(tween(SelectModeBottomAppbar.duration))
-        val fadeIn = fadeIn(tween(SelectModeBottomAppbar.duration, SelectModeBottomAppbar.delay))
+        val fadeOut = fadeOut(tween(durationMillis = SelectModeBottomAppbar.duration))
+        val fadeIn = fadeIn(
+            tween(
+                durationMillis = SelectModeBottomAppbar.duration,
+                delayMillis = SelectModeBottomAppbar.delay
+            )
+        )
     }
 
     @OptIn(ExperimentalAnimationApi::class)

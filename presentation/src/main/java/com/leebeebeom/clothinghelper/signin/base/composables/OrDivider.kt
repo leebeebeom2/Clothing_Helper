@@ -16,14 +16,14 @@ import com.leebeebeom.clothinghelper.base.composables.SingleLineText
 @Composable
 fun OrDivider() {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        val weightModifier = Modifier.weight(1f)
+        val modifier = Modifier.weight(1f)
 
-        Divider(modifier = weightModifier)
+        Divider(modifier = modifier)
         SingleLineText(
             text = R.string.or,
             modifier = Modifier.padding(horizontal = 14.dp),
             style = MaterialTheme.typography.body2.copy(LocalContentColor.current.copy(ContentAlpha.medium))
         )
-        Divider(modifier = weightModifier)
+        Divider(modifier = modifier)
     }
 }

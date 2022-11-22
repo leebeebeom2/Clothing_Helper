@@ -24,28 +24,31 @@ fun EditDialog(
     onDismiss: () -> Unit,
     onPositiveButtonClick: (String) -> Unit,
     show: () -> Boolean,
-    initialName: String
+    initialName: () -> String?
 ) {
     if (show()) {
-        val state =
-            rememberSaveable(saver = EditDialogState.Saver) { EditDialogState(initialName = initialName) }
+        initialName()?.let {
+            val state =
+                rememberSaveable(saver = EditDialogState.Saver) { EditDialogState(initialName = it) }
 
-        TextFieldDialog(
-            label = label,
-            placeHolder = placeHolder,
-            title = title,
-            error = { state.error },
-            textFieldValue = { state.textFieldValue },
-            positiveButtonEnabled = { state.positiveButtonEnabled },
-            onValueChange = {
-                state.onValueChange(it)
-                if (names().contains(it.text.trim())) state.updateError(existNameError)
-                if (state.initialName == it.text) state.updateError(null)
-            },
-            onFocusChanged = state::onFocusChange,
-            onPositiveButtonClick = { onPositiveButtonClick(state.text.trim()) },
-            onDismiss = onDismiss
-        )
+            TextFieldDialog(
+                label = label,
+                placeHolder = placeHolder,
+                title = title,
+                error = { state.error },
+                textFieldValue = { state.textFieldValue },
+                positiveButtonEnabled = { state.positiveButtonEnabled },
+                onValueChange = {
+                    state.onValueChange(it)
+                    if (names().contains(it.text.trim())) state.updateError(existNameError)
+                    if (state.initialName == it.text) state.updateError(null)
+                },
+                onFocusChanged = state::onFocusChange,
+                onPositiveButtonClick = { onPositiveButtonClick(state.text.trim()) },
+                onDismiss = onDismiss
+            )
+        }
+
     }
 
 }

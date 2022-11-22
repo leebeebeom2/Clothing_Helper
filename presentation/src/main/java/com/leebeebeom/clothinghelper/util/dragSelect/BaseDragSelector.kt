@@ -24,10 +24,18 @@ abstract class BaseDragSelector<T>(
     }
 
     fun onDrag(touchOffset: Offset, onSelect: (String) -> Unit) {
+        forward(touchOffset, onSelect)
+        backward(touchOffset, onSelect)
+    }
+
+    private fun forward(
+        touchOffset: Offset,
+        onSelect: (String) -> Unit
+    ) {
         initialSelectedIndex?.let { index ->
             dragDirection = getDragDirection(touchOffset)
 
-            if (dragDirection == DragDirection.Down)
+            if (dragDirection == DragDirection.Down) // 정방향 아래로 드래그
                 onDragStart(
                     touchOffset = touchOffset,
                     indexRange = { index..it },
@@ -36,7 +44,7 @@ abstract class BaseDragSelector<T>(
                     passedItemKeysAddOrRemove = passedItemKeys::addAll,
                     selectedItemFirstOrLast = { it.lastOrNull() }
                 )
-            else if (dragDirection == DragDirection.Up)
+            else if (dragDirection == DragDirection.Up) // 정방향 위로 드래그
                 onDragStart(
                     touchOffset = touchOffset,
                     indexRange = { it..index },
@@ -48,11 +56,14 @@ abstract class BaseDragSelector<T>(
         }
     }
 
-    fun onDragEndMove(touchOffset: Offset, onSelect: (key: String) -> Unit) {
+    private fun backward(
+        touchOffset: Offset,
+        onSelect: (key: String) -> Unit
+    ) {
         lastSelectedIndex?.let { index ->
             val dragEndDirection = getDragEndDirection(touchOffset)
 
-            if (dragEndDirection == DragDirection.Up)
+            if (dragEndDirection == DragDirection.Up) // 역방향 위로(아래로 드래그 후 위로)
                 onDragStart(
                     touchOffset = touchOffset,
                     indexRange = { it..index },
@@ -61,7 +72,7 @@ abstract class BaseDragSelector<T>(
                     passedItemKeysAddOrRemove = passedItemKeys::removeAll,
                     selectedItemFirstOrLast = { it.lastOrNull() }
                 )
-            else if (dragEndDirection == DragDirection.Down)
+            else if (dragEndDirection == DragDirection.Down) // 역방향 아래로(위로 드래그 후 아래로)
                 onDragStart(
                     touchOffset = touchOffset,
                     indexRange = { index..it },
@@ -73,6 +84,12 @@ abstract class BaseDragSelector<T>(
         }
     }
 
+    /**
+     * @param indexRange 아래로 드래그 시 selectedItemIndex..lastIndex 위로 드래그 시 반대로
+     * @param passedItemKeysContainsOrNot 정방향 시 !contains, 역방향 시 contains
+     * @param passedItemKeysAddOrRemove 정방향 시 add, 역방향 시 remove
+     * @param selectedItemFirstOrLast lastSelectedItem에 추가될 객체 아래로 드래그 시 last 위로 드래그 시 first
+     */
     private fun onDragStart(
         touchOffset: Offset,
         indexRange: (selectedItemIndex: Int) -> IntRange,

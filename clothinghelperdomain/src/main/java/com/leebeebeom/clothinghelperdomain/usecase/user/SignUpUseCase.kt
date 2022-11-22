@@ -19,7 +19,7 @@ class SignUpUseCase @Inject constructor(
         email: String,
         password: String,
         name: String,
-        onUpdateSubCategoriesFail: (FirebaseResult) -> Unit
+        onUpdateSubCategoriesFail: (FirebaseResult.Fail) -> Unit
     ): AuthResult {
         val authResult = userRepository.signUp(email = email, password = password, name = name)
 

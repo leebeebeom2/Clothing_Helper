@@ -32,14 +32,13 @@ class ListDragSelector(
         selectedItem: LazyListItemInfo,
         indexRange: (selectedItemIndex: Int) -> IntRange,
         passedItemKeysContainsOrNot: (String) -> Boolean
-    ): List<LazyListItemInfo> =
-        state.layoutInfo.visibleItemsInfo.filter {
-            (it.key as? String)?.let { key ->
-                it.index != initialSelectedIndex &&
-                        it.index in indexRange(selectedItem.index) &&
-                        passedItemKeysContainsOrNot(key)
-            } ?: false
-        }
+    ) = state.layoutInfo.visibleItemsInfo.filter {
+        (it.key as? String)?.let { key ->
+            it.index != initialSelectedIndex &&
+                    it.index in indexRange(selectedItem.index) &&
+                    passedItemKeysContainsOrNot(key)
+        } ?: false
+    }
 
     override fun getSelectedKeys(selectedItems: List<LazyListItemInfo>) =
         selectedItems.map { it.key as String }

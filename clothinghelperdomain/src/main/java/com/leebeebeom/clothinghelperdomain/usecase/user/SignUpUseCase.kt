@@ -19,14 +19,14 @@ class SignUpUseCase @Inject constructor(
         email: String,
         password: String,
         name: String,
-        onUpdateSubCategoriesFail: (FirebaseResult.Fail) -> Unit
+        onLoadFail: (FirebaseResult.Fail) -> Unit
     ): AuthResult {
         val authResult = userRepository.signUp(email = email, password = password, name = name)
 
         if (authResult is AuthResult.Success)
             pushInitialSubCategoriesUseCase.pushInitialSubCategories(
                 authResult.user.uid,
-                onUpdateSubCategoriesFail
+                onLoadFail
             )
         return authResult
     }

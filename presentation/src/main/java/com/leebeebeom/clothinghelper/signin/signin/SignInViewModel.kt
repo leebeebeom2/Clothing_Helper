@@ -37,7 +37,6 @@ class SignInViewModel @Inject constructor(
     override fun updateGoogleButtonEnabled(enabled: Boolean) =
         uiState.updateGoogleButtonEnabled(enabled)
 
-    override fun disableGoogleButton() = uiState.updateGoogleButtonEnabled(false)
     override fun showToast(text: Int) = uiState.showToast(text)
 }
 

@@ -9,7 +9,7 @@ import com.leebeebeom.clothinghelperdomain.usecase.folder.EditFolderNameUseCase
 interface EditFolder : BaseContainerAddAndEdit {
     val editFolderNameUseCase: EditFolderNameUseCase
 
-    suspend fun baseEditFolderName(folder: StableFolder) {
+    suspend fun baseEditFolder(folder: StableFolder) {
         uid?.let {
             val result = editFolderNameUseCase.edit(folder.toStable(), it)
             showFailToast(

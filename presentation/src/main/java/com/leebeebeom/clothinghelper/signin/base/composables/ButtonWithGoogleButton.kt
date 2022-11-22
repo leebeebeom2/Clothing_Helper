@@ -28,5 +28,4 @@ fun ButtonWithGoogleButton(
         onActivityResult = onActivityResult,
         disabled = googleButtonDisable
     )
-    SimpleHeightSpacer(dp = 4)
 }

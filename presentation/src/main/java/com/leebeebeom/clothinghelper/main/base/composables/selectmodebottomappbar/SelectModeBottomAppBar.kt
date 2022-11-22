@@ -21,6 +21,8 @@ fun BoxScope.SelectModeBottomAppBar(
     onEditIconClick: () -> Unit,
     onDeleteIconClick: () -> Unit = {}, // TODO
     isSelectMode: () -> Boolean,
+    showEditIcon: () -> Boolean,
+    showDeleteIcon: () -> Boolean
 ) {
     AnimatedVisibility(
         modifier = Modifier.align(Alignment.BottomCenter),
@@ -30,26 +32,27 @@ fun BoxScope.SelectModeBottomAppBar(
     ) {
         BottomAppBar {
             SelectModeBottomAppBarAllSelect(
-                isAllSelected,
-                onAllSelectCheckBoxClick,
-                selectedSize
+                isAllSelected = isAllSelected,
+                onClick = onAllSelectCheckBoxClick,
+                selectedSize = selectedSize
             )
 
             Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.End) {
                 SelectModeBottomAppBarIcon(
-                    visible = { selectedSize() == 1 },
+                    visible = showEditIcon,
                     onClick = onEditIconClick,
                     drawable = R.drawable.ic_edit,
                     text = R.string.edit
                 )
+                SimpleWidthSpacer(dp = 8)
                 SelectModeBottomAppBarIcon(
-                    visible = { selectedSize() > 0 },
+                    visible = showDeleteIcon,
                     onClick = onDeleteIconClick,
                     drawable = R.drawable.ic_delete2,
                     text = R.string.delete
                 )
             }
-            SimpleWidthSpacer(dp = 4)
+            SimpleWidthSpacer(dp = 8)
         }
     }
 }

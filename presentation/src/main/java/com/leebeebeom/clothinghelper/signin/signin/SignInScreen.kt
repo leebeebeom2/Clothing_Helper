@@ -14,12 +14,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.composables.MaxWidthButton
 import com.leebeebeom.clothinghelper.base.composables.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.composables.SimpleToast
 import com.leebeebeom.clothinghelper.base.composables.SingleLineText
-import com.leebeebeom.clothinghelper.signin.base.composables.GoogleSignInButton
-import com.leebeebeom.clothinghelper.signin.base.composables.OrDivider
+import com.leebeebeom.clothinghelper.signin.base.composables.ButtonWithGoogleButton
 import com.leebeebeom.clothinghelper.signin.base.textfields.EmailTextField
 import com.leebeebeom.clothinghelper.signin.base.textfields.PasswordTextField
 
@@ -60,20 +58,13 @@ fun SignInScreen(
         )
 
         ForgotPasswordText(onClick = onForgotPasswordClick)
-
-        MaxWidthButton(
-            text = R.string.sign_in,
-            enabled = { uiState.buttonEnabled },
-            onClick = viewModel::signInWithEmailAndPassword
-        )
-        SimpleHeightSpacer(dp = 8)
-        OrDivider()
-        SimpleHeightSpacer(dp = 8)
-        // 프리뷰 시 주석 처리
-        GoogleSignInButton(
-            enabled = { uiState.googleButtonEnabled },
+        ButtonWithGoogleButton(
+            buttonText = R.string.sign_in,
+            buttonEnabled = { uiState.buttonEnabled },
+            onButtonClick = viewModel::signInWithEmailAndPassword,
+            googleButtonEnabled = { uiState.googleButtonEnabled },
             onActivityResult = viewModel::signInWithGoogleEmail,
-            disabled = viewModel::disableGoogleButton
+            googleButtonDisable = { uiState.updateGoogleButtonEnabled(false) }
         )
         SimpleHeightSpacer(dp = 4)
         SignUpText(onEmailSignUpClick)
@@ -97,7 +88,7 @@ private fun SignUpText(onClick: () -> Unit) {
             SingleLineText(
                 text = stringResource(id = R.string.sign_up_with_email),
                 style = MaterialTheme.typography.body2.copy(
-                    color = Color(0xFF35C2C1), fontWeight = FontWeight.Bold
+                    color = Color(0xFF35C2C1), fontWeight = FontWeight.Black
                 )
             )
         }

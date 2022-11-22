@@ -14,7 +14,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.leebeebeom.clothinghelper.base.composables.BlockBacKPressWhenIsLoading
+import com.leebeebeom.clothinghelper.base.composables.BlockBacKPressWhenLoading
 import com.leebeebeom.clothinghelper.base.composables.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelper.util.noRippleClickable
@@ -42,12 +42,12 @@ fun SignInRoot(
                         .noRippleClickable(onClick = focusManager::clearFocus),
                 ) {
                     content()
-                    BlockBacKPressWhenIsLoading { isLoading }
+                    BlockBacKPressWhenLoading { isLoading }
                 }
             }
         }
     }
-    CenterDotProgressIndicator(isLoading = { isLoading })
+    CenterDotProgressIndicator(show = { isLoading })
 }
 
 @HiltViewModel

@@ -11,16 +11,25 @@ import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.delay
 
-interface BaseSelectMode {
+interface SelectMode<T : BaseContainer> {
+    val items: ImmutableList<T>
     val isSelectMode: Boolean
     val selectedKeys: ImmutableSet<String>
     val selectedSize: Int
+    val isAllSelected: Boolean
+    val firstSelectedItem: T?
+    val showEditIcon: Boolean
+    val showDeleteIcon: Boolean
     fun selectModeOn(key: String)
     fun onSelect(key: String)
     suspend fun selectModeOff()
+    fun toggleAllSelect()
 }
 
-class BaseSelectModeImpl : BaseSelectMode {
+class SelectModeImpl<T : BaseContainer> : SelectMode<T> {
+    override val items: ImmutableList<T>
+        get() = TODO("Not yet implemented")
+
     override var isSelectMode by mutableStateOf(false)
         private set
 
@@ -28,6 +37,14 @@ class BaseSelectModeImpl : BaseSelectMode {
         private set
 
     override val selectedSize by derivedStateOf { selectedKeys.size }
+
+    /**
+     * derivedStateOf { selectedKeys.size == items.size }
+     */
+    override val isAllSelected get() = TODO("Not yet implemented")
+
+    override val showEditIcon by derivedStateOf { selectedKeys.size == 1 }
+    override val showDeleteIcon by derivedStateOf { selectedKeys.size > 0 }
 
     override fun selectModeOn(key: String) {
         onSelect(key)
@@ -48,20 +65,21 @@ class BaseSelectModeImpl : BaseSelectMode {
         selectedKeys = selectedKeys.taskAndReturnSet { it.clear() }
     }
 
-    fun toggleAllSelect(list: List<BaseContainer>) {
+    fun toggleAllSelect(items: List<BaseContainer>) {
         selectedKeys =
-            if (selectedSize == list.size) emptySet<String>().toImmutableSet()
-            else list.map { it.key }.toImmutableSet()
-    }
-}
-
-abstract class SelectMode<T : BaseContainer>(private val baseSelectModeImpl: BaseSelectModeImpl = BaseSelectModeImpl()) :
-    BaseSelectMode by baseSelectModeImpl {
-    abstract val list: ImmutableList<T>
-    val isAllSelected by derivedStateOf { selectedKeys.size == list.size }
-    val firstSelectedItem by derivedStateOf {
-        selectedKeys.firstOrNull()?.let { key -> list.firstOrNull { it.key == key } }
+            if (selectedSize == items.size) emptySet<String>().toImmutableSet()
+            else items.map { it.key }.toImmutableSet()
     }
 
-    fun toggleAllSelect() = baseSelectModeImpl.toggleAllSelect(list)
+    /**
+     * get() = selectedKeys.firstOrNull()?.let { key -> items.firstOrNull { it.key == key } }
+     */
+    override val firstSelectedItem get() = TODO("Not yet implemented")
+
+    /**
+     * selectModeImpl.toggleAllSelect(list)
+     */
+    override fun toggleAllSelect() {
+        TODO("Not yet implemented")
+    }
 }

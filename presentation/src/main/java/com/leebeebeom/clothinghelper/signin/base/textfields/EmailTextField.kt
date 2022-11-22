@@ -23,7 +23,13 @@ fun EmailTextField(
         state = rememberEmailTextFieldState(imeAction = imeAction),
         textFieldValue = { state.textFieldValue },
         error = error,
-        onValueChange = { state.onValueChange(it, onEmailChange, updateError) },
+        onValueChange = {
+            state.onValueChange(
+                newTextFieldValue = it.copy(it.text.trim()),
+                onValueChange = onEmailChange,
+                updateError = updateError
+            )
+        },
         onFocusChanged = state::onFocusChange
     )
 }
@@ -35,6 +41,6 @@ private fun rememberEmailTextFieldState(
 ) = rememberMaxWidthTextFieldState(
     label = R.string.email,
     placeholder = R.string.email_place_holder,
-    showKeyboardEnabled = true,
+    showKeyboard = true,
     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = imeAction),
 )

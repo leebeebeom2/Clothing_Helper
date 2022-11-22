@@ -27,7 +27,13 @@ fun PasswordTextField(
     MaxWidthTextField(state = rememberPasswordTextFieldState(label = label, imeAction = imeAction),
         textFieldValue = { state.textFieldValue },
         error = error,
-        onValueChange = { state.onValueChange(it, onPasswordChange, updateError) },
+        onValueChange = {
+            state.onValueChange(
+                newTextFieldValue = it.copy(it.text.trim()),
+                onValueChange = onPasswordChange,
+                updateError = updateError
+            )
+        },
         onFocusChanged = state::onFocusChange,
         trailingIcon = { VisibleIcon({ isVisible }, onClick = { isVisible = !isVisible }) },
         isVisible = { isVisible }
@@ -39,7 +45,9 @@ fun PasswordTextField(
 private fun rememberPasswordTextFieldState(
     @StringRes label: Int = R.string.password, imeAction: ImeAction = ImeAction.Done
 ) = rememberMaxWidthTextFieldState(
-    label = label, keyboardOptions = KeyboardOptions(
-        keyboardType = KeyboardType.Password, imeAction = imeAction
+    label = label,
+    keyboardOptions = KeyboardOptions(
+        keyboardType = KeyboardType.Password,
+        imeAction = imeAction
     )
 )

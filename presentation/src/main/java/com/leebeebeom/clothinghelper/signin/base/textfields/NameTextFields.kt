@@ -4,7 +4,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.TextFieldValue
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.*
 import com.leebeebeom.clothinghelper.base.composables.MaxWidthTextField
@@ -16,27 +15,22 @@ fun NameTextField(
     name: () -> String,
     onNameChange: (String) -> Unit
 ) {
-    val state = remember { NameTextFieldState(name()) }
+    val state = remember { TextFieldState(name()) }
 
     MaxWidthTextField(
         state = rememberMaxWidthTextFieldState(
-            label = R.string.name,
+            label = R.string.nickname,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
         ),
         textFieldValue = { state.textFieldValue },
         error = { null },
-        onValueChange = { state.onValueChange(it, onNameChange) {} },
+        onValueChange = {
+            state.onValueChange(
+                newTextFieldValue = it,
+                onValueChange = onNameChange,
+                updateError = {}
+            )
+        },
         onFocusChanged = state::onFocusChange
     )
-}
-
-class NameTextFieldState(name: String) : TextFieldState(name) {
-    override fun onValueChange(
-        newTextFieldValue: TextFieldValue,
-        onValueChange: (String) -> Unit,
-        updateError: (Int?) -> Unit
-    ) {
-        textFieldValue = newTextFieldValue
-        onValueChange(newTextFieldValue.text)
-    }
 }

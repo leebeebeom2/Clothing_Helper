@@ -12,7 +12,6 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import com.leebeebeom.clothinghelper.main.base.dialogs.composables.BaseTextFieldDialogState
 import com.leebeebeom.clothinghelper.main.base.dialogs.composables.TextFieldDialog
-import com.leebeebeom.clothinghelper.map.StableSubCategory
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -23,14 +22,14 @@ fun EditDialog(
     names: () -> ImmutableList<String>,
     @StringRes existNameError: Int,
     onDismiss: () -> Unit,
-    onPositiveButtonClick: (StableSubCategory) -> Unit,
+    onPositiveButtonClick: (String) -> Unit,
     show: () -> Boolean,
-    subCategory: () -> StableSubCategory?
+    initialName: () -> String?
 ) {
     if (show()) {
-        subCategory()?.let { selectedSubCategory ->
+        initialName()?.let {
             val state =
-                rememberSaveable(saver = EditDialogState.Saver) { EditDialogState(initialName = selectedSubCategory.name) }
+                rememberSaveable(saver = EditDialogState.Saver) { EditDialogState(initialName = it) }
 
             TextFieldDialog(
                 label = label,
@@ -45,9 +44,7 @@ fun EditDialog(
                     if (state.initialName == it.text) state.updateError(null)
                 },
                 onFocusChanged = state::onFocusChange,
-                onPositiveButtonClick = {
-                    onPositiveButtonClick(selectedSubCategory.copy(name = state.text.trim()))
-                },
+                onPositiveButtonClick = { onPositiveButtonClick(state.text.trim()) },
                 onDismiss = onDismiss
             )
         }

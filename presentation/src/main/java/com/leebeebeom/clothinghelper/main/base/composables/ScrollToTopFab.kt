@@ -1,7 +1,6 @@
 package com.leebeebeom.clothinghelper.main.base.composables
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,14 +18,14 @@ import com.leebeebeom.clothinghelper.base.composables.SimpleIcon
 import kotlinx.coroutines.launch
 
 @Composable
-fun BoxScope.ScrollToTopFab(showFab: () -> Boolean, toTop: suspend () -> Unit) {
+fun BoxScope.ScrollToTopFab(show: () -> Boolean, toTop: suspend () -> Unit) {
     val coroutineScope = rememberCoroutineScope()
 
     AnimatedVisibility(
         modifier = Modifier
             .align(Alignment.BottomCenter)
             .padding(4.dp),
-        visible = showFab(),
+        visible = show(),
         enter = Anime.ScrollToTopFab.scaleIn,
         exit = Anime.ScrollToTopFab.scaleOut
     ) {

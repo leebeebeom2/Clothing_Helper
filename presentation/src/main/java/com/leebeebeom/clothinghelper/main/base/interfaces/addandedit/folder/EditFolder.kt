@@ -6,7 +6,7 @@ import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.toStable
 import com.leebeebeom.clothinghelperdomain.usecase.folder.EditFolderNameUseCase
 
-interface EditFolderName : BaseContainerAddAndEdit {
+interface EditFolder : BaseContainerAddAndEdit {
     val editFolderNameUseCase: EditFolderNameUseCase
 
     suspend fun baseEditFolderName(folder: StableFolder) {

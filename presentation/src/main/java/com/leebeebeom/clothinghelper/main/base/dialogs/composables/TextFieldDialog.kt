@@ -28,7 +28,7 @@ fun TextFieldDialog(
         DialogTitle(text = title)
 
         val state = rememberMaxWidthTextFieldState(
-            label = label, placeholder = placeHolder, showKeyboardEnabled = true
+            label = label, placeholder = placeHolder, showKeyboard = true
         )
 
         MaxWidthTextField(

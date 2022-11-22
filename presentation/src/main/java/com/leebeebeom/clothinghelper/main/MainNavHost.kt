@@ -99,11 +99,11 @@ data class MainNavHostState(
         EssentialMenuType.Trash -> {} // TODO
     }
 
-    fun navigateToSubCategory(subCategoryParent: SubCategoryParent) {
+    fun navigateToSubCategory(parent: SubCategoryParent) {
         val currentParent =
             currentBackStack.value?.arguments?.getString(MainDestinations.SubCategory.parent)
-        if (currentParent != subCategoryParent.name)
-            navController.navigate("${MainDestinations.SubCategory.route}/${subCategoryParent.name}")
+        if (currentParent != parent.name)
+            navController.navigate("${MainDestinations.SubCategory.route}/${parent.name}")
     }
 
     private fun navigateToMain() {
@@ -119,24 +119,24 @@ data class MainNavHostState(
     }
 
     fun navigateToDetail(container: BaseContainer) {
-
         val currentArgument = currentBackStack.value?.arguments
-
-        val parent =
-            when (container) {
-                is StableSubCategory -> container.parent
-                else -> currentArgument?.getString(MainDestinations.Detail.parent)!!
-            }
 
         val parentKey = container.key
         val currentParentKey = currentArgument?.getString(MainDestinations.Detail.parentKey)
 
-        val currentTitle = when (container) {
-            is StableSubCategory -> ""
-            else -> currentArgument?.getString(MainDestinations.Detail.title) ?: ""
-        }
-
         if (currentParentKey != parentKey) {
+            val parent =
+                when (container) {
+                    is StableSubCategory -> container.parent
+                    else -> currentArgument?.getString(MainDestinations.Detail.parent)!!
+                }
+
+
+            val currentTitle = when (container) {
+                is StableSubCategory -> ""
+                else -> currentArgument?.getString(MainDestinations.Detail.title) ?: ""
+            }
+
             val titleWithDash = "$currentTitle - ${container.name}"
             navController.navigate(route = "${MainDestinations.Detail.route}/${parent}/${titleWithDash}/${parentKey}")
         }

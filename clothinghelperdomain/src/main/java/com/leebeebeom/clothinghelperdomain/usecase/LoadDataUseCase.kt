@@ -21,7 +21,7 @@ class LoadDataUseCase @Inject constructor(
     /**
      * 유저 변경 시 서브 카테고리, 폴더 리로드
      */
-    suspend fun load(onUpdateSubCategoriesFail: (FirebaseResult) -> Unit) =
+    suspend fun load(onLoadSubCategoriesFail: (FirebaseResult) -> Unit) =
         getUserUseCase.user.collectLatest {
             coroutineScope {
                 val subCategoryDeferred =
@@ -33,8 +33,8 @@ class LoadDataUseCase @Inject constructor(
 
                 when {
                     subCategoryResult is FirebaseResult.Fail ->
-                        onUpdateSubCategoriesFail(subCategoryResult)
-                    folderResult is FirebaseResult.Fail -> onUpdateSubCategoriesFail(folderResult)
+                        onLoadSubCategoriesFail(subCategoryResult)
+                    folderResult is FirebaseResult.Fail -> onLoadSubCategoriesFail(folderResult)
                 }
             }
         }

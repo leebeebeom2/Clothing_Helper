@@ -17,7 +17,7 @@ class GoogleSignInUseCase @Inject constructor(
      */
     suspend fun googleSignIn(
         credential: Any?,
-        onLoadSubCategoriesFail: (FirebaseResult) -> Unit
+        onLoadSubCategoriesFail: (FirebaseResult.Fail) -> Unit
     ): AuthResult {
         val authResult = userRepository.googleSignIn(credential)
 

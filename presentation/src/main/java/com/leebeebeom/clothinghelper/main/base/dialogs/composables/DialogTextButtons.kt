@@ -46,7 +46,7 @@ fun RowScope.DialogTextButton(
         ) {
             SingleLineText(
                 text = text,
-                style = MaterialTheme.typography.subtitle1.copy(color = textColor),
+                style = MaterialTheme.typography.body1.copy(color = textColor),
             )
         }
     }

@@ -1,11 +1,11 @@
 package com.leebeebeom.clothinghelper.main.base.interfaces.addandedit
 
 import androidx.annotation.StringRes
-import com.leebeebeom.clothinghelper.base.ToastUIState
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import kotlinx.coroutines.TimeoutCancellationException
 
-interface BaseContainerAddAndEdit : ToastUIState {
+interface BaseContainerAddAndEdit {
+    fun showToast(@StringRes text: Int)
     val uid: String?
 
     fun showFailToast(

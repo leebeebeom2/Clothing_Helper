@@ -16,9 +16,9 @@ class FolderRepositoryImpl @Inject constructor(
 
     override val refPath = DatabasePath.FOLDERS
 
-    override fun getNewContainer(value: Folder, key: String, createDate: Long) =
-        value.copy(key = key, createDate = createDate, editDate = createDate)
+    override fun getNewContainer(t: Folder, key: String, createDate: Long) =
+        t.copy(key = key, createDate = createDate, editDate = createDate)
 
-    override fun getContainerWithNewEditDate(value: Folder, editDate: Long) =
-        value.copy(editDate = editDate)
+    override fun getContainerWithNewEditDate(newT: Folder, editDate: Long) =
+        newT.copy(editDate = editDate)
 }

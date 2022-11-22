@@ -31,11 +31,11 @@ class SubCategoryRepositoryImpl @Inject constructor(
     override val refPath = DatabasePath.SUB_CATEGORIES
 
     override fun getNewContainer(
-        value: SubCategory, key: String, createDate: Long
-    ) = value.copy(key = key, createDate = createDate, editDate = createDate)
+        t: SubCategory, key: String, createDate: Long
+    ) = t.copy(key = key, createDate = createDate, editDate = createDate)
 
-    override fun getContainerWithNewEditDate(value: SubCategory, editDate: Long) =
-        value.copy(editDate = editDate)
+    override fun getContainerWithNewEditDate(newT: SubCategory, editDate: Long) =
+        newT.copy(editDate = editDate)
 }
 
 private fun getInitialSubCategories(): List<SubCategory> {

@@ -19,7 +19,7 @@ fun DrawerHeader(user: () -> StableUser?, onSettingIconClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp, horizontal = 8.dp),
+            .padding(vertical = 8.dp, horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         HeaderText(name = { user()?.name ?: "" }, email = { user()?.email ?: "" })
@@ -36,7 +36,7 @@ private fun RowScope.HeaderText(name: () -> String, email: () -> String) {
         modifier = Modifier
             .padding(start = 4.dp)
             .weight(1f),
-        style = MaterialTheme.typography.body1,
+        style = MaterialTheme.typography.subtitle1,
         text = "${name()}(${email()})"
     )
 }

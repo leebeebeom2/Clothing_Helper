@@ -11,10 +11,10 @@ import com.leebeebeom.clothinghelper.base.ToastUIStateImpl
 interface EmailUIState : ToastUIState {
     val emailError: Int?
     val email: String
+    val buttonEnabled: Boolean
+
     fun updateEmailError(@StringRes error: Int?)
     fun onEmailChange(email: String)
-
-    val buttonEnabled: Boolean
 }
 
 class EmailUIStateImpl : EmailUIState, ToastUIState by ToastUIStateImpl() {
@@ -24,6 +24,8 @@ class EmailUIStateImpl : EmailUIState, ToastUIState by ToastUIStateImpl() {
     override var email by mutableStateOf("")
         private set
 
+    override val buttonEnabled by derivedStateOf { email.isNotBlank() && emailError == null }
+
     override fun updateEmailError(@StringRes error: Int?) {
         emailError = error
     }
@@ -31,6 +33,4 @@ class EmailUIStateImpl : EmailUIState, ToastUIState by ToastUIStateImpl() {
     override fun onEmailChange(email: String) {
         this.email = email
     }
-
-    override val buttonEnabled by derivedStateOf { email.isNotBlank() && emailError == null }
 }

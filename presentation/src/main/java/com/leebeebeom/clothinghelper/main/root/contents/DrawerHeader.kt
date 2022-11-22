@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.root.contents.header
+package com.leebeebeom.clothinghelper.main.root.contents
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope

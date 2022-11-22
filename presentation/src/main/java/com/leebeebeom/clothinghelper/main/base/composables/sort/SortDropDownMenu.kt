@@ -39,7 +39,8 @@ fun SortDropdownMenu(
         Row(
             modifier = Modifier
                 .height(IntrinsicSize.Min)
-                .padding(vertical = 8.dp, horizontal = 12.dp)
+                .padding(horizontal = 12.dp)
+                .padding(top = 8.dp, bottom = 4.dp)
         ) {
             SortButtons(sort, onSortClick)
             SimpleWidthSpacer(dp = 8)
@@ -62,7 +63,7 @@ private fun OrderButtons(
         SortButton(
             text = R.string.sort_Ascending,
             isSelected = { sort().order == Order.ASCENDING }) { onOrderClick(Order.ASCENDING) }
-        SimpleHeightSpacer(dp = 8)
+        SimpleHeightSpacer(dp = 4)
         SortButton(
             text = R.string.sort_Descending,
             isSelected = { sort().order == Order.DESCENDING }) { onOrderClick(Order.DESCENDING) }
@@ -77,11 +78,11 @@ private fun SortButtons(
         SortButton(
             text = R.string.sort_name,
             isSelected = { sort().sort == Sort.NAME }) { onSortClick(Sort.NAME) }
-        SimpleHeightSpacer(dp = 8)
+        SimpleHeightSpacer(dp = 4)
         SortButton(
             text = R.string.sort_create_date,
             isSelected = { sort().sort == Sort.CREATE }) { onSortClick(Sort.CREATE) }
-        SimpleHeightSpacer(dp = 8)
+        SimpleHeightSpacer(dp = 4)
         SortButton(
             text = R.string.sort_edit_date,
             isSelected = { sort().sort == Sort.EDIT }) { onSortClick(Sort.EDIT) }
@@ -90,10 +91,10 @@ private fun SortButtons(
 
 @Composable
 private fun Header() {
-    Column(modifier = Modifier.padding(start = 12.dp, end = 12.dp, top = 8.dp)) {
+    Column(modifier = Modifier.padding(start = 12.dp, end = 12.dp, top = 4.dp)) {
         SingleLineText(
             text = R.string.sort,
-            style = MaterialTheme.typography.subtitle2.copy(letterSpacing = 1.55.sp)
+            style = MaterialTheme.typography.subtitle1.copy(letterSpacing = 1.55.sp)
                 .copy(color = LocalContentColor.current.copy(0.8f))
         )
         SimpleHeightSpacer(dp = 8)
@@ -115,12 +116,12 @@ fun SortButton(
             .border(
                 BorderStroke(width = 1.5.dp, color = strokeColor), shape = RoundedCornerShape(20.dp)
             )
-            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .padding(horizontal = 20.dp, vertical = 12.dp)
             .noRippleClickable(onClick = onSortButtonClick)
     ) {
         SingleLineText(
             text = text,
-            style = MaterialTheme.typography.body2,
+            style = MaterialTheme.typography.body2.copy(fontSize = 16.sp),
         )
     }
 }

@@ -1,9 +1,6 @@
 package com.leebeebeom.clothinghelper.main.base.interfaces
 
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.map.toStable
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategory
@@ -22,13 +19,19 @@ interface SubCategoryUIState {
 class SubCategoryUIStateImpl : SubCategoryUIState {
     override var allSubCategories by mutableStateOf(emptyList<StableSubCategory>())
         private set
+    private val subCategoriesMap =
+        hashMapOf<SubCategoryParent, State<ImmutableList<StableSubCategory>>>()
 
     override fun loadAllSubCategories(allSubCategories: List<SubCategory>) {
         this.allSubCategories = allSubCategories.map { it.toStable() }
     }
 
-    override fun getSubCategories(subCategoryParent: SubCategoryParent): ImmutableList<StableSubCategory> =
-        derivedStateOf {
-            allSubCategories.filter { it.parent == subCategoryParent }.toImmutableList()
-        }.value
+    override fun getSubCategories(subCategoryParent: SubCategoryParent): ImmutableList<StableSubCategory> {
+        if (subCategoriesMap[subCategoryParent] == null) {
+            subCategoriesMap[subCategoryParent] = derivedStateOf {
+                allSubCategories.filter { it.parent == subCategoryParent }.toImmutableList()
+            }
+        }
+        return subCategoriesMap[subCategoryParent]?.value!!
+    }
 }

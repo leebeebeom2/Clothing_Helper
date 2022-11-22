@@ -32,10 +32,10 @@ sealed class MainDestinations(val route: String) {
 
     object Setting : MainDestinations("setting")
     object Detail : MainDestinations("detail") {
-        const val subCategoryParent = "subCategoryParent"
+        const val parent = "parent"
         const val title = "title"
         const val parentKey = "parentKey"
-        val routeWithArg = "$route/{$subCategoryParent}/{$title}/{$parentKey}"
+        val routeWithArg = "$route/{$parent}/{$title}/{$parentKey}"
         val arguments = listOf(
             navArgument(title) { type = NavType.StringType },
             navArgument(parentKey) { type = NavType.StringType },
@@ -75,7 +75,7 @@ fun MainNavHost(state: MainNavHostState = rememberMainNavHostState()) {
             ) { entry ->
                 val arguments = entry.arguments!!
                 val parent =
-                    enumValueOf<SubCategoryParent>(arguments.getString(MainDestinations.Detail.subCategoryParent)!!)
+                    enumValueOf<SubCategoryParent>(arguments.getString(MainDestinations.Detail.parent)!!)
                 DetailScreen(
                     parent = parent,
                     title = arguments.getString(MainDestinations.Detail.title)!!,

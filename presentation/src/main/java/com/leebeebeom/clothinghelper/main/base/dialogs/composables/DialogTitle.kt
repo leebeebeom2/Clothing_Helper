@@ -12,7 +12,7 @@ import com.leebeebeom.clothinghelper.base.composables.SingleLineText
 fun DialogTitle(@StringRes text: Int) {
     SingleLineText(
         text = text,
-        style = MaterialTheme.typography.subtitle1,
+        style = MaterialTheme.typography.h6,
         modifier = Modifier.padding(start = 4.dp, bottom = 12.dp)
     )
 }

@@ -9,7 +9,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.composables.SingleLineText
@@ -25,7 +24,6 @@ fun OrDivider() {
             modifier = Modifier.padding(horizontal = 14.dp),
             style = MaterialTheme.typography.body2.copy(
                 color = LocalContentColor.current.copy(ContentAlpha.disabled),
-                fontWeight = FontWeight.Black
             )
         )
         Divider(modifier = modifier)

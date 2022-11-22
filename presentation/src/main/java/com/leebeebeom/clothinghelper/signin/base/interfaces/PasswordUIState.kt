@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 interface PasswordUIState : EmailUIState {
     val passwordError: Int?
     val password: String
+
     fun updatePasswordError(@StringRes error: Int?)
     fun onPasswordChange(password: String)
 }

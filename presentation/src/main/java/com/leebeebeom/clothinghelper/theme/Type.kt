@@ -2,26 +2,12 @@ package com.leebeebeom.clothinghelper.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.leebeebeom.clothinghelper.R
 
-val NanumBarunGothicFontFamily = FontFamily(
-    Font(R.font.nanumbarungothicultralight, FontWeight.Thin),
-    Font(R.font.nanumbarungothicultralight, FontWeight.ExtraLight),
-    Font(R.font.nanumbarungothiclight, FontWeight.Light),
-    Font(R.font.nanumbarungothic, FontWeight.Normal),
-    Font(R.font.nanumbarungothic, FontWeight.Medium),
-    Font(R.font.nanumbarungothic, FontWeight.SemiBold),
-    Font(R.font.nanumbarungothicbold, FontWeight.Bold),
-    Font(R.font.nanumbarungothicbold, FontWeight.ExtraBold),
-    Font(R.font.nanumbarungothicbold, FontWeight.Black)
-)
-
-val NanumBarunGothic = Typography(
-    defaultFontFamily = NanumBarunGothicFontFamily,
+val Type = Typography(
+    defaultFontFamily = FontFamily.Monospace,
     h1 = TextStyle(
         fontWeight = FontWeight.Light,
         fontSize = 96.sp,

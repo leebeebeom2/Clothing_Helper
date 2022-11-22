@@ -1,7 +1,6 @@
 package com.leebeebeom.clothinghelper.theme
 
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Typography
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 
@@ -18,7 +17,7 @@ fun ClothingHelperTheme(
 ) {
     MaterialTheme(
         colors = LightColorPalette,
-        typography = Typography(),
+        typography = Type,
         shapes = Shapes,
         content = content,
     )

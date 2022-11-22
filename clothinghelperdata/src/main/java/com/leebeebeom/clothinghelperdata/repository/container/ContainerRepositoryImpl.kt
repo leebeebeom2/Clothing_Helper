@@ -29,15 +29,9 @@ abstract class ContainerRepositoryImpl<T : BaseContainer> :
     private val allContainers = MutableStateFlow(emptyList<T>())
     protected abstract val refPath: String
 
-    /**
-     * [T]리스트의 상태가 변하거나 정렬이 변할 시 정렬된 [T] 리스트 [Flow] 반환
-     */
     protected fun getSortedContainers(sortFlow: Flow<SortPreferences>) =
-        combine(allContainers, sortFlow) { allContainers, sort -> getSorted(allContainers, sort) }
+        combine(allContainers, sortFlow, transform = ::getSorted)
 
-    /**
-     * uid가 null이면 [allContainers]를 빈 리스트로 [update]
-     */
     override suspend fun load(uid: String?, type: Class<T>) =
         databaseTryWithLoading("update") {
             uid?.let {
@@ -55,11 +49,6 @@ abstract class ContainerRepositoryImpl<T : BaseContainer> :
             }
         }
 
-    /**
-     * 1초간 응답없을 시 네트워크 미 연결로 간주
-     *
-     * [TimeoutCancellationException]이 포함된 [FirebaseResult.Fail] 반환
-     */
     override suspend fun add(t: T, uid: String) =
         databaseTryWithTimeOut(1000, "add") {
             val containerRef = root.getContainerRef(uid, refPath)
@@ -75,15 +64,10 @@ abstract class ContainerRepositoryImpl<T : BaseContainer> :
             FirebaseResult.Success
         }
 
-    /**
-     * 1초간 응답없을 시 네트워크 미 연결로 간주
-     *
-     * [TimeoutCancellationException]이 포함된 [FirebaseResult.Fail] 반환
-     */
     override suspend fun edit(newT: T, uid: String): FirebaseResult =
         databaseTryWithTimeOut(1000, "edit") {
             val newContainerWithNewEditDate =
-                getContainerWithNewEditDate(newT, System.currentTimeMillis())
+                getContainerWithNewEditDate(newT = newT, editDate = System.currentTimeMillis())
             root.getContainerRef(uid, refPath).child(newContainerWithNewEditDate.key)
                 .setValue(newContainerWithNewEditDate).await()
 
@@ -125,9 +109,7 @@ abstract class ContainerRepositoryImpl<T : BaseContainer> :
     }
 
     protected suspend fun push(containerRef: DatabaseReference, t: T) =
-        withContext(Dispatchers.IO) {
-            containerRef.child(t.key).setValue(t)
-        }
+        withContext(Dispatchers.IO) { containerRef.child(t.key).setValue(t) }
 
     protected fun getKey(containerRef: DatabaseReference) = containerRef.push().key!!
 

@@ -8,11 +8,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.composables.MaxWidthButton
 import com.leebeebeom.clothinghelper.base.composables.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.composables.SimpleToast
-import com.leebeebeom.clothinghelper.signin.base.composables.GoogleSignInButton
-import com.leebeebeom.clothinghelper.signin.base.composables.OrDivider
+import com.leebeebeom.clothinghelper.signin.base.composables.ButtonWithGoogleButton
 import com.leebeebeom.clothinghelper.signin.base.textfields.EmailTextField
 import com.leebeebeom.clothinghelper.signin.base.textfields.NameTextField
 import com.leebeebeom.clothinghelper.signin.base.textfields.PasswordTextField
@@ -79,20 +77,15 @@ fun SignUpScreen(
         )
 
         SimpleHeightSpacer(dp = 12)
-        MaxWidthButton(
-            text = R.string.sign_up,
-            enabled = { uiState.buttonEnabled },
-            onClick = viewModel::signUpWithEmailAndPassword,
-        )
-        SimpleHeightSpacer(dp = 8)
-        OrDivider()
-        SimpleHeightSpacer(dp = 8)
-        // 프리뷰 시 주석처리
-        GoogleSignInButton(
-            enabled = { uiState.googleButtonEnabled },
+        ButtonWithGoogleButton(
+            buttonText = R.string.sign_up,
+            buttonEnabled = { uiState.buttonEnabled },
+            onButtonClick = viewModel::signUpWithEmailAndPassword,
+            googleButtonEnabled = { uiState.googleButtonEnabled },
             onActivityResult = viewModel::signInWithGoogleEmail,
-            disabled = viewModel::disableGoogleButton
+            googleButtonDisable = { uiState.updateGoogleButtonEnabled(false) }
         )
+
         SimpleHeightSpacer(dp = 150)
     }
 

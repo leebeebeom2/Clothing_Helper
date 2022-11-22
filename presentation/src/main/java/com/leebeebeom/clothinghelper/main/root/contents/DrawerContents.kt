@@ -3,6 +3,7 @@ package com.leebeebeom.clothinghelper.main.root.contents
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Divider
@@ -39,7 +40,7 @@ fun DrawerContents(
         Surface(color = Color(0xFF121212)) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(top = 8.dp, bottom = 40.dp)
+                contentPadding = PaddingValues(top = 4.dp, bottom = 40.dp)
             ) {
                 items(state.essentialMenus, key = { it.name }) {
                     EssentialMenu(
@@ -48,7 +49,7 @@ fun DrawerContents(
                     )
                 }
 
-                item { Divider(color = Disabled, modifier = Modifier.weight(1f)) }
+                item { Divider(color = Disabled, modifier = Modifier.weight(1f).padding(vertical = 8.dp)) }
 
                 items(state.mainCategories, key = { it.name }) {
                     DrawerMainCategory(

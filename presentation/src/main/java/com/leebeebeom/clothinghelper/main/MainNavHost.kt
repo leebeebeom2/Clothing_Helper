@@ -19,7 +19,9 @@ import com.leebeebeom.clothinghelper.main.root.MainRoot
 import com.leebeebeom.clothinghelper.main.root.model.EssentialMenuType
 import com.leebeebeom.clothinghelper.main.setting.SettingScreen
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryScreen
+import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.util.navigateSingleTop
+import com.leebeebeom.clothinghelperdomain.model.container.BaseContainer
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 
 sealed class MainDestinations(val route: String) {
@@ -116,13 +118,27 @@ data class MainNavHostState(
             navController.navigateSingleTop(route = MainDestinations.Setting.route)
     }
 
-    fun navigateToDetail(parent: SubCategoryParent, title: String, parentKey: String) {
+    fun navigateToDetail(container: BaseContainer) {
+
         val currentArgument = currentBackStack.value?.arguments
+
+        val parent =
+            when (container) {
+                is StableSubCategory -> container.parent
+                else -> currentArgument?.getString(MainDestinations.Detail.parent)!!
+            }
+
+        val parentKey = container.key
         val currentParentKey = currentArgument?.getString(MainDestinations.Detail.parentKey)
-        val currentTitle = currentArgument?.getString(MainDestinations.Detail.title) ?: ""
+
+        val currentTitle = when (container) {
+            is StableSubCategory -> ""
+            else -> currentArgument?.getString(MainDestinations.Detail.title) ?: ""
+        }
+
         if (currentParentKey != parentKey) {
-            val titleWithDash = "$currentTitle - $title"
-            navController.navigate(route = "${MainDestinations.Detail.route}/${parent.name}/${titleWithDash}/${parentKey}")
+            val titleWithDash = "$currentTitle - ${container.name}"
+            navController.navigate(route = "${MainDestinations.Detail.route}/${parent}/${titleWithDash}/${parentKey}")
         }
     }
 }

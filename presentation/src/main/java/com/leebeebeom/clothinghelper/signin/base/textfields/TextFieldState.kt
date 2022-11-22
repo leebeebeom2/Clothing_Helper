@@ -16,7 +16,7 @@ open class TextFieldState(initialText: String) {
         onValueChange: (String) -> Unit,
         updateError: (Int?) -> Unit
     ) {
-        val text = newTextFieldValue.text.trim()
+        val text = newTextFieldValue.text
         if (textFieldValue.text != text) updateError(null)
         textFieldValue = newTextFieldValue
         onValueChange(text)

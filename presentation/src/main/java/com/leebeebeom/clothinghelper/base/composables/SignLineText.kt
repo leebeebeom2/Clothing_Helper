@@ -33,7 +33,12 @@ fun SingleLineText(
     style: TextStyle = LocalTextStyle.current,
     textAlign: TextAlign? = null
 ) {
-    SingleLineText(modifier, stringResource(id = text), style, textAlign)
+    SingleLineText(
+        modifier = modifier,
+        text = stringResource(id = text),
+        style = style,
+        textAlign = textAlign
+    )
 }
 
 @Composable

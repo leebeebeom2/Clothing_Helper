@@ -17,14 +17,14 @@ class GoogleSignInUseCase @Inject constructor(
      */
     suspend fun googleSignIn(
         credential: Any?,
-        onLoadSubCategoriesFail: (FirebaseResult.Fail) -> Unit
+        onSubCategoriesLoadFail: (FirebaseResult.Fail) -> Unit
     ): AuthResult {
         val authResult = userRepository.googleSignIn(credential)
 
         if (authResult is AuthResult.Success && authResult.isNewer)
             pushInitialSubCategoriesUseCase.pushInitialSubCategories(
                 authResult.user.uid,
-                onLoadSubCategoriesFail
+                onSubCategoriesLoadFail
             )
         return authResult
     }

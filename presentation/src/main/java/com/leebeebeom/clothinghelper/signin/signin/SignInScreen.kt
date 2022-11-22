@@ -88,7 +88,7 @@ private fun SignUpText(onClick: () -> Unit) {
             SingleLineText(
                 text = stringResource(id = R.string.sign_up_with_email),
                 style = MaterialTheme.typography.body2.copy(
-                    color = Color(0xFF35C2C1), fontWeight = FontWeight.Black
+                    color = Color(0xFF35C2C1), fontWeight = FontWeight.Bold
                 )
             )
         }

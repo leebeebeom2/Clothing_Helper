@@ -20,9 +20,9 @@ import com.leebeebeom.clothinghelper.theme.Disabled
 
 @Composable
 fun CenterDotProgressIndicator(
-    backGround: Color = Disabled, isLoading: () -> Boolean
+    backGround: Color = Disabled, show: () -> Boolean
 ) {
-    if (isLoading()) Surface(color = backGround) {
+    if (show()) Surface(color = backGround) {
         Box(modifier = Modifier
             .fillMaxSize()
             .clickable(enabled = false) { }) {

@@ -18,6 +18,7 @@ import com.leebeebeom.clothinghelper.main.root.components.DrawerTotalCount
 import com.leebeebeom.clothinghelper.main.root.contents.dropdownmenus.DrawerSubCategoryDropDownMenu
 import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
+import com.leebeebeom.clothinghelper.theme.DarkGray
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -65,7 +66,7 @@ fun DrawerSubCategory(
 
     }
 
-    DrawerItems(show = { isExpand }, items = { folders(subCategory().key) }, backGround = MaterialTheme.colors.primary) {
+    DrawerItems(show = { isExpand }, items = { folders(subCategory().key) }, backGround = DarkGray) {
         DrawerFolder(
             folder = { it },
             onClick = { onFolderClick(it) },

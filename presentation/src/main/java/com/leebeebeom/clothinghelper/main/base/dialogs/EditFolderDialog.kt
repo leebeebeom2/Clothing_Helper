@@ -2,7 +2,6 @@ package com.leebeebeom.clothinghelper.main.base.dialogs
 
 import androidx.compose.runtime.Composable
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.main.base.dialogs.EditDialog
 import com.leebeebeom.clothinghelper.map.StableFolder
 import kotlinx.collections.immutable.ImmutableList
 
@@ -23,6 +22,6 @@ fun EditFolderDialog(
         onDismiss = onDismiss,
         onPositiveButtonClick = onPositiveButtonClick,
         show = show,
-        initialName = { folder().name}
+        initialName = { folder().name }
     )
 }

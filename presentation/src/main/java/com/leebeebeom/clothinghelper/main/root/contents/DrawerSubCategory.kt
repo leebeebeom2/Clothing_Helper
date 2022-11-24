@@ -12,6 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.base.composables.SingleLineText
 import com.leebeebeom.clothinghelper.main.root.components.DrawerContentRow
+import com.leebeebeom.clothinghelper.main.root.components.DrawerExpandIcon
+import com.leebeebeom.clothinghelper.main.root.components.DrawerItems
+import com.leebeebeom.clothinghelper.main.root.components.DrawerTotalCount
 import com.leebeebeom.clothinghelper.main.root.contents.dropdownmenus.DrawerSubCategoryDropDownMenu
 import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
@@ -24,14 +27,16 @@ fun DrawerSubCategory(
     subCategories: () -> ImmutableList<StableSubCategory>,
     onEditSubCategoryNamePositiveClick: (StableSubCategory) -> Unit,
     onAddFolderPositiveClick: (StableFolder) -> Unit,
-    folders: () -> ImmutableList<StableFolder>
+    folders: (key: String) -> ImmutableList<StableFolder>,
+    onFolderClick: (StableFolder) -> Unit
 ) {
+    var isExpand by rememberSaveable { mutableStateOf(false) }
     var showDropDownMenu by rememberSaveable { mutableStateOf(false) }
 
     DrawerContentRow(
         modifier = Modifier
             .heightIn(40.dp)
-            .padding(horizontal = 8.dp),
+            .padding(start = 8.dp),
         onClick = onClick,
         onLongClick = { showDropDownMenu = true }
     ) {
@@ -40,7 +45,6 @@ fun DrawerSubCategory(
             text = subCategory().name,
             style = MaterialTheme.typography.subtitle2
         )
-
         DrawerSubCategoryDropDownMenu(
             show = { showDropDownMenu },
             onDismiss = { showDropDownMenu = false },
@@ -48,7 +52,25 @@ fun DrawerSubCategory(
             subCategory = subCategory,
             onEditSubCategoryPositiveClick = onEditSubCategoryNamePositiveClick,
             onAddFolderPositiveClick = onAddFolderPositiveClick,
-            folders = folders,
+            folders = { folders(subCategory().key) },
+        )
+        DrawerTotalCount(items = { folders(subCategory().key) }, isLoading = { false })
+
+        DrawerExpandIcon(
+            isLoading = { false },
+            isExpanded = { isExpand },
+            onClick = { isExpand = !isExpand },
+            items = { folders(subCategory().key) }
+        )
+
+    }
+
+    DrawerItems(show = { isExpand }, items = { folders(subCategory().key) }, depth = 2) {
+        DrawerFolder(
+            folder = { it },
+            onClick = { onFolderClick(it) },
+            startPadding = 24.dp,
+            folders = folders
         )
     }
 }

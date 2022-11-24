@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.main.root.model.*
+import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.map.StableUser
 import com.leebeebeom.clothinghelper.theme.Disabled
@@ -31,7 +32,9 @@ fun DrawerContents(
     onSubCategoryClick: (StableSubCategory) -> Unit,
     onSettingIconClick: () -> Unit,
     onAddSubCategoryPositiveButtonClick: (StableSubCategory) -> Unit,
-    onEditSUbCategoryNamePositiveClick: (StableSubCategory) -> Unit
+    onEditSUbCategoryNamePositiveClick: (StableSubCategory) -> Unit,
+    onAddFolderPositiveClick: (StableFolder) -> Unit,
+    folders:(parentKey:String) -> ImmutableList<StableFolder>
 ) {
     Column {
         DrawerHeader(user = user, onSettingIconClick = onSettingIconClick)
@@ -58,7 +61,9 @@ fun DrawerContents(
                         onMainCategoryClick = onMainCategoryClick,
                         onSubCategoryClick = onSubCategoryClick,
                         onAddSubCategoryPositiveClick = onAddSubCategoryPositiveButtonClick,
-                        onEditSubCategoryNamePositiveClick = onEditSUbCategoryNamePositiveClick
+                        onEditSubCategoryNamePositiveClick = onEditSUbCategoryNamePositiveClick,
+                        onAddFolderPositiveClick = onAddFolderPositiveClick,
+                        folders = folders
                     )
                 }
             }

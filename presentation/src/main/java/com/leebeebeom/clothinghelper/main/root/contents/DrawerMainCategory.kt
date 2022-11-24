@@ -78,7 +78,7 @@ fun DrawerMainCategory(
         DrawerItems(
             show = { isExpanded },
             items = { subCategories(mainCategory.type) },
-            depth = 1
+            backGround = MaterialTheme.colors.primary
         ) {
             DrawerSubCategory(
                 subCategory = { it },

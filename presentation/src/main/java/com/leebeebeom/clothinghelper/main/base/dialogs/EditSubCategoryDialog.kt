@@ -22,7 +22,7 @@ fun EditSubCategoryDialog(
     }
 
     EditDialog(
-        label = R.string.edit_category,
+        label = R.string.category,
         placeHolder = R.string.category_place_holder,
         title = R.string.edit_category,
         show = show,

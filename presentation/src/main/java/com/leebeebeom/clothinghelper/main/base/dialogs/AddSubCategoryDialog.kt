@@ -19,7 +19,7 @@ fun AddSubCategoryDialog(
     val names by remember { derivedStateOf { subCategories().map { it.name }.toImmutableList() } }
 
     AddDialog(
-        label = R.string.add_category,
+        label = R.string.category,
         placeHolder = R.string.category_place_holder,
         title = R.string.add_category,
         names = { names },

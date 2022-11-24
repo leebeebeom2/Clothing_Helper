@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.*
@@ -14,10 +13,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.base.Anime.DrawerList.listExpand
 import com.leebeebeom.clothinghelper.base.Anime.DrawerList.listShrink
-import com.leebeebeom.clothinghelper.base.composables.DotProgressIndicator
 import com.leebeebeom.clothinghelper.base.composables.SingleLineText
-import com.leebeebeom.clothinghelper.main.base.composables.ExpandIcon
 import com.leebeebeom.clothinghelper.main.root.components.DrawerContentRow
+import com.leebeebeom.clothinghelper.main.root.components.DrawerExpandIcon
 import com.leebeebeom.clothinghelper.main.root.components.DrawerTotalCount
 import com.leebeebeom.clothinghelper.main.root.contents.dropdownmenus.DrawerMainCategoryDropDownMenu
 import com.leebeebeom.clothinghelper.main.root.model.MainCategory
@@ -66,14 +64,14 @@ fun DrawerMainCategory(
                 }
             )
             DrawerTotalCount(
-                subCategories = { subCategories(mainCategory.type) },
+                items = { subCategories(mainCategory.type) },
                 isLoading = isLoading
             )
-            ExpandIcon(
+            DrawerExpandIcon(
                 isLoading = isLoading,
                 isExpanded = { isExpanded },
                 onClick = { isExpanded = !isExpanded },
-                subCategories = { subCategories(mainCategory.type) }
+                items = { subCategories(mainCategory.type) }
             )
         }
         SubCategories(
@@ -85,28 +83,6 @@ fun DrawerMainCategory(
             folders = folders
         )
     }
-}
-
-@Composable
-private fun ExpandIcon(
-    isLoading: () -> Boolean,
-    isExpanded: () -> Boolean,
-    onClick: () -> Unit,
-    subCategories: () -> ImmutableList<StableSubCategory>
-) {
-    val show by remember { derivedStateOf { subCategories().size > 0 } }
-
-    if (isLoading())
-        DotProgressIndicator(
-            modifier = Modifier.padding(end = 4.dp),
-            size = 4.dp,
-            color = MaterialTheme.colors.surface.copy(ContentAlpha.disabled)
-        )
-    else if (show)
-        ExpandIcon(
-            isExpanded = isExpanded,
-            onClick = onClick
-        )
 }
 
 @Composable

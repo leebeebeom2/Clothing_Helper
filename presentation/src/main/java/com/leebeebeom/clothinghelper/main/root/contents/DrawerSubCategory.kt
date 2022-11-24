@@ -36,12 +36,12 @@ fun DrawerSubCategory(
     DrawerContentRow(
         modifier = Modifier
             .heightIn(40.dp)
-            .padding(start = 8.dp),
+            .padding(start = 16.dp),
         onClick = onClick,
         onLongClick = { showDropDownMenu = true }
     ) {
         SingleLineText(
-            modifier = Modifier.padding(start = 12.dp),
+            modifier = Modifier.padding(start = 4.dp),
             text = subCategory().name,
             style = MaterialTheme.typography.subtitle2
         )
@@ -65,7 +65,7 @@ fun DrawerSubCategory(
 
     }
 
-    DrawerItems(show = { isExpand }, items = { folders(subCategory().key) }, depth = 2) {
+    DrawerItems(show = { isExpand }, items = { folders(subCategory().key) }, backGround = MaterialTheme.colors.primary) {
         DrawerFolder(
             folder = { it },
             onClick = { onFolderClick(it) },

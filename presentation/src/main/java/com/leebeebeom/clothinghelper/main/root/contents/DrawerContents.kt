@@ -35,7 +35,8 @@ fun DrawerContents(
     onEditSUbCategoryNamePositiveClick: (StableSubCategory) -> Unit,
     onAddFolderPositiveClick: (StableFolder) -> Unit,
     folders: (parentKey: String) -> ImmutableList<StableFolder>,
-    onFolderClick: (StableFolder) -> Unit
+    onFolderClick: (StableFolder) -> Unit,
+    onEditFolderPositiveClick : (StableFolder) -> Unit
 ) {
     Column {
         DrawerHeader(user = user, onSettingIconClick = onSettingIconClick)
@@ -72,7 +73,8 @@ fun DrawerContents(
                         onEditSubCategoryPositiveClick = onEditSUbCategoryNamePositiveClick,
                         onAddFolderPositiveClick = onAddFolderPositiveClick,
                         folders = folders,
-                        onFolderClick = onFolderClick
+                        onFolderClick = onFolderClick,
+                        onEditFolderPositiveClick = onEditFolderPositiveClick
                     )
                 }
             }

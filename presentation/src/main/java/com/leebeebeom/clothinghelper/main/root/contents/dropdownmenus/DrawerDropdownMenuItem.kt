@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -28,6 +29,7 @@ fun DrawerDropdownMenuItem(
             )
             .padding(vertical = 10.dp)
             .padding(start = 12.dp, end = 24.dp)
+            .widthIn(52.dp)
             .fillMaxSize(),
         style = MaterialTheme.typography.subtitle2,
         textAlign = TextAlign.Start

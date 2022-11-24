@@ -11,12 +11,12 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.main.root.model.*
 import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.map.StableUser
+import com.leebeebeom.clothinghelper.theme.DarkGray
 import com.leebeebeom.clothinghelper.theme.Disabled
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 import kotlinx.collections.immutable.ImmutableList
@@ -34,12 +34,12 @@ fun DrawerContents(
     onAddSubCategoryPositiveButtonClick: (StableSubCategory) -> Unit,
     onEditSUbCategoryNamePositiveClick: (StableSubCategory) -> Unit,
     onAddFolderPositiveClick: (StableFolder) -> Unit,
-    folders:(parentKey:String) -> ImmutableList<StableFolder>
+    folders: (parentKey: String) -> ImmutableList<StableFolder>
 ) {
     Column {
         DrawerHeader(user = user, onSettingIconClick = onSettingIconClick)
 
-        Surface(color = Color.DarkGray) {
+        Surface(color = DarkGray) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(top = 4.dp, bottom = 40.dp)
@@ -51,7 +51,14 @@ fun DrawerContents(
                     )
                 }
 
-                item { Divider(color = Disabled, modifier = Modifier.weight(1f).padding(vertical = 8.dp)) }
+                item {
+                    Divider(
+                        color = Disabled,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(vertical = 8.dp)
+                    )
+                }
 
                 items(state.mainCategories, key = { it.name }) {
                     DrawerMainCategory(

@@ -5,7 +5,7 @@ import com.leebeebeom.clothinghelperdomain.model.container.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 
 data class StableSubCategory(
-    val parent: SubCategoryParent = SubCategoryParent.TOP,
+    override val parent: SubCategoryParent = SubCategoryParent.TOP,
     override val key: String = "",
     override val name: String = "",
     override val createDate: Long = 0,

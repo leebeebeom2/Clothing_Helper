@@ -9,5 +9,6 @@ data class Folder(
     override val createDate: Long = 0,
     override val name: String = "",
     override val key: String = "",
-    override val editDate: Long = 0
+    override val editDate: Long = 0,
+    override val parent: SubCategoryParent = SubCategoryParent.TOP
 ) : BaseContainer(), Parcelable

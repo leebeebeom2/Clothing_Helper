@@ -124,18 +124,20 @@ private fun SubCategories(
         enter = listExpand,
         exit = listShrink
     ) {
-        Surface(color = MaterialTheme.colors.primary) {
-            Column {
-                subCategories().forEach {
-                    key(it.key) {
-                        DrawerSubCategory(
-                            subCategory = { it },
-                            onClick = { onClick(it) },
-                            onEditSubCategoryNamePositiveClick = onEditSubCategoryPositiveClick,
-                            subCategories = subCategories,
-                            onAddFolderPositiveClick = onAddFolderPositiveClick,
-                            folders = { folders(it.key) }
-                        )
+        key("subCategories") {
+            Surface(color = MaterialTheme.colors.primary) {
+                Column {
+                    subCategories().forEach {
+                        key(it.key) {
+                            DrawerSubCategory(
+                                subCategory = { it },
+                                onClick = { onClick(it) },
+                                onEditSubCategoryNamePositiveClick = onEditSubCategoryPositiveClick,
+                                subCategories = subCategories,
+                                onAddFolderPositiveClick = onAddFolderPositiveClick,
+                                folders = { folders(it.key) }
+                            )
+                        }
                     }
                 }
             }

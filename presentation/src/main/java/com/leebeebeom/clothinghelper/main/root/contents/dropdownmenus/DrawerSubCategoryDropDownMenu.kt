@@ -8,7 +8,7 @@ import androidx.compose.runtime.setValue
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.main.base.composables.DropDownMenuRoot
 import com.leebeebeom.clothinghelper.main.base.dialogs.EditSubCategoryDialog
-import com.leebeebeom.clothinghelper.main.detail.dialogs.AddFolderDialog
+import com.leebeebeom.clothinghelper.main.base.dialogs.AddFolderDialog
 import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import kotlinx.collections.immutable.ImmutableList

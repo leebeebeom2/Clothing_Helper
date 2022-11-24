@@ -85,7 +85,9 @@ fun MainRoot(
                         drawerClose()
                     },
                     onAddSubCategoryPositiveButtonClick = viewModel::addSubCategory,
-                    onEditSUbCategoryNamePositiveClick = viewModel::editSubCategoryName
+                    onEditSUbCategoryNamePositiveClick = viewModel::editSubCategoryName,
+                    onAddFolderPositiveClick = viewModel::addFolder,
+                    folders = uiState::getFolders
                 )
             },
             drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),

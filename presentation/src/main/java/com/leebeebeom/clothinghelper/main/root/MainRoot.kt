@@ -13,6 +13,7 @@ import com.leebeebeom.clothinghelper.base.composables.BlockBacKPressWhenLoading
 import com.leebeebeom.clothinghelper.base.composables.SimpleToast
 import com.leebeebeom.clothinghelper.main.root.contents.DrawerContents
 import com.leebeebeom.clothinghelper.main.root.model.EssentialMenuType
+import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
@@ -51,6 +52,7 @@ fun MainRoot(
     uiState: MainRootUIState = viewModel.uiState,
     state: MainRootState = rememberMainRootState(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    onFolderClick: (StableFolder) -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val drawerClose = remember {
@@ -82,6 +84,10 @@ fun MainRoot(
                     },
                     onSettingIconClick = {
                         onSettingIconClick()
+                        drawerClose()
+                    },
+                    onFolderClick = {
+                        onFolderClick(it)
                         drawerClose()
                     },
                     onAddSubCategoryPositiveButtonClick = viewModel::addSubCategory,

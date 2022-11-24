@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -12,6 +13,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import com.leebeebeom.clothinghelper.main.base.dialogs.composables.BaseTextFieldDialogState
 import com.leebeebeom.clothinghelper.main.base.dialogs.composables.TextFieldDialog
+import com.leebeebeom.clothinghelperdomain.model.container.BaseContainer
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -19,7 +21,7 @@ fun EditDialog(
     @StringRes label: Int,
     @StringRes placeHolder: Int,
     @StringRes title: Int,
-    names: () -> ImmutableList<String>,
+    items: () -> ImmutableList<BaseContainer>,
     @StringRes existNameError: Int,
     onDismiss: () -> Unit,
     onPositiveButtonClick: (String) -> Unit,
@@ -27,6 +29,7 @@ fun EditDialog(
     initialName: () -> String
 ) {
     if (show()) {
+        val names by remember { derivedStateOf { items().map { it.name } } }
         val state =
             rememberSaveable(saver = EditDialogState.Saver) { EditDialogState(initialName = initialName()) }
 
@@ -39,7 +42,7 @@ fun EditDialog(
             positiveButtonEnabled = { state.positiveButtonEnabled },
             onValueChange = {
                 state.onValueChange(it)
-                if (names().contains(it.text.trim())) state.updateError(existNameError)
+                if (names.contains(it.text.trim())) state.updateError(existNameError)
                 if (state.initialName == it.text) state.updateError(null)
             },
             onFocusChanged = state::onFocusChange,

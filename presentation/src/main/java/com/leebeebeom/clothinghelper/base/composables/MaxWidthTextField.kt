@@ -95,11 +95,13 @@ private fun ErrorText(@StringRes error: () -> Int?) {
     AnimatedVisibility(
         visible = error() != null, enter = errorIn, exit = errorOut
     ) {
-        SingleLineText(
-            modifier = Modifier.padding(start = 4.dp, top = 4.dp),
-            text = error,
-            style = MaterialTheme.typography.caption.copy(color = MaterialTheme.colors.error),
-        )
+        key("errorText") {
+            SingleLineText(
+                modifier = Modifier.padding(start = 4.dp, top = 4.dp),
+                text = error,
+                style = MaterialTheme.typography.caption.copy(color = MaterialTheme.colors.error),
+            )
+        }
     }
 }
 
@@ -157,11 +159,13 @@ private fun CancelIcon(show: () -> Boolean, onValueChange: (TextFieldValue) -> U
         enter = Anime.CancelIcon.fadeIn,
         exit = Anime.CancelIcon.fadeOut,
     ) {
-        CustomIconButton(
-            onClick = { onValueChange(TextFieldValue()) },
-            drawable = R.drawable.ic_cancel,
-            tint = Color(0xFF555555),
-            size = 24.dp
-        )
+        key("cancelIcon") {
+            CustomIconButton(
+                onClick = { onValueChange(TextFieldValue()) },
+                drawable = R.drawable.ic_cancel,
+                tint = Color(0xFF555555),
+                size = 24.dp
+            )
+        }
     }
 }

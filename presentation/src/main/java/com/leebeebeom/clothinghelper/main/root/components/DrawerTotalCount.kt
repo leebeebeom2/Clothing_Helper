@@ -9,19 +9,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.base.composables.SingleLineText
-import com.leebeebeom.clothinghelper.map.StableSubCategory
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun RowScope.DrawerTotalCount(
-    subCategories: () -> ImmutableList<StableSubCategory>,
+    items: () -> ImmutableList<*>,
     isLoading: () -> Boolean,
 ) {
     SingleLineText(
         modifier = Modifier
             .weight(1f)
             .padding(start = 4.dp),
-        text = if (isLoading()) "" else "(${subCategories().size})",
+        text = if (isLoading()) "" else "(${items().size})",
         style = MaterialTheme.typography.caption.copy(
             LocalContentColor.current.copy(
                 ContentAlpha.disabled

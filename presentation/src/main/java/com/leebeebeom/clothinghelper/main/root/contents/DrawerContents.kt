@@ -39,7 +39,7 @@ fun DrawerContents(
     Column {
         DrawerHeader(user = user, onSettingIconClick = onSettingIconClick)
 
-        Surface(color = Color(0xFF121212)) {
+        Surface(color = Color.DarkGray) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(top = 4.dp, bottom = 40.dp)

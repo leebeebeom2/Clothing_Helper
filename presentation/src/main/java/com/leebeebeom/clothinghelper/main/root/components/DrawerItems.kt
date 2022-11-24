@@ -2,11 +2,12 @@ package com.leebeebeom.clothinghelper.main.root.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
-import androidx.compose.ui.graphics.Color
 import com.leebeebeom.clothinghelper.base.Anime
+import com.leebeebeom.clothinghelper.theme.DarkGray
 import com.leebeebeom.clothinghelperdomain.model.container.BaseContainer
 import kotlinx.collections.immutable.ImmutableList
 
@@ -14,7 +15,7 @@ import kotlinx.collections.immutable.ImmutableList
 fun <T : BaseContainer> DrawerItems(
     show: () -> Boolean,
     items: () -> ImmutableList<T>,
-    backGround: Color,
+    depth: Int,
     item: @Composable (T) -> Unit,
 ) {
     AnimatedVisibility(
@@ -23,7 +24,7 @@ fun <T : BaseContainer> DrawerItems(
         exit = Anime.DrawerList.listShrink
     ) {
         key("drawerItems") {
-            Surface(color = backGround) {
+            Surface(color = if (depth % 2 == 0) DarkGray else MaterialTheme.colors.primary) {
                 Column { items().forEach { key(it.key) { item(it) } } }
             }
         }

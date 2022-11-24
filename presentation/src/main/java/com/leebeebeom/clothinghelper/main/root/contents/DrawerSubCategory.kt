@@ -70,7 +70,8 @@ fun DrawerSubCategory(
             folder = { it },
             onClick = { onFolderClick(it) },
             startPadding = 24.dp,
-            folders = folders
+            folders = folders,
+            depth = 2
         )
     }
 }

@@ -14,15 +14,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.leebeebeom.clothinghelper.base.Anime.List.listExpand
-import com.leebeebeom.clothinghelper.base.Anime.List.listShrink
+import com.leebeebeom.clothinghelper.base.Anime.DrawerList.listExpand
+import com.leebeebeom.clothinghelper.base.Anime.DrawerList.listShrink
 import com.leebeebeom.clothinghelper.base.composables.DotProgressIndicator
 import com.leebeebeom.clothinghelper.base.composables.SingleLineText
-import com.leebeebeom.clothinghelper.main.base.components.ExpandIcon
+import com.leebeebeom.clothinghelper.main.base.composables.ExpandIcon
 import com.leebeebeom.clothinghelper.main.root.components.DrawerContentRow
-import com.leebeebeom.clothinghelper.main.root.components.DrawerContentText
 import com.leebeebeom.clothinghelper.main.root.contents.dropdownmenus.DrawerMainCategoryDropDownMenu
 import com.leebeebeom.clothinghelper.main.root.model.MainCategory
+import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 import kotlinx.collections.immutable.ImmutableList
@@ -35,22 +35,23 @@ fun DrawerMainCategory(
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (StableSubCategory) -> Unit,
     onAddSubCategoryPositiveClick: (StableSubCategory) -> Unit,
-    onEditSubCategoryNamePositiveClick: (StableSubCategory) -> Unit
+    onEditSubCategoryNamePositiveClick: (StableSubCategory) -> Unit,
+    onAddFolderPositiveClick: (StableFolder) -> Unit,
+    folders: (parentKey: String) -> ImmutableList<StableFolder>
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     var showDropdownMenu by rememberSaveable { mutableStateOf(false) }
 
     Column {
         DrawerContentRow(
-            modifier = Modifier
-                .heightIn(44.dp),
+            modifier = Modifier.heightIn(44.dp),
             onClick = { onMainCategoryClick(mainCategory.type) },
             onLongClick = { showDropdownMenu = true }
         ) {
-            DrawerContentText(
+            SingleLineText(
                 modifier = Modifier.padding(start = 8.dp),
                 text = stringResource(id = mainCategory.name),
-                style = MaterialTheme.typography.subtitle1
+                style = MaterialTheme.typography.body1
             )
             DrawerMainCategoryDropDownMenu(
                 show = { showDropdownMenu },
@@ -73,14 +74,16 @@ fun DrawerMainCategory(
                 isLoading = isLoading,
                 isExpanded = { isExpanded },
                 onClick = { isExpanded = !isExpanded },
-                subCategories = {subCategories(mainCategory.type)}
+                subCategories = { subCategories(mainCategory.type) }
             )
         }
         SubCategories(
-            isExpanded = { isExpanded },
+            show = { isExpanded },
             subCategories = { subCategories(mainCategory.type) },
             onClick = onSubCategoryClick,
-            onEditSubCategoryNamePositiveClick = onEditSubCategoryNamePositiveClick,
+            onEditSubCategoryPositiveClick = onEditSubCategoryNamePositiveClick,
+            onAddFolderPositiveClick = onAddFolderPositiveClick,
+            folders = folders
         )
     }
 }
@@ -109,13 +112,15 @@ private fun ExpandIcon(
 
 @Composable
 private fun SubCategories(
-    isExpanded: () -> Boolean,
+    show: () -> Boolean,
     subCategories: () -> ImmutableList<StableSubCategory>,
     onClick: (StableSubCategory) -> Unit,
-    onEditSubCategoryNamePositiveClick: (StableSubCategory) -> Unit
+    onEditSubCategoryPositiveClick: (StableSubCategory) -> Unit,
+    folders: (parentKey: String) -> ImmutableList<StableFolder>,
+    onAddFolderPositiveClick: (StableFolder) -> Unit
 ) {
     AnimatedVisibility(
-        visible = isExpanded(),
+        visible = show(),
         enter = listExpand,
         exit = listShrink
     ) {
@@ -126,8 +131,10 @@ private fun SubCategories(
                         DrawerSubCategory(
                             subCategory = { it },
                             onClick = { onClick(it) },
-                            onEditSubCategoryNamePositiveClick = onEditSubCategoryNamePositiveClick,
-                            subCategories = subCategories
+                            onEditSubCategoryNamePositiveClick = onEditSubCategoryPositiveClick,
+                            subCategories = subCategories,
+                            onAddFolderPositiveClick = onAddFolderPositiveClick,
+                            folders = { folders(it.key) }
                         )
                     }
                 }
@@ -141,13 +148,11 @@ private fun RowScope.TotalCount(
     subCategories: () -> ImmutableList<StableSubCategory>,
     isLoading: () -> Boolean,
 ) {
-    val count by remember { derivedStateOf { subCategories().size } }
-
     SingleLineText(
         modifier = Modifier
             .weight(1f)
             .padding(start = 4.dp),
-        text = if (isLoading()) "" else "($count)",
+        text = if (isLoading()) "" else "(${subCategories().size})",
         style = MaterialTheme.typography.caption.copy(
             LocalContentColor.current.copy(
                 ContentAlpha.disabled

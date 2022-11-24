@@ -1,21 +1,21 @@
 package com.leebeebeom.clothinghelper.main.root.contents
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.leebeebeom.clothinghelper.base.Anime.DrawerList.listExpand
-import com.leebeebeom.clothinghelper.base.Anime.DrawerList.listShrink
 import com.leebeebeom.clothinghelper.base.composables.SingleLineText
 import com.leebeebeom.clothinghelper.main.root.components.DrawerContentRow
 import com.leebeebeom.clothinghelper.main.root.components.DrawerExpandIcon
+import com.leebeebeom.clothinghelper.main.root.components.DrawerItems
 import com.leebeebeom.clothinghelper.main.root.components.DrawerTotalCount
 import com.leebeebeom.clothinghelper.main.root.contents.dropdownmenus.DrawerMainCategoryDropDownMenu
 import com.leebeebeom.clothinghelper.main.root.model.MainCategory
@@ -32,7 +32,7 @@ fun DrawerMainCategory(
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (StableSubCategory) -> Unit,
     onAddSubCategoryPositiveClick: (StableSubCategory) -> Unit,
-    onEditSubCategoryNamePositiveClick: (StableSubCategory) -> Unit,
+    onEditSubCategoryPositiveClick: (StableSubCategory) -> Unit,
     onAddFolderPositiveClick: (StableFolder) -> Unit,
     folders: (parentKey: String) -> ImmutableList<StableFolder>
 ) {
@@ -74,48 +74,18 @@ fun DrawerMainCategory(
                 items = { subCategories(mainCategory.type) }
             )
         }
-        SubCategories(
+        DrawerItems(
             show = { isExpanded },
-            subCategories = { subCategories(mainCategory.type) },
-            onClick = onSubCategoryClick,
-            onEditSubCategoryPositiveClick = onEditSubCategoryNamePositiveClick,
-            onAddFolderPositiveClick = onAddFolderPositiveClick,
-            folders = folders
-        )
-    }
-}
-
-@Composable
-private fun SubCategories(
-    show: () -> Boolean,
-    subCategories: () -> ImmutableList<StableSubCategory>,
-    onClick: (StableSubCategory) -> Unit,
-    onEditSubCategoryPositiveClick: (StableSubCategory) -> Unit,
-    folders: (parentKey: String) -> ImmutableList<StableFolder>,
-    onAddFolderPositiveClick: (StableFolder) -> Unit
-) {
-    AnimatedVisibility(
-        visible = show(),
-        enter = listExpand,
-        exit = listShrink
-    ) {
-        key("subCategories") {
-            Surface(color = MaterialTheme.colors.primary) {
-                Column {
-                    subCategories().forEach {
-                        key(it.key) {
-                            DrawerSubCategory(
-                                subCategory = { it },
-                                onClick = { onClick(it) },
-                                onEditSubCategoryNamePositiveClick = onEditSubCategoryPositiveClick,
-                                subCategories = subCategories,
-                                onAddFolderPositiveClick = onAddFolderPositiveClick,
-                                folders = { folders(it.key) }
-                            )
-                        }
-                    }
-                }
-            }
+            items = { subCategories(mainCategory.type) }
+        ) {
+            DrawerSubCategory(
+                subCategory = { it },
+                onClick = { onSubCategoryClick(it) },
+                onEditSubCategoryNamePositiveClick = onEditSubCategoryPositiveClick,
+                subCategories = { subCategories(mainCategory.type) },
+                onAddFolderPositiveClick = onAddFolderPositiveClick,
+                folders = { folders(it.key) }
+            )
         }
     }
 }

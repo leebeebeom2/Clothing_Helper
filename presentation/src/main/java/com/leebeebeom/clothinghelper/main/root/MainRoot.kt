@@ -93,6 +93,7 @@ fun MainRoot(
                     onAddSubCategoryPositiveButtonClick = viewModel::addSubCategory,
                     onEditSUbCategoryNamePositiveClick = viewModel::editSubCategoryName,
                     onAddFolderPositiveClick = viewModel::addFolder,
+                    onEditFolderPositiveClick = viewModel::editFolder,
                     folders = uiState::getFolders
                 )
             },

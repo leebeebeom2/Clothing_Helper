@@ -7,7 +7,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
@@ -20,7 +21,10 @@ const val fabBottomPadding = 24
 @Composable
 fun BoxScope.Fab(
     modifier: Modifier = Modifier,
-    paddingValues: PaddingValues = PaddingValues(end = fabEndPadding.dp, bottom = fabBottomPadding.dp),
+    paddingValues: PaddingValues = PaddingValues(
+        end = fabEndPadding.dp,
+        bottom = fabBottomPadding.dp
+    ),
     align: Alignment = Alignment.BottomEnd,
     size: Dp = 48.dp,
     visible: () -> Boolean,
@@ -33,13 +37,15 @@ fun BoxScope.Fab(
         enter = Anime.SelectModeFabFade.fadeIn,
         exit = Anime.SelectModeFabFade.fadeOut
     ) {
-        FloatingActionButton(
-            modifier = modifier
-                .padding(paddingValues)
-                .size(size),
-            onClick = onClick,
-            backgroundColor = MaterialTheme.colors.primary,
-            content = content
-        )
+        key("fab") {
+            FloatingActionButton(
+                modifier = modifier
+                    .padding(paddingValues)
+                    .size(size),
+                onClick = onClick,
+                backgroundColor = MaterialTheme.colors.primary,
+                content = content
+            )
+        }
     }
 }

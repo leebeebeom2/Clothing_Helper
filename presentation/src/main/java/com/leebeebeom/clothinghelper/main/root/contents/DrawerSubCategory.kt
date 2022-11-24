@@ -10,9 +10,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.leebeebeom.clothinghelper.base.composables.SingleLineText
 import com.leebeebeom.clothinghelper.main.root.components.DrawerContentRow
-import com.leebeebeom.clothinghelper.main.root.components.DrawerContentText
 import com.leebeebeom.clothinghelper.main.root.contents.dropdownmenus.DrawerSubCategoryDropDownMenu
+import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import kotlinx.collections.immutable.ImmutableList
 
@@ -21,7 +22,9 @@ fun DrawerSubCategory(
     subCategory: () -> StableSubCategory,
     onClick: () -> Unit,
     subCategories: () -> ImmutableList<StableSubCategory>,
-    onEditSubCategoryNamePositiveClick: (StableSubCategory) -> Unit
+    onEditSubCategoryNamePositiveClick: (StableSubCategory) -> Unit,
+    onAddFolderPositiveClick: (StableFolder) -> Unit,
+    folders: () -> ImmutableList<StableFolder>
 ) {
     var showDropDownMenu by rememberSaveable { mutableStateOf(false) }
 
@@ -32,9 +35,9 @@ fun DrawerSubCategory(
         onClick = onClick,
         onLongClick = { showDropDownMenu = true }
     ) {
-        DrawerContentText(
+        SingleLineText(
             modifier = Modifier.padding(start = 12.dp),
-            text = { subCategory().name },
+            text = subCategory().name,
             style = MaterialTheme.typography.subtitle2
         )
 
@@ -43,7 +46,9 @@ fun DrawerSubCategory(
             onDismiss = { showDropDownMenu = false },
             subCategories = subCategories,
             subCategory = subCategory,
-            onEditSubCategoryNamePositiveClick = onEditSubCategoryNamePositiveClick
+            onEditSubCategoryPositiveClick = onEditSubCategoryNamePositiveClick,
+            onAddFolderPositiveClick = onAddFolderPositiveClick,
+            folders = folders,
         )
     }
 }

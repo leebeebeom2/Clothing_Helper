@@ -5,7 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class SubCategory(
-    val parent: SubCategoryParent = SubCategoryParent.TOP,
+    override val parent: SubCategoryParent = SubCategoryParent.TOP,
     override val key: String = "",
     override val name: String = "",
     override val createDate: Long = 0,

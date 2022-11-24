@@ -34,7 +34,8 @@ fun DrawerMainCategory(
     onAddSubCategoryPositiveClick: (StableSubCategory) -> Unit,
     onEditSubCategoryPositiveClick: (StableSubCategory) -> Unit,
     onAddFolderPositiveClick: (StableFolder) -> Unit,
-    folders: (parentKey: String) -> ImmutableList<StableFolder>
+    folders: (parentKey: String) -> ImmutableList<StableFolder>,
+    onFolderClick: (StableFolder) -> Unit
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     var showDropdownMenu by rememberSaveable { mutableStateOf(false) }
@@ -76,7 +77,8 @@ fun DrawerMainCategory(
         }
         DrawerItems(
             show = { isExpanded },
-            items = { subCategories(mainCategory.type) }
+            items = { subCategories(mainCategory.type) },
+            depth = 1
         ) {
             DrawerSubCategory(
                 subCategory = { it },
@@ -84,7 +86,8 @@ fun DrawerMainCategory(
                 onEditSubCategoryNamePositiveClick = onEditSubCategoryPositiveClick,
                 subCategories = { subCategories(mainCategory.type) },
                 onAddFolderPositiveClick = onAddFolderPositiveClick,
-                folders = { folders(it.key) }
+                folders = folders,
+                onFolderClick = onFolderClick
             )
         }
     }

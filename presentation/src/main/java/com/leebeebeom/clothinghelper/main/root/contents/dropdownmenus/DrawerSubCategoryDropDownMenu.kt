@@ -7,8 +7,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.main.base.composables.DropDownMenuRoot
-import com.leebeebeom.clothinghelper.main.base.dialogs.EditSubCategoryDialog
 import com.leebeebeom.clothinghelper.main.base.dialogs.AddFolderDialog
+import com.leebeebeom.clothinghelper.main.base.dialogs.EditSubCategoryDialog
 import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import kotlinx.collections.immutable.ImmutableList
@@ -40,21 +40,15 @@ fun DrawerSubCategoryDropDownMenu(
         )
     }
 
-    EditSubCategoryDialog(
-        show = { showSubCategoryEditDialog },
+    EditSubCategoryDialog(show = { showSubCategoryEditDialog },
         subCategory = subCategory,
         subCategories = subCategories,
         onPositiveButtonClick = onEditSubCategoryPositiveClick,
-        onDismiss = { showSubCategoryEditDialog = false }
-    )
+        onDismiss = { showSubCategoryEditDialog = false })
 
-    AddFolderDialog(folders = folders,
-        onPositiveButtonClick = {
-            onAddFolderPositiveClick(
-                StableFolder(parentKey = subCategory().key, name = it)
-            )
-        },
-        show = { showAddFolderDialog },
-        onDismiss = { showAddFolderDialog = false }
-    )
+    AddFolderDialog(folders = folders, onPositiveButtonClick = {
+        onAddFolderPositiveClick(
+            StableFolder(parentKey = subCategory().key, name = it)
+        )
+    }, show = { showAddFolderDialog }, onDismiss = { showAddFolderDialog = false })
 }

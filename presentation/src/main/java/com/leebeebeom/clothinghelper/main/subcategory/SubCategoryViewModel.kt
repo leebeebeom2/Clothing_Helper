@@ -16,6 +16,7 @@ import com.leebeebeom.clothinghelperdomain.model.Order
 import com.leebeebeom.clothinghelperdomain.model.Sort
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.usecase.GetDataLoadingStateUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.folder.GetAllFoldersUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.preferences.sort.SubCategorySortUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.AddSubCategoryUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.EditSubCategoryUseCase
@@ -34,6 +35,7 @@ class SubCategoryViewModel @Inject constructor(
     private val subCategorySortUseCase: SubCategorySortUseCase,
     private val getAllSubCategoriesUseCase: GetAllSubCategoriesUseCase,
     private val getUserUseCase: GetUserUseCase,
+    private val getAllFoldersUseCase: GetAllFoldersUseCase,
     override val addSubCategoryUseCase: AddSubCategoryUseCase,
     override val editSubCategoryUseCase: EditSubCategoryUseCase,
 ) : AddSubCategory, EditSubCategory, ViewModel() {
@@ -48,6 +50,7 @@ class SubCategoryViewModel @Inject constructor(
             launch { getAllSubCategoriesUseCase.allSubCategories.collectLatest(uiState::loadAllSubCategories) }
             launch { subCategorySortUseCase.sortPreferences.collectLatest(uiState::updateSort) }
             launch { getUserUseCase.user.collectLatest(uiState::updateUser) }
+            launch { getAllFoldersUseCase.allFolders.collectLatest(uiState::loadAllFolders) }
         }
     }
 

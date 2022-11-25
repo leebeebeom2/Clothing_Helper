@@ -38,10 +38,9 @@ fun DrawerFolder(
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     var showDropDownMenu by rememberSaveable { mutableStateOf(false) }
 
-    DrawerContentRow(
-        modifier = Modifier
-            .heightIn(40.dp)
-            .padding(start = startPadding),
+    DrawerContentRow(modifier = Modifier
+        .heightIn(40.dp)
+        .padding(start = startPadding),
         onClick = { onClick(folder()) },
         onLongClick = { showDropDownMenu = true }) {
 
@@ -54,31 +53,28 @@ fun DrawerFolder(
                 .weight(1f)
         ) {
             SingleLineText(
-                text = folder().name,
-                style = MaterialTheme.typography.subtitle2
+                text = folder().name, style = MaterialTheme.typography.subtitle2
             )
             DrawerFolderDropDownMenu(
                 show = { showDropDownMenu },
                 onDismiss = { showDropDownMenu = false },
                 folders = { folders(folder().key) },
-                onAddFolderPositiveClick = onAddFolderPositiveClick,
+                onAddFolderPositiveClick = {
+                    onAddFolderPositiveClick(it)
+                    isExpanded = true
+                },
                 onEditFolderPositiveClick = onEditFolderPositiveClick,
                 folder = folder
             )
             DrawerCount { folders(folder().key) }
         }
-        DrawerExpandIcon(
-            isLoading = { false },
+        DrawerExpandIcon(isLoading = { false },
             isExpanded = { isExpanded },
             onClick = { isExpanded = !isExpanded },
-            items = { folders(folder().key) }
-        )
+            items = { folders(folder().key) })
     }
 
-    DrawerItems(
-        show = { isExpanded },
-        items = { folders(folder().key) },
-        backGround = DarkGray
+    DrawerItems(show = { isExpanded }, items = { folders(folder().key) }, backGround = DarkGray
     ) {
         DrawerFolder(
             folder = { it },

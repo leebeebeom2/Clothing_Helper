@@ -65,6 +65,7 @@ fun DrawerMainCategory(
                                 name = it
                             )
                         )
+                        isExpanded = true
                     }
                 )
             }

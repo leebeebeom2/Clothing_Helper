@@ -63,7 +63,10 @@ fun DrawerSubCategory(
                     subCategories = subCategories,
                     subCategory = subCategory,
                     onEditSubCategoryPositiveClick = onEditSubCategoryNamePositiveClick,
-                    onAddFolderPositiveClick = onAddFolderPositiveClick,
+                    onAddFolderPositiveClick = {
+                        onAddFolderPositiveClick(it)
+                        isExpand = true
+                    },
                     folders = { folders(subCategory().key) },
                 )
                 SimpleHeightSpacer(dp = 2)

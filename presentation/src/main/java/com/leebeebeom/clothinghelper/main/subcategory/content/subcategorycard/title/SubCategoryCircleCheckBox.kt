@@ -2,14 +2,11 @@ package com.leebeebeom.clothinghelper.main.subcategory.content.subcategorycard.t
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.base.Anime
-import com.leebeebeom.clothinghelper.base.composables.CircleCheckBox
+import com.leebeebeom.clothinghelper.main.base.composables.CircleCheckBox
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import kotlinx.collections.immutable.ImmutableSet
 
@@ -27,11 +24,13 @@ fun SubCategoryCircleCheckBox(
         enter = Anime.CircleCheckBox.expandIn,
         exit = Anime.CircleCheckBox.shrinkOut
     ) {
-        CircleCheckBox(
-            isChecked = { isChecked },
-            modifier = Modifier.padding(start = 4.dp),
-            onClick = onClick,
-            size = 18.dp
-        )
+        key("subCategoryCheckBox") {
+            CircleCheckBox(
+                isChecked = { isChecked },
+                modifier = Modifier.padding(start = 4.dp),
+                onClick = onClick,
+                size = 18.dp
+            )
+        }
     }
 }

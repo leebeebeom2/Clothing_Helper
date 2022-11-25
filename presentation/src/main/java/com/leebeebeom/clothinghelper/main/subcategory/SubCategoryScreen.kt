@@ -81,8 +81,7 @@ fun SubCategoryScreen(
             selectedSubCategoryKey = { uiState.selectedKeys },
             isSelectMode = { uiState.isSelectMode },
             onSelect = uiState::onSelect,
-            folders = uiState::getFolders,
-            addSubCategoryPositiveClick = viewModel::addSubCategory
+            folders = uiState::getFolders
         )
 
         EditSubCategoryDialog(
@@ -106,6 +105,15 @@ fun SubCategoryScreen(
         CenterDotProgressIndicator(
             backGround = MaterialTheme.colors.background,
             show = { uiState.isLoading })
+
+        val addSubCategory = remember<(String) -> Unit> {
+            { viewModel.addSubCategory(StableSubCategory(parent = parent, name = it)) }
+        }
+        SubCategoryFab(
+            onPositiveButtonClick = addSubCategory,
+            subCategories = { uiState.items },
+            isSelectMode = { uiState.isSelectMode }
+        )
     }
 
     SimpleToast(text = { uiState.toastText }, toastShown = uiState::toastShown)

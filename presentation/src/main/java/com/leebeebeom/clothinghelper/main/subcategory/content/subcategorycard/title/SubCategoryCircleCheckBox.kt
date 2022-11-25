@@ -29,7 +29,7 @@ fun SubCategoryCircleCheckBox(
                 isChecked = { isChecked },
                 modifier = Modifier.padding(start = 4.dp),
                 onClick = onClick,
-                size = 18.dp
+                size = 20.dp
             )
         }
     }

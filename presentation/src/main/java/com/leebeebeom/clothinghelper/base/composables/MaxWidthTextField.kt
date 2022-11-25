@@ -78,6 +78,7 @@ private fun TextField(
                 show = { textFieldValue().text.isNotEmpty() }, onValueChange = onValueChange
             )
         },
+        singleLine = true,
         keyboardActions = if (state.keyboardOptions.imeAction == ImeAction.Done) KeyboardActions(
             onDone = { focusManager.clearFocus() })
         else KeyboardActions.Default,

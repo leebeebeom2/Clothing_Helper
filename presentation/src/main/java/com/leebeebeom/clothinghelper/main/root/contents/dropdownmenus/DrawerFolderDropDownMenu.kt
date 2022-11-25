@@ -12,8 +12,8 @@ import kotlinx.collections.immutable.ImmutableList
 fun DrawerFolderDropDownMenu(
     show: () -> Boolean, onDismiss: () -> Unit,
     folders: () -> ImmutableList<StableFolder>,
-    onAddFolderPositiveClick: (String) -> Unit,
-    onEditFolderPositiveClick: (String) -> Unit,
+    onAddFolderPositiveClick: (StableFolder) -> Unit,
+    onEditFolderPositiveClick: (StableFolder) -> Unit,
     folder: () -> StableFolder
 ) {
     var showAddFolderDialog by remember { mutableStateOf(false) }
@@ -35,7 +35,11 @@ fun DrawerFolderDropDownMenu(
 
     AddFolderDialog(
         folders = folders,
-        onPositiveButtonClick = onAddFolderPositiveClick,
+        onPositiveButtonClick = {
+            onAddFolderPositiveClick(
+                StableFolder(parentKey = folder().key, parent = folder().parent, name = it, )
+            )
+        },
         show = { showAddFolderDialog },
         onDismiss = { showAddFolderDialog = false }
     )

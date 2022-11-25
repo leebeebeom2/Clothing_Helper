@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SubCategoryTitleAnimateSpacer(isSelectMode: () -> Boolean) {
-    val width by animateDpAsState(targetValue = if (isSelectMode()) 2.dp else 12.dp)
+    val width by animateDpAsState(targetValue = if (isSelectMode()) 4.dp else 12.dp)
 
     Spacer(modifier = Modifier.width(width))
 }

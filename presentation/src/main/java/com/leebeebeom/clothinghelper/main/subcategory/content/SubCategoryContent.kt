@@ -5,12 +5,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.*
+import androidx.compose.material.LocalContentColor
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
+import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.base.composables.SingleLineText
 import com.leebeebeom.clothinghelper.main.base.composables.ScrollToTopFab
 import com.leebeebeom.clothinghelper.main.subcategory.content.subcategorycard.SubCategoryCard
 import com.leebeebeom.clothinghelper.map.StableFolder
@@ -46,8 +51,13 @@ fun SubCategoryContent(
 ) {
     var dragSelectStart by rememberSaveable { mutableStateOf(false) }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        LazyColumn(
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        if (subCategories().isEmpty())
+            SingleLineText(
+                text = R.string.sub_category_place_holder,
+                style = MaterialTheme.typography.body1.copy(LocalContentColor.current.copy(0.8f))
+            )
+        else LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .dragSelect(

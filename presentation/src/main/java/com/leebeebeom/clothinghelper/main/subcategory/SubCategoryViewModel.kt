@@ -70,7 +70,8 @@ class SubCategoryViewModel @Inject constructor(
 class SubCategoryScreenUIState(private val selectModeImpl: SelectModeImpl<StableSubCategory> = SelectModeImpl()) :
     ToastUIState by ToastUIStateImpl(), LoadingUIState by LoadingUIStateImpl(),
     UserUIState by UserUIStateImpl(), SubCategoryUIState by SubCategoryUIStateImpl(),
-    SortUIState by SortUIStateImpl(), SelectMode<StableSubCategory> by selectModeImpl {
+    SortUIState by SortUIStateImpl(), SelectMode<StableSubCategory> by selectModeImpl,
+    FolderUIState by FolderUIStateImpl() {
 
     override var items by mutableStateOf(emptyList<StableSubCategory>().toImmutableList())
         private set

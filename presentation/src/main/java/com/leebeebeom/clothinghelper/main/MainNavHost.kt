@@ -33,11 +33,9 @@ sealed class MainDestinations(val route: String) {
 
     object Setting : MainDestinations("setting")
     object Detail : MainDestinations("detail") {
-        const val parent = "parent"
         const val parentKey = "parentKey"
-        val routeWithArg = "$route/{$parent}/{$parentKey}"
+        val routeWithArg = "$route/{$parentKey}"
         val arguments = listOf(
-            navArgument(parent) { type = NavType.StringType },
             navArgument(parentKey) { type = NavType.StringType },
         )
     }
@@ -74,12 +72,8 @@ fun MainNavHost(state: MainNavHostState = rememberMainNavHostState()) {
                 route = MainDestinations.Detail.routeWithArg,
                 arguments = MainDestinations.Detail.arguments
             ) { entry ->
-                val arguments = entry.arguments!!
-                val parent =
-                    enumValueOf<SubCategoryParent>(arguments.getString(MainDestinations.Detail.parent)!!)
                 DetailScreen(
-                    parent = parent,
-                    parentKey = arguments.getString(MainDestinations.Detail.parentKey)!!
+                    parentKey = entry.arguments!!.getString(MainDestinations.Detail.parentKey)!!
                 )
             }
         }
@@ -117,16 +111,11 @@ data class MainNavHostState(
     }
 
     fun navigateToDetail(container: BaseContainer) {
-        val currentArgument = currentBackStack.value?.arguments
-
         val parentKey = container.key
-        val currentParentKey = currentArgument?.getString(MainDestinations.Detail.parentKey)
+        val currentParentKey = currentBackStack.value?.arguments?.getString(MainDestinations.Detail.parentKey)
 
-        if (parentKey != currentParentKey) {
-            val parent = container.parent.name
-
-            navController.navigate(route = "${MainDestinations.Detail.route}/${parent}/${parentKey}")
-        }
+        if (parentKey != currentParentKey)
+            navController.navigate(route = "${MainDestinations.Detail.route}/${parentKey}")
     }
 }
 

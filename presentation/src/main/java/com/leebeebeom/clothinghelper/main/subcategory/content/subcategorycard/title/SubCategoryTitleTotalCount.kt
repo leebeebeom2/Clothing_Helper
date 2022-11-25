@@ -5,11 +5,13 @@ import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import com.leebeebeom.clothinghelper.base.composables.SingleLineText
+import com.leebeebeom.clothinghelper.map.StableFolder
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
-fun SubCategoryTitleTotalCount() {
-    SingleLineText( // TODO total count
-        text = "(10)", style = MaterialTheme.typography.caption.copy(
+fun SubCategoryTitleTotalCount(folders: () -> ImmutableList<StableFolder>) {
+    SingleLineText(
+        text = "(${folders().size})", style = MaterialTheme.typography.caption.copy(
             color = LocalContentColor.current.copy(ContentAlpha.medium)
         )
     )

@@ -2,12 +2,14 @@ package com.leebeebeom.clothinghelper.main.subcategory
 
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.composables.SimpleIcon
-import com.leebeebeom.clothinghelper.base.dialogs.AddDialogState
-import com.leebeebeom.clothinghelper.main.base.components.Fab
-import com.leebeebeom.clothinghelper.main.subcategory.dialogs.AddSubCategoryDialog
+import com.leebeebeom.clothinghelper.main.base.composables.Fab
+import com.leebeebeom.clothinghelper.main.base.dialogs.AddSubCategoryDialog
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import kotlinx.collections.immutable.ImmutableList
 
@@ -17,21 +19,23 @@ fun BoxScope.SubCategoryFab(
     subCategories: () -> ImmutableList<StableSubCategory>,
     isSelectMode: () -> Boolean,
 ) {
-    val state =
-        rememberSaveable(saver = AddDialogState.Saver) { AddDialogState() }
+    var showDialog by rememberSaveable { mutableStateOf(false) }
 
-    SubCategoryFab(isSelectMode = isSelectMode, showDialog = state::showDialog)
+    SubCategoryFab(isSelectMode = isSelectMode, onClick = { showDialog = true })
 
-    AddSubCategoryDialog(state = state,
+    AddSubCategoryDialog(
         subCategories = subCategories,
-        onPositiveButtonClick = { onPositiveButtonClick(state.text) })
+        onPositiveButtonClick = onPositiveButtonClick,
+        show = { showDialog },
+        onDismiss = { showDialog = false }
+    )
 }
 
 @Composable
 private fun BoxScope.SubCategoryFab(
-    showDialog: () -> Unit, isSelectMode: () -> Boolean
+    onClick: () -> Unit, isSelectMode: () -> Boolean
 ) {
     Fab(
-        visible = { !isSelectMode() }, onClick = showDialog
+        visible = { !isSelectMode() }, onClick = onClick
     ) { SimpleIcon(drawable = R.drawable.ic_add) }
 }

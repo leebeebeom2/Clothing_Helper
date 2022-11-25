@@ -1,5 +1,8 @@
 package com.leebeebeom.clothinghelper.main.subcategory.content
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -52,12 +55,8 @@ fun SubCategoryContent(
     var dragSelectStart by rememberSaveable { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        if (subCategories().isEmpty())
-            SingleLineText(
-                text = R.string.sub_category_place_holder,
-                style = MaterialTheme.typography.body1.copy(LocalContentColor.current.copy(0.8f))
-            )
-        else LazyColumn(
+        SubCategoryPlaceHolder(subCategories)
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .dragSelect(
@@ -91,6 +90,19 @@ fun SubCategoryContent(
             )
         }
         ScrollToTopFab(show = { state.showScrollToTopButton }, toTop = state::scrollToTop)
+    }
+}
+
+@Composable
+private fun SubCategoryPlaceHolder(subCategories: () -> ImmutableList<StableSubCategory>) {
+    val isEmpty by remember { derivedStateOf { subCategories().isEmpty() } }
+    AnimatedVisibility(visible = isEmpty, enter = fadeIn(), exit = fadeOut()) {
+        key("subCategoryPlaceHolder") {
+            SingleLineText(
+                text = R.string.sub_category_place_holder,
+                style = MaterialTheme.typography.body1.copy(LocalContentColor.current.copy(0.6f))
+            )
+        }
     }
 }
 

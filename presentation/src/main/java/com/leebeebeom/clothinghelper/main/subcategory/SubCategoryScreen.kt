@@ -11,10 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.base.composables.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelper.base.composables.SimpleToast
-import com.leebeebeom.clothinghelper.main.base.components.SelectModeBackHandler
-import com.leebeebeom.clothinghelper.main.base.selectmodebottomappbar.SelectModeBottomAppBar
+import com.leebeebeom.clothinghelper.main.base.composables.SelectModeBackHandler
+import com.leebeebeom.clothinghelper.main.base.composables.selectmodebottomappbar.SelectModeBottomAppBar
+import com.leebeebeom.clothinghelper.main.base.dialogs.EditSubCategoryDialog
 import com.leebeebeom.clothinghelper.main.subcategory.content.SubCategoryContent
-import com.leebeebeom.clothinghelper.main.subcategory.dialogs.EditSubCategoryNameDialog
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 
@@ -33,7 +33,7 @@ import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 
 인포 텍스트 확인
 
-애드 카테고리 다이얼로그 동작 확인 TODO 슬라이드 인 애니메이션 TODO 컬러지정? 할까말까?
+애드 카테고리 다이얼로그 동작 확인 TODO 컬러지정
 화면 방향 혹은 다크모드 변경 시 커서 맨 뒤에 있는지 확인
 이미 존재하는 카테고리 명일시 "이미 존재하는 카테고리 입니다." 에러 표시
 텍스트 변경 시 에러 숨김
@@ -58,9 +58,6 @@ import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 트림 확인
 본래 이름일 시 에러 표시 x 확인 버튼만 disable
 이름 변경 시 정렬 지키는 지 확인
-
-TODO 플레이스 홀더
-TODO 리프레쉬
  */
 
 
@@ -70,12 +67,12 @@ fun SubCategoryScreen(
     viewModel: SubCategoryViewModel = hiltViewModel(),
     uiState: SubCategoryScreenUIState = viewModel.getUiState(parent),
     state: SubCategoryState = rememberSubCategoryState(),
-    onSubCategoryClick: (SubCategoryParent, name: String, key: String) -> Unit
+    onSubCategoryClick: (StableSubCategory) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         SubCategoryContent(
             parent = parent,
-            subCategories = { uiState.list },
+            subCategories = { uiState.items },
             sort = { uiState.sort },
             onLongClick = uiState::selectModeOn,
             onSubCategoryClick = onSubCategoryClick,
@@ -91,15 +88,15 @@ fun SubCategoryScreen(
         }
         SubCategoryFab(
             onPositiveButtonClick = addSubCategoryPositiveButtonClick,
-            subCategories = { uiState.list },
+            subCategories = { uiState.items },
             isSelectMode = { uiState.isSelectMode }
         )
 
-        EditSubCategoryNameDialog(
-            subCategories = { uiState.list },
+        EditSubCategoryDialog(
+            subCategories = { uiState.items },
             onPositiveButtonClick = viewModel::editSubCategoryName,
             onDismiss = state::dismissEditDialog,
-            showDialog = { state.showEditDialog },
+            show = { state.showEditDialog },
             subCategory = { uiState.firstSelectedItem }
         )
 
@@ -108,12 +105,14 @@ fun SubCategoryScreen(
             isAllSelected = { uiState.isAllSelected },
             onAllSelectCheckBoxClick = uiState::toggleAllSelect,
             onEditIconClick = state::showEditDialog,
-            isSelectMode = { uiState.isSelectMode }
+            isSelectMode = { uiState.isSelectMode },
+            showEditIcon = { uiState.showEditIcon },
+            showDeleteIcon = { uiState.showDeleteIcon }
         )
 
         CenterDotProgressIndicator(
             backGround = MaterialTheme.colors.background,
-            isLoading = { uiState.isLoading })
+            show = { uiState.isLoading })
     }
 
     SimpleToast(text = { uiState.toastText }, toastShown = uiState::toastShown)
@@ -145,6 +144,5 @@ class SubCategoryState(initialShowDialog: Boolean = false) {
 }
 
 @Composable
-fun rememberSubCategoryState(): SubCategoryState {
-    return rememberSaveable(saver = SubCategoryState.saver) { SubCategoryState() }
-}
+fun rememberSubCategoryState() =
+    rememberSaveable(saver = SubCategoryState.saver) { SubCategoryState() }

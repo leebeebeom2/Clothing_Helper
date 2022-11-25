@@ -1,6 +1,7 @@
 package com.leebeebeom.clothinghelper.main.root.contents
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
@@ -36,7 +37,7 @@ fun DrawerMainCategory(
     onAddFolderPositiveClick: (StableFolder) -> Unit,
     folders: (parentKey: String) -> ImmutableList<StableFolder>,
     onFolderClick: (StableFolder) -> Unit,
-    onEditFolderPositiveClick : (StableFolder) -> Unit
+    onEditFolderPositiveClick: (StableFolder) -> Unit
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     var showDropdownMenu by rememberSaveable { mutableStateOf(false) }
@@ -47,24 +48,26 @@ fun DrawerMainCategory(
             onClick = { onMainCategoryClick(mainCategory.type) },
             onLongClick = { showDropdownMenu = true }
         ) {
-            SingleLineText(
-                modifier = Modifier.padding(start = 8.dp),
-                text = stringResource(id = mainCategory.name),
-                style = MaterialTheme.typography.body1
-            )
-            DrawerMainCategoryDropDownMenu(
-                show = { showDropdownMenu },
-                onDismiss = { showDropdownMenu = false },
-                subCategories = { subCategories(mainCategory.type) },
-                onAddSubCategoryPositiveClick = {
-                    onAddSubCategoryPositiveClick(
-                        StableSubCategory(
-                            parent = mainCategory.type,
-                            name = it
+            Row(modifier = Modifier.weight(1f)) {
+                SingleLineText(
+                    modifier = Modifier.padding(start = 8.dp),
+                    text = stringResource(id = mainCategory.name),
+                    style = MaterialTheme.typography.body1
+                )
+                DrawerMainCategoryDropDownMenu(
+                    show = { showDropdownMenu },
+                    onDismiss = { showDropdownMenu = false },
+                    subCategories = { subCategories(mainCategory.type) },
+                    onAddSubCategoryPositiveClick = {
+                        onAddSubCategoryPositiveClick(
+                            StableSubCategory(
+                                parent = mainCategory.type,
+                                name = it
+                            )
                         )
-                    )
-                }
-            )
+                    }
+                )
+            }
             DrawerTotalCount(
                 items = { subCategories(mainCategory.type) },
                 isLoading = isLoading

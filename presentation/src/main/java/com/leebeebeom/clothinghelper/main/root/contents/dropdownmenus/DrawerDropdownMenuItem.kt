@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.base.composables.SingleLineText
 
 @Composable
@@ -31,7 +32,7 @@ fun DrawerDropdownMenuItem(
             .padding(start = 12.dp, end = 24.dp)
             .widthIn(52.dp)
             .fillMaxSize(),
-        style = MaterialTheme.typography.subtitle2,
+        style = MaterialTheme.typography.subtitle2.copy(fontSize = 15.sp),
         textAlign = TextAlign.Start
     )
 }

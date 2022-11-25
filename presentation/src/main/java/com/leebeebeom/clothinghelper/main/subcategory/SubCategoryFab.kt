@@ -17,12 +17,11 @@ import kotlinx.collections.immutable.ImmutableList
 fun BoxScope.SubCategoryFab(
     onPositiveButtonClick: (newName: String) -> Unit,
     subCategories: () -> ImmutableList<StableSubCategory>,
-    isSelectMode: () -> Boolean,
-    show: () -> Boolean
+    isSelectMode: () -> Boolean
 ) {
     var showDialog by rememberSaveable { mutableStateOf(false) }
 
-    SubCategoryFab(isSelectMode = isSelectMode, show = show, onClick = { showDialog = true })
+    SubCategoryFab(isSelectMode = isSelectMode, onClick = { showDialog = true })
 
     AddSubCategoryDialog(
         subCategories = subCategories,
@@ -33,10 +32,8 @@ fun BoxScope.SubCategoryFab(
 }
 
 @Composable
-private fun BoxScope.SubCategoryFab(
-    onClick: () -> Unit, isSelectMode: () -> Boolean, show: () -> Boolean
-) {
+private fun BoxScope.SubCategoryFab(onClick: () -> Unit, isSelectMode: () -> Boolean) {
     Fab(
-        visible = { !isSelectMode() && show() }, onClick = onClick
+        visible = { !isSelectMode() }, onClick = onClick
     ) { SimpleIcon(drawable = R.drawable.ic_add) }
 }

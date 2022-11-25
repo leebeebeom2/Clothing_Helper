@@ -4,7 +4,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.base.composables.SingleLineText
-import com.leebeebeom.clothinghelper.base.composables.SortIconWithDivider
+import com.leebeebeom.clothinghelper.main.base.composables.sort.SortIconWithDivider
 import com.leebeebeom.clothinghelper.util.getHeaderStringRes
 import com.leebeebeom.clothinghelperdomain.model.Order
 import com.leebeebeom.clothinghelperdomain.model.Sort

@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.main.root.components
 
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.LocalContentColor
@@ -12,14 +11,12 @@ import com.leebeebeom.clothinghelper.base.composables.SingleLineText
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
-fun RowScope.DrawerTotalCount(
+fun DrawerMainTotalCount(
     items: () -> ImmutableList<*>,
     isLoading: () -> Boolean,
 ) {
     SingleLineText(
-        modifier = Modifier
-            .weight(1f)
-            .padding(start = 4.dp),
+        modifier = Modifier.padding(start = 4.dp),
         text = if (isLoading()) "" else "(${items().size})",
         style = MaterialTheme.typography.caption.copy(
             LocalContentColor.current.copy(

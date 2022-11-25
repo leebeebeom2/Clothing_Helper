@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.leebeebeom.clothinghelper.base.composables.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.composables.SingleLineText
 import com.leebeebeom.clothinghelper.main.root.components.DrawerContentRow
 import com.leebeebeom.clothinghelper.main.root.components.DrawerCount
@@ -65,6 +66,7 @@ fun DrawerSubCategory(
                     onAddFolderPositiveClick = onAddFolderPositiveClick,
                     folders = { folders(subCategory().key) },
                 )
+                SimpleHeightSpacer(dp = 2)
                 DrawerCount { folders(subCategory().key) }
             }
             DrawerExpandIcon(

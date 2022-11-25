@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -18,22 +19,24 @@ import com.leebeebeom.clothinghelper.base.composables.SimpleHeightSpacer
 fun SubCategoryInfo(isExpanded: () -> Boolean) {
     AnimatedVisibility(
         visible = isExpanded(),
-        enter = Anime.SubCategoryCard.expandIn,
-        exit = Anime.SubCategoryCard.shrinkOut
+        enter = Anime.SubCategoryCardInfo.expandIn,
+        exit = Anime.SubCategoryCardInfo.shrinkOut
     ) {
-        Surface(color = MaterialTheme.colors.background) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            ) {
-                SubCategoryInfoText( // TODO
-                    infoTitle = R.string.average_size, info = R.string.top_info
-                )
+        key("subCategoryInfo") {
+            Surface(color = MaterialTheme.colors.background) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                ) {
+                    SubCategoryInfoText( // TODO
+                        infoTitle = R.string.average_size, info = R.string.top_info
+                    )
 
-                SubCategoryInfoText(
-                    infoTitle = R.string.most_have_size, info = R.string.top_info
-                )
+                    SubCategoryInfoText(
+                        infoTitle = R.string.most_have_size, info = R.string.top_info
+                    )
+                }
             }
         }
     }

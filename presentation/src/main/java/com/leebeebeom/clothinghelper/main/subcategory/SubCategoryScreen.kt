@@ -81,16 +81,8 @@ fun SubCategoryScreen(
             selectedSubCategoryKey = { uiState.selectedKeys },
             isSelectMode = { uiState.isSelectMode },
             onSelect = uiState::onSelect,
-            folders = uiState::getFolders
-        )
-
-        val addSubCategoryPositiveButtonClick = remember<(String) -> Unit> {
-            { viewModel.addSubCategory(StableSubCategory(parent = parent, name = it)) }
-        }
-        SubCategoryFab(
-            onPositiveButtonClick = addSubCategoryPositiveButtonClick,
-            subCategories = { uiState.items },
-            isSelectMode = { uiState.isSelectMode }
+            folders = uiState::getFolders,
+            addSubCategoryPositiveClick = viewModel::addSubCategory
         )
 
         EditSubCategoryDialog(

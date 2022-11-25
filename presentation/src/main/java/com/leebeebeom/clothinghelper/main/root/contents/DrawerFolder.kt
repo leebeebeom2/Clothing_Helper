@@ -28,11 +28,11 @@ import kotlinx.collections.immutable.ImmutableList
 @Composable
 fun DrawerFolder(
     folder: () -> StableFolder,
-    onClick: () -> Unit,
+    onClick: (StableFolder) -> Unit,
     startPadding: Dp,
     folders: (key: String) -> ImmutableList<StableFolder>,
-    onAddFolderPositiveClick: (String) -> Unit,
-    onEditFolderPositiveClick: (String) -> Unit,
+    onAddFolderPositiveClick: (StableFolder) -> Unit,
+    onEditFolderPositiveClick: (StableFolder) -> Unit,
 ) {
 
     var isExpanded by rememberSaveable { mutableStateOf(false) }
@@ -42,7 +42,7 @@ fun DrawerFolder(
         modifier = Modifier
             .heightIn(40.dp)
             .padding(start = startPadding),
-        onClick = onClick,
+        onClick = { onClick(folder()) },
         onLongClick = { showDropDownMenu = true }) {
 
         SimpleIcon(drawable = R.drawable.ic_folder, modifier = Modifier.size(25.dp))
@@ -51,7 +51,8 @@ fun DrawerFolder(
             Modifier
                 .padding(start = 8.dp)
                 .padding(vertical = 8.dp)
-                .weight(1f)) {
+                .weight(1f)
+        ) {
             SingleLineText(
                 text = folder().name,
                 style = MaterialTheme.typography.subtitle2

@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.main.base.composables.ScrollToTopFab
 import com.leebeebeom.clothinghelper.main.subcategory.content.subcategorycard.SubCategoryCard
+import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.util.dragSelect.ListDragSelector
 import com.leebeebeom.clothinghelper.util.dragSelect.dragSelect
@@ -40,7 +41,8 @@ fun SubCategoryContent(
     selectedSubCategoryKey: () -> ImmutableSet<String>,
     isSelectMode: () -> Boolean,
     onSelect: (String) -> Unit,
-    haptic: HapticFeedback = LocalHapticFeedback.current
+    haptic: HapticFeedback = LocalHapticFeedback.current,
+    folders: (parentKey: String) -> ImmutableList<StableFolder>
 ) {
     var dragSelectStart by rememberSaveable { mutableStateOf(false) }
 
@@ -69,29 +71,32 @@ fun SubCategoryContent(
                     onOrderClick = onOrderClick
                 )
             }
-            SubCategories(
-                subCategories,
-                isSelectMode,
-                onSelect,
-                onSubCategoryClick,
-                selectedSubCategoryKey
+            subCategories(
+                subCategories = subCategories,
+                isSelectMode = isSelectMode,
+                onSelect = onSelect,
+                onSubCategoryClick = onSubCategoryClick,
+                selectedSubCategoryKey = selectedSubCategoryKey,
+                folders = folders
             )
         }
         ScrollToTopFab(show = { state.showScrollToTopButton }, toTop = state::scrollToTop)
     }
 }
 
-private fun LazyListScope.SubCategories(
+private fun LazyListScope.subCategories(
     subCategories: () -> ImmutableList<StableSubCategory>,
     isSelectMode: () -> Boolean,
     onSelect: (String) -> Unit,
     onSubCategoryClick: (StableSubCategory) -> Unit,
-    selectedSubCategoryKey: () -> ImmutableSet<String>
+    selectedSubCategoryKey: () -> ImmutableSet<String>,
+    folders: (parentKey: String) -> ImmutableList<StableFolder>
 ) {
     items(items = subCategories(), key = { it.key }) {
         SubCategoryCard(subCategory = { it }, onClick = {
             if (isSelectMode()) onSelect(it.key) else onSubCategoryClick(it)
-        }, selectedCategoryKeys = selectedSubCategoryKey, isSelectMode = isSelectMode
+        }, selectedCategoryKeys = selectedSubCategoryKey, isSelectMode = isSelectMode,
+            folders = { folders(it.key) }
         )
     }
 }

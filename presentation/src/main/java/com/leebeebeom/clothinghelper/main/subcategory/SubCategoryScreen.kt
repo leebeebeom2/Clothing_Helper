@@ -80,7 +80,8 @@ fun SubCategoryScreen(
             onOrderClick = viewModel::changeOrder,
             selectedSubCategoryKey = { uiState.selectedKeys },
             isSelectMode = { uiState.isSelectMode },
-            onSelect = uiState::onSelect
+            onSelect = uiState::onSelect,
+            folders = uiState::getFolders
         )
 
         val addSubCategoryPositiveButtonClick = remember<(String) -> Unit> {

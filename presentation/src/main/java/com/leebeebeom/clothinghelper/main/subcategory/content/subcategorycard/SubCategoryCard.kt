@@ -13,7 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.main.subcategory.content.subcategorycard.title.SubCategoryCardTitle
+import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
 
 @Composable
@@ -21,7 +23,8 @@ fun SubCategoryCard(
     subCategory: () -> StableSubCategory,
     onClick: () -> Unit,
     selectedCategoryKeys: () -> ImmutableSet<String>,
-    isSelectMode: () -> Boolean
+    isSelectMode: () -> Boolean,
+    folders: () -> ImmutableList<StableFolder>
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
@@ -38,6 +41,7 @@ fun SubCategoryCard(
                 onCheckBoxClick = onClick,
                 selectedCategoryKeys = selectedCategoryKeys,
                 isSelectMode = isSelectMode,
+                folders = folders
             )
             SubCategoryInfo { isExpanded }
         }

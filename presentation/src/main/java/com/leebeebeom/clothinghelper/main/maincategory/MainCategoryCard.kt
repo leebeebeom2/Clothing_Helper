@@ -7,9 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -42,8 +39,7 @@ fun MainCategoryCard(
     ) {
         Box(
             modifier = Modifier
-                .padding(start = 16.dp, end = 8.dp)
-                .padding(vertical = 16.dp)
+                .padding(start = 16.dp, end = 8.dp, top = 10.dp, bottom = 12.dp)
         ) {
             SingleLineText(
                 text = mainCategory.name,
@@ -69,8 +65,6 @@ private fun BoxScope.SubCategoryCountText(
     isLoading: () -> Boolean,
     subCategories: () -> ImmutableList<StableSubCategory>
 ) {
-    val size by remember { derivedStateOf { subCategories().size } }
-
     if (isLoading())
         DotProgressIndicator(
             modifier = Modifier
@@ -81,7 +75,7 @@ private fun BoxScope.SubCategoryCountText(
     else SingleLineText(
         text = stringResource(
             id = R.string.categories,
-            formatArgs = arrayOf(size)
+            formatArgs = arrayOf(subCategories().size)
         ),
         modifier = Modifier.align(Alignment.BottomStart),
         style = MaterialTheme.typography.caption.copy(

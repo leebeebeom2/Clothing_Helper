@@ -20,8 +20,6 @@ import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 카드 클릭 시 이동 확인
 
 서브 카테고리 갯수 일치 확인
-
-TODO 스와이프 투 리프레쉬
  */
 
 @Composable

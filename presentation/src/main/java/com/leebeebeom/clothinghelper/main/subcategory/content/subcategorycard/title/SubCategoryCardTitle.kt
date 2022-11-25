@@ -40,7 +40,7 @@ fun SubCategoryCardTitle(
             Column(modifier = Modifier.weight(1f)) {
                 SubCategoryName { subCategory().name }
                 SimpleHeightSpacer(dp = 4)
-                SubCategoryTitleTotalCount(folders)
+                SubCategoryCardCount(folders)
             }
             ExpandIcon(
                 modifier = Modifier.size(30.dp),

@@ -11,7 +11,7 @@ import com.leebeebeom.clothinghelper.map.StableFolder
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
-fun SubCategoryTitleTotalCount(folders: () -> ImmutableList<StableFolder>) {
+fun SubCategoryCardCount(folders: () -> ImmutableList<StableFolder>) {
     SingleLineText(
         text = stringResource(
             id = R.string.folders_charts,

@@ -10,7 +10,7 @@ fun EditFolderDialog(
     folders: () -> ImmutableList<StableFolder>,
     show: () -> Boolean,
     onDismiss: () -> Unit,
-    onPositiveButtonClick: (String) -> Unit,
+    onPositiveButtonClick: (StableFolder) -> Unit,
     folder: () -> StableFolder
 ) {
     EditDialog(
@@ -20,7 +20,7 @@ fun EditFolderDialog(
         items = folders,
         existNameError = R.string.error_exist_folder_name,
         onDismiss = onDismiss,
-        onPositiveButtonClick = onPositiveButtonClick,
+        onPositiveButtonClick = { onPositiveButtonClick(folder().copy(name = it)) },
         show = show,
         initialName = { folder().name }
     )

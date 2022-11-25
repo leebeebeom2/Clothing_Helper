@@ -1,5 +1,7 @@
 package com.leebeebeom.clothinghelper.main.root.contents
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
@@ -8,13 +10,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.base.composables.SingleLineText
 import com.leebeebeom.clothinghelper.main.root.components.DrawerContentRow
+import com.leebeebeom.clothinghelper.main.root.components.DrawerCount
 import com.leebeebeom.clothinghelper.main.root.components.DrawerExpandIcon
 import com.leebeebeom.clothinghelper.main.root.components.DrawerItems
-import com.leebeebeom.clothinghelper.main.root.components.DrawerTotalCount
 import com.leebeebeom.clothinghelper.main.root.contents.dropdownmenus.DrawerSubCategoryDropDownMenu
 import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
@@ -38,33 +41,39 @@ fun DrawerSubCategory(
     DrawerContentRow(
         modifier = Modifier
             .heightIn(40.dp)
-            .padding(start = 16.dp),
+            .padding(start = 8.dp),
         onClick = onClick,
         onLongClick = { showDropDownMenu = true }
     ) {
-        SingleLineText(
-            modifier = Modifier.padding(start = 4.dp),
-            text = subCategory().name,
-            style = MaterialTheme.typography.subtitle2
-        )
-        DrawerSubCategoryDropDownMenu(
-            show = { showDropDownMenu },
-            onDismiss = { showDropDownMenu = false },
-            subCategories = subCategories,
-            subCategory = subCategory,
-            onEditSubCategoryPositiveClick = onEditSubCategoryNamePositiveClick,
-            onAddFolderPositiveClick = onAddFolderPositiveClick,
-            folders = { folders(subCategory().key) },
-        )
-        DrawerTotalCount(items = { folders(subCategory().key) }, isLoading = { false })
-
-        DrawerExpandIcon(
-            isLoading = { false },
-            isExpanded = { isExpand },
-            onClick = { isExpand = !isExpand },
-            items = { folders(subCategory().key) }
-        )
-
+        Row(
+            Modifier
+                .padding(start = 4.dp)
+                .padding(vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                SingleLineText(
+                    text = subCategory().name,
+                    style = MaterialTheme.typography.subtitle1
+                )
+                DrawerSubCategoryDropDownMenu(
+                    show = { showDropDownMenu },
+                    onDismiss = { showDropDownMenu = false },
+                    subCategories = subCategories,
+                    subCategory = subCategory,
+                    onEditSubCategoryPositiveClick = onEditSubCategoryNamePositiveClick,
+                    onAddFolderPositiveClick = onAddFolderPositiveClick,
+                    folders = { folders(subCategory().key) },
+                )
+                DrawerCount { folders(subCategory().key) }
+            }
+            DrawerExpandIcon(
+                isLoading = { false },
+                isExpanded = { isExpand },
+                onClick = { isExpand = !isExpand },
+                items = { folders(subCategory().key) }
+            )
+        }
     }
 
     DrawerItems(

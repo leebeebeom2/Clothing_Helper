@@ -10,8 +10,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.base.composables.SimpleWidthSpacer
-import com.leebeebeom.clothinghelper.main.base.components.ExpandIcon
+import com.leebeebeom.clothinghelper.main.base.composables.ExpandIcon
+import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
 
 @Composable
@@ -21,7 +23,8 @@ fun SubCategoryCardTitle(
     onExpandIconClick: () -> Unit,
     onCheckBoxClick: () -> Unit,
     selectedCategoryKeys: () -> ImmutableSet<String>,
-    isSelectMode: () -> Boolean
+    isSelectMode: () -> Boolean,
+    folders: () -> ImmutableList<StableFolder>
 ) {
     Surface(elevation = 4.dp) {
         Row(
@@ -43,7 +46,7 @@ fun SubCategoryCardTitle(
                 SubCategoryTitleAnimateSpacer(isSelectMode = isSelectMode)
                 SubCategoryName(name = { subCategory().name })
                 SimpleWidthSpacer(dp = 4)
-                SubCategoryTitleTotalCount()
+                SubCategoryTitleTotalCount(folders)
             }
 
             ExpandIcon(

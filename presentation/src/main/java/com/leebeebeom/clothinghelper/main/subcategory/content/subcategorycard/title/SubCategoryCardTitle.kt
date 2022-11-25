@@ -46,9 +46,8 @@ fun SubCategoryCardTitle(
                 SubCategoryTitleAnimateSpacer(isSelectMode = isSelectMode)
                 SubCategoryName(name = { subCategory().name })
                 SimpleWidthSpacer(dp = 4)
-                SubCategoryTitleTotalCount(folders)
             }
-
+            SubCategoryTitleTotalCount(folders)
             ExpandIcon(
                 modifier = Modifier.size(24.dp),
                 isExpanded = isExpanded,

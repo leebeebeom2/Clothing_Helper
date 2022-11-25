@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.MaxWidthButton
+import com.leebeebeom.clothinghelper.base.composables.MaxWidthButton
 
 @Composable
 fun SettingScreen(

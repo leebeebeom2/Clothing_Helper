@@ -4,17 +4,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
-import com.leebeebeom.clothinghelper.main.base.components.ScrollToTopFab
+import com.leebeebeom.clothinghelper.main.base.composables.ScrollToTopFab
 import com.leebeebeom.clothinghelper.main.subcategory.content.subcategorycard.SubCategoryCard
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.util.dragSelect.ListDragSelector
@@ -37,7 +34,7 @@ fun SubCategoryContent(
     sort: () -> SortPreferences,
     state: LazyListState = rememberLazyListState(),
     onLongClick: (key: String) -> Unit,
-    onSubCategoryClick: (SubCategoryParent, name: String, key: String) -> Unit,
+    onSubCategoryClick: (StableSubCategory) -> Unit,
     onSortClick: (Sort) -> Unit,
     onOrderClick: (Order) -> Unit,
     selectedSubCategoryKey: () -> ImmutableSet<String>,
@@ -58,7 +55,7 @@ fun SubCategoryContent(
                     onLongClick = onLongClick
                 ),
             contentPadding = PaddingValues(
-                start = 16.dp, end = 16.dp, top = 16.dp, bottom = 120.dp
+                start = 16.dp, end = 16.dp, top = 8.dp, bottom = 120.dp
             ),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             state = state,
@@ -72,18 +69,29 @@ fun SubCategoryContent(
                     onOrderClick = onOrderClick
                 )
             }
-            items(items = subCategories(), key = { it.key }) {
-                SubCategoryCard(subCategory = { it }, onClick = {
-                    if (isSelectMode()) onSelect(it.key) else onSubCategoryClick(
-                        it.parent,
-                        it.name,
-                        it.key
-                    )
-                }, selectedCategoryKeys = selectedSubCategoryKey, isSelectMode = isSelectMode
-                )
-            }
+            SubCategories(
+                subCategories,
+                isSelectMode,
+                onSelect,
+                onSubCategoryClick,
+                selectedSubCategoryKey
+            )
         }
+        ScrollToTopFab(show = { state.showScrollToTopButton }, toTop = state::scrollToTop)
+    }
+}
 
-        ScrollToTopFab(showFab = { state.showScrollToTopButton }, onClick = state::scrollToTop)
+private fun LazyListScope.SubCategories(
+    subCategories: () -> ImmutableList<StableSubCategory>,
+    isSelectMode: () -> Boolean,
+    onSelect: (String) -> Unit,
+    onSubCategoryClick: (StableSubCategory) -> Unit,
+    selectedSubCategoryKey: () -> ImmutableSet<String>
+) {
+    items(items = subCategories(), key = { it.key }) {
+        SubCategoryCard(subCategory = { it }, onClick = {
+            if (isSelectMode()) onSelect(it.key) else onSubCategoryClick(it)
+        }, selectedCategoryKeys = selectedSubCategoryKey, isSelectMode = isSelectMode
+        )
     }
 }

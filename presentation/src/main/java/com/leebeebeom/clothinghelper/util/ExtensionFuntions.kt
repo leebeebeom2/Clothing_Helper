@@ -2,8 +2,7 @@ package com.leebeebeom.clothinghelper.util
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.navigation.NavHostController
@@ -18,21 +17,6 @@ inline fun <T> Collection<T>.taskAndReturnSet(crossinline task: (MutableSet<T>) 
 
 fun NavHostController.navigateSingleTop(route: String) = navigate(route) {
     launchSingleTop = true
-}
-
-fun LazyListState.isScrollingUp(): State<Boolean> {
-    var previousIndex by mutableStateOf(firstVisibleItemIndex)
-    var previousScrollOffset by mutableStateOf(firstVisibleItemScrollOffset)
-    return derivedStateOf {
-        if (previousIndex != firstVisibleItemIndex) {
-            previousIndex > firstVisibleItemIndex
-        } else {
-            previousScrollOffset >= firstVisibleItemScrollOffset
-        }.also {
-            previousIndex = firstVisibleItemIndex
-            previousScrollOffset = firstVisibleItemScrollOffset
-        }
-    }
 }
 
 fun Modifier.noRippleClickable(onClick: () -> Unit): Modifier = composed {

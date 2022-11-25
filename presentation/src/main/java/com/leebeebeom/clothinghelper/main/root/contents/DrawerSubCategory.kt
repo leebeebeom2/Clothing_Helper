@@ -88,14 +88,8 @@ fun DrawerSubCategory(
             onClick = { onFolderClick(it) },
             startPadding = 24.dp,
             folders = folders,
-            onAddFolderPositiveClick = { newName ->
-                onAddFolderPositiveClick(
-                    StableFolder(parent = subCategory().parent, parentKey = it.key, name = newName)
-                )
-            },
-            onEditFolderPositiveClick = { newName ->
-                onEditFolderPositiveClick(it.copy(name = newName))
-            }
+            onAddFolderPositiveClick = onAddFolderPositiveClick,
+            onEditFolderPositiveClick = onEditFolderPositiveClick
         )
     }
 }

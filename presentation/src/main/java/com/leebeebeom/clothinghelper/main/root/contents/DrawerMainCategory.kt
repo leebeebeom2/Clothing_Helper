@@ -17,7 +17,7 @@ import com.leebeebeom.clothinghelper.base.composables.SingleLineText
 import com.leebeebeom.clothinghelper.main.root.components.DrawerContentRow
 import com.leebeebeom.clothinghelper.main.root.components.DrawerExpandIcon
 import com.leebeebeom.clothinghelper.main.root.components.DrawerItems
-import com.leebeebeom.clothinghelper.main.root.components.DrawerTotalCount
+import com.leebeebeom.clothinghelper.main.root.components.DrawerMainTotalCount
 import com.leebeebeom.clothinghelper.main.root.contents.dropdownmenus.DrawerMainCategoryDropDownMenu
 import com.leebeebeom.clothinghelper.main.root.model.MainCategory
 import com.leebeebeom.clothinghelper.map.StableFolder
@@ -68,7 +68,7 @@ fun DrawerMainCategory(
                     }
                 )
             }
-            DrawerTotalCount(
+            DrawerMainTotalCount(
                 items = { subCategories(mainCategory.type) },
                 isLoading = isLoading
             )

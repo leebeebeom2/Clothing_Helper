@@ -34,7 +34,6 @@ class SignUpViewModel @Inject constructor(
                 onSubCategoryLoadFail = { uiState.showToast(R.string.data_load_failed) }
             )
             when (result) {
-                is AuthResult.Success -> showToast(R.string.sign_up_complete)
                 is AuthResult.Fail -> setFireBaseError(
                     errorCode = result.errorCode,
                     updateEmailError = uiState::updateEmailError,
@@ -42,6 +41,7 @@ class SignUpViewModel @Inject constructor(
                     showToast = ::showToast
                 )
                 is AuthResult.UnknownFail -> showToast(R.string.unknown_error)
+                else -> {}
             }
         }
 

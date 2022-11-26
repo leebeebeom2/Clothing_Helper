@@ -27,7 +27,7 @@ fun SignInNavHost(state: SignInNavHostState = rememberSignInNavHostState()) {
             composable(route = SignInDestinations.SIGN_IN) {
                 SignInScreen(
                     onForgotPasswordClick = state::navigateToResetPassword,
-                    onEmailSignUpClick = state::navigateToSignUp
+                    onSignUpClick = state::navigateToSignUp
                 )
             }
             composable(route = SignInDestinations.SIGN_UP) { SignUpScreen() }

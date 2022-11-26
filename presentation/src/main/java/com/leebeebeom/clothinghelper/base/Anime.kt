@@ -54,6 +54,9 @@ object Anime {
     object CircleCheckBox {
         val expandIn = expandHorizontally() + scaleIn()
         val shrinkOut = shrinkHorizontally() + scaleOut()
+
+        val scaleIn = scaleIn()
+        val scaleOut = scaleOut()
     }
 
     object CancelIcon {
@@ -73,5 +76,9 @@ object Anime {
             animationSpec = spring(stiffness = Spring.StiffnessMedium),
             transformOrigin = TransformOrigin(0.5f, 0.5f)
         )
+    }
+
+    object ExpandIcon {
+        val rotateSpec = tween<Float>(durationMillis = 300)
     }
 }

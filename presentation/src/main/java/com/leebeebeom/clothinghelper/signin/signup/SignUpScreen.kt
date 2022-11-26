@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.base.composables.MaxWidthButton
 import com.leebeebeom.clothinghelper.base.composables.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.composables.SimpleToast
 import com.leebeebeom.clothinghelper.signin.base.composables.ButtonWithGoogleButton
@@ -78,13 +79,16 @@ fun SignUpScreen(
 
         SimpleHeightSpacer(dp = 12)
         ButtonWithGoogleButton(
-            buttonText = R.string.sign_up,
-            buttonEnabled = { uiState.buttonEnabled },
-            onButtonClick = viewModel::signUpWithEmailAndPassword,
+            buttons = {
+                MaxWidthButton(
+                    text = R.string.sign_up,
+                    enabled = { uiState.buttonEnabled },
+                    onClick = viewModel::signUpWithEmailAndPassword,
+                )
+            },
             googleButtonEnabled = { uiState.googleButtonEnabled },
-            onActivityResult = viewModel::signInWithGoogleEmail,
-            googleButtonDisable = { uiState.updateGoogleButtonEnabled(false) }
-        )
+            onActivityResult = viewModel::signInWithGoogleEmail
+        ) { uiState.updateGoogleButtonEnabled(false) }
 
         SimpleHeightSpacer(dp = 150)
     }

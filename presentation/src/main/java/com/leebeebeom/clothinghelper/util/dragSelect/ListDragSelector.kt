@@ -16,6 +16,7 @@ class ListDragSelector(
 
     override fun getSelectedItem(touchOffset: Offset, task: (LazyListItemInfo) -> Unit) {
         state.layoutInfo.visibleItemsInfo.firstOrNull {
+            println("터치: ${touchOffset.y.toInt()}, top: ${it.top}, bottom: ${it.bottom}}")
             touchOffset.y.toInt() in it.top..it.bottom
         }?.let { task(it) }
     }
@@ -83,7 +84,7 @@ class ListDragSelector(
 }
 
 val LazyListItemInfo.top: Int
-    get() = offset + 50
+    get() = offset + 20
 
 val LazyListItemInfo.bottom: Int
-    get() = offset + size + 43
+    get() = top + size

@@ -24,7 +24,8 @@ import kotlinx.collections.immutable.ImmutableSet
 
 @Composable
 fun FolderGrid(
-    folders: () -> ImmutableList<StableFolder>,
+    parentKey: String,
+    folders: (parentKey: String) -> ImmutableList<StableFolder>,
     selectedFolderKeys: () -> ImmutableSet<String>,
     isSelectMode: () -> Boolean,
     sort: () -> SortPreferences,
@@ -34,11 +35,12 @@ fun FolderGrid(
     onLongClick: (String) -> Unit,
     onClick: (StableFolder) -> Unit
 ) {
-    val isFolderEmpty by remember { derivedStateOf { folders().isEmpty() } }
+    val isFolderEmpty by remember { derivedStateOf { folders(parentKey).isEmpty() } }
 
     Crossfade(targetState = isFolderEmpty) {
         if (!it)
             FolderGridContent(
+                parentKey = parentKey,
                 folders = folders,
                 selectedFolderKeys = selectedFolderKeys,
                 isSelectMode = isSelectMode,

@@ -7,17 +7,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
+import com.leebeebeom.clothinghelper.main.base.composables.ScrollToTopFab
 import com.leebeebeom.clothinghelper.main.base.composables.sort.SortIconWithDivider
 import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.util.dragSelect.GridDragSelector
 import com.leebeebeom.clothinghelper.util.dragSelect.dragSelect
+import com.leebeebeom.clothinghelper.util.scrollToTop
+import com.leebeebeom.clothinghelper.util.showScrollToTopFab
 import com.leebeebeom.clothinghelperdomain.model.Order
 import com.leebeebeom.clothinghelperdomain.model.Sort
 import com.leebeebeom.clothinghelperdomain.model.SortPreferences
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
-
-//TODO 탑 팹
 
 @Composable
 fun FolderGridContent(
@@ -71,5 +72,6 @@ fun FolderGridContent(
                 )
             }
         }
+        ScrollToTopFab(show = { lazyState.showScrollToTopFab }, toTop = lazyState::scrollToTop)
     }
 }

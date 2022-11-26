@@ -11,7 +11,8 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.composables.MaxWidthButton
 import com.leebeebeom.clothinghelper.base.composables.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.composables.SimpleToast
-import com.leebeebeom.clothinghelper.signin.base.composables.ButtonWithGoogleButton
+import com.leebeebeom.clothinghelper.signin.base.composables.GoogleSignInButton
+import com.leebeebeom.clothinghelper.signin.base.composables.OrDivider
 import com.leebeebeom.clothinghelper.signin.base.textfields.EmailTextField
 import com.leebeebeom.clothinghelper.signin.base.textfields.NameTextField
 import com.leebeebeom.clothinghelper.signin.base.textfields.PasswordTextField
@@ -78,17 +79,19 @@ fun SignUpScreen(
         )
 
         SimpleHeightSpacer(dp = 12)
-        ButtonWithGoogleButton(
-            buttons = {
-                MaxWidthButton(
-                    text = R.string.sign_up,
-                    enabled = { uiState.buttonEnabled },
-                    onClick = viewModel::signUpWithEmailAndPassword,
-                )
-            },
-            googleButtonEnabled = { uiState.googleButtonEnabled },
-            onActivityResult = viewModel::signInWithGoogleEmail
-        ) { uiState.updateGoogleButtonEnabled(false) }
+        MaxWidthButton(
+            text = R.string.sign_up,
+            enabled = { uiState.buttonEnabled },
+            onClick = viewModel::signUpWithEmailAndPassword,
+        )
+        SimpleHeightSpacer(dp = 8)
+        OrDivider()
+        SimpleHeightSpacer(dp = 8)
+        GoogleSignInButton(
+            enabled = { uiState.googleButtonEnabled },
+            onActivityResult = viewModel::signInWithGoogleEmail,
+            disabled = { uiState.updateGoogleButtonEnabled(false) }
+        )
 
         SimpleHeightSpacer(dp = 150)
     }

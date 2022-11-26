@@ -49,7 +49,7 @@ fun FolderGridContent(
                     onLongClick = onLongClick
                 ),
             columns = GridCells.Fixed(4),
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 20.dp),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 80.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             userScrollEnabled = !dragSelectStart
         ) {

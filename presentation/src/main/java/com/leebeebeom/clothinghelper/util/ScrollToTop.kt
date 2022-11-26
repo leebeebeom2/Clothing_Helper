@@ -3,7 +3,7 @@ package com.leebeebeom.clothinghelper.util
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.derivedStateOf
 
-val LazyListState.showScrollToTopButton
+val LazyListState.showScrollToTopFab
     get() = derivedStateOf { firstVisibleItemScrollOffset > 0 }.value
 
 suspend fun LazyListState.scrollToTop() {

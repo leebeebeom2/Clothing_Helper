@@ -73,7 +73,8 @@ fun MainNavHost(state: MainNavHostState = rememberMainNavHostState()) {
                 arguments = MainDestinations.Detail.arguments
             ) { entry ->
                 DetailScreen(
-                    parentKey = entry.arguments!!.getString(MainDestinations.Detail.parentKey)!!
+                    parentKey = entry.arguments!!.getString(MainDestinations.Detail.parentKey)!!,
+                    onFolderClick = state::navigateToDetail
                 )
             }
         }

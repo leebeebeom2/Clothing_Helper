@@ -26,7 +26,7 @@ import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.util.dragSelect.ListDragSelector
 import com.leebeebeom.clothinghelper.util.dragSelect.dragSelect
 import com.leebeebeom.clothinghelper.util.scrollToTop
-import com.leebeebeom.clothinghelper.util.showScrollToTopButton
+import com.leebeebeom.clothinghelper.util.showScrollToTopFab
 import com.leebeebeom.clothinghelperdomain.model.Order
 import com.leebeebeom.clothinghelperdomain.model.Sort
 import com.leebeebeom.clothinghelperdomain.model.SortPreferences
@@ -89,7 +89,7 @@ fun SubCategoryContent(
                 folders = folders
             )
         }
-        ScrollToTopFab(show = { state.showScrollToTopButton }, toTop = state::scrollToTop)
+        ScrollToTopFab(show = { state.showScrollToTopFab }, toTop = state::scrollToTop)
     }
 }
 

@@ -3,21 +3,19 @@ package com.leebeebeom.clothinghelper.signin.signin
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.composables.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.base.composables.SimpleToast
-import com.leebeebeom.clothinghelper.base.composables.SingleLineText
-import com.leebeebeom.clothinghelper.signin.base.composables.ButtonWithGoogleButton
+import com.leebeebeom.clothinghelper.base.composables.*
+import com.leebeebeom.clothinghelper.signin.base.composables.GoogleSignInButton
+import com.leebeebeom.clothinghelper.signin.base.composables.OrDivider
 import com.leebeebeom.clothinghelper.signin.base.textfields.EmailTextField
 import com.leebeebeom.clothinghelper.signin.base.textfields.PasswordTextField
 
@@ -33,7 +31,7 @@ import com.leebeebeom.clothinghelper.signin.base.textfields.PasswordTextField
 @Composable
 fun SignInScreen(
     onForgotPasswordClick: () -> Unit,
-    onEmailSignUpClick: () -> Unit,
+    onSignUpClick: () -> Unit,
     viewModel: SignInViewModel = hiltViewModel(),
     uiState: SignInUIState = viewModel.uiState
 ) {
@@ -58,43 +56,32 @@ fun SignInScreen(
         )
 
         ForgotPasswordText(onClick = onForgotPasswordClick)
-        ButtonWithGoogleButton(
-            buttonText = R.string.sign_in,
-            buttonEnabled = { uiState.buttonEnabled },
-            onButtonClick = viewModel::signInWithEmailAndPassword,
-            googleButtonEnabled = { uiState.googleButtonEnabled },
-            onActivityResult = viewModel::signInWithGoogleEmail,
-            googleButtonDisable = { uiState.updateGoogleButtonEnabled(false) }
+
+        MaxWidthButton(
+            text = R.string.sign_in,
+            enabled = { uiState.buttonEnabled },
+            onClick = viewModel::signInWithEmailAndPassword,
         )
-        SimpleHeightSpacer(dp = 4)
-        SignUpText(onEmailSignUpClick)
+        SimpleHeightSpacer(dp = 8)
+        OrDivider()
+        SimpleHeightSpacer(dp = 8)
+        GoogleSignInButton(
+            enabled = { uiState.googleButtonEnabled },
+            onActivityResult = viewModel::signInWithGoogleEmail,
+            disabled = { uiState.updateGoogleButtonEnabled(false) }
+        )
+        SimpleHeightSpacer(dp = 12)
+        MaxWidthButton(
+            text = R.string.sign_up_with_email,
+            enabled = { true },
+            onClick = onSignUpClick,
+            colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
+            icon = { SimpleIcon(drawable = R.drawable.ic_email) }
+        )
 
         SimpleToast(text = { uiState.toastText }, toastShown = uiState::toastShown)
     }
 }
-
-@Composable
-private fun SignUpText(onClick: () -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        SingleLineText(
-            text = R.string.do_not_have_an_account,
-            style = MaterialTheme.typography.body2,
-        )
-        TextButton(onClick = onClick) {
-            SingleLineText(
-                text = stringResource(id = R.string.sign_up_with_email),
-                style = MaterialTheme.typography.body2.copy(
-                    color = Color(0xFF35C2C1), fontWeight = FontWeight.Bold
-                )
-            )
-        }
-    }
-}
-
 
 @Composable
 private fun ForgotPasswordText(onClick: () -> Unit) {
@@ -104,7 +91,7 @@ private fun ForgotPasswordText(onClick: () -> Unit) {
         ) {
             SingleLineText(
                 text = R.string.forgot_password,
-                style = MaterialTheme.typography.caption
+                style = MaterialTheme.typography.caption.copy(textDecoration = TextDecoration.Underline)
             )
         }
     }

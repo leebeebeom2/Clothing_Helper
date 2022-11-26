@@ -19,7 +19,7 @@ fun DetailHeader(title: String) {
     TopAppBar(
         backgroundColor = MaterialTheme.colors.background,
         elevation = 0.dp,
-        contentPadding = PaddingValues(horizontal = 12.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp),
         modifier = Modifier.horizontalScroll(rememberScrollState()),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -27,7 +27,7 @@ fun DetailHeader(title: String) {
                 text = title,
                 style = MaterialTheme.typography.h2.copy(
                     color = Color.Black.copy(alpha = 0.8f),
-                    fontSize = 24.sp
+                    fontSize = 28.sp
                 )
             )
         }

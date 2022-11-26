@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.detail.contents.foldergrid
+package com.leebeebeom.clothinghelper.main.detail.contents.folder
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Box

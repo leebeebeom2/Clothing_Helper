@@ -16,6 +16,8 @@ class GridDragSelector(
 
     override fun getSelectedItem(touchOffset: Offset, task: (LazyGridItemInfo) -> Unit) {
         state.layoutInfo.visibleItemsInfo.firstOrNull {
+            println("터치 x: ${touchOffset.x.toInt()}, start: ${it.start}, end: ${it.end}")
+            println("터치 y: ${touchOffset.y.toInt()}, top: ${it.top}, bottom: ${it.bottom}")
             touchOffset.y.toInt() in it.top..it.bottom &&
                     touchOffset.x.toInt() in it.start..it.end
         }?.let { task(it) }
@@ -84,4 +86,4 @@ class GridDragSelector(
 val LazyGridItemInfo.top get() = offset.y + 23
 val LazyGridItemInfo.bottom get() = offset.y + size.height - 58
 val LazyGridItemInfo.start get() = offset.x + 90
-val LazyGridItemInfo.end get() = offset.x + size.width + 7
+val LazyGridItemInfo.end get() = offset.x + size.width - 10

@@ -5,7 +5,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -22,21 +21,19 @@ fun SubCategoryInfo(isExpanded: () -> Boolean) {
         enter = Anime.SubCategoryCardInfo.expandIn,
         exit = Anime.SubCategoryCardInfo.shrinkOut
     ) {
-        key("subCategoryInfo") {
-            Surface(color = MaterialTheme.colors.background) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                ) {
-                    SubCategoryInfoText( // TODO
-                        infoTitle = R.string.average_size, info = R.string.top_info
-                    )
+        Surface(color = MaterialTheme.colors.background) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                SubCategoryInfoText( // TODO
+                    infoTitle = R.string.average_size, info = R.string.top_info
+                )
 
-                    SubCategoryInfoText(
-                        infoTitle = R.string.most_have_size, info = R.string.top_info
-                    )
-                }
+                SubCategoryInfoText(
+                    infoTitle = R.string.most_have_size, info = R.string.top_info
+                )
             }
         }
     }

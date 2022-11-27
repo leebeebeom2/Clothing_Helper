@@ -97,12 +97,10 @@ fun SubCategoryContent(
 private fun SubCategoryPlaceHolder(subCategories: () -> ImmutableList<StableSubCategory>) {
     val isEmpty by remember { derivedStateOf { subCategories().isEmpty() } }
     AnimatedVisibility(visible = isEmpty, enter = fadeIn(), exit = fadeOut()) {
-        key("subCategoryPlaceHolder") {
-            SingleLineText(
-                text = R.string.sub_category_place_holder,
-                style = MaterialTheme.typography.body1.copy(LocalContentColor.current.copy(0.6f))
-            )
-        }
+        SingleLineText(
+            text = R.string.sub_category_place_holder,
+            style = MaterialTheme.typography.body1.copy(LocalContentColor.current.copy(0.6f))
+        )
     }
 }
 

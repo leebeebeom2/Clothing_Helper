@@ -3,7 +3,10 @@ package com.leebeebeom.clothinghelper.main.detail.contents.folder
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
@@ -12,7 +15,6 @@ import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.base.Anime
 import com.leebeebeom.clothinghelper.base.composables.SingleLineText
 import com.leebeebeom.clothinghelper.main.base.composables.CircleCheckBox
-import com.leebeebeom.clothinghelper.main.detail.CardWithFolderShape
 import com.leebeebeom.clothinghelper.map.StableFolder
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
@@ -36,7 +38,7 @@ fun Folder(
             onClick = { if (isSelectMode()) onSelect(folder.key) else onClick(folder) }) {
             Box(modifier = Modifier.padding(end = 4.dp, bottom = 4.dp)) {
                 FolderCheckBox(
-                    isChecked = isChecked,
+                    isChecked = { isChecked },
                     show = isSelectMode,
                     onClick = { onSelect(folder.key) })
                 FolderCount { folders(folder.key) }
@@ -48,7 +50,7 @@ fun Folder(
 
 @Composable
 private fun BoxScope.FolderCheckBox(
-    isChecked: Boolean,
+    isChecked: () -> Boolean,
     show: () -> Boolean,
     onClick: () -> Unit
 ) {
@@ -57,23 +59,20 @@ private fun BoxScope.FolderCheckBox(
         enter = Anime.CircleCheckBox.scaleIn,
         exit = Anime.CircleCheckBox.scaleOut
     ) {
-        key("folderCheckBox") {
-            CircleCheckBox(
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(start = 1.dp),
-                isChecked = { isChecked },
-                onClick = onClick,
-                size = 16.dp
-            )
-        }
+        CircleCheckBox(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(start = 1.dp),
+            isChecked = isChecked,
+            onClick = onClick,
+            size = 16.dp
+        )
     }
 }
 
 @Composable
 private fun BoxScope.FolderCount(folders: () -> ImmutableList<StableFolder>) {
-    Column(modifier = Modifier
-        .align(Alignment.BottomEnd)) {
+    Column(modifier = Modifier.align(Alignment.BottomEnd)) {
         ProvideTextStyle(
             value = MaterialTheme.typography.caption.copy(
                 color = LocalContentColor.current.copy(ContentAlpha.medium),
@@ -81,7 +80,7 @@ private fun BoxScope.FolderCount(folders: () -> ImmutableList<StableFolder>) {
             )
         ) {
             SingleLineText(text = "${folders().size}")
-            SingleLineText(text = "0")
+            SingleLineText(text = "0") // TODO
         }
     }
 }

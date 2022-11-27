@@ -44,7 +44,7 @@ fun FolderGridContent(
                 .fillMaxWidth()
                 .dragSelect(
                     dragSelector = remember { GridDragSelector(lazyState, haptic) },
-                    onDragStart = { dragSelectStart = true },
+                    onDragStart = { dragSelectStart = it },
                     onSelect = onSelect,
                     onLongClick = onLongClick
                 ),

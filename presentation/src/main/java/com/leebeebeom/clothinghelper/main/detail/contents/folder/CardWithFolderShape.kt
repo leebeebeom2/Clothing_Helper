@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.detail
+package com.leebeebeom.clothinghelper.main.detail.contents.folder
 
 import android.graphics.Matrix
 import androidx.compose.foundation.layout.aspectRatio

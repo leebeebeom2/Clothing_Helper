@@ -23,9 +23,9 @@ suspend fun LazyListState.scrollToTop() {
 suspend fun LazyGridState.scrollToTop() {
     val scrollToTop = suspend { animateScrollToItem(0) }
 
-    if (firstVisibleItemIndex <= 2) scrollToTop()
+    if (firstVisibleItemIndex <= 5) scrollToTop()
     else {
-        scrollToItem(2)
+        scrollToItem(5)
         scrollToTop()
     }
 }

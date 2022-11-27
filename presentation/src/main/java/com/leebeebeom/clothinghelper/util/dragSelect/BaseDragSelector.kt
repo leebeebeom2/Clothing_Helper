@@ -4,130 +4,149 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 
-abstract class BaseDragSelector<T>(
+abstract class BaseDragSelector<T : BaseSelectedItem>(
     private val haptic: HapticFeedback
 ) {
-    protected var currentDragDirection: DragDirection? = DragDirection.None
-    private val passedItemKeys: LinkedHashSet<String> = linkedSetOf()
-    protected var lastSelectedIndex: Int? = null
-    protected var initialSelectedIndex: Int? = null
+    private val passedItems: LinkedHashSet<T> = linkedSetOf()
 
-    fun dragSelectStart(touchOffset: Offset, onLongClick: (key: String) -> Unit) {
+    fun dragSelectStart(touchOffset: Offset, onLongClick: (key: String) -> Unit) =
         getSelectedItem(touchOffset) { selectedItem ->
-            getKey(selectedItem)?.let {
-                setInitial(selectedItem)
-                passedItemKeys.add(it)
-                onLongClick(it)
+            (selectedItem.key as? String)?.let { key ->
+                passedItems.add(selectedItem)
+                onLongClick(key)
                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            }
+        }
+
+    fun onDrag(touchOffset: Offset, onSelect: (String) -> Unit) {
+        passedItems.firstOrNull()?.let { initialItem ->
+            getSelectedItem(touchOffset) { selectedItem ->
+                if (isDragDown(initialItem = initialItem, selectedItem = selectedItem))
+                    dragDown(
+                        selectedItem = selectedItem,
+                        onSelect = onSelect,
+                        initialItem = initialItem
+                    )
+                else if (isDragUp(initialItem = initialItem, selectedItem = selectedItem))
+                    dragUp(
+                        selectedItem = selectedItem,
+                        onSelect = onSelect,
+                        initialItem = initialItem
+                    )
+                else if (passedItems.first().index == selectedItem.index) {
+                    passedItems.drop(1).forEach { onSelect(it.key) }
+                    val initial = passedItems.first()
+                    passedItems.clear()
+                    passedItems.add(initial)
+                }
+
             }
         }
     }
 
-    fun onDrag(touchOffset: Offset, onSelect: (String) -> Unit) {
-        forward(touchOffset, onSelect)
-        backward(touchOffset, onSelect)
-    }
-
-    private fun forward(
-        touchOffset: Offset,
-        onSelect: (String) -> Unit
-    ) {
-        initialSelectedIndex?.let { index ->
-            currentDragDirection = getDragDirection(touchOffset)
-
-            if (currentDragDirection == DragDirection.Down) // 정방향 아래로 드래그
-                onDragStart(
-                    touchOffset = touchOffset,
-                    indexRange = { index..it },
-                    passedItemKeysContainsOrNot = { !passedItemKeys.contains(it) },
-                    onSelect = onSelect,
-                    passedItemKeysAddOrRemove = passedItemKeys::addAll,
-                    selectedItemFirstOrLast = { it.lastOrNull() }
-                )
-            else if (currentDragDirection == DragDirection.Up) // 정방향 위로 드래그
-                onDragStart(
-                    touchOffset = touchOffset,
-                    indexRange = { it..index },
-                    passedItemKeysContainsOrNot = { !passedItemKeys.contains(it) },
-                    onSelect = onSelect,
-                    passedItemKeysAddOrRemove = passedItemKeys::addAll,
-                    selectedItemFirstOrLast = { it.firstOrNull() }
-                )
+    private fun dragUp(selectedItem: T, onSelect: (String) -> Unit, initialItem: T) {
+        if (isDragUpForward(selectedItem)) { // 드래그 업 정방향
+            initPassedItems(onSelect) { it.index > initialItem.index } // 패스드 아이템 초기화
+            forward(
+                selectedItem = selectedItem,
+                onSelect = onSelect,
+                range = selectedItem.index until initialItem.index
+            )
+        } else if (isDragUpBackward(selectedItem)) { // 드래그 업 역방향
+            backward(
+                selectedItem = selectedItem,
+                onSelect = onSelect,
+                range = passedItems.last().index until selectedItem.index
+            )
         }
     }
 
-    private fun backward(
-        touchOffset: Offset,
-        onSelect: (key: String) -> Unit
+    private fun dragDown(
+        selectedItem: T,
+        onSelect: (String) -> Unit,
+        initialItem: T
     ) {
-        lastSelectedIndex?.let { index ->
-            val dragEndDirection = getDragEndDirection(touchOffset)
-
-            if (dragEndDirection == DragDirection.Up) // 역방향 위로(아래로 드래그 후 위로)
-                onDragStart(
-                    touchOffset = touchOffset,
-                    indexRange = { it..index },
-                    passedItemKeysContainsOrNot = passedItemKeys::contains,
-                    onSelect = onSelect,
-                    passedItemKeysAddOrRemove = passedItemKeys::removeAll,
-                    selectedItemFirstOrLast = { it.lastOrNull() }
-                )
-            else if (dragEndDirection == DragDirection.Down) // 역방향 아래로(위로 드래그 후 아래로)
-                onDragStart(
-                    touchOffset = touchOffset,
-                    indexRange = { index..it },
-                    passedItemKeysContainsOrNot = passedItemKeys::contains,
-                    onSelect = onSelect,
-                    passedItemKeysAddOrRemove = passedItemKeys::removeAll,
-                    selectedItemFirstOrLast = { it.firstOrNull() }
-                )
+        if (dragDownForward(selectedItem)) { // 드래그 다운 정방향
+            initPassedItems(onSelect) { it.index < initialItem.index } // 패스드 아이템 초기화
+            forward(
+                selectedItem = selectedItem,
+                onSelect = onSelect,
+                range = initialItem.index + 1..selectedItem.index
+            )
+        } else if (dragDownBackward(selectedItem)) { // 드래그 다운 역방향
+            backward(
+                selectedItem = selectedItem,
+                onSelect = onSelect,
+                range = selectedItem.index + 1..passedItems.last().index
+            )
         }
     }
 
     /**
-     * @param indexRange 아래로 드래그 시 selectedItemIndex..lastIndex 위로 드래그 시 반대로
-     * @param passedItemKeysContainsOrNot 정방향 시 !contains, 역방향 시 contains
-     * @param passedItemKeysAddOrRemove 정방향 시 add, 역방향 시 remove
-     * @param selectedItemFirstOrLast lastSelectedItem에 추가될 객체 아래로 드래그 시 last 위로 드래그 시 first
+     * @param range selectedItem.index + 1..passedItems.last().index <- drag down
+     *              passedItems.last().index until selectedItem.index <- drag up
      */
-    private fun onDragStart(
-        touchOffset: Offset,
-        indexRange: (selectedItemIndex: Int) -> IntRange,
-        passedItemKeysContainsOrNot: (String) -> Boolean,
-        onSelect: (String) -> Unit,
-        passedItemKeysAddOrRemove: (Set<String>) -> Unit,
-        selectedItemFirstOrLast: (List<T>) -> T?
-    ) {
-        getSelectedItem(touchOffset) { selectedItem ->
-            val selectedItems =
-                getSelectedItems(selectedItem, indexRange, passedItemKeysContainsOrNot)
-            val selectedKeys = getSelectedKeys(selectedItems)
-            passedItemKeysAddOrRemove(selectedKeys.toSet())
-            selectedKeys.forEach(onSelect)
-            selectedItemFirstOrLast(selectedItems)?.let { setLast(it) }
+    private fun backward(selectedItem: T, onSelect: (String) -> Unit, range: IntRange) {
+        val selectedItems = getSelectedItems(
+            selectedItem = selectedItem,
+            indexRange = range,
+            passedItemsContainsOrNot = { passedItems.contains(it) }
+        )
+
+        passedItems.removeAll(selectedItems)
+        selectedItems.forEach { onSelect(it.key) }
+    }
+
+    /**
+     * @param range initialItem.Index + 1..selectedItem.index <- drag down
+     *              selectedItem.index until initialItem.Index <- drag up
+     */
+    private fun forward(selectedItem: T, onSelect: (String) -> Unit, range: IntRange) {
+        val selectedItems = getSelectedItems(
+            selectedItem = selectedItem,
+            indexRange = range,
+            passedItemsContainsOrNot = { !passedItems.contains(it) }
+        )
+
+        passedItems.addAll(selectedItems)
+        selectedItems.forEach { onSelect(it.key) }
+    }
+
+    /**
+     * @param predicate it.index > initialItem.index or it.index < initialItem.index
+     */
+    private fun initPassedItems(onSelect: (String) -> Unit, predicate: (passedItem: T) -> Boolean) {
+        if (passedItems.size > 1) {
+            val previousPassedItems = passedItems.filter(predicate)
+            passedItems.removeAll(previousPassedItems.toSet())
+            previousPassedItems.forEach { onSelect(it.key) }
         }
     }
 
-    fun onDragEnd() {
-        dragEnd()
-        initialSelectedIndex = null
-        lastSelectedIndex = null
-        currentDragDirection = DragDirection.None
-        passedItemKeys.clear()
-    }
+    private fun isDragDown(initialItem: T, selectedItem: T) =
+        initialItem.index < selectedItem.index
+
+    private fun dragDownForward(selectedItem: T) =
+        passedItems.last().index < selectedItem.index
+
+    private fun dragDownBackward(selectedItem: T) =
+        passedItems.last().index > selectedItem.index
+
+    private fun isDragUp(initialItem: T, selectedItem: T) =
+        initialItem.index > selectedItem.index
+
+    private fun isDragUpForward(selectedItem: T) =
+        passedItems.last().index > selectedItem.index
+
+    private fun isDragUpBackward(selectedItem: T) =
+        passedItems.last().index < selectedItem.index
+
+    fun onDragEnd() = passedItems.clear()
 
     protected abstract fun getSelectedItem(touchOffset: Offset, task: (T) -> Unit)
-    protected abstract fun getKey(selectedItem: T): String?
-    protected abstract fun setInitial(selectedItem: T)
-    protected abstract fun setLast(selectedItem: T)
     protected abstract fun getSelectedItems(
         selectedItem: T,
-        indexRange: (selectedItemIndex: Int) -> IntRange,
-        passedItemKeysContainsOrNot: (String) -> Boolean
-    ): List<T>
-
-    protected abstract fun getSelectedKeys(selectedItems: List<T>): List<String>
-    protected abstract fun getDragDirection(touchOffset: Offset): DragDirection?
-    protected abstract fun getDragEndDirection(touchOffset: Offset): DragDirection
-    protected abstract fun dragEnd()
+        indexRange: IntRange,
+        passedItemsContainsOrNot: (T) -> Boolean
+    ): Set<T>
 }

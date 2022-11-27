@@ -22,10 +22,8 @@ fun <T : BaseContainer> DrawerItems(
         enter = Anime.DrawerList.listExpand,
         exit = Anime.DrawerList.listShrink
     ) {
-        key("drawerItems") {
-            Surface(color = backGround) {
-                Column { items().forEach { key(it.key) { item(it) } } }
-            }
+        Surface(color = backGround) {
+            Column { items().forEach { key(it.key) { item(it) } } }
         }
     }
 }

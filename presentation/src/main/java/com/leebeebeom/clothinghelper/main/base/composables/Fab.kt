@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
@@ -37,15 +36,13 @@ fun BoxScope.Fab(
         enter = Anime.SelectModeFabFade.fadeIn,
         exit = Anime.SelectModeFabFade.fadeOut
     ) {
-        key("fab") {
-            FloatingActionButton(
-                modifier = modifier
-                    .padding(paddingValues)
-                    .size(size),
-                onClick = onClick,
-                backgroundColor = MaterialTheme.colors.primary,
-                content = content
-            )
-        }
+        FloatingActionButton(
+            modifier = modifier
+                .padding(paddingValues)
+                .size(size),
+            onClick = onClick,
+            backgroundColor = MaterialTheme.colors.primary,
+            content = content
+        )
     }
 }

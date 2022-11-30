@@ -1,6 +1,6 @@
 package com.leebeebeom.clothinghelperdomain.repository
 
-import com.leebeebeom.clothinghelperdomain.model.container.Folder
+import com.leebeebeom.clothinghelperdomain.model.data.Folder
 import kotlinx.coroutines.flow.Flow
 
 interface FolderRepository : ContainerRepository<Folder> {

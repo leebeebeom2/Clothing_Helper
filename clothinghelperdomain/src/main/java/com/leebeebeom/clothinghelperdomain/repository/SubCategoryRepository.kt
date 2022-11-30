@@ -1,6 +1,6 @@
 package com.leebeebeom.clothinghelperdomain.repository
 
-import com.leebeebeom.clothinghelperdomain.model.container.SubCategory
+import com.leebeebeom.clothinghelperdomain.model.data.SubCategory
 import kotlinx.coroutines.flow.Flow
 
 interface SubCategoryRepository :ContainerRepository<SubCategory> {

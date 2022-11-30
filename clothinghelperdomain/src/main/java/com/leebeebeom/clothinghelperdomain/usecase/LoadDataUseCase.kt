@@ -1,8 +1,8 @@
 package com.leebeebeom.clothinghelperdomain.usecase
 
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
-import com.leebeebeom.clothinghelperdomain.model.container.Folder
-import com.leebeebeom.clothinghelperdomain.model.container.SubCategory
+import com.leebeebeom.clothinghelperdomain.model.data.Folder
+import com.leebeebeom.clothinghelperdomain.model.data.SubCategory
 import com.leebeebeom.clothinghelperdomain.repository.FolderRepository
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
 import com.leebeebeom.clothinghelperdomain.usecase.user.GetUserUseCase

@@ -18,7 +18,7 @@ fun SizeChartHeader(path: String) {
     Row(modifier = Modifier
         .horizontalScroll(rememberScrollState())
         .padding(vertical = 8.dp, horizontal = 12.dp)) {
-        SingleLineText(text = path, style = MaterialTheme.typography.h4.copy(fontSize = 26.sp))
+        SingleLineText(text = path, style = MaterialTheme.typography.h4.copy(fontSize = 24.sp))
     }
 
     Divider(modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp))

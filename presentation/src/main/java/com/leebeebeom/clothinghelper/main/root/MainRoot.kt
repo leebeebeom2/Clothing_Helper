@@ -1,12 +1,10 @@
 package com.leebeebeom.clothinghelper.main.root
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.base.composables.BackHandler
 import com.leebeebeom.clothinghelper.base.composables.BlockBacKPressWhenLoading
@@ -97,7 +95,6 @@ fun MainRoot(
                     folders = uiState::getFolders
                 )
             },
-            drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
             drawerBackgroundColor = MaterialTheme.colors.primary,
         ) {
             content(it)

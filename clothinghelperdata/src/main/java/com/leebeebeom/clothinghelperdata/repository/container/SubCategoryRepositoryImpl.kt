@@ -14,7 +14,7 @@ import javax.inject.Singleton
 @Singleton
 class SubCategoryRepositoryImpl @Inject constructor(
     subCategoryPreferencesRepository: SubCategoryPreferencesRepository
-) : ContainerRepositoryImpl<SubCategory>(), SubCategoryRepository {
+) : BaseDataRepositoryImpl<SubCategory>(), SubCategoryRepository {
 
     override val allSubCategories = getSortedContainers(subCategoryPreferencesRepository.sort)
 

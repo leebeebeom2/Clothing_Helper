@@ -10,7 +10,7 @@ import com.leebeebeom.clothinghelperdata.repository.util.updateMutable
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.model.SortPreferences
 import com.leebeebeom.clothinghelperdomain.model.data.BaseModel
-import com.leebeebeom.clothinghelperdomain.repository.ContainerRepository
+import com.leebeebeom.clothinghelperdomain.repository.BaseDataRepository
 import com.leebeebeom.clothinghelperdomain.repository.LoadingRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
@@ -22,8 +22,8 @@ import kotlinx.coroutines.tasks.await
 private val db = Firebase.database.apply { setPersistenceEnabled(true) }
 private val loadingRepositoryImpl = LoadingRepositoryImpl(true)
 
-abstract class ContainerRepositoryImpl<T : BaseModel> :
-    LoadingRepository by loadingRepositoryImpl, ContainerRepository<T> {
+abstract class BaseDataRepositoryImpl<T : BaseModel> :
+    LoadingRepository by loadingRepositoryImpl, BaseDataRepository<T> {
     protected val root = db.reference
 
     private val allContainers = MutableStateFlow(emptyList<T>())

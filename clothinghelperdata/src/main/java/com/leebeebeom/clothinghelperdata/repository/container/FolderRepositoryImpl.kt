@@ -10,7 +10,7 @@ import javax.inject.Singleton
 @Singleton
 class FolderRepositoryImpl @Inject constructor(
     folderPreferencesRepository: FolderPreferencesRepository
-) : ContainerRepositoryImpl<Folder>(),
+) : BaseDataRepositoryImpl<Folder>(),
     FolderRepository {
     override val allFolders = getSortedContainers(folderPreferencesRepository.sort)
 

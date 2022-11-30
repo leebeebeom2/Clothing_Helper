@@ -1,7 +1,7 @@
 package com.leebeebeom.clothinghelper.map
 
-import com.leebeebeom.clothinghelperdomain.model.data.SizeChart
 import com.leebeebeom.clothinghelperdomain.model.data.BaseModel
+import com.leebeebeom.clothinghelperdomain.model.data.SizeChart
 import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
 
 data class StableSizeChart(
@@ -9,6 +9,9 @@ data class StableSizeChart(
     val isFavorite: Boolean = false,
     val link: String = "",
     val memo: String = "",
+    val brand: String = "",
+    val photoUrl: String = "",
+    val sizes: List<Int> = emptyList(),
     override val name: String = "",
     override val key: String = "",
     override val createDate: Long = 0,
@@ -22,11 +25,13 @@ fun StableSizeChart.toUnstable() =
         isFavorite = isFavorite,
         link = link,
         memo = memo,
+        brand = brand,
+        photoUrl = photoUrl,
+        sizes = sizes,
         name = name,
         key = key,
         createDate = createDate,
-        editDate = editDate,
-        parent = parent
+        editDate = editDate
     )
 
 fun SizeChart.toStable() =
@@ -35,9 +40,11 @@ fun SizeChart.toStable() =
         isFavorite = isFavorite,
         link = link,
         memo = memo,
+        brand = brand,
+        photoUrl = photoUrl,
+        sizes = sizes,
         name = name,
         key = key,
         createDate = createDate,
-        editDate = editDate,
-        parent = parent
+        editDate = editDate
     )

@@ -12,25 +12,29 @@ import com.leebeebeom.clothinghelperdomain.model.SortPreferences
 import com.leebeebeom.clothinghelperdomain.model.data.BaseModel
 import com.leebeebeom.clothinghelperdomain.repository.BaseDataRepository
 import com.leebeebeom.clothinghelperdomain.repository.LoadingRepository
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 
 private val db = Firebase.database.apply { setPersistenceEnabled(true) }
 private val loadingRepositoryImpl = LoadingRepositoryImpl(true)
 
-abstract class BaseDataRepositoryImpl<T : BaseModel> :
-    LoadingRepository by loadingRepositoryImpl, BaseDataRepository<T> {
+abstract class BaseDataRepositoryImpl<T : BaseModel>(
+    private val sortFlow: Flow<SortPreferences>,
+) : LoadingRepository by loadingRepositoryImpl, BaseDataRepository<T> {
     protected val root = db.reference
 
-    private val allContainers = MutableStateFlow(emptyList<T>())
-    protected abstract val refPath: String
+    private val _allData = MutableStateFlow(emptyList<T>())
+    override val allData = getSortedContainers()
+    private fun getSortedContainers() = combine(_allData, sortFlow, transform = ::getSorted)
 
-    protected fun getSortedContainers(sortFlow: Flow<SortPreferences>) =
-        combine(allContainers, sortFlow, transform = ::getSorted)
+    protected abstract val refPath: String
 
     override suspend fun load(uid: String?, type: Class<T>) =
         databaseTryWithLoading("update") {
@@ -41,10 +45,10 @@ abstract class BaseDataRepositoryImpl<T : BaseModel> :
                     temp.add((it.getValue(type))!!)
                 }
 
-                allContainers.update { temp }
+                _allData.update { temp }
                 FirebaseResult.Success
             } ?: let {
-                allContainers.update { emptyList() }
+                _allData.update { emptyList() }
                 FirebaseResult.Success
             }
         }
@@ -60,7 +64,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel> :
             )
 
             push(containerRef, newContainer).await()
-            allContainers.updateMutable { it.add(newContainer) }
+            _allData.updateMutable { it.add(newContainer) }
             FirebaseResult.Success
         }
 
@@ -71,7 +75,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel> :
             root.getContainerRef(uid, refPath).child(newContainerWithNewEditDate.key)
                 .setValue(newContainerWithNewEditDate).await()
 
-            allContainers.updateMutable {
+            _allData.updateMutable {
                 val oldContainer =
                     it.first { value -> value.key == newContainerWithNewEditDate.key }
                 it.remove(oldContainer)

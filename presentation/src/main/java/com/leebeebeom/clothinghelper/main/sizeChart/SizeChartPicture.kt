@@ -37,15 +37,17 @@ fun SizeChartPicture(
     val photoLauncher = photoLauncher(onResult = viewModel::getPicture)
     val context = LocalContext.current
 
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        elevation = 2.dp,
-        onClick = {
-            photoLauncher.launch(getPhotoIntent(context))
+    Box(modifier = Modifier.padding(horizontal = 40.dp, vertical = 20.dp)){
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            elevation = 2.dp,
+            onClick = {
+                photoLauncher.launch(getPhotoIntent(context))
+            }
+        ) {
+            Picture { uiState.imageUri }
         }
-    ) {
-        Picture { uiState.imageUri }
     }
 }
 

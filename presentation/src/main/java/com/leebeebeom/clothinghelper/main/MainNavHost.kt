@@ -20,6 +20,8 @@ import com.leebeebeom.clothinghelper.main.root.model.EssentialMenuType
 import com.leebeebeom.clothinghelper.main.setting.SettingScreen
 import com.leebeebeom.clothinghelper.main.sizeChart.SizeChartScreen
 import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryScreen
+import com.leebeebeom.clothinghelper.map.StableFolder
+import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.util.navigateSingleTop
 import com.leebeebeom.clothinghelperdomain.model.container.BaseContainer
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
@@ -36,12 +38,10 @@ sealed class MainDestinations(val route: String) {
     object Detail : MainDestinations("detail") {
         const val parentKey = "parentKey"
         const val subCategoryKey = "subCategoryKey"
-        const val subCategoryParent = "subCategoryParent"
-        val routeWithArg = "$route/{$parentKey}/${subCategoryKey}/${subCategoryParent}"
+        val routeWithArg = "$route/{$parentKey}/${subCategoryKey}"
         val arguments = listOf(
             navArgument(parentKey) { type = NavType.StringType },
             navArgument(subCategoryKey) { type = NavType.StringType },
-            navArgument(subCategoryParent) { type = NavType.StringType },
         )
     }
 
@@ -83,7 +83,6 @@ fun MainNavHost(state: MainNavHostState = rememberMainNavHostState()) {
                 DetailScreen(
                     parentKey = arguments.getString(MainDestinations.Detail.parentKey)!!,
                     subCategoryKey = arguments.getString(MainDestinations.Detail.subCategoryKey)!!,
-                    subCategoryParent = enumValueOf(arguments.getString(MainDestinations.Detail.subCategoryParent)!!),
                     onFolderClick = state::navigateToDetail,
                     onFabClick = state::navigateToSizeChart
                 )
@@ -124,15 +123,14 @@ data class MainNavHostState(
     }
 
     fun navigateToDetail(container: BaseContainer) {
-        val arguments = currentBackStack.value?.arguments!!
-
         val parentKey = container.key
-        val currentParentKey = arguments.getString(MainDestinations.Detail.parentKey)
+        val currentParentKey =
+            currentBackStack.value?.arguments!!.getString(MainDestinations.Detail.parentKey)
 
         if (parentKey != currentParentKey) {
-            val subCategoryKey = arguments.getString(MainDestinations.Detail.subCategoryKey)
-            val subCategoryParent = arguments.getString(MainDestinations.Detail.subCategoryParent)
-            navController.navigate(route = "${MainDestinations.Detail.route}/${parentKey}/${subCategoryKey}/${subCategoryParent}")
+            val subCategoryKey =
+                if (container is StableSubCategory) container.key else (container as StableFolder).subCategoryKey
+            navController.navigate(route = "${MainDestinations.Detail.route}/${parentKey}/${subCategoryKey}")
         }
     }
 

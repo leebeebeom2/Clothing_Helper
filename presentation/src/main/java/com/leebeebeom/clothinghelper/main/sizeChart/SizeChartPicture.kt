@@ -31,21 +31,18 @@ import java.io.File
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SizeChartPicture(
-    viewModel: SizeChartViewModel = hiltViewModel(),
-    uiState: SizeChartUIState = viewModel.uiState
+    viewModel: SizeChartViewModel = hiltViewModel(), uiState: SizeChartUIState = viewModel.uiState
 ) {
     val photoLauncher = photoLauncher(onResult = viewModel::getPicture)
     val context = LocalContext.current
 
-    Box(modifier = Modifier.padding(horizontal = 40.dp, vertical = 20.dp)){
-        Card(
-            modifier = Modifier.fillMaxWidth(),
+    Box(modifier = Modifier.padding(horizontal = 40.dp, vertical = 20.dp)) {
+        Card(modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             elevation = 2.dp,
             onClick = {
                 photoLauncher.launch(getPhotoIntent(context))
-            }
-        ) {
+            }) {
             Picture { uiState.imageUri }
         }
     }
@@ -53,8 +50,7 @@ fun SizeChartPicture(
 
 @Composable
 private fun photoLauncher(onResult: (ActivityResult) -> Unit) = rememberLauncherForActivityResult(
-    contract = ActivityResultContracts.StartActivityForResult(),
-    onResult = onResult
+    contract = ActivityResultContracts.StartActivityForResult(), onResult = onResult
 )
 
 private fun getPhotoIntent(context: Context): Intent {
@@ -63,12 +59,10 @@ private fun getPhotoIntent(context: Context): Intent {
     val contentUri =
         FileProvider.getUriForFile(context, "com.leebeebeom.clothinghelper.fileprovider", fileName)
 
-    val intent = Intent(ACTION_PICK)
-        .setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
-        .putExtra("crop", true)
-        .putExtra("aspectX", 3)
-        .putExtra("aspectY", 4)
-        .putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
+    val intent =
+        Intent(ACTION_PICK).setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+            .putExtra("crop", true).putExtra("aspectX", 3).putExtra("aspectY", 4)
+            .putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
 
     val activity = intent.resolveActivity(context.packageManager)
     context.grantUriPermission(
@@ -82,26 +76,24 @@ private fun getPhotoIntent(context: Context): Intent {
 
 @Composable
 private fun Picture(uri: () -> Uri?) {
-    CoilImage(
-        imageModel = uri(),
-        modifier = Modifier.fillMaxWidth(),
-        contentScale = ContentScale.FillBounds,
-        failure = {
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                SimpleIcon(
-                    drawable = R.drawable.ic_add_circle,
-                    modifier = Modifier.size(100.dp),
-                    tint = LocalContentColor.current.copy(alpha = 0.1f)
-                )
-            }
-        },
-        success = {
-            Image(painter = rememberDrawablePainter(drawable = it.drawable), contentDescription = null)
+    CoilImage(imageModel = uri(), modifier = Modifier.fillMaxWidth(), failure = {
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f), contentAlignment = Alignment.Center
+        ) {
+            SimpleIcon(
+                drawable = R.drawable.ic_add_circle,
+                modifier = Modifier.size(100.dp),
+                tint = LocalContentColor.current.copy(alpha = 0.1f)
+            )
         }
-    )
+    }, success = {
+        Image(
+            modifier = Modifier.fillMaxWidth(),
+            painter = rememberDrawablePainter(drawable = it.drawable),
+            contentDescription = null,
+            contentScale = ContentScale.FillWidth
+        )
+    })
 }

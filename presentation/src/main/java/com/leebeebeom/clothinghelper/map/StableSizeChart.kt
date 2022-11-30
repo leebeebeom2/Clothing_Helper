@@ -1,8 +1,8 @@
 package com.leebeebeom.clothinghelper.map
 
-import com.leebeebeom.clothinghelperdomain.model.SizeChart
-import com.leebeebeom.clothinghelperdomain.model.container.BaseModel
-import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.model.data.SizeChart
+import com.leebeebeom.clothinghelperdomain.model.data.BaseModel
+import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
 
 data class StableSizeChart(
     val subCategoryKey: String = "",

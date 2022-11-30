@@ -12,4 +12,4 @@ data class Folder(
     override val key: String = "",
     override val editDate: Long = 0,
     override val parent: SubCategoryParent = SubCategoryParent.TOP
-) : BaseContainer(), Parcelable
+) : BaseModel(), Parcelable

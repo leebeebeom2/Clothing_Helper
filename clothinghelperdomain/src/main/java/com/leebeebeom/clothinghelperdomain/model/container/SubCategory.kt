@@ -10,7 +10,7 @@ data class SubCategory(
     override val name: String = "",
     override val createDate: Long = 0,
     override val editDate: Long = 0
-) : BaseContainer(), Parcelable
+) : BaseModel(), Parcelable
 
 enum class SubCategoryParent {
     TOP, BOTTOM, OUTER, ETC

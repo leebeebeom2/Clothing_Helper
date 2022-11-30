@@ -1,6 +1,6 @@
 package com.leebeebeom.clothinghelperdomain.model.container
 
-abstract class BaseContainer {
+abstract class BaseModel {
     abstract val parent: SubCategoryParent
     abstract val name: String
     abstract val key: String

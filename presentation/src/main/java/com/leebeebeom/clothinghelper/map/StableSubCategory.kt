@@ -1,6 +1,6 @@
 package com.leebeebeom.clothinghelper.map
 
-import com.leebeebeom.clothinghelperdomain.model.container.BaseContainer
+import com.leebeebeom.clothinghelperdomain.model.container.BaseModel
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 
@@ -10,7 +10,7 @@ data class StableSubCategory(
     override val name: String = "",
     override val createDate: Long = 0,
     override val editDate: Long = 0
-) : BaseContainer()
+) : BaseModel()
 
 fun SubCategory.toStable() =
     StableSubCategory(

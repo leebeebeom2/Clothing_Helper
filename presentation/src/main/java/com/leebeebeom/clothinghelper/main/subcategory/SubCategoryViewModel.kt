@@ -14,7 +14,7 @@ import com.leebeebeom.clothinghelper.main.base.interfaces.addandedit.subcategory
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelperdomain.model.Order
 import com.leebeebeom.clothinghelperdomain.model.Sort
-import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.usecase.GetDataLoadingStateUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.folder.GetAllFoldersUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.preferences.sort.SubCategorySortUseCase

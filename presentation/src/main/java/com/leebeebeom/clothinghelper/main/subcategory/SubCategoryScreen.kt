@@ -16,7 +16,7 @@ import com.leebeebeom.clothinghelper.main.base.composables.selectmodebottomappba
 import com.leebeebeom.clothinghelper.main.base.dialogs.EditSubCategoryDialog
 import com.leebeebeom.clothinghelper.main.subcategory.content.SubCategoryContent
 import com.leebeebeom.clothinghelper.map.StableSubCategory
-import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
 
 /*
 최초 구동 시 로딩 확인

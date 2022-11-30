@@ -1,10 +1,7 @@
 package com.leebeebeom.clothinghelperdomain.repository
 
 import com.leebeebeom.clothinghelperdomain.model.data.SubCategory
-import kotlinx.coroutines.flow.Flow
 
-interface SubCategoryRepository :ContainerRepository<SubCategory> {
-    val allSubCategories: Flow<List<SubCategory>>
-
+interface SubCategoryRepository : BaseDataRepository<SubCategory> {
     suspend fun pushInitialSubCategories(uid: String)
 }

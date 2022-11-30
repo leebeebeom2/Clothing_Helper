@@ -13,7 +13,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import com.leebeebeom.clothinghelper.main.base.dialogs.composables.BaseTextFieldDialogState
 import com.leebeebeom.clothinghelper.main.base.dialogs.composables.TextFieldDialog
-import com.leebeebeom.clothinghelperdomain.model.container.BaseContainer
+import com.leebeebeom.clothinghelperdomain.model.data.BaseModel
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -21,7 +21,7 @@ fun EditDialog(
     @StringRes label: Int,
     @StringRes placeHolder: Int,
     @StringRes title: Int,
-    items: () -> ImmutableList<BaseContainer>,
+    items: () -> ImmutableList<BaseModel>,
     @StringRes existNameError: Int,
     onDismiss: () -> Unit,
     onPositiveButtonClick: (String) -> Unit,

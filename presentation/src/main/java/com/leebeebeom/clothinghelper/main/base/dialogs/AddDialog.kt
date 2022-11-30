@@ -12,7 +12,7 @@ import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.text.TextRange
 import com.leebeebeom.clothinghelper.main.base.dialogs.composables.BaseTextFieldDialogState
 import com.leebeebeom.clothinghelper.main.base.dialogs.composables.TextFieldDialog
-import com.leebeebeom.clothinghelperdomain.model.container.BaseContainer
+import com.leebeebeom.clothinghelperdomain.model.data.BaseModel
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -20,7 +20,7 @@ fun AddDialog(
     @StringRes label: Int,
     @StringRes placeHolder: Int,
     @StringRes title: Int,
-    items: () -> ImmutableList<BaseContainer>,
+    items: () -> ImmutableList<BaseModel>,
     @StringRes existNameError: Int,
     onPositiveButtonClick: (String) -> Unit,
     show: () -> Boolean,

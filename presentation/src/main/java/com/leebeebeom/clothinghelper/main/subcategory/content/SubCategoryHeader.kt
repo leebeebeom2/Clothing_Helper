@@ -9,7 +9,7 @@ import com.leebeebeom.clothinghelper.util.getHeaderStringRes
 import com.leebeebeom.clothinghelperdomain.model.Order
 import com.leebeebeom.clothinghelperdomain.model.Sort
 import com.leebeebeom.clothinghelperdomain.model.SortPreferences
-import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
 
 @Composable
 fun SubCategoryHeader(

@@ -7,7 +7,6 @@ import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 data class StableFolder(
     val parentKey: String = "",
     val subCategoryKey: String = "",
-    val subCategoryParent: SubCategoryParent = SubCategoryParent.TOP,
     override val createDate: Long = 0,
     override val name: String = "",
     override val key: String = "",
@@ -18,7 +17,6 @@ data class StableFolder(
 fun Folder.toStable() = StableFolder(
     parentKey = parentKey,
     subCategoryKey = subCategoryKey,
-    subCategoryParent = subCategoryParent,
     createDate = createDate,
     name = name,
     key = key,
@@ -29,7 +27,6 @@ fun Folder.toStable() = StableFolder(
 fun StableFolder.toStable() = Folder(
     parentKey = parentKey,
     subCategoryKey = subCategoryKey,
-    subCategoryParent = subCategoryParent,
     createDate = createDate,
     name = name,
     key = key,

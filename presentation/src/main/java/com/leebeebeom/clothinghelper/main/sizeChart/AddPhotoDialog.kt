@@ -25,7 +25,7 @@ import com.leebeebeom.clothinghelper.main.base.dialogs.composables.DialogTitle
 import java.io.File
 
 @Composable
-fun AddPhoto(show: () -> Boolean, onDismiss: () -> Unit, onResult: (ActivityResult) -> Unit) {
+fun AddPhotoDialog(show: () -> Boolean, onDismiss: () -> Unit, onResult: (ActivityResult) -> Unit) {
     if (show()) {
         val photoLauncher = photoLauncher(onResult = {
             onResult(it)

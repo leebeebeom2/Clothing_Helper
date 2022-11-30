@@ -1,7 +1,7 @@
 package com.leebeebeom.clothinghelper.main.root.model
 
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
 import kotlinx.collections.immutable.toImmutableList
 
 data class MainCategory(val name: Int, val type: SubCategoryParent)

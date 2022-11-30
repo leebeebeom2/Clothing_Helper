@@ -6,5 +6,5 @@ import javax.inject.Inject
 
 @ViewModelScoped
 class GetAllFoldersUseCase @Inject constructor(folderRepository: FolderRepository) {
-    val allFolders = folderRepository.allFolders
+    val allFolders = folderRepository.allData
 }

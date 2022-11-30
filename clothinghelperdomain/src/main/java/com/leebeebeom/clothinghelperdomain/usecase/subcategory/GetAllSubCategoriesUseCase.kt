@@ -6,5 +6,5 @@ import javax.inject.Inject
 
 @ViewModelScoped
 class GetAllSubCategoriesUseCase @Inject constructor(private val subCategoryRepository: SubCategoryRepository) {
-    val allSubCategories get() = subCategoryRepository.allSubCategories
+    val allSubCategories get() = subCategoryRepository.allData
 }

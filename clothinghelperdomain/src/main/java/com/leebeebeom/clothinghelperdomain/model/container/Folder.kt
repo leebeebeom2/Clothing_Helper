@@ -7,6 +7,7 @@ import kotlinx.parcelize.Parcelize
 data class Folder(
     val parentKey: String = "",
     val subCategoryKey: String = "",
+    val subCategoryParent: SubCategoryParent = SubCategoryParent.TOP,
     override val createDate: Long = 0,
     override val name: String = "",
     override val key: String = "",

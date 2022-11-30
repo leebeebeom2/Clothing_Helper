@@ -1,65 +1,106 @@
 package com.leebeebeom.clothinghelper.main.detail
 
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.leebeebeom.clothinghelper.base.SingleLineText
-import com.leebeebeom.clothinghelper.util.getHeaderStringRes
-import com.leebeebeom.clothinghelperdomain.model.SubCategoryParent
-
-// TODO 앱바 엘리베이션 구현
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.leebeebeom.clothinghelper.main.base.composables.SelectModeBackHandler
+import com.leebeebeom.clothinghelper.main.base.composables.selectmodebottomappbar.SelectModeBottomAppBar
+import com.leebeebeom.clothinghelper.main.base.dialogs.EditFolderDialog
+import com.leebeebeom.clothinghelper.main.detail.contents.DetailHeader
+import com.leebeebeom.clothinghelper.main.detail.contents.folder.FolderGrid
+import com.leebeebeom.clothinghelper.map.StableFolder
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DetailScreen(
-    parent: SubCategoryParent, title: String, parentKey: String
+    parentKey: String,
+    subCategoryKey: String,
+    viewModel: DetailViewModel = hiltViewModel(),
+    uiState: DetailUIState = viewModel.getUIState(parentKey),
+    onFolderClick: (StableFolder) -> Unit,
+    onFabClick: (path:String) -> Unit
 ) {
-    Box {
-        val backdropScaffoldState =
-            rememberBackdropScaffoldState(initialValue = BackdropValue.Concealed)
-        BackdropScaffold(
-            scaffoldState = backdropScaffoldState,
-            appBar = { Header(parent, title) },
-            backLayerBackgroundColor = MaterialTheme.colors.background,
-            backLayerContent = { FolderGrid() },
-            frontLayerContent = { FrontLayerContent() },
-            frontLayerElevation = 4.dp,
-            frontLayerScrimColor = Color.Unspecified,
-            headerHeight = 52.dp
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(end = 24.dp, bottom = 32.dp)
-        ) {
-            AddFab()
-        }
-    }
-}
+    var isFabSpread by remember { mutableStateOf(false) }
 
-@Composable
-private fun Header(parent: SubCategoryParent, title: String) {
-    TopAppBar(
-        backgroundColor = MaterialTheme.colors.background,
-        elevation = 0.dp,
-        contentPadding = PaddingValues(horizontal = 12.dp),
-        modifier = Modifier.horizontalScroll(rememberScrollState()),
+    Box(
+        modifier = Modifier.clickable(interactionSource = remember { MutableInteractionSource() },
+            indication = null,
+            onClick = { isFabSpread = false })
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            val parentText = stringResource(id = getHeaderStringRes(parent))
-            SingleLineText(
-                text = "$parentText$title",
-                style = MaterialTheme.typography.h2.copy(color = Color.Black, fontSize = 24.sp)
-            )
+        val backDropState = rememberBackdropScaffoldState(initialValue = BackdropValue.Concealed)
+        BackdropScaffold(
+            scaffoldState = backDropState,
+            appBar = { DetailHeader(uiState.title) },
+            backLayerBackgroundColor = MaterialTheme.colors.background,
+            backLayerContent = {
+                FolderGrid(
+                    parentKey = parentKey,
+                    folders = uiState::getFolders,
+                    selectedFolderKeys = { uiState.selectedKeys },
+                    isSelectMode = { uiState.isSelectMode },
+                    sort = { uiState.sort },
+                    onSortClick = viewModel::changeSort,
+                    onOrderClick = viewModel::changeOrder,
+                    onSelect = uiState::onSelect,
+                    onLongClick = uiState::selectModeOn,
+                    onClick = onFolderClick
+                )
+            },
+            frontLayerContent = { FrontLayerContent() },
+            frontLayerElevation = 1.dp,
+            frontLayerScrimColor = Color.Unspecified,
+            headerHeight = 120.dp
+        )
+
+        val addFolderPositiveClick = remember<(String) -> Unit> {
+            {
+                viewModel.addFolder(
+                    StableFolder(
+                        parentKey = parentKey,
+                        subCategoryKey = subCategoryKey,
+                        name = it,
+                        parent = uiState.parent
+                    )
+                )
+            }
         }
+        DetailFab(
+            onAddFolderPositiveButtonClick = addFolderPositiveClick,
+            folders = { uiState.items },
+            isRevealed = { backDropState.isRevealed },
+            isSelectMode = { uiState.isSelectMode },
+            onClick = { onFabClick(uiState.title) }
+        )
+
+        var showEditDialog by rememberSaveable { mutableStateOf(false) }
+
+        SelectModeBottomAppBar(selectedSize = { uiState.selectedSize },
+            isAllSelected = { uiState.isAllSelected },
+            onAllSelectCheckBoxClick = uiState::toggleAllSelect,
+            onEditIconClick = { showEditDialog = true },
+            isSelectMode = { uiState.isSelectMode },
+            showEditIcon = { uiState.showEditIcon },
+            showDeleteIcon = { uiState.showDeleteIcon })
+
+        EditFolderDialog(
+            folders = { uiState.items },
+            show = { showEditDialog },
+            onDismiss = { showEditDialog = false },
+            onPositiveButtonClick = viewModel::editFolder,
+            folder = { uiState.firstSelectedItem }
+        )
     }
+
+
+    SelectModeBackHandler(
+        isSelectMode = { uiState.isSelectMode }, selectModeOff = uiState::selectModeOff
+    )
 }

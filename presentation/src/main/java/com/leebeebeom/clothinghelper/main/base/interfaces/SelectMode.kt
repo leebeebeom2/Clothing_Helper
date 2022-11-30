@@ -5,13 +5,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.leebeebeom.clothinghelper.util.taskAndReturnSet
-import com.leebeebeom.clothinghelperdomain.model.container.BaseContainer
+import com.leebeebeom.clothinghelperdomain.model.data.BaseModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.delay
 
-interface SelectMode<T : BaseContainer> {
+interface SelectMode<T : BaseModel> {
     val items: ImmutableList<T>
     val isSelectMode: Boolean
     val selectedKeys: ImmutableSet<String>
@@ -26,7 +26,7 @@ interface SelectMode<T : BaseContainer> {
     fun toggleAllSelect()
 }
 
-class SelectModeImpl<T : BaseContainer> : SelectMode<T> {
+class SelectModeImpl<T : BaseModel> : SelectMode<T> {
     override val items: ImmutableList<T>
         get() = TODO("Not yet implemented")
 
@@ -65,7 +65,7 @@ class SelectModeImpl<T : BaseContainer> : SelectMode<T> {
         selectedKeys = selectedKeys.taskAndReturnSet { it.clear() }
     }
 
-    fun toggleAllSelect(items: List<BaseContainer>) {
+    fun toggleAllSelect(items: List<BaseModel>) {
         selectedKeys =
             if (selectedSize == items.size) emptySet<String>().toImmutableSet()
             else items.map { it.key }.toImmutableSet()

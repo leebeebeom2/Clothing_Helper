@@ -3,8 +3,8 @@ package com.leebeebeom.clothinghelper.main.base.interfaces
 import androidx.compose.runtime.*
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.map.toStable
-import com.leebeebeom.clothinghelperdomain.model.container.SubCategory
-import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.model.data.SubCategory
+import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 

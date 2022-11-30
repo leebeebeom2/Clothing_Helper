@@ -3,7 +3,7 @@ package com.leebeebeom.clothinghelper.main.base.interfaces
 import androidx.compose.runtime.*
 import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.toStable
-import com.leebeebeom.clothinghelperdomain.model.container.Folder
+import com.leebeebeom.clothinghelperdomain.model.data.Folder
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 

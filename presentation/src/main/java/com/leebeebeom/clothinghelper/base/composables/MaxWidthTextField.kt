@@ -25,6 +25,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun MaxWidthTextField(
+    modifier: Modifier = Modifier,
     state: MaxWidthTextFieldState,
     textFieldValue: () -> TextFieldValue,
     error: () -> Int?,
@@ -35,6 +36,7 @@ fun MaxWidthTextField(
 ) {
     Column {
         TextField(
+            modifier = modifier,
             state = state,
             onFocusChanged = onFocusChanged,
             textFieldValue = textFieldValue,
@@ -57,12 +59,13 @@ private fun TextField(
     onValueChange: (TextFieldValue) -> Unit,
     onFocusChanged: (FocusState) -> Unit,
     isVisible: () -> Boolean,
-    trailingIcon: @Composable (() -> Unit)?
+    trailingIcon: @Composable() (() -> Unit)?,
+    modifier: Modifier
 ) {
     val focusManager = LocalFocusManager.current
 
     OutlinedTextField(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .focusRequester(state.focusRequester)
             .onFocusChanged(onFocusChanged),

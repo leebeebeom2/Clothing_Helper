@@ -7,11 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.ui.graphics.Color
 import com.leebeebeom.clothinghelper.base.Anime
-import com.leebeebeom.clothinghelperdomain.model.container.BaseContainer
+import com.leebeebeom.clothinghelperdomain.model.data.BaseModel
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
-fun <T : BaseContainer> DrawerItems(
+fun <T : BaseModel> DrawerItems(
     show: () -> Boolean,
     items: () -> ImmutableList<T>,
     backGround: Color,

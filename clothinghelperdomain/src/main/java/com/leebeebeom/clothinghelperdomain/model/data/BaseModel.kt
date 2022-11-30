@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelperdomain.model.container
+package com.leebeebeom.clothinghelperdomain.model.data
 
 abstract class BaseModel {
     abstract val parent: SubCategoryParent

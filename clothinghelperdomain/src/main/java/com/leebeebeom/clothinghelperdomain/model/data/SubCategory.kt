@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelperdomain.model.container
+package com.leebeebeom.clothinghelperdomain.model.data
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

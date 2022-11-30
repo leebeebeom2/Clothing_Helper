@@ -27,7 +27,7 @@ fun DetailHeader(title: String) {
                 text = title,
                 style = MaterialTheme.typography.h2.copy(
                     color = Color.Black.copy(alpha = 0.8f),
-                    fontSize = 28.sp
+                    fontSize = 24.sp
                 )
             )
         }

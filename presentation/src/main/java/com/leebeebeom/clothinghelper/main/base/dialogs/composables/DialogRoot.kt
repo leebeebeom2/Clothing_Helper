@@ -2,7 +2,6 @@ package com.leebeebeom.clothinghelper.main.base.dialogs.composables
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
@@ -16,7 +15,7 @@ fun DialogRoot(onDismiss: () -> Unit, content: @Composable () -> Unit) {
     Dialog(onDismissRequest = onDismiss) {
         Surface(
             color = MaterialTheme.colors.surface,
-            shape = RoundedCornerShape(20.dp),
+            shape = MaterialTheme.shapes.medium,
             modifier = Modifier.padding(start = 40.dp, end = 40.dp)
         ) {
             Column(

@@ -9,7 +9,7 @@ import com.leebeebeom.clothinghelperdata.repository.util.logE
 import com.leebeebeom.clothinghelperdata.repository.util.updateMutable
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult
 import com.leebeebeom.clothinghelperdomain.model.SortPreferences
-import com.leebeebeom.clothinghelperdomain.model.container.BaseContainer
+import com.leebeebeom.clothinghelperdomain.model.data.BaseModel
 import com.leebeebeom.clothinghelperdomain.repository.ContainerRepository
 import com.leebeebeom.clothinghelperdomain.repository.LoadingRepository
 import kotlinx.coroutines.*
@@ -22,7 +22,7 @@ import kotlinx.coroutines.tasks.await
 private val db = Firebase.database.apply { setPersistenceEnabled(true) }
 private val loadingRepositoryImpl = LoadingRepositoryImpl(true)
 
-abstract class ContainerRepositoryImpl<T : BaseContainer> :
+abstract class ContainerRepositoryImpl<T : BaseModel> :
     LoadingRepository by loadingRepositoryImpl, ContainerRepository<T> {
     protected val root = db.reference
 

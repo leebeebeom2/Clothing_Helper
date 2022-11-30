@@ -1,7 +1,7 @@
 package com.leebeebeom.clothinghelperdata.repository.container
 
 import com.leebeebeom.clothinghelperdata.repository.base.DatabasePath
-import com.leebeebeom.clothinghelperdomain.model.container.Folder
+import com.leebeebeom.clothinghelperdomain.model.data.Folder
 import com.leebeebeom.clothinghelperdomain.repository.FolderRepository
 import com.leebeebeom.clothinghelperdomain.repository.preferences.FolderPreferencesRepository
 import javax.inject.Inject

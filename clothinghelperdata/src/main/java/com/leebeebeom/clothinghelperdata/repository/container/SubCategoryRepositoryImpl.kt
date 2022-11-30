@@ -1,8 +1,8 @@
 package com.leebeebeom.clothinghelperdata.repository.container
 
 import com.leebeebeom.clothinghelperdata.repository.base.DatabasePath
-import com.leebeebeom.clothinghelperdomain.model.container.SubCategory
-import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.model.data.SubCategory
+import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
 import com.leebeebeom.clothinghelperdomain.repository.preferences.SubCategoryPreferencesRepository
 import kotlinx.coroutines.Dispatchers

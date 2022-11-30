@@ -3,9 +3,9 @@ package com.leebeebeom.clothinghelperdata.repository.util
 import com.leebeebeom.clothinghelperdomain.model.Order
 import com.leebeebeom.clothinghelperdomain.model.Sort
 import com.leebeebeom.clothinghelperdomain.model.SortPreferences
-import com.leebeebeom.clothinghelperdomain.model.container.BaseContainer
+import com.leebeebeom.clothinghelperdomain.model.data.BaseModel
 
-fun <T : BaseContainer> getSorted(
+fun <T : BaseModel> getSorted(
     list: List<T>, sortPreferences: SortPreferences
 ): List<T> {
     val sort = sortPreferences.sort

@@ -24,7 +24,7 @@ fun Folder.toStable() = StableFolder(
     parent = parent
 )
 
-fun StableFolder.toStable() = Folder(
+fun StableFolder.toUnstable() = Folder(
     parentKey = parentKey,
     subCategoryKey = subCategoryKey,
     createDate = createDate,

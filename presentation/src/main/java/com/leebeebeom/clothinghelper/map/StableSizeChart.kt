@@ -1,39 +1,43 @@
 package com.leebeebeom.clothinghelper.map
 
 import com.leebeebeom.clothinghelperdomain.model.SizeChart
+import com.leebeebeom.clothinghelperdomain.model.container.BaseModel
 import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
 
 data class StableSizeChart(
-    val parentKey: String = "",
     val subCategoryKey: String = "",
-    val parent: SubCategoryParent = SubCategoryParent.TOP,
-    val createTime: Long = 0,
-    val editTime: Long = 0,
     val isFavorite: Boolean = false,
     val link: String = "",
-    val memo: String = ""
-)
+    val memo: String = "",
+    override val name: String = "",
+    override val key: String = "",
+    override val createDate: Long = 0,
+    override val editDate: Long = 0,
+    override val parent: SubCategoryParent = SubCategoryParent.TOP
+) : BaseModel()
 
 fun StableSizeChart.toUnstable() =
     SizeChart(
-        parentKey = parentKey,
         subCategoryKey = subCategoryKey,
-        parent = parent,
-        createTime = createTime,
-        editTime = editTime,
         isFavorite = isFavorite,
         link = link,
-        memo = memo
+        memo = memo,
+        name = name,
+        key = key,
+        createDate = createDate,
+        editDate = editDate,
+        parent = parent
     )
 
 fun SizeChart.toStable() =
     StableSizeChart(
-        parentKey = parentKey,
         subCategoryKey = subCategoryKey,
-        parent = parent,
-        createTime = createTime,
-        editTime = editTime,
         isFavorite = isFavorite,
         link = link,
-        memo = memo
+        memo = memo,
+        name = name,
+        key = key,
+        createDate = createDate,
+        editDate = editDate,
+        parent = parent
     )

@@ -20,7 +20,7 @@ fun SubCategoryHeader(
 ) {
     SingleLineText(
         text = getHeaderStringRes(parent),
-        style = MaterialTheme.typography.h2.copy(fontSize = 32.sp)
+        style = MaterialTheme.typography.h5.copy(fontSize = 30.sp)
     )
 
     SortIconWithDivider(sort, onSortClick, onOrderClick)

@@ -6,7 +6,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
@@ -114,7 +113,8 @@ fun SortButton(
     Box(
         modifier = Modifier
             .border(
-                BorderStroke(width = 1.5.dp, color = strokeColor), shape = RoundedCornerShape(20.dp)
+                BorderStroke(width = 1.5.dp, color = strokeColor),
+                shape = MaterialTheme.shapes.medium
             )
             .padding(horizontal = 20.dp, vertical = 12.dp)
             .noRippleClickable(onClick = onSortButtonClick)

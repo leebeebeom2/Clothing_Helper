@@ -22,7 +22,7 @@ import com.leebeebeom.clothinghelper.main.root.contents.dropdownmenus.DrawerMain
 import com.leebeebeom.clothinghelper.main.root.model.MainCategory
 import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
-import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable

@@ -18,7 +18,7 @@ import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.map.StableUser
 import com.leebeebeom.clothinghelper.theme.DarkGray
 import com.leebeebeom.clothinghelper.theme.Disabled
-import com.leebeebeom.clothinghelperdomain.model.container.SubCategoryParent
+import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable

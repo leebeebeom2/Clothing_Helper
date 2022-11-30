@@ -37,7 +37,12 @@ fun DrawerFolderDropDownMenu(
         folders = folders,
         onPositiveButtonClick = {
             onAddFolderPositiveClick(
-                StableFolder(parentKey = folder().key, parent = folder().parent, name = it, )
+                StableFolder(
+                    parentKey = folder().key,
+                    subCategoryKey = folder().subCategoryKey,
+                    parent = folder().parent,
+                    name = it,
+                )
             )
         },
         show = { showAddFolderDialog },

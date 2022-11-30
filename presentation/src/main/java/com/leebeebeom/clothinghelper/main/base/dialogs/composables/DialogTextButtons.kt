@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
@@ -21,7 +22,7 @@ fun DialogTextButtons(
     onPositiveButtonClick: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    Row {
+    Row(modifier = Modifier.fillMaxWidth()) {
         DialogTextButton(text = R.string.cancel, textColor = cancelTextColor, onClick = onDismiss)
         DialogTextButton(text = R.string.check,
             textColor = positiveTextColor,

@@ -34,9 +34,8 @@ fun MaxWidthTextField(
     trailingIcon: @Composable (() -> Unit)? = null,
     isVisible: () -> Boolean = { true }
 ) {
-    Column {
+    Column(modifier = modifier) {
         TextField(
-            modifier = modifier,
             state = state,
             onFocusChanged = onFocusChanged,
             textFieldValue = textFieldValue,
@@ -59,13 +58,12 @@ private fun TextField(
     onValueChange: (TextFieldValue) -> Unit,
     onFocusChanged: (FocusState) -> Unit,
     isVisible: () -> Boolean,
-    trailingIcon: @Composable() (() -> Unit)?,
-    modifier: Modifier
+    trailingIcon: @Composable (() -> Unit)?,
 ) {
     val focusManager = LocalFocusManager.current
 
     OutlinedTextField(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .focusRequester(state.focusRequester)
             .onFocusChanged(onFocusChanged),

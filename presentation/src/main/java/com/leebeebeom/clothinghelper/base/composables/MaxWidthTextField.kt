@@ -61,12 +61,16 @@ private fun TextField(
     trailingIcon: @Composable (() -> Unit)?,
 ) {
     val focusManager = LocalFocusManager.current
+    var hasFocus by rememberSaveable { mutableStateOf(false) }
 
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
             .focusRequester(state.focusRequester)
-            .onFocusChanged(onFocusChanged),
+            .onFocusChanged {
+                hasFocus = it.hasFocus
+                onFocusChanged(it)
+            },
         value = textFieldValue(),
         onValueChange = onValueChange,
         label = { SingleLineText(text = state.label) },
@@ -76,7 +80,7 @@ private fun TextField(
         keyboardOptions = state.keyboardOptions,
         trailingIcon = {
             trailingIcon?.run { invoke() } ?: CancelIcon(
-                show = { textFieldValue().text.isNotEmpty() }, onValueChange = onValueChange
+                show = { textFieldValue().text.isNotEmpty() && hasFocus }, onValueChange = onValueChange
             )
         },
         singleLine = true,
@@ -163,7 +167,7 @@ private fun CancelIcon(show: () -> Boolean, onValueChange: (TextFieldValue) -> U
             onClick = { onValueChange(TextFieldValue()) },
             drawable = R.drawable.ic_cancel,
             tint = Color(0xFF555555),
-            size = 24.dp
+            size = 20.dp
         )
     }
 }

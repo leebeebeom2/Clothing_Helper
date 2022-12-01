@@ -25,22 +25,20 @@ fun SizeChartPicture(
 ) {
     var showRatioDialog by remember { mutableStateOf(false) }
 
-    Box(
-        modifier = Modifier
-            .padding(horizontal = 20.dp)
-            .padding(top = 20.dp)
-    ) {
-        Card(modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
-            elevation = 2.dp,
-            onClick = {
-                showRatioDialog = true
-            }) {
-            Picture { uiState.imageUri }
-        }
+    Card(modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        elevation = 2.dp,
+        onClick = {
+            showRatioDialog = true
+        }) {
+        Picture { uiState.imageUri }
     }
 
-    AddPhotoDialog(show = { showRatioDialog }, onDismiss = { showRatioDialog = false }, onResult = viewModel::getPicture)
+    AddPhotoDialog(
+        show = { showRatioDialog },
+        onDismiss = { showRatioDialog = false },
+        onResult = viewModel::getPicture
+    )
 }
 
 @Composable

@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.detail
+package com.leebeebeom.clothinghelper.main.sizechartlist
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -8,9 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.base.composables.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.theme.LightGray
 
 @Composable
 fun FrontLayerContent() {
@@ -32,6 +32,6 @@ fun DragHandle() {
             .clip(MaterialTheme.shapes.medium)
             .height(4.dp)
             .width(40.dp)
-            .background(Color(0xffcccccc))
+            .background(LightGray)
     )
 }

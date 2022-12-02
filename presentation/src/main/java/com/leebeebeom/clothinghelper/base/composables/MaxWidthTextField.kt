@@ -21,6 +21,9 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.Anime
 import com.leebeebeom.clothinghelper.base.Anime.Error.errorIn
 import com.leebeebeom.clothinghelper.base.Anime.Error.errorOut
+import com.leebeebeom.clothinghelper.theme.DarkGrayishBlue
+import com.leebeebeom.clothinghelper.theme.Gainsboro
+import com.leebeebeom.clothinghelper.theme.LightGrayishBlue
 import kotlinx.coroutines.delay
 
 @Composable
@@ -91,9 +94,9 @@ private fun TextField(
             KeyboardActions(onDone = { focusManager.clearFocus() })
         else KeyboardActions.Default,
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            unfocusedBorderColor = Color(0xFFDADADA),
-            unfocusedLabelColor = Color(0xFF8391A1),
-            backgroundColor = Color(0xFFF7F8F9),
+            unfocusedBorderColor = Gainsboro,
+            unfocusedLabelColor = DarkGrayishBlue,
+            backgroundColor = LightGrayishBlue,
             placeholderColor = MaterialTheme.colors.onSurface.copy(ContentAlpha.disabled)
         )
     )

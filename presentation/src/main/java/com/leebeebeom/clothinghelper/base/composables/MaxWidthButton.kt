@@ -1,7 +1,6 @@
 package com.leebeebeom.clothinghelper.base.composables
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -25,7 +24,6 @@ fun MaxWidthButton(
     enabled: () -> Boolean = { true },
     colors: ButtonColors = ButtonDefaults.buttonColors(),
     icon: @Composable () -> Unit = {},
-    borderStroke: BorderStroke? = null,
     onClick: () -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
@@ -36,10 +34,7 @@ fun MaxWidthButton(
             .heightIn(52.dp), onClick = {
             onClick()
             focusManager.clearFocus()
-        },
-        colors = colors,
-        enabled = enabled(),
-        border = borderStroke
+        }, colors = colors, enabled = enabled()
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically

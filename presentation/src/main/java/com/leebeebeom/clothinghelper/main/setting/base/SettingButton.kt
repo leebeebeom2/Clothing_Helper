@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.base.composables.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.composables.SimpleIcon
 import com.leebeebeom.clothinghelper.base.composables.SingleLineText
 
@@ -43,4 +44,5 @@ fun SettingButton(@StringRes text: Int, onClick: () -> Unit) {
             )
         }
     }
+    SimpleHeightSpacer(dp = 8)
 }

@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun MaxWidthButton(
     modifier: Modifier = Modifier,
+    textAlign: TextAlign = TextAlign.Center,
     @StringRes text: Int,
     enabled: () -> Boolean,
     colors: ButtonColors = ButtonDefaults.buttonColors(),
@@ -43,7 +44,7 @@ fun MaxWidthButton(
                 text = text,
                 modifier = Modifier.weight(1f),
                 style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.Bold),
-                textAlign = TextAlign.Center
+                textAlign = textAlign
             )
         }
     }

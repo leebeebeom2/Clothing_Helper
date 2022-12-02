@@ -21,7 +21,7 @@ fun MaxWidthButton(
     modifier: Modifier = Modifier,
     textAlign: TextAlign = TextAlign.Center,
     @StringRes text: Int,
-    enabled: () -> Boolean,
+    enabled: () -> Boolean = { true },
     colors: ButtonColors = ButtonDefaults.buttonColors(),
     icon: @Composable () -> Unit = {},
     onClick: () -> Unit,

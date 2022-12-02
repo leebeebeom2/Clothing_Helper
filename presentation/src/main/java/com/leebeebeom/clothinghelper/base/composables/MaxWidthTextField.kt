@@ -79,13 +79,16 @@ private fun TextField(
         visualTransformation = if (isVisible()) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = state.keyboardOptions,
         trailingIcon = {
-            trailingIcon?.run { invoke() } ?: CancelIcon(
-                show = { textFieldValue().text.isNotEmpty() && hasFocus }, onValueChange = onValueChange
-            )
+            trailingIcon?.run { invoke() }
+                ?: CancelIcon(
+                    show = { textFieldValue().text.isNotEmpty() && hasFocus },
+                    onClick = { onValueChange(TextFieldValue()) }
+                )
         },
         singleLine = true,
-        keyboardActions = if (state.keyboardOptions.imeAction == ImeAction.Done) KeyboardActions(
-            onDone = { focusManager.clearFocus() })
+        keyboardActions =
+        if (state.keyboardOptions.imeAction == ImeAction.Done)
+            KeyboardActions(onDone = { focusManager.clearFocus() })
         else KeyboardActions.Default,
         colors = TextFieldDefaults.outlinedTextFieldColors(
             unfocusedBorderColor = Color(0xFFDADADA),
@@ -157,14 +160,14 @@ private fun ShowKeyboard(showKeyboardEnabled: Boolean, showKeyboard: suspend () 
 }
 
 @Composable
-private fun CancelIcon(show: () -> Boolean, onValueChange: (TextFieldValue) -> Unit) {
+private fun CancelIcon(show: () -> Boolean, onClick: () -> Unit) {
     AnimatedVisibility(
         visible = show(),
         enter = Anime.CancelIcon.fadeIn,
         exit = Anime.CancelIcon.fadeOut,
     ) {
         CustomIconButton(
-            onClick = { onValueChange(TextFieldValue()) },
+            onClick = onClick,
             drawable = R.drawable.ic_cancel,
             tint = Color(0xFF555555),
             size = 20.dp

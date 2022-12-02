@@ -84,16 +84,12 @@ fun SignUpScreen(
             enabled = { uiState.buttonEnabled },
             onClick = viewModel::signUpWithEmailAndPassword,
         )
-        SimpleHeightSpacer(dp = 8)
         OrDivider()
-        SimpleHeightSpacer(dp = 8)
         GoogleSignInButton(
             enabled = { uiState.googleButtonEnabled },
             onActivityResult = viewModel::signInWithGoogleEmail,
             disabled = { uiState.updateGoogleButtonEnabled(false) }
         )
-
-        SimpleHeightSpacer(dp = 150)
     }
 
     SimpleToast(text = { uiState.toastText }, toastShown = uiState::toastShown)

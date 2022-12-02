@@ -24,6 +24,7 @@ import com.leebeebeom.clothinghelper.base.Anime.Error.errorOut
 import com.leebeebeom.clothinghelper.theme.DarkGrayishBlue
 import com.leebeebeom.clothinghelper.theme.Gainsboro
 import com.leebeebeom.clothinghelper.theme.LightGrayishBlue
+import com.leebeebeom.clothinghelper.theme.VeryDarkGray
 import kotlinx.coroutines.delay
 
 @Composable
@@ -172,7 +173,7 @@ private fun CancelIcon(show: () -> Boolean, onClick: () -> Unit) {
         CustomIconButton(
             onClick = onClick,
             drawable = R.drawable.ic_cancel,
-            tint = Color(0xFF555555),
+            tint = VeryDarkGray,
             size = 20.dp
         )
     }

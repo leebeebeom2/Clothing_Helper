@@ -4,6 +4,7 @@ import com.leebeebeom.clothinghelperdomain.model.data.SizeChart
 import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
 
 data class StableSizeChart(
+    val parentKey:String = "",
     val subCategoryKey: String = "",
     val isFavorite: Boolean = false,
     val link: String = "",
@@ -20,6 +21,7 @@ data class StableSizeChart(
 
 fun StableSizeChart.toUnstable() =
     SizeChart(
+        parentKey = parentKey,
         subCategoryKey = subCategoryKey,
         isFavorite = isFavorite,
         link = link,
@@ -35,6 +37,7 @@ fun StableSizeChart.toUnstable() =
 
 fun SizeChart.toStable() =
     StableSizeChart(
+        parentKey = parentKey,
         subCategoryKey = subCategoryKey,
         isFavorite = isFavorite,
         link = link,

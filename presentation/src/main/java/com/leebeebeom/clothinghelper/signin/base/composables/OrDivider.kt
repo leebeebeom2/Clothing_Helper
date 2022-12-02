@@ -17,7 +17,7 @@ import com.leebeebeom.clothinghelper.base.composables.SingleLineText
 
 @Composable
 fun OrDivider() {
-    SimpleHeightSpacer(dp = 8)
+    SimpleHeightSpacer(dp = 16)
     Row(verticalAlignment = Alignment.CenterVertically) {
         val modifier = Modifier.weight(1f)
 
@@ -32,5 +32,5 @@ fun OrDivider() {
         )
         Divider(modifier = modifier)
     }
-    SimpleHeightSpacer(dp = 8)
+    SimpleHeightSpacer(dp = 16)
 }

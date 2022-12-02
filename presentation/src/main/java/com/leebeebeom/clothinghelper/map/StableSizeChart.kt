@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.map
 
-import com.leebeebeom.clothinghelperdomain.model.data.BaseModel
 import com.leebeebeom.clothinghelperdomain.model.data.SizeChart
 import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
 
@@ -17,7 +16,7 @@ data class StableSizeChart(
     override val createDate: Long = 0,
     override val editDate: Long = 0,
     override val parent: SubCategoryParent = SubCategoryParent.TOP
-) : BaseModel()
+) : BaseStableModel()
 
 fun StableSizeChart.toUnstable() =
     SizeChart(

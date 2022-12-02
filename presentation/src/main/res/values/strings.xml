@@ -48,7 +48,7 @@
     <string name="add_category">카테고리 추가</string>
     <string name="add_folder">폴더 추가</string>
     <string name="password_confirm">비밀번호 확인</string>
-    <string name="canceled">취소되었습니다.</string>
+    <string name="canceled">취소되었습니다. 🙄</string>
     <string name="main_screen">메인 화면</string>
     <string name="average_size">평균 사이즈</string>
     <string name="top_info">총장: 71 가슴: 50\n어깨: 53 소매: 24</string>
@@ -74,4 +74,18 @@
     <string name="sort">정렬</string>
     <string name="sub_category_place_holder">표시할 카테고리가 없어요. 😯</string>
     <string name="folder_grid_place_holder">아직 폴더가 없네요. 😏</string>
+    <string name="choose_ratio">이미지의 비율을 선택해주세요. 😋</string>
+    <string name="square_ratio">1 x 1</string>
+    <string name="rectangle_ratio">3 x 4</string>
+    <string name="add_photo">사진 추가</string>
+    <string name="top_length">총장(cm)</string>
+    <string name="top_shoulder">어깨(cm)</string>
+    <string name="top_chest">가슴(cm)</string>
+    <string name="top_sleeve">소매(cm)</string>
+    <string name="brand">브랜드</string>
+    <string name="product_name">제품명</string>
+    <string name="size">사이즈</string>
+    <string name="address">주소</string>
+    <string name="size_chart_template">사이즈 표 템플릿</string>
+    <string name="setting">Settings</string>
 </resources>

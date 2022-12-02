@@ -1,6 +1,7 @@
 package com.leebeebeom.clothinghelperdomain.model.data
 
 data class SizeChart(
+    val parentKey:String = "",
     val subCategoryKey: String = "",
     val isFavorite: Boolean = false,
     val link: String = "",

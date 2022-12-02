@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun MaxWidthButton(
+    modifier: Modifier = Modifier,
     @StringRes text: Int,
     enabled: () -> Boolean,
     colors: ButtonColors = ButtonDefaults.buttonColors(),
@@ -27,7 +28,7 @@ fun MaxWidthButton(
     val focusManager = LocalFocusManager.current
 
     Button(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .heightIn(52.dp), onClick = {
             onClick()

@@ -13,7 +13,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.composables.*
+import com.leebeebeom.clothinghelper.base.composables.MaxWidthButton
+import com.leebeebeom.clothinghelper.base.composables.SimpleIcon
+import com.leebeebeom.clothinghelper.base.composables.SimpleToast
+import com.leebeebeom.clothinghelper.base.composables.SingleLineText
 import com.leebeebeom.clothinghelper.signin.base.composables.GoogleSignInButton
 import com.leebeebeom.clothinghelper.signin.base.composables.OrDivider
 import com.leebeebeom.clothinghelper.signin.base.textfields.EmailTextField
@@ -62,23 +65,19 @@ fun SignInScreen(
             enabled = { uiState.buttonEnabled },
             onClick = viewModel::signInWithEmailAndPassword,
         )
-        SimpleHeightSpacer(dp = 8)
         OrDivider()
-        SimpleHeightSpacer(dp = 8)
+        MaxWidthButton(
+            text = R.string.sign_up_with_email,
+            onClick = onSignUpClick,
+            colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
+            icon = { SimpleIcon(drawable = R.drawable.ic_email) }
+        )
+        OrDivider()
         GoogleSignInButton(
             enabled = { uiState.googleButtonEnabled },
             onActivityResult = viewModel::signInWithGoogleEmail,
             disabled = { uiState.updateGoogleButtonEnabled(false) }
         )
-        SimpleHeightSpacer(dp = 12)
-        MaxWidthButton(
-            text = R.string.sign_up_with_email,
-            enabled = { true },
-            onClick = onSignUpClick,
-            colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
-            icon = { SimpleIcon(drawable = R.drawable.ic_email) }
-        )
-
         SimpleToast(text = { uiState.toastText }, toastShown = uiState::toastShown)
     }
 }

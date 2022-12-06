@@ -12,8 +12,8 @@ class PushInitialSubCategoriesUseCase @Inject constructor(private val subCategor
         uid: String,
         onLoadSubCategoriesFail: (FirebaseResult.Fail) -> Unit
     ) {
-        subCategoryRepository.pushInitialSubCategories(uid)
-        val result = subCategoryRepository.load(uid, SubCategory::class.java)
+        subCategoryRepository.pushInitialSubCategories(uid = uid)
+        val result = subCategoryRepository.load(uid = uid, type = SubCategory::class.java)
         if (result is FirebaseResult.Fail) onLoadSubCategoriesFail(result)
     }
 }

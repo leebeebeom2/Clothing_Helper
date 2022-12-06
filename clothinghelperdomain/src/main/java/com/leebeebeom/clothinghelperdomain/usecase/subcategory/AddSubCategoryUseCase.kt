@@ -8,5 +8,5 @@ import javax.inject.Inject
 @ViewModelScoped
 class AddSubCategoryUseCase @Inject constructor(private val subCategoryRepository: SubCategoryRepository) {
     suspend fun add(subCategory: SubCategory, uid: String) =
-        subCategoryRepository.add(subCategory, uid)
+        subCategoryRepository.add(t = subCategory, uid = uid)
 }

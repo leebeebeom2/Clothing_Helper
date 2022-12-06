@@ -11,9 +11,7 @@ import javax.inject.Singleton
 @Singleton
 class FolderRepositoryImpl @Inject constructor(
     @FolderPreferencesRepository folderPreferencesRepository: SortPreferenceRepository
-) : BaseDataRepositoryImpl<Folder>(
-    sortFlow = folderPreferencesRepository.sort
-), FolderRepository {
+) : BaseDataRepositoryImpl<Folder>(sortFlow = folderPreferencesRepository.sort), FolderRepository {
     override val refPath = DatabasePath.FOLDERS
 
     override fun getNewContainer(t: Folder, key: String, createDate: Long) =

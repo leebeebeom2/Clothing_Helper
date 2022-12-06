@@ -36,37 +36,33 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
 
     protected abstract val refPath: String
 
-    override suspend fun load(uid: String?, type: Class<T>) =
-        databaseTryWithLoading("update") {
-            uid?.let {
-                val temp = mutableListOf<T>()
+    override suspend fun load(uid: String?, type: Class<T>) = databaseTryWithLoading("update") {
+        uid?.let {
+            val temp = mutableListOf<T>()
 
-                root.child(uid).child(refPath).get().await().children.forEach {
-                    temp.add((it.getValue(type))!!)
-                }
-
-                _allData.update { temp }
-                FirebaseResult.Success
-            } ?: let {
-                _allData.update { emptyList() }
-                FirebaseResult.Success
+            root.child(uid).child(refPath).get().await().children.forEach {
+                temp.add((it.getValue(type))!!)
             }
-        }
 
-    override suspend fun add(t: T, uid: String) =
-        databaseTryWithTimeOut(1000, "add") {
-            val containerRef = root.getContainerRef(uid, refPath)
-
-            val newContainer = getNewContainer(
-                t = t,
-                key = getKey(containerRef),
-                createDate = System.currentTimeMillis()
-            )
-
-            push(containerRef, newContainer).await()
-            _allData.updateMutable { it.add(newContainer) }
+            _allData.update { temp }
+            FirebaseResult.Success
+        } ?: let {
+            _allData.update { emptyList() }
             FirebaseResult.Success
         }
+    }
+
+    override suspend fun add(t: T, uid: String) = databaseTryWithTimeOut(1000, "add") {
+        val containerRef = root.getContainerRef(uid, refPath)
+
+        val newContainer = getNewContainer(
+            t = t, key = getKey(containerRef), createDate = System.currentTimeMillis()
+        )
+
+        push(containerRef, newContainer).await()
+        _allData.updateMutable { it.add(newContainer) }
+        FirebaseResult.Success
+    }
 
     override suspend fun edit(newT: T, uid: String): FirebaseResult =
         databaseTryWithTimeOut(1000, "edit") {
@@ -85,9 +81,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         }
 
     private suspend fun databaseTryWithTimeOut(
-        time: Long,
-        site: String,
-        task: suspend () -> FirebaseResult
+        time: Long, site: String, task: suspend () -> FirebaseResult
     ) = withContext(Dispatchers.IO) {
         try {
             withContext(NonCancellable) { withTimeout(time) { task() } }
@@ -98,8 +92,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     }
 
     private suspend fun databaseTryWithLoading(
-        site: String,
-        task: suspend () -> FirebaseResult
+        site: String, task: suspend () -> FirebaseResult
     ) = withContext(Dispatchers.IO) {
         try {
             loadingRepositoryImpl.loadingOn()

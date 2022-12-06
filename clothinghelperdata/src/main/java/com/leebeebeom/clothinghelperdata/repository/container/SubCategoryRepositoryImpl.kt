@@ -15,9 +15,8 @@ import javax.inject.Singleton
 @Singleton
 class SubCategoryRepositoryImpl @Inject constructor(
     @SubCategoryPreferencesRepository subCategoryPreferencesRepository: SortPreferenceRepository
-) : BaseDataRepositoryImpl<SubCategory>(
-    sortFlow = subCategoryPreferencesRepository.sort
-), SubCategoryRepository {
+) : BaseDataRepositoryImpl<SubCategory>(sortFlow = subCategoryPreferencesRepository.sort),
+    SubCategoryRepository {
 
     override suspend fun pushInitialSubCategories(uid: String) = withContext(Dispatchers.IO) {
         val subCategoryRef = root.getContainerRef(uid, refPath)

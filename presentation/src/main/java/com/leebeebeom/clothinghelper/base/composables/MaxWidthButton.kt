@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -41,7 +42,8 @@ fun MaxWidthButton(
             SingleLineText(
                 text = text,
                 modifier = Modifier.weight(1f),
-                style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.Bold)
+                style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.Bold),
+                textAlign = TextAlign.Center
             )
         }
     }

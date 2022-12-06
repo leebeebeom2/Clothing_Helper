@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -32,19 +31,16 @@ fun SignInRoot(
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
 
     ClothingHelperTheme {
-        Scaffold {
-            Surface {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(it)
-                        .padding(horizontal = 20.dp)
-                        .noRippleClickable(onClick = focusManager::clearFocus),
-                ) {
-                    content()
-                    BlockBacKPressWhenLoading { isLoading }
-                    CenterDotProgressIndicator(show = { isLoading })
-                }
+        Surface {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp)
+                    .noRippleClickable(onClick = focusManager::clearFocus),
+            ) {
+                content()
+                BlockBacKPressWhenLoading { isLoading }
+                CenterDotProgressIndicator(show = { isLoading })
             }
         }
     }

@@ -7,6 +7,7 @@ import com.leebeebeom.clothinghelperdata.repository.preferences.FolderPreference
 import com.leebeebeom.clothinghelperdata.repository.preferences.SubCategoryPreferencesRepositoryImpl
 import com.leebeebeom.clothinghelperdomain.repository.*
 import com.leebeebeom.clothinghelperdomain.repository.preferences.FolderPreferencesRepository
+import com.leebeebeom.clothinghelperdomain.repository.preferences.SortPreferenceRepository
 import com.leebeebeom.clothinghelperdomain.repository.preferences.SubCategoryPreferencesRepository
 import dagger.Binds
 import dagger.Module
@@ -27,8 +28,10 @@ abstract class RepositoryModule {
     abstract fun folderRepository(impl: FolderRepositoryImpl): FolderRepository
 
     @Binds
-    abstract fun subCategoryPreferencesRepository(impl: SubCategoryPreferencesRepositoryImpl): SubCategoryPreferencesRepository
+    @SubCategoryPreferencesRepository
+    abstract fun subCategoryPreferencesRepository(impl: SubCategoryPreferencesRepositoryImpl): SortPreferenceRepository
 
     @Binds
-    abstract fun folderPreferencesRepository(impl: FolderPreferencesRepositoryImpl): FolderPreferencesRepository
+    @FolderPreferencesRepository
+    abstract fun folderPreferencesRepository(impl: FolderPreferencesRepositoryImpl): SortPreferenceRepository
 }

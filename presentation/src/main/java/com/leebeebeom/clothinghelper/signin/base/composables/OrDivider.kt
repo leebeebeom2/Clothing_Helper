@@ -24,13 +24,16 @@ fun OrDivider() {
         Divider(modifier = modifier)
         SingleLineText(
             text = R.string.or,
-            modifier = Modifier.padding(horizontal = 14.dp),
-            style = MaterialTheme.typography.body2.copy(
-                color = LocalContentColor.current.copy(ContentAlpha.disabled),
-                fontWeight = FontWeight.Bold
-            )
+            modifier = Modifier.padding(horizontal = 12.dp),
+            style = orTextStyle()
         )
         Divider(modifier = modifier)
     }
     SimpleHeightSpacer(dp = 12)
 }
+
+@Composable
+fun orTextStyle() = MaterialTheme.typography.body2.copy(
+    color = LocalContentColor.current.copy(ContentAlpha.disabled),
+    fontWeight = FontWeight.Bold
+)

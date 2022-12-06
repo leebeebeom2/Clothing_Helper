@@ -5,7 +5,6 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.leebeebeom.clothinghelperdomain.repository.preferences.SortPreferenceRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
-import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Singleton

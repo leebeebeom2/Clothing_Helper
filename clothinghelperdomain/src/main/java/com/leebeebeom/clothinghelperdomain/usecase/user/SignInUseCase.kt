@@ -6,5 +6,8 @@ import javax.inject.Inject
 
 @ViewModelScoped
 class SignInUseCase @Inject constructor(private val userRepository: UserRepository) {
-    suspend fun signIn(email: String, password: String) = userRepository.signIn(email, password)
+    suspend fun signIn(email: String, password: String) = userRepository.signIn(
+        email = email,
+        password = password
+    )
 }

@@ -25,8 +25,8 @@ class SignUpUseCase @Inject constructor(
 
         if (authResult is AuthResult.Success)
             pushInitialSubCategoriesUseCase.pushInitialSubCategories(
-                authResult.user.uid,
-                onSubCategoryLoadFail
+                uid = authResult.user.uid,
+                onLoadSubCategoriesFail = onSubCategoryLoadFail
             )
         return authResult
     }

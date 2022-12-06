@@ -19,7 +19,7 @@ class GoogleSignInUseCase @Inject constructor(
         credential: Any?,
         onSubCategoriesLoadFail: (FirebaseResult.Fail) -> Unit
     ): AuthResult {
-        val authResult = userRepository.googleSignIn(credential)
+        val authResult = userRepository.googleSignIn(credential = credential)
 
         if (authResult is AuthResult.Success && authResult.isNewer)
             pushInitialSubCategoriesUseCase.pushInitialSubCategories(

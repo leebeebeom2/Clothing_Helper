@@ -6,5 +6,5 @@ import javax.inject.Inject
 
 @ViewModelScoped
 class ResetPasswordUseCase @Inject constructor(private val userRepository: UserRepository) {
-    suspend fun sendResetPasswordEmail(email: String) = userRepository.resetPasswordEmail(email)
+    suspend fun sendResetPasswordEmail(email: String) = userRepository.resetPasswordEmail(email = email)
 }

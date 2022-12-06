@@ -18,7 +18,8 @@ class SortUseCaseImpl(private val sortPreferenceRepository: SortPreferenceReposi
     SortUseCase {
     override val sortPreferences = sortPreferenceRepository.sort
 
-    override suspend fun changeSort(sort: Sort) = sortPreferenceRepository.changeSort(sort)
+    override suspend fun changeSort(sort: Sort) = sortPreferenceRepository.changeSort(sort = sort)
 
-    override suspend fun changeOrder(order: Order) = sortPreferenceRepository.changeOrder(order)
+    override suspend fun changeOrder(order: Order) =
+        sortPreferenceRepository.changeOrder(order = order)
 }

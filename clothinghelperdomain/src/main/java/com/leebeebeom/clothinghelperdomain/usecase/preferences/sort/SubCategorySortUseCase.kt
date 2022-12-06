@@ -8,4 +8,4 @@ import javax.inject.Inject
 @ViewModelScoped
 class SubCategorySortUseCase @Inject constructor(
     @SubCategoryPreferencesRepository subCategoryPreferencesRepository: SortPreferenceRepository
-) : SortUseCase by SortUseCaseImpl(subCategoryPreferencesRepository)
+) : SortUseCase by SortUseCaseImpl(sortPreferenceRepository = subCategoryPreferencesRepository)

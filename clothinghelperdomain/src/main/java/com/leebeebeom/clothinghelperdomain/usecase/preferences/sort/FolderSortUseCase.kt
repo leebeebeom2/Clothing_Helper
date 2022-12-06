@@ -8,4 +8,4 @@ import javax.inject.Inject
 @ViewModelScoped
 class FolderSortUseCase @Inject constructor(
     @FolderPreferencesRepository folderPreferencesRepository: SortPreferenceRepository
-) : SortUseCase by SortUseCaseImpl(folderPreferencesRepository)
+) : SortUseCase by SortUseCaseImpl(sortPreferenceRepository = folderPreferencesRepository)

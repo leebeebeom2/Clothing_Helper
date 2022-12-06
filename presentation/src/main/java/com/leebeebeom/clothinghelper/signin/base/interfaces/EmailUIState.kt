@@ -5,10 +5,8 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.leebeebeom.clothinghelper.base.ToastUIState
-import com.leebeebeom.clothinghelper.base.ToastUIStateImpl
 
-interface EmailUIState : ToastUIState {
+interface EmailUIState {
     val emailError: Int?
     val email: String
     val buttonEnabled: Boolean
@@ -17,7 +15,7 @@ interface EmailUIState : ToastUIState {
     fun onEmailChange(email: String)
 }
 
-class EmailUIStateImpl : EmailUIState, ToastUIState by ToastUIStateImpl() {
+class EmailUIStateImpl : EmailUIState {
     override var emailError: Int? by mutableStateOf(null)
         private set
 

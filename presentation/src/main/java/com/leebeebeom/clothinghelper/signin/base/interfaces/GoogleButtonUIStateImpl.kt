@@ -4,13 +4,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 
-interface GoogleButtonUIState : PasswordUIState {
+interface GoogleButtonUIState {
     val googleButtonEnabled: Boolean
 
     fun updateGoogleButtonEnabled(enabled: Boolean)
 }
 
-class GoogleButtonUIStateImpl : PasswordUIState by PasswordUIStateImpl(), GoogleButtonUIState {
+class GoogleButtonUIStateImpl : GoogleButtonUIState {
     override var googleButtonEnabled by mutableStateOf(true)
         private set
 

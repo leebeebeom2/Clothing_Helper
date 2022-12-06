@@ -20,7 +20,7 @@ import com.leebeebeom.clothinghelper.base.composables.MaxWidthButton
 fun GoogleSignInButton(
     enabled: () -> Boolean,
     onActivityResult: (ActivityResult) -> Unit,
-    disabled: () -> Unit
+    onClick: () -> Unit
 ) {
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
@@ -35,7 +35,7 @@ fun GoogleSignInButton(
         colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
         icon = { GoogleIcon() },
         onClick = {
-            disabled()
+            onClick()
             launcher.launch(intent)
         }
     )

@@ -13,10 +13,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.composables.MaxWidthButton
-import com.leebeebeom.clothinghelper.base.composables.SimpleIcon
-import com.leebeebeom.clothinghelper.base.composables.SimpleToast
-import com.leebeebeom.clothinghelper.base.composables.SingleLineText
+import com.leebeebeom.clothinghelper.base.composables.*
 import com.leebeebeom.clothinghelper.signin.base.composables.GoogleSignInButton
 import com.leebeebeom.clothinghelper.signin.base.composables.OrDivider
 import com.leebeebeom.clothinghelper.signin.base.textfields.EmailTextField
@@ -41,7 +38,8 @@ fun SignInScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.Center
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.Center
     ) {
         EmailTextField(
             email = { uiState.email },
@@ -72,11 +70,11 @@ fun SignInScreen(
             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
             icon = { SimpleIcon(drawable = R.drawable.ic_email) }
         )
-        OrDivider()
+        SimpleHeightSpacer(dp = 12)
         GoogleSignInButton(
             enabled = { uiState.googleButtonEnabled },
             onActivityResult = viewModel::signInWithGoogleEmail,
-            disabled = { uiState.updateGoogleButtonEnabled(false) }
+            onClick = { uiState.updateGoogleButtonEnabled(false) }
         )
         SimpleToast(text = { uiState.toastText }, toastShown = uiState::toastShown)
     }

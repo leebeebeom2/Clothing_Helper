@@ -7,5 +7,8 @@ import javax.inject.Inject
 
 @ViewModelScoped
 class EditFolderNameUseCase @Inject constructor(private val folderRepository: FolderRepository) {
-    suspend fun edit(newFolder: Folder, uid: String) = folderRepository.edit(newFolder, uid)
+    suspend fun edit(newFolder: Folder, uid: String) = folderRepository.edit(
+        newT = newFolder,
+        uid = uid
+    )
 }

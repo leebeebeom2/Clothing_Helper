@@ -4,14 +4,14 @@ import com.leebeebeom.clothinghelperdomain.model.data.Folder
 import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
 
 data class StableFolder(
-    val parentKey: String = "",
-    val subCategoryKey: String = "",
+    override val parentKey: String = "",
+    override val subCategoryKey: String = "",
     override val createDate: Long = 0,
     override val name: String = "",
     override val key: String = "",
     override val editDate: Long = 0,
     override val parent: SubCategoryParent = SubCategoryParent.TOP
-) : BaseStableModel()
+) : BaseStableFolderModel()
 
 fun Folder.toStable() = StableFolder(
     parentKey = parentKey,

@@ -7,3 +7,8 @@ abstract class BaseModel {
     abstract val createDate: Long
     abstract val editDate: Long
 }
+
+abstract class BaseFolderModel : BaseModel() {
+    abstract val parentKey: String
+    abstract val subCategoryKey: String
+}

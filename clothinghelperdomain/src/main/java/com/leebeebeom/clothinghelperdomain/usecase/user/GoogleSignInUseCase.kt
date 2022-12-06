@@ -23,8 +23,8 @@ class GoogleSignInUseCase @Inject constructor(
 
         if (authResult is AuthResult.Success && authResult.isNewer)
             pushInitialSubCategoriesUseCase.pushInitialSubCategories(
-                authResult.user.uid,
-                onSubCategoriesLoadFail
+                uid = authResult.user.uid,
+                onLoadSubCategoriesFail = onSubCategoriesLoadFail
             )
         return authResult
     }

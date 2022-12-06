@@ -36,7 +36,7 @@ fun SignInRoot(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 20.dp)
-                    .noRippleClickable(onClick = focusManager::clearFocus),
+                    .noRippleClickable(onClick = focusManager::clearFocus)
             ) {
                 content()
                 BlockBacKPressWhenLoading { isLoading }

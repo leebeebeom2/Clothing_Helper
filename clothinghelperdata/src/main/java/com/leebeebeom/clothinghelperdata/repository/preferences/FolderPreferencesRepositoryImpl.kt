@@ -14,7 +14,3 @@ class FolderPreferencesRepositoryImpl @Inject constructor(@ApplicationContext co
 
 private const val FOLDER = "folder_preferences"
 private val Context.folderDatastore by preferencesDataStore(name = FOLDER)
-
-@Qualifier
-@Retention(AnnotationRetention.RUNTIME)
-annotation class FolderPreferencesRepository

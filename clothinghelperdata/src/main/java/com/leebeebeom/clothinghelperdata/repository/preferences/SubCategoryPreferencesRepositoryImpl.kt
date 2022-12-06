@@ -14,7 +14,3 @@ class SubCategoryPreferencesRepositoryImpl @Inject constructor(@ApplicationConte
 
 private const val SUBCATEGORY = "subCategory_preferences"
 private val Context.subCategoryDatastore by preferencesDataStore(name = SUBCATEGORY)
-
-@Qualifier
-@Retention(AnnotationRetention.RUNTIME)
-annotation class SubCategoryPreferencesRepository

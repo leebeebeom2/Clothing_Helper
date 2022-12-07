@@ -22,7 +22,6 @@ import com.leebeebeom.clothinghelperdomain.usecase.subcategory.EditSubCategoryUs
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetAllSubCategoriesUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.user.GetUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -45,12 +44,7 @@ class MainRootViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             launch {
-                loadDataUseCase.load {
-                    when (it.exception) {
-                        is TimeoutCancellationException -> showToast(R.string.network_error_for_load)
-                        else -> uiState.showToast(R.string.data_load_failed)
-                    }
-                }
+                loadDataUseCase.load { uiState.showToast(R.string.data_load_failed) }
             }
 
             launch { getDataLoadingStateUseCase.isLoading.collectLatest(uiState::updateIsLoading) }
@@ -78,7 +72,7 @@ class MainRootViewModel @Inject constructor(
         }
     }
 
-    fun editFolder(newFolder:StableFolder){
+    fun editFolder(newFolder: StableFolder) {
         viewModelScope.launch {
             super.baseEditFolder(newFolder)
         }

@@ -10,13 +10,13 @@ interface BaseContainerAddAndEdit {
 
     fun showFailToast(
         result: FirebaseResult,
-        @StringRes networkFail: Int,
-        @StringRes fail: Int
+        @StringRes networkFailError: Int,
+        @StringRes failError: Int
     ) {
         if (result is FirebaseResult.Fail)
             when (result.exception) {
-                is TimeoutCancellationException -> showToast(networkFail)
-                else -> showToast(fail)
+                is TimeoutCancellationException -> showToast(networkFailError)
+                else -> showToast(failError)
             }
     }
 }

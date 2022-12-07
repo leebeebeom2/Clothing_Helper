@@ -1,7 +1,6 @@
 package com.leebeebeom.clothinghelper.main.base.dialogs
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.map.StableFolder
 import kotlinx.collections.immutable.ImmutableList

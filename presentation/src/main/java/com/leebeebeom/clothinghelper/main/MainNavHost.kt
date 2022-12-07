@@ -3,31 +3,30 @@ package com.leebeebeom.clothinghelper.main
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.leebeebeom.clothinghelper.main.maincategory.MainCategoryScreen
 import com.leebeebeom.clothinghelper.main.root.MainRoot
 import com.leebeebeom.clothinghelper.main.root.model.EssentialMenuType
 import com.leebeebeom.clothinghelper.main.setting.settingGraph
-import com.leebeebeom.clothinghelper.main.sizeChart.SizeChartScreen
-import com.leebeebeom.clothinghelper.main.sizechartlist.SizeChartListScreen
-import com.leebeebeom.clothinghelper.main.subcategory.SubCategoryScreen
 import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
+import com.leebeebeom.clothinghelper.util.getCurrentRoute
+import com.leebeebeom.clothinghelper.util.getStringArg
 import com.leebeebeom.clothinghelper.util.navigateSingleTop
 import com.leebeebeom.clothinghelperdomain.model.data.BaseModel
 import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
 
 sealed class MainDestinations(val route: String) {
     object MainCategory : MainDestinations("mainCategory")
+
     object SubCategory : MainDestinations("subCategory") {
         const val parent = "parent"
         val routeWithArg = "$route/{$parent}"
@@ -35,6 +34,7 @@ sealed class MainDestinations(val route: String) {
     }
 
     object Setting : MainDestinations("setting")
+
     object SizeChartList : MainDestinations("SizeChartList") {
         const val parentKey = "parentKey"
         const val subCategoryKey = "subCategoryKey"
@@ -68,80 +68,52 @@ fun MainNavHost(state: MainNavHostState = rememberMainNavHostState()) {
             startDestination = MainDestinations.MainCategory.route,
             modifier = Modifier.padding(it)
         ) {
-            composable( // Main
-                route = MainDestinations.MainCategory.route
-            ) {
-                MainCategoryScreen(onMainCategoryClick = state::navigateToSubCategory)
-            }
+            mainGraph(
+                onMainCategoryClick = state::navigateToSubCategory,
+                onSubCategoryClick = state::navigateToSizeChartList,
+                onFolderClick = state::navigateToSizeChartList,
+                onSizeChartListFabClick = state::navigateToSizeChart
+            )
 
-            composable( // SubCategory
-                route = MainDestinations.SubCategory.routeWithArg,
-                arguments = MainDestinations.SubCategory.arguments
-            ) { entry ->
-                SubCategoryScreen(
-                    parent = enumValueOf(entry.arguments?.getString(MainDestinations.SubCategory.parent)!!),
-                    onSubCategoryClick = state::navigateToSizeChartList
-                )
-            }
-
-            composable( // SizeChartList
-                route = MainDestinations.SizeChartList.routeWithArg,
-                arguments = MainDestinations.SizeChartList.arguments
-            ) { entry ->
-                val arguments = entry.arguments!!
-                SizeChartListScreen(
-                    parentKey = arguments.getString(MainDestinations.SizeChartList.parentKey)!!,
-                    subCategoryKey = arguments.getString(MainDestinations.SizeChartList.subCategoryKey)!!,
-                    onFolderClick = state::navigateToSizeChartList,
-                    onFabClick = state::navigateToSizeChart
-                )
-            }
-
-            composable( // SizeChart
-                route = MainDestinations.SizeChart.routeWithArg,
-                arguments = MainDestinations.SizeChart.arguments
-            ) { entry ->
-                val path = entry.arguments?.getString(MainDestinations.SizeChart.path)!!
-                SizeChartScreen(path = path)
-            }
-
-            settingGraph(navController = state.navController) // Setting
+            settingGraph(navController = state.navController)
         }
     }
 }
 
-data class MainNavHostState(
-    val navController: NavHostController, val currentBackStack: State<NavBackStackEntry?>
+class MainNavHostState(
+    val navController: NavHostController, currentBackStack: State<NavBackStackEntry?>
 ) {
-    fun onEssentialMenuClick(type: EssentialMenuType) = when (type) {
-        EssentialMenuType.MainScreen -> navigateToMain()
-        EssentialMenuType.Favorite -> {} // TODO
-        EssentialMenuType.SeeAll -> {} // TODO
-        EssentialMenuType.Trash -> {} // TODO
-    }
+    private val currentBackStack by currentBackStack
+
+    fun onEssentialMenuClick(type: EssentialMenuType) =
+        when (type) {
+            EssentialMenuType.MainScreen -> navigateToMain()
+            EssentialMenuType.Favorite -> {} // TODO
+            EssentialMenuType.SeeAll -> {} // TODO
+            EssentialMenuType.Trash -> {} // TODO
+        }
 
     fun navigateToSubCategory(parent: SubCategoryParent) {
-        val currentParent =
-            currentBackStack.value?.arguments?.getString(MainDestinations.SubCategory.parent)
+        val currentParent = currentBackStack.getStringArg(MainDestinations.SubCategory.parent)
+
         if (currentParent != parent.name) navController.navigate("${MainDestinations.SubCategory.route}/${parent.name}")
     }
 
     private fun navigateToMain() {
-        val currentRoute = currentBackStack.value?.destination?.route
-        if (currentRoute != MainDestinations.MainCategory.route) navController.navigateSingleTop(
-            route = MainDestinations.MainCategory.route
-        )
+        val currentRoute = currentBackStack.getCurrentRoute()
+        if (currentRoute != MainDestinations.MainCategory.route)
+            navController.navigateSingleTop(route = MainDestinations.MainCategory.route)
     }
 
     fun navigateToSetting() {
-        val currentRoute = currentBackStack.value?.destination?.route
+        val currentRoute = currentBackStack.getCurrentRoute()
         if (currentRoute != MainDestinations.Setting.route) navController.navigateSingleTop(route = MainDestinations.Setting.route)
     }
 
     fun navigateToSizeChartList(container: BaseModel) {
         val parentKey = container.key
         val currentParentKey =
-            currentBackStack.value?.arguments?.getString(MainDestinations.SizeChartList.parentKey)
+            currentBackStack.getStringArg(MainDestinations.SizeChartList.parentKey)
 
         if (parentKey != currentParentKey) {
             val subCategoryKey =

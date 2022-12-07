@@ -5,6 +5,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.toImmutableSet
@@ -25,3 +26,6 @@ fun Modifier.noRippleClickable(onClick: () -> Unit): Modifier = composed {
         onClick()
     }
 }
+
+fun NavBackStackEntry?.getCurrentRoute() = this?.destination?.route
+fun NavBackStackEntry?.getStringArg(key: String) = this?.arguments?.getString(key)

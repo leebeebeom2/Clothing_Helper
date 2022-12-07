@@ -17,7 +17,7 @@ interface SelectMode<T : BaseModel> {
     val selectedKeys: ImmutableSet<String>
     val selectedSize: Int
     val isAllSelected: Boolean
-    val firstSelectedItem: T?
+    val firstSelectedItem: T
     val showEditIcon: Boolean
     val showDeleteIcon: Boolean
     fun selectModeOn(key: String)
@@ -72,7 +72,7 @@ class SelectModeImpl<T : BaseModel> : SelectMode<T> {
     }
 
     /**
-     * get() = selectedKeys.firstOrNull()?.let { key -> items.firstOrNull { it.key == key } }
+     * get() = items.first { it.key == selectedKeys.first() }
      */
     override val firstSelectedItem get() = TODO("Not yet implemented")
 

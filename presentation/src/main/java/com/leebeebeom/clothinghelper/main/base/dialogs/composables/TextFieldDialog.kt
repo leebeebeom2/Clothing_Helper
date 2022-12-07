@@ -6,6 +6,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.text.input.TextFieldValue
+import com.leebeebeom.clothinghelper.base.TextFieldState
 import com.leebeebeom.clothinghelper.base.composables.MaxWidthTextField
 import com.leebeebeom.clothinghelper.base.composables.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.base.composables.rememberMaxWidthTextFieldState
@@ -51,11 +52,8 @@ fun TextFieldDialog(
 abstract class BaseTextFieldDialogState(
     initialText: String,
     initialError: Int?,
-) {
-    var text by mutableStateOf(initialText)
-        protected set
-
-    var textFieldValue by mutableStateOf(TextFieldValue(text))
+) : TextFieldState(initialText) {
+    var text = initialText
         protected set
 
     var error: Int? by mutableStateOf(initialError)
@@ -68,8 +66,10 @@ abstract class BaseTextFieldDialogState(
     open val positiveButtonEnabled by derivedStateOf { text.trim().isNotBlank() && error == null }
 
     open fun onValueChange(newTextFiled: TextFieldValue) {
-        if (text != newTextFiled.text) error = null
-        text = newTextFiled.text
-        textFieldValue = newTextFiled
+        super.onValueChange(
+            newTextFieldValue = newTextFiled,
+            onValueChange = { text = it },
+            updateError = ::updateError
+        )
     }
 }

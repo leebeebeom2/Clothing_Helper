@@ -30,9 +30,9 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun DrawerSubCategory(
+    subCategory: () -> StableSubCategory,
     subCategories: () -> ImmutableList<StableSubCategory>,
     folders: (key: String) -> ImmutableList<StableFolder>,
-    subCategory: () -> StableSubCategory,
     onClick: () -> Unit,
     onFolderClick: (StableFolder) -> Unit,
     onEditSubCategoryNamePositiveClick: EditSubCategory,
@@ -73,7 +73,9 @@ fun DrawerSubCategory(
                     folders = { folders(subCategory().key) },
                 )
                 SimpleHeightSpacer(dp = 2)
-                DrawerCount { folders(subCategory().key) }
+                DrawerCount(
+                    folders = { folders(subCategory().key) }
+                )
             }
             DrawerExpandIcon(
                 isLoading = { false },
@@ -87,7 +89,7 @@ fun DrawerSubCategory(
     DrawerItems(
         show = { isExpand },
         items = { folders(subCategory().key) },
-        backGround = DarkGray
+        background = DarkGray
     ) {
         DrawerFolder(
             folder = { it },

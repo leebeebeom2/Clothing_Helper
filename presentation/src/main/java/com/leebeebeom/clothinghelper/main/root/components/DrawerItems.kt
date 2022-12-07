@@ -14,7 +14,7 @@ import kotlinx.collections.immutable.ImmutableList
 fun <T : BaseModel> DrawerItems(
     show: () -> Boolean,
     items: () -> ImmutableList<T>,
-    backGround: Color,
+    background: Color,
     item: @Composable (T) -> Unit,
 ) {
     AnimatedVisibility(
@@ -22,7 +22,7 @@ fun <T : BaseModel> DrawerItems(
         enter = Anime.DrawerList.listExpand,
         exit = Anime.DrawerList.listShrink
     ) {
-        Surface(color = backGround) {
+        Surface(color = background) {
             Column { items().forEach { key(it.key) { item(it) } } }
         }
     }

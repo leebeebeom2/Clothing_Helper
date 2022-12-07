@@ -12,6 +12,7 @@ import com.leebeebeom.clothinghelper.main.base.interfaces.addandedit.subcategory
 import com.leebeebeom.clothinghelper.main.base.interfaces.addandedit.subcategory.EditSubCategory
 import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
+import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.usecase.GetDataLoadingStateUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.LoadDataUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.folder.AddFolderUseCase
@@ -54,27 +55,34 @@ class MainRootViewModel @Inject constructor(
         }
     }
 
-    fun addSubCategory(subCategory: StableSubCategory) {
+    fun addSubCategory(name: String, parent: SubCategoryParent) {
         viewModelScope.launch {
-            super.baseAddSubCategory(subCategory)
+            super.baseAddSubCategory(name = name, parent = parent)
         }
     }
 
-    fun editSubCategoryName(subCategory: StableSubCategory) {
+    fun editSubCategoryName(oldSubCategory: StableSubCategory, name: String) {
         viewModelScope.launch {
-            super.baseEditSubCategory(subCategory)
+            super.baseEditSubCategory(oldSubCategory = oldSubCategory, name = name)
         }
     }
 
-    fun addFolder(folder: StableFolder) {
+    fun addFolder(
+        parentKey: String, subCategoryKey: String, name: String, parent: SubCategoryParent
+    ) {
         viewModelScope.launch {
-            super.baseAddFolder(folder)
+            super.baseAddFolder(
+                parentKey = parentKey,
+                subCategoryKey = subCategoryKey,
+                name = name,
+                subCategoryParent = parent,
+            )
         }
     }
 
-    fun editFolder(newFolder: StableFolder) {
+    fun editFolder(oldFolder: StableFolder, name: String) {
         viewModelScope.launch {
-            super.baseEditFolder(newFolder)
+            super.baseEditFolder(oldFolder = oldFolder, name = name)
         }
     }
 
@@ -82,9 +90,6 @@ class MainRootViewModel @Inject constructor(
     override val uid get() = uiState.user?.uid
 }
 
-class MainRootUIState :
-    ToastUIState by ToastUIStateImpl(),
-    UserUIState by UserUIStateImpl(),
-    LoadingUIState by LoadingUIStateImpl(),
-    SubCategoryUIState by SubCategoryUIStateImpl(),
+class MainRootUIState : ToastUIState by ToastUIStateImpl(), UserUIState by UserUIStateImpl(),
+    LoadingUIState by LoadingUIStateImpl(), SubCategoryUIState by SubCategoryUIStateImpl(),
     FolderUIState by FolderUIStateImpl()

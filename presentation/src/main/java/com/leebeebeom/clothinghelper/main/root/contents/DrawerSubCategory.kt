@@ -23,18 +23,21 @@ import com.leebeebeom.clothinghelper.main.root.contents.dropdownmenus.DrawerSubC
 import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.theme.DarkGray
+import com.leebeebeom.clothinghelper.util.AddFolder
+import com.leebeebeom.clothinghelper.util.EditFolder
+import com.leebeebeom.clothinghelper.util.EditSubCategory
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun DrawerSubCategory(
+    subCategories: () -> ImmutableList<StableSubCategory>,
+    folders: (key: String) -> ImmutableList<StableFolder>,
     subCategory: () -> StableSubCategory,
     onClick: () -> Unit,
-    subCategories: () -> ImmutableList<StableSubCategory>,
-    onEditSubCategoryNamePositiveClick: (StableSubCategory) -> Unit,
-    onAddFolderPositiveClick: (StableFolder) -> Unit,
-    folders: (key: String) -> ImmutableList<StableFolder>,
     onFolderClick: (StableFolder) -> Unit,
-    onEditFolderPositiveClick: (StableFolder) -> Unit
+    onEditSubCategoryNamePositiveClick: EditSubCategory,
+    onAddFolderPositiveClick: AddFolder,
+    onEditFolderPositiveClick: EditFolder
 ) {
     var isExpand by rememberSaveable { mutableStateOf(false) }
     var showDropDownMenu by rememberSaveable { mutableStateOf(false) }
@@ -61,10 +64,10 @@ fun DrawerSubCategory(
                     show = { showDropDownMenu },
                     onDismiss = { showDropDownMenu = false },
                     subCategories = subCategories,
-                    subCategory = subCategory,
+                    selectedSubCategory = subCategory,
                     onEditSubCategoryPositiveClick = onEditSubCategoryNamePositiveClick,
-                    onAddFolderPositiveClick = {
-                        onAddFolderPositiveClick(it)
+                    onAddFolderPositiveClick = { parentKey, subCategoryKey, name, parent ->
+                        onAddFolderPositiveClick(parentKey, subCategoryKey, name, parent)
                         isExpand = true
                     },
                     folders = { folders(subCategory().key) },

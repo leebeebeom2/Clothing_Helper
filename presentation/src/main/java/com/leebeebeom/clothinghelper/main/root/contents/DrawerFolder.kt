@@ -23,6 +23,8 @@ import com.leebeebeom.clothinghelper.main.root.components.DrawerItems
 import com.leebeebeom.clothinghelper.main.root.contents.dropdownmenus.DrawerFolderDropDownMenu
 import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.theme.DarkGray
+import com.leebeebeom.clothinghelper.util.AddFolder
+import com.leebeebeom.clothinghelper.util.EditFolder
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -31,8 +33,8 @@ fun DrawerFolder(
     onClick: (StableFolder) -> Unit,
     startPadding: Dp,
     folders: (key: String) -> ImmutableList<StableFolder>,
-    onAddFolderPositiveClick: (StableFolder) -> Unit,
-    onEditFolderPositiveClick: (StableFolder) -> Unit,
+    onAddFolderPositiveClick: AddFolder,
+    onEditFolderPositiveClick: EditFolder,
 ) {
 
     var isExpanded by rememberSaveable { mutableStateOf(false) }
@@ -59,8 +61,8 @@ fun DrawerFolder(
                 show = { showDropDownMenu },
                 onDismiss = { showDropDownMenu = false },
                 folders = { folders(folder().key) },
-                onAddFolderPositiveClick = {
-                    onAddFolderPositiveClick(it)
+                onAddFolderPositiveClick = { parentKey, subCategoryKey, name, parent ->
+                    onAddFolderPositiveClick(parentKey, subCategoryKey, name, parent)
                     isExpanded = true
                 },
                 onEditFolderPositiveClick = onEditFolderPositiveClick,

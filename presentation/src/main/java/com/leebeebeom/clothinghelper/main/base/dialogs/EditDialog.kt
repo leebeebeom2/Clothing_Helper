@@ -10,7 +10,6 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.input.TextFieldValue
 import com.leebeebeom.clothinghelper.main.base.dialogs.composables.BaseTextFieldDialogState
 import com.leebeebeom.clothinghelper.main.base.dialogs.composables.TextFieldDialog
 import com.leebeebeom.clothinghelperdomain.model.data.BaseModel
@@ -29,7 +28,7 @@ fun EditDialog(
     initialName: () -> String
 ) {
     if (show()) {
-        val names by remember { derivedStateOf { items().map { it.name } } }
+        val names = remember { items().map { it.name } }
         val state =
             rememberSaveable(saver = EditDialogState.Saver) { EditDialogState(initialName = initialName()) }
 
@@ -56,17 +55,11 @@ class EditDialogState(
     val initialName: String,
     initialText: String = initialName,
     initialError: Int? = null
-) :
-    BaseTextFieldDialogState(initialText, initialError) {
-    override fun onValueChange(newTextFiled: TextFieldValue) {
-        super.onValueChange(newTextFiled)
-        if (newTextFiled.text.trim() == initialName) error = null
-    }
-
+) : BaseTextFieldDialogState(initialText, initialError) {
     override val positiveButtonEnabled by derivedStateOf { super.positiveButtonEnabled && initialName != text.trim() }
 
-    fun onFocusChange(newFocusState: FocusState) {
-        if (newFocusState.hasFocus) textFieldValue =
+    override fun onFocusChange(focusState: FocusState) {
+        if (focusState.hasFocus) textFieldValue =
             textFieldValue.copy(selection = TextRange(0, text.length))
     }
 

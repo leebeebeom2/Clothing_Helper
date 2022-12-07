@@ -3,6 +3,7 @@ package com.leebeebeom.clothinghelper.main.base.dialogs
 import androidx.compose.runtime.Composable
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.map.StableSubCategory
+import com.leebeebeom.clothinghelper.util.EditSubCategory
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -10,7 +11,7 @@ fun EditSubCategoryDialog(
     show: () -> Boolean,
     selectedSubCategory: () -> StableSubCategory,
     subCategories: () -> ImmutableList<StableSubCategory>,
-    onPositiveButtonClick: (StableSubCategory) -> Unit,
+    onPositiveButtonClick: EditSubCategory,
     onDismiss: () -> Unit
 ) {
     EditDialog(
@@ -21,7 +22,7 @@ fun EditSubCategoryDialog(
         items = subCategories,
         existNameError = R.string.error_exist_category_name,
         onDismiss = onDismiss,
-        onPositiveButtonClick = { onPositiveButtonClick(selectedSubCategory().copy(name = it)) },
+        onPositiveButtonClick = { onPositiveButtonClick(selectedSubCategory(), it) },
         initialName = { selectedSubCategory().name }
     )
 }

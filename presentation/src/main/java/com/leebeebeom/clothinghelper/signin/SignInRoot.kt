@@ -40,10 +40,10 @@ fun SignInRoot(
             ) {
                 content()
                 BlockBacKPressWhenLoading { isLoading }
-                CenterDotProgressIndicator(show = { isLoading })
             }
         }
     }
+    CenterDotProgressIndicator(show = { isLoading })
 }
 
 @HiltViewModel

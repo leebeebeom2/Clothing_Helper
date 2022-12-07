@@ -55,17 +55,36 @@ fun SortDropdownMenu(
 }
 
 @Composable
+private fun Header() {
+    Column(modifier = Modifier.padding(start = 12.dp, end = 12.dp, top = 4.dp)) {
+        SingleLineText(
+            text = R.string.sort,
+            style = sortDropDownMenuHeaderStyle()
+        )
+        SimpleHeightSpacer(dp = 8)
+        Divider()
+    }
+}
+
+@Composable
+private fun sortDropDownMenuHeaderStyle() =
+    MaterialTheme.typography.subtitle1.copy(letterSpacing = 1.55.sp)
+        .copy(color = LocalContentColor.current.copy(0.8f))
+
+@Composable
 private fun OrderButtons(
     sort: () -> SortPreferences, onOrderClick: (Order) -> Unit
 ) {
+    val order = sort().order
+
     Column {
         SortButton(
             text = R.string.sort_Ascending,
-            isSelected = { sort().order == Order.ASCENDING }) { onOrderClick(Order.ASCENDING) }
+            isSelected = { order == Order.ASCENDING }) { onOrderClick(Order.ASCENDING) }
         SimpleHeightSpacer(dp = 4)
         SortButton(
             text = R.string.sort_Descending,
-            isSelected = { sort().order == Order.DESCENDING }) { onOrderClick(Order.DESCENDING) }
+            isSelected = { order == Order.DESCENDING }) { onOrderClick(Order.DESCENDING) }
     }
 }
 
@@ -73,31 +92,20 @@ private fun OrderButtons(
 private fun SortButtons(
     sort: () -> SortPreferences, onSortClick: (Sort) -> Unit
 ) {
+    val sortValue = sort().sort
+
     Column {
         SortButton(
             text = R.string.sort_name,
-            isSelected = { sort().sort == Sort.NAME }) { onSortClick(Sort.NAME) }
+            isSelected = { sortValue == Sort.NAME }) { onSortClick(Sort.NAME) }
         SimpleHeightSpacer(dp = 4)
         SortButton(
             text = R.string.sort_create_date,
-            isSelected = { sort().sort == Sort.CREATE }) { onSortClick(Sort.CREATE) }
+            isSelected = { sortValue == Sort.CREATE }) { onSortClick(Sort.CREATE) }
         SimpleHeightSpacer(dp = 4)
         SortButton(
             text = R.string.sort_edit_date,
-            isSelected = { sort().sort == Sort.EDIT }) { onSortClick(Sort.EDIT) }
-    }
-}
-
-@Composable
-private fun Header() {
-    Column(modifier = Modifier.padding(start = 12.dp, end = 12.dp, top = 4.dp)) {
-        SingleLineText(
-            text = R.string.sort,
-            style = MaterialTheme.typography.subtitle1.copy(letterSpacing = 1.55.sp)
-                .copy(color = LocalContentColor.current.copy(0.8f))
-        )
-        SimpleHeightSpacer(dp = 8)
-        Divider()
+            isSelected = { sortValue == Sort.EDIT }) { onSortClick(Sort.EDIT) }
     }
 }
 

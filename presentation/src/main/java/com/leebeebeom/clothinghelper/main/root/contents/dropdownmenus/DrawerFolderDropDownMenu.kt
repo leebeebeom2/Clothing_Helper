@@ -6,14 +6,16 @@ import com.leebeebeom.clothinghelper.main.base.composables.DropDownMenuRoot
 import com.leebeebeom.clothinghelper.main.base.dialogs.AddFolderDialog
 import com.leebeebeom.clothinghelper.main.base.dialogs.EditFolderDialog
 import com.leebeebeom.clothinghelper.map.StableFolder
+import com.leebeebeom.clothinghelper.util.AddFolder
+import com.leebeebeom.clothinghelper.util.EditFolder
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun DrawerFolderDropDownMenu(
     show: () -> Boolean, onDismiss: () -> Unit,
     folders: () -> ImmutableList<StableFolder>,
-    onAddFolderPositiveClick: (StableFolder) -> Unit,
-    onEditFolderPositiveClick: (StableFolder) -> Unit,
+    onAddFolderPositiveClick: AddFolder,
+    onEditFolderPositiveClick: EditFolder,
     folder: () -> StableFolder
 ) {
     var showAddFolderDialog by remember { mutableStateOf(false) }
@@ -36,13 +38,12 @@ fun DrawerFolderDropDownMenu(
     AddFolderDialog(
         folders = folders,
         onPositiveButtonClick = {
+            val parent = folder()
             onAddFolderPositiveClick(
-                StableFolder(
-                    parentKey = folder().key,
-                    subCategoryKey = folder().subCategoryKey,
-                    parent = folder().parent,
-                    name = it,
-                )
+                parent.key,
+                parent.subCategoryKey,
+                it,
+                parent.parent,
             )
         },
         show = { showAddFolderDialog },
@@ -54,6 +55,6 @@ fun DrawerFolderDropDownMenu(
         show = { showEditFolderDialog },
         onDismiss = { showEditFolderDialog = false },
         onPositiveButtonClick = onEditFolderPositiveClick,
-        folder = folder
+        selectedFolder = folder
     )
 }

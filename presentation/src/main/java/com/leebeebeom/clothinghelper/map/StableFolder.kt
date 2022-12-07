@@ -1,5 +1,6 @@
 package com.leebeebeom.clothinghelper.map
 
+import com.leebeebeom.clothinghelperdomain.model.data.BaseFolderModel
 import com.leebeebeom.clothinghelperdomain.model.data.Folder
 import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
 
@@ -11,7 +12,7 @@ data class StableFolder(
     override val key: String = "",
     override val editDate: Long = 0,
     override val parent: SubCategoryParent = SubCategoryParent.TOP
-) : BaseStableFolderModel()
+) : BaseFolderModel()
 
 fun Folder.toStable() = StableFolder(
     parentKey = parentKey,

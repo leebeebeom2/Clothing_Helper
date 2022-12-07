@@ -2,26 +2,27 @@ package com.leebeebeom.clothinghelper.main.maincategory
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
+import androidx.compose.material.ContentAlpha
+import androidx.compose.material.LocalContentColor
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.base.composables.DotProgressIndicator
 import com.leebeebeom.clothinghelper.base.composables.SimpleIcon
 import com.leebeebeom.clothinghelper.base.composables.SingleLineText
+import com.leebeebeom.clothinghelper.main.base.composables.MaxWidthCard
+import com.leebeebeom.clothinghelper.main.base.composables.titleStyle
 import com.leebeebeom.clothinghelper.main.root.model.MainCategory
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
 import kotlinx.collections.immutable.ImmutableList
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainCategoryCard(
     modifier: Modifier,
@@ -30,18 +31,13 @@ fun MainCategoryCard(
     isLoading: () -> Boolean,
     onMainContentClick: (SubCategoryParent) -> Unit,
 ) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        elevation = 2.dp,
-        onClick = { onMainContentClick(mainCategory.type) }
-    ) {
+    MaxWidthCard(modifier = modifier, onClick = { onMainContentClick(mainCategory.type) }) {
         Box(
-            modifier = Modifier
-                .padding(start = 16.dp, end = 8.dp, top = 10.dp, bottom = 12.dp)
+            modifier = Modifier.padding(start = 16.dp, end = 8.dp, top = 10.dp, bottom = 12.dp)
         ) {
             SingleLineText(
                 text = mainCategory.name,
-                style = MaterialTheme.typography.h2.copy(fontSize = 32.sp)
+                style = titleStyle()
             )
 
             SimpleIcon(

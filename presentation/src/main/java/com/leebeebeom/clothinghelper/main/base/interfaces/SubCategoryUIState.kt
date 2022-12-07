@@ -12,7 +12,6 @@ interface SubCategoryUIState {
     val allSubCategories: List<StableSubCategory>
 
     fun loadAllSubCategories(allSubCategories: List<SubCategory>)
-
     fun getSubCategories(subCategoryParent: SubCategoryParent): ImmutableList<StableSubCategory>
 }
 

@@ -23,7 +23,7 @@ fun AddDialog(
     onDismiss: () -> Unit
 ) {
     if (show()) {
-        val names = remember(items()) { items().map { it.name } }
+        val names = remember { items().map { it.name } }
         val state = rememberSaveable(saver = AddDialogState.Saver) { AddDialogState() }
 
         TextFieldDialog(label = label,

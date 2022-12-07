@@ -89,7 +89,7 @@ fun SubCategoryScreen(
             onPositiveButtonClick = viewModel::editSubCategoryName,
             onDismiss = state::dismissEditDialog,
             show = { state.showEditDialog },
-            subCategory = { uiState.firstSelectedItem }
+            selectedSubCategory = { uiState.firstSelectedItem }
         )
 
         SelectModeBottomAppBar(
@@ -106,9 +106,7 @@ fun SubCategoryScreen(
             backGround = MaterialTheme.colors.background,
             show = { uiState.isLoading })
 
-        val addSubCategory = remember<(String) -> Unit> {
-            { viewModel.addSubCategory(StableSubCategory(parent = parent, name = it)) }
-        }
+        val addSubCategory = remember<(String) -> Unit> { { viewModel.addSubCategory(it, parent) } }
         SubCategoryFab(
             onPositiveButtonClick = addSubCategory,
             subCategories = { uiState.items },

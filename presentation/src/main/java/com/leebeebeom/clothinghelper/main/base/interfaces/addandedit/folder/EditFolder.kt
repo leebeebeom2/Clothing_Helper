@@ -9,9 +9,13 @@ import com.leebeebeom.clothinghelperdomain.usecase.folder.EditFolderNameUseCase
 interface EditFolder : BaseContainerAddAndEdit {
     val editFolderNameUseCase: EditFolderNameUseCase
 
-    suspend fun baseEditFolder(folder: StableFolder) {
+    suspend fun baseEditFolder(oldFolder: StableFolder, name: String) {
         uid?.let {
-            val result = editFolderNameUseCase.edit(newFolder = folder.toUnstable(), uid = it)
+            val result = editFolderNameUseCase.edit(
+                oldFolder = oldFolder.toUnstable(),
+                name = name,
+                uid = it
+            )
             showFailToast(
                 result = result,
                 networkFailError = R.string.network_error_for_edit_folder,

@@ -29,7 +29,7 @@ fun SettingButton(@StringRes text: Int, onClick: () -> Unit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp)
+                .padding(vertical = 12.dp)
                 .padding(start = 16.dp, end = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {

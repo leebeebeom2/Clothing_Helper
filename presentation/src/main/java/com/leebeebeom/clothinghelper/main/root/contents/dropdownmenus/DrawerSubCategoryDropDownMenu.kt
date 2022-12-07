@@ -11,17 +11,19 @@ import com.leebeebeom.clothinghelper.main.base.dialogs.AddFolderDialog
 import com.leebeebeom.clothinghelper.main.base.dialogs.EditSubCategoryDialog
 import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
+import com.leebeebeom.clothinghelper.util.AddFolder
+import com.leebeebeom.clothinghelper.util.EditSubCategory
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun DrawerSubCategoryDropDownMenu(
+    selectedSubCategory: () -> StableSubCategory,
+    subCategories: () -> ImmutableList<StableSubCategory>,
+    folders: () -> ImmutableList<StableFolder>,
     show: () -> Boolean,
     onDismiss: () -> Unit,
-    subCategories: () -> ImmutableList<StableSubCategory>,
-    subCategory: () -> StableSubCategory,
-    onEditSubCategoryPositiveClick: (StableSubCategory) -> Unit,
-    onAddFolderPositiveClick: (StableFolder) -> Unit,
-    folders: () -> ImmutableList<StableFolder>
+    onEditSubCategoryPositiveClick: EditSubCategory,
+    onAddFolderPositiveClick: AddFolder,
 ) {
     var showSubCategoryEditDialog by rememberSaveable { mutableStateOf(false) }
     var showAddFolderDialog by rememberSaveable { mutableStateOf(false) }
@@ -41,19 +43,17 @@ fun DrawerSubCategoryDropDownMenu(
     }
 
     EditSubCategoryDialog(show = { showSubCategoryEditDialog },
-        subCategory = subCategory,
+        selectedSubCategory = selectedSubCategory,
         subCategories = subCategories,
         onPositiveButtonClick = onEditSubCategoryPositiveClick,
         onDismiss = { showSubCategoryEditDialog = false })
 
     AddFolderDialog(folders = folders, onPositiveButtonClick = {
         onAddFolderPositiveClick(
-            StableFolder(
-                parentKey = subCategory().key,
-                subCategoryKey = subCategory().key,
-                name = it,
-                parent = subCategory().parent
-            )
+            selectedSubCategory().key,
+            selectedSubCategory().key,
+            it,
+            selectedSubCategory().parent
         )
     }, show = { showAddFolderDialog }, onDismiss = { showAddFolderDialog = false })
 }

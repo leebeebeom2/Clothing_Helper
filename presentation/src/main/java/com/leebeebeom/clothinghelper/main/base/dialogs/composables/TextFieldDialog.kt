@@ -63,7 +63,7 @@ abstract class BaseTextFieldDialogState(
         this.error = error
     }
 
-    open val positiveButtonEnabled by derivedStateOf { text.trim().isNotBlank() && error == null }
+    open val positiveButtonEnabled by derivedStateOf { textFieldValue.text.trim().isNotBlank() && error == null }
 
     open fun onValueChange(newTextFiled: TextFieldValue) {
         super.onValueChange(

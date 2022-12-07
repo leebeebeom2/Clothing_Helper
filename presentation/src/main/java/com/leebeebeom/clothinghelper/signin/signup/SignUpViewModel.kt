@@ -42,7 +42,6 @@ class SignUpViewModel @Inject constructor(
                 is AuthResult.Fail -> setFireBaseError(
                     errorCode = result.errorCode,
                     updateEmailError = uiState::updateEmailError,
-                    updatePasswordError = {},
                     showToast = ::showToast
                 )
                 is AuthResult.UnknownFail -> showToast(R.string.unknown_error)

@@ -22,6 +22,7 @@ interface SelectMode<T : BaseModel> {
     val showDeleteIcon: Boolean
     fun selectModeOn(key: String)
     fun onSelect(key: String)
+    fun onSelect(keys: Set<String>)
     suspend fun selectModeOff()
     fun toggleAllSelect()
 }
@@ -51,6 +52,8 @@ class SelectModeImpl<T : BaseModel> : SelectMode<T> {
         isSelectMode = true
     }
 
+    override fun onSelect(keys: Set<String>) = keys.forEach(::onSelect)
+
     override fun onSelect(key: String) {
         selectedKeys =
             if (selectedKeys.contains(key)) selectedKeys.taskAndReturnSet {
@@ -72,7 +75,7 @@ class SelectModeImpl<T : BaseModel> : SelectMode<T> {
     }
 
     /**
-     * get() = items.first { it.key == selectedKeys.first() }
+     * items.first { it.key == selectedKeys.first() }
      */
     override val firstSelectedItem get() = TODO("Not yet implemented")
 

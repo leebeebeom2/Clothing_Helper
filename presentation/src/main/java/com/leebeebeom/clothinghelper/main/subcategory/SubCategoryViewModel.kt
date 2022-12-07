@@ -79,7 +79,6 @@ class SubCategoryScreenUIState(private val selectModeImpl: SelectModeImpl<Stable
     override var items by mutableStateOf(emptyList<StableSubCategory>().toImmutableList())
         private set
 
-
     override val isAllSelected by derivedStateOf { selectedKeys.size == items.size }
     override val firstSelectedItem get() = items.first { it.key == selectedKeys.first() }
 

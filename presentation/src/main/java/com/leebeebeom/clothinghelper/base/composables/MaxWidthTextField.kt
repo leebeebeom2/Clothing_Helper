@@ -35,7 +35,8 @@ fun MaxWidthTextField(
     onValueChange: (TextFieldValue) -> Unit,
     onFocusChanged: (FocusState) -> Unit,
     trailingIcon: @Composable (() -> Unit)? = null,
-    isVisible: () -> Boolean = { true }
+    isVisible: () -> Boolean = { true },
+    cancelIconEnabled: Boolean = true
 ) {
     Column(modifier = modifier) {
         TextField(
@@ -45,7 +46,8 @@ fun MaxWidthTextField(
             onValueChange = onValueChange,
             error = error,
             isVisible = isVisible,
-            trailingIcon = trailingIcon
+            trailingIcon = trailingIcon,
+            cancelIconEnabled = cancelIconEnabled
         )
         ErrorText(error)
     }
@@ -62,6 +64,7 @@ private fun TextField(
     onFocusChanged: (FocusState) -> Unit,
     isVisible: () -> Boolean,
     trailingIcon: @Composable (() -> Unit)?,
+    cancelIconEnabled: Boolean
 ) {
     val focusManager = LocalFocusManager.current
     var hasFocus by rememberSaveable { mutableStateOf(false) }
@@ -82,11 +85,10 @@ private fun TextField(
         visualTransformation = if (isVisible()) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = state.keyboardOptions,
         trailingIcon = {
-            trailingIcon?.run { invoke() }
-                ?: CancelIcon(
-                    show = { textFieldValue().text.isNotEmpty() && hasFocus },
-                    onClick = { onValueChange(TextFieldValue()) }
-                )
+            trailingIcon?.run { invoke() } ?: CancelIcon(
+                show = { cancelIconEnabled && textFieldValue().text.isNotEmpty() && hasFocus },
+                onClick = { onValueChange(TextFieldValue()) }
+            )
         },
         singleLine = true,
         keyboardActions =

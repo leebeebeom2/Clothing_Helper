@@ -36,7 +36,6 @@ fun DrawerFolder(
     onAddFolderPositiveClick: AddFolder,
     onEditFolderPositiveClick: EditFolder,
 ) {
-
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     var showDropDownMenu by rememberSaveable { mutableStateOf(false) }
 
@@ -68,7 +67,7 @@ fun DrawerFolder(
                 onEditFolderPositiveClick = onEditFolderPositiveClick,
                 folder = folder
             )
-            DrawerCount { folders(folder().key) }
+            DrawerCount(folders = { folders(folder().key) })
         }
         DrawerExpandIcon(isLoading = { false },
             isExpanded = { isExpanded },
@@ -76,7 +75,7 @@ fun DrawerFolder(
             items = { folders(folder().key) })
     }
 
-    DrawerItems(show = { isExpanded }, items = { folders(folder().key) }, backGround = DarkGray
+    DrawerItems(show = { isExpanded }, items = { folders(folder().key) }, background = DarkGray
     ) {
         DrawerFolder(
             folder = { it },

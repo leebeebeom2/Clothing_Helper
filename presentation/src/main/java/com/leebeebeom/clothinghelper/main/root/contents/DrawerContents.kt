@@ -18,6 +18,10 @@ import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.map.StableUser
 import com.leebeebeom.clothinghelper.theme.DarkGray
 import com.leebeebeom.clothinghelper.theme.Disabled
+import com.leebeebeom.clothinghelper.util.AddFolder
+import com.leebeebeom.clothinghelper.util.AddSubCategory
+import com.leebeebeom.clothinghelper.util.EditFolder
+import com.leebeebeom.clothinghelper.util.EditSubCategory
 import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
 import kotlinx.collections.immutable.ImmutableList
 
@@ -33,10 +37,10 @@ fun DrawerContents(
     onSubCategoryClick: (StableSubCategory) -> Unit,
     onFolderClick: (StableFolder) -> Unit,
     onSettingIconClick: () -> Unit,
-    onAddSubCategoryPositiveButtonClick: (StableSubCategory) -> Unit,
-    onEditSubCategoryPositiveClick: (StableSubCategory) -> Unit,
-    onAddFolderPositiveClick: (StableFolder) -> Unit,
-    onEditFolderPositiveClick : (StableFolder) -> Unit
+    onAddSubCategoryPositiveButtonClick: AddSubCategory,
+    onEditSubCategoryPositiveClick: EditSubCategory,
+    onAddFolderPositiveClick: AddFolder,
+    onEditFolderPositiveClick : EditFolder
 ) {
     Column {
         DrawerHeader(user = user, onSettingIconClick = onSettingIconClick)

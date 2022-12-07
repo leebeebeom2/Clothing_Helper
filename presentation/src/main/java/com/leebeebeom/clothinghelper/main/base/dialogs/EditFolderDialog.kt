@@ -12,10 +12,8 @@ fun EditFolderDialog(
     show: () -> Boolean,
     onDismiss: () -> Unit,
     onPositiveButtonClick: (StableFolder) -> Unit,
-    folder: () -> StableFolder
+    selectedFolder: () -> StableFolder
 ) {
-    val folderValue = remember { folder() }
-
     EditDialog(
         label = R.string.folder,
         placeHolder = R.string.folder_place_holder,
@@ -23,8 +21,8 @@ fun EditFolderDialog(
         items = folders,
         existNameError = R.string.error_exist_folder_name,
         onDismiss = onDismiss,
-        onPositiveButtonClick = { onPositiveButtonClick(folderValue.copy(name = it)) },
+        onPositiveButtonClick = { onPositiveButtonClick(selectedFolder().copy(name = it)) },
         show = show,
-        initialName = { folderValue.name }
+        initialName = { selectedFolder().name }
     )
 }

@@ -8,7 +8,7 @@ import kotlinx.collections.immutable.ImmutableList
 @Composable
 fun EditSubCategoryDialog(
     show: () -> Boolean,
-    subCategory: () -> StableSubCategory,
+    selectedSubCategory: () -> StableSubCategory,
     subCategories: () -> ImmutableList<StableSubCategory>,
     onPositiveButtonClick: (StableSubCategory) -> Unit,
     onDismiss: () -> Unit
@@ -21,7 +21,7 @@ fun EditSubCategoryDialog(
         items = subCategories,
         existNameError = R.string.error_exist_category_name,
         onDismiss = onDismiss,
-        onPositiveButtonClick = { onPositiveButtonClick(subCategory().copy(name = it)) },
-        initialName = { subCategory().name }
+        onPositiveButtonClick = { onPositiveButtonClick(selectedSubCategory().copy(name = it)) },
+        initialName = { selectedSubCategory().name }
     )
 }

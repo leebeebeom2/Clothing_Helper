@@ -16,7 +16,7 @@ fun DrawerMainCategoryDropDownMenu(
     show: () -> Boolean,
     onDismiss: () -> Unit,
     subCategories: () -> ImmutableList<StableSubCategory>,
-    onAddSubCategoryPositiveClick: (String) -> Unit
+    onAddSubCategoryPositiveClick: (name: String) -> Unit
 ) {
     var showDialog by rememberSaveable { mutableStateOf(false) }
 

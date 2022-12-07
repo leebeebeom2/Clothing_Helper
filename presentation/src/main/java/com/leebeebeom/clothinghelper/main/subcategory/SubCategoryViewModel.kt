@@ -60,13 +60,13 @@ class SubCategoryViewModel @Inject constructor(
     fun changeOrder(order: Order) =
         viewModelScope.launch { subCategorySortUseCase.changeOrder(order) }
 
-    fun addSubCategory(subCategory: StableSubCategory) =
-        viewModelScope.launch { super.baseAddSubCategory(subCategory = subCategory) }
+    fun addSubCategory(name: String, parent: SubCategoryParent) =
+        viewModelScope.launch { super.baseAddSubCategory(name = name, parent = parent) }
 
-    fun editSubCategoryName(newSubCategory: StableSubCategory) =
+    fun editSubCategoryName(oldSubCategory: StableSubCategory, name: String) =
         viewModelScope.launch {
             uiState.selectModeOff()
-            super.baseEditSubCategory(newSubCategory)
+            super.baseEditSubCategory(oldSubCategory = oldSubCategory, name = name)
         }
 }
 

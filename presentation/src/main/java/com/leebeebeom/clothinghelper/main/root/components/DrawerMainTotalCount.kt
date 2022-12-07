@@ -19,9 +19,7 @@ fun DrawerMainTotalCount(
         modifier = Modifier.padding(start = 4.dp),
         text = if (isLoading()) "" else "(${items().size})",
         style = MaterialTheme.typography.caption.copy(
-            LocalContentColor.current.copy(
-                ContentAlpha.disabled
-            )
+            LocalContentColor.current.copy(ContentAlpha.disabled)
         )
     )
 }

@@ -19,9 +19,7 @@ fun DrawerCount(
             formatArgs = arrayOf(items().size, 0)
         ),
         style = MaterialTheme.typography.caption.copy(
-            LocalContentColor.current.copy(
-                ContentAlpha.disabled
-            )
+            LocalContentColor.current.copy(ContentAlpha.disabled)
         )
     )
 }

@@ -43,7 +43,7 @@ fun RowScope.DialogTextButton(
 ) {
     Box(modifier = Modifier.weight(1f)) {
         TextButton(
-            modifier = Modifier.align(Alignment.Center), onClick = onClick, enabled = enabled()
+            modifier = Modifier.align(Alignment.Center).fillMaxWidth(), onClick = onClick, enabled = enabled()
         ) {
             SingleLineText(
                 text = text,

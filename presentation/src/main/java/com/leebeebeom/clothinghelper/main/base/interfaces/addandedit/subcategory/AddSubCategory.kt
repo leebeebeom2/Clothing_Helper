@@ -2,16 +2,15 @@ package com.leebeebeom.clothinghelper.main.base.interfaces.addandedit.subcategor
 
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.main.base.interfaces.addandedit.BaseContainerAddAndEdit
-import com.leebeebeom.clothinghelper.map.StableSubCategory
-import com.leebeebeom.clothinghelper.map.toUnstable
+import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.AddSubCategoryUseCase
 
 interface AddSubCategory : BaseContainerAddAndEdit {
     val addSubCategoryUseCase: AddSubCategoryUseCase
 
-    suspend fun baseAddSubCategory(subCategory: StableSubCategory) {
+    suspend fun baseAddSubCategory(name: String, parent: SubCategoryParent) {
         uid?.let {
-            val result = addSubCategoryUseCase.add(subCategory = subCategory.toUnstable(), uid = it)
+            val result = addSubCategoryUseCase.add(name = name, parent = parent, uid = it)
             showFailToast(
                 result = result,
                 networkFailError = R.string.network_error_for_add_sub_category,

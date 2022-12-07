@@ -15,7 +15,7 @@ private object FirebaseAuthErrorCode {
 fun setFireBaseError(
     errorCode: String,
     updateEmailError: (error: Int) -> Unit,
-    updatePasswordError: (error: Int) -> Unit,
+    updatePasswordError: (error: Int) -> Unit = {},
     showToast: (text: Int) -> Unit
 ) {
     when (errorCode) {

@@ -23,19 +23,19 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun DrawerContents(
+    state: DrawerContentsState = remember { DrawerContentsState() },
     user: () -> StableUser?,
     isLoading: () -> Boolean,
     subCategories: (SubCategoryParent) -> ImmutableList<StableSubCategory>,
-    state: DrawerContentsState = remember { DrawerContentsState() },
+    folders: (parentKey: String) -> ImmutableList<StableFolder>,
     onEssentialMenuClick: (essentialMenu: EssentialMenuType) -> Unit,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (StableSubCategory) -> Unit,
+    onFolderClick: (StableFolder) -> Unit,
     onSettingIconClick: () -> Unit,
     onAddSubCategoryPositiveButtonClick: (StableSubCategory) -> Unit,
-    onEditSUbCategoryNamePositiveClick: (StableSubCategory) -> Unit,
+    onEditSubCategoryPositiveClick: (StableSubCategory) -> Unit,
     onAddFolderPositiveClick: (StableFolder) -> Unit,
-    folders: (parentKey: String) -> ImmutableList<StableFolder>,
-    onFolderClick: (StableFolder) -> Unit,
     onEditFolderPositiveClick : (StableFolder) -> Unit
 ) {
     Column {
@@ -56,9 +56,7 @@ fun DrawerContents(
                 item {
                     Divider(
                         color = Disabled,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(vertical = 8.dp)
+                        modifier = Modifier.padding(vertical = 8.dp)
                     )
                 }
 
@@ -70,7 +68,7 @@ fun DrawerContents(
                         onMainCategoryClick = onMainCategoryClick,
                         onSubCategoryClick = onSubCategoryClick,
                         onAddSubCategoryPositiveClick = onAddSubCategoryPositiveButtonClick,
-                        onEditSubCategoryPositiveClick = onEditSUbCategoryNamePositiveClick,
+                        onEditSubCategoryPositiveClick = onEditSubCategoryPositiveClick,
                         onAddFolderPositiveClick = onAddFolderPositiveClick,
                         folders = folders,
                         onFolderClick = onFolderClick,

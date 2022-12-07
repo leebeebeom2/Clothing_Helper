@@ -11,7 +11,7 @@ open class TextFieldState(initialText: String) {
     var textFieldValue by mutableStateOf(TextFieldValue(initialText))
         protected set
 
-    open fun onValueChange(
+    fun onValueChange(
         newTextFieldValue: TextFieldValue,
         onValueChange: (String) -> Unit,
         updateError: (Int?) -> Unit
@@ -22,7 +22,7 @@ open class TextFieldState(initialText: String) {
         onValueChange(text)
     }
 
-    fun onFocusChange(focusState: FocusState) {
+    open fun onFocusChange(focusState: FocusState) {
         if (focusState.hasFocus)
             textFieldValue = textFieldValue.copy(selection = TextRange(textFieldValue.text.length))
     }

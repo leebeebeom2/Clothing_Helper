@@ -22,6 +22,10 @@ import com.leebeebeom.clothinghelper.main.root.contents.dropdownmenus.DrawerMain
 import com.leebeebeom.clothinghelper.main.root.model.MainCategory
 import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
+import com.leebeebeom.clothinghelper.util.AddFolder
+import com.leebeebeom.clothinghelper.util.AddSubCategory
+import com.leebeebeom.clothinghelper.util.EditFolder
+import com.leebeebeom.clothinghelper.util.EditSubCategory
 import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
 import kotlinx.collections.immutable.ImmutableList
 
@@ -29,15 +33,15 @@ import kotlinx.collections.immutable.ImmutableList
 fun DrawerMainCategory(
     mainCategory: MainCategory,
     subCategories: (SubCategoryParent) -> ImmutableList<StableSubCategory>,
+    folders: (parentKey: String) -> ImmutableList<StableFolder>,
     isLoading: () -> Boolean,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (StableSubCategory) -> Unit,
-    onAddSubCategoryPositiveClick: (StableSubCategory) -> Unit,
-    onEditSubCategoryPositiveClick: (StableSubCategory) -> Unit,
-    onAddFolderPositiveClick: (StableFolder) -> Unit,
-    folders: (parentKey: String) -> ImmutableList<StableFolder>,
     onFolderClick: (StableFolder) -> Unit,
-    onEditFolderPositiveClick: (StableFolder) -> Unit
+    onAddSubCategoryPositiveClick: AddSubCategory,
+    onEditSubCategoryPositiveClick: EditSubCategory,
+    onAddFolderPositiveClick: AddFolder,
+    onEditFolderPositiveClick: EditFolder
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     var showDropdownMenu by rememberSaveable { mutableStateOf(false) }
@@ -59,20 +63,13 @@ fun DrawerMainCategory(
                     onDismiss = { showDropdownMenu = false },
                     subCategories = { subCategories(mainCategory.type) },
                     onAddSubCategoryPositiveClick = {
-                        onAddSubCategoryPositiveClick(
-                            StableSubCategory(
-                                parent = mainCategory.type,
-                                name = it
-                            )
-                        )
+                        onAddSubCategoryPositiveClick(it, mainCategory.type)
                         isExpanded = true
-                    }
+                    })
+                DrawerMainTotalCount(
+                    items = { subCategories(mainCategory.type) }, isLoading = isLoading
                 )
             }
-            DrawerMainTotalCount(
-                items = { subCategories(mainCategory.type) },
-                isLoading = isLoading
-            )
             DrawerExpandIcon(
                 isLoading = isLoading,
                 isExpanded = { isExpanded },

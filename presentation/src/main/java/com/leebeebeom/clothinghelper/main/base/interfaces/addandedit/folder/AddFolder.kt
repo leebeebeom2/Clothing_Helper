@@ -11,11 +11,11 @@ interface AddFolder : BaseContainerAddAndEdit {
 
     suspend fun baseAddFolder(folder: StableFolder) {
         uid?.let {
-            val result = addFoldersUseCase.add(folder.toUnstable(), it)
+            val result = addFoldersUseCase.add(folder = folder.toUnstable(), uid = it)
             showFailToast(
-                result,
-                R.string.network_error_for_add_folder,
-                R.string.add_folder_failed
+                result = result,
+                networkFailError = R.string.network_error_for_add_folder,
+                failError = R.string.add_folder_failed
             )
         }
     }

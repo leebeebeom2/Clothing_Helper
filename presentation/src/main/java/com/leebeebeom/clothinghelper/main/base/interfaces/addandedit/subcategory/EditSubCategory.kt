@@ -11,11 +11,14 @@ interface EditSubCategory : BaseContainerAddAndEdit {
 
     suspend fun baseEditSubCategory(newSubCategory: StableSubCategory) {
         uid?.let {
-            val result = editSubCategoryUseCase.edit(newSubCategory.toUnstable(), it)
+            val result = editSubCategoryUseCase.edit(
+                newSubCategory = newSubCategory.toUnstable(),
+                uid = it
+            )
             showFailToast(
-                result,
-                R.string.network_error_for_edit_sub_category,
-                R.string.edit_category_name_failed
+                result = result,
+                networkFailError = R.string.network_error_for_edit_sub_category,
+                failError = R.string.edit_category_name_failed
             )
         }
     }

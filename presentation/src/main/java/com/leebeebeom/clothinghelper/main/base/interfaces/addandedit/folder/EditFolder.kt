@@ -11,11 +11,11 @@ interface EditFolder : BaseContainerAddAndEdit {
 
     suspend fun baseEditFolder(folder: StableFolder) {
         uid?.let {
-            val result = editFolderNameUseCase.edit(folder.toUnstable(), it)
+            val result = editFolderNameUseCase.edit(newFolder = folder.toUnstable(), uid = it)
             showFailToast(
-                result,
-                R.string.network_error_for_edit_folder,
-                R.string.edit_folder_name_failed
+                result = result,
+                networkFailError = R.string.network_error_for_edit_folder,
+                failError = R.string.edit_folder_name_failed
             )
         }
     }

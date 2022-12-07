@@ -55,12 +55,7 @@ fun MainRoot(
     onFolderClick: (StableFolder) -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
-    val drawerClose = remember {
-        {
-            coroutineScope.launch { state.onDrawerClose() }
-            Unit
-        }
-    }
+    val drawerClose = remember<() -> Unit> { { coroutineScope.launch { state.onDrawerClose() } } }
 
     ClothingHelperTheme {
         Scaffold(
@@ -91,7 +86,7 @@ fun MainRoot(
                         drawerClose()
                     },
                     onAddSubCategoryPositiveButtonClick = viewModel::addSubCategory,
-                    onEditSUbCategoryNamePositiveClick = viewModel::editSubCategoryName,
+                    onEditSubCategoryPositiveClick = viewModel::editSubCategoryName,
                     onAddFolderPositiveClick = viewModel::addFolder,
                     onEditFolderPositiveClick = viewModel::editFolder,
                     folders = uiState::getFolders

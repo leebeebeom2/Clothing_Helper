@@ -42,11 +42,13 @@ fun DrawerSubCategoryDropDownMenu(
         )
     }
 
-    EditSubCategoryDialog(show = { showSubCategoryEditDialog },
+    EditSubCategoryDialog(
+        show = { showSubCategoryEditDialog },
         selectedSubCategory = selectedSubCategory,
         subCategories = subCategories,
         onPositiveButtonClick = onEditSubCategoryPositiveClick,
-        onDismiss = { showSubCategoryEditDialog = false })
+        onDismiss = { showSubCategoryEditDialog = false }
+    )
 
     AddFolderDialog(folders = folders, onPositiveButtonClick = {
         onAddFolderPositiveClick(

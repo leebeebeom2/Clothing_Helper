@@ -31,7 +31,7 @@ data class LazyGridItem(
     val end: Int,
 ) : LazyBaseItem()
 
-fun LazyGridItemInfo.toGridSelectedItem() =
+fun LazyGridItemInfo.toLazyGridItem() =
     LazyGridItem(
         key = key as String,
         index = index,

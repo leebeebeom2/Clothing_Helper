@@ -29,7 +29,9 @@ fun StableSizeChart.toUnstable() = SizeChart(
     name = name,
     key = key,
     createDate = createDate,
-    editDate = editDate
+    editDate = editDate,
+    fields = fields,
+    parent = parent
 )
 
 fun SizeChart.toStable() = StableSizeChart(
@@ -41,5 +43,7 @@ fun SizeChart.toStable() = StableSizeChart(
     name = name,
     key = key,
     createDate = createDate,
-    editDate = editDate
+    editDate = editDate,
+    fields = fields,
+    parent = parent
 )

@@ -4,15 +4,15 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.runtime.derivedStateOf
 
-private val getShowScrollToTopFab: (firstVisibleItemScrollOffset: Int) -> Boolean = {
+private val showScrollToTopFab: (firstVisibleItemScrollOffset: Int) -> Boolean = {
     derivedStateOf { it > 0 }.value
 }
 
 val LazyListState.showScrollToTopFab
-    get() = getShowScrollToTopFab(firstVisibleItemIndex)
+    get() = showScrollToTopFab(firstVisibleItemIndex)
 
 val LazyGridState.showScrollToTopFab
-    get() = getShowScrollToTopFab(firstVisibleItemIndex)
+    get() = showScrollToTopFab(firstVisibleItemIndex)
 
 suspend fun LazyListState.scrollToTop() {
     val scrollToTop = suspend { animateScrollToItem(0) }

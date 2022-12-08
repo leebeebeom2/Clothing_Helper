@@ -12,4 +12,6 @@ data class Folder(
     override val key: String = "",
     override val editDate: Long = 0,
     override val parent: SubCategoryParent = SubCategoryParent.TOP
-) : BaseFolderModel(), Parcelable
+) : BaseFolderModel(), Parcelable {
+    override fun addKey(key: String) = copy(key = key)
+}

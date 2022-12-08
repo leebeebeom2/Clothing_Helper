@@ -6,6 +6,8 @@ abstract class BaseModel {
     abstract val key: String
     abstract val createDate: Long
     abstract val editDate: Long
+
+    abstract fun addKey(key: String): BaseModel
 }
 
 abstract class BaseFolderModel : BaseModel() {

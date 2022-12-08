@@ -1,3 +1,0 @@
-package com.leebeebeom.clothinghelperdomain.repository.preferences
-
-interface SubCategoryPreferencesRepository : SortPreferenceRepository

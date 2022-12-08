@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.base
+package com.leebeebeom.clothinghelper.util
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.Spring

@@ -1,7 +1,7 @@
 package com.leebeebeom.clothinghelperdomain.repository
 
 import com.leebeebeom.clothinghelperdomain.model.AuthResult
-import com.leebeebeom.clothinghelperdomain.model.User
+import com.leebeebeom.clothinghelperdomain.model.data.User
 import kotlinx.coroutines.flow.StateFlow
 
 interface UserRepository : LoadingRepository {

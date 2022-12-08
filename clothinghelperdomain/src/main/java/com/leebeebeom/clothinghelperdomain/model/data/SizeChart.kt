@@ -2,11 +2,9 @@ package com.leebeebeom.clothinghelperdomain.model.data
 
 data class SizeChart(
     val isFavorite: Boolean = false,
-    val link: String = "",
-    val memo: String = "",
     val brand: String = "",
-    val photoUrl: String = "",
     val sizes: List<Int> = emptyList(),
+    val fields: Map<String, String> = emptyMap(),
     override val parentKey: String = "",
     override val subCategoryKey: String = "",
     override val name: String = "",

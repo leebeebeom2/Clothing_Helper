@@ -16,14 +16,14 @@ import com.leebeebeom.clothinghelper.ui.signin.composable.VisibleIcon
 @Composable
 fun PasswordTextField(
     @StringRes label: Int = R.string.password,
-    password: () -> String,
+    initiallPassword: () -> String,
     error: () -> Int?,
     imeAction: ImeAction,
     onPasswordChange: (String) -> Unit,
     updateError: (Int?) -> Unit
 ) {
     var isVisible by rememberSaveable { mutableStateOf(false) }
-    val state = remember { TextFieldState(password()) }
+    val state = remember { TextFieldState(initiallPassword()) }
 
     MaxWidthTextField(state = rememberPasswordTextFieldState(label = label, imeAction = imeAction),
         textFieldValue = { state.textFieldValue },

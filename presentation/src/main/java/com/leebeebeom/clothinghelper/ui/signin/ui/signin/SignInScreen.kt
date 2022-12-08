@@ -49,7 +49,7 @@ fun SignInScreen(
         )
 
         PasswordTextField(
-            initailPassword = { uiState.password },
+            initiallPassword = { uiState.password },
             error = { uiState.passwordError },
             updateError = uiState::updatePasswordError,
             onPasswordChange = uiState::onPasswordChange,

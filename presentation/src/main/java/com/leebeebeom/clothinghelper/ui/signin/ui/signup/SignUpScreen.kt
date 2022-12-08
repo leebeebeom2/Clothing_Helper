@@ -69,7 +69,7 @@ fun SignUpScreen(
         NameTextField(initialName = { uiState.name }, onNameChange = uiState::onNameChange)
 
         PasswordTextField(
-            initailPassword = { uiState.password },
+            initiallPassword = { uiState.password },
             error = { uiState.passwordError },
             imeAction = ImeAction.Next,
             onPasswordChange = uiState::onPasswordChange,
@@ -78,7 +78,7 @@ fun SignUpScreen(
 
         PasswordTextField(
             label = R.string.password_confirm,
-            initailPassword = { uiState.passwordConfirm },
+            initiallPassword = { uiState.passwordConfirm },
             error = { uiState.passwordConfirmError },
             imeAction = ImeAction.Done,
             onPasswordChange = uiState::onPasswordConfirmChange,

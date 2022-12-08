@@ -9,7 +9,7 @@ import kotlinx.coroutines.withContext
 
 class LoadingRepositoryImpl(initialLoading: Boolean) : LoadingRepository {
     private val _isLoading = MutableStateFlow(initialLoading)
-    override val isLoading get() = _isLoading.asStateFlow()
+    override val isLoading = _isLoading.asStateFlow()
 
     fun loadingOn() = _isLoading.update { true }
 

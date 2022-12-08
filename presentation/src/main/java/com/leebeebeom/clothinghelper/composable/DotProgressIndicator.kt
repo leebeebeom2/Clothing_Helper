@@ -57,7 +57,8 @@ fun DotProgressIndicator(
     val infiniteTransition = rememberInfiniteTransition()
 
     @Composable
-    fun animateOffsetWithDelay(delay: Int) = infiniteTransition.animateFloat(initialValue = 0f,
+    fun animateOffsetWithDelay(delay: Int) = infiniteTransition.animateFloat(
+        initialValue = 0f,
         targetValue = 0f,
         animationSpec = infiniteRepeatable(animation = keyframes {
             durationMillis = delayUnit * 4

@@ -11,6 +11,7 @@ import com.leebeebeom.clothinghelperdomain.model.Sort
 import com.leebeebeom.clothinghelperdomain.model.SortPreferences
 import com.leebeebeom.clothinghelperdomain.model.data.BaseModel
 import com.leebeebeom.clothinghelperdomain.repository.BaseDataRepository
+import com.leebeebeom.clothinghelperdomain.repository.LoadingRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
@@ -26,7 +27,7 @@ private val loadingRepositoryImpl = LoadingRepositoryImpl(true)
 
 class BaseDataRepositoryImpl<T : BaseModel>(
     sortFlow: Flow<SortPreferences>, private val refPath: String
-) : LoadingRepositoryImpl(true), BaseDataRepository<T> {
+) : LoadingRepository by loadingRepositoryImpl, BaseDataRepository<T> {
     val root = db.reference
 
     private val _allData = MutableStateFlow(emptyList<T>())

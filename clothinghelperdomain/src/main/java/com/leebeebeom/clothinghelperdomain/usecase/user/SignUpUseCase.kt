@@ -12,9 +12,6 @@ class SignUpUseCase @Inject constructor(
     private val userRepository: UserRepository,
     private val pushInitialSubCategoriesUseCase: PushInitialSubCategoriesUseCase
 ) {
-    /**
-     * 가입 성공 시 초기 서브 카테고리 푸쉬
-     */
     suspend fun signUp(
         email: String,
         password: String,

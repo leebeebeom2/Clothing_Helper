@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.setting.base
+package com.leebeebeom.clothinghelper.ui.setting.base
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Row
@@ -14,9 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.composables.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.base.composables.SimpleIcon
-import com.leebeebeom.clothinghelper.base.composables.SingleLineText
+import com.leebeebeom.clothinghelper.composable.SimpleIcon
+import com.leebeebeom.clothinghelper.composable.SingleLineText
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -36,7 +35,10 @@ fun SettingButton(@StringRes text: Int, onClick: () -> Unit) {
             SingleLineText(
                 modifier = Modifier.weight(1f),
                 text = text,
-                style = MaterialTheme.typography.body1.copy(fontSize = 17.sp, color = LocalContentColor.current.copy(0.8f))
+                style = MaterialTheme.typography.body1.copy(
+                    fontSize = 17.sp,
+                    color = LocalContentColor.current.copy(0.8f)
+                )
             )
             SimpleIcon(
                 drawable = R.drawable.ic_navigate_next,
@@ -44,5 +46,4 @@ fun SettingButton(@StringRes text: Int, onClick: () -> Unit) {
             )
         }
     }
-    SimpleHeightSpacer(dp = 8)
 }

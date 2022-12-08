@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.signin.base.interfaces
+package com.leebeebeom.clothinghelper.ui.signin.state
 
 import androidx.annotation.StringRes
 import androidx.compose.runtime.derivedStateOf

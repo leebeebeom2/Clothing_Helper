@@ -1,16 +1,21 @@
-package com.leebeebeom.clothinghelper.signin.base.interfaces
+package com.leebeebeom.clothinghelper.ui.signin.state
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.leebeebeom.clothinghelper.state.ToastUIState
+import com.leebeebeom.clothinghelper.state.ToastUIStateImpl
 
-interface GoogleButtonUIState {
+interface GoogleButtonUIState : ToastUIState {
     val googleButtonEnabled: Boolean
 
     fun updateGoogleButtonEnabled(enabled: Boolean)
 }
 
-class GoogleButtonUIStateImpl : GoogleButtonUIState {
+/**
+ * ToastUIState 상속
+ */
+class GoogleButtonUIStateImpl : GoogleButtonUIState, ToastUIState by ToastUIStateImpl() {
     override var googleButtonEnabled by mutableStateOf(true)
         private set
 

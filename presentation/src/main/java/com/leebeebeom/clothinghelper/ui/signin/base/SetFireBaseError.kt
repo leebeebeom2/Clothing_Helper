@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.signin.base
+package com.leebeebeom.clothinghelper.ui.signin.base
 
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelperdata.repository.A_NETWORK_ERROR

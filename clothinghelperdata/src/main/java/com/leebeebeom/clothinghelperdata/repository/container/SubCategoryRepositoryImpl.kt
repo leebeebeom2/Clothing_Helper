@@ -5,8 +5,8 @@ import com.leebeebeom.clothinghelperdomain.model.data.SubCategory
 import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.repository.BaseDataRepository
 import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
-import com.leebeebeom.clothinghelperdomain.repository.preferences.SortPreferenceRepository
-import com.leebeebeom.clothinghelperdomain.repository.preferences.SubCategoryPreferencesRepository
+import com.leebeebeom.clothinghelperdomain.repository.preference.SortPreferenceRepository
+import com.leebeebeom.clothinghelperdomain.repository.preference.SubCategoryPreferencesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext

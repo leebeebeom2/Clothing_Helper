@@ -2,7 +2,7 @@ package com.leebeebeom.clothinghelperdata.repository.preference
 
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
-import com.leebeebeom.clothinghelperdomain.repository.preferences.SortPreferenceRepository
+import com.leebeebeom.clothinghelperdomain.repository.preference.SortPreferenceRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton

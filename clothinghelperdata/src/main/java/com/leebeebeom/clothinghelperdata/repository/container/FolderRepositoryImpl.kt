@@ -4,8 +4,8 @@ import com.leebeebeom.clothinghelperdata.repository.base.DatabasePath
 import com.leebeebeom.clothinghelperdomain.model.data.Folder
 import com.leebeebeom.clothinghelperdomain.repository.BaseDataRepository
 import com.leebeebeom.clothinghelperdomain.repository.FolderRepository
-import com.leebeebeom.clothinghelperdomain.repository.preferences.FolderPreferencesRepository
-import com.leebeebeom.clothinghelperdomain.repository.preferences.SortPreferenceRepository
+import com.leebeebeom.clothinghelperdomain.repository.preference.FolderPreferencesRepository
+import com.leebeebeom.clothinghelperdomain.repository.preference.SortPreferenceRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 

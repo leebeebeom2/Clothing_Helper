@@ -12,7 +12,7 @@ import com.leebeebeom.clothinghelperdata.repository.base.DatabasePath
 import com.leebeebeom.clothinghelperdata.repository.base.LoadingRepositoryImpl
 import com.leebeebeom.clothinghelperdata.repository.util.logE
 import com.leebeebeom.clothinghelperdomain.model.AuthResult
-import com.leebeebeom.clothinghelperdomain.model.User
+import com.leebeebeom.clothinghelperdomain.model.data.User
 import com.leebeebeom.clothinghelperdomain.repository.LoadingRepository
 import com.leebeebeom.clothinghelperdomain.repository.UserRepository
 import kotlinx.coroutines.Dispatchers

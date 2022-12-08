@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.signin.base.composables
+package com.leebeebeom.clothinghelper.ui.signin.composable
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
@@ -14,7 +14,7 @@ import androidx.compose.ui.res.vectorResource
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.composables.MaxWidthButton
+import com.leebeebeom.clothinghelper.composable.MaxWidthButton
 
 @Composable
 fun GoogleSignInButton(

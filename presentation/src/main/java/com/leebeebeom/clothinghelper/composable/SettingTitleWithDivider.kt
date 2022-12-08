@@ -1,10 +1,9 @@
-package com.leebeebeom.clothinghelper.main.setting.base
+package com.leebeebeom.clothinghelper.composable
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.ContentAlpha
@@ -15,15 +14,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
-import com.leebeebeom.clothinghelper.base.composables.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.base.composables.SingleLineText
 
 @Composable
-fun SettingTitle(@StringRes title: Int, @StringRes subTitle: Int? = null) {
+fun TitleWithDivider(@StringRes title: Int, @StringRes subTitle: Int? = null) {
+    Column {
+        SettingTitleWithHorizontalScroll(title = title, subTitle = subTitle)
+        SimpleHeightSpacer(dp = 8)
+        Divider(modifier = Modifier.fillMaxWidth())
+    }
+}
+
+@Composable
+fun SettingTitleWithHorizontalScroll(
+    modifier: Modifier = Modifier,
+    @StringRes title: Int,
+    @StringRes subTitle: Int? = null
+) {
     Row(
-        modifier = Modifier
-            .horizontalScroll(rememberScrollState())
-            .fillMaxSize(),
+        modifier = modifier.horizontalScroll(rememberScrollState()),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column {
@@ -42,8 +50,4 @@ fun SettingTitle(@StringRes title: Int, @StringRes subTitle: Int? = null) {
             }
         }
     }
-
-    SimpleHeightSpacer(dp = 8)
-    Divider(modifier = Modifier.fillMaxWidth())
-    SimpleHeightSpacer(dp = 8)
 }

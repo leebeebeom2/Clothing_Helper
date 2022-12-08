@@ -9,23 +9,11 @@ class ListDragSelector(
     haptic: HapticFeedback
 ) : BaseDragSelector<ListSelectedItem>(haptic) {
 
-    override fun getSelectedItem(touchOffset: Offset, task: (ListSelectedItem) -> Unit) {
-        state.layoutInfo.visibleItemsInfo.firstOrNull { visibleItem ->
-            (visibleItem.key as? String)?.let {
-                touchOffset.y.toInt() in visibleItem.top..visibleItem.bottom
-            } ?: false
-        }?.let { selectedItem ->
-            task(selectedItem.toListSelectedItem())
-        }
-    }
+    override val visibleItemsInfo: List<ListSelectedItem>
+        get() = state.layoutInfo.visibleItemsInfo.map { it.toListSelectedItem() }
 
-    override fun getSelectedItems(
-        selectedItem: ListSelectedItem,
-        indexRange: IntRange,
-        passedItemsContainsOrNot: (ListSelectedItem) -> Boolean
-    ) = state.layoutInfo.visibleItemsInfo.filter { visibleItem ->
-        (visibleItem.key as? String)?.let { _ ->
-            visibleItem.index in indexRange && passedItemsContainsOrNot(visibleItem.toListSelectedItem())
-        } ?: false
-    }.map { it.toListSelectedItem() }.toSet()
+    override fun selectedItemPredicate(
+        touchOffset: Offset,
+        visibleItem: ListSelectedItem
+    ) = touchOffset.y.toInt() in visibleItem.top..visibleItem.bottom
 }

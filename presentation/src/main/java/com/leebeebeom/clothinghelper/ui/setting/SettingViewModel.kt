@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.setting
+package com.leebeebeom.clothinghelper.ui.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

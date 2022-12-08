@@ -4,8 +4,8 @@ import androidx.navigation.*
 import androidx.navigation.compose.composable
 import com.leebeebeom.clothinghelper.ui.main.MainDestinations
 import com.leebeebeom.clothinghelper.ui.setting.SettingDestination.*
-import com.leebeebeom.clothinghelper.ui.setting.sizecharttemplate.SizeChartTemplateListScreen
-import com.leebeebeom.clothinghelper.ui.setting.sizecharttemplate.SizeChartTemplateScreen
+import com.leebeebeom.clothinghelper.ui.setting.ui.sizechart.SizeChartTemplateScreen
+import com.leebeebeom.clothinghelper.ui.setting.ui.sizechartlist.SizeChartTemplateListScreen
 import com.leebeebeom.clothinghelper.util.navigateSingleTop
 
 sealed class SettingDestination(val route: String) {

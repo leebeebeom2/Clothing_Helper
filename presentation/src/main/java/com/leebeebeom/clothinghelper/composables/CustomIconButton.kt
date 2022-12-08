@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.base.composables
+package com.leebeebeom.clothinghelper.composables
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable

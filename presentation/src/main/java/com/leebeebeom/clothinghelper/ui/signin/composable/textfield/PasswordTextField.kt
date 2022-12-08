@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.signin.base.textfields
+package com.leebeebeom.clothinghelper.ui.signin.composable.textfield
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.text.KeyboardOptions
@@ -8,10 +8,10 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.TextFieldState
-import com.leebeebeom.clothinghelper.base.composables.MaxWidthTextField
-import com.leebeebeom.clothinghelper.base.composables.rememberMaxWidthTextFieldState
-import com.leebeebeom.clothinghelper.signin.base.composables.VisibleIcon
+import com.leebeebeom.clothinghelper.composable.MaxWidthTextField
+import com.leebeebeom.clothinghelper.composable.rememberMaxWidthTextFieldState
+import com.leebeebeom.clothinghelper.state.TextFieldState
+import com.leebeebeom.clothinghelper.ui.signin.composable.VisibleIcon
 
 @Composable
 fun PasswordTextField(
@@ -37,18 +37,14 @@ fun PasswordTextField(
         },
         onFocusChanged = state::onFocusChange,
         trailingIcon = { VisibleIcon({ isVisible }, onClick = { isVisible = !isVisible }) },
-        isVisible = { isVisible }
-    )
+        isVisible = { isVisible })
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-private fun rememberPasswordTextFieldState(
-    @StringRes label: Int = R.string.password, imeAction: ImeAction = ImeAction.Done
-) = rememberMaxWidthTextFieldState(
-    label = label,
-    keyboardOptions = KeyboardOptions(
-        keyboardType = KeyboardType.Password,
-        imeAction = imeAction
+private fun rememberPasswordTextFieldState(@StringRes label: Int, imeAction: ImeAction) =
+    rememberMaxWidthTextFieldState(
+        label = label, keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Password, imeAction = imeAction
+        )
     )
-)

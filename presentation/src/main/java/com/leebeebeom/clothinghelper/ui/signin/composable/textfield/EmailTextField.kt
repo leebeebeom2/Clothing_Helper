@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.signin.base.textfields
+package com.leebeebeom.clothinghelper.ui.signin.composable.textfield
 
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.*
@@ -6,19 +6,19 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.TextFieldState
-import com.leebeebeom.clothinghelper.base.composables.MaxWidthTextField
-import com.leebeebeom.clothinghelper.base.composables.rememberMaxWidthTextFieldState
+import com.leebeebeom.clothinghelper.composable.MaxWidthTextField
+import com.leebeebeom.clothinghelper.composable.rememberMaxWidthTextFieldState
+import com.leebeebeom.clothinghelper.state.TextFieldState
 
 @Composable
 fun EmailTextField(
-    email: () -> String,
+    initialEmail: () -> String,
     error: () -> Int?,
     imeAction: ImeAction = ImeAction.Next,
     updateError: (Int?) -> Unit,
     onEmailChange: (String) -> Unit
 ) {
-    val state = remember { TextFieldState(email()) }
+    val state = remember { TextFieldState(initialEmail()) }
 
     MaxWidthTextField(
         state = rememberEmailTextFieldState(imeAction = imeAction),

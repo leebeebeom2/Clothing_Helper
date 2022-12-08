@@ -1,10 +1,9 @@
-package com.leebeebeom.clothinghelper.signin.base
+package com.leebeebeom.clothinghelper.ui.signin.base
 
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.util.Log
 import androidx.activity.result.ActivityResult
-import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -12,6 +11,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.ui.signin.state.GoogleButtonUIState
 import com.leebeebeom.clothinghelperdata.repository.A_NETWORK_ERROR
 import com.leebeebeom.clothinghelperdata.repository.util.TAG
 import com.leebeebeom.clothinghelperdomain.model.AuthResult
@@ -20,16 +20,14 @@ import kotlinx.coroutines.launch
 
 abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSignInUseCase) :
     ViewModel() {
-
-    abstract fun updateGoogleButtonEnabled(enabled: Boolean)
-    abstract fun showToast(@StringRes text: Int)
+    abstract val uiState: GoogleButtonUIState
 
     fun signInWithGoogleEmail(activityResult: ActivityResult) {
         when (activityResult.resultCode) {
             RESULT_OK -> googleSignIn(activityResult)
             RESULT_CANCELED -> {
-                showToast(R.string.canceled)
-                updateGoogleButtonEnabled(enabled = true)
+                uiState.showToast(R.string.canceled)
+                uiState.updateGoogleButtonEnabled(enabled = true)
             }
             else -> {
                 Log.e(TAG, "signInWithGoogleEmail: resultCode = ${activityResult.resultCode}")
@@ -43,16 +41,16 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
             val result =
                 googleSignInUseCase.googleSignIn(
                     credential = getGoogleCredential(activityResult),
-                    onSubCategoriesLoadFail = { showToast(R.string.data_load_failed) }
+                    onSubCategoriesLoadFail = { uiState.showToast(R.string.data_load_failed) }
                 )
 
             when (result) {
                 is AuthResult.Success -> {
-                    showToast(R.string.google_sign_in_complete)
-                    updateGoogleButtonEnabled(enabled = true)
+                    uiState.showToast(R.string.google_sign_in_complete)
+                    uiState.updateGoogleButtonEnabled(enabled = true)
                 }
                 is AuthResult.Fail ->
-                    if (result.errorCode == A_NETWORK_ERROR) showToast(R.string.network_error)
+                    if (result.errorCode == A_NETWORK_ERROR) uiState.showToast(R.string.network_error)
                     else unknownFail()
                 is AuthResult.UnknownFail -> unknownFail()
             }
@@ -66,7 +64,7 @@ abstract class GoogleSignInUpViewModel(private val googleSignInUseCase: GoogleSi
     }
 
     private fun unknownFail() {
-        showToast(R.string.unknown_error)
-        updateGoogleButtonEnabled(enabled = true)
+        uiState.showToast(R.string.unknown_error)
+        uiState.updateGoogleButtonEnabled(enabled = true)
     }
 }

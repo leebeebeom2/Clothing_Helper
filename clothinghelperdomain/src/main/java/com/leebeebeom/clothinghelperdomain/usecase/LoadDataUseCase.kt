@@ -18,9 +18,6 @@ class LoadDataUseCase @Inject constructor(
     private val subCategoryRepository: SubCategoryRepository,
     private val folderRepository: FolderRepository
 ) {
-    /**
-     * 유저 변경 시 서브 카테고리, 폴더 리로드
-     */
     suspend fun load(onLoadSubCategoriesFail: (FirebaseResult.Fail) -> Unit) =
         getUserUseCase.user.collectLatest {
             coroutineScope {

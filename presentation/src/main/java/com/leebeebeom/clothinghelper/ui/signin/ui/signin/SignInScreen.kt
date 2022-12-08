@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.signin.signin
+package com.leebeebeom.clothinghelper.ui.signin.ui.signin
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -13,11 +13,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.composables.*
-import com.leebeebeom.clothinghelper.signin.base.composables.GoogleSignInButton
-import com.leebeebeom.clothinghelper.signin.base.composables.OrDivider
-import com.leebeebeom.clothinghelper.signin.base.textfields.EmailTextField
-import com.leebeebeom.clothinghelper.signin.base.textfields.PasswordTextField
+import com.leebeebeom.clothinghelper.composable.*
+import com.leebeebeom.clothinghelper.ui.signin.composable.GoogleSignInButton
+import com.leebeebeom.clothinghelper.ui.signin.composable.OrDivider
+import com.leebeebeom.clothinghelper.ui.signin.composable.textfield.EmailTextField
+import com.leebeebeom.clothinghelper.ui.signin.composable.textfield.PasswordTextField
 
 /*
 에러 애니메이션, 로딩, 스크린 아웃, 로그인 토스트, 구글 로그인 토스트, 테스트
@@ -42,14 +42,14 @@ fun SignInScreen(
         verticalArrangement = Arrangement.Center
     ) {
         EmailTextField(
-            email = { uiState.email },
+            initialEmail = { uiState.email },
             error = { uiState.emailError },
             updateError = uiState::updateEmailError,
             onEmailChange = uiState::onEmailChange
         )
 
         PasswordTextField(
-            password = { uiState.password },
+            initailPassword = { uiState.password },
             error = { uiState.passwordError },
             updateError = uiState::updatePasswordError,
             onPasswordChange = uiState::onPasswordChange,

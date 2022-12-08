@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.signin.signup
+package com.leebeebeom.clothinghelper.ui.signin.ui.signup
 
 import androidx.annotation.StringRes
 import androidx.compose.runtime.derivedStateOf
@@ -7,14 +7,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.ToastUIState
-import com.leebeebeom.clothinghelper.base.ToastUIStateImpl
-import com.leebeebeom.clothinghelper.signin.base.GoogleSignInUpViewModel
-import com.leebeebeom.clothinghelper.signin.base.interfaces.GoogleButtonUIState
-import com.leebeebeom.clothinghelper.signin.base.interfaces.GoogleButtonUIStateImpl
-import com.leebeebeom.clothinghelper.signin.base.interfaces.PasswordUIState
-import com.leebeebeom.clothinghelper.signin.base.interfaces.PasswordUIStateImpl
-import com.leebeebeom.clothinghelper.signin.base.setFireBaseError
+import com.leebeebeom.clothinghelper.ui.signin.base.GoogleSignInUpViewModel
+import com.leebeebeom.clothinghelper.ui.signin.base.setFireBaseError
+import com.leebeebeom.clothinghelper.ui.signin.state.GoogleButtonUIState
+import com.leebeebeom.clothinghelper.ui.signin.state.GoogleButtonUIStateImpl
+import com.leebeebeom.clothinghelper.ui.signin.state.PasswordUIState
+import com.leebeebeom.clothinghelper.ui.signin.state.PasswordUIStateImpl
 import com.leebeebeom.clothinghelperdomain.model.AuthResult
 import com.leebeebeom.clothinghelperdomain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.user.SignUpUseCase
@@ -27,7 +25,7 @@ class SignUpViewModel @Inject constructor(
     private val signUpUseCase: SignUpUseCase, googleSignInUseCase: GoogleSignInUseCase
 ) : GoogleSignInUpViewModel(googleSignInUseCase) {
 
-    val uiState = SignUpUIState()
+    override val uiState = SignUpUIState()
 
     fun signUpWithEmailAndPassword() =
         viewModelScope.launch {
@@ -38,28 +36,22 @@ class SignUpViewModel @Inject constructor(
                 onSubCategoryLoadFail = { uiState.showToast(R.string.data_load_failed) }
             )
             when (result) {
-                is AuthResult.Success -> showToast(R.string.sign_up_complete)
+                is AuthResult.Success -> uiState.showToast(R.string.sign_up_complete)
                 is AuthResult.Fail -> setFireBaseError(
                     errorCode = result.errorCode,
                     updateEmailError = uiState::updateEmailError,
-                    showToast = ::showToast
+                    showToast = uiState::showToast
                 )
-                is AuthResult.UnknownFail -> showToast(R.string.unknown_error)
+                is AuthResult.UnknownFail -> uiState.showToast(R.string.unknown_error)
                 else -> {}
             }
         }
-
-    override fun updateGoogleButtonEnabled(enabled: Boolean) =
-        uiState.updateGoogleButtonEnabled(enabled)
-
-    override fun showToast(text: Int) = uiState.showToast(text)
 }
 
 class SignUpUIState(
     private val passwordUIState: PasswordUIStateImpl = PasswordUIStateImpl()
 ) : PasswordUIState by passwordUIState,
-    GoogleButtonUIState by GoogleButtonUIStateImpl(),
-    ToastUIState by ToastUIStateImpl() {
+    GoogleButtonUIState by GoogleButtonUIStateImpl() {
     var passwordConfirmError: Int? by mutableStateOf(null)
         private set
 
@@ -96,6 +88,6 @@ class SignUpUIState(
     }
 
     override val buttonEnabled by derivedStateOf {
-        passwordUIState.buttonEnabled && passwordConfirm.isNotBlank() && this.passwordConfirmError == null && name.isNotBlank()
+        passwordUIState.buttonEnabled && passwordConfirm.isNotBlank() && passwordConfirmError == null && name.isNotBlank()
     }
 }

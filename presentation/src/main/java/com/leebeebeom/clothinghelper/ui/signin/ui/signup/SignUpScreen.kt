@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.signin.signup
+package com.leebeebeom.clothinghelper.ui.signin.ui.signup
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,14 +10,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.composables.MaxWidthButton
-import com.leebeebeom.clothinghelper.base.composables.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.base.composables.SimpleToast
-import com.leebeebeom.clothinghelper.signin.base.composables.GoogleSignInButton
-import com.leebeebeom.clothinghelper.signin.base.composables.OrDivider
-import com.leebeebeom.clothinghelper.signin.base.textfields.EmailTextField
-import com.leebeebeom.clothinghelper.signin.base.textfields.NameTextField
-import com.leebeebeom.clothinghelper.signin.base.textfields.PasswordTextField
+import com.leebeebeom.clothinghelper.composable.MaxWidthButton
+import com.leebeebeom.clothinghelper.composable.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.composable.SimpleToast
+import com.leebeebeom.clothinghelper.ui.signin.composable.GoogleSignInButton
+import com.leebeebeom.clothinghelper.ui.signin.composable.OrDivider
+import com.leebeebeom.clothinghelper.ui.signin.composable.textfield.EmailTextField
+import com.leebeebeom.clothinghelper.ui.signin.composable.textfield.NameTextField
+import com.leebeebeom.clothinghelper.ui.signin.composable.textfield.PasswordTextField
 
 /*
 필드가 하나라도 비어있거나 에러 메세지가 표시중인 경우 가입하기 버튼 비활성화
@@ -60,16 +60,16 @@ fun SignUpScreen(
         verticalArrangement = Arrangement.Center
     ) {
         EmailTextField(
-            email = { uiState.email },
+            initialEmail = { uiState.email },
             error = { uiState.emailError },
             updateError = uiState::updateEmailError,
             onEmailChange = uiState::onEmailChange
         )
 
-        NameTextField(name = { uiState.name }, onNameChange = uiState::onNameChange)
+        NameTextField(initialName = { uiState.name }, onNameChange = uiState::onNameChange)
 
         PasswordTextField(
-            password = { uiState.password },
+            initailPassword = { uiState.password },
             error = { uiState.passwordError },
             imeAction = ImeAction.Next,
             onPasswordChange = uiState::onPasswordChange,
@@ -78,7 +78,7 @@ fun SignUpScreen(
 
         PasswordTextField(
             label = R.string.password_confirm,
-            password = { uiState.passwordConfirm },
+            initailPassword = { uiState.passwordConfirm },
             error = { uiState.passwordConfirmError },
             imeAction = ImeAction.Done,
             onPasswordChange = uiState::onPasswordConfirmChange,

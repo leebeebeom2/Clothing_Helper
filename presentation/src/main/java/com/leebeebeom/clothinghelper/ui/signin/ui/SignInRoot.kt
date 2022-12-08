@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.signin
+package com.leebeebeom.clothinghelper.ui.signin.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -13,8 +13,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.leebeebeom.clothinghelper.base.composables.BlockBacKPressWhenLoading
-import com.leebeebeom.clothinghelper.base.composables.CenterDotProgressIndicator
+import com.leebeebeom.clothinghelper.composable.BlockBacKPressWhenLoading
+import com.leebeebeom.clothinghelper.composable.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelper.util.noRippleClickable
 import com.leebeebeom.clothinghelperdomain.usecase.user.GetSignInLoadingStateUseCase

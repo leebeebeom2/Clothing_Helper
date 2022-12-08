@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.signin.resetpassword
+package com.leebeebeom.clothinghelper.ui.signin.ui.resetpassword
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
@@ -16,10 +16,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.composables.MaxWidthButton
-import com.leebeebeom.clothinghelper.base.composables.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.base.composables.SimpleToast
-import com.leebeebeom.clothinghelper.signin.base.textfields.EmailTextField
+import com.leebeebeom.clothinghelper.composable.MaxWidthButton
+import com.leebeebeom.clothinghelper.composable.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.composable.SimpleToast
+import com.leebeebeom.clothinghelper.ui.signin.composable.textfield.EmailTextField
 
 /*
 이메일 필드가 비어있거나 에러 메세지 표시 중일 경우 확인 버튼 비활성화
@@ -58,7 +58,7 @@ fun ResetPasswordScreen(
         )
 
         EmailTextField(
-            email = { uiState.email },
+            initialEmail = { uiState.email },
             error = { uiState.emailError },
             updateError = uiState::updateEmailError,
             onEmailChange = uiState::onEmailChange
@@ -70,7 +70,6 @@ fun ResetPasswordScreen(
             enabled = { uiState.buttonEnabled },
             onClick = viewModel::sendResetPasswordEmail
         )
-        SimpleHeightSpacer(dp = 80)
     }
 
     SimpleToast(text = { uiState.toastText }, toastShown = uiState::toastShown)

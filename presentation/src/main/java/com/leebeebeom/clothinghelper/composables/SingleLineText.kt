@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.base.composables
+package com.leebeebeom.clothinghelper.composables
 
 import androidx.annotation.StringRes
 import androidx.compose.material.LocalTextStyle

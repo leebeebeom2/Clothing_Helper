@@ -37,7 +37,7 @@ class BaseDataRepositoryImpl<T : BaseModel>(
         uid?.let {
             val temp = mutableListOf<T>()
 
-            root.child(uid).child(refPath).get().await().children.forEach {
+            root.getContainerRef(uid, refPath).get().await().children.forEach {
                 temp.add((it.getValue(type))!!)
             }
 

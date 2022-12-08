@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.base.composables
+package com.leebeebeom.clothinghelper.composables
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -45,31 +45,26 @@ fun DotProgressIndicator(
     val delayUnit = 300
 
     @Composable
-    fun Dot(offset: Float) =
-        Spacer(
-            Modifier
-                .size(size)
-                .offset(y = -offset.dp)
-                .background(
-                    color = color,
-                    shape = CircleShape
-                )
-        )
+    fun Dot(offset: Float) = Spacer(
+        Modifier
+            .size(size)
+            .offset(y = -offset.dp)
+            .background(
+                color = color, shape = CircleShape
+            )
+    )
 
     val infiniteTransition = rememberInfiniteTransition()
 
     @Composable
-    fun animateOffsetWithDelay(delay: Int) = infiniteTransition.animateFloat(
-        initialValue = 0f,
+    fun animateOffsetWithDelay(delay: Int) = infiniteTransition.animateFloat(initialValue = 0f,
         targetValue = 0f,
-        animationSpec = infiniteRepeatable(
-            animation = keyframes {
-                durationMillis = delayUnit * 4
-                0f at delay with LinearEasing
-                maxOffset at delay + delayUnit with LinearEasing
-                0f at delay + delayUnit * 2
-            }
-        )
+        animationSpec = infiniteRepeatable(animation = keyframes {
+            durationMillis = delayUnit * 4
+            0f at delay with LinearEasing
+            maxOffset at delay + delayUnit with LinearEasing
+            0f at delay + delayUnit * 2
+        })
     )
 
     val offset1 by animateOffsetWithDelay(0)

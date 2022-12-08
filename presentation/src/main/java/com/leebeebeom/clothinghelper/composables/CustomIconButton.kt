@@ -23,7 +23,7 @@ fun CustomIconButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     @DrawableRes drawable: Int,
-    size:Dp = Dp.Unspecified,
+    size: Dp = Dp.Unspecified,
     tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current),
     contentDescription: String? = null
 ) {

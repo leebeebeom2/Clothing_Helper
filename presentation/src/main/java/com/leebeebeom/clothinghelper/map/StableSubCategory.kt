@@ -10,7 +10,9 @@ data class StableSubCategory(
     override val name: String = "",
     override val createDate: Long = 0,
     override val editDate: Long = 0
-) : BaseModel()
+) : BaseModel() {
+    override fun addKey(key: String) = copy(key = key)
+}
 
 fun SubCategory.toStable() =
     StableSubCategory(

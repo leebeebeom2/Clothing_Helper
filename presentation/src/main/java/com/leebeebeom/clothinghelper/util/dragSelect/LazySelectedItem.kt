@@ -3,36 +3,36 @@ package com.leebeebeom.clothinghelper.util.dragSelect
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.grid.LazyGridItemInfo
 
-abstract class BaseSelectedItem {
+abstract class LazyBaseItem {
     abstract val key: String
     abstract val index: Int
 }
 
-data class ListSelectedItem(
+data class LazyListItem(
     override val key: String,
     override val index: Int,
     val top: Int,
     val bottom: Int
-) : BaseSelectedItem()
+) : LazyBaseItem()
 
-fun LazyListItemInfo.toListSelectedItem() = ListSelectedItem(
+fun LazyListItemInfo.toLazyListItem() = LazyListItem(
     key = key as String,
     index = index,
     top = top,
     bottom = bottom
 )
 
-data class GridSelectedItem(
+data class LazyGridItem(
     override val key: String,
     override val index: Int,
     val top: Int,
     val bottom: Int,
     val start: Int,
     val end: Int,
-) : BaseSelectedItem()
+) : LazyBaseItem()
 
 fun LazyGridItemInfo.toGridSelectedItem() =
-    GridSelectedItem(
+    LazyGridItem(
         key = key as String,
         index = index,
         top = top,

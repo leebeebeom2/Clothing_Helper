@@ -4,7 +4,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 
-abstract class BaseDragSelector<T : BaseSelectedItem>(
+abstract class BaseDragSelector<T : LazyBaseItem>(
     private val haptic: HapticFeedback
 ) {
     private val passedItems: LinkedHashSet<T> = linkedSetOf()

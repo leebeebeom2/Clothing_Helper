@@ -30,7 +30,7 @@ fun Modifier.dragSelect(
 
 private inline fun PointerInputScope.dragEnd(
     onDragStart: (Boolean) -> Unit,
-    realDragSelector: BaseDragSelector<out BaseSelectedItem>
+    realDragSelector: BaseDragSelector<out LazyBaseItem>
 ) {
     onDragStart(false)
     interceptOutOfBoundsChildEvents = false

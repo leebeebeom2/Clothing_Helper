@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.composable.MaxWidthButton
-import com.leebeebeom.clothinghelper.ui.setting.base.SettingButton
+import com.leebeebeom.clothinghelper.ui.setting.composable.SettingButton
 import com.leebeebeom.clothinghelper.composable.TitleWithDivider
 
 @Composable

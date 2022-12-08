@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.setting.base
+package com.leebeebeom.clothinghelper.ui.setting.composable
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Row

@@ -8,7 +8,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 fun Modifier.dragSelect(
     dragSelector: BaseDragSelector<*>,
     onDragStart: (Boolean) -> Unit,
-    onSelect: (key: String) -> Unit,
+    onSelect: (keys: List<String>) -> Unit,
     onLongClick: (key: String) -> Unit
 ): Modifier {
     val castedDragSelector = dragSelector as? ListDragSelector ?: dragSelector as GridDragSelector

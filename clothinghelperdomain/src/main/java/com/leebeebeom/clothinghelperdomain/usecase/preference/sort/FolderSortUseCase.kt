@@ -1,7 +1,7 @@
-package com.leebeebeom.clothinghelperdomain.usecase.preferences.sort
+package com.leebeebeom.clothinghelperdomain.usecase.preference.sort
 
-import com.leebeebeom.clothinghelperdomain.repository.preferences.FolderPreferencesRepository
-import com.leebeebeom.clothinghelperdomain.repository.preferences.SortPreferenceRepository
+import com.leebeebeom.clothinghelperdomain.repository.preference.FolderPreferencesRepository
+import com.leebeebeom.clothinghelperdomain.repository.preference.SortPreferenceRepository
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 

@@ -1,9 +1,9 @@
-package com.leebeebeom.clothinghelperdomain.usecase.preferences.sort
+package com.leebeebeom.clothinghelperdomain.usecase.preference.sort
 
 import com.leebeebeom.clothinghelperdomain.model.Order
 import com.leebeebeom.clothinghelperdomain.model.Sort
 import com.leebeebeom.clothinghelperdomain.model.SortPreferences
-import com.leebeebeom.clothinghelperdomain.repository.preferences.SortPreferenceRepository
+import com.leebeebeom.clothinghelperdomain.repository.preference.SortPreferenceRepository
 import kotlinx.coroutines.flow.Flow
 
 interface SortUseCase {

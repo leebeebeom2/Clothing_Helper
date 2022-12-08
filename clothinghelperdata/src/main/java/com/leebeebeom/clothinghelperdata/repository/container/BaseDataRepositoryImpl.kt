@@ -98,13 +98,10 @@ class BaseDataRepositoryImpl<T : BaseModel>(
         }
     }
 
-    private fun getKey(containerRef: DatabaseReference) = containerRef.push().key!!
+    fun getKey(containerRef: DatabaseReference) = containerRef.push().key!!
 
-    private suspend fun push(containerRef: DatabaseReference, t: T) =
+    suspend fun push(containerRef: DatabaseReference, t: T) =
         withContext(Dispatchers.IO) { containerRef.child(t.key).setValue(t) }
-
-    private fun DatabaseReference.getContainerRef(uid: String, path: String) =
-        child(uid).child(path)
 
     private fun <T : BaseModel> getSortedData(
         allData: List<T>, sortPreferences: SortPreferences
@@ -129,3 +126,6 @@ class BaseDataRepositoryImpl<T : BaseModel>(
         update { temp }
     }
 }
+
+fun DatabaseReference.getContainerRef(uid: String, path: String) =
+    child(uid).child(path)

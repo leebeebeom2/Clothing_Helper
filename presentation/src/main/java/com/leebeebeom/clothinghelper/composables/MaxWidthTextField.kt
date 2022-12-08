@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.base.composables
+package com.leebeebeom.clothinghelper.composables
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
@@ -17,13 +17,10 @@ import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.Anime
-import com.leebeebeom.clothinghelper.base.Anime.Error.errorIn
-import com.leebeebeom.clothinghelper.base.Anime.Error.errorOut
-import com.leebeebeom.clothinghelper.theme.DarkGrayishBlue
-import com.leebeebeom.clothinghelper.theme.Gainsboro
-import com.leebeebeom.clothinghelper.theme.LightGrayishBlue
-import com.leebeebeom.clothinghelper.theme.VeryDarkGray
+import com.leebeebeom.clothinghelper.theme.*
+import com.leebeebeom.clothinghelper.util.Anime
+import com.leebeebeom.clothinghelper.util.Anime.Error.errorIn
+import com.leebeebeom.clothinghelper.util.Anime.Error.errorOut
 import kotlinx.coroutines.delay
 
 @Composable
@@ -36,10 +33,11 @@ fun MaxWidthTextField(
     onFocusChanged: (FocusState) -> Unit,
     trailingIcon: @Composable (() -> Unit)? = null,
     isVisible: () -> Boolean = { true },
-    cancelIconEnabled: Boolean = true
+    cancelIconEnabled: Boolean = true,
+    enabled: Boolean = true
 ) {
     Column(modifier = modifier) {
-        TextField(
+        MaxWidthTextField(
             state = state,
             onFocusChanged = onFocusChanged,
             textFieldValue = textFieldValue,
@@ -47,7 +45,8 @@ fun MaxWidthTextField(
             error = error,
             isVisible = isVisible,
             trailingIcon = trailingIcon,
-            cancelIconEnabled = cancelIconEnabled
+            cancelIconEnabled = cancelIconEnabled,
+            enabled = enabled
         )
         ErrorText(error)
     }
@@ -56,7 +55,7 @@ fun MaxWidthTextField(
 }
 
 @Composable
-private fun TextField(
+private fun MaxWidthTextField(
     state: MaxWidthTextFieldState,
     textFieldValue: () -> TextFieldValue,
     error: () -> Int?,
@@ -64,7 +63,8 @@ private fun TextField(
     onFocusChanged: (FocusState) -> Unit,
     isVisible: () -> Boolean,
     trailingIcon: @Composable (() -> Unit)?,
-    cancelIconEnabled: Boolean
+    cancelIconEnabled: Boolean,
+    enabled: Boolean
 ) {
     val focusManager = LocalFocusManager.current
     var hasFocus by rememberSaveable { mutableStateOf(false) }
@@ -100,7 +100,8 @@ private fun TextField(
             unfocusedLabelColor = DarkGrayishBlue,
             backgroundColor = LightGrayishBlue,
             placeholderColor = MaterialTheme.colors.onSurface.copy(ContentAlpha.disabled)
-        )
+        ),
+        enabled = enabled
     )
 }
 
@@ -112,7 +113,7 @@ private fun ErrorText(@StringRes error: () -> Int?) {
         SingleLineText(
             modifier = Modifier.padding(start = 4.dp, top = 4.dp),
             text = error,
-            style = MaterialTheme.typography.caption.copy(color = MaterialTheme.colors.error),
+            style = errorTextStyle()
         )
     }
 }

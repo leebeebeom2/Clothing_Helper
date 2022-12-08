@@ -18,14 +18,14 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun TitleWithDivider(@StringRes title: Int, @StringRes subTitle: Int? = null) {
     Column {
-        SettingTitleWithHorizontalScroll(title = title, subTitle = subTitle)
+        TitleWithHorizontalScroll(title = title, subTitle = subTitle)
         SimpleHeightSpacer(dp = 8)
         Divider(modifier = Modifier.fillMaxWidth())
     }
 }
 
 @Composable
-fun SettingTitleWithHorizontalScroll(
+private fun TitleWithHorizontalScroll(
     modifier: Modifier = Modifier,
     @StringRes title: Int,
     @StringRes subTitle: Int? = null

@@ -25,7 +25,7 @@ fun TitleWithDivider(@StringRes title: Int, @StringRes subTitle: Int? = null) {
 }
 
 @Composable
-private fun TitleWithHorizontalScroll(
+fun TitleWithHorizontalScroll(
     modifier: Modifier = Modifier,
     @StringRes title: Int,
     @StringRes subTitle: Int? = null

@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.base
+package com.leebeebeom.clothinghelper.states
 
 import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue

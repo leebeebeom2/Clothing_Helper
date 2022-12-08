@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.base.composables
+package com.leebeebeom.clothinghelper.composables
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable

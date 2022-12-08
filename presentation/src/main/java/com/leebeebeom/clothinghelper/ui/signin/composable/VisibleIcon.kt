@@ -1,10 +1,10 @@
-package com.leebeebeom.clothinghelper.signin.base.composables
+package com.leebeebeom.clothinghelper.ui.signin.composable
 
 import androidx.compose.material.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.composables.CustomIconButton
+import com.leebeebeom.clothinghelper.composable.CustomIconButton
 
 @Composable
 fun VisibleIcon(isVisible: () -> Boolean, onClick: () -> Unit) {

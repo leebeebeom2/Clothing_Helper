@@ -7,14 +7,12 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.leebeebeom.clothinghelper.theme.buttonTextStyle
 
 @Composable
 fun MaxWidthButton(
@@ -42,8 +40,7 @@ fun MaxWidthButton(
             SingleLineText(
                 text = text,
                 modifier = Modifier.weight(1f),
-                style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.Bold),
-                textAlign = TextAlign.Center
+                style = buttonTextStyle()
             )
         }
     }

@@ -12,9 +12,6 @@ class GoogleSignInUseCase @Inject constructor(
     private val userRepository: UserRepository,
     private val pushInitialSubCategoriesUseCase: PushInitialSubCategoriesUseCase
 ) {
-    /**
-     * 첫 유저일 시 초기 서브 카테고리 푸쉬
-     */
     suspend fun googleSignIn(
         credential: Any?,
         onSubCategoriesLoadFail: (FirebaseResult.Fail) -> Unit

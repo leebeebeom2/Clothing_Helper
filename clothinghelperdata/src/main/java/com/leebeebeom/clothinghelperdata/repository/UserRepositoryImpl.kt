@@ -36,10 +36,10 @@ class UserRepositoryImpl @Inject constructor() :
     private val auth = FirebaseAuth.getInstance()
 
     private val _isSignIn = MutableStateFlow(auth.currentUser != null)
-    override val isSignIn get() = _isSignIn.asStateFlow()
+    override val isSignIn = _isSignIn.asStateFlow()
 
     private val _user = MutableStateFlow(auth.currentUser.toUser())
-    override val user get() = _user.asStateFlow()
+    override val user = _user.asStateFlow()
 
     init {
         auth.addAuthStateListener {
@@ -97,8 +97,8 @@ class UserRepositoryImpl @Inject constructor() :
     override suspend fun signOut() =
         authTry("signOut") {
             auth.signOut()
-            updateSignIn(false)
             updateUser(null)
+            updateSignIn(false)
             AuthResult.Success()
         }
 
@@ -109,33 +109,33 @@ class UserRepositoryImpl @Inject constructor() :
             updateUserAndUpdateSignIn(user)
         }
 
-    private suspend fun updateUserAndUpdateSignIn(userObj: User) = withContext(NonCancellable) {
-        updateUser(user = userObj)
+    private suspend fun updateUserAndUpdateSignIn(user: User) = withContext(NonCancellable) {
+        updateUser(user = user)
         updateSignIn(state = true)
     }
 
     private fun updateSignIn(state: Boolean) = _isSignIn.update { state }
     private fun updateUser(user: User?) = _user.update { user }
 
-    private suspend fun authTry(site: String, task: suspend () -> AuthResult) =
+    private suspend fun authTry(callSite: String, task: suspend () -> AuthResult) =
         withContext(Dispatchers.IO) {
             try {
                 loadingRepositoryImpl.loadingOn()
-               withContext(NonCancellable) { task() }
+                withContext(NonCancellable) { task() }
             } catch (e: FirebaseAuthException) {
-                logE(site, e)
+                logE(callSite, e)
                 AuthResult.Fail(e.errorCode)
             } catch (e: FirebaseNetworkException) {
                 AuthResult.Fail(A_NETWORK_ERROR)
             } catch (e: FirebaseTooManyRequestsException) {
                 AuthResult.Fail(TOO_MANY_REQUEST)
             } catch (e: Exception) {
-                logE(site, e)
+                logE(callSite, e)
                 AuthResult.UnknownFail
             } finally {
                 loadingRepositoryImpl.loadingOff()
             }
         }
-}
 
-private fun FirebaseUser?.toUser() = this?.let { User(email!!, displayName ?: "", uid) }
+    private fun FirebaseUser?.toUser() = this?.let { User(email!!, displayName ?: "", uid) }
+}

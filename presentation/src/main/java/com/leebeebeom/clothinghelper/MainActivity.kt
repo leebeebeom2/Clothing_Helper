@@ -12,6 +12,8 @@ import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leebeebeom.clothinghelper.main.MainNavHost
 import com.leebeebeom.clothinghelper.signin.SignInNavHost
+import com.leebeebeom.clothinghelper.ui.main.MainNavHost
+import com.leebeebeom.clothinghelper.ui.signin.SignInNavHost
 import com.leebeebeom.clothinghelperdomain.usecase.user.GetSignInStateUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp

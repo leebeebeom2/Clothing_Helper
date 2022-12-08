@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.base.composables
+package com.leebeebeom.clothinghelper.composables
 
 import android.widget.Toast
 import androidx.annotation.DrawableRes

@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelperdata.repository.preferences
+package com.leebeebeom.clothinghelperdata.repository.preference
 
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore

@@ -5,6 +5,6 @@ import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 
 @ViewModelScoped
-class GetAllFoldersUseCase @Inject constructor(folderRepository: FolderRepository) {
-    val allFolders = folderRepository.allData
+class GetAllFoldersUseCase @Inject constructor(private val folderRepository: FolderRepository) {
+    val allFolders get() = folderRepository.allData
 }

@@ -1,6 +1,6 @@
 package com.leebeebeom.clothinghelper.map
 
-import com.leebeebeom.clothinghelperdomain.model.User
+import com.leebeebeom.clothinghelperdomain.model.data.User
 
 data class StableUser(
     val email: String,

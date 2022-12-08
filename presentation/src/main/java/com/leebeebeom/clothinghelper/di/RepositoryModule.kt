@@ -3,12 +3,12 @@ package com.leebeebeom.clothinghelper.di
 import com.leebeebeom.clothinghelperdata.repository.UserRepositoryImpl
 import com.leebeebeom.clothinghelperdata.repository.container.FolderRepositoryImpl
 import com.leebeebeom.clothinghelperdata.repository.container.SubCategoryRepositoryImpl
-import com.leebeebeom.clothinghelperdata.repository.preferences.FolderPreferencesRepositoryImpl
-import com.leebeebeom.clothinghelperdata.repository.preferences.SubCategoryPreferencesRepositoryImpl
+import com.leebeebeom.clothinghelperdata.repository.preference.FolderPreferencesRepositoryImpl
+import com.leebeebeom.clothinghelperdata.repository.preference.SubCategoryPreferencesRepositoryImpl
 import com.leebeebeom.clothinghelperdomain.repository.*
-import com.leebeebeom.clothinghelperdomain.repository.preferences.FolderPreferencesRepository
-import com.leebeebeom.clothinghelperdomain.repository.preferences.SortPreferenceRepository
-import com.leebeebeom.clothinghelperdomain.repository.preferences.SubCategoryPreferencesRepository
+import com.leebeebeom.clothinghelperdomain.repository.preference.FolderPreferencesRepository
+import com.leebeebeom.clothinghelperdomain.repository.preference.SortPreferenceRepository
+import com.leebeebeom.clothinghelperdomain.repository.preference.SubCategoryPreferencesRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

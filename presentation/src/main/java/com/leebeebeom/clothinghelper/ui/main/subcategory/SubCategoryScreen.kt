@@ -1,21 +1,19 @@
-package com.leebeebeom.clothinghelper.main.subcategory
+package com.leebeebeom.clothinghelper.ui.main.subcategory
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.listSaver
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.leebeebeom.clothinghelper.base.composables.CenterDotProgressIndicator
-import com.leebeebeom.clothinghelper.base.composables.SimpleToast
-import com.leebeebeom.clothinghelper.main.base.composables.SelectModeBackHandler
-import com.leebeebeom.clothinghelper.main.base.composables.selectmodebottomappbar.SelectModeBottomAppBar
-import com.leebeebeom.clothinghelper.main.base.dialogs.EditSubCategoryDialog
-import com.leebeebeom.clothinghelper.main.subcategory.content.SubCategoryContent
+import com.leebeebeom.clothinghelper.composable.CenterDotProgressIndicator
+import com.leebeebeom.clothinghelper.composable.SelectModeBackHandler
+import com.leebeebeom.clothinghelper.composable.SimpleToast
 import com.leebeebeom.clothinghelper.map.StableSubCategory
+import com.leebeebeom.clothinghelper.ui.main.composables.selectmodebottomappbar.SelectModeBottomAppBar
+import com.leebeebeom.clothinghelper.ui.main.dialogs.EditSubCategoryDialog
+import com.leebeebeom.clothinghelper.ui.main.subcategory.content.SubCategoryContent
 import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
 
 /*
@@ -66,82 +64,52 @@ fun SubCategoryScreen(
     parent: SubCategoryParent,
     viewModel: SubCategoryViewModel = hiltViewModel(),
     uiState: SubCategoryScreenUIState = viewModel.getUiState(parent),
-    state: SubCategoryState = rememberSubCategoryState(),
     onSubCategoryClick: (StableSubCategory) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         SubCategoryContent(
             parent = parent,
-            subCategories = { uiState.items },
-            sort = { uiState.sort },
-            onLongClick = uiState::selectModeOn,
+            subCategories = { uiState.subCategories },
             onSubCategoryClick = onSubCategoryClick,
+            onLongClick = uiState::selectModeOn,
+            sort = { uiState.sort },
             onSortClick = viewModel::changeSort,
             onOrderClick = viewModel::changeOrder,
-            selectedSubCategoryKey = { uiState.selectedKeys },
+            selectedSubCategoryKeys = { uiState.selectedKeys },
             isSelectMode = { uiState.isSelectMode },
             onSelect = uiState::onSelect,
+            onSelectSingle = uiState::onSelect,
             folders = uiState::getFolders
         )
 
-        EditSubCategoryDialog(
-            subCategories = { uiState.items },
-            onPositiveButtonClick = viewModel::editSubCategoryName,
-            onDismiss = state::dismissEditDialog,
-            show = { state.showEditDialog },
-            selectedSubCategory = { uiState.firstSelectedItem }
-        )
-
         SelectModeBottomAppBar(
-            selectedSize = { uiState.selectedSize },
-            isAllSelected = { uiState.isAllSelected },
+            selectedItemsSize = { uiState.selectedSize },
+            itemsSize = { uiState.itemsSize },
             onAllSelectCheckBoxClick = uiState::toggleAllSelect,
-            onEditIconClick = state::showEditDialog,
-            isSelectMode = { uiState.isSelectMode },
-            showEditIcon = { uiState.showEditIcon },
-            showDeleteIcon = { uiState.showDeleteIcon }
+            show = { uiState.isSelectMode },
+            editDialog = { show, onDismiss ->
+                EditSubCategoryDialog(subCategories = { uiState.subCategories },
+                    onPositiveButtonClick = viewModel::editSubCategoryName,
+                    onDismiss = onDismiss,
+                    show = { show },
+                    selectedSubCategory = { uiState.firstSelectedItem })
+            }
         )
 
         CenterDotProgressIndicator(
             backGround = MaterialTheme.colors.background,
-            show = { uiState.isLoading })
+            show = { uiState.isLoading }
+        )
 
         val addSubCategory = remember<(String) -> Unit> { { viewModel.addSubCategory(it, parent) } }
-        SubCategoryFab(
-            onPositiveButtonClick = addSubCategory,
-            subCategories = { uiState.items },
-            isSelectMode = { uiState.isSelectMode }
-        )
+        SubCategoryFab(onPositiveButtonClick = addSubCategory,
+            subCategories = { uiState.subCategories },
+            isSelectMode = { uiState.isSelectMode })
     }
 
     SimpleToast(text = { uiState.toastText }, toastShown = uiState::toastShown)
 
     SelectModeBackHandler(
-        isSelectMode = { uiState.isSelectMode },
-        selectModeOff = uiState::selectModeOff
+        isSelectMode = { uiState.isSelectMode }, selectModeOff = uiState::selectModeOff
     )
 }
-
-class SubCategoryState(initialShowDialog: Boolean = false) {
-    var showEditDialog by mutableStateOf(initialShowDialog)
-        private set
-
-    fun showEditDialog() {
-        showEditDialog = true
-    }
-
-    fun dismissEditDialog() {
-        showEditDialog = false
-    }
-
-    companion object {
-        val saver: Saver<SubCategoryState, *> = listSaver(
-            save = { listOf(it.showEditDialog) },
-            restore = { SubCategoryState(it[0]) }
-        )
-    }
-}
-
-@Composable
-fun rememberSubCategoryState() =
-    rememberSaveable(saver = SubCategoryState.saver) { SubCategoryState() }

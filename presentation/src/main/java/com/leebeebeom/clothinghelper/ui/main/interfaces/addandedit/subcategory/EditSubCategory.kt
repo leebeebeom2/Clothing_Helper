@@ -1,9 +1,9 @@
-package com.leebeebeom.clothinghelper.main.base.interfaces.addandedit.subcategory
+package com.leebeebeom.clothinghelper.ui.main.interfaces.addandedit.subcategory
 
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.main.base.interfaces.addandedit.BaseContainerAddAndEdit
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.map.toUnstable
+import com.leebeebeom.clothinghelper.ui.main.interfaces.addandedit.BaseContainerAddAndEdit
 import com.leebeebeom.clothinghelperdomain.usecase.subcategory.EditSubCategoryUseCase
 
 interface EditSubCategory : BaseContainerAddAndEdit {

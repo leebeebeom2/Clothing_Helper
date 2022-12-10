@@ -1,7 +1,7 @@
-package com.leebeebeom.clothinghelper.main.base.interfaces.addandedit.folder
+package com.leebeebeom.clothinghelper.ui.main.interfaces.addandedit.folder
 
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.main.base.interfaces.addandedit.BaseContainerAddAndEdit
+import com.leebeebeom.clothinghelper.ui.main.interfaces.addandedit.BaseContainerAddAndEdit
 import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.usecase.folder.AddFolderUseCase
 

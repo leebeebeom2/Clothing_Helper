@@ -1,9 +1,9 @@
-package com.leebeebeom.clothinghelper.main.base.interfaces.addandedit.folder
+package com.leebeebeom.clothinghelper.ui.main.interfaces.addandedit.folder
 
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.main.base.interfaces.addandedit.BaseContainerAddAndEdit
 import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.toUnstable
+import com.leebeebeom.clothinghelper.ui.main.interfaces.addandedit.BaseContainerAddAndEdit
 import com.leebeebeom.clothinghelperdomain.usecase.folder.EditFolderNameUseCase
 
 interface EditFolder : BaseContainerAddAndEdit {

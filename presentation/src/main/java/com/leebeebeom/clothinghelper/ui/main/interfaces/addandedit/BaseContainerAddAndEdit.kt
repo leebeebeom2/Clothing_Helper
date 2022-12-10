@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.base.interfaces.addandedit
+package com.leebeebeom.clothinghelper.ui.main.interfaces.addandedit
 
 import androidx.annotation.StringRes
 import com.leebeebeom.clothinghelperdomain.model.FirebaseResult

@@ -1,17 +1,24 @@
-package com.leebeebeom.clothinghelper.main.root
+package com.leebeebeom.clothinghelper.ui.main.root
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.ToastUIState
-import com.leebeebeom.clothinghelper.base.ToastUIStateImpl
-import com.leebeebeom.clothinghelper.main.base.interfaces.*
-import com.leebeebeom.clothinghelper.main.base.interfaces.addandedit.folder.AddFolder
-import com.leebeebeom.clothinghelper.main.base.interfaces.addandedit.folder.EditFolder
-import com.leebeebeom.clothinghelper.main.base.interfaces.addandedit.subcategory.AddSubCategory
-import com.leebeebeom.clothinghelper.main.base.interfaces.addandedit.subcategory.EditSubCategory
 import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
+import com.leebeebeom.clothinghelper.state.ToastUIState
+import com.leebeebeom.clothinghelper.state.ToastUIStateImpl
+import com.leebeebeom.clothinghelper.ui.main.interfaces.LoadingUIState
+import com.leebeebeom.clothinghelper.ui.main.interfaces.LoadingUIStateImpl
+import com.leebeebeom.clothinghelper.ui.main.interfaces.UserUIState
+import com.leebeebeom.clothinghelper.ui.main.interfaces.UserUIStateImpl
+import com.leebeebeom.clothinghelper.ui.main.interfaces.addandedit.folder.AddFolder
+import com.leebeebeom.clothinghelper.ui.main.interfaces.addandedit.folder.EditFolder
+import com.leebeebeom.clothinghelper.ui.main.interfaces.addandedit.subcategory.AddSubCategory
+import com.leebeebeom.clothinghelper.ui.main.interfaces.addandedit.subcategory.EditSubCategory
+import com.leebeebeom.clothinghelper.ui.main.interfaces.container.FolderUIState
+import com.leebeebeom.clothinghelper.ui.main.interfaces.container.FolderUIStateImpl
+import com.leebeebeom.clothinghelper.ui.main.interfaces.container.SubCategoryUIState
+import com.leebeebeom.clothinghelper.ui.main.interfaces.container.SubCategoryUIStateImpl
 import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
 import com.leebeebeom.clothinghelperdomain.usecase.GetDataLoadingStateUseCase
 import com.leebeebeom.clothinghelperdomain.usecase.LoadDataUseCase
@@ -41,6 +48,8 @@ class MainRootViewModel @Inject constructor(
 ) : AddSubCategory, EditSubCategory, AddFolder, EditFolder, ViewModel() {
 
     val uiState = MainRootUIState()
+    override val toastState = uiState
+    override val userState = uiState
 
     init {
         viewModelScope.launch {
@@ -49,8 +58,8 @@ class MainRootViewModel @Inject constructor(
             }
 
             launch { getDataLoadingStateUseCase.isLoading.collectLatest(uiState::updateIsLoading) }
-            launch { getAllSubCategoriesUseCase.allSubCategories.collectLatest(uiState::loadAllSubCategories) }
             launch { getUserUseCase.user.collectLatest(uiState::updateUser) }
+            launch { getAllSubCategoriesUseCase.allSubCategories.collectLatest(uiState::loadAllSubCategories) }
             launch { getAllFoldersUseCase.allFolders.collectLatest(uiState::loadAllFolders) }
         }
     }
@@ -85,9 +94,6 @@ class MainRootViewModel @Inject constructor(
             super.baseEditFolder(oldFolder = oldFolder, name = name)
         }
     }
-
-    override fun showToast(text: Int) = uiState.showToast(text)
-    override val uid get() = uiState.user?.uid
 }
 
 class MainRootUIState : ToastUIState by ToastUIStateImpl(), UserUIState by UserUIStateImpl(),

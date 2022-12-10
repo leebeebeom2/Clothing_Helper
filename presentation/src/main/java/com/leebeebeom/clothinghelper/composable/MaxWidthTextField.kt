@@ -115,7 +115,7 @@ private fun ErrorText(@StringRes error: () -> Int?) {
         SingleLineText(
             modifier = Modifier.padding(start = 4.dp, top = 4.dp),
             text = error,
-            style = errorTextStyle()
+            style = MaterialTheme.typography.caption.copy(color = MaterialTheme.colors.error)
         )
     }
 }

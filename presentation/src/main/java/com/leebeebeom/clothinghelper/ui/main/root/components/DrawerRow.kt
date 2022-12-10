@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.root.components
+package com.leebeebeom.clothinghelper.ui.main.root.components
 
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -21,7 +21,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun DrawerContentRow(
+fun DrawerRow(
     modifier: Modifier,
     onClick: () -> Unit,
     onLongClick: () -> Unit = {},

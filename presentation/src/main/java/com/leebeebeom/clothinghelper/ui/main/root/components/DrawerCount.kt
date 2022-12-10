@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.root.components
+package com.leebeebeom.clothinghelper.ui.main.root.components
 
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.LocalContentColor
@@ -9,7 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.composables.SingleLineText
+import com.leebeebeom.clothinghelper.composable.SingleLineText
 import com.leebeebeom.clothinghelper.map.StableSizeChart
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList

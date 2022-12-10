@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.root.components
+package com.leebeebeom.clothinghelper.ui.main.root.components
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ContentAlpha
@@ -9,8 +9,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.leebeebeom.clothinghelper.base.composables.DotProgressIndicator
-import com.leebeebeom.clothinghelper.main.base.composables.ExpandIcon
+import com.leebeebeom.clothinghelper.composable.DotProgressIndicator
+import com.leebeebeom.clothinghelper.ui.main.composables.ExpandIcon
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -22,15 +22,12 @@ fun DrawerExpandIcon(
 ) {
     val show by remember { derivedStateOf { items().size > 0 } }
 
-    if (isLoading())
-        DotProgressIndicator(
-            modifier = Modifier.padding(end = 4.dp),
-            size = 4.dp,
-            color = MaterialTheme.colors.surface.copy(ContentAlpha.disabled)
-        )
-    else if (show)
-        ExpandIcon(
-            isExpanded = isExpanded,
-            onClick = onClick
-        )
+    if (isLoading()) DotProgressIndicator(
+        modifier = Modifier.padding(end = 4.dp),
+        size = 4.dp,
+        color = MaterialTheme.colors.surface.copy(ContentAlpha.disabled)
+    )
+    else if (show) ExpandIcon(
+        isExpanded = isExpanded, onClick = onClick
+    )
 }

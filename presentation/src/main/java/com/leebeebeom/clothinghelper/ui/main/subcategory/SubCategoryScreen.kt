@@ -1,20 +1,26 @@
 package com.leebeebeom.clothinghelper.ui.main.subcategory
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.composable.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelper.composable.SelectModeBackHandler
+import com.leebeebeom.clothinghelper.composable.SimpleIcon
 import com.leebeebeom.clothinghelper.composable.SimpleToast
 import com.leebeebeom.clothinghelper.map.StableSubCategory
+import com.leebeebeom.clothinghelper.ui.main.composables.Fab
 import com.leebeebeom.clothinghelper.ui.main.composables.selectmodebottomappbar.SelectModeBottomAppBar
+import com.leebeebeom.clothinghelper.ui.main.dialogs.AddSubCategoryDialog
 import com.leebeebeom.clothinghelper.ui.main.dialogs.EditSubCategoryDialog
 import com.leebeebeom.clothinghelper.ui.main.subcategory.content.SubCategoryContent
 import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
+import kotlinx.collections.immutable.ImmutableList
 
 /*
 최초 구동 시 로딩 확인
@@ -111,5 +117,25 @@ fun SubCategoryScreen(
 
     SelectModeBackHandler(
         isSelectMode = { uiState.isSelectMode }, selectModeOff = uiState::selectModeOff
+    )
+}
+
+@Composable
+fun BoxScope.SubCategoryFab(
+    onPositiveButtonClick: (newName: String) -> Unit,
+    subCategories: () -> ImmutableList<StableSubCategory>,
+    isSelectMode: () -> Boolean
+) {
+    var showDialog by rememberSaveable { mutableStateOf(false) }
+
+    Fab(
+        visible = { !isSelectMode() }, onClick = { showDialog = true }
+    ) { SimpleIcon(drawable = R.drawable.ic_add) }
+
+    AddSubCategoryDialog(
+        subCategories = subCategories,
+        onPositiveButtonClick = onPositiveButtonClick,
+        show = { showDialog },
+        onDismiss = { showDialog = false }
     )
 }

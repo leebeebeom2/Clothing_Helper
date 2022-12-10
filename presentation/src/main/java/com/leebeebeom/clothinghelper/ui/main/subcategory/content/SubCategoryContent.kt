@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.subcategory.content
+package com.leebeebeom.clothinghelper.ui.main.subcategory.content
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -18,11 +18,13 @@ import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.composables.SingleLineText
-import com.leebeebeom.clothinghelper.main.base.composables.ScrollToTopFab
-import com.leebeebeom.clothinghelper.main.subcategory.content.subcategorycard.SubCategoryCard
+import com.leebeebeom.clothinghelper.composable.SingleLineText
+import com.leebeebeom.clothinghelper.composable.TitleWithDivider
 import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
+import com.leebeebeom.clothinghelper.ui.main.composables.ScrollToTopFab
+import com.leebeebeom.clothinghelper.ui.main.composables.sort.SortIcon
+import com.leebeebeom.clothinghelper.ui.main.subcategory.content.subcategorycard.SubCategoryCard
 import com.leebeebeom.clothinghelper.util.dragSelect.ListDragSelector
 import com.leebeebeom.clothinghelper.util.dragSelect.dragSelect
 import com.leebeebeom.clothinghelper.util.scrollToTop
@@ -46,21 +48,23 @@ fun SubCategoryContent(
     onSubCategoryClick: (StableSubCategory) -> Unit,
     onSortClick: (Sort) -> Unit,
     onOrderClick: (Order) -> Unit,
-    selectedSubCategoryKey: () -> ImmutableSet<String>,
+    selectedSubCategoryKeys: () -> ImmutableSet<String>,
     isSelectMode: () -> Boolean,
-    onSelect: (String) -> Unit,
+    onSelect: (List<String>) -> Unit,
+    onSelectSingle: (String) -> Unit,
     haptic: HapticFeedback = LocalHapticFeedback.current,
     folders: (parentKey: String) -> ImmutableList<StableFolder>
 ) {
+    val dragSelect = remember { ListDragSelector(state, haptic) }
     var dragSelectStart by rememberSaveable { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        SubCategoryPlaceHolder(subCategories)
+        PlaceHolder(subCategories)
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .dragSelect(
-                    dragSelector = remember { ListDragSelector(state, haptic) },
+                    dragSelector = dragSelect,
                     onDragStart = { dragSelectStart = it },
                     onSelect = onSelect,
                     onLongClick = onLongClick
@@ -72,20 +76,29 @@ fun SubCategoryContent(
             state = state,
             userScrollEnabled = !dragSelectStart
         ) {
-            item {
-                SubCategoryHeader(
-                    parent = parent,
-                    sort = sort,
-                    onSortClick = onSortClick,
-                    onOrderClick = onOrderClick
+            item { // Header
+                TitleWithDivider(
+                    title = when (parent) {
+                        SubCategoryParent.TOP -> R.string.top
+                        SubCategoryParent.BOTTOM -> R.string.bottom
+                        SubCategoryParent.OUTER -> R.string.outer
+                        SubCategoryParent.ETC -> R.string.etc
+                    },
+                    icon = {
+                        SortIcon(
+                            sort = sort,
+                            onSortClick = onSortClick,
+                            onOrderClick = onOrderClick
+                        )
+                    }
                 )
             }
             subCategories(
                 subCategories = subCategories,
                 isSelectMode = isSelectMode,
-                onSelect = onSelect,
-                onSubCategoryClick = onSubCategoryClick,
-                selectedSubCategoryKey = selectedSubCategoryKey,
+                onSelect = onSelectSingle,
+                onClick = onSubCategoryClick,
+                selectedSubCategoryKey = selectedSubCategoryKeys,
                 folders = folders
             )
         }
@@ -94,8 +107,9 @@ fun SubCategoryContent(
 }
 
 @Composable
-private fun SubCategoryPlaceHolder(subCategories: () -> ImmutableList<StableSubCategory>) {
+private fun PlaceHolder(subCategories: () -> ImmutableList<StableSubCategory>) {
     val isEmpty by remember { derivedStateOf { subCategories().isEmpty() } }
+
     AnimatedVisibility(visible = isEmpty, enter = fadeIn(), exit = fadeOut()) {
         SingleLineText(
             text = R.string.sub_category_place_holder,
@@ -108,14 +122,16 @@ private fun LazyListScope.subCategories(
     subCategories: () -> ImmutableList<StableSubCategory>,
     isSelectMode: () -> Boolean,
     onSelect: (String) -> Unit,
-    onSubCategoryClick: (StableSubCategory) -> Unit,
+    onClick: (StableSubCategory) -> Unit,
     selectedSubCategoryKey: () -> ImmutableSet<String>,
     folders: (parentKey: String) -> ImmutableList<StableFolder>
 ) {
     items(items = subCategories(), key = { it.key }) {
-        SubCategoryCard(subCategory = { it }, onClick = {
-            if (isSelectMode()) onSelect(it.key) else onSubCategoryClick(it)
-        }, selectedCategoryKeys = selectedSubCategoryKey, isSelectMode = isSelectMode,
+        SubCategoryCard(
+            subCategory = { it },
+            onClick = { if (isSelectMode()) onSelect(it.key) else onClick(it) },
+            selectedCategoryKeys = selectedSubCategoryKey,
+            isSelectMode = isSelectMode,
             folders = { folders(it.key) }
         )
     }

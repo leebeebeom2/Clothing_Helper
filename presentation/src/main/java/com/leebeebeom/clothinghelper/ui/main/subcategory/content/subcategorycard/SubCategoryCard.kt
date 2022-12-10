@@ -11,7 +11,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
-import com.leebeebeom.clothinghelper.ui.main.subcategory.content.subcategorycard.title.SubCategoryCardTitle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
 

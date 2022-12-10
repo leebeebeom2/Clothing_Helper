@@ -21,10 +21,10 @@ sealed class MainDestinations(val route: String) {
 @Composable
 fun MainNavHost(navController: NavHostController = rememberNavController()) {
     MainRoot(
+        onSettingIconClick = navController::navigateToSetting,
         onEssentialMenuClick = { onEssentialMenuClick(navController, it) },
         onMainCategoryClick = navController::navigateToSubCategory,
         onSubCategoryClick = navController::navigateToSizeChartList,
-        onSettingIconClick = navController::navigateToSetting,
         onFolderClick = navController::navigateToSizeChartList
     ) {
         NavHost(

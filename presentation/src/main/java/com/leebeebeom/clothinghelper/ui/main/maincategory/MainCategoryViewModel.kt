@@ -1,13 +1,13 @@
-package com.leebeebeom.clothinghelper.main.maincategory
+package com.leebeebeom.clothinghelper.ui.main.maincategory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.leebeebeom.clothinghelper.main.base.interfaces.LoadingUIState
-import com.leebeebeom.clothinghelper.main.base.interfaces.LoadingUIStateImpl
-import com.leebeebeom.clothinghelper.main.base.interfaces.SubCategoryUIState
-import com.leebeebeom.clothinghelper.main.base.interfaces.SubCategoryUIStateImpl
-import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetAllSubCategoriesUseCase
+import com.leebeebeom.clothinghelper.ui.main.interfaces.LoadingUIState
+import com.leebeebeom.clothinghelper.ui.main.interfaces.LoadingUIStateImpl
+import com.leebeebeom.clothinghelper.ui.main.interfaces.container.SubCategoryUIState
+import com.leebeebeom.clothinghelper.ui.main.interfaces.container.SubCategoryUIStateImpl
 import com.leebeebeom.clothinghelperdomain.usecase.GetDataLoadingStateUseCase
+import com.leebeebeom.clothinghelperdomain.usecase.subcategory.GetAllSubCategoriesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

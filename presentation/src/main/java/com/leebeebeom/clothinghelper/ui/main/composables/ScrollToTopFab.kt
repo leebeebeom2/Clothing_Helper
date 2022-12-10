@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.base.composables
+package com.leebeebeom.clothinghelper.ui.main.composables
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.BoxScope
@@ -13,8 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.Anime
-import com.leebeebeom.clothinghelper.base.composables.SimpleIcon
+import com.leebeebeom.clothinghelper.composable.SimpleIcon
+import com.leebeebeom.clothinghelper.util.Anime
 import kotlinx.coroutines.launch
 
 @Composable

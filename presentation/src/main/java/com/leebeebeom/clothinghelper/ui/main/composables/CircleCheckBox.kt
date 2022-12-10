@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.base.composables
+package com.leebeebeom.clothinghelper.ui.main.composables
 
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.animation.graphics.res.animatedVectorResource
@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.composables.CustomIconButton
+import com.leebeebeom.clothinghelper.composable.CustomIconButton
 
 @OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable

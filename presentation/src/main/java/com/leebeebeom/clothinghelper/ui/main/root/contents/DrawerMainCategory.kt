@@ -1,9 +1,11 @@
-package com.leebeebeom.clothinghelper.main.root.contents
+package com.leebeebeom.clothinghelper.ui.main.root.contents
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ContentAlpha
+import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -13,15 +15,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.leebeebeom.clothinghelper.base.composables.SingleLineText
-import com.leebeebeom.clothinghelper.main.root.components.DrawerContentRow
-import com.leebeebeom.clothinghelper.main.root.components.DrawerExpandIcon
-import com.leebeebeom.clothinghelper.main.root.components.DrawerItems
-import com.leebeebeom.clothinghelper.main.root.components.DrawerMainTotalCount
-import com.leebeebeom.clothinghelper.main.root.contents.dropdownmenus.DrawerMainCategoryDropDownMenu
-import com.leebeebeom.clothinghelper.main.root.model.MainCategory
+import com.leebeebeom.clothinghelper.composable.SingleLineText
 import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
+import com.leebeebeom.clothinghelper.ui.main.root.components.DrawerExpandIcon
+import com.leebeebeom.clothinghelper.ui.main.root.components.DrawerItems
+import com.leebeebeom.clothinghelper.ui.main.root.components.DrawerRow
+import com.leebeebeom.clothinghelper.ui.main.root.contents.dropdownmenus.DrawerMainCategoryDropDownMenu
+import com.leebeebeom.clothinghelper.ui.main.root.model.MainCategory
 import com.leebeebeom.clothinghelper.util.AddFolder
 import com.leebeebeom.clothinghelper.util.AddSubCategory
 import com.leebeebeom.clothinghelper.util.EditFolder
@@ -32,10 +33,10 @@ import kotlinx.collections.immutable.ImmutableList
 @Composable
 fun DrawerMainCategory(
     mainCategory: MainCategory,
-    subCategories: (SubCategoryParent) -> ImmutableList<StableSubCategory>,
-    folders: (parentKey: String) -> ImmutableList<StableFolder>,
     isLoading: () -> Boolean,
-    onMainCategoryClick: (SubCategoryParent) -> Unit,
+    subCategories: (parentName: String) -> ImmutableList<StableSubCategory>,
+    folders: (parentKey: String) -> ImmutableList<StableFolder>,
+    onClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (StableSubCategory) -> Unit,
     onFolderClick: (StableFolder) -> Unit,
     onAddSubCategoryPositiveClick: AddSubCategory,
@@ -47,9 +48,9 @@ fun DrawerMainCategory(
     var showDropdownMenu by rememberSaveable { mutableStateOf(false) }
 
     Column {
-        DrawerContentRow(
+        DrawerRow(
             modifier = Modifier.heightIn(44.dp),
-            onClick = { onMainCategoryClick(mainCategory.type) },
+            onClick = { onClick(mainCategory.type) },
             onLongClick = { showDropdownMenu = true }
         ) {
             Row(modifier = Modifier.weight(1f)) {
@@ -61,37 +62,49 @@ fun DrawerMainCategory(
                 DrawerMainCategoryDropDownMenu(
                     show = { showDropdownMenu },
                     onDismiss = { showDropdownMenu = false },
-                    subCategories = { subCategories(mainCategory.type) },
+                    subCategories = { subCategories(mainCategory.type.name) },
                     onAddSubCategoryPositiveClick = {
                         onAddSubCategoryPositiveClick(it, mainCategory.type)
                         isExpanded = true
                     })
-                DrawerMainTotalCount(
-                    items = { subCategories(mainCategory.type) }, isLoading = isLoading
-                )
+                Count(items = { subCategories(mainCategory.type.name) }, isLoading = isLoading)
             }
             DrawerExpandIcon(
                 isLoading = isLoading,
                 isExpanded = { isExpanded },
                 onClick = { isExpanded = !isExpanded },
-                items = { subCategories(mainCategory.type) }
+                items = { subCategories(mainCategory.type.name) }
             )
         }
         DrawerItems(
             show = { isExpanded },
-            items = { subCategories(mainCategory.type) },
+            items = { subCategories(mainCategory.type.name) },
             background = MaterialTheme.colors.primary
         ) {
             DrawerSubCategory(
                 subCategory = { it },
-                onClick = { onSubCategoryClick(it) },
-                onEditSubCategoryNamePositiveClick = onEditSubCategoryPositiveClick,
-                subCategories = { subCategories(mainCategory.type) },
-                onAddFolderPositiveClick = onAddFolderPositiveClick,
+                subCategories = { subCategories(mainCategory.type.name) },
                 folders = folders,
+                onClick = { onSubCategoryClick(it) },
                 onFolderClick = onFolderClick,
+                onEditSubCategoryNamePositiveClick = onEditSubCategoryPositiveClick,
+                onAddFolderPositiveClick = onAddFolderPositiveClick,
                 onEditFolderPositiveClick = onEditFolderPositiveClick
             )
         }
     }
+}
+
+@Composable
+private fun Count(
+    items: () -> ImmutableList<*>,
+    isLoading: () -> Boolean,
+) {
+    SingleLineText(
+        modifier = Modifier.padding(start = 4.dp),
+        text = if (isLoading()) "" else "(${items().size})",
+        style = MaterialTheme.typography.caption.copy(
+            LocalContentColor.current.copy(ContentAlpha.disabled)
+        )
+    )
 }

@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.base.dialogs.composables
+package com.leebeebeom.clothinghelper.ui.main.dialogs.composables
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.leebeebeom.clothinghelper.base.composables.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.composable.SimpleHeightSpacer
 
 @Composable
 fun DialogRoot(onDismiss: () -> Unit, content: @Composable () -> Unit) {

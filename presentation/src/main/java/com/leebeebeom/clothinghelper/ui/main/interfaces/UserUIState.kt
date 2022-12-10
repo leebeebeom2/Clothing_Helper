@@ -1,11 +1,11 @@
-package com.leebeebeom.clothinghelper.main.base.interfaces
+package com.leebeebeom.clothinghelper.ui.main.interfaces
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.leebeebeom.clothinghelper.map.StableUser
 import com.leebeebeom.clothinghelper.map.toStable
-import com.leebeebeom.clothinghelperdomain.model.User
+import com.leebeebeom.clothinghelperdomain.model.data.User
 
 interface UserUIState {
     val user: StableUser?

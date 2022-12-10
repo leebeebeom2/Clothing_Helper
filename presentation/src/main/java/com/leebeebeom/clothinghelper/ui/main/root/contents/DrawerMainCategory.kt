@@ -84,7 +84,8 @@ fun DrawerMainCategory(
             DrawerSubCategory(
                 subCategory = { it },
                 subCategories = { subCategories(mainCategory.type.name) },
-                folders = folders,
+                folders = { folders(it.key) },
+                allFolders = folders,
                 onClick = { onSubCategoryClick(it) },
                 onFolderClick = onFolderClick,
                 onEditSubCategoryNamePositiveClick = onEditSubCategoryPositiveClick,

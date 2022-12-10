@@ -1,11 +1,11 @@
-package com.leebeebeom.clothinghelper.main.root.contents.dropdownmenus
+package com.leebeebeom.clothinghelper.ui.main.root.contents.dropdownmenus
 
+import androidx.compose.material.DropdownMenu
 import androidx.compose.runtime.*
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.main.base.composables.DropDownMenuRoot
-import com.leebeebeom.clothinghelper.main.base.dialogs.AddFolderDialog
-import com.leebeebeom.clothinghelper.main.base.dialogs.EditFolderDialog
 import com.leebeebeom.clothinghelper.map.StableFolder
+import com.leebeebeom.clothinghelper.ui.main.dialogs.AddFolderDialog
+import com.leebeebeom.clothinghelper.ui.main.dialogs.EditFolderDialog
 import com.leebeebeom.clothinghelper.util.AddFolder
 import com.leebeebeom.clothinghelper.util.EditFolder
 import kotlinx.collections.immutable.ImmutableList
@@ -16,12 +16,12 @@ fun DrawerFolderDropDownMenu(
     folders: () -> ImmutableList<StableFolder>,
     onAddFolderPositiveClick: AddFolder,
     onEditFolderPositiveClick: EditFolder,
-    folder: () -> StableFolder
+    selectedFolder: () -> StableFolder
 ) {
     var showAddFolderDialog by remember { mutableStateOf(false) }
     var showEditFolderDialog by remember { mutableStateOf(false) }
 
-    DropDownMenuRoot(show = show, onDismiss = onDismiss) {
+    DropdownMenu(expanded = show(), onDismissRequest = onDismiss) {
         DrawerDropdownMenuItem(
             text = R.string.add_folder,
             onClick = { showAddFolderDialog = true },
@@ -38,7 +38,7 @@ fun DrawerFolderDropDownMenu(
     AddFolderDialog(
         folders = folders,
         onPositiveButtonClick = {
-            val parent = folder()
+            val parent = selectedFolder()
             onAddFolderPositiveClick(
                 parent.key,
                 parent.subCategoryKey,
@@ -55,6 +55,6 @@ fun DrawerFolderDropDownMenu(
         show = { showEditFolderDialog },
         onDismiss = { showEditFolderDialog = false },
         onPositiveButtonClick = onEditFolderPositiveClick,
-        selectedFolder = folder
+        selectedFolder = selectedFolder
     )
 }

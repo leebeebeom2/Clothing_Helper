@@ -11,6 +11,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import com.leebeebeom.clothinghelper.R
 
+@JvmName("SingleLineTextString")
+@Composable
+fun SingleLineText(
+    modifier: Modifier = Modifier,
+    textString: () -> String,
+    style: TextStyle = LocalTextStyle.current,
+    textAlign: TextAlign? = null
+) {
+    SingleLineText(
+        modifier = modifier,
+        text = textString(),
+        style = style,
+        textAlign = textAlign
+    )
+}
+
 @Composable
 fun SingleLineText(
     modifier: Modifier = Modifier,

@@ -23,7 +23,6 @@ fun BoxScope.SelectModeBottomAppBar(
     editDialog: @Composable (show: Boolean, onDismiss: () -> Unit) -> Unit,
     deleteDialog: @Composable (show: Boolean, onDismiss: () -> Unit) -> Unit = { _, _ -> } // TODO
 ) {
-    val isAllSelected by remember { derivedStateOf { selectedItemsSize() == itemsSize() } }
     val showEditIcon by remember { derivedStateOf { selectedItemsSize() == 1 } }
     val showDeleteIcon by remember { derivedStateOf { selectedItemsSize() > 0 } }
 
@@ -38,9 +37,9 @@ fun BoxScope.SelectModeBottomAppBar(
     ) {
         BottomAppBar {
             SelectModeBottomAppBarAllSelect(
-                isAllSelected = { isAllSelected },
+                itemsSize = itemsSize,
                 onClick = onAllSelectCheckBoxClick,
-                selectedSize = selectedItemsSize
+                selectedItemsSize = selectedItemsSize
             )
 
             Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.End) {

@@ -74,9 +74,7 @@ fun DrawerSubCategory(
                     }
                 )
                 SimpleHeightSpacer(dp = 2)
-                DrawerCount(
-                    folders = folders
-                )
+                DrawerCount(folders = folders)
             }
             DrawerExpandIcon(
                 isLoading = { false },

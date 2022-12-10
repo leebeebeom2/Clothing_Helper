@@ -1,10 +1,15 @@
 package com.leebeebeom.clothinghelperdomain.model.data
 
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toImmutableMap
+
 data class SizeChart(
     val isFavorite: Boolean = false,
     val brand: String = "",
-    val sizes: List<Int> = emptyList(),
-    val fields: Map<String, String> = emptyMap(),
+    val sizes: ImmutableList<Int> = emptyList<Int>().toImmutableList(),
+    val fields: ImmutableMap<String, String> = emptyMap<String, String>().toImmutableMap(),
     override val parentKey: String = "",
     override val subCategoryKey: String = "",
     override val name: String = "",

@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.base.dialogs
+package com.leebeebeom.clothinghelper.ui.main.dialogs
 
 import androidx.compose.runtime.Composable
 import com.leebeebeom.clothinghelper.R

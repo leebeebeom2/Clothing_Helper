@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.base.dialogs
+package com.leebeebeom.clothinghelper.ui.main.dialogs
 
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
@@ -10,8 +10,8 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.text.TextRange
-import com.leebeebeom.clothinghelper.main.base.dialogs.composables.BaseTextFieldDialogState
-import com.leebeebeom.clothinghelper.main.base.dialogs.composables.TextFieldDialog
+import com.leebeebeom.clothinghelper.ui.main.dialogs.composables.BaseTextFieldDialogState
+import com.leebeebeom.clothinghelper.ui.main.dialogs.composables.TextFieldDialog
 import com.leebeebeom.clothinghelperdomain.model.data.BaseModel
 import kotlinx.collections.immutable.ImmutableList
 
@@ -28,7 +28,7 @@ fun EditDialog(
     initialName: () -> String
 ) {
     if (show()) {
-        val names = remember { items().map { it.name } }
+        val names by remember { derivedStateOf { items().map { it.name } } }
         val state =
             rememberSaveable(saver = EditDialogState.Saver) { EditDialogState(initialName = initialName()) }
 

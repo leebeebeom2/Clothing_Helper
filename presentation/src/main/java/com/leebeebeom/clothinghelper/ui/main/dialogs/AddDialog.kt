@@ -1,13 +1,15 @@
-package com.leebeebeom.clothinghelper.main.base.dialogs
+package com.leebeebeom.clothinghelper.ui.main.dialogs
 
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
-import com.leebeebeom.clothinghelper.main.base.dialogs.composables.BaseTextFieldDialogState
-import com.leebeebeom.clothinghelper.main.base.dialogs.composables.TextFieldDialog
+import com.leebeebeom.clothinghelper.ui.main.dialogs.composables.BaseTextFieldDialogState
+import com.leebeebeom.clothinghelper.ui.main.dialogs.composables.TextFieldDialog
 import com.leebeebeom.clothinghelperdomain.model.data.BaseModel
 import kotlinx.collections.immutable.ImmutableList
 
@@ -23,10 +25,11 @@ fun AddDialog(
     onDismiss: () -> Unit
 ) {
     if (show()) {
-        val names = remember { items().map { it.name } }
+        val names by remember { derivedStateOf { items().map { it.name } } }
         val state = rememberSaveable(saver = AddDialogState.Saver) { AddDialogState() }
 
-        TextFieldDialog(label = label,
+        TextFieldDialog(
+            label = label,
             placeHolder = placeHolder,
             title = title,
             error = { state.error },

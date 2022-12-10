@@ -4,7 +4,6 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
@@ -16,11 +15,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun TitleWithDivider(@StringRes title: Int, @StringRes subTitle: Int? = null) {
+fun TitleWithDivider(
+    @StringRes title: Int,
+    @StringRes subTitle: Int? = null,
+    icon: @Composable (() -> Unit)? = null
+) {
     Column {
         TitleWithHorizontalScroll(title = title, subTitle = subTitle)
-        SimpleHeightSpacer(dp = 8)
-        Divider(modifier = Modifier.fillMaxWidth())
+        if (icon == null) SimpleHeightSpacer(dp = 8)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Divider(modifier = Modifier.weight(1f))
+            icon?.invoke()
+        }
     }
 }
 

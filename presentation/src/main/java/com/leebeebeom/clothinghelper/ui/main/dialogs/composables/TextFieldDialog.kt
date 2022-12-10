@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.base.dialogs.composables
+package com.leebeebeom.clothinghelper.ui.main.dialogs.composables
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
@@ -6,10 +6,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.text.input.TextFieldValue
-import com.leebeebeom.clothinghelper.base.TextFieldState
-import com.leebeebeom.clothinghelper.base.composables.MaxWidthTextField
-import com.leebeebeom.clothinghelper.base.composables.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.base.composables.rememberMaxWidthTextFieldState
+import com.leebeebeom.clothinghelper.composable.MaxWidthTextField
+import com.leebeebeom.clothinghelper.composable.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.composable.rememberMaxWidthTextFieldState
+import com.leebeebeom.clothinghelper.state.TextFieldState
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -63,7 +63,9 @@ abstract class BaseTextFieldDialogState(
         this.error = error
     }
 
-    open val positiveButtonEnabled by derivedStateOf { textFieldValue.text.trim().isNotBlank() && error == null }
+    open val positiveButtonEnabled by derivedStateOf {
+        textFieldValue.text.trim().isNotBlank() && error == null
+    }
 
     open fun onValueChange(newTextFiled: TextFieldValue) {
         super.onValueChange(

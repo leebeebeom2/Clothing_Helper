@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.root
+package com.leebeebeom.clothinghelper.ui.main.root
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -8,14 +8,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.leebeebeom.clothinghelper.base.composables.BackHandler
-import com.leebeebeom.clothinghelper.base.composables.BlockBacKPressWhenLoading
-import com.leebeebeom.clothinghelper.base.composables.SimpleToast
-import com.leebeebeom.clothinghelper.main.root.contents.DrawerContents
-import com.leebeebeom.clothinghelper.main.root.model.EssentialMenuType
+import com.leebeebeom.clothinghelper.composable.BackHandler
+import com.leebeebeom.clothinghelper.composable.BlockBacKPressWhenLoading
+import com.leebeebeom.clothinghelper.composable.SimpleToast
 import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.theme.ClothingHelperTheme
+import com.leebeebeom.clothinghelper.ui.main.root.contents.DrawerContents
+import com.leebeebeom.clothinghelper.ui.main.root.model.EssentialMenuType
 import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -48,11 +48,11 @@ fun MainRoot(
     onEssentialMenuClick: (type: EssentialMenuType) -> Unit,
     onMainCategoryClick: (SubCategoryParent) -> Unit,
     onSubCategoryClick: (StableSubCategory) -> Unit,
+    onFolderClick: (StableFolder) -> Unit,
     viewModel: MainRootViewModel = hiltViewModel(),
     uiState: MainRootUIState = viewModel.uiState,
     state: MainRootState = rememberMainRootState(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    onFolderClick: (StableFolder) -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val drawerClose = remember<() -> Unit> { { coroutineScope.launch { state.onDrawerClose() } } }
@@ -65,6 +65,7 @@ fun MainRoot(
                     user = { uiState.user },
                     isLoading = { uiState.isLoading },
                     subCategories = uiState::getSubCategories,
+                    folders = uiState::getFolders,
                     onEssentialMenuClick = {
                         onEssentialMenuClick(it)
                         drawerClose()
@@ -88,8 +89,7 @@ fun MainRoot(
                     onAddSubCategoryPositiveButtonClick = viewModel::addSubCategory,
                     onEditSubCategoryPositiveClick = viewModel::editSubCategoryName,
                     onAddFolderPositiveClick = viewModel::addFolder,
-                    onEditFolderPositiveClick = viewModel::editFolder,
-                    folders = uiState::getFolders
+                    onEditFolderPositiveClick = viewModel::editFolder
                 )
             },
             drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),

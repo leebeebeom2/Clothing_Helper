@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.base.composables.sort
+package com.leebeebeom.clothinghelper.ui.main.composables.sort
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateColorAsState
@@ -7,6 +7,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
+import androidx.compose.material.DropdownMenu
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -16,10 +17,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.composables.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.base.composables.SimpleWidthSpacer
-import com.leebeebeom.clothinghelper.base.composables.SingleLineText
-import com.leebeebeom.clothinghelper.main.base.composables.DropDownMenuRoot
+import com.leebeebeom.clothinghelper.composable.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.composable.SimpleWidthSpacer
+import com.leebeebeom.clothinghelper.composable.SingleLineText
 import com.leebeebeom.clothinghelper.util.noRippleClickable
 import com.leebeebeom.clothinghelperdomain.model.Order
 import com.leebeebeom.clothinghelperdomain.model.Sort
@@ -33,7 +33,7 @@ fun SortDropdownMenu(
     onOrderClick: (Order) -> Unit,
     onDismiss: () -> Unit
 ) {
-    DropDownMenuRoot(show = show, onDismiss = onDismiss) {
+    DropdownMenu(expanded = show(), onDismissRequest = onDismiss) {
         Header()
         Row(
             modifier = Modifier
@@ -41,7 +41,7 @@ fun SortDropdownMenu(
                 .padding(horizontal = 12.dp)
                 .padding(top = 8.dp, bottom = 4.dp)
         ) {
-            SortButtons(sort, onSortClick)
+            SortButtons(sort = sort, onSortClick = onSortClick)
             SimpleWidthSpacer(dp = 8)
             Divider(
                 modifier = Modifier
@@ -49,17 +49,22 @@ fun SortDropdownMenu(
                     .fillMaxHeight()
             )
             SimpleWidthSpacer(dp = 8)
-            OrderButtons(sort, onOrderClick)
+            OrderButtons(sort = sort, onOrderClick = onOrderClick)
         }
     }
 }
 
 @Composable
 private fun Header() {
-    Column(modifier = Modifier.padding(start = 12.dp, end = 12.dp, top = 4.dp)) {
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 12.dp)
+            .padding(top = 4.dp)
+    ) {
         SingleLineText(
             text = R.string.sort,
-            style = sortDropDownMenuHeaderStyle()
+            style = MaterialTheme.typography.subtitle1.copy(letterSpacing = 1.55.sp)
+                .copy(color = LocalContentColor.current.copy(0.8f))
         )
         SimpleHeightSpacer(dp = 8)
         Divider()
@@ -67,24 +72,17 @@ private fun Header() {
 }
 
 @Composable
-private fun sortDropDownMenuHeaderStyle() =
-    MaterialTheme.typography.subtitle1.copy(letterSpacing = 1.55.sp)
-        .copy(color = LocalContentColor.current.copy(0.8f))
-
-@Composable
 private fun OrderButtons(
     sort: () -> SortPreferences, onOrderClick: (Order) -> Unit
 ) {
-    val order = sort().order
-
     Column {
         SortButton(
             text = R.string.sort_Ascending,
-            isSelected = { order == Order.ASCENDING }) { onOrderClick(Order.ASCENDING) }
+            isSelected = { sort().order == Order.ASCENDING }) { onOrderClick(Order.ASCENDING) }
         SimpleHeightSpacer(dp = 4)
         SortButton(
             text = R.string.sort_Descending,
-            isSelected = { order == Order.DESCENDING }) { onOrderClick(Order.DESCENDING) }
+            isSelected = { sort().order == Order.DESCENDING }) { onOrderClick(Order.DESCENDING) }
     }
 }
 
@@ -92,31 +90,26 @@ private fun OrderButtons(
 private fun SortButtons(
     sort: () -> SortPreferences, onSortClick: (Sort) -> Unit
 ) {
-    val sortValue = sort().sort
-
     Column {
         SortButton(
             text = R.string.sort_name,
-            isSelected = { sortValue == Sort.NAME }) { onSortClick(Sort.NAME) }
+            isSelected = { sort().sort == Sort.NAME }) { onSortClick(Sort.NAME) }
         SimpleHeightSpacer(dp = 4)
         SortButton(
             text = R.string.sort_create_date,
-            isSelected = { sortValue == Sort.CREATE }) { onSortClick(Sort.CREATE) }
+            isSelected = { sort().sort == Sort.CREATE }) { onSortClick(Sort.CREATE) }
         SimpleHeightSpacer(dp = 4)
         SortButton(
             text = R.string.sort_edit_date,
-            isSelected = { sortValue == Sort.EDIT }) { onSortClick(Sort.EDIT) }
+            isSelected = { sort().sort == Sort.EDIT }) { onSortClick(Sort.EDIT) }
     }
 }
 
 @Composable
-fun SortButton(
-    @StringRes text: Int, isSelected: () -> Boolean, onSortButtonClick: () -> Unit
+private fun SortButton(
+    @StringRes text: Int, isSelected: () -> Boolean, onClick: () -> Unit
 ) {
-    val strokeColor by animateColorAsState(
-        targetValue = if (isSelected()) MaterialTheme.colors.primary.copy(0.8f) else Color.Transparent,
-        animationSpec = tween(durationMillis = 200)
-    )
+    val strokeColor by borderColor(isSelected)
 
     Box(
         modifier = Modifier
@@ -125,7 +118,7 @@ fun SortButton(
                 shape = MaterialTheme.shapes.medium
             )
             .padding(horizontal = 20.dp, vertical = 12.dp)
-            .noRippleClickable(onClick = onSortButtonClick)
+            .noRippleClickable(onClick = onClick)
     ) {
         SingleLineText(
             text = text,
@@ -133,3 +126,9 @@ fun SortButton(
         )
     }
 }
+
+@Composable
+private fun borderColor(isSelected: () -> Boolean) = animateColorAsState(
+    targetValue = if (isSelected()) MaterialTheme.colors.primary.copy(0.8f) else Color.Transparent,
+    animationSpec = tween(durationMillis = 200)
+)

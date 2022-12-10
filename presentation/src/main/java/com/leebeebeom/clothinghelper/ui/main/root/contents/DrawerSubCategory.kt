@@ -94,7 +94,8 @@ fun DrawerSubCategory(
             folder = { it },
             onClick = onFolderClick,
             startPadding = 24.dp,
-            folders = allFolders,
+            folders = { allFolders(it.key) },
+            allFolders = allFolders,
             onAddFolderPositiveClick = onAddFolderPositiveClick,
             onEditFolderPositiveClick = onEditFolderPositiveClick
         )

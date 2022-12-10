@@ -1,7 +1,6 @@
 package com.leebeebeom.clothinghelper.ui.signin
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,16 +21,16 @@ object SignInDestinations {
 }
 
 @Composable
-fun SignInNavHost(state: SignInNavHostState = rememberSignInNavHostState()) {
+fun SignInNavHost(navController: NavHostController = rememberNavController()) {
     SignInRoot {
         NavHost(
-            navController = state.navController,
+            navController = navController,
             startDestination = SignIN
         ) {
             composable(route = SignIN) {
                 SignInScreen(
-                    onForgotPasswordClick = state::navigateToResetPassword,
-                    onSignUpClick = state::navigateToSignUp
+                    onForgotPasswordClick = navController::navigateToResetPassword,
+                    onSignUpClick = navController::navigateToSignUp
                 )
             }
             composable(route = SignUp) { SignUpScreen() }
@@ -40,11 +39,5 @@ fun SignInNavHost(state: SignInNavHostState = rememberSignInNavHostState()) {
     }
 }
 
-data class SignInNavHostState(val navController: NavHostController) {
-    fun navigateToSignUp() = navController.navigateSingleTop(SignUp)
-    fun navigateToResetPassword() = navController.navigateSingleTop(ResetPassword)
-}
-
-@Composable
-fun rememberSignInNavHostState(navController: NavHostController = rememberNavController()) =
-    remember { SignInNavHostState(navController) }
+private fun NavHostController.navigateToSignUp() = navigateSingleTop(SignUp)
+private fun NavHostController.navigateToResetPassword() = navigateSingleTop(ResetPassword)

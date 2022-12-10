@@ -10,7 +10,8 @@ class GridDragSelector(
 ) : BaseDragSelector<LazyGridItem>(haptic) {
 
     override val visibleItemsInfo: List<LazyGridItem>
-        get() = state.layoutInfo.visibleItemsInfo.map { it.toLazyGridItem() }
+        get() = state.layoutInfo.visibleItemsInfo.filter { (it.key as? String) != null }
+            .map { it.toLazyGridItem() }
 
     override fun selectedItemPredicate(
         touchOffset: Offset,

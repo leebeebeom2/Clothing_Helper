@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.root.model
+package com.leebeebeom.clothinghelper.ui.main.root.model
 
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelperdomain.model.data.SubCategoryParent

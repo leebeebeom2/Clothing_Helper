@@ -21,7 +21,9 @@ import com.leebeebeom.clothinghelper.theme.*
 import com.leebeebeom.clothinghelper.util.Anime
 import com.leebeebeom.clothinghelper.util.Anime.Error.errorIn
 import com.leebeebeom.clothinghelper.util.Anime.Error.errorOut
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun MaxWidthTextField(
@@ -127,10 +129,12 @@ data class MaxWidthTextFieldState @OptIn(ExperimentalComposeUiApi::class) constr
     val keyboardController: SoftwareKeyboardController?
 ) {
     @OptIn(ExperimentalComposeUiApi::class)
-    suspend fun showKeyboard() {
-        focusRequester.requestFocus()
-        delay(100)
-        keyboardController?.show()
+    fun showKeyboard(scope: CoroutineScope) {
+        scope.launch {
+            focusRequester.requestFocus()
+            delay(100)
+            keyboardController?.show()
+        }
     }
 }
 
@@ -156,11 +160,11 @@ fun rememberMaxWidthTextFieldState(
 }
 
 @Composable
-private fun ShowKeyboard(showKeyboardEnabled: Boolean, showKeyboard: suspend () -> Unit) {
+private fun ShowKeyboard(showKeyboardEnabled: Boolean, showKeyboard: (CoroutineScope) -> Unit) {
     var keyboardShown by rememberSaveable { mutableStateOf(false) }
 
     if (!keyboardShown && showKeyboardEnabled) {
-        LaunchedEffect(key1 = Unit) { showKeyboard() }
+        LaunchedEffect(key1 = Unit) { showKeyboard(this) }
         keyboardShown = true
     }
 }

@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.main.root.contents
+package com.leebeebeom.clothinghelper.ui.main.root.contents
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.heightIn
@@ -14,15 +14,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.base.composables.SimpleIcon
-import com.leebeebeom.clothinghelper.base.composables.SingleLineText
-import com.leebeebeom.clothinghelper.main.root.components.DrawerContentRow
-import com.leebeebeom.clothinghelper.main.root.components.DrawerCount
-import com.leebeebeom.clothinghelper.main.root.components.DrawerExpandIcon
-import com.leebeebeom.clothinghelper.main.root.components.DrawerItems
-import com.leebeebeom.clothinghelper.main.root.contents.dropdownmenus.DrawerFolderDropDownMenu
+import com.leebeebeom.clothinghelper.composable.SimpleIcon
+import com.leebeebeom.clothinghelper.composable.SingleLineText
 import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.theme.DarkGray
+import com.leebeebeom.clothinghelper.ui.main.root.components.DrawerCount
+import com.leebeebeom.clothinghelper.ui.main.root.components.DrawerExpandIcon
+import com.leebeebeom.clothinghelper.ui.main.root.components.DrawerItems
+import com.leebeebeom.clothinghelper.ui.main.root.components.DrawerRow
+import com.leebeebeom.clothinghelper.ui.main.root.contents.dropdownmenus.DrawerFolderDropDownMenu
 import com.leebeebeom.clothinghelper.util.AddFolder
 import com.leebeebeom.clothinghelper.util.EditFolder
 import kotlinx.collections.immutable.ImmutableList
@@ -32,14 +32,15 @@ fun DrawerFolder(
     folder: () -> StableFolder,
     onClick: (StableFolder) -> Unit,
     startPadding: Dp,
-    folders: (key: String) -> ImmutableList<StableFolder>,
+    folders: () -> ImmutableList<StableFolder>,
+    allFolders: (key: String) -> ImmutableList<StableFolder>,
     onAddFolderPositiveClick: AddFolder,
     onEditFolderPositiveClick: EditFolder,
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     var showDropDownMenu by rememberSaveable { mutableStateOf(false) }
 
-    DrawerContentRow(modifier = Modifier
+    DrawerRow(modifier = Modifier
         .heightIn(40.dp)
         .padding(start = startPadding),
         onClick = { onClick(folder()) },
@@ -54,34 +55,38 @@ fun DrawerFolder(
                 .weight(1f)
         ) {
             SingleLineText(
-                text = folder().name, style = MaterialTheme.typography.subtitle2
+                textString = { folder().name }, style = MaterialTheme.typography.subtitle2
             )
             DrawerFolderDropDownMenu(
+                selectedFolder = folder,
                 show = { showDropDownMenu },
                 onDismiss = { showDropDownMenu = false },
-                folders = { folders(folder().key) },
+                folders = folders,
                 onAddFolderPositiveClick = { parentKey, subCategoryKey, name, parent ->
                     onAddFolderPositiveClick(parentKey, subCategoryKey, name, parent)
                     isExpanded = true
                 },
-                onEditFolderPositiveClick = onEditFolderPositiveClick,
-                folder = folder
+                onEditFolderPositiveClick = onEditFolderPositiveClick
             )
-            DrawerCount(folders = { folders(folder().key) })
+            DrawerCount(folders = folders)
         }
-        DrawerExpandIcon(isLoading = { false },
+        DrawerExpandIcon(
+            isLoading = { false },
             isExpanded = { isExpanded },
             onClick = { isExpanded = !isExpanded },
-            items = { folders(folder().key) })
+            items = folders
+        )
     }
 
-    DrawerItems(show = { isExpanded }, items = { folders(folder().key) }, background = DarkGray
+    DrawerItems(
+        show = { isExpanded }, items = folders, background = DarkGray
     ) {
         DrawerFolder(
             folder = { it },
             onClick = onClick,
             startPadding = startPadding.plus(8.dp),
             folders = folders,
+            allFolders = allFolders,
             onAddFolderPositiveClick = onAddFolderPositiveClick,
             onEditFolderPositiveClick = onEditFolderPositiveClick
         )

@@ -23,10 +23,15 @@ fun TitleWithDivider(
     Column {
         TitleWithHorizontalScroll(title = title, subTitle = subTitle)
         if (icon == null) SimpleHeightSpacer(dp = 8)
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Divider(modifier = Modifier.weight(1f))
-            icon?.invoke()
-        }
+        DividerWithIcon(icon)
+    }
+}
+
+@Composable
+fun DividerWithIcon(icon: @Composable (() -> Unit)? = null) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Divider(modifier = Modifier.weight(1f))
+        icon?.invoke()
     }
 }
 

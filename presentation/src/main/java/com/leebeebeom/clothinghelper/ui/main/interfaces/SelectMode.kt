@@ -7,7 +7,9 @@ import androidx.compose.runtime.setValue
 import com.leebeebeom.clothinghelperdomain.model.data.BaseModel
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.toImmutableSet
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 interface SelectMode<T : BaseModel> {
     val isSelectMode: Boolean
@@ -17,7 +19,7 @@ interface SelectMode<T : BaseModel> {
     fun selectModeOn(key: String)
     fun onSelect(key: String)
     fun onSelect(keys: List<String>)
-    suspend fun selectModeOff()
+    fun selectModeOff(scope: CoroutineScope)
     fun toggleAllSelect()
 }
 
@@ -43,10 +45,12 @@ class SelectModeImpl<T : BaseModel> : SelectMode<T> {
             else selectedKeys.taskAndReturn { it.add(key) }
     }
 
-    override suspend fun selectModeOff() {
-        isSelectMode = false
-        delay(200)
-        selectedKeys = selectedKeys.taskAndReturn { it.clear() }
+    override fun selectModeOff(scope: CoroutineScope) {
+        scope.launch {
+            isSelectMode = false
+            delay(200)
+            selectedKeys = selectedKeys.taskAndReturn { it.clear() }
+        }
     }
 
     fun toggleAllSelect(items: List<BaseModel>) {

@@ -15,10 +15,10 @@ import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.composable.SimpleIcon
 import com.leebeebeom.clothinghelper.util.Anime
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.CoroutineScope
 
 @Composable
-fun BoxScope.ScrollToTopFab(show: () -> Boolean, toTop: suspend () -> Unit) {
+fun BoxScope.ScrollToTopFab(show: () -> Boolean, toTop: (CoroutineScope) -> Unit) {
     val coroutineScope = rememberCoroutineScope()
 
     AnimatedVisibility(
@@ -30,7 +30,7 @@ fun BoxScope.ScrollToTopFab(show: () -> Boolean, toTop: suspend () -> Unit) {
         exit = Anime.ScrollToTopFab.scaleOut
     ) {
         FloatingActionButton(
-            onClick = { coroutineScope.launch { toTop() } },
+            onClick = { toTop(coroutineScope) },
             backgroundColor = MaterialTheme.colors.surface,
             modifier = Modifier
                 .padding(bottom = 16.dp)

@@ -3,6 +3,8 @@ package com.leebeebeom.clothinghelper.util
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.runtime.derivedStateOf
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 private val showScrollToTopFab: (firstVisibleItemScrollOffset: Int) -> Boolean = {
     derivedStateOf { it > 0 }.value
@@ -14,22 +16,26 @@ val LazyListState.showScrollToTopFab
 val LazyGridState.showScrollToTopFab
     get() = showScrollToTopFab(firstVisibleItemIndex)
 
-suspend fun LazyListState.scrollToTop() {
+fun LazyListState.scrollToTop(scope: CoroutineScope) {
     val scrollToTop = suspend { animateScrollToItem(0) }
 
-    if (firstVisibleItemIndex <= 2) scrollToTop()
-    else {
-        scrollToItem(2)
-        scrollToTop()
+    scope.launch {
+        if (firstVisibleItemIndex <= 2) scrollToTop()
+        else {
+            scrollToItem(2)
+            scrollToTop()
+        }
     }
 }
 
-suspend fun LazyGridState.scrollToTop() {
+fun LazyGridState.scrollToTop(scope: CoroutineScope) {
     val scrollToTop = suspend { animateScrollToItem(0) }
 
-    if (firstVisibleItemIndex <= 5) scrollToTop()
-    else {
-        scrollToItem(5)
-        scrollToTop()
+    scope.launch {
+        if (firstVisibleItemIndex <= 5) scrollToTop()
+        else {
+            scrollToItem(5)
+            scrollToTop()
+        }
     }
 }

@@ -1,16 +1,16 @@
-package com.leebeebeom.clothinghelper.main.root.contents.dropdownmenus
+package com.leebeebeom.clothinghelper.ui.main.root.contents.dropdownmenus
 
+import androidx.compose.material.DropdownMenu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.main.base.composables.DropDownMenuRoot
-import com.leebeebeom.clothinghelper.main.base.dialogs.AddFolderDialog
-import com.leebeebeom.clothinghelper.main.base.dialogs.EditSubCategoryDialog
 import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
+import com.leebeebeom.clothinghelper.ui.main.dialogs.AddFolderDialog
+import com.leebeebeom.clothinghelper.ui.main.dialogs.EditSubCategoryDialog
 import com.leebeebeom.clothinghelper.util.AddFolder
 import com.leebeebeom.clothinghelper.util.EditSubCategory
 import kotlinx.collections.immutable.ImmutableList
@@ -28,7 +28,7 @@ fun DrawerSubCategoryDropDownMenu(
     var showSubCategoryEditDialog by rememberSaveable { mutableStateOf(false) }
     var showAddFolderDialog by rememberSaveable { mutableStateOf(false) }
 
-    DropDownMenuRoot(show = show, onDismiss = onDismiss) {
+    DropdownMenu(expanded = show(), onDismissRequest = onDismiss) {
         DrawerDropdownMenuItem(
             text = R.string.edit_category,
             onClick = { showSubCategoryEditDialog = true },

@@ -1,7 +1,6 @@
-package com.leebeebeom.clothinghelper.main.subcategory.content.subcategorycard
+package com.leebeebeom.clothinghelper.ui.main.subcategory.content.subcategorycard
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
@@ -10,9 +9,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
-import com.leebeebeom.clothinghelper.main.subcategory.content.subcategorycard.title.SubCategoryCardTitle
 import com.leebeebeom.clothinghelper.map.StableFolder
 import com.leebeebeom.clothinghelper.map.StableSubCategory
+import com.leebeebeom.clothinghelper.ui.main.subcategory.content.subcategorycard.title.SubCategoryCardTitle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
 
@@ -27,7 +26,7 @@ fun SubCategoryCard(
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
-    Card(elevation = 2.dp, shape = RoundedCornerShape(12.dp), onClick = onClick) {
+    Card(elevation = 2.dp, onClick = onClick) {
         Column {
             SubCategoryCardTitle(
                 subCategory = subCategory,

@@ -1,9 +1,6 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -24,8 +21,7 @@ import javax.inject.Inject
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun SignInRoot(
-    viewModel: SignInRootViewModel = hiltViewModel(),
-    content: @Composable (BoxScope.() -> Unit)
+    viewModel: SignInRootViewModel = hiltViewModel(), content: @Composable (BoxScope.() -> Unit)
 ) {
     val focusManager = LocalFocusManager.current
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
@@ -36,6 +32,7 @@ fun SignInRoot(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 20.dp)
+                    .padding(bottom = 40.dp)
                     .noRippleClickable(onClick = focusManager::clearFocus)
             ) {
                 content()

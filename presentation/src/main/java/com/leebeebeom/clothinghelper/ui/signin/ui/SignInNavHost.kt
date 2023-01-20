@@ -1,14 +1,13 @@
-package com.leebeebeom.clothinghelper.ui.signin
+package com.leebeebeom.clothinghelper.ui.signin.ui
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.leebeebeom.clothinghelper.ui.signin.SignInDestinations.ResetPassword
-import com.leebeebeom.clothinghelper.ui.signin.SignInDestinations.SignIN
-import com.leebeebeom.clothinghelper.ui.signin.SignInDestinations.SignUp
-import com.leebeebeom.clothinghelper.ui.signin.ui.SignInRoot
+import com.leebeebeom.clothinghelper.ui.signin.ui.SignInDestinations.ResetPassword
+import com.leebeebeom.clothinghelper.ui.signin.ui.SignInDestinations.SignIN
+import com.leebeebeom.clothinghelper.ui.signin.ui.SignInDestinations.SignUp
 import com.leebeebeom.clothinghelper.ui.signin.ui.resetpassword.ResetPasswordScreen
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInScreen
 import com.leebeebeom.clothinghelper.ui.signin.ui.signup.SignUpScreen

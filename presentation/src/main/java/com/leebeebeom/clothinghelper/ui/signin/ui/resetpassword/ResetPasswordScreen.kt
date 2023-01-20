@@ -44,7 +44,6 @@ fun ResetPasswordScreen(
         taskSuccess = { uiState.isTaskSuccess },
         consumeIsTaskSuccess = uiState::consumeIsTaskSuccess
     )
-
     Column(
         modifier = Modifier
             .fillMaxSize()

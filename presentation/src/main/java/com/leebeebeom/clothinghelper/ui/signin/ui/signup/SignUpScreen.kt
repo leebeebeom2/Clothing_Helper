@@ -14,6 +14,7 @@ import com.leebeebeom.clothinghelper.composable.MaxWidthButton
 import com.leebeebeom.clothinghelper.composable.SimpleHeightSpacer
 import com.leebeebeom.clothinghelper.composable.SimpleToast
 import com.leebeebeom.clothinghelper.ui.signin.composable.GoogleSignInButton
+import com.leebeebeom.clothinghelper.ui.signin.composable.Logo
 import com.leebeebeom.clothinghelper.ui.signin.composable.OrDivider
 import com.leebeebeom.clothinghelper.ui.signin.composable.textfield.EmailTextField
 import com.leebeebeom.clothinghelper.ui.signin.composable.textfield.NameTextField
@@ -59,6 +60,7 @@ fun SignUpScreen(
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.Center
     ) {
+        Logo()
         EmailTextField(
             initialEmail = { uiState.email },
             error = { uiState.emailError },

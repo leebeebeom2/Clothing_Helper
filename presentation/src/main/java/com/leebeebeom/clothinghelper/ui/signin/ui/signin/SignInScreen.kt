@@ -15,6 +15,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.composable.*
 import com.leebeebeom.clothinghelper.ui.signin.composable.GoogleSignInButton
+import com.leebeebeom.clothinghelper.ui.signin.composable.Logo
 import com.leebeebeom.clothinghelper.ui.signin.composable.OrDivider
 import com.leebeebeom.clothinghelper.ui.signin.composable.textfield.EmailTextField
 import com.leebeebeom.clothinghelper.ui.signin.composable.textfield.PasswordTextField
@@ -41,6 +42,7 @@ fun SignInScreen(
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.Center
     ) {
+        Logo()
         EmailTextField(
             initialEmail = { uiState.email },
             error = { uiState.emailError },

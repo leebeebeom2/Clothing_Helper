@@ -14,5 +14,3 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Clothing Helper"
 include ':presentation'
-include ':clothinghelperdomain'
-include ':clothinghelperdata'

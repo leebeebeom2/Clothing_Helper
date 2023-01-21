@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Clothing Helper</string>
+    <string name="app_name">옷질도우미</string>
     <string name="sign_in">로그인</string>
     <string name="starts_with_google_email">구글 이메일로 시작하기</string>
     <string name="sign_up_with_email">이메일로 가입하기</string>
@@ -13,9 +13,10 @@
     <string name="sign_up">가입하기</string>
     <string name="error_password_confirm_not_same">⚠️ 비밀번호가 일치하지 않아요.</string>
     <string name="error_weak_password">⚠️ 비밀번호는 6자리 이상만 가능해요.</string>
-    <string name="error_email_already_in_use">이미 사용중인 이메일이네요. 😥</string>
+    <string name="error_email_already_in_use">이미 사용중인 이메일이에요. 😥</string>
     <string name="empty"></string>
     <string name="sign_in_complete">로그인 되었습니다. 😊</string>
+    <string name="sign_up_complete">이메일로 가입되었습니다. 😊</string>
     <string name="google_sign_in_complete">구글 이메일로 로그인 되었습니다. 😊</string>
     <string name="forgot_password">비밀번호를 잊으셨나요?</string>
     <string name="email_send_complete">이메일이 전송되었습니다. 😊</string>
@@ -50,9 +51,6 @@
     <string name="password_confirm">비밀번호 확인</string>
     <string name="canceled">취소되었습니다. 🙄</string>
     <string name="main_screen">메인 화면</string>
-    <string name="average_size">평균 사이즈</string>
-    <string name="top_info">총장: 71 가슴: 50\n어깨: 53 소매: 24</string>
-    <string name="most_have_size">가장 많이 보유한 사이즈</string>
     <string name="data_load_failed">데이터를 가져올 수 없습니다. 😥</string>
     <string name="categories">%1d categories</string>
     <string name="folders_charts">%1d folders, %2d charts</string>
@@ -78,14 +76,27 @@
     <string name="square_ratio">1 x 1</string>
     <string name="rectangle_ratio">3 x 4</string>
     <string name="add_photo">사진 추가</string>
-    <string name="top_length">총장(cm)</string>
-    <string name="top_shoulder">어깨(cm)</string>
-    <string name="top_chest">가슴(cm)</string>
-    <string name="top_sleeve">소매(cm)</string>
     <string name="brand">브랜드</string>
     <string name="product_name">제품명</string>
     <string name="size">사이즈</string>
     <string name="address">주소</string>
     <string name="size_chart_template">사이즈 표 템플릿</string>
     <string name="setting">Settings</string>
+    <string name="size_chart_template_sub_title">새로운 사이즈 표 생성 시 기본 구성을 변경할 수 있습니다.</string>
+
+    <string name="average_size">평균 사이즈</string>
+    <string name="info">총장: 110 허리: 28 허벅지: 32 밑위: 25 밑단: 24</string>
+    <string name="minimum_size">가장 작은 사이즈</string>
+    <string name="maximum_size">가장 큰 사이즈</string>
+
+    <string name="length">총장(cm)</string>
+    <string name="shoulder">어깨(cm)</string>
+    <string name="chest">가슴(cm)</string>
+    <string name="sleeve">소매(cm)</string>
+
+    <string name="waist_cm">허리(cm)</string>
+    <string name="waist_inch">허리(inch)</string>
+    <string name="rise">밑위(cm)</string>
+    <string name="thigh">허벅지(cm)</string>
+    <string name="hem">밑단(cm)</string>
 </resources>

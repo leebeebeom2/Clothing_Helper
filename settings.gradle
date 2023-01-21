@@ -13,4 +13,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Clothing Helper"
-include ':presentation'
+include ':app'

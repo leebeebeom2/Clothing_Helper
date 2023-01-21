@@ -33,7 +33,6 @@
     <string name="unknown_error">알 수 없는 이유로 실패하였습니다. 😥</string>
     <string name="too_many_requst_error">잠시 후 다시 시도해 주세요. 😥</string>
     <string name="network_error">인터넷 연결을 확인해 주세요. 😥</string>
-    <string name="network_error_for_load">데이터를 가져올 수 없습니다. 😥\n인터넷 연결을 확인해 주세요‼️</string>
     <string name="network_error_for_add_sub_category">카테고리를 추가할 수 없습니다. 😥\n인터넷 연결을 확인해 주세요‼️</string>
     <string name="network_error_for_add_folder">폴더를 추가할 수 없습니다. 😥\n인터넷 연결을 확인해 주세요‼️</string>
     <string name="network_error_for_edit_sub_category">카테고리를 수정할 수 없습니다. 😥\n인터넷 연결을 확인해 주세요‼️</string>
@@ -95,7 +94,6 @@
     <string name="sleeve">소매(cm)</string>
 
     <string name="waist_cm">허리(cm)</string>
-    <string name="waist_inch">허리(inch)</string>
     <string name="rise">밑위(cm)</string>
     <string name="thigh">허벅지(cm)</string>
     <string name="hem">밑단(cm)</string>

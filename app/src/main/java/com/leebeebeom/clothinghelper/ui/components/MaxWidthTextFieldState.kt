@@ -37,7 +37,7 @@ enum class KeyboardRoute {
 }
 
 enum class ImeActionRoute {
-    DEFAULT, DONE
+    NEXT, DONE
 }
 
 @Composable
@@ -192,8 +192,8 @@ open class MutableMaxWidthTextFieldState(
         KeyboardRoute.PASSWORD -> KeyboardType.Password
     }
     private val imeAction = when (imeActionRoute) {
+        ImeActionRoute.NEXT -> ImeAction.Next
         ImeActionRoute.DONE -> ImeAction.Done
-        ImeActionRoute.DEFAULT -> ImeAction.Default
     }
 
     override val keyboardOptions =
@@ -260,7 +260,11 @@ open class MutableMaxWidthTextFieldState(
 @NonRestartableComposable
 fun rememberMaxWidthTextFieldState(
     initialText: String = "",
+    initialError: Int? = null,
+    initialEnabled: Boolean = true,
     initialVisibility: Boolean = true,
+    keyboardRoute: KeyboardRoute = KeyboardRoute.TEXT,
+    imeActionRoute: ImeActionRoute = ImeActionRoute.DONE,
     @StringRes label: Int,
     @StringRes placeholder: Int? = null,
     showKeyboard: Boolean = false,
@@ -268,7 +272,11 @@ fun rememberMaxWidthTextFieldState(
 ): MutableMaxWidthTextFieldState = rememberSaveable(saver = MutableMaxWidthTextFieldState.Saver) {
     MutableMaxWidthTextFieldState(
         initialText = initialText,
+        initialError = initialError,
+        initialEnabled = initialEnabled,
         initialVisibility = initialVisibility,
+        keyboardRoute = keyboardRoute,
+        imeActionRoute = imeActionRoute,
         label = label,
         placeholder = placeholder,
         showKeyboard = showKeyboard,

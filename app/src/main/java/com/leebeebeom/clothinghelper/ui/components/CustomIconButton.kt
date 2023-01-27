@@ -1,22 +1,17 @@
-package com.leebeebeom.clothinghelper.composable
+package com.leebeebeom.clothinghelper.ui.components
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
+import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.LocalContentColor
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 
 @Composable
 fun CustomIconButton(
@@ -25,6 +20,7 @@ fun CustomIconButton(
     @DrawableRes drawable: Int,
     size: Dp = Dp.Unspecified,
     tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current),
+    @StringRes text: Int? = null,
     contentDescription: String? = null
 ) {
     CustomIconButton(
@@ -33,6 +29,7 @@ fun CustomIconButton(
         painter = painterResource(id = drawable),
         tint = tint,
         size = size,
+        text = text,
         contentDescription = contentDescription
     )
 }
@@ -44,19 +41,20 @@ fun CustomIconButton(
     painter: Painter,
     size: Dp = Dp.Unspecified,
     tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current),
+    @StringRes text: Int? = null,
     contentDescription: String? = null
 ) {
-    Box(
-        modifier = modifier
-            .clip(CircleShape)
-            .clickable(onClick = onClick)
-            .padding(2.dp)
-    ) {
-        Icon(
-            painter = painter,
-            contentDescription = contentDescription,
-            modifier = Modifier.size(size),
-            tint = tint
-        )
+    IconButton(modifier = modifier, onClick = onClick) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                painter = painter,
+                contentDescription = contentDescription,
+                modifier = Modifier.size(size),
+                tint = tint
+            )
+            text?.let {
+                SingleLineText(text = it, style = MaterialTheme.typography.body2)
+            }
+        }
     }
 }

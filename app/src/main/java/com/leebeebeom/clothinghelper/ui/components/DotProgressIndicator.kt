@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.composable
+package com.leebeebeom.clothinghelper.ui.components
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.leebeebeom.clothinghelper.theme.Disabled
+import com.leebeebeom.clothinghelper.ui.theme.Disabled
 
 @Composable
 fun CenterDotProgressIndicator(
@@ -25,7 +25,9 @@ fun CenterDotProgressIndicator(
     if (show()) Surface(color = backGround) {
         Box(modifier = Modifier
             .fillMaxSize()
+            // background click block
             .clickable(enabled = false) { }) {
+
             DotProgressIndicator(
                 modifier = Modifier.align(Alignment.Center),
                 size = 8.dp,

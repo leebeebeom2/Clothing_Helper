@@ -45,7 +45,7 @@ fun MaxWidthTextFieldWithError(
     modifier: Modifier = Modifier,
     state: MaxWidthTextFieldState,
     onValueChange: (TextFieldValue) -> Unit,
-    onFocusChanged: (FocusState) -> Unit,
+    onFocusChanged: (FocusState) -> Unit = {},
     trailingIcon: @Composable (() -> Unit)? = null
 ) {
     Column(modifier = modifier) {

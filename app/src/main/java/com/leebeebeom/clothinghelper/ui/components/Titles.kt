@@ -1,9 +1,11 @@
-package com.leebeebeom.clothinghelper.composable
+package com.leebeebeom.clothinghelper.ui.components
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
@@ -12,24 +14,30 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
+private const val space = 8
 
 @Composable
 fun TitleWithDivider(
-    @StringRes title: Int,
-    @StringRes subTitle: Int? = null,
-    icon: @Composable (() -> Unit)? = null
+    @StringRes title: Int, @StringRes subTitle: Int? = null, icon: @Composable (() -> Unit)? = null
 ) {
-    Column {
+    Column(modifier = Modifier.padding(start = 16.dp)) {
+        HeightSpacer(dp = space)
         TitleWithHorizontalScroll(title = title, subTitle = subTitle)
-        if (icon == null) SimpleHeightSpacer(dp = 8)
         DividerWithIcon(icon)
     }
 }
 
 @Composable
 fun DividerWithIcon(icon: @Composable (() -> Unit)? = null) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier = Modifier.offset { IntOffset(0, icon?.let { -40 } ?: 0) },
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (icon == null) HeightSpacer(dp = space)
         Divider(modifier = Modifier.weight(1f))
         icon?.invoke()
     }
@@ -47,14 +55,12 @@ fun TitleWithHorizontalScroll(
     ) {
         Column {
             SingleLineText(
-                text = title,
-                style = MaterialTheme.typography.h5.copy(fontSize = 28.sp)
+                text = title, style = MaterialTheme.typography.h4.copy(fontSize = 30.sp)
             )
 
             subTitle?.let {
                 SingleLineText(
-                    text = it,
-                    style = MaterialTheme.typography.body2.copy(
+                    text = it, style = MaterialTheme.typography.body2.copy(
                         LocalContentColor.current.copy(ContentAlpha.medium)
                     )
                 )

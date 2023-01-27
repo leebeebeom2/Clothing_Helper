@@ -18,14 +18,15 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-private const val space = 8
+private const val SPACE = 8
+const val DIVIDER_Y_OFFSET = -40
 
 @Composable
 fun TitleWithDivider(
     @StringRes title: Int, @StringRes subTitle: Int? = null, icon: @Composable (() -> Unit)? = null
 ) {
     Column(modifier = Modifier.padding(start = 16.dp)) {
-        HeightSpacer(dp = space)
+        HeightSpacer(dp = SPACE)
         TitleWithHorizontalScroll(title = title, subTitle = subTitle)
         DividerWithIcon(icon)
     }
@@ -34,10 +35,10 @@ fun TitleWithDivider(
 @Composable
 fun DividerWithIcon(icon: @Composable (() -> Unit)? = null) {
     Row(
-        modifier = Modifier.offset { IntOffset(0, icon?.let { -40 } ?: 0) },
+        modifier = Modifier.offset { IntOffset(0, icon?.let { DIVIDER_Y_OFFSET } ?: 0) },
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (icon == null) HeightSpacer(dp = space)
+        if (icon == null) HeightSpacer(dp = SPACE)
         Divider(modifier = Modifier.weight(1f))
         icon?.invoke()
     }

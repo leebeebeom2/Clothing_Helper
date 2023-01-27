@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.composable
+package com.leebeebeom.clothinghelper.ui.components
 
 import android.widget.Toast
 import androidx.annotation.DrawableRes
@@ -18,7 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SimpleIcon(
+fun IconWrapper(
     modifier: Modifier = Modifier,
     @DrawableRes drawable: Int,
     tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
@@ -32,17 +32,17 @@ fun SimpleIcon(
 }
 
 @Composable
-fun SimpleHeightSpacer(dp: Int) {
+fun HeightSpacer(dp: Int) {
     Spacer(modifier = Modifier.height(dp.dp))
 }
 
 @Composable
-fun SimpleWidthSpacer(dp: Int) {
+fun WidthSpacer(dp: Int) {
     Spacer(modifier = Modifier.width(dp.dp))
 }
 
 @Composable
-fun SimpleToast(@StringRes text: () -> Int?, toastShown: () -> Unit) {
+fun ToastWrapper(@StringRes text: () -> Int?, toastShown: () -> Unit) {
     text()?.let {
         Toast.makeText(LocalContext.current, stringResource(id = it), Toast.LENGTH_SHORT).show()
         toastShown()

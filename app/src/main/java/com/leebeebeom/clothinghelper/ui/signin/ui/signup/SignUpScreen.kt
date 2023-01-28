@@ -3,22 +3,27 @@ package com.leebeebeom.clothinghelper.ui.signin.ui.signup
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.composable.MaxWidthButton
-import com.leebeebeom.clothinghelper.composable.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.composable.SimpleToast
+import com.leebeebeom.clothinghelper.ui.ActivityViewModel
+import com.leebeebeom.clothinghelper.ui.components.HeightSpacer
+import com.leebeebeom.clothinghelper.ui.components.ImeActionRoute
+import com.leebeebeom.clothinghelper.ui.components.MaxWidthButton
+import com.leebeebeom.clothinghelper.ui.getActivityViewModel
 import com.leebeebeom.clothinghelper.ui.signin.composable.GoogleSignInButton
 import com.leebeebeom.clothinghelper.ui.signin.composable.Logo
 import com.leebeebeom.clothinghelper.ui.signin.composable.OrDivider
 import com.leebeebeom.clothinghelper.ui.signin.composable.textfield.EmailTextField
 import com.leebeebeom.clothinghelper.ui.signin.composable.textfield.NameTextField
 import com.leebeebeom.clothinghelper.ui.signin.composable.textfield.PasswordTextField
+import com.leebeebeom.clothinghelper.ui.signin.ui.SignInNavUiState
+import com.leebeebeom.clothinghelper.ui.signin.ui.SignInNavViewModel
 
 /*
 필드가 하나라도 비어있거나 에러 메세지가 표시중인 경우 가입하기 버튼 비활성화
@@ -51,55 +56,51 @@ import com.leebeebeom.clothinghelper.ui.signin.composable.textfield.PasswordText
 
 @Composable
 fun SignUpScreen(
+    signInNavViewModel: SignInNavViewModel,
+    signInNavUiState: SignInNavUiState = signInNavViewModel.signInNavUiState,
     viewModel: SignUpViewModel = hiltViewModel(),
-    uiState: SignUpUIState = viewModel.uiState
+    uiState: SignUpUiState = viewModel.uiState,
+    activityViewModel: ActivityViewModel = getActivityViewModel()
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.Center
+            .verticalScroll(rememberScrollState())
+            .padding(bottom = 40.dp), verticalArrangement = Arrangement.Center
     ) {
         Logo()
         EmailTextField(
-            initialEmail = { uiState.email },
-            error = { uiState.emailError },
-            updateError = uiState::updateEmailError,
-            onEmailChange = uiState::onEmailChange
+            error = { uiState.emailError }, onInputChange = viewModel::onEmailChange
         )
 
-        NameTextField(initialName = { uiState.name }, onNameChange = uiState::onNameChange)
+        NameTextField(onInputChange = viewModel::onNameChange)
 
         PasswordTextField(
-            initiallPassword = { uiState.password },
             error = { uiState.passwordError },
-            imeAction = ImeAction.Next,
-            onPasswordChange = uiState::onPasswordChange,
-            updateError = uiState::updatePasswordError
+            onInputChange = viewModel::onPasswordChange,
+            imeActionRoute = ImeActionRoute.NEXT
         )
 
         PasswordTextField(
             label = R.string.password_confirm,
-            initiallPassword = { uiState.passwordConfirm },
             error = { uiState.passwordConfirmError },
-            imeAction = ImeAction.Done,
-            onPasswordChange = uiState::onPasswordConfirmChange,
-            updateError = uiState::updatePasswordConfirmError
+            onInputChange = viewModel::onPasswordConfirmChange
         )
 
-        SimpleHeightSpacer(dp = 12)
+        HeightSpacer(dp = 12)
         MaxWidthButton(
             text = R.string.sign_up,
             enabled = { uiState.buttonEnabled },
-            onClick = viewModel::signUpWithEmailAndPassword,
+            onClick = { viewModel.signUpWithEmailAndPassword(activityViewModel::showToast) },
         )
         OrDivider()
-        GoogleSignInButton(
-            enabled = { uiState.googleButtonEnabled },
-            onActivityResult = viewModel::signInWithGoogleEmail,
-            onClick = { uiState.updateGoogleButtonEnabled(false) }
-        )
+        GoogleSignInButton(enabled = { signInNavUiState.googleButtonEnabled },
+            onActivityResult = {
+                signInNavViewModel.signInWithGoogleEmail(
+                    showToast = activityViewModel::showToast,
+                    activityResult = it
+                )
+            },
+            onClick = { signInNavViewModel.setGoogleButtonEnable(false) })
     }
-
-    SimpleToast(text = { uiState.toastText }, toastShown = uiState::toastShown)
 }

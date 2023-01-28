@@ -1,12 +1,7 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui.resetpassword
 
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -16,9 +11,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.composable.MaxWidthButton
-import com.leebeebeom.clothinghelper.composable.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.composable.SimpleToast
+import com.leebeebeom.clothinghelper.ui.ActivityViewModel
+import com.leebeebeom.clothinghelper.ui.components.HeightSpacer
+import com.leebeebeom.clothinghelper.ui.components.ImeActionRoute
+import com.leebeebeom.clothinghelper.ui.components.MaxWidthButton
+import com.leebeebeom.clothinghelper.ui.getActivityViewModel
+import com.leebeebeom.clothinghelper.ui.signin.composable.SignInBaseColumn
 import com.leebeebeom.clothinghelper.ui.signin.composable.textfield.EmailTextField
 
 /*
@@ -38,18 +36,14 @@ import com.leebeebeom.clothinghelper.ui.signin.composable.textfield.EmailTextFie
 @Composable
 fun ResetPasswordScreen(
     viewModel: ResetPasswordViewModel = hiltViewModel(),
-    uiState: ResetPasswordUIState = viewModel.uiState
+    uiState: ResetPasswordUiState = viewModel.uiState,
+    activityViewModel: ActivityViewModel = getActivityViewModel()
 ) {
-    TaskSuccess(
-        taskSuccess = { uiState.isTaskSuccess },
-        consumeIsTaskSuccess = uiState::consumeIsTaskSuccess
+    GoBack(
+        taskSuccess = { uiState.isTaskSuccess }, consumeTaskSuccess = viewModel::consumeTaskSuccess
     )
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.Center
-    ) {
+
+    SignInBaseColumn {
         Text(
             text = stringResource(id = R.string.reset_password_text),
             style = MaterialTheme.typography.body2,
@@ -57,27 +51,22 @@ fun ResetPasswordScreen(
         )
 
         EmailTextField(
-            initialEmail = { uiState.email },
             error = { uiState.emailError },
-            updateError = uiState::updateEmailError,
-            onEmailChange = uiState::onEmailChange
+            imeActionRoute = ImeActionRoute.DONE,
+            onInputChange = viewModel::onEmailChange
         )
 
-        SimpleHeightSpacer(dp = 12)
-        MaxWidthButton(
-            text = R.string.send,
+        HeightSpacer(dp = 12)
+        MaxWidthButton(text = R.string.send,
             enabled = { uiState.buttonEnabled },
-            onClick = viewModel::sendResetPasswordEmail
-        )
+            onClick = { viewModel.sendResetPasswordEmail(showToast = activityViewModel::showToast) })
     }
-
-    SimpleToast(text = { uiState.toastText }, toastShown = uiState::toastShown)
 }
 
 @Composable
-private fun TaskSuccess(taskSuccess: () -> Boolean, consumeIsTaskSuccess: () -> Unit) {
+private fun GoBack(taskSuccess: () -> Boolean, consumeTaskSuccess: () -> Unit) {
     if (taskSuccess()) {
         (LocalContext.current as ComponentActivity).onBackPressedDispatcher.onBackPressed()
-        consumeIsTaskSuccess()
+        consumeTaskSuccess()
     }
 }

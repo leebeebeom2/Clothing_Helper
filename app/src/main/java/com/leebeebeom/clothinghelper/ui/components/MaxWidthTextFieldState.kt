@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalComposeUiApi::class)
+@file:OptIn(ExperimentalComposeUiApi::class, ExperimentalComposeUiApi::class)
 
 package com.leebeebeom.clothinghelper.ui.components
 
@@ -18,6 +18,7 @@ import androidx.compose.ui.focus.*
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
@@ -46,6 +47,7 @@ fun MaxWidthTextFieldWithError(
     state: MaxWidthTextFieldState,
     onValueChange: (TextFieldValue) -> Unit,
     onFocusChanged: (FocusState) -> Unit,
+    onInputChange: (String) -> Unit,
     trailingIcon: @Composable (() -> Unit)? = null
 ) {
     Column(modifier = modifier) {
@@ -58,6 +60,7 @@ fun MaxWidthTextFieldWithError(
         ErrorText(state = state)
     }
     ShowKeyboard(state = state)
+    TextFieldEmit(state = state, onInputChange = onInputChange)
 }
 
 @Composable
@@ -116,7 +119,7 @@ interface MaxWidthTextFieldState {
     // mutable
     val textFieldValue: TextFieldValue
     val error: Int?
-    val isError get() = error != null
+    val isError: Boolean
     val hasFocus: Boolean
     val enabled: Boolean
     val isVisible: Boolean
@@ -166,22 +169,23 @@ interface MaxWidthTextFieldState {
     }
 }
 
-@Stable
 open class MutableMaxWidthTextFieldState(
-    initialText: String = "",
-    initialError: Int? = null,
+    initialText: String,
+    initialError: Int?,
     initialHasFocus: Boolean = false,
-    initialEnabled: Boolean = true,
-    initialVisibility: Boolean = true,
-    final override val keyboardRoute: KeyboardRoute = KeyboardRoute.TEXT,
-    final override val imeActionRoute: ImeActionRoute = ImeActionRoute.DONE,
+    initialEnabled: Boolean,
+    initialVisibility: Boolean,
+    final override val keyboardRoute: KeyboardRoute,
+    final override val imeActionRoute: ImeActionRoute,
     override val label: Int,
     override val placeholder: Int?,
     override val showKeyboard: Boolean,
     override val cancelIconEnabled: Boolean,
+    private val blockBlank: Boolean
 ) : MaxWidthTextFieldState {
     override var textFieldValue by mutableStateOf(TextFieldValue(initialText))
     override var error: Int? by mutableStateOf(initialError)
+    override val isError by derivedStateOf { error != null }
     override var hasFocus by mutableStateOf(initialHasFocus)
     override var enabled by mutableStateOf(initialEnabled)
     override var isVisible by mutableStateOf(initialVisibility)
@@ -201,8 +205,14 @@ open class MutableMaxWidthTextFieldState(
 
     override val focusRequester: FocusRequester = FocusRequester()
 
-    fun onValueChange(newTextField: TextFieldValue) {
-        textFieldValue = newTextField
+    open fun onValueChange(newTextField: TextFieldValue) {
+        if (blockBlank) {
+            textFieldValue = newTextField.copy(text = newTextField.text.trim())
+            if (textFieldValue.text != newTextField.text) error = null
+        } else {
+            textFieldValue = newTextField
+            error = null
+        }
     }
 
     override fun showKeyboard(
@@ -215,13 +225,19 @@ open class MutableMaxWidthTextFieldState(
         }
     }
 
-    open fun onFocusChanged(focusState: FocusState) {
+    fun onFocusChanged(focusState: FocusState) {
         hasFocus = focusState.hasFocus
+        if (hasFocus)
+            textFieldValue = textFieldValue.copy(selection = TextRange(textFieldValue.text.length))
     }
 
     override fun getKeyboardActions(focusManager: FocusManager) =
         if (imeAction == ImeAction.Done) KeyboardActions(onDone = { focusManager.clearFocus() })
         else KeyboardActions.Default
+
+    fun visibilityToggle() {
+        isVisible = !isVisible
+    }
 
     companion object {
         val Saver: Saver<MutableMaxWidthTextFieldState, *> = listSaver(save = {
@@ -236,7 +252,8 @@ open class MutableMaxWidthTextFieldState(
                 it.label,
                 it.placeholder,
                 it.showKeyboard,
-                it.cancelIconEnabled
+                it.cancelIconEnabled,
+                it.blockBlank
             )
         }, restore = {
             MutableMaxWidthTextFieldState(
@@ -250,7 +267,8 @@ open class MutableMaxWidthTextFieldState(
                 label = it[7] as Int,
                 placeholder = it[8] as Int?,
                 showKeyboard = it[9] as Boolean,
-                cancelIconEnabled = it[10] as Boolean
+                cancelIconEnabled = it[10] as Boolean,
+                blockBlank = it[11] as Boolean
             )
         })
     }
@@ -259,8 +277,8 @@ open class MutableMaxWidthTextFieldState(
 @Composable
 @NonRestartableComposable
 fun rememberMaxWidthTextFieldState(
-    initialText: String = "",
-    initialError: Int? = null,
+    initialInput: String = "",
+    initialError: () -> Int? = { null },
     initialEnabled: Boolean = true,
     initialVisibility: Boolean = true,
     keyboardRoute: KeyboardRoute = KeyboardRoute.TEXT,
@@ -269,20 +287,38 @@ fun rememberMaxWidthTextFieldState(
     @StringRes placeholder: Int? = null,
     showKeyboard: Boolean = false,
     cancelIconEnabled: Boolean = true,
-): MutableMaxWidthTextFieldState = rememberSaveable(saver = MutableMaxWidthTextFieldState.Saver) {
-    MutableMaxWidthTextFieldState(
-        initialText = initialText,
-        initialError = initialError,
-        initialEnabled = initialEnabled,
-        initialVisibility = initialVisibility,
-        keyboardRoute = keyboardRoute,
-        imeActionRoute = imeActionRoute,
-        label = label,
-        placeholder = placeholder,
-        showKeyboard = showKeyboard,
-        cancelIconEnabled = cancelIconEnabled
-    )
-}
+    blockBlank: Boolean = false
+): MutableMaxWidthTextFieldState =
+    rememberSaveable(
+        saver = MutableMaxWidthTextFieldState.Saver,
+        inputs = arrayOf(
+            initialInput,
+            initialError,
+            initialEnabled,
+            initialVisibility,
+            keyboardRoute,
+            imeActionRoute,
+            label,
+            placeholder,
+            showKeyboard,
+            cancelIconEnabled,
+            blockBlank
+        )
+    ) {
+        MutableMaxWidthTextFieldState(
+            initialText = initialInput,
+            initialError = initialError(),
+            initialEnabled = initialEnabled,
+            initialVisibility = initialVisibility,
+            keyboardRoute = keyboardRoute,
+            imeActionRoute = imeActionRoute,
+            label = label,
+            placeholder = placeholder,
+            showKeyboard = showKeyboard,
+            cancelIconEnabled = cancelIconEnabled,
+            blockBlank = blockBlank
+        )
+    }
 
 @Composable
 private fun ShowKeyboard(
@@ -292,4 +328,12 @@ private fun ShowKeyboard(
     if (state.showKeyboard) LaunchedEffect(
         key1 = Unit
     ) { state.showKeyboard(scope = this, keyboardController = keyboardController) }
+}
+
+@Composable
+private fun TextFieldEmit(state: MaxWidthTextFieldState, onInputChange: (String) -> Unit) {
+    val currentOnInputChange by rememberUpdatedState(newValue = onInputChange)
+    LaunchedEffect(key1 = state) {
+        snapshotFlow { state.textFieldValue.text }.collect(currentOnInputChange)
+    }
 }

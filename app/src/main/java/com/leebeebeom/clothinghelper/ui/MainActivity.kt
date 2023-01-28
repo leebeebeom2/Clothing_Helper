@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.leebeebeom.clothinghelper.ui.components.ToastWrapper
 import com.leebeebeom.clothinghelper.ui.main.MainNavHost
 import com.leebeebeom.clothinghelper.ui.signin.ui.SignInNavHost
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,9 +21,17 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun MainActivityScreen(viewModel: MainActivityViewModel = hiltViewModel()) {
+    fun MainActivityScreen(
+        viewModel: ActivityViewModel = hiltViewModel(),
+        uiState: ActivityUiState = viewModel.activityUiState
+    ) {
         val isSignIn by viewModel.isSignIn.collectAsStateWithLifecycle()
 
         Crossfade(targetState = isSignIn) { if (it) MainNavHost() else SignInNavHost() }
+
+        ToastWrapper(
+            text = { uiState.toastText },
+            toastShown = viewModel::toastShown
+        )
     }
 }

@@ -32,5 +32,6 @@ private fun rememberEmailTextFieldState(
     showKeyboard = true,
     initialError = initialError,
     keyboardRoute = KeyboardRoute.EMAIL,
-    imeActionRoute = imeActionRoute
+    imeActionRoute = imeActionRoute,
+    blockBlank = true
 )

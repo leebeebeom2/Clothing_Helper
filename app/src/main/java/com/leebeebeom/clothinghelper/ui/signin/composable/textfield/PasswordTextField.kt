@@ -42,5 +42,6 @@ private fun rememberPasswordTextFieldState(
     keyboardRoute = KeyboardRoute.PASSWORD,
     imeActionRoute = imeActionRoute,
     label = label,
-    cancelIconEnabled = false
+    cancelIconEnabled = false,
+    blockBlank = true
 )

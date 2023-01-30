@@ -22,7 +22,7 @@ fun ExpandIcon(
     )
 
     CustomIconButton(
-        modifier = modifier.graphicsLayer { rotationZ = rotate },
+        modifier = modifier.graphicsLayer { rotationZ = rotate }, // TODO 리컴포지션 테스트
         onClick = onClick,
         drawable = R.drawable.ic_expand_more,
         tint = LocalContentColor.current.copy(alpha = 0.6f),

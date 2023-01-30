@@ -15,8 +15,8 @@ import com.leebeebeom.clothinghelper.ui.components.SingleLineText
 
 @Composable
 fun DrawerHeader(
-    userName: () -> String,
-    userEmail: () -> String,
+    userName: () -> String?,
+    userEmail: () -> String?,
     navigateToSetting: () -> Unit
 ) {
     Row(
@@ -31,7 +31,7 @@ fun DrawerHeader(
 }
 
 @Composable
-private fun RowScope.HeaderText(userName: () -> String, userEmail: () -> String) {
+private fun RowScope.HeaderText(userName: () -> String?, userEmail: () -> String?) {
     SingleLineText(
         modifier = Modifier.weight(1f),
         style = MaterialTheme.typography.subtitle1,

@@ -22,12 +22,12 @@ const val DRAWER_ESSENTIAL_MENU_HEIGHT = 40
 const val DRAWER_ESSENTIAL_MENU_ICON_SIZE = 22
 
 fun LazyListScope.drawerEssentialMenus(
-    essentialMenus: ImmutableList<EssentialMenu>,
-    onEssentialMenuClick: (essentialMenu: EssentialMenuType) -> Unit
+    drawerEssentialMenus: ImmutableList<DrawerEssentialMenu>,
+    onEssentialMenuClick: (essentialMenu: DrawerEssentialMenuType) -> Unit
 ) {
-    items(items = essentialMenus, key = { it.name }) {
+    items(items = drawerEssentialMenus, key = { it.name }) {
         DrawerEssentialMenu(
-            essentialMenu = it,
+            drawerEssentialMenu = it,
             onClick = onEssentialMenuClick,
         )
     }
@@ -35,35 +35,35 @@ fun LazyListScope.drawerEssentialMenus(
 
 @Composable
 private fun DrawerEssentialMenu(
-    essentialMenu: EssentialMenu, onClick: (EssentialMenuType) -> Unit
+    drawerEssentialMenu: DrawerEssentialMenu, onClick: (DrawerEssentialMenuType) -> Unit
 ) {
     DrawerRow(
         modifier = Modifier.heightIn(DRAWER_ESSENTIAL_MENU_HEIGHT.dp),
-        onClick = { onClick(essentialMenu.type) }) {
+        onClick = { onClick(drawerEssentialMenu.type) }) {
         IconWrapper(
             modifier = Modifier.size(DRAWER_ESSENTIAL_MENU_ICON_SIZE.dp),
-            drawable = essentialMenu.drawable
+            drawable = drawerEssentialMenu.drawable
         )
         WidthSpacer(dp = 8)
         SingleLineText(
-            text = stringResource(id = essentialMenu.name),
+            text = stringResource(id = drawerEssentialMenu.name),
             style = MaterialTheme.typography.body1.copy(letterSpacing = 0.75.sp)
         )
     }
 }
 
-data class EssentialMenu(
-    val name: Int, val drawable: Int, val type: EssentialMenuType
+data class DrawerEssentialMenu(
+    val name: Int, val drawable: Int, val type: DrawerEssentialMenuType
 )
 
-enum class EssentialMenuType {
+enum class DrawerEssentialMenuType {
     MainScreen, Favorite, SeeAll, Trash
 }
 
 fun getEssentialMenus() =
     listOf(
-        EssentialMenu(R.string.main_screen, R.drawable.ic_home, EssentialMenuType.MainScreen),
-        EssentialMenu(R.string.favorite, R.drawable.ic_star, EssentialMenuType.Favorite),
-        EssentialMenu(R.string.see_all, R.drawable.ic_list, EssentialMenuType.SeeAll),
-        EssentialMenu(R.string.trash, R.drawable.ic_delete, EssentialMenuType.Trash)
+        DrawerEssentialMenu(R.string.main_screen, R.drawable.ic_home, DrawerEssentialMenuType.MainScreen),
+        DrawerEssentialMenu(R.string.favorite, R.drawable.ic_star, DrawerEssentialMenuType.Favorite),
+        DrawerEssentialMenu(R.string.see_all, R.drawable.ic_list, DrawerEssentialMenuType.SeeAll),
+        DrawerEssentialMenu(R.string.trash, R.drawable.ic_delete, DrawerEssentialMenuType.Trash)
     ).toImmutableList()

@@ -14,11 +14,11 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ShowToast
 import com.leebeebeom.clothinghelper.data.repository.A_NETWORK_ERROR
 import com.leebeebeom.clothinghelper.data.repository.util.TAG
 import com.leebeebeom.clothinghelper.domain.model.AuthResult.*
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
+import com.leebeebeom.clothinghelper.ui.util.ShowToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,7 +32,6 @@ class SignInNavViewModel @Inject constructor(private val googleSignInUseCase: Go
 
     private val _signInNavUiState = MutableSignInNavUiState()
     val signInNavUiState: SignInNavUiState = _signInNavUiState
-
 
     fun signInWithGoogleEmail(activityResult: ActivityResult, showToast: ShowToast) {
         when (activityResult.resultCode) {
@@ -85,6 +84,7 @@ class SignInNavViewModel @Inject constructor(private val googleSignInUseCase: Go
     }
 }
 
+@Stable
 interface SignInNavUiState {
     val googleButtonEnabled: Boolean
 }
@@ -94,9 +94,8 @@ class MutableSignInNavUiState : SignInNavUiState {
 }
 
 @Composable
-fun getSignInNavViewModel(
-    entry: NavBackStackEntry,
-    navController: NavController
+fun signInNavViewModel(
+    entry: NavBackStackEntry, navController: NavController
 ): SignInNavViewModel {
     val signInNavEntry =
         remember(entry) { navController.getBackStackEntry(SignInDestinations.SignInNav_Route) }

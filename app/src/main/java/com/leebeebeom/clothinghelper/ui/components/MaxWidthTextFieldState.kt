@@ -34,6 +34,7 @@ import com.leebeebeom.clothinghelper.ui.util.Anime.Error.errorIn
 import com.leebeebeom.clothinghelper.ui.util.Anime.Error.errorOut
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 enum class KeyboardRoute {
@@ -335,4 +336,9 @@ private fun TextFieldEmit(state: MaxWidthTextFieldState, onInputChange: (String)
     LaunchedEffect(key1 = state) {
         snapshotFlow { state.textFieldValue.text.trim() }.collect(currentOnInputChange)
     }
+}
+
+@Composable
+fun SetError(error: Flow<Int?>, collect: (Int?) -> Unit) {
+    LaunchedEffect(key1 = error) { error.collect(collect) }
 }

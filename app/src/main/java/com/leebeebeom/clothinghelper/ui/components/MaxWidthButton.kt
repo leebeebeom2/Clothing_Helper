@@ -17,7 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
-val buttonHeight = 52.dp
+const val BUTTON_HEIGHT = 52
 
 @Composable
 fun MaxWidthButton(
@@ -31,7 +31,7 @@ fun MaxWidthButton(
     Button(
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(buttonHeight),
+            .heightIn(BUTTON_HEIGHT.dp),
         onClick = {
             onClick()
             focusManager.clearFocus()

@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leebeebeom.clothinghelper.ui.main.MainNavHost
 import com.leebeebeom.clothinghelper.ui.signin.ui.SignInNavHost
+import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -29,7 +30,7 @@ class MainActivity : ComponentActivity() {
     ) {
         val isSignIn by viewModel.isSignIn.collectAsStateWithLifecycle()
 
-        CrossFadeWrapper { isSignIn }
+        ClothingHelperTheme { CrossFadeWrapper { isSignIn } }
 
         ToastWrapper(
             text = { uiState.toastText }, toastShown = viewModel::toastShown

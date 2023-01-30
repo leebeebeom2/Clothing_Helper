@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.ActivityViewModel
 import com.leebeebeom.clothinghelper.ui.activityViewModel
@@ -33,7 +33,7 @@ fun SignInScreen(
     navigateToSignUp: () -> Unit,
     signInNavViewModel: SignInNavViewModel,
     signInNavUiState: SignInNavUiState = signInNavViewModel.signInNavUiState,
-    viewModel: SignInViewModel = viewModel(),
+    viewModel: SignInViewModel = hiltViewModel(),
     uiState: EmailAndPasswordState = viewModel.uiState,
     activityViewModel: ActivityViewModel = activityViewModel()
 ) {

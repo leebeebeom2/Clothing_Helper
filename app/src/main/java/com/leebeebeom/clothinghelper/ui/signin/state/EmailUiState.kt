@@ -10,6 +10,6 @@ interface EmailUiState {
 
 open class MutableEmailUiState : EmailUiState {
     override var emailError: Int? by mutableStateOf(null)
-    var email = ""
+    var email by mutableStateOf("")
     override val buttonEnabled by derivedStateOf { email.isNotBlank() && emailError == null }
 }

@@ -9,6 +9,6 @@ interface EmailAndPasswordState : EmailUiState {
 
 open class MutableEmailAndPasswordUiState : MutableEmailUiState(), EmailAndPasswordState {
     override var passwordError: Int? by mutableStateOf(null)
-    var password = ""
+    var password by mutableStateOf("")
     override val buttonEnabled by derivedStateOf { super.buttonEnabled && password.isNotBlank() && passwordError == null }
 }

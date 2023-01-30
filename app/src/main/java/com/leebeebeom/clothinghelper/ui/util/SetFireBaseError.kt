@@ -1,9 +1,9 @@
-package com.leebeebeom.clothinghelper.ui.signin.base
+package com.leebeebeom.clothinghelper.ui.util
 
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelperdata.repository.A_NETWORK_ERROR
-import com.leebeebeom.clothinghelperdata.repository.TOO_MANY_REQUEST
-import com.leebeebeom.clothinghelperdata.repository.util.logE
+import com.leebeebeom.clothinghelper.data.repository.A_NETWORK_ERROR
+import com.leebeebeom.clothinghelper.data.repository.TOO_MANY_REQUEST
+import com.leebeebeom.clothinghelper.data.repository.util.logE
 
 private object FirebaseAuthErrorCode {
     const val ERROR_INVALID_EMAIL = "ERROR_INVALID_EMAIL"
@@ -12,11 +12,11 @@ private object FirebaseAuthErrorCode {
     const val ERROR_WRONG_PASSWORD = "ERROR_WRONG_PASSWORD"
 }
 
-fun setFireBaseError(
+fun fireBaseError(
     errorCode: String,
     updateEmailError: (error: Int) -> Unit,
     updatePasswordError: (error: Int) -> Unit = {},
-    showToast: (text: Int) -> Unit
+    showToast: ShowToast
 ) {
     when (errorCode) {
         FirebaseAuthErrorCode.ERROR_INVALID_EMAIL -> updateEmailError(R.string.error_invalid_email)

@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.main.root.components
+package com.leebeebeom.clothinghelper.ui.main.drawer.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
@@ -6,8 +6,8 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.ui.graphics.Color
-import com.leebeebeom.clothinghelper.util.Anime
-import com.leebeebeom.clothinghelperdomain.model.data.BaseModel
+import com.leebeebeom.clothinghelper.domain.model.data.BaseModel
+import com.leebeebeom.clothinghelper.ui.util.Anime
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable

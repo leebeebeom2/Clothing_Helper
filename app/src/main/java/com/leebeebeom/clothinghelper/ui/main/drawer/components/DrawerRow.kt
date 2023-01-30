@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.main.root.components
+package com.leebeebeom.clothinghelper.ui.main.drawer.components
 
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -25,15 +26,14 @@ fun DrawerRow(
     modifier: Modifier,
     onClick: () -> Unit,
     onLongClick: () -> Unit = {},
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    haptic: HapticFeedback = LocalHapticFeedback.current,
     content: @Composable RowScope.() -> Unit
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val haptic = LocalHapticFeedback.current
-
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = 4.dp)
             .clip(MaterialTheme.shapes.small)
             .indication(interactionSource = interactionSource, LocalIndication.current)
             .pointerInput(Unit) {

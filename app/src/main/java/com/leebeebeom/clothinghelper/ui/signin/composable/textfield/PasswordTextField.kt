@@ -1,13 +1,11 @@
 package com.leebeebeom.clothinghelper.ui.signin.composable.textfield
 
 import androidx.annotation.StringRes
+import androidx.compose.material.LocalContentColor
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.components.ImeActionRoute
-import com.leebeebeom.clothinghelper.ui.components.KeyboardRoute
-import com.leebeebeom.clothinghelper.ui.components.MaxWidthTextFieldWithError
-import com.leebeebeom.clothinghelper.ui.components.rememberMaxWidthTextFieldState
-import com.leebeebeom.clothinghelper.ui.signin.composable.VisibleIcon
+import com.leebeebeom.clothinghelper.ui.components.*
 
 @Composable
 fun PasswordTextField(
@@ -16,7 +14,7 @@ fun PasswordTextField(
     @StringRes label: Int = R.string.password,
     onInputChange: (String) -> Unit
 ) {
-    val state = rememberPasswordTextFieldState(initialError = error, imeActionRoute, label)
+    val state = rememberPasswordTextFieldState(imeActionRoute = imeActionRoute, label = label)
 
     MaxWidthTextFieldWithError(
         state = state,
@@ -28,16 +26,27 @@ fun PasswordTextField(
                 isVisible = { state.isVisible },
                 onClick = state::visibilityToggle
             )
-        })
+        }
+    )
+
+    SetTextFieldError(error = error, collect = { state.error = it })
+}
+
+@Composable
+fun VisibleIcon(isVisible: () -> Boolean, onClick: () -> Unit) {
+    CustomIconButton(
+        drawable = if (isVisible()) R.drawable.ic_visibility_off else R.drawable.ic_visibility,
+        tint = LocalContentColor.current.copy(0.4f),
+        onClick = onClick,
+        size = 24.dp
+    )
 }
 
 @Composable
 private fun rememberPasswordTextFieldState(
-    initialError: () -> Int?,
-    imeActionRoute: ImeActionRoute = ImeActionRoute.DONE,
+    imeActionRoute: ImeActionRoute,
     label: Int = R.string.password
 ) = rememberMaxWidthTextFieldState(
-    initialError = initialError,
     initialVisibility = false,
     keyboardRoute = KeyboardRoute.PASSWORD,
     imeActionRoute = imeActionRoute,

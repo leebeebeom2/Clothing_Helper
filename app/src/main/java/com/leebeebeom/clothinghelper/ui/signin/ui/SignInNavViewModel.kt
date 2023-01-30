@@ -8,7 +8,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.AuthCredential
@@ -95,9 +94,9 @@ class MutableSignInNavUiState : SignInNavUiState {
 
 @Composable
 fun signInNavViewModel(
-    entry: NavBackStackEntry, navController: NavController
+    entry: NavBackStackEntry,
+    navGraphEntry: NavBackStackEntry
 ): SignInNavViewModel {
-    val signInNavEntry =
-        remember(entry) { navController.getBackStackEntry(SignInDestinations.SignInNav_Route) }
+    val signInNavEntry = remember(entry) { navGraphEntry }
     return hiltViewModel(signInNavEntry)
 }

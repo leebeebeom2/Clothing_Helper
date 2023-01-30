@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.leebeebeom.clothinghelper.composable.SimpleHeightSpacer
+import com.leebeebeom.clothinghelper.ui.components.HeightSpacer
 
 @Composable
 fun DialogRoot(onDismiss: () -> Unit, content: @Composable () -> Unit) {
@@ -16,14 +16,14 @@ fun DialogRoot(onDismiss: () -> Unit, content: @Composable () -> Unit) {
         Surface(
             color = MaterialTheme.colors.surface,
             shape = MaterialTheme.shapes.medium,
-            modifier = Modifier.padding(start = 40.dp, end = 40.dp)
+            modifier = Modifier.padding(start = 20.dp, end = 20.dp)
         ) {
             Column(
                 modifier = Modifier
                     .padding(start = 20.dp, end = 20.dp, top = 20.dp)
             ) {
                 content()
-                SimpleHeightSpacer(dp = 20)
+                HeightSpacer(dp = 20)
             }
         }
     }

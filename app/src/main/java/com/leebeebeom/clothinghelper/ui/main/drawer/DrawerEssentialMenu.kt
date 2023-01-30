@@ -18,8 +18,8 @@ import com.leebeebeom.clothinghelper.ui.main.drawer.components.DrawerRow
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
-const val ESSENTIAL_MENU_HEIGHT = 40
-const val ESSENTIAL_MENU_ICON_SIZE = 22
+const val DRAWER_ESSENTIAL_MENU_HEIGHT = 40
+const val DRAWER_ESSENTIAL_MENU_ICON_SIZE = 22
 
 fun LazyListScope.drawerEssentialMenus(
     essentialMenus: ImmutableList<EssentialMenu>,
@@ -38,10 +38,10 @@ private fun DrawerEssentialMenu(
     essentialMenu: EssentialMenu, onClick: (EssentialMenuType) -> Unit
 ) {
     DrawerRow(
-        modifier = Modifier.heightIn(ESSENTIAL_MENU_HEIGHT.dp),
+        modifier = Modifier.heightIn(DRAWER_ESSENTIAL_MENU_HEIGHT.dp),
         onClick = { onClick(essentialMenu.type) }) {
         IconWrapper(
-            modifier = Modifier.size(ESSENTIAL_MENU_ICON_SIZE.dp),
+            modifier = Modifier.size(DRAWER_ESSENTIAL_MENU_ICON_SIZE.dp),
             drawable = essentialMenu.drawable
         )
         WidthSpacer(dp = 8)

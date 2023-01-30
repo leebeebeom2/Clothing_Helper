@@ -49,7 +49,9 @@ fun SignInNavHost(
                 signInNavViewModel(entry = it, navGraphEntry = navController.navGraphEntry)
             )
         }
-        composable(route = ResetPassword_Route) { ResetPasswordScreen() }
+        composable(route = ResetPassword_Route) {
+            ResetPasswordScreen(popBackStack = { navController.popBackStack() })
+        }
     }
 
     CenterDotProgressIndicator(show = { activityViewModel.activityUiState.isSignInLoading })

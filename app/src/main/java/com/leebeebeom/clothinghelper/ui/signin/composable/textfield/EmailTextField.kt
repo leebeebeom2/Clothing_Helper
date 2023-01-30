@@ -3,11 +3,10 @@ package com.leebeebeom.clothinghelper.ui.signin.composable.textfield
 import androidx.compose.runtime.Composable
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.components.*
-import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun EmailTextField(
-    error: Flow<Int?>,
+    error: () -> Int?,
     imeActionRoute: ImeActionRoute = ImeActionRoute.NEXT,
     onInputChange: (String) -> Unit
 ) {

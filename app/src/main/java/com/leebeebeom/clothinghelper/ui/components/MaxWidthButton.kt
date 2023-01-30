@@ -21,7 +21,6 @@ val buttonHeight = 52.dp
 
 @Composable
 fun MaxWidthButton(
-    modifier: Modifier = Modifier,
     @StringRes text: Int,
     enabled: () -> Boolean = { true },
     colors: ButtonColors = ButtonDefaults.buttonColors(),
@@ -30,7 +29,7 @@ fun MaxWidthButton(
     onClick: () -> Unit,
 ) {
     Button(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .heightIn(buttonHeight),
         onClick = {

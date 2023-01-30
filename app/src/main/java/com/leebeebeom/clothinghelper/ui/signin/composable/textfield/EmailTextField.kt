@@ -2,18 +2,16 @@ package com.leebeebeom.clothinghelper.ui.signin.composable.textfield
 
 import androidx.compose.runtime.Composable
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.components.ImeActionRoute
-import com.leebeebeom.clothinghelper.ui.components.KeyboardRoute
-import com.leebeebeom.clothinghelper.ui.components.MaxWidthTextFieldWithError
-import com.leebeebeom.clothinghelper.ui.components.rememberMaxWidthTextFieldState
+import com.leebeebeom.clothinghelper.ui.components.*
+import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun EmailTextField(
-    error: () -> Int?,
+    error: Flow<Int?>,
     imeActionRoute: ImeActionRoute = ImeActionRoute.NEXT,
     onInputChange: (String) -> Unit
 ) {
-    val state = rememberEmailTextFieldState(initialError = error, imeActionRoute = imeActionRoute)
+    val state = rememberEmailTextFieldState(imeActionRoute = imeActionRoute)
 
     MaxWidthTextFieldWithError(
         state = state,
@@ -21,16 +19,17 @@ fun EmailTextField(
         onFocusChanged = state::onFocusChanged,
         onInputChange = onInputChange
     )
+
+    SetTextFieldError(error = error, collect = { state.error = it })
 }
 
 @Composable
 private fun rememberEmailTextFieldState(
-    initialError: () -> Int?, imeActionRoute: ImeActionRoute
+    imeActionRoute: ImeActionRoute
 ) = rememberMaxWidthTextFieldState(
     label = R.string.email,
     placeholder = R.string.email_place_holder,
     showKeyboard = true,
-    initialError = initialError,
     keyboardRoute = KeyboardRoute.EMAIL,
     imeActionRoute = imeActionRoute,
     blockBlank = true

@@ -21,17 +21,22 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun MainActivityScreen(
+    private fun MainActivityScreen(
         viewModel: ActivityViewModel = hiltViewModel(),
         uiState: ActivityUiState = viewModel.activityUiState
     ) {
         val isSignIn by viewModel.isSignIn.collectAsStateWithLifecycle()
 
-        Crossfade(targetState = isSignIn) { if (it) MainNavHost() else SignInNavHost() }
+        CrossFadeWrapper { isSignIn }
 
         ToastWrapper(
             text = { uiState.toastText },
             toastShown = viewModel::toastShown
         )
+    }
+
+    @Composable
+    private fun CrossFadeWrapper(state: () -> Boolean) {
+        Crossfade(targetState = state()) { if (it) MainNavHost() else SignInNavHost() }
     }
 }

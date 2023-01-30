@@ -22,6 +22,9 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.ui.components.ImeActionRoute.DONE
+import com.leebeebeom.clothinghelper.ui.components.ImeActionRoute.NEXT
+import com.leebeebeom.clothinghelper.ui.components.KeyboardRoute.*
 import com.leebeebeom.clothinghelper.ui.theme.DarkGrayishBlue
 import com.leebeebeom.clothinghelper.ui.theme.Gainsboro
 import com.leebeebeom.clothinghelper.ui.theme.LightGrayishBlue
@@ -43,14 +46,13 @@ enum class ImeActionRoute {
 
 @Composable
 fun MaxWidthTextFieldWithError(
-    modifier: Modifier = Modifier,
     state: MaxWidthTextFieldState,
     onValueChange: (TextFieldValue) -> Unit,
     onFocusChanged: (FocusState) -> Unit,
     onInputChange: (String) -> Unit,
     trailingIcon: @Composable (() -> Unit)? = null
 ) {
-    Column(modifier = modifier) {
+    Column {
         MaxWidthTextField(
             state = state,
             trailingIcon = trailingIcon,
@@ -96,7 +98,7 @@ private fun MaxWidthTextField(
             backgroundColor = LightGrayishBlue,
             placeholderColor = MaterialTheme.colors.onSurface.copy(ContentAlpha.disabled)
         ),
-        enabled = state.enabled
+        enabled = state.isEnabled
     )
 }
 
@@ -121,7 +123,6 @@ interface MaxWidthTextFieldState {
     val error: Int?
     val isError: Boolean
     val hasFocus: Boolean
-    val enabled: Boolean
     val isVisible: Boolean
 
     // immutable
@@ -131,6 +132,7 @@ interface MaxWidthTextFieldState {
     @get:StringRes
     val placeholder: Int?
 
+    val isEnabled: Boolean
     val showKeyboard: Boolean
     val keyboardOptions: KeyboardOptions
     val cancelIconEnabled: Boolean
@@ -171,12 +173,12 @@ interface MaxWidthTextFieldState {
 
 open class MutableMaxWidthTextFieldState(
     initialText: String,
-    initialError: Int?,
+    initialError: Int? = null,
     initialHasFocus: Boolean = false,
-    initialEnabled: Boolean,
     initialVisibility: Boolean,
     final override val keyboardRoute: KeyboardRoute,
     final override val imeActionRoute: ImeActionRoute,
+    override val isEnabled: Boolean,
     override val label: Int,
     override val placeholder: Int?,
     override val showKeyboard: Boolean,
@@ -187,17 +189,16 @@ open class MutableMaxWidthTextFieldState(
     override var error: Int? by mutableStateOf(initialError)
     override val isError by derivedStateOf { error != null }
     override var hasFocus by mutableStateOf(initialHasFocus)
-    override var enabled by mutableStateOf(initialEnabled)
     override var isVisible by mutableStateOf(initialVisibility)
 
     private val keyboardType = when (keyboardRoute) {
-        KeyboardRoute.TEXT -> KeyboardType.Text
-        KeyboardRoute.EMAIL -> KeyboardType.Email
-        KeyboardRoute.PASSWORD -> KeyboardType.Password
+        TEXT -> KeyboardType.Text
+        EMAIL -> KeyboardType.Email
+        PASSWORD -> KeyboardType.Password
     }
     private val imeAction = when (imeActionRoute) {
-        ImeActionRoute.NEXT -> ImeAction.Next
-        ImeActionRoute.DONE -> ImeAction.Done
+        NEXT -> ImeAction.Next
+        DONE -> ImeAction.Done
     }
 
     override val keyboardOptions =
@@ -205,10 +206,13 @@ open class MutableMaxWidthTextFieldState(
 
     override val focusRequester: FocusRequester = FocusRequester()
 
-    open fun onValueChange(newTextField: TextFieldValue) {
+    fun onValueChange(newTextField: TextFieldValue) {
         if (blockBlank) {
-            textFieldValue = newTextField.copy(text = newTextField.text.trim())
-            if (textFieldValue.text != newTextField.text) error = null
+            val newText = newTextField.text.trim()
+            if (textFieldValue.text != newText) {
+                error = null
+                textFieldValue = newTextField.copy(text = newText)
+            }
         } else {
             textFieldValue = newTextField
             error = null
@@ -245,7 +249,7 @@ open class MutableMaxWidthTextFieldState(
                 it.textFieldValue.text,
                 it.error,
                 it.hasFocus,
-                it.enabled,
+                it.isEnabled,
                 it.isVisible,
                 it.keyboardRoute,
                 it.imeActionRoute,
@@ -260,7 +264,7 @@ open class MutableMaxWidthTextFieldState(
                 initialText = it[0] as String,
                 initialError = it[1] as Int?,
                 initialHasFocus = it[2] as Boolean,
-                initialEnabled = it[3] as Boolean,
+                isEnabled = it[3] as Boolean,
                 initialVisibility = it[4] as Boolean,
                 keyboardRoute = it[5] as KeyboardRoute,
                 imeActionRoute = it[6] as ImeActionRoute,
@@ -278,11 +282,10 @@ open class MutableMaxWidthTextFieldState(
 @NonRestartableComposable
 fun rememberMaxWidthTextFieldState(
     initialInput: String = "",
-    initialError: () -> Int? = { null },
-    initialEnabled: Boolean = true,
     initialVisibility: Boolean = true,
-    keyboardRoute: KeyboardRoute = KeyboardRoute.TEXT,
-    imeActionRoute: ImeActionRoute = ImeActionRoute.DONE,
+    isEnabled: Boolean = true,
+    keyboardRoute: KeyboardRoute = TEXT,
+    imeActionRoute: ImeActionRoute = DONE,
     @StringRes label: Int,
     @StringRes placeholder: Int? = null,
     showKeyboard: Boolean = false,
@@ -291,8 +294,7 @@ fun rememberMaxWidthTextFieldState(
 ): MutableMaxWidthTextFieldState = rememberSaveable(
     saver = MutableMaxWidthTextFieldState.Saver, inputs = arrayOf(
         initialInput,
-        initialError,
-        initialEnabled,
+        isEnabled,
         initialVisibility,
         keyboardRoute,
         imeActionRoute,
@@ -305,8 +307,7 @@ fun rememberMaxWidthTextFieldState(
 ) {
     MutableMaxWidthTextFieldState(
         initialText = initialInput,
-        initialError = initialError(),
-        initialEnabled = initialEnabled,
+        isEnabled = isEnabled,
         initialVisibility = initialVisibility,
         keyboardRoute = keyboardRoute,
         imeActionRoute = imeActionRoute,

@@ -1,8 +1,6 @@
 package com.leebeebeom.clothinghelper.ui.components
 
-import android.widget.Toast
 import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -12,9 +10,7 @@ import androidx.compose.material.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -39,12 +35,4 @@ fun HeightSpacer(dp: Int) {
 @Composable
 fun WidthSpacer(dp: Int) {
     Spacer(modifier = Modifier.width(dp.dp))
-}
-
-@Composable
-fun ToastWrapper(@StringRes text: () -> Int?, toastShown: () -> Unit) {
-    text()?.let {
-        Toast.makeText(LocalContext.current, stringResource(id = it), Toast.LENGTH_SHORT).show()
-        toastShown()
-    }
 }

@@ -1,14 +1,17 @@
 package com.leebeebeom.clothinghelper.ui
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.StringRes
 import androidx.compose.animation.Crossfade
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.leebeebeom.clothinghelper.ui.components.ToastWrapper
 import com.leebeebeom.clothinghelper.ui.main.MainNavHost
 import com.leebeebeom.clothinghelper.ui.signin.ui.SignInNavHost
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,13 +33,20 @@ class MainActivity : ComponentActivity() {
         CrossFadeWrapper { isSignIn }
 
         ToastWrapper(
-            text = { uiState.toastText },
-            toastShown = viewModel::toastShown
+            text = { uiState.toastText }, toastShown = viewModel::toastShown
         )
     }
 
     @Composable
     private fun CrossFadeWrapper(state: () -> Boolean) {
         Crossfade(targetState = state()) { if (it) MainNavHost() else SignInNavHost() }
+    }
+
+    @Composable
+    private fun ToastWrapper(@StringRes text: () -> Int?, toastShown: () -> Unit) {
+        text()?.let {
+            Toast.makeText(LocalContext.current, stringResource(id = it), Toast.LENGTH_SHORT).show()
+            toastShown()
+        }
     }
 }

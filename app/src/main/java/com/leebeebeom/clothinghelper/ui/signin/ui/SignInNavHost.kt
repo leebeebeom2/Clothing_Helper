@@ -5,6 +5,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.leebeebeom.clothinghelper.ui.ActivityViewModel
+import com.leebeebeom.clothinghelper.ui.activityViewModel
+import com.leebeebeom.clothinghelper.ui.components.BlockBacKPressWhenLoading
+import com.leebeebeom.clothinghelper.ui.components.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelper.ui.signin.ui.SignInDestinations.ResetPassword_Route
 import com.leebeebeom.clothinghelper.ui.signin.ui.SignInDestinations.SignInNav_Route
 import com.leebeebeom.clothinghelper.ui.signin.ui.SignInDestinations.SignIn_Route
@@ -22,30 +26,34 @@ object SignInDestinations {
 }
 
 @Composable
-fun SignInNavHost(navController: NavHostController = rememberNavController()) {
-    SignInRoot {
-        NavHost(
-            navController = navController,
-            startDestination = SignIn_Route,
-            route = SignInNav_Route
-        ) {
-            composable(route = SignIn_Route) {
-                SignInScreen(
-                    navigateToResetPassword = navController::navigateToResetPassword,
-                    navigateToSignUp = navController::navigateToSignUp,
-                    signInNavViewModel =
-                    getSignInNavViewModel(entry = it, navController = navController)
-                )
-            }
-            composable(route = SignUp_Route) {
-                SignUpScreen(
-                    signInNavViewModel =
-                    getSignInNavViewModel(entry = it, navController = navController)
-                )
-            }
-            composable(route = ResetPassword_Route) { ResetPasswordScreen() }
+fun SignInNavHost(
+    navController: NavHostController = rememberNavController(),
+    activityViewModel: ActivityViewModel = activityViewModel()
+) {
+    NavHost(
+        navController = navController,
+        startDestination = SignIn_Route,
+        route = SignInNav_Route
+    ) {
+        composable(route = SignIn_Route) {
+            SignInScreen(
+                navigateToResetPassword = navController::navigateToResetPassword,
+                navigateToSignUp = navController::navigateToSignUp,
+                signInNavViewModel =
+                signInNavViewModel(entry = it, navController = navController)
+            )
         }
+        composable(route = SignUp_Route) {
+            SignUpScreen(
+                signInNavViewModel =
+                signInNavViewModel(entry = it, navController = navController)
+            )
+        }
+        composable(route = ResetPassword_Route) { ResetPasswordScreen() }
     }
+
+    CenterDotProgressIndicator(show = { activityViewModel.activityUiState.isSignInLoading })
+    BlockBacKPressWhenLoading { activityViewModel.activityUiState.isSignInLoading }
 }
 
 private fun NavHostController.navigateToSignUp() = navigateSingleTop(SignUp_Route)

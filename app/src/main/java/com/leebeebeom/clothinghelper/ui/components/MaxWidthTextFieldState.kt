@@ -227,8 +227,8 @@ open class MutableMaxWidthTextFieldState(
 
     fun onFocusChanged(focusState: FocusState) {
         hasFocus = focusState.hasFocus
-        if (hasFocus)
-            textFieldValue = textFieldValue.copy(selection = TextRange(textFieldValue.text.length))
+        if (hasFocus) textFieldValue =
+            textFieldValue.copy(selection = TextRange(textFieldValue.text.length))
     }
 
     override fun getKeyboardActions(focusManager: FocusManager) =
@@ -288,37 +288,35 @@ fun rememberMaxWidthTextFieldState(
     showKeyboard: Boolean = false,
     cancelIconEnabled: Boolean = true,
     blockBlank: Boolean = false
-): MutableMaxWidthTextFieldState =
-    rememberSaveable(
-        saver = MutableMaxWidthTextFieldState.Saver,
-        inputs = arrayOf(
-            initialInput,
-            initialError,
-            initialEnabled,
-            initialVisibility,
-            keyboardRoute,
-            imeActionRoute,
-            label,
-            placeholder,
-            showKeyboard,
-            cancelIconEnabled,
-            blockBlank
-        )
-    ) {
-        MutableMaxWidthTextFieldState(
-            initialText = initialInput,
-            initialError = initialError(),
-            initialEnabled = initialEnabled,
-            initialVisibility = initialVisibility,
-            keyboardRoute = keyboardRoute,
-            imeActionRoute = imeActionRoute,
-            label = label,
-            placeholder = placeholder,
-            showKeyboard = showKeyboard,
-            cancelIconEnabled = cancelIconEnabled,
-            blockBlank = blockBlank
-        )
-    }
+): MutableMaxWidthTextFieldState = rememberSaveable(
+    saver = MutableMaxWidthTextFieldState.Saver, inputs = arrayOf(
+        initialInput,
+        initialError,
+        initialEnabled,
+        initialVisibility,
+        keyboardRoute,
+        imeActionRoute,
+        label,
+        placeholder,
+        showKeyboard,
+        cancelIconEnabled,
+        blockBlank
+    )
+) {
+    MutableMaxWidthTextFieldState(
+        initialText = initialInput,
+        initialError = initialError(),
+        initialEnabled = initialEnabled,
+        initialVisibility = initialVisibility,
+        keyboardRoute = keyboardRoute,
+        imeActionRoute = imeActionRoute,
+        label = label,
+        placeholder = placeholder,
+        showKeyboard = showKeyboard,
+        cancelIconEnabled = cancelIconEnabled,
+        blockBlank = blockBlank
+    )
+}
 
 @Composable
 private fun ShowKeyboard(
@@ -334,6 +332,6 @@ private fun ShowKeyboard(
 private fun TextFieldEmit(state: MaxWidthTextFieldState, onInputChange: (String) -> Unit) {
     val currentOnInputChange by rememberUpdatedState(newValue = onInputChange)
     LaunchedEffect(key1 = state) {
-        snapshotFlow { state.textFieldValue.text }.collect(currentOnInputChange)
+        snapshotFlow { state.textFieldValue.text.trim() }.collect(currentOnInputChange)
     }
 }

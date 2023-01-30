@@ -19,7 +19,6 @@ import com.leebeebeom.clothinghelper.ui.ActivityDestinations.SIGN_IN_ROUTE
 import com.leebeebeom.clothinghelper.ui.main.MainNavHost
 import com.leebeebeom.clothinghelper.ui.signin.ui.SignInNavHost
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
-import com.leebeebeom.clothinghelper.ui.util.navigateSingleTop
 import dagger.hilt.android.AndroidEntryPoint
 
 object ActivityDestinations {
@@ -36,7 +35,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun MainActivityScreen(
+fun MainActivityScreen(
     viewModel: ActivityViewModel = activityViewModel(),
     uiState: ActivityUiState = viewModel.activityUiState,
     navController: NavHostController = rememberNavController()
@@ -53,12 +52,34 @@ private fun MainActivityScreen(
         }
     }
 
-    // TODO 화면 인스턴스가 하나인 지 테스트, 로그인 된 상태로 앱 실행 시 로그인 화면 안 보이는지 테스트
-    if (isSignIn) navController.navigateSingleTop(MAIN_ROUTE)
-    else navController.navigateSingleTop(SIGN_IN_ROUTE)
-
+    MainActivityNavigateWrapper(
+        isSignIn = { isSignIn },
+        navigateToMainGraph = navController::navigateToMainGraph,
+        navigateToSignInGraph = navController::navigateToSignInGraph
+    )
     ToastWrapper(text = { uiState.toastText }, toastShown = viewModel::toastShown)
 }
+
+@Composable
+private fun MainActivityNavigateWrapper(
+    isSignIn: () -> Boolean,
+    navigateToMainGraph: () -> Unit,
+    navigateToSignInGraph: () -> Unit,
+) {
+    if (isSignIn()) navigateToMainGraph() else navigateToSignInGraph()
+}
+
+private fun NavHostController.navigateToSignInGraph() =
+    navigate(SIGN_IN_ROUTE) {
+        popUpTo(MAIN_ROUTE) { inclusive = true }
+        launchSingleTop = true
+    }
+
+private fun NavHostController.navigateToMainGraph() =
+    navigate(MAIN_ROUTE) {
+        popUpTo(SIGN_IN_ROUTE) { inclusive = true }
+        launchSingleTop = true
+    }
 
 @Composable
 private fun ToastWrapper(@StringRes text: () -> Int?, toastShown: () -> Unit) {

@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.main.root.contents.dropdownmenus
+package com.leebeebeom.clothinghelper.ui.main.drawer.contents.dropdownmenus
 
 import androidx.compose.material.DropdownMenu
 import androidx.compose.runtime.Composable
@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.map.StableSubCategory
 import com.leebeebeom.clothinghelper.ui.main.dialogs.AddSubCategoryDialog
 import kotlinx.collections.immutable.ImmutableList
 
@@ -15,7 +14,7 @@ import kotlinx.collections.immutable.ImmutableList
 fun DrawerMainCategoryDropDownMenu(
     show: () -> Boolean,
     onDismiss: () -> Unit,
-    subCategories: () -> ImmutableList<StableSubCategory>,
+    subCategoryNames: () -> ImmutableList<String>,
     onAddSubCategoryPositiveClick: (name: String) -> Unit
 ) {
     var showDialog by rememberSaveable { mutableStateOf(false) }
@@ -29,7 +28,7 @@ fun DrawerMainCategoryDropDownMenu(
     }
 
     AddSubCategoryDialog(
-        subCategories = subCategories,
+        subCategoryNames = subCategoryNames,
         onPositiveButtonClick = onAddSubCategoryPositiveClick,
         show = { showDialog },
         onDismiss = { showDialog = false }

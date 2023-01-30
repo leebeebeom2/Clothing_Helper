@@ -12,12 +12,10 @@ import androidx.compose.ui.text.style.TextOverflow
 
 @Composable
 fun SingleLineText(
-    modifier: Modifier = Modifier,
     text: () -> String?,
-    style: TextStyle = LocalTextStyle.current,
-    textAlign: TextAlign? = null
+    style: TextStyle = LocalTextStyle.current
 ) {
-    SingleLineText(modifier = modifier, text = text(), style = style, textAlign = textAlign)
+    SingleLineText(text = text(), style = style)
 }
 
 @Composable

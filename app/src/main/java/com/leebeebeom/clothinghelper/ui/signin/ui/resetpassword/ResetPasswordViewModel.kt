@@ -5,12 +5,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ShowToast
 import com.leebeebeom.clothinghelper.domain.model.AuthResult.*
 import com.leebeebeom.clothinghelper.domain.usecase.user.ResetPasswordUseCase
 import com.leebeebeom.clothinghelper.ui.signin.base.EmailViewModel
 import com.leebeebeom.clothinghelper.ui.signin.state.EmailUiState
 import com.leebeebeom.clothinghelper.ui.signin.state.MutableEmailUiState
+import com.leebeebeom.clothinghelper.ui.util.ShowToast
 import com.leebeebeom.clothinghelper.ui.util.fireBaseError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -23,10 +23,6 @@ class ResetPasswordViewModel @Inject constructor(private val resetPasswordUseCas
     override val mutableUiState: MutableResetPasswordUiState = MutableResetPasswordUiState()
     val uiState: ResetPasswordUiState = mutableUiState
 
-    fun taskSuccess() {
-        mutableUiState.isTaskSuccess = true
-    }
-
     fun consumeTaskSuccess() {
         mutableUiState.isTaskSuccess = false
     }
@@ -37,7 +33,7 @@ class ResetPasswordViewModel @Inject constructor(private val resetPasswordUseCas
                 resetPasswordUseCase.sendResetPasswordEmail(email = mutableUiState.email)) {
                 is Success -> {
                     showToast(R.string.email_send_complete)
-                    taskSuccess()
+                    mutableUiState.isTaskSuccess = true
                 }
                 is Fail ->
                     fireBaseError(
@@ -45,9 +41,7 @@ class ResetPasswordViewModel @Inject constructor(private val resetPasswordUseCas
                         updateEmailError = { mutableUiState.emailError = it },
                         showToast = showToast
                     )
-                is UnknownFail -> showToast(
-                    R.string.unknown_error
-                )
+                is UnknownFail -> showToast(R.string.unknown_error)
             }
         }
     }

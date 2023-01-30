@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.components.IconWrapper
 import com.leebeebeom.clothinghelper.ui.components.SingleLineText
 import com.leebeebeom.clothinghelper.ui.components.WidthSpacer
@@ -17,6 +18,7 @@ import com.leebeebeom.clothinghelper.ui.main.drawer.components.DrawerRow
 import com.leebeebeom.clothinghelper.ui.main.drawer.model.EssentialMenu
 import com.leebeebeom.clothinghelper.ui.main.drawer.model.EssentialMenuType
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 const val ESSENTIAL_MENU_HEIGHT = 40
 const val ESSENTIAL_MENU_ICON_SIZE = 22
@@ -51,3 +53,19 @@ private fun EssentialMenu(
         )
     }
 }
+
+data class EssentialMenu(
+    val name: Int, val drawable: Int, val type: EssentialMenuType
+)
+
+enum class EssentialMenuType {
+    MainScreen, Favorite, SeeAll, Trash
+}
+
+fun getEssentialMenus() =
+    listOf(
+        EssentialMenu(R.string.main_screen, R.drawable.ic_home, EssentialMenuType.MainScreen),
+        EssentialMenu(R.string.favorite, R.drawable.ic_star, EssentialMenuType.Favorite),
+        EssentialMenu(R.string.see_all, R.drawable.ic_list, EssentialMenuType.SeeAll),
+        EssentialMenu(R.string.trash, R.drawable.ic_delete, EssentialMenuType.Trash)
+    ).toImmutableList()

@@ -40,13 +40,13 @@ fun SignInNavHost(
                 navigateToResetPassword = navController::navigateToResetPassword,
                 navigateToSignUp = navController::navigateToSignUp,
                 signInNavViewModel =
-                signInNavViewModel(entry = it, navController = navController)
+                signInNavViewModel(entry = it, navGraphEntry = navController.navGraphEntry)
             )
         }
         composable(route = SignUp_Route) {
             SignUpScreen(
                 signInNavViewModel =
-                signInNavViewModel(entry = it, navController = navController)
+                signInNavViewModel(entry = it, navGraphEntry = navController.navGraphEntry)
             )
         }
         composable(route = ResetPassword_Route) { ResetPasswordScreen() }
@@ -58,3 +58,4 @@ fun SignInNavHost(
 
 private fun NavHostController.navigateToSignUp() = navigateSingleTop(SignUp_Route)
 private fun NavHostController.navigateToResetPassword() = navigateSingleTop(ResetPassword_Route)
+private val NavHostController.navGraphEntry get() = getBackStackEntry(SignInNav_Route)

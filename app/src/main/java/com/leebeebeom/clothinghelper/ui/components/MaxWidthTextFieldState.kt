@@ -339,6 +339,6 @@ private fun TextFieldEmit(state: MaxWidthTextFieldState, onInputChange: (String)
 }
 
 @Composable
-fun SetError(error: Flow<Int?>, collect: (Int?) -> Unit) {
+fun SetTextFieldError(error: Flow<Int?>, collect: (Int?) -> Unit) {
     LaunchedEffect(key1 = error) { error.collect(collect) }
 }

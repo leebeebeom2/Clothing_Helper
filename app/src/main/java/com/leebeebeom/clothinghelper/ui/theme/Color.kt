@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.theme
+package com.leebeebeom.clothinghelper.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

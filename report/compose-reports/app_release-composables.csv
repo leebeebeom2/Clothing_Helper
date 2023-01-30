@@ -1,0 +1,6 @@
+package,name,composable,skippable,restartable,readonly,inline,isLambda,hasDefaults,defaultsGroup,groups,calls,
+com.leebeebeom.clothinghelper.ui.main.subcategory.content.subcategorycard.SubCategoryCardTitle,SubCategoryCardTitle,1,1,1,0,0,0,0,0,1,1,
+com.leebeebeom.clothinghelper.ui.main.subcategory.content.subcategorycard.CheckBox,CheckBox,1,1,1,0,0,0,0,0,1,2,
+com.leebeebeom.clothinghelper.ui.main.subcategory.content.subcategorycard.AnimateSpacer,AnimateSpacer,1,1,1,0,0,0,0,0,1,2,
+com.leebeebeom.clothinghelper.ui.main.subcategory.content.subcategorycard.Name,Name,1,1,1,0,0,0,0,0,1,2,
+com.leebeebeom.clothinghelper.ui.main.subcategory.content.subcategorycard.Count,Count,1,1,1,0,0,0,0,0,1,5,

@@ -1,0 +1,24 @@
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun SubCategoryCardTitle(
+  stable subCategory: Function0<SubCategory>
+  stable isExpanded: Function0<Boolean>
+  stable onExpandIconClick: Function0<Unit>
+  stable onCheckBoxClick: Function0<Unit>
+  stable selectedCategoryKeys: Function0<ImmutableSet<String>>
+  stable isSelectMode: Function0<Boolean>
+  stable folders: Function0<ImmutableList<Folder>>
+)
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun CheckBox(
+  stable subCategory: Function0<SubCategory>
+  stable onClick: Function0<Unit>
+  stable selectedCategoryKeys: Function0<ImmutableSet<String>>
+  stable isSelectMode: Function0<Boolean>
+)
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun AnimateSpacer(
+  stable isSelectMode: Function0<Boolean>
+)
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun Name(
+  stable name: Function0<String>
+)
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun Count(
+  stable folders: Function0<ImmutableList<Folder>>
+)

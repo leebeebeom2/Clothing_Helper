@@ -12,16 +12,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.composable.SimpleHeightSpacer
-import com.leebeebeom.clothinghelper.composable.SingleLineText
+import com.leebeebeom.clothinghelper.ui.components.HeightSpacer
+import com.leebeebeom.clothinghelper.ui.components.SingleLineText
 
 @Composable
 fun OrDivider() {
-    SimpleHeightSpacer(dp = 12)
+    HeightSpacer(dp = 12)
     Row(verticalAlignment = Alignment.CenterVertically) {
-        val modifier = Modifier.weight(1f)
+        val weightModifier = Modifier.weight(1f)
 
-        Divider(modifier = modifier)
+        Divider(modifier = weightModifier)
         SingleLineText(
             text = R.string.or,
             modifier = Modifier.padding(horizontal = 12.dp),
@@ -30,7 +30,7 @@ fun OrDivider() {
                 fontWeight = FontWeight.Bold
             )
         )
-        Divider(modifier = modifier)
+        Divider(modifier = weightModifier)
     }
-    SimpleHeightSpacer(dp = 12)
+    HeightSpacer(dp = 12)
 }

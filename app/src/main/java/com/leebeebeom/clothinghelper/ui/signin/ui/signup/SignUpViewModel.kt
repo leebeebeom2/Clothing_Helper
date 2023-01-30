@@ -3,12 +3,12 @@ package com.leebeebeom.clothinghelper.ui.signin.ui.signup
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ShowToast
 import com.leebeebeom.clothinghelper.domain.model.AuthResult.*
 import com.leebeebeom.clothinghelper.domain.usecase.user.SignUpUseCase
 import com.leebeebeom.clothinghelper.ui.signin.base.EmailAndPasswordViewModel
 import com.leebeebeom.clothinghelper.ui.signin.state.EmailAndPasswordState
 import com.leebeebeom.clothinghelper.ui.signin.state.MutableEmailAndPasswordUiState
+import com.leebeebeom.clothinghelper.ui.util.ShowToast
 import com.leebeebeom.clothinghelper.ui.util.fireBaseError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -27,21 +27,26 @@ class SignUpViewModel @Inject constructor(
     }
 
     override fun onPasswordChange(password: String) {
-        mutableUiState.password = password
+        super.onPasswordChange(password)
 
-        if (password.isNotBlank()) {
-            if (password.length < 6) mutableUiState.passwordError = R.string.error_weak_password
+        if (password.isBlank()) return
 
-            if (mutableUiState.passwordConfirm.isNotBlank() && password != mutableUiState.passwordConfirm) mutableUiState.passwordConfirmError =
-                R.string.error_password_confirm_not_same
-            else mutableUiState.passwordConfirmError = null
-        }
+        if (password.length < 6) mutableUiState.passwordError = R.string.error_weak_password
+
+        if (mutableUiState.passwordConfirm.isBlank()) return
+
+        if (password != mutableUiState.passwordConfirm)
+            mutableUiState.passwordConfirmError = R.string.error_password_confirm_not_same
+        else mutableUiState.passwordConfirmError = null
     }
 
     fun onPasswordConfirmChange(passwordConfirm: String) {
         mutableUiState.passwordConfirm = passwordConfirm
+        mutableUiState.passwordConfirmError = null
 
-        if (passwordConfirm.isNotBlank() && mutableUiState.password.isNotBlank() && passwordConfirm != mutableUiState.password)
+        if (passwordConfirm.isBlank()) return
+
+        if (passwordConfirm != mutableUiState.password)
             mutableUiState.passwordConfirmError = R.string.error_password_confirm_not_same
     }
 
@@ -49,7 +54,7 @@ class SignUpViewModel @Inject constructor(
         viewModelScope.launch {
             val result = signUpUseCase.signUp(email = mutableUiState.email,
                 password = mutableUiState.password,
-                name = mutableUiState.name.trim(),
+                name = mutableUiState.name,
                 onSubCategoryLoadFail = { showToast(R.string.data_load_failed) })
             when (result) {
                 is Success -> showToast(R.string.sign_up_complete)

@@ -2,10 +2,7 @@ package com.leebeebeom.clothinghelper.ui
 
 import android.content.Context
 import androidx.activity.ComponentActivity
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
@@ -30,6 +27,7 @@ class ActivityViewModel @Inject constructor(private val getSignInStateUseCase: G
     val isSignIn get() = getSignInStateUseCase.isSignIn
 }
 
+@Stable
 interface ActivityUiState {
     val toastText: Int?
 }
@@ -39,5 +37,5 @@ private class MutableActivityUiState : ActivityUiState {
 }
 
 @Composable
-fun getActivityViewModel(context: Context = LocalContext.current): ActivityViewModel =
+fun activityViewModel(context: Context = LocalContext.current): ActivityViewModel =
     hiltViewModel(viewModelStoreOwner = (context as ComponentActivity))

@@ -13,10 +13,10 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.data.repository.A_NETWORK_ERROR
 import com.leebeebeom.clothinghelper.data.repository.util.TAG
 import com.leebeebeom.clothinghelper.domain.model.AuthResult.*
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
+import com.leebeebeom.clothinghelper.ui.util.FirebaseAuthErrorCode.A_NETWORK_ERROR
 import com.leebeebeom.clothinghelper.ui.util.ShowToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

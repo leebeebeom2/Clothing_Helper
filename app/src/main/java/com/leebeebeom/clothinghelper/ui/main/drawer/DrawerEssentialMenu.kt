@@ -15,20 +15,18 @@ import com.leebeebeom.clothinghelper.ui.components.IconWrapper
 import com.leebeebeom.clothinghelper.ui.components.SingleLineText
 import com.leebeebeom.clothinghelper.ui.components.WidthSpacer
 import com.leebeebeom.clothinghelper.ui.main.drawer.components.DrawerRow
-import com.leebeebeom.clothinghelper.ui.main.drawer.model.EssentialMenu
-import com.leebeebeom.clothinghelper.ui.main.drawer.model.EssentialMenuType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
 const val ESSENTIAL_MENU_HEIGHT = 40
 const val ESSENTIAL_MENU_ICON_SIZE = 22
 
-fun LazyListScope.essentialMenus(
+fun LazyListScope.drawerEssentialMenus(
     essentialMenus: ImmutableList<EssentialMenu>,
     onEssentialMenuClick: (essentialMenu: EssentialMenuType) -> Unit
 ) {
     items(items = essentialMenus, key = { it.name }) {
-        EssentialMenu(
+        DrawerEssentialMenu(
             essentialMenu = it,
             onClick = onEssentialMenuClick,
         )
@@ -36,7 +34,7 @@ fun LazyListScope.essentialMenus(
 }
 
 @Composable
-private fun EssentialMenu(
+private fun DrawerEssentialMenu(
     essentialMenu: EssentialMenu, onClick: (EssentialMenuType) -> Unit
 ) {
     DrawerRow(

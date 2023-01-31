@@ -6,11 +6,13 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.ActivityDestinations.MAIN_ROUTE
 import com.leebeebeom.clothinghelper.ui.ActivityDestinations.SIGN_IN_ROUTE
 import com.leebeebeom.clothinghelper.ui.main.drawer.SETTING_ICON
 import org.junit.Rule
 import org.junit.Test
+
 
 class MainActivityTest {
     @get:Rule
@@ -70,6 +72,19 @@ class MainActivityTest {
         uiSignOut()
         waitSignInScreen()
         assertDoesNotExistMainBackStack(navController)
+    }
+
+    @Test
+    fun toastTest() {
+        var viewModel: ActivityViewModel? = null
+        rule.activity.setContent {
+            viewModel = activityViewModel()
+            MainActivityScreen(viewModel = viewModel!!)
+        }
+        rule.waitForIdle()
+        viewModel!!.showToast(R.string.toast_test)
+        rule.waitForIdle()
+        // 테스트 불가
     }
 
     private fun assertDoesNotExistSignInBackStack(navController: NavHostController?) {

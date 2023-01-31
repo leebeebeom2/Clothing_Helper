@@ -3,11 +3,12 @@ package com.leebeebeom.clothinghelper.ui.signin.ui
 import android.app.Activity
 import android.util.Log
 import androidx.activity.result.ActivityResult
-import androidx.compose.runtime.*
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavBackStackEntry
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.AuthCredential
@@ -15,6 +16,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.data.repository.util.TAG
 import com.leebeebeom.clothinghelper.domain.model.AuthResult.*
+import com.leebeebeom.clothinghelper.domain.usecase.user.GetSignInLoadingStateUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelper.ui.util.FirebaseAuthErrorCode.A_NETWORK_ERROR
 import com.leebeebeom.clothinghelper.ui.util.ShowToast
@@ -26,11 +28,20 @@ import javax.inject.Inject
  * Google 로그인 로직
  */
 @HiltViewModel
-class SignInNavViewModel @Inject constructor(private val googleSignInUseCase: GoogleSignInUseCase) :
-    ViewModel() {
-
+class SignInNavViewModel @Inject constructor(
+    private val googleSignInUseCase: GoogleSignInUseCase,
+    private val getSignInLoadingStateUseCase: GetSignInLoadingStateUseCase
+) : ViewModel() {
     private val _signInNavUiState = MutableSignInNavUiState()
     val signInNavUiState: SignInNavUiState = _signInNavUiState
+
+    init {
+        viewModelScope.launch {
+            getSignInLoadingStateUseCase.isLoading.collect {
+                _signInNavUiState.isSignInLoading = it
+            }
+        }
+    }
 
     fun signInWithGoogleEmail(activityResult: ActivityResult, showToast: ShowToast) {
         when (activityResult.resultCode) {
@@ -86,17 +97,10 @@ class SignInNavViewModel @Inject constructor(private val googleSignInUseCase: Go
 @Stable
 interface SignInNavUiState {
     val googleButtonEnabled: Boolean
+    val isSignInLoading: Boolean
 }
 
 class MutableSignInNavUiState : SignInNavUiState {
     override var googleButtonEnabled by mutableStateOf(true)
-}
-
-@Composable
-fun signInNavViewModel(
-    entry: NavBackStackEntry,
-    navGraphEntry: NavBackStackEntry
-): SignInNavViewModel {
-    val signInNavEntry = remember(entry) { navGraphEntry }
-    return hiltViewModel(signInNavEntry)
+    override var isSignInLoading by mutableStateOf(false)
 }

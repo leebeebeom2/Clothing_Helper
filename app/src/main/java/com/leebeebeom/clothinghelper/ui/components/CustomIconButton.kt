@@ -20,7 +20,8 @@ fun CustomIconButton(
     @DrawableRes drawable: Int,
     size: Dp = Dp.Unspecified,
     tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current),
-    @StringRes text: Int? = null
+    @StringRes text: Int? = null,
+    contentDescription: String? = null
 ) {
     CustomIconButton(
         modifier = modifier,
@@ -28,7 +29,8 @@ fun CustomIconButton(
         painter = painterResource(id = drawable),
         tint = tint,
         size = size,
-        text = text
+        text = text,
+        contentDescription = contentDescription
     )
 }
 

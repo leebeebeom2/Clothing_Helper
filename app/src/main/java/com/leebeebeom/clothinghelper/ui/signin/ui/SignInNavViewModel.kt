@@ -33,7 +33,7 @@ class SignInNavViewModel @Inject constructor(
     private val getSignInLoadingStateUseCase: GetSignInLoadingStateUseCase
 ) : ViewModel() {
     private val _signInNavUiState = MutableSignInNavUiState()
-    val signInNavUiState: SignInNavUiState = _signInNavUiState
+    val uiState: SignInNavUiState = _signInNavUiState
 
     init {
         viewModelScope.launch {

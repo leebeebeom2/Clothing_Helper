@@ -18,6 +18,7 @@ import androidx.compose.ui.focus.*
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
@@ -114,6 +115,8 @@ private fun ErrorText(state: MaxWidthTextFieldState) {
     }
 }
 
+const val CANCEL_ICON = "cancel Icon"
+
 @Stable
 @OptIn(ExperimentalComposeUiApi::class)
 interface MaxWidthTextFieldState {
@@ -160,6 +163,7 @@ interface MaxWidthTextFieldState {
             exit = Anime.CancelIcon.fadeOut,
         ) {
             CustomIconButton(
+                modifier = Modifier.testTag(CANCEL_ICON),
                 onClick = { onValueChange(TextFieldValue()) },
                 drawable = R.drawable.ic_cancel,
                 tint = VeryDarkGray,

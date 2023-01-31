@@ -55,7 +55,9 @@ class SignInNavHostTest {
     }
 
     private fun blockBackPressTest() {
+        centerDotProgressIndicator.assertDoesNotExist()
         uiState.isSignInLoading = true
+        centerDotProgressIndicator.assertExists()
         rule.waitForIdle()
         UiDevice.getInstance(getInstrumentation()).pressBack()
         UiDevice.getInstance(getInstrumentation()).pressBack()

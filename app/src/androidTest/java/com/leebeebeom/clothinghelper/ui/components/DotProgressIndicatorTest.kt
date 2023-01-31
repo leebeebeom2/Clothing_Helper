@@ -26,6 +26,7 @@ class DotProgressIndicatorTest {
                 }
             }
         }
+        rule.onNodeWithTag(CENTER_DOT_PROGRESS_INDICATOR).assertDoesNotExist()
         isLoading = true
         rule.onNodeWithTag(CENTER_DOT_PROGRESS_INDICATOR).assertExists()
         isLoading = false

@@ -18,7 +18,6 @@ import androidx.compose.ui.focus.*
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
@@ -228,8 +227,6 @@ open class MutableMaxWidthTextFieldState(
 
     fun onFocusChanged(focusState: FocusState) {
         hasFocus = focusState.hasFocus
-        if (hasFocus) textFieldValue =
-            textFieldValue.copy(selection = TextRange(textFieldValue.text.length))
     }
 
     override fun getKeyboardActions(focusManager: FocusManager) =

@@ -6,9 +6,9 @@ abstract class EmailAndPasswordViewModel : EmailViewModel() {
     abstract override val mutableUiState: MutableEmailAndPasswordUiState
 
     open fun onPasswordChange(password: String) {
-        if (mutableUiState.password != password){
-            mutableUiState.password = password
-            mutableUiState.passwordError = null
-        }
+        if (mutableUiState.password == password) return
+
+        mutableUiState.password = password
+        mutableUiState.passwordError = null
     }
 }

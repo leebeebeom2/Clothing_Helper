@@ -148,10 +148,9 @@ interface MaxWidthTextFieldState {
     fun TrailingIcon(
         trailingIcon: @Composable (() -> Unit)?, onValueChange: (TextFieldValue) -> Unit
     ) {
-        if (trailingIcon != null || cancelIconEnabled) Row {
-            trailingIcon?.run { invoke() } ?: CancelIcon(onValueChange = onValueChange)
-            WidthSpacer(dp = 4)
-        }
+        if (trailingIcon != null || cancelIconEnabled) trailingIcon?.run { invoke() } ?: CancelIcon(
+            onValueChange = onValueChange
+        )
     }
 
     @Composable
@@ -209,10 +208,8 @@ open class MutableMaxWidthTextFieldState(
     fun onValueChange(newTextField: TextFieldValue) {
         if (blockBlank) {
             val newText = newTextField.text.trim()
-            if (textFieldValue.text != newText) {
-                error = null
-                textFieldValue = newTextField.copy(text = newText)
-            }
+            if (textFieldValue.text != newText) error = null
+            textFieldValue = newTextField.copy(text = newText)
         } else {
             textFieldValue = newTextField
             error = null
@@ -324,9 +321,13 @@ private fun ShowKeyboard(
     state: MaxWidthTextFieldState,
     keyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
 ) {
-    if (state.showKeyboard) LaunchedEffect(
-        key1 = Unit
-    ) { state.showKeyboard(scope = this, keyboardController = keyboardController) }
+    var showedKeyboard by rememberSaveable { mutableStateOf(false) }
+    if (state.showKeyboard && !showedKeyboard) LaunchedEffect(key1 = Unit) {
+        if (state.showKeyboard) state.showKeyboard(
+            scope = this, keyboardController = keyboardController
+        )
+        showedKeyboard = true
+    }
 }
 
 @Composable

@@ -29,7 +29,6 @@ class ActivityViewModel @Inject constructor(
         }
     }
 
-
     fun showToast(toastText: Int) {
         _activityUiState.toastText = toastText
     }

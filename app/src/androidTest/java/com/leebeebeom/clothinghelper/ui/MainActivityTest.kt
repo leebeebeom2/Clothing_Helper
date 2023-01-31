@@ -16,54 +16,59 @@ class MainActivityTest {
     @get:Rule
     val rule = createAndroidComposeRule<MainActivity>()
 
-    // 로그인 상태로 앱 실행 시 로그인 화면 안 보이는 지
     @Test
     fun doesSeeSignInScreenTest() {
-        if (user == null) signIn()
-        setContent()
+        // 로그인 상태로 앱 실행 시 로그인 화면 안 보이는 지
+        firebaseSignIn()
+        rule.waitForIdle()
         emailTextField.assertDoesNotExist()
     }
 
-    // 로그인 시 메인 스크린 이동
     @Test
     fun signInTest() {
-        signOut()
-        setContent()
+        // 로그인 시 메인 스크린 이동
+        firebaseSignOut()
         waitSignInScreen()
         uiSignIn()
         waitMainScreen()
     }
 
-    // 로그아웃 시 로그인 스크린 이동
     @Test
     fun signOutTest() {
-        signIn()
-        setContent()
+        // 로그아웃 시 로그인 스크린 이동
+        firebaseSignIn()
         waitMainScreen()
         uiSignOut()
-        waitMainScreen()
+        waitSignInScreen()
     }
 
-    // 로그인, 로그아웃 시 백스택은 하나여야함.
     @Test
     fun backStackTest() {
-        signOut()
+        // 로그인, 로그아웃 시 백스택은 하나여야함.
+        firebaseSignOut()
         var navController: NavHostController? = null
         rule.activity.setContent {
             navController = rememberNavController()
             MainActivityScreen(navController = navController!!)
         }
         waitSignInScreen()
-        signIn()
+
+        uiSignIn()
         waitMainScreen()
         assertDoesNotExistSignInBackStack(navController)
-        signOut()
+
+        uiSignOut()
         waitSignInScreen()
         assertDoesNotExistMainBackStack(navController)
-        signIn()
-        signOut()
-        signIn()
-        signOut()
+
+        uiSignIn()
+        waitMainScreen()
+        uiSignOut()
+        waitSignInScreen()
+        uiSignIn()
+        waitMainScreen()
+        uiSignOut()
+        waitSignInScreen()
         assertDoesNotExistMainBackStack(navController)
     }
 
@@ -94,28 +99,26 @@ class MainActivityTest {
     private fun uiSignOut() {
         rule.onRoot().performTouchInput { swipeRight() }
         rule.onNodeWithContentDescription(SETTING_ICON).performClick()
+        rule.onNodeWithText("로그아웃").performClick()
     }
 
-    private fun signOut() = FirebaseAuth.getInstance().signOut()
+    private fun firebaseSignOut() = FirebaseAuth.getInstance().signOut()
 
-    private fun signIn() =
+    private fun firebaseSignIn() =
         FirebaseAuth.getInstance().signInWithEmailAndPassword("1@a.com", "111111")
 
-    val user get() = FirebaseAuth.getInstance().currentUser
-    val emailTextField get() = rule.onNodeWithText("이메일")
-    val passwordTextField get() = rule.onNodeWithText("비밀번호")
-    val signInButton get() = rule.onNodeWithText("로그인")
+    private val emailTextField get() = rule.onNodeWithText("이메일")
+    private val passwordTextField get() = rule.onNodeWithText("비밀번호")
+    private val signInButton get() = rule.onNodeWithText("로그인")
     private fun waitSignInScreen() {
-        rule.waitUntil {
+        rule.waitUntil(5000) {
             rule.onAllNodesWithText("이메일").fetchSemanticsNodes().isNotEmpty()
         }
     }
 
     private fun waitMainScreen() {
-        rule.waitUntil {
+        rule.waitUntil(5000) {
             rule.onAllNodesWithText("이메일").fetchSemanticsNodes().isEmpty()
         }
     }
-
-    private fun setContent() = rule.activity.setContent { MainActivityScreen() }
 }

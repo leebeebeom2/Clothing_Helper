@@ -7,7 +7,9 @@ abstract class EmailViewModel : ViewModel() {
     protected abstract val mutableUiState: MutableEmailUiState
 
     fun onEmailChange(email: String) {
-        mutableUiState.email = email
-        mutableUiState.emailError = null
+        if (mutableUiState.email != email) {
+            mutableUiState.email = email
+            mutableUiState.emailError = null
+        }
     }
 }

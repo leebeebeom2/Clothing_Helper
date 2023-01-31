@@ -82,7 +82,7 @@ private fun NavHostController.navigateToMainGraph() =
     }
 
 @Composable
-private fun ToastWrapper(@StringRes text: () -> Int?, toastShown: () -> Unit) {
+fun ToastWrapper(@StringRes text: () -> Int?, toastShown: () -> Unit) {
     text()?.let {
         Toast.makeText(LocalContext.current, stringResource(id = it), Toast.LENGTH_SHORT).show()
         toastShown()

@@ -57,7 +57,7 @@ fun MainActivityScreen(
         navigateToMainGraph = navController::navigateToMainGraph,
         navigateToSignInGraph = navController::navigateToSignInGraph
     )
-    ToastWrapper(text = { uiState.toastText }, toastShown = viewModel::toastShown)
+    ToastWrapper(text = { uiState.toastText }, toastShown = viewModel::toastShown) // 테스트 불가
 }
 
 @Composable

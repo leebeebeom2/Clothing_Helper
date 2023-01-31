@@ -41,6 +41,8 @@ class SignUpViewModel @Inject constructor(
     }
 
     fun onPasswordConfirmChange(passwordConfirm: String) {
+        if (mutableUiState.passwordConfirm == passwordConfirm) return
+
         mutableUiState.passwordConfirm = passwordConfirm
         mutableUiState.passwordConfirmError = null
 

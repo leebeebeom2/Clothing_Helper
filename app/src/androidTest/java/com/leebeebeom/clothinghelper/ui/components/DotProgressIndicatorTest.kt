@@ -6,8 +6,6 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
@@ -15,8 +13,6 @@ import org.junit.Rule
 import org.junit.Test
 
 class DotProgressIndicatorTest {
-    private val centerDotProgressIndicator = "center dot progress indicator"
-
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 
@@ -26,16 +22,14 @@ class DotProgressIndicatorTest {
         rule.setContent {
             ClothingHelperTheme {
                 Surface(color = MaterialTheme.colors.background) {
-                    CenterDotProgressIndicator(
-                        modifier = Modifier.testTag(centerDotProgressIndicator)
-                    ) { isLoading }
+                    CenterDotProgressIndicator { isLoading }
                 }
             }
         }
-        rule.onNodeWithTag(centerDotProgressIndicator).assertDoesNotExist()
+        rule.onNodeWithTag(CENTER_DOT_PROGRESS_INDICATOR_TAG).assertDoesNotExist()
         isLoading = true
-        rule.onNodeWithTag(centerDotProgressIndicator).assertExists()
+        rule.onNodeWithTag(CENTER_DOT_PROGRESS_INDICATOR_TAG).assertExists()
         isLoading = false
-        rule.onNodeWithTag(centerDotProgressIndicator).assertDoesNotExist()
+        rule.onNodeWithTag(CENTER_DOT_PROGRESS_INDICATOR_TAG).assertDoesNotExist()
     }
 }

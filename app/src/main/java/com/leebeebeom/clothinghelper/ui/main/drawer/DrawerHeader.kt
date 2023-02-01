@@ -13,6 +13,8 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.components.CustomIconButton
 import com.leebeebeom.clothinghelper.ui.components.SingleLineText
 
+const val SETTING_ICON = "setting icon"
+
 @Composable
 fun DrawerHeader(
     userName: () -> String?,
@@ -26,7 +28,11 @@ fun DrawerHeader(
         verticalAlignment = Alignment.CenterVertically
     ) {
         HeaderText(userName = userName, userEmail = userEmail)
-        CustomIconButton(drawable = R.drawable.ic_settings, onClick = navigateToSetting)
+        CustomIconButton(
+            drawable = R.drawable.ic_settings,
+            onClick = navigateToSetting,
+            contentDescription = SETTING_ICON
+        )
     }
 }
 

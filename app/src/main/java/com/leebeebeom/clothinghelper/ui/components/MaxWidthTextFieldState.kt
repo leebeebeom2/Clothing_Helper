@@ -1,4 +1,7 @@
-@file:OptIn(ExperimentalComposeUiApi::class, ExperimentalComposeUiApi::class)
+@file:OptIn(
+    ExperimentalComposeUiApi::class, ExperimentalComposeUiApi::class,
+    ExperimentalComposeUiApi::class
+)
 
 package com.leebeebeom.clothinghelper.ui.components
 
@@ -18,7 +21,6 @@ import androidx.compose.ui.focus.*
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
@@ -78,10 +80,10 @@ private fun MaxWidthTextField(
             .fillMaxWidth()
             .focusRequester(state.focusRequester)
             .onFocusChanged(onFocusChanged = onFocusChanged),
+        label = state.label?.run { { SingleLineText(text = state.label) } },
+        placeholder = state.placeholder?.let { { SingleLineText(text = state.placeholder) } },
         value = state.textFieldValue,
         onValueChange = onValueChange,
-        label = { SingleLineText(text = state.label) },
-        placeholder = state.placeholder?.let { { SingleLineText(text = state.placeholder) } },
         isError = state.isError,
         visualTransformation = if (state.isVisible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = state.keyboardOptions,
@@ -129,7 +131,7 @@ interface MaxWidthTextFieldState {
 
     // immutable
     @get:StringRes
-    val label: Int
+    val label: Int?
 
     @get:StringRes
     val placeholder: Int?
@@ -163,11 +165,11 @@ interface MaxWidthTextFieldState {
             exit = Anime.CancelIcon.fadeOut,
         ) {
             CustomIconButton(
-                modifier = Modifier.testTag(CANCEL_ICON),
                 onClick = { onValueChange(TextFieldValue()) },
                 drawable = R.drawable.ic_cancel,
                 tint = VeryDarkGray,
-                size = 20.dp
+                size = 20.dp,
+                contentDescription = CANCEL_ICON
             )
         }
     }
@@ -181,7 +183,7 @@ open class MutableMaxWidthTextFieldState(
     final override val keyboardRoute: KeyboardRoute,
     final override val imeActionRoute: ImeActionRoute,
     override val isEnabled: Boolean,
-    override val label: Int,
+    override val label: Int?,
     override val placeholder: Int?,
     override val showKeyboard: Boolean,
     override val cancelIconEnabled: Boolean,
@@ -284,7 +286,7 @@ fun rememberMaxWidthTextFieldState(
     isEnabled: Boolean = true,
     keyboardRoute: KeyboardRoute = TEXT,
     imeActionRoute: ImeActionRoute = DONE,
-    @StringRes label: Int,
+    @StringRes label: Int? = null,
     @StringRes placeholder: Int? = null,
     showKeyboard: Boolean = false,
     cancelIconEnabled: Boolean = true,

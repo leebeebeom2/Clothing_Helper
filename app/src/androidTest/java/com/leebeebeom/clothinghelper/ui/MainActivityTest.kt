@@ -1,5 +1,6 @@
 package com.leebeebeom.clothinghelper.ui
 
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
@@ -7,6 +8,8 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.rules.ActivityScenarioRule
+import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
+import androidx.test.uiautomator.UiDevice
 import com.google.firebase.auth.FirebaseAuth
 import com.leebeebeom.clothinghelper.ui.main.drawer.SETTING_ICON
 import org.junit.Before
@@ -15,7 +18,12 @@ import org.junit.Test
 
 typealias ActivityRule = AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>
 
-val activityRule get() = createAndroidComposeRule<MainActivity>()
+private val activityRule get() = createAndroidComposeRule<MainActivity>()
+fun restore() {
+    val device = UiDevice.getInstance(getInstrumentation())
+    device.setOrientationLeft()
+    device.setOrientationRight()
+}
 
 class MainActivitySignInStartTest {
     @get:Rule
@@ -23,13 +31,17 @@ class MainActivitySignInStartTest {
 
     @Before
     fun signIn() {
+        Log.d("TAG", "signIn: 실행")
         FirebaseAuth.getInstance().signInWithEmailAndPassword("1@a.com", "111111")
     }
 
     @Test
     fun doesSeeSignInScreenTest() {
         // 로그인 상태로 앱 실행 시 로그인 화면 안 보이는 지
-        rule.waitUntil { true }
+        waitMainScreen(rule)
+        emailTextField(rule).assertDoesNotExist()
+        restore()
+        waitMainScreen(rule)
         emailTextField(rule).assertDoesNotExist()
     }
 
@@ -39,6 +51,8 @@ class MainActivitySignInStartTest {
         emailTextField(rule).assertDoesNotExist()
         uiSignOut(rule)
         waitSignInScreen(rule)
+        restore()
+        emailTextField(rule).assertExists()
     }
 }
 
@@ -57,6 +71,8 @@ class MainActivitySignOutStartTest {
         emailTextField(rule).assertExists()
         uiSignIn(rule)
         waitMainScreen(rule)
+        restore()
+        emailTextField(rule).assertDoesNotExist()
     }
 
     @Test

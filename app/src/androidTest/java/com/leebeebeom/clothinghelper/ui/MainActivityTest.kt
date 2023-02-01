@@ -8,8 +8,6 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
-import androidx.test.uiautomator.UiDevice
 import com.google.firebase.auth.FirebaseAuth
 import com.leebeebeom.clothinghelper.ui.main.drawer.SETTING_ICON
 import org.junit.Before
@@ -19,11 +17,7 @@ import org.junit.Test
 typealias ActivityRule = AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>
 
 private val activityRule get() = createAndroidComposeRule<MainActivity>()
-fun restore() {
-    val device = UiDevice.getInstance(getInstrumentation())
-    device.setOrientationLeft()
-    device.setOrientationRight()
-}
+fun recreate(rule: ActivityRule) = rule.activityRule.scenario.recreate()
 
 class MainActivitySignInStartTest {
     @get:Rule
@@ -40,7 +34,7 @@ class MainActivitySignInStartTest {
         // 로그인 상태로 앱 실행 시 로그인 화면 안 보이는 지
         waitMainScreen(rule)
         emailTextField(rule).assertDoesNotExist()
-        restore()
+        recreate(rule)
         waitMainScreen(rule)
         emailTextField(rule).assertDoesNotExist()
     }
@@ -51,7 +45,7 @@ class MainActivitySignInStartTest {
         emailTextField(rule).assertDoesNotExist()
         uiSignOut(rule)
         waitSignInScreen(rule)
-        restore()
+        recreate(rule)
         emailTextField(rule).assertExists()
     }
 }
@@ -71,7 +65,7 @@ class MainActivitySignOutStartTest {
         emailTextField(rule).assertExists()
         uiSignIn(rule)
         waitMainScreen(rule)
-        restore()
+        recreate(rule)
         emailTextField(rule).assertDoesNotExist()
     }
 

@@ -14,21 +14,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.ui.theme.Disabled
 
-const val CENTER_DOT_PROGRESS_INDICATOR = "center dot progress indicator"
-const val DOT_PROGRESS_INDICATOR = "dot progress indicator"
-
 @Composable
 fun CenterDotProgressIndicator(
-    backGround: Color = Disabled, show: () -> Boolean
+    modifier: Modifier = Modifier,
+    backGround: Color = Disabled,
+    show: () -> Boolean
 ) {
     if (show()) Surface(color = backGround) {
-        Box(modifier = Modifier
-            .testTag(CENTER_DOT_PROGRESS_INDICATOR)
+        Box(modifier = modifier
             .fillMaxSize()
             // background click block
             .clickable(enabled = false) { }) {
@@ -82,7 +79,7 @@ fun DotProgressIndicator(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
-        modifier = modifier.padding(top = maxOffset.dp).testTag(DOT_PROGRESS_INDICATOR)
+        modifier = modifier.padding(top = maxOffset.dp)
     ) {
         Dot(offset1)
         Spacer(Modifier.width(4.dp))

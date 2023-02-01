@@ -14,8 +14,8 @@ import com.leebeebeom.clothinghelper.ui.activityViewModel
 import com.leebeebeom.clothinghelper.ui.components.HeightSpacer
 import com.leebeebeom.clothinghelper.ui.components.ImeActionRoute
 import com.leebeebeom.clothinghelper.ui.components.MaxWidthButton
-import com.leebeebeom.clothinghelper.ui.signin.composable.SignInBaseColumn
-import com.leebeebeom.clothinghelper.ui.signin.composable.textfield.EmailTextField
+import com.leebeebeom.clothinghelper.ui.signin.components.SignInBaseColumn
+import com.leebeebeom.clothinghelper.ui.signin.components.textfield.EmailTextField
 
 @Composable
 fun ResetPasswordScreen(

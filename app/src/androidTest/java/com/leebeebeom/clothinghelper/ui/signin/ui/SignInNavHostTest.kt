@@ -11,7 +11,7 @@ import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.uiautomator.UiDevice
 import com.leebeebeom.clothinghelper.ui.ActivityDestinations.SIGN_IN_ROUTE
 import com.leebeebeom.clothinghelper.ui.MainActivity
-import com.leebeebeom.clothinghelper.ui.components.CENTER_DOT_PROGRESS_INDICATOR
+import com.leebeebeom.clothinghelper.ui.components.CENTER_DOT_PROGRESS_INDICATOR_TAG
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -34,7 +34,7 @@ class SignInNavHostTest {
             }
         }
     }
-    
+
     // centerDotProgressIndicator 테스트와 동시 진행
 
     @Test
@@ -65,5 +65,5 @@ class SignInNavHostTest {
         centerDotProgressIndicator.assertExists()
     }
 
-    private val centerDotProgressIndicator = rule.onNodeWithTag(CENTER_DOT_PROGRESS_INDICATOR)
+    private val centerDotProgressIndicator = rule.onNodeWithTag(CENTER_DOT_PROGRESS_INDICATOR_TAG)
 }

@@ -16,7 +16,7 @@ import org.junit.Test
 class MainActivitySignInStartTest {
     @get:Rule
     val rule = createAndroidComposeRule<HiltTestActivity>()
-    lateinit var restoreTester: StateRestorationTester
+    private lateinit var restoreTester: StateRestorationTester
 
     @Before
     fun signIn() {
@@ -28,6 +28,7 @@ class MainActivitySignInStartTest {
     @Test
     fun doesSeeSignInScreenTest() {
         // 로그인 상태로 앱 실행 시 로그인 화면 안 보이는 지
+        // TODO 구글은 따로 테스트 필요
         waitMainScreen(rule)
         emailTextField(rule).assertDoesNotExist()
         restoreTester.emulateSavedInstanceStateRestore()

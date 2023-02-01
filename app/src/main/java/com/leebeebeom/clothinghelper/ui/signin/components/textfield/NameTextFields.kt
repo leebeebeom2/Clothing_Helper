@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.signin.composable.textfield
+package com.leebeebeom.clothinghelper.ui.signin.components.textfield
 
 import androidx.compose.runtime.Composable
 import com.leebeebeom.clothinghelper.R

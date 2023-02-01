@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.signin.composable
+package com.leebeebeom.clothinghelper.ui.signin.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

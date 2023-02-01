@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.signin.composable
+package com.leebeebeom.clothinghelper.ui.signin.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxWidth

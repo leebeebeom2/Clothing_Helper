@@ -4,7 +4,6 @@ import androidx.annotation.StringRes
 import androidx.compose.material.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.components.*
@@ -34,13 +33,14 @@ fun PasswordTextField(
     SetTextFieldError(error = error, collect = { state.error = it })
 }
 
-const val VISIBLE_ICON = "visible icon"
-const val INVISIBLE_ICON = "invisible icon"
-
 @Composable
-fun VisibleIcon(isVisible: () -> Boolean, onClick: () -> Unit) {
+fun VisibleIcon(
+    modifier: Modifier = Modifier,
+    isVisible: () -> Boolean,
+    onClick: () -> Unit
+) {
     CustomIconButton(
-        modifier = Modifier.testTag(if (isVisible()) INVISIBLE_ICON else VISIBLE_ICON),
+        modifier = modifier,
         drawable = if (isVisible()) R.drawable.ic_visibility_off else R.drawable.ic_visibility,
         tint = LocalContentColor.current.copy(0.4f),
         onClick = onClick,

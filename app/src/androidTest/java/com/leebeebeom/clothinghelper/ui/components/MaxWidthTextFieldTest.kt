@@ -21,17 +21,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.signin.composable.textfield.VisibleIcon
+import com.leebeebeom.clothinghelper.ui.signin.components.textfield.VisibleIcon
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
 class MaxWidthTextFieldTest {
-    private val move = "이동"
-    private val moveBack = "뒤로 이동"
+    private val moveText = "이동"
+    private val moveBackText = "뒤로 이동"
     private val testInput = "테스트 인풋"
     private var input = ""
+    private val screen1Route = "screen1"
+    private val screen2Route = "screen2"
     private lateinit var state: MutableMaxWidthTextFieldState
     private lateinit var passwordState: MutableMaxWidthTextFieldState
 
@@ -41,11 +43,10 @@ class MaxWidthTextFieldTest {
 
     @Before
     fun init() {
-        val screen1Route = "screen1"
-        val screen2Route = "screen2"
         input = ""
 
         recreateTester = StateRestorationTester(rule)
+
         recreateTester.setContent {
             ClothingHelperTheme {
                 val navController = rememberNavController()
@@ -59,14 +60,14 @@ class MaxWidthTextFieldTest {
                             passwordTextField()()
 
                             Button(onClick = { navController.navigate(screen2Route) }) {
-                                Text(text = move)
+                                Text(text = moveText)
                             }
                         }
                     }
                     composable(screen2Route) {
                         Box(modifier = Modifier.fillMaxSize()) {
                             Button(onClick = { navController.popBackStack() }) {
-                                Text(text = moveBack)
+                                Text(text = moveBackText)
                             }
                         }
                     }
@@ -88,61 +89,72 @@ class MaxWidthTextFieldTest {
     fun textChangeTest() {
         textField.performTextInput(testInput)
 
-        rule.onNodeWithText(testInput).assertExists()
-        assert(input == testInput)
+        assertInputChange()
         recreateTester.emulateSavedInstanceStateRestore()
-        rule.onNodeWithText(testInput).assertExists()
-        assert(input == testInput)
+        assertInputChange()
 
-        textField.performClick()
-        state.onValueChange(
-            newTextField = state.textFieldValue.copy(selection = TextRange(1))
-        )
+        textField.performClick() // 포커스
+        // 커서 위치 변경
+        state.onValueChange(newTextField = state.textFieldValue.copy(selection = TextRange(1)))
         textField.performTextInput("스")
 
-        rule.onNodeWithText("테스스트 인풋").assertExists()
-        assert(input == "테스스트 인풋")
+        assertCursorPosition()
         recreateTester.emulateSavedInstanceStateRestore()
-        rule.onNodeWithText("테스스트 인풋").assertExists()
-        assert(input == "테스스트 인풋")
+        assertCursorPosition()
 
         textField.performTextClearance()
 
-        rule.onNodeWithText(testInput).assertDoesNotExist()
-        assert(input.isBlank())
+        assertTextClear()
         recreateTester.emulateSavedInstanceStateRestore()
+        assertTextClear()
+    }
+
+    private fun assertTextClear() {
         rule.onNodeWithText(testInput).assertDoesNotExist()
         assert(input.isBlank())
+    }
+
+    private fun assertCursorPosition() {
+        rule.onNodeWithText("테스스트 인풋").assertExists()
+        assert(input == "테스스트 인풋")
+    }
+
+    private fun assertInputChange() {
+        rule.onNodeWithText(testInput).assertExists()
+        assert(input == testInput)
     }
 
     @Test
     fun passwordTextFieldTest() {
         passwordTextField.performTextInput(testInput)
 
-        visibleIcon.assertExists()
-        rule.onNodeWithText(testInput).assertDoesNotExist()
+        assertInVisible()
         recreateTester.emulateSavedInstanceStateRestore()
-        visibleIcon.assertExists()
-        rule.onNodeWithText(testInput).assertDoesNotExist()
+        assertInVisible()
 
         visibleIcon.performClick()
 
-        visibleIcon.assertDoesNotExist()
-        invisibleIcon.assertExists()
-        rule.onNodeWithText(testInput).assertExists()
+
+        assertVisible()
         recreateTester.emulateSavedInstanceStateRestore()
-        visibleIcon.assertDoesNotExist()
-        invisibleIcon.assertExists()
-        rule.onNodeWithText(testInput).assertExists()
+        assertVisible()
 
         invisibleIcon.performClick()
 
-        invisibleIcon.assertDoesNotExist()
-        visibleIcon.assertExists()
-        rule.onNodeWithText(testInput).assertDoesNotExist()
+        assertInVisible()
         recreateTester.emulateSavedInstanceStateRestore()
-        invisibleIcon.assertDoesNotExist()
+        assertInVisible()
+    }
+
+    private fun assertVisible() {
+        visibleIcon.assertDoesNotExist()
+        invisibleIcon.assertExists()
+        rule.onNodeWithText(testInput).assertExists()
+    }
+
+    private fun assertInVisible() {
         visibleIcon.assertExists()
+        invisibleIcon.assertDoesNotExist()
         rule.onNodeWithText(testInput).assertDoesNotExist()
     }
 
@@ -165,26 +177,26 @@ class MaxWidthTextFieldTest {
     fun errorTest() {
         state.error = R.string.error_test
         rule.waitForIdle()
-        rule.onNodeWithText("에러").assertExists()
 
+        errorText.assertExists()
         recreateTester.emulateSavedInstanceStateRestore()
-        rule.onNodeWithText("에러").assertExists()
+        errorText.assertExists()
 
         textField.performTextInput(testInput)
-        rule.onNodeWithText("에러").assertDoesNotExist()
 
+        errorText.assertDoesNotExist()
         recreateTester.emulateSavedInstanceStateRestore()
-        rule.onNodeWithText("에러").assertDoesNotExist()
-        rule.onNodeWithText(testInput)
+        errorText.assertDoesNotExist()
     }
 
-    private val moveButton get() = rule.onNodeWithText(move)
-    private val moveBackButton get() = rule.onNodeWithText(moveBack)
+    private val moveButton get() = rule.onNodeWithText(moveText)
+    private val moveBackButton get() = rule.onNodeWithText(moveBackText)
     private val textField get() = rule.onNodeWithText("이메일")
     private val passwordTextField get() = rule.onNodeWithText("비밀번호")
     private val visibleIcon get() = rule.onNodeWithTag(visibleIconTag)
     private val invisibleIcon get() = rule.onNodeWithTag(invisibleIconTag)
     private val cancelIcon get() = rule.onNodeWithContentDescription(CANCEL_ICON)
+    private val errorText get() = rule.onNodeWithText("에러")
 
     /**
      * showKeyboard

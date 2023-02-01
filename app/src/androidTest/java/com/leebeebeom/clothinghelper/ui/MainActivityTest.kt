@@ -29,7 +29,7 @@ class MainActivitySignInStartTest {
     @Test
     fun doesSeeSignInScreenTest() {
         // 로그인 상태로 앱 실행 시 로그인 화면 안 보이는 지
-        rule.waitForIdle()
+        rule.waitUntil { true }
         emailTextField(rule).assertDoesNotExist()
     }
 

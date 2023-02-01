@@ -1,9 +1,8 @@
 package com.leebeebeom.clothinghelper.ui
 
-import android.util.Log
-import androidx.activity.compose.setContent
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -14,19 +13,16 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-typealias ActivityRule = AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>
-
-private val activityRule get() = createAndroidComposeRule<MainActivity>()
-fun recreate(rule: ActivityRule) = rule.activityRule.scenario.recreate()
-
 class MainActivitySignInStartTest {
     @get:Rule
-    val rule = activityRule
+    val rule = createAndroidComposeRule<HiltTestActivity>()
+    lateinit var restoreTester: StateRestorationTester
 
     @Before
     fun signIn() {
-        Log.d("TAG", "signIn: 실행")
         FirebaseAuth.getInstance().signInWithEmailAndPassword("1@a.com", "111111")
+        restoreTester = StateRestorationTester(rule)
+        restoreTester.setContent { MainActivityScreen() }
     }
 
     @Test
@@ -34,8 +30,7 @@ class MainActivitySignInStartTest {
         // 로그인 상태로 앱 실행 시 로그인 화면 안 보이는 지
         waitMainScreen(rule)
         emailTextField(rule).assertDoesNotExist()
-        recreate(rule)
-        waitMainScreen(rule)
+        restoreTester.emulateSavedInstanceStateRestore()
         emailTextField(rule).assertDoesNotExist()
     }
 
@@ -44,18 +39,25 @@ class MainActivitySignInStartTest {
         // 로그아웃 시 로그인 스크린 이동
         emailTextField(rule).assertDoesNotExist()
         uiSignOut(rule)
-        waitSignInScreen(rule)
-        recreate(rule)
+        emailTextField(rule).assertExists()
+        restoreTester.emulateSavedInstanceStateRestore()
         emailTextField(rule).assertExists()
     }
 }
 
 class MainActivitySignOutStartTest {
     @get:Rule
-    val rule = activityRule
+    val rule = createAndroidComposeRule<HiltTestActivity>()
+    lateinit var restoreTester: StateRestorationTester
+    private lateinit var navController: NavHostController
 
     @Before
     fun signOut() {
+        restoreTester = StateRestorationTester(rule)
+        restoreTester.setContent {
+            navController = rememberNavController()
+            MainActivityScreen(navController = navController)
+        }
         FirebaseAuth.getInstance().signOut()
     }
 
@@ -64,84 +66,85 @@ class MainActivitySignOutStartTest {
         // 로그인 시 메인 스크린 이동
         emailTextField(rule).assertExists()
         uiSignIn(rule)
-        waitMainScreen(rule)
-        recreate(rule)
+        emailTextField(rule).assertDoesNotExist()
+        restoreTester.emulateSavedInstanceStateRestore()
         emailTextField(rule).assertDoesNotExist()
     }
 
     @Test
     fun backStackTest() {
         // 로그인, 로그아웃 시 백스택은 하나여야함.
-        var navController: NavHostController? = null
-        rule.activity.setContent {
-            navController = rememberNavController()
-            MainActivityScreen(navController = navController!!)
+        waitSignInScreen(rule)
+        assertDoesNotExistMainBackStack()
+
+        uiSignIn(rule)
+        assertDoesNotExistSignInBackStack()
+
+        uiSignOut(rule)
+        assertDoesNotExistMainBackStack()
+
+        uiSignIn(rule)
+        uiSignOut(rule)
+        uiSignIn(rule)
+        uiSignOut(rule)
+        assertDoesNotExistMainBackStack()
+    }
+
+    private fun assertDoesNotExistSignInBackStack() {
+        try {
+            navController.getBackStackEntry(ActivityDestinations.SIGN_IN_ROUTE)
+            assert(false)
+        } catch (e: IllegalArgumentException) {
+            assert(true)
         }
-        rule.waitForIdle()
-        assertDoesNotExistMainBackStack(navController)
+    }
 
-        uiSignIn(rule)
-        waitMainScreen(rule)
-        assertDoesNotExistSignInBackStack(navController)
-
-        uiSignOut(rule)
-        waitSignInScreen(rule)
-        assertDoesNotExistMainBackStack(navController)
-
-        uiSignIn(rule)
-        waitMainScreen(rule)
-        uiSignOut(rule)
-        waitSignInScreen(rule)
-        uiSignIn(rule)
-        waitMainScreen(rule)
-        uiSignOut(rule)
-        waitSignInScreen(rule)
-        assertDoesNotExistMainBackStack(navController)
+    private fun assertDoesNotExistMainBackStack() {
+        try {
+            navController.getBackStackEntry(ActivityDestinations.MAIN_ROUTE)
+            assert(false)
+        } catch (e: IllegalArgumentException) {
+            assert(true)
+        }
     }
 }
 
-fun emailTextField(rule: ActivityRule) = rule.onNodeWithText("이메일")
-fun passwordTextField(rule: ActivityRule) = rule.onNodeWithText("비밀번호")
-fun signInButton(rule: ActivityRule) = rule.onNodeWithText("로그인")
+private const val EMAIL_TEXT = "이메일"
+private const val PASSWORD_TEXT = "비밀번호"
+private const val SIGN_IN_TEXT = "로그인"
+private const val SIGN_OUT_TEXT = "로그아웃"
 
-fun waitSignInScreen(rule: ActivityRule) {
-    rule.waitUntil(5000) {
-        rule.onAllNodesWithText("이메일").fetchSemanticsNodes().isNotEmpty()
-    }
-}
+private fun emailTextField(rule: AndroidComposeTestRule<ActivityScenarioRule<HiltTestActivity>, HiltTestActivity>) =
+    rule.onNodeWithText(EMAIL_TEXT)
 
-fun waitMainScreen(rule: ActivityRule) {
-    rule.waitUntil(5000) {
-        rule.onAllNodesWithText("이메일").fetchSemanticsNodes().isEmpty()
-    }
-}
+private fun passwordTextField(rule: AndroidComposeTestRule<ActivityScenarioRule<HiltTestActivity>, HiltTestActivity>) =
+    rule.onNodeWithText(PASSWORD_TEXT)
 
-fun uiSignOut(rule: ActivityRule) {
+private fun signInButton(rule: AndroidComposeTestRule<ActivityScenarioRule<HiltTestActivity>, HiltTestActivity>) =
+    rule.onNodeWithText(SIGN_IN_TEXT)
+
+fun uiSignOut(rule: AndroidComposeTestRule<ActivityScenarioRule<HiltTestActivity>, HiltTestActivity>) {
     rule.onRoot().performTouchInput { swipeRight() }
     rule.onNodeWithContentDescription(SETTING_ICON).performClick()
-    rule.onNodeWithText("로그아웃").performClick()
+    rule.onNodeWithText(SIGN_OUT_TEXT).performClick()
+    waitSignInScreen(rule)
 }
 
-fun uiSignIn(rule: ActivityRule) {
+fun uiSignIn(rule: AndroidComposeTestRule<ActivityScenarioRule<HiltTestActivity>, HiltTestActivity>) {
     emailTextField(rule).performTextInput("1@a.com")
     passwordTextField(rule).performTextInput("111111")
     signInButton(rule).performClick()
+    waitMainScreen(rule)
 }
 
-private fun assertDoesNotExistSignInBackStack(navController: NavHostController?) {
-    try {
-        navController!!.getBackStackEntry(ActivityDestinations.SIGN_IN_ROUTE)
-        assert(false)
-    } catch (e: IllegalArgumentException) {
-        assert(true)
+private fun waitSignInScreen(rule: AndroidComposeTestRule<ActivityScenarioRule<HiltTestActivity>, HiltTestActivity>) {
+    rule.waitUntil(5000) {
+        rule.onAllNodesWithText(EMAIL_TEXT).fetchSemanticsNodes().isNotEmpty()
     }
 }
 
-private fun assertDoesNotExistMainBackStack(navController: NavHostController?) {
-    try {
-        navController!!.getBackStackEntry(ActivityDestinations.MAIN_ROUTE)
-        assert(false)
-    } catch (e: IllegalArgumentException) {
-        assert(true)
+private fun waitMainScreen(rule: AndroidComposeTestRule<ActivityScenarioRule<HiltTestActivity>, HiltTestActivity>) {
+    rule.waitUntil(5000) {
+        rule.onAllNodesWithText(EMAIL_TEXT).fetchSemanticsNodes().isEmpty()
     }
 }

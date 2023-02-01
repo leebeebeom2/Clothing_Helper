@@ -19,6 +19,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ClothingHelper">
+        <activity android:name=".ui.HiltTestActivity"
+            android:theme="@style/Theme.ClothingHelper"
+            />
         <activity
             android:name="com.leebeebeom.clothinghelper.ui.MainActivity"
             android:exported="true"

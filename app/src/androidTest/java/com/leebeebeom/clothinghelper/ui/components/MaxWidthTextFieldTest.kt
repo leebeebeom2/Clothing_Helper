@@ -10,7 +10,6 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -21,6 +20,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.ui.signin.components.textfield.INVISIBLE_ICON_TAG
+import com.leebeebeom.clothinghelper.ui.signin.components.textfield.VISIBLE_ICON_TAG
 import com.leebeebeom.clothinghelper.ui.signin.components.textfield.VisibleIcon
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import org.junit.Before
@@ -134,7 +135,6 @@ class MaxWidthTextFieldTest {
 
         visibleIcon.performClick()
 
-
         assertVisible()
         recreateTester.emulateSavedInstanceStateRestore()
         assertVisible()
@@ -218,8 +218,8 @@ class MaxWidthTextFieldTest {
     private val moveBackButton get() = rule.onNodeWithText(moveBackText)
     private val textField get() = rule.onNodeWithText("이메일")
     private val passwordTextField get() = rule.onNodeWithText("비밀번호")
-    private val visibleIcon get() = rule.onNodeWithTag(visibleIconTag)
-    private val invisibleIcon get() = rule.onNodeWithTag(invisibleIconTag)
+    private val visibleIcon get() = rule.onNodeWithContentDescription(VISIBLE_ICON_TAG)
+    private val invisibleIcon get() = rule.onNodeWithContentDescription(INVISIBLE_ICON_TAG)
     private val cancelIcon get() = rule.onNodeWithContentDescription(CANCEL_ICON)
     private val errorText get() = rule.onNodeWithText("에러")
 
@@ -241,9 +241,6 @@ class MaxWidthTextFieldTest {
         )
     }
 
-    private val visibleIconTag = "visible icon"
-    private val invisibleIconTag = "invisible icon"
-
     private fun passwordTextField(): @Composable () -> Unit = {
         passwordState = rememberMaxWidthTextFieldState(
             label = R.string.password,
@@ -260,10 +257,6 @@ class MaxWidthTextFieldTest {
             onInputChange = {},
             trailingIcon = {
                 VisibleIcon(
-                    modifier = Modifier.testTag(
-                        if (passwordState.isVisible) invisibleIconTag
-                        else visibleIconTag
-                    ),
                     isVisible = { passwordState.isVisible },
                     onClick = passwordState::visibilityToggle
                 )

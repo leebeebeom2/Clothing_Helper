@@ -80,8 +80,8 @@ class MaxWidthTextFieldTest {
         )
 
     @Test
-    fun textFieldInputChangeTest() =
-        textFieldInputChangeTest(
+    fun inputChangeTest() =
+        inputChangeTest(
             textField = rule.emailTextField,
             rule = rule,
             input = { emailInput },
@@ -89,8 +89,8 @@ class MaxWidthTextFieldTest {
             state = { state })
 
     @Test
-    fun passwordTextFieldVisibleTest() =
-        passwordTextFieldVisibleTest(
+    fun textFieldVisibleTest() =
+        textFieldVisibleTest(
             rule = rule,
             input = { passwordInput },
             restoreTester = restoreTester

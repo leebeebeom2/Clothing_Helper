@@ -212,6 +212,20 @@ class MaxWidthTextFieldTest {
         passwordTextField.assertIsNotFocused()
     }
 
+    @Test
+    fun imeTest() {
+        textField.assertIsFocused()
+        textField.performImeAction()
+
+        textField.assertIsNotFocused()
+        passwordTextField.assertIsFocused()
+
+        passwordTextField.performImeAction()
+        textField.assertIsNotFocused()
+        passwordTextField.assertIsNotFocused()
+        assert(!isKeyboardShown())
+    }
+
     private val moveButton get() = rule.onNodeWithText(moveText)
     private val moveBackButton get() = rule.onNodeWithText(moveBackText)
     private val textField get() = rule.onNodeWithText("이메일")

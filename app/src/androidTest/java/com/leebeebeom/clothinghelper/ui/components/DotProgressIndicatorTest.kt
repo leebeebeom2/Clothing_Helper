@@ -5,17 +5,17 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.test.junit4.StateRestorationTester
-import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithTag
+import com.leebeebeom.clothinghelper.centerDotProgressIndicator
+import com.leebeebeom.clothinghelper.composeRule
+import com.leebeebeom.clothinghelper.restoreTester
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import org.junit.Rule
 import org.junit.Test
 
 class DotProgressIndicatorTest {
     @get:Rule
-    val rule = createComposeRule()
-    private val restoreTester = StateRestorationTester(rule)
+    val rule = composeRule
+    private val restoreTester = restoreTester(rule)
 
     @Test
     fun centerDotProgressIndicatorTest() {
@@ -28,24 +28,18 @@ class DotProgressIndicatorTest {
                 }
             }
         }
-        assertDoesNotExists()
+        rule.centerDotProgressIndicator.assertDoesNotExist()
 
         isLoading = true
 
-        assertExists()
+        rule.centerDotProgressIndicator.assertExists()
         restoreTester.emulateSavedInstanceStateRestore()
-        assertExists()
+        rule.centerDotProgressIndicator.assertExists()
 
         isLoading = false
 
-        assertDoesNotExists()
+        rule.centerDotProgressIndicator.assertDoesNotExist()
         restoreTester.emulateSavedInstanceStateRestore()
-        assertDoesNotExists()
+        rule.centerDotProgressIndicator.assertDoesNotExist()
     }
-
-    private fun assertExists() =
-        rule.onNodeWithTag(CENTER_DOT_PROGRESS_INDICATOR_TAG).assertExists()
-
-    private fun assertDoesNotExists() =
-        rule.onNodeWithTag(CENTER_DOT_PROGRESS_INDICATOR_TAG).assertDoesNotExist()
 }

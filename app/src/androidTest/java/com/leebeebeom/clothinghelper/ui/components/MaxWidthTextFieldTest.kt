@@ -232,7 +232,7 @@ class MaxWidthTextFieldTest {
     private val passwordTextField get() = rule.onNodeWithText("비밀번호")
     private val visibleIcon get() = rule.onNodeWithContentDescription(VISIBLE_ICON_TAG)
     private val invisibleIcon get() = rule.onNodeWithContentDescription(INVISIBLE_ICON_TAG)
-    private val cancelIcon get() = rule.onNodeWithContentDescription(CANCEL_ICON)
+    private val cancelIcon get() = rule.onNodeWithContentDescription(CANCEL_ICON_TAG)
     private val errorText get() = rule.onNodeWithText("에러")
 
     /**

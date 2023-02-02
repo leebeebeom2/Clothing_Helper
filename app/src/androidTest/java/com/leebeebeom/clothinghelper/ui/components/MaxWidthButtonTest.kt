@@ -3,7 +3,11 @@ package com.leebeebeom.clothinghelper.ui.components
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.*
-import com.leebeebeom.clothinghelper.*
+import com.leebeebeom.clothinghelper.R.string.check
+import com.leebeebeom.clothinghelper.checkButton
+import com.leebeebeom.clothinghelper.composeRule
+import com.leebeebeom.clothinghelper.emailTextField
+import com.leebeebeom.clothinghelper.restoreTester
 import com.leebeebeom.clothinghelper.ui.signin.components.textfield.EmailTextField
 import org.junit.Before
 import org.junit.Rule
@@ -24,7 +28,7 @@ class MaxWidthButtonTest {
 
         restoreTester.setContent {
             EmailTextField(error = { null }, onInputChange = {})
-            MaxWidthButton(text = R.string.check,
+            MaxWidthButton(text = check,
                 enabled = { enable.value },
                 onClick = { onClickTest = onClickTestText })
         }

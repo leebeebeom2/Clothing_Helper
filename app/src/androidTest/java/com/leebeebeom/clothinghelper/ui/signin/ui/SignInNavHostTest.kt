@@ -41,6 +41,7 @@ class SignInNavHostTest {
     }
 
     // centerDotProgressIndicator 테스트와 동시 진행
+    // 네비게이션 테스트 포함
     @Test
     fun signInBlockBacKPressTest() {
         val emailTextField = rule.onNodeWithText("이메일")

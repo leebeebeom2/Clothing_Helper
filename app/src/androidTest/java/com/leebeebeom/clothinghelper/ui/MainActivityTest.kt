@@ -48,12 +48,11 @@ class MainActivitySignInStartTest {
 class MainActivitySignOutStartTest {
     @get:Rule
     val rule = createAndroidComposeRule<HiltTestActivity>()
-    lateinit var restoreTester: StateRestorationTester
+    private val restoreTester = StateRestorationTester(rule)
     private lateinit var navController: NavHostController
 
     @Before
     fun signOut() {
-        restoreTester = StateRestorationTester(rule)
         restoreTester.setContent {
             navController = rememberNavController()
             MainActivityScreen(navController = navController)

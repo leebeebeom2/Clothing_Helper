@@ -1,13 +1,11 @@
 package com.leebeebeom.clothinghelper.ui.components
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.performClick
+import com.leebeebeom.clothinghelper.*
 import com.leebeebeom.clothinghelper.R.string.check
-import com.leebeebeom.clothinghelper.checkButton
-import com.leebeebeom.clothinghelper.composeRule
-import com.leebeebeom.clothinghelper.emailTextField
-import com.leebeebeom.clothinghelper.restoreTester
 import com.leebeebeom.clothinghelper.ui.signin.components.textfield.EmailTextField
 import org.junit.Before
 import org.junit.Rule
@@ -27,46 +25,37 @@ class MaxWidthButtonTest {
         onClickTest = ""
 
         restoreTester.setContent {
-            EmailTextField(error = { null }, onInputChange = {})
-            MaxWidthButton(text = check,
-                enabled = { enable.value },
-                onClick = { onClickTest = onClickTestText })
+            Column {
+                EmailTextField(error = { null }, onInputChange = {})
+                MaxWidthButton(text = check,
+                    enabled = { enable.value },
+                    onClick = { onClickTest = onClickTestText })
+            }
         }
     }
 
     @Test
-    fun focusTest() {
-        rule.emailTextField.assertIsFocused()
-        rule.checkButton.performClick()
-        rule.emailTextField.assertIsNotFocused()
-    }
+    fun buttonFocusTest() = buttonFocusTest(
+        focusNode = rule.emailTextField,
+        button = rule.checkButton,
+        restoreTester = restoreTester
+    )
 
     @Test
-    fun enabledTest() {
-        rule.checkButton.assertIsEnabled()
-        restoreTester.emulateSavedInstanceStateRestore()
-        rule.checkButton.assertIsEnabled()
-
-        enable.value = false
-
-        rule.checkButton.assertIsNotEnabled()
-        restoreTester.emulateSavedInstanceStateRestore()
-        rule.checkButton.assertIsNotEnabled()
-
-        enable.value = true
-
-        rule.checkButton.assertIsEnabled()
-        restoreTester.emulateSavedInstanceStateRestore()
-        rule.checkButton.assertIsEnabled()
-    }
+    fun buttonEnabledTest() = buttonEnabledTest(
+        button = rule.checkButton,
+        setEnable = { enable.value = it },
+        restoreTester = restoreTester
+    )
 
     @Test
     fun onClickTest() {
         rule.checkButton.performClick()
         assert(onClickTest == onClickTestText)
-        onClickTest = ""
 
+        onClickTest = ""
         restoreTester.emulateSavedInstanceStateRestore()
+
         rule.checkButton.performClick()
         assert(onClickTest == onClickTestText)
     }

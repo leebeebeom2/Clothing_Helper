@@ -8,10 +8,9 @@ import com.leebeebeom.clothinghelper.ui.components.*
 fun EmailTextField(
     error: () -> Int?,
     imeActionRoute: ImeActionRoute = ImeActionRoute.NEXT,
+    state: MutableMaxWidthTextFieldState = rememberEmailTextFieldState(imeActionRoute = imeActionRoute),
     onInputChange: (String) -> Unit
 ) {
-    val state = rememberEmailTextFieldState(imeActionRoute = imeActionRoute)
-
     MaxWidthTextFieldWithError(
         state = state,
         onValueChange = state::onValueChange,
@@ -23,7 +22,7 @@ fun EmailTextField(
 }
 
 @Composable
-private fun rememberEmailTextFieldState(
+fun rememberEmailTextFieldState(
     imeActionRoute: ImeActionRoute
 ) = rememberMaxWidthTextFieldState(
     label = R.string.email,

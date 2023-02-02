@@ -33,6 +33,9 @@ fun PasswordTextField(
     SetTextFieldError(error = error, collect = { state.error = it })
 }
 
+const val VISIBLE_ICON_TAG = "visible icon"
+const val INVISIBLE_ICON_TAG = "invisible icon"
+
 @Composable
 fun VisibleIcon(
     modifier: Modifier = Modifier,
@@ -44,7 +47,8 @@ fun VisibleIcon(
         drawable = if (isVisible()) R.drawable.ic_visibility_off else R.drawable.ic_visibility,
         tint = LocalContentColor.current.copy(0.4f),
         onClick = onClick,
-        size = 24.dp
+        size = 24.dp,
+        contentDescription = if (isVisible()) INVISIBLE_ICON_TAG else VISIBLE_ICON_TAG
     )
 }
 

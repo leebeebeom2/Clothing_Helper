@@ -110,7 +110,7 @@ class MaxWidthTextFieldTest {
 
     @Test
     fun errorTest() = errorTest(
-        rule,
+        rule = rule,
         errorTextField = rule.emailTextField,
         setError = { state.error = it },
         restoreTester = restoreTester

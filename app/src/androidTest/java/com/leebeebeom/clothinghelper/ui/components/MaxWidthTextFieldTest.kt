@@ -14,8 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.leebeebeom.clothinghelper.*
-import com.leebeebeom.clothinghelper.R.string.email
-import com.leebeebeom.clothinghelper.R.string.password
+import com.leebeebeom.clothinghelper.R.string.*
 import com.leebeebeom.clothinghelper.ui.signin.components.textfield.VisibleIcon
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import org.junit.Before
@@ -112,7 +111,7 @@ class MaxWidthTextFieldTest {
     fun errorTest() = errorTest(
         rule = rule,
         errorTextField = rule.emailTextField,
-        setError = { state.error = it },
+        setError = { state.error = error_test },
         restoreTester = restoreTester
     )
 

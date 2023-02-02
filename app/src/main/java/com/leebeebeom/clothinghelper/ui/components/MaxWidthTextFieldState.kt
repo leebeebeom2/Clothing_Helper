@@ -117,7 +117,7 @@ private fun ErrorText(state: MaxWidthTextFieldState) {
     }
 }
 
-const val CANCEL_ICON = "cancel Icon"
+const val CANCEL_ICON_TAG = "cancel Icon"
 
 @Stable
 @OptIn(ExperimentalComposeUiApi::class)
@@ -169,7 +169,7 @@ interface MaxWidthTextFieldState {
                 drawable = R.drawable.ic_cancel,
                 tint = VeryDarkGray,
                 size = 20.dp,
-                contentDescription = CANCEL_ICON
+                contentDescription = CANCEL_ICON_TAG
             )
         }
     }

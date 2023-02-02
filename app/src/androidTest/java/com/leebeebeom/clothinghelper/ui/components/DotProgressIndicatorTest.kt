@@ -15,12 +15,12 @@ import org.junit.Test
 class DotProgressIndicatorTest {
     @get:Rule
     val rule = createComposeRule()
-    lateinit var restoreTester: StateRestorationTester
+    private val restoreTester = StateRestorationTester(rule)
 
     @Test
     fun centerDotProgressIndicatorTest() {
         var isLoading by mutableStateOf(false)
-        restoreTester = StateRestorationTester(rule)
+
         restoreTester.setContent {
             ClothingHelperTheme {
                 Surface(color = MaterialTheme.colors.background) {

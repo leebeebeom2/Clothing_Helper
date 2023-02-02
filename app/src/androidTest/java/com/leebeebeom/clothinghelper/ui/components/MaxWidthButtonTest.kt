@@ -14,7 +14,7 @@ import org.junit.Test
 class MaxWidthButtonTest {
     @get:Rule
     val rule = createComposeRule()
-    lateinit var restoreTester: StateRestorationTester
+    private val restoreTester = StateRestorationTester(rule)
     private val onClickTestText = "onClick"
     private var onClickTest = ""
     private lateinit var enable: MutableState<Boolean>
@@ -24,7 +24,6 @@ class MaxWidthButtonTest {
         enable = mutableStateOf(true)
         onClickTest = ""
 
-        restoreTester = StateRestorationTester(rule)
         restoreTester.setContent {
             EmailTextField(error = { null }, onInputChange = {})
             MaxWidthButton(text = R.string.check,

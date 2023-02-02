@@ -16,12 +16,11 @@ import org.junit.Test
 class MainActivitySignInStartTest {
     @get:Rule
     val rule = createAndroidComposeRule<HiltTestActivity>()
-    private lateinit var restoreTester: StateRestorationTester
+    private val restoreTester = StateRestorationTester(rule)
 
     @Before
     fun signIn() {
         FirebaseAuth.getInstance().signInWithEmailAndPassword("1@a.com", "111111")
-        restoreTester = StateRestorationTester(rule)
         restoreTester.setContent { MainActivityScreen() }
     }
 

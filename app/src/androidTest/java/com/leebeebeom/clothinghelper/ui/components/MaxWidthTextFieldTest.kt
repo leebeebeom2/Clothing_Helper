@@ -40,15 +40,13 @@ class MaxWidthTextFieldTest {
 
     @get:Rule
     val rule = createComposeRule()
-    lateinit var recreateTester: StateRestorationTester
+    private val restoreTester = StateRestorationTester(rule)
 
     @Before
     fun init() {
         input = ""
 
-        recreateTester = StateRestorationTester(rule)
-
-        recreateTester.setContent {
+        restoreTester.setContent {
             ClothingHelperTheme {
                 val navController = rememberNavController()
                 NavHost(navController = navController, startDestination = screen1Route) {
@@ -91,7 +89,7 @@ class MaxWidthTextFieldTest {
         textField.performTextInput(testInput)
 
         assertInputChange()
-        recreateTester.emulateSavedInstanceStateRestore()
+        restoreTester.emulateSavedInstanceStateRestore()
         assertInputChange()
 
         textField.performClick() // 포커스
@@ -100,13 +98,13 @@ class MaxWidthTextFieldTest {
         textField.performTextInput("스")
 
         assertCursorPosition()
-        recreateTester.emulateSavedInstanceStateRestore()
+        restoreTester.emulateSavedInstanceStateRestore()
         assertCursorPosition()
 
         textField.performTextClearance()
 
         assertTextClear()
-        recreateTester.emulateSavedInstanceStateRestore()
+        restoreTester.emulateSavedInstanceStateRestore()
         assertTextClear()
     }
 
@@ -130,19 +128,19 @@ class MaxWidthTextFieldTest {
         passwordTextField.performTextInput(testInput)
 
         assertInVisible()
-        recreateTester.emulateSavedInstanceStateRestore()
+        restoreTester.emulateSavedInstanceStateRestore()
         assertInVisible()
 
         visibleIcon.performClick()
 
         assertVisible()
-        recreateTester.emulateSavedInstanceStateRestore()
+        restoreTester.emulateSavedInstanceStateRestore()
         assertVisible()
 
         invisibleIcon.performClick()
 
         assertInVisible()
-        recreateTester.emulateSavedInstanceStateRestore()
+        restoreTester.emulateSavedInstanceStateRestore()
         assertInVisible()
     }
 
@@ -179,13 +177,13 @@ class MaxWidthTextFieldTest {
         rule.waitForIdle()
 
         errorText.assertExists()
-        recreateTester.emulateSavedInstanceStateRestore()
+        restoreTester.emulateSavedInstanceStateRestore()
         errorText.assertExists()
 
         textField.performTextInput(testInput)
 
         errorText.assertDoesNotExist()
-        recreateTester.emulateSavedInstanceStateRestore()
+        restoreTester.emulateSavedInstanceStateRestore()
         errorText.assertDoesNotExist()
     }
 

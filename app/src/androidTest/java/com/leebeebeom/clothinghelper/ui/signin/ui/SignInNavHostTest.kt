@@ -21,15 +21,14 @@ import org.junit.Test
 class SignInNavHostTest {
     @get:Rule
     val rule = createAndroidComposeRule<HiltTestActivity>()
+    private val restoreTester = StateRestorationTester(rule)
     private val device = UiDevice.getInstance(getInstrumentation())
-    lateinit var restoreTester: StateRestorationTester
 
     private lateinit var uiState: MutableSignInNavUiState
 
     @Before
     fun init() {
         uiState = MutableSignInNavUiState()
-        restoreTester = StateRestorationTester(rule)
         restoreTester.setContent {
             NavHost(
                 navController = rememberNavController(),

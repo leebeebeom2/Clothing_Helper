@@ -8,12 +8,14 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.leebeebeom.clothinghelper.*
-import com.leebeebeom.clothinghelper.R.string.*
+import com.leebeebeom.clothinghelper.R.string.email
+import com.leebeebeom.clothinghelper.R.string.password
 import com.leebeebeom.clothinghelper.ui.signin.components.textfield.VisibleIcon
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import org.junit.Before
@@ -110,7 +112,7 @@ class MaxWidthTextFieldTest {
     fun errorTest() = errorTest(
         rule,
         errorTextField = rule.emailTextField,
-        setError = { state.error = error_test },
+        setError = { state.error = it },
         restoreTester = restoreTester
     )
 

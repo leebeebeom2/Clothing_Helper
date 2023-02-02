@@ -2,8 +2,6 @@ package com.leebeebeom.clothinghelper.ui
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import androidx.compose.ui.test.junit4.StateRestorationTester
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
@@ -47,8 +45,8 @@ class MainActivitySignInStartTest {
 
 class MainActivitySignOutStartTest {
     @get:Rule
-    val rule = createAndroidComposeRule<HiltTestActivity>()
-    private val restoreTester = StateRestorationTester(rule)
+    val rule = activityRule
+    private val restoreTester = restoreTester(rule)
     private lateinit var navController: NavHostController
 
     @Before

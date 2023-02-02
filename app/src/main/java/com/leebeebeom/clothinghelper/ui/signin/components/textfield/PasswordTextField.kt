@@ -12,10 +12,12 @@ fun PasswordTextField(
     error: () -> Int?,
     imeActionRoute: ImeActionRoute = ImeActionRoute.DONE,
     @StringRes label: Int = R.string.password,
+    state: MutableMaxWidthTextFieldState = rememberPasswordTextFieldState(
+        imeActionRoute = imeActionRoute,
+        label = label
+    ),
     onInputChange: (String) -> Unit
 ) {
-    val state = rememberPasswordTextFieldState(imeActionRoute = imeActionRoute, label = label)
-
     MaxWidthTextFieldWithError(
         state = state,
         onValueChange = state::onValueChange,
@@ -50,7 +52,7 @@ fun VisibleIcon(
 }
 
 @Composable
-private fun rememberPasswordTextFieldState(
+fun rememberPasswordTextFieldState(
     imeActionRoute: ImeActionRoute,
     label: Int = R.string.password
 ) = rememberMaxWidthTextFieldState(

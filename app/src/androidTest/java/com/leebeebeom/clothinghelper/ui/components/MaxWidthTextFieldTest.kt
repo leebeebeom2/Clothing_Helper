@@ -189,6 +189,31 @@ class MaxWidthTextFieldTest {
         errorText.assertDoesNotExist()
     }
 
+    @Test
+    fun cursorTest() {
+        textField.performTextInput(testInput)
+        changeFocus()
+        textField.performTextInput("1")
+
+        rule.onNodeWithText(testInput + 1)
+
+        changeFocus()
+        changeFocus()
+        textField.performTextInput("1")
+
+        rule.onNodeWithText(testInput + 1 + 1)
+    }
+
+    private fun changeFocus() {
+        passwordTextField.performClick()
+        passwordTextField.assertIsFocused()
+        textField.assertIsNotFocused()
+
+        textField.performClick()
+        textField.assertIsFocused()
+        passwordTextField.assertIsNotFocused()
+    }
+
     private val moveButton get() = rule.onNodeWithText(moveText)
     private val moveBackButton get() = rule.onNodeWithText(moveBackText)
     private val textField get() = rule.onNodeWithText("이메일")

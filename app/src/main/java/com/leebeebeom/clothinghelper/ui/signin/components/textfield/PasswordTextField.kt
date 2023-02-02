@@ -3,7 +3,6 @@ package com.leebeebeom.clothinghelper.ui.signin.components.textfield
 import androidx.annotation.StringRes
 import androidx.compose.material.LocalContentColor
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.components.*
@@ -38,12 +37,10 @@ const val INVISIBLE_ICON_TAG = "invisible icon"
 
 @Composable
 fun VisibleIcon(
-    modifier: Modifier = Modifier,
     isVisible: () -> Boolean,
     onClick: () -> Unit
 ) {
     CustomIconButton(
-        modifier = modifier,
         drawable = if (isVisible()) R.drawable.ic_visibility_off else R.drawable.ic_visibility,
         tint = LocalContentColor.current.copy(0.4f),
         onClick = onClick,

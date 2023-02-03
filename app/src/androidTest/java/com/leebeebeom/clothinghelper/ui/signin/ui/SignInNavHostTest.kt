@@ -8,10 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.uiautomator.UiDevice
-import com.leebeebeom.clothinghelper.activityRule
-import com.leebeebeom.clothinghelper.centerDotProgressIndicator
-import com.leebeebeom.clothinghelper.keyboardCheck
-import com.leebeebeom.clothinghelper.restoreTester
+import com.leebeebeom.clothinghelper.*
 import com.leebeebeom.clothinghelper.ui.ActivityDestinations.SIGN_IN_ROUTE
 import org.junit.Before
 import org.junit.Rule
@@ -73,5 +70,16 @@ class SignInNavHostTest {
         device.pressBack()
         rule.centerDotProgressIndicator.assertExists()
         uiState.isSignInLoading = false
+    }
+
+    @Test
+    fun showKeyboardOnceTest() {
+        showKeyboardOnceTest(
+            move = { rule.onNodeWithText("이메일로 가입하기").performClick() },
+            moveBack = {
+                device.pressBack()
+                device.pressBack()
+            }
+        )
     }
 }

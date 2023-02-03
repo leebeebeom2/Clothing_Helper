@@ -1,11 +1,11 @@
 package com.leebeebeom.clothinghelper.ui.signin.components
 
 import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.leebeebeom.clothinghelper.activityRule
+import com.leebeebeom.clothinghelper.googleSignInButton
 import com.leebeebeom.clothinghelper.restoreTester
 import com.leebeebeom.clothinghelper.ui.signin.ui.SignInNavViewModel
 import org.junit.Before
@@ -34,13 +34,10 @@ class GoogleSignInButtonTest {
 
     @Test
     fun enabledTest() {
-        googleSignInButton.performClick()
+        rule.googleSignInButton.performClick()
         rule.waitForIdle()
-        googleSignInButton.assertIsNotEnabled()
+        rule.googleSignInButton.assertIsNotEnabled()
     }
 
-
     // 구글 로그인 테스트 불가
-
-    private val googleSignInButton = rule.onNodeWithText("구글 이메일로 시작하기")
 }

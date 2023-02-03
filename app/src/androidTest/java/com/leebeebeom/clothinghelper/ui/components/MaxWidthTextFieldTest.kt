@@ -86,8 +86,8 @@ class MaxWidthTextFieldTest {
             textField = rule.emailTextField,
             rule = rule,
             input = { emailInput },
-            restoreTester = restoreTester,
-            state = { state })
+            restoreTester = restoreTester
+        )
 
     @Test
     fun textFieldVisibleTest() =

@@ -8,7 +8,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.*
 import com.leebeebeom.clothinghelper.ui.components.ImeActionRoute
 import com.leebeebeom.clothinghelper.ui.components.MaxWidthTextFieldWithError
-import com.leebeebeom.clothinghelper.ui.components.MutableMaxWidthTextFieldState
 import com.leebeebeom.clothinghelper.ui.components.rememberMaxWidthTextFieldState
 import com.leebeebeom.clothinghelper.ui.signin.state.MutableEmailAndPasswordUiState
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInViewModel
@@ -23,7 +22,6 @@ class PasswordTextFieldTest {
     private val restoreTester = restoreTester(rule)
     private lateinit var viewModel: SignInViewModel
     private lateinit var uiState: MutableEmailAndPasswordUiState
-    private lateinit var state: MutableMaxWidthTextFieldState
     private val ComposeContentTestRule.dummyTextField get() = onNodeWithText("확인")
 
     @Before
@@ -32,7 +30,6 @@ class PasswordTextFieldTest {
             ClothingHelperTheme {
                 viewModel = hiltViewModel()
                 uiState = viewModel.uiState as MutableEmailAndPasswordUiState
-                state = rememberPasswordTextFieldState(imeActionRoute = ImeActionRoute.DONE)
 
                 val state2 = rememberMaxWidthTextFieldState(
                     label = R.string.check,
@@ -49,7 +46,7 @@ class PasswordTextFieldTest {
                     PasswordTextField(
                         error = { uiState.passwordError },
                         onInputChange = viewModel::onPasswordChange,
-                        state = state
+                        state = rememberPasswordTextFieldState(imeActionRoute = ImeActionRoute.DONE)
                     )
                 }
 
@@ -68,8 +65,7 @@ class PasswordTextFieldTest {
             textField = rule.passwordTextField,
             rule = rule,
             input = { uiState.password },
-            restoreTester = restoreTester,
-            state = { state }
+            restoreTester = restoreTester
         )
     }
 

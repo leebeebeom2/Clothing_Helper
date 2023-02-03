@@ -11,7 +11,6 @@ import com.leebeebeom.clothinghelper.R.string.check
 import com.leebeebeom.clothinghelper.R.string.error_test
 import com.leebeebeom.clothinghelper.ui.components.ImeActionRoute
 import com.leebeebeom.clothinghelper.ui.components.MaxWidthTextFieldWithError
-import com.leebeebeom.clothinghelper.ui.components.MutableMaxWidthTextFieldState
 import com.leebeebeom.clothinghelper.ui.components.rememberMaxWidthTextFieldState
 import com.leebeebeom.clothinghelper.ui.signin.state.MutableEmailUiState
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInViewModel
@@ -26,7 +25,6 @@ class EmailTextFieldTest {
     private val restoreTester = restoreTester(rule)
     private lateinit var viewmodel: SignInViewModel
     private lateinit var uiState: MutableEmailUiState
-    private lateinit var state: MutableMaxWidthTextFieldState
     private val ComposeContentTestRule.dummyTextField get() = onNodeWithText("확인")
 
     @Before
@@ -36,9 +34,8 @@ class EmailTextFieldTest {
                 Column(modifier = Modifier.fillMaxSize()) {
                     viewmodel = hiltViewModel()
                     uiState = viewmodel.uiState as MutableEmailUiState
-                    state = rememberEmailTextFieldState(imeActionRoute = ImeActionRoute.NEXT)
                     EmailTextField(
-                        state = state,
+                        state = rememberEmailTextFieldState(imeActionRoute = ImeActionRoute.NEXT),
                         error = { uiState.emailError },
                         onInputChange = viewmodel::onEmailChange,
                         imeActionRoute = ImeActionRoute.DONE
@@ -62,11 +59,10 @@ class EmailTextFieldTest {
     @Test
     fun inputChangeTest() =
         inputChangeTest(
-            rule = rule,
             textField = rule.emailTextField,
+            rule = rule,
             input = { uiState.email },
-            restoreTester = restoreTester,
-            state = { state }
+            restoreTester = restoreTester
         )
 
     @Test

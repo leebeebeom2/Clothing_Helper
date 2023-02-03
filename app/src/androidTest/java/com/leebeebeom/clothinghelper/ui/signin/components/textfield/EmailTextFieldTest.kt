@@ -68,7 +68,7 @@ class EmailTextFieldTest {
     @Test
     fun cancelIconTest() =
         cancelIconTest(
-            cancelIconTestField = rule.emailTextField,
+            cancelIconTextField = rule.emailTextField,
             noCancelIconTestField = rule.dummyTextField,
             rule = rule,
             cancelIconTextFieldInput = { uiState.email },

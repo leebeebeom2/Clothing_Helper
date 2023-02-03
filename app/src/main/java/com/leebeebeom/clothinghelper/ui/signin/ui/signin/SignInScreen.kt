@@ -17,12 +17,12 @@ import com.leebeebeom.clothinghelper.ui.components.HeightSpacer
 import com.leebeebeom.clothinghelper.ui.components.IconWrapper
 import com.leebeebeom.clothinghelper.ui.components.MaxWidthButton
 import com.leebeebeom.clothinghelper.ui.components.SingleLineText
-import com.leebeebeom.clothinghelper.ui.signin.composable.GoogleSignInButton
-import com.leebeebeom.clothinghelper.ui.signin.composable.Logo
-import com.leebeebeom.clothinghelper.ui.signin.composable.OrDivider
-import com.leebeebeom.clothinghelper.ui.signin.composable.SignInBaseColumn
-import com.leebeebeom.clothinghelper.ui.signin.composable.textfield.EmailTextField
-import com.leebeebeom.clothinghelper.ui.signin.composable.textfield.PasswordTextField
+import com.leebeebeom.clothinghelper.ui.signin.components.GoogleSignInButton
+import com.leebeebeom.clothinghelper.ui.signin.components.Logo
+import com.leebeebeom.clothinghelper.ui.signin.components.OrDivider
+import com.leebeebeom.clothinghelper.ui.signin.components.SignInBaseColumn
+import com.leebeebeom.clothinghelper.ui.signin.components.textfield.EmailTextField
+import com.leebeebeom.clothinghelper.ui.signin.components.textfield.PasswordTextField
 import com.leebeebeom.clothinghelper.ui.signin.state.EmailAndPasswordState
 import com.leebeebeom.clothinghelper.ui.signin.ui.SignInNavUiState
 import com.leebeebeom.clothinghelper.ui.signin.ui.SignInNavViewModel
@@ -32,7 +32,7 @@ fun SignInScreen(
     navigateToResetPassword: () -> Unit,
     navigateToSignUp: () -> Unit,
     signInNavViewModel: SignInNavViewModel,
-    signInNavUiState: SignInNavUiState = signInNavViewModel.signInNavUiState,
+    signInNavUiState: SignInNavUiState = signInNavViewModel.uiState,
     viewModel: SignInViewModel = hiltViewModel(),
     uiState: EmailAndPasswordState = viewModel.uiState,
     activityViewModel: ActivityViewModel = activityViewModel()

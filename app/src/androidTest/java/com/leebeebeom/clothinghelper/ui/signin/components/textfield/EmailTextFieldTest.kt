@@ -97,11 +97,18 @@ class EmailTextFieldTest {
     )
 
     @Test
-    fun cursorTest() = cursorTest(
-        restoreTester = restoreTester,
-        textField1 = rule.emailTextField,
-        textField2 = rule.dummyTextField
-    )
+    fun cursorTest() {
+        cursorTest(
+            restoreTester = restoreTester,
+            textField1 = rule.emailTextField,
+            textField2 = rule.dummyTextField
+        )
+        cursorTest(
+            restoreTester = restoreTester,
+            textField1 = rule.dummyTextField,
+            textField2 = rule.emailTextField
+        )
+    }
 
     @Test
     fun imeTest() = imeTest(

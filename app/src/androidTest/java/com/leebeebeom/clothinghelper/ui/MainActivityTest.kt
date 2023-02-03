@@ -64,7 +64,7 @@ class MainActivitySignOutStartTest {
         rule.emailTextField.assertExists()
         rule.uiSignIn()
 
-        assertSignIn(rule)
+        assertSignIn(rule = rule, restoreTester = restoreTester)
     }
 
     @Test

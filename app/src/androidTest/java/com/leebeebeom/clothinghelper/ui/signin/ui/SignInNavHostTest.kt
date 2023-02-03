@@ -1,8 +1,6 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui
 
 import androidx.compose.ui.test.junit4.StateRestorationTester
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.NavHost
@@ -10,18 +8,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.uiautomator.UiDevice
+import com.leebeebeom.clothinghelper.activityRule
+import com.leebeebeom.clothinghelper.centerDotProgressIndicator
+import com.leebeebeom.clothinghelper.keyboardCheck
+import com.leebeebeom.clothinghelper.restoreTester
 import com.leebeebeom.clothinghelper.ui.ActivityDestinations.SIGN_IN_ROUTE
-import com.leebeebeom.clothinghelper.ui.HiltTestActivity
-import com.leebeebeom.clothinghelper.ui.components.CENTER_DOT_PROGRESS_INDICATOR_TAG
-import com.leebeebeom.clothinghelper.ui.components.isKeyboardShown
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
 class SignInNavHostTest {
     @get:Rule
-    val rule = createAndroidComposeRule<HiltTestActivity>()
-    private val restoreTester = StateRestorationTester(rule)
+    val rule = activityRule
+    private val restoreTester = restoreTester(rule)
     private val device = UiDevice.getInstance(getInstrumentation())
 
     private lateinit var uiState: MutableSignInNavUiState
@@ -42,45 +41,37 @@ class SignInNavHostTest {
     // centerDotProgressIndicator 테스트와 동시 진행
     // 네비게이션 테스트 포함
     @Test
-    fun signInBlockBacKPressTest() {
-        val emailTextField = rule.onNodeWithText("이메일")
-
-        emailTextField.assertExists()
-        blockBackPressTest()
-        emailTextField.assertExists()
-    }
+    fun signInBlockBacKPressTest() = blockBackPressTest(restoreTester = restoreTester)
 
     @Test
     fun signUpBlockBacKPressTest() {
-        rule.waitUntil { isKeyboardShown() }
+        rule.waitUntil { keyboardCheck() }
         device.pressBack() // 키보드 내리기
-        rule.onNodeWithText("이메일로 가입하기").performClick() // 이동
-
-        val nickNameTextField = rule.onNodeWithText("닉네임")
-        nickNameTextField.assertExists()
-        blockBackPressTest()
-        nickNameTextField.assertExists()
+        rule.onNodeWithText("이메일로 가입하기").performClick()
+        blockBackPressTest(restoreTester = restoreTester)
     }
 
     @Test
     fun resetPasswordBlockBacKPressTest() {
         rule.onNodeWithText("비밀번호를 잊으셨나요?").performClick()
+        blockBackPressTest(restoreTester = restoreTester)
+    }
 
-        val sendButton = rule.onNodeWithText("보내기")
-        sendButton.assertExists()
+    private fun blockBackPressTest(restoreTester: StateRestorationTester) {
         blockBackPressTest()
-        sendButton.assertExists()
+        restoreTester.emulateSavedInstanceStateRestore()
+        blockBackPressTest()
     }
 
     private fun blockBackPressTest() {
-        centerDotProgressIndicator.assertDoesNotExist()
+        rule.centerDotProgressIndicator.assertDoesNotExist()
         uiState.isSignInLoading = true
-        centerDotProgressIndicator.assertExists()
+        rule.centerDotProgressIndicator.assertExists()
         device.pressBack()
         device.pressBack()
         device.pressBack()
-        centerDotProgressIndicator.assertExists()
+        device.pressBack()
+        rule.centerDotProgressIndicator.assertExists()
+        uiState.isSignInLoading = false
     }
-
-    private val centerDotProgressIndicator = rule.onNodeWithTag(CENTER_DOT_PROGRESS_INDICATOR_TAG)
 }

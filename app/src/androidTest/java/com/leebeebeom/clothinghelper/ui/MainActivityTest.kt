@@ -63,9 +63,8 @@ class MainActivitySignOutStartTest {
         // 로그인 시 메인 스크린 이동
         rule.emailTextField.assertExists()
         rule.uiSignIn()
-        rule.emailTextField.assertDoesNotExist()
-        restoreTester.emulateSavedInstanceStateRestore()
-        rule.emailTextField.assertDoesNotExist()
+
+        assertSignIn(rule)
     }
 
     @Test

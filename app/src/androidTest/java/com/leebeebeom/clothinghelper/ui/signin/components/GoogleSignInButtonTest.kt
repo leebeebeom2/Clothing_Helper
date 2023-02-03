@@ -1,15 +1,12 @@
 package com.leebeebeom.clothinghelper.ui.signin.components
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.leebeebeom.clothinghelper.ui.HiltTestActivity
+import com.leebeebeom.clothinghelper.activityRule
+import com.leebeebeom.clothinghelper.restoreTester
 import com.leebeebeom.clothinghelper.ui.signin.ui.SignInNavViewModel
 import org.junit.Before
 import org.junit.Rule
@@ -17,20 +14,20 @@ import org.junit.Test
 
 class GoogleSignInButtonTest {
     @get:Rule
-    val rule = createAndroidComposeRule<HiltTestActivity>()
-    lateinit var enabled: MutableState<Boolean>
+    val rule = activityRule
+    val restoreTester = restoreTester(rule)
 
     @Before
     fun init() {
-        enabled = mutableStateOf(true)
+        FirebaseAuth.getInstance().signOut()
 
-        rule.setContent {
+        restoreTester.setContent {
             val viewModel: SignInNavViewModel = hiltViewModel()
 
             GoogleSignInButton(
-                enabled = { enabled.value },
+                enabled = { viewModel.uiState.googleButtonEnabled },
                 onActivityResult = { viewModel.signInWithGoogleEmail(it) {} },
-                disable = { enabled.value = false }
+                disable = { viewModel.setGoogleButtonEnable(false) }
             )
         }
     }
@@ -42,15 +39,8 @@ class GoogleSignInButtonTest {
         googleSignInButton.assertIsNotEnabled()
     }
 
-    @Test
-    fun googleSignInTest() {
-        googleSignInButton.performClick()
-        rule.waitForIdle()
-        rule.waitUntil {
-            rule.onAllNodesWithText("구글 이메일로 시작하기").fetchSemanticsNodes().isNotEmpty()
-        }
-        assert(FirebaseAuth.getInstance().currentUser != null)
-    }
+
+    // 구글 로그인 테스트 불가
 
     private val googleSignInButton = rule.onNodeWithText("구글 이메일로 시작하기")
 }

@@ -1,16 +1,20 @@
 package com.leebeebeom.clothinghelper.ui.signin.components.textfield
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.test.*
-import androidx.compose.ui.test.junit4.StateRestorationTester
-import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.text.TextRange
-import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.components.CANCEL_ICON_TAG
+import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.leebeebeom.clothinghelper.*
+import com.leebeebeom.clothinghelper.R.string.check
+import com.leebeebeom.clothinghelper.R.string.error_test
 import com.leebeebeom.clothinghelper.ui.components.ImeActionRoute
+import com.leebeebeom.clothinghelper.ui.components.MaxWidthTextFieldWithError
 import com.leebeebeom.clothinghelper.ui.components.MutableMaxWidthTextFieldState
+import com.leebeebeom.clothinghelper.ui.components.rememberMaxWidthTextFieldState
+import com.leebeebeom.clothinghelper.ui.signin.state.MutableEmailUiState
+import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInViewModel
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import org.junit.Before
 import org.junit.Rule
@@ -18,25 +22,34 @@ import org.junit.Test
 
 class EmailTextFieldTest {
     @get:Rule
-    val rule = createComposeRule()
+    val rule = activityRule
+    private val restoreTester = restoreTester(rule)
+    private lateinit var viewmodel: SignInViewModel
+    private lateinit var uiState: MutableEmailUiState
     private lateinit var state: MutableMaxWidthTextFieldState
-    private var input = ""
-    private val restoreTester = StateRestorationTester(rule)
-    private val testInput = "테스트"
+    private val ComposeContentTestRule.dummyTextField get() = onNodeWithText("확인")
 
     @Before
     fun init() {
-        input = ""
-
         restoreTester.setContent {
             ClothingHelperTheme {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    state = rememberEmailTextFieldState(imeActionRoute = ImeActionRoute.DONE)
-
+                Column(modifier = Modifier.fillMaxSize()) {
+                    viewmodel = hiltViewModel()
+                    uiState = viewmodel.uiState as MutableEmailUiState
+                    state = rememberEmailTextFieldState(imeActionRoute = ImeActionRoute.NEXT)
                     EmailTextField(
                         state = state,
-                        error = { state.error },
-                        onInputChange = { input = it }
+                        error = { uiState.emailError },
+                        onInputChange = viewmodel::onEmailChange,
+                        imeActionRoute = ImeActionRoute.DONE
+                    )
+
+                    val state2 = rememberMaxWidthTextFieldState(label = check)
+                    MaxWidthTextFieldWithError(
+                        state = state2,
+                        onValueChange = state2::onValueChange,
+                        onFocusChanged = state2::onFocusChanged,
+                        onInputChange = {}
                     )
                 }
             }
@@ -44,94 +57,55 @@ class EmailTextFieldTest {
     }
 
     @Test
-    fun inputChangeTest() {
-        textField.performTextInput(testInput)
-
-        assertInput(testInput)
-        restoreTester.emulateSavedInstanceStateRestore()
-        assertInput(testInput)
-
-        rule.waitForIdle()
-        textField.performClick() // 포커스 이동
-        // 커서 변경
-        state.onValueChange(newTextField = state.textFieldValue.copy(selection = TextRange(1)))
-
-        textField.performTextInput("스")
-
-        assertInput("테스스트")
-        restoreTester.emulateSavedInstanceStateRestore()
-        assertInput("테스스트")
-    }
+    fun showKeyboardTest() = isKeyboardShown()
 
     @Test
-    fun cancelIconTest() {
-        cancelIcon.assertDoesNotExist()
-        textField.performTextInput(testInput)
-        rule.waitForIdle()
-        cancelIcon.assertExists()
-
-        textField.performImeAction()
-        cancelIcon.assertDoesNotExist()
-
-        assertInput(testInput)
-        restoreTester.emulateSavedInstanceStateRestore()
-        assertInput(testInput)
-
-        cancelIcon.assertDoesNotExist()
-        textField.performClick()
-        cancelIcon.assertExists()
-        cancelIcon.performClick()
-
-        assertInput("")
-        cancelIcon.assertDoesNotExist()
-        restoreTester.emulateSavedInstanceStateRestore()
-        assertInput("")
-        cancelIcon.assertDoesNotExist()
-    }
+    fun inputChangeTest() =
+        inputChangeTest(
+            rule = rule,
+            textField = rule.emailTextField,
+            input = { uiState.email },
+            restoreTester = restoreTester,
+            state = { state }
+        )
 
     @Test
-    fun errorTest() {
-        errorText.assertDoesNotExist()
-        state.error = R.string.error_test
-
-        errorText.assertExists()
-        restoreTester.emulateSavedInstanceStateRestore()
-        errorText.assertExists()
-
-        textField.performTextInput(" ") // block blank
-        errorText.assertExists()
-        restoreTester.emulateSavedInstanceStateRestore()
-        textField.performTextInput(" ") // block blank
-        errorText.assertExists()
-
-        textField.performTextInput("0")
-
-        errorText.assertDoesNotExist()
-        restoreTester.emulateSavedInstanceStateRestore()
-        errorText.assertDoesNotExist()
-    }
+    fun cancelIconTest() =
+        cancelIconTest(
+            cancelIconTestField = rule.emailTextField,
+            noCancelIconTestField = rule.dummyTextField,
+            rule = rule,
+            cancelIconTextFieldInput = { uiState.email },
+            restorationTester = restoreTester
+        )
 
     @Test
-    fun blockBlankTest() {
-        textField.performTextInput(testInput)
+    fun errorTest() =
+        errorTest(
+            rule = rule,
+            errorTextField = rule.emailTextField,
+            setError = { uiState.emailError = error_test },
+            restoreTester = restoreTester,
+            blockBlank = true
+        )
 
-        assertBlockBlank()
-        restoreTester.emulateSavedInstanceStateRestore()
-        assertBlockBlank()
-    }
+    @Test
+    fun blockBlankTest() = blockBlankTest(
+        rule = rule,
+        textField = rule.emailTextField,
+        restoreTester = restoreTester
+    )
 
-    private fun assertBlockBlank() {
-        textField.performTextInput(" ")
-        rule.onNodeWithText("$testInput ").assertDoesNotExist()
-        rule.onNodeWithText(testInput).assertExists()
-    }
+    @Test
+    fun cursorTest() = cursorTest(
+        restoreTester = restoreTester,
+        textField1 = rule.emailTextField,
+        textField2 = rule.dummyTextField
+    )
 
-    private fun assertInput(text: String) {
-        rule.onNodeWithText(text).assertExists()
-        assert(input == text)
-    }
-
-    private val textField get() = rule.onNodeWithText("이메일")
-    private val cancelIcon get() = rule.onNodeWithContentDescription(CANCEL_ICON_TAG)
-    private val errorText get() = rule.onNodeWithText("에러")
+    @Test
+    fun imeTest() = imeTest(
+        rule.emailTextField,
+        doneTextField = rule.dummyTextField
+    )
 }

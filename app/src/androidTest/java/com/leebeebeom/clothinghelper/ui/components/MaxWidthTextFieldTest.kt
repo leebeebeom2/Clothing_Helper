@@ -72,40 +72,35 @@ class MaxWidthTextFieldTest {
         }
     }
 
+    @Test
+    fun showKeyboardTest() = showKeyboardTest(textField = rule.emailTextField)
+
     // 키보드는 최초 실행 시에만 보여야 함
     @Test
-    fun showKeyboardOnceTest() =
-        showKeyboardOnceTest(
-            move = { moveButton.performClick() },
-            moveBack = { moveBackButton.performClick() }
-        )
+    fun showKeyboardOnceTest() = showKeyboardOnceTest(move = { moveButton.performClick() },
+        moveBack = { moveBackButton.performClick() })
 
     @Test
-    fun inputChangeTest() =
-        inputChangeTest(
-            textField = rule.emailTextField,
-            rule = rule,
-            input = { emailInput },
-            restoreTester = restoreTester
-        )
+    fun inputChangeTest() = inputChangeTest(
+        textField = rule.emailTextField,
+        rule = rule,
+        input = { emailInput },
+        restoreTester = restoreTester
+    )
 
     @Test
-    fun textFieldVisibleTest() =
-        textFieldVisibleTest(
-            rule = rule,
-            input = { passwordInput },
-            restoreTester = restoreTester
-        )
+    fun textFieldVisibleTest() = textFieldVisibleTest(
+        rule = rule, input = { passwordInput }, restoreTester = restoreTester
+    )
 
     @Test
-    fun cancelIconTest() =
-        cancelIconTest(
-            cancelIconTextField = rule.emailTextField,
-            noCancelIconTextField = rule.passwordTextField,
-            rule = rule,
-            cancelIconTextFieldInput = { emailInput },
-            restoreTester = restoreTester
-        )
+    fun cancelIconTest() = cancelIconTest(
+        cancelIconTextField = rule.emailTextField,
+        noCancelIconTextField = rule.passwordTextField,
+        rule = rule,
+        cancelIconTextFieldInput = { emailInput },
+        restoreTester = restoreTester
+    )
 
     @Test
     fun errorTest() = errorTest(
@@ -135,17 +130,13 @@ class MaxWidthTextFieldTest {
 
     private fun emailTextField(): @Composable () -> Unit = {
         state = rememberMaxWidthTextFieldState(
-            label = email,
-            showKeyboard = true,
-            imeActionRoute = ImeActionRoute.NEXT
+            label = email, showKeyboard = true, imeActionRoute = ImeActionRoute.NEXT
         )
 
-        MaxWidthTextFieldWithError(
-            state = state,
+        MaxWidthTextFieldWithError(state = state,
             onValueChange = state::onValueChange,
             onFocusChanged = state::onFocusChanged,
-            onInputChange = { emailInput = it }
-        )
+            onInputChange = { emailInput = it })
     }
 
     private fun passwordTextField(): @Composable () -> Unit = {
@@ -157,8 +148,7 @@ class MaxWidthTextFieldTest {
             cancelIconEnabled = false
         )
 
-        MaxWidthTextFieldWithError(
-            state = passwordState,
+        MaxWidthTextFieldWithError(state = passwordState,
             onValueChange = passwordState::onValueChange,
             onFocusChanged = passwordState::onFocusChanged,
             onInputChange = { passwordInput = it },
@@ -167,7 +157,6 @@ class MaxWidthTextFieldTest {
                     isVisible = { passwordState.isVisible },
                     onClick = passwordState::visibilityToggle
                 )
-            }
-        )
+            })
     }
 }

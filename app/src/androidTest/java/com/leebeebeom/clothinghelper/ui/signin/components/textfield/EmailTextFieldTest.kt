@@ -3,7 +3,6 @@ package com.leebeebeom.clothinghelper.ui.signin.components.textfield
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -43,57 +42,47 @@ class EmailTextFieldTest {
                     )
 
                     val state2 = rememberMaxWidthTextFieldState(label = check)
-                    MaxWidthTextFieldWithError(
-                        state = state2,
+                    MaxWidthTextFieldWithError(state = state2,
                         onValueChange = state2::onValueChange,
                         onFocusChanged = state2::onFocusChanged,
-                        onInputChange = {}
-                    )
+                        onInputChange = {})
                 }
             }
         }
     }
 
     @Test
-    fun showKeyboardTest() {
-        rule.emailTextField.assertIsFocused()
-        isKeyboardShown()
-    }
+    fun showKeyboardTest() = showKeyboardTest(textField = rule.emailTextField)
 
     @Test
-    fun inputChangeTest() =
-        inputChangeTest(
-            textField = rule.emailTextField,
-            rule = rule,
-            input = { uiState.email },
-            restoreTester = restoreTester
-        )
+    fun inputChangeTest() = inputChangeTest(
+        textField = rule.emailTextField,
+        rule = rule,
+        input = { uiState.email },
+        restoreTester = restoreTester
+    )
 
     @Test
-    fun cancelIconTest() =
-        cancelIconTest(
-            cancelIconTextField = rule.emailTextField,
-            noCancelIconTextField = rule.dummyTextField,
-            rule = rule,
-            cancelIconTextFieldInput = { uiState.email },
-            restoreTester = restoreTester
-        )
+    fun cancelIconTest() = cancelIconTest(
+        cancelIconTextField = rule.emailTextField,
+        noCancelIconTextField = rule.dummyTextField,
+        rule = rule,
+        cancelIconTextFieldInput = { uiState.email },
+        restoreTester = restoreTester
+    )
 
     @Test
-    fun errorTest() =
-        errorTest(
-            rule = rule,
-            errorTextField = rule.emailTextField,
-            setError = { uiState.emailError = error_test },
-            restoreTester = restoreTester,
-            blockBlank = true
-        )
+    fun errorTest() = errorTest(
+        rule = rule,
+        errorTextField = rule.emailTextField,
+        setError = { uiState.emailError = error_test },
+        restoreTester = restoreTester,
+        blockBlank = true
+    )
 
     @Test
     fun blockBlankTest() = blockBlankTest(
-        rule = rule,
-        textField = rule.emailTextField,
-        restoreTester = restoreTester
+        rule = rule, textField = rule.emailTextField, restoreTester = restoreTester
     )
 
     @Test
@@ -112,7 +101,6 @@ class EmailTextFieldTest {
 
     @Test
     fun imeTest() = imeTest(
-        rule.emailTextField,
-        doneTextField = rule.dummyTextField
+        rule.emailTextField, doneTextField = rule.dummyTextField
     )
 }

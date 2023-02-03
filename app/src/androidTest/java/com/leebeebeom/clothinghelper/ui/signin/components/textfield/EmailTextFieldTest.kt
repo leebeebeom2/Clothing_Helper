@@ -3,6 +3,7 @@ package com.leebeebeom.clothinghelper.ui.signin.components.textfield
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -54,7 +55,10 @@ class EmailTextFieldTest {
     }
 
     @Test
-    fun showKeyboardTest() = isKeyboardShown()
+    fun showKeyboardTest() {
+        rule.emailTextField.assertIsFocused()
+        isKeyboardShown()
+    }
 
     @Test
     fun inputChangeTest() =

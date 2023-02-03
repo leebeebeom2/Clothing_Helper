@@ -72,7 +72,7 @@ class EmailTextFieldTest {
             noCancelIconTextField = rule.dummyTextField,
             rule = rule,
             cancelIconTextFieldInput = { uiState.email },
-            restorationTester = restoreTester
+            restoreTester = restoreTester
         )
 
     @Test

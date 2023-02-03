@@ -100,7 +100,7 @@ class MaxWidthTextFieldTest {
     @Test
     fun cancelIconTest() =
         cancelIconTest(
-            cancelIconTestField = rule.emailTextField,
+            cancelIconTextField = rule.emailTextField,
             noCancelIconTestField = rule.passwordTextField,
             rule = rule,
             cancelIconTextFieldInput = { emailInput },

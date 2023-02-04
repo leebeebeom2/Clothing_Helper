@@ -70,10 +70,10 @@ class MainActivitySignOutStartTest {
         customTestRule.uiSignOut()
         notExistMainBackStack()
 
-        customTestRule.uiSignIn()
-        customTestRule.uiSignOut()
-        customTestRule.uiSignIn()
-        customTestRule.uiSignOut()
+        repeat(2) {
+            customTestRule.uiSignIn()
+            customTestRule.uiSignOut()
+        }
         notExistMainBackStack()
     }
 

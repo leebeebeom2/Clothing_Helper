@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.performClick
-import com.leebeebeom.clothinghelper.*
+import com.leebeebeom.clothinghelper.CustomTestRule
 import com.leebeebeom.clothinghelper.R.string.check
+import com.leebeebeom.clothinghelper.checkButton
+import com.leebeebeom.clothinghelper.composeRule
 import com.leebeebeom.clothinghelper.ui.signin.components.textfield.EmailTextField
 import org.junit.Before
 import org.junit.Rule
@@ -14,7 +16,7 @@ import org.junit.Test
 class MaxWidthButtonTest {
     @get:Rule
     val rule = composeRule
-    private val restoreTester = restoreTester(rule)
+    private val customTestRule = CustomTestRule(rule = rule)
     private val onClickTestText = "onClick"
     private lateinit var onClickTest: String
     private lateinit var enable: MutableState<Boolean>
@@ -24,7 +26,7 @@ class MaxWidthButtonTest {
         enable = mutableStateOf(true)
         onClickTest = ""
 
-        restoreTester.setContent {
+        customTestRule.setContent {
             Column {
                 EmailTextField(error = { null }, onInputChange = {})
                 MaxWidthButton(text = check,
@@ -36,27 +38,55 @@ class MaxWidthButtonTest {
 
     @Test
     fun buttonFocusTest() = buttonFocusTest(
-        focusNode = rule.emailTextField,
-        button = rule.checkButton,
-        restoreTester = restoreTester
+        focusNode = { customTestRule.emailTextField },
+        button = { customTestRule.checkButton }
     )
 
     @Test
-    fun buttonEnabledTest() = buttonEnabledTest(
-        button = rule.checkButton,
-        setEnable = { enable.value = it },
-        restoreTester = restoreTester
+    fun buttonEnabledTest() = buttonEnableTest(
+        button = { customTestRule.checkButton },
+        initialEnabled = true,
+        setEnable = { enable.value = it }
     )
 
     @Test
     fun onClickTest() {
-        rule.checkButton.performClick()
+        customTestRule.checkButton.click()
         assert(onClickTest == onClickTestText)
 
         onClickTest = ""
-        restoreTester.emulateSavedInstanceStateRestore()
+        customTestRule.restore()
 
         rule.checkButton.performClick()
         assert(onClickTest == onClickTestText)
     }
+}
+
+fun buttonFocusTest(
+    focusNode: () -> CustomTestRule.CustomSemanticsNodeInteraction,
+    button: () -> CustomTestRule.CustomSemanticsNodeInteraction
+) {
+    focusNode().click()
+    focusNode().focused()
+    button().click()
+    focusNode().notFocused()
+}
+
+fun buttonEnableTest(
+    button: () -> CustomTestRule.CustomSemanticsNodeInteraction,
+    initialEnabled: Boolean,
+    setEnable: (Boolean) -> Unit,
+) {
+    fun enableCheck(initialEnabled: Boolean) =
+        if (initialEnabled) button().enabled() else button().notEnabled()
+
+    enableCheck(initialEnabled)
+
+    setEnable(!initialEnabled)
+
+    enableCheck(!initialEnabled)
+
+    setEnable(initialEnabled)
+
+    enableCheck(initialEnabled)
 }

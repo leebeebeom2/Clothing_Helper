@@ -1,6 +1,8 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -16,6 +18,8 @@ import com.leebeebeom.clothinghelper.ui.signin.ui.resetpassword.ResetPasswordScr
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInScreen
 import com.leebeebeom.clothinghelper.ui.signin.ui.signup.SignUpScreen
 
+const val SIGN_IN_NAV_TAG = "sign in nav"
+
 object SignInDestinations {
     const val SignInNav_Route = "signInNav"
     const val SignIn_Route = "signIn"
@@ -30,7 +34,10 @@ fun SignInNavHost(
     uiState: SignInNavUiState = viewModel.uiState
 ) {
     NavHost(
-        navController = navController, startDestination = SignIn_Route, route = SignInNav_Route
+        modifier = Modifier.testTag(SIGN_IN_NAV_TAG),
+        navController = navController,
+        startDestination = SignIn_Route,
+        route = SignInNav_Route
     ) {
         composable(route = SignIn_Route) {
             SignInScreen(

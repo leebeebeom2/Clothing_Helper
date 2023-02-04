@@ -5,41 +5,36 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.leebeebeom.clothinghelper.centerDotProgressIndicator
-import com.leebeebeom.clothinghelper.composeRule
-import com.leebeebeom.clothinghelper.restoreTester
+import com.leebeebeom.clothinghelper.*
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import org.junit.Rule
 import org.junit.Test
 
 class DotProgressIndicatorTest {
     @get:Rule
-    val rule = composeRule
-    private val restoreTester = restoreTester(rule)
+    val rule = activityRule
+    private val customTestRule = CustomTestRule(rule = rule)
 
     @Test
     fun centerDotProgressIndicatorTest() {
         var isLoading by mutableStateOf(false)
 
-        restoreTester.setContent {
+        customTestRule.setContent {
             ClothingHelperTheme {
                 Surface(color = MaterialTheme.colors.background) {
                     CenterDotProgressIndicator { isLoading }
                 }
             }
         }
-        rule.centerDotProgressIndicator.assertDoesNotExist()
+
+        customTestRule.centerDotProgressIndicator.notExist()
 
         isLoading = true
 
-        rule.centerDotProgressIndicator.assertExists()
-        restoreTester.emulateSavedInstanceStateRestore()
-        rule.centerDotProgressIndicator.assertExists()
+        customTestRule.centerDotProgressIndicator.exist()
 
         isLoading = false
 
-        rule.centerDotProgressIndicator.assertDoesNotExist()
-        restoreTester.emulateSavedInstanceStateRestore()
-        rule.centerDotProgressIndicator.assertDoesNotExist()
+        customTestRule.centerDotProgressIndicator.notExist()
     }
 }

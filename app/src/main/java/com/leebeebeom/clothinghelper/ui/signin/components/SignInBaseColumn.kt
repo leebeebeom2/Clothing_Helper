@@ -14,11 +14,12 @@ import com.leebeebeom.clothinghelper.ui.util.noRippleClickable
 
 @Composable
 fun SignInBaseColumn(
+    modifier: Modifier = Modifier,
     focusManager: FocusManager = LocalFocusManager.current,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colors.background)
             .verticalScroll(rememberScrollState())

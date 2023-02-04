@@ -5,7 +5,12 @@ import androidx.compose.ui.test.swipeRight
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
-import com.leebeebeom.clothinghelper.*
+import com.leebeebeom.clothinghelper.CustomTestRule
+import com.leebeebeom.clothinghelper.EMAIL
+import com.leebeebeom.clothinghelper.PASSWORD
+import com.leebeebeom.clothinghelper.activityRule
+import com.leebeebeom.clothinghelper.ui.ActivityDestinations.MAIN_ROUTE
+import com.leebeebeom.clothinghelper.ui.ActivityDestinations.SIGN_IN_ROUTE
 import com.leebeebeom.clothinghelper.ui.main.MAIN_NAV_TAG
 import com.leebeebeom.clothinghelper.ui.signin.ui.SIGN_IN_NAV_TAG
 import org.junit.Before
@@ -72,18 +77,12 @@ class MainActivitySignOutStartTest {
         notExistMainBackStack()
     }
 
-    private fun notExistSignInBackStack() {
-        try {
-            navController.getBackStackEntry(ActivityDestinations.SIGN_IN_ROUTE)
-            assert(false)
-        } catch (e: IllegalArgumentException) {
-            assert(true)
-        }
-    }
+    private fun notExistSignInBackStack() = checkBackStack(SIGN_IN_ROUTE)
+    private fun notExistMainBackStack() = checkBackStack(MAIN_ROUTE)
 
-    private fun notExistMainBackStack() {
+    private fun checkBackStack(route: String) {
         try {
-            navController.getBackStackEntry(ActivityDestinations.MAIN_ROUTE)
+            navController.getBackStackEntry(route)
             assert(false)
         } catch (e: IllegalArgumentException) {
             assert(true)

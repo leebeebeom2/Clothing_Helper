@@ -115,7 +115,8 @@ class MaxWidthTextFieldTest {
         rule = customTestRule,
         errorTextField = { customTestRule.emailTextField },
         errorText = rule.activity.getString(error_test),
-        setError = { emailState.error = error_test }
+        setError = { emailState.error = error_test },
+        blockBlank = true
     )
 
     @Test
@@ -138,15 +139,30 @@ class MaxWidthTextFieldTest {
     fun imeTest() = imeTest({ customTestRule.emailTextField },
         doneTextField = { customTestRule.passwordTextField })
 
+    @Test
+    fun blockBlankTest() = blockBlankTest(
+        rule = customTestRule,
+        textField = { customTestRule.emailTextField }
+    )
+
     private fun emailTextField(): @Composable () -> Unit = {
         emailState = rememberMaxWidthTextFieldState(
-            label = email, showKeyboard = true, imeActionRoute = ImeActionRoute.NEXT
+            label = email,
+            showKeyboard = true,
+            imeActionRoute = ImeActionRoute.NEXT,
+            blockBlank = true
         )
 
         MaxWidthTextFieldWithError(state = emailState,
             onValueChange = emailState::onValueChange,
             onFocusChanged = emailState::onFocusChanged,
-            onInputChange = { emailInput = it })
+            onInputChange = {
+                if (emailInput != it) {
+                    emailInput = it
+                    emailState.error = null
+                }
+            }
+        )
     }
 
     private fun passwordTextField(): @Composable () -> Unit = {
@@ -155,13 +171,19 @@ class MaxWidthTextFieldTest {
             initialVisibility = false,
             keyboardRoute = KeyboardRoute.PASSWORD,
             imeActionRoute = ImeActionRoute.DONE,
-            cancelIconEnabled = false
+            cancelIconEnabled = false,
+            blockBlank = true
         )
 
         MaxWidthTextFieldWithError(state = passwordState,
             onValueChange = passwordState::onValueChange,
             onFocusChanged = passwordState::onFocusChanged,
-            onInputChange = { passwordInput = it },
+            onInputChange = {
+                if (passwordInput != it) {
+                    passwordInput = it
+                    passwordState.error = null
+                }
+            },
             trailingIcon = {
                 VisibleIcon(
                     isVisible = { passwordState.isVisible },
@@ -312,7 +334,8 @@ fun errorTest(
     rule: CustomTestRule,
     errorTextField: () -> CustomSemanticsNodeInteraction,
     errorText: String,
-    setError: () -> Unit
+    setError: () -> Unit,
+    blockBlank: Boolean = false
 ) {
     fun errorTextNode() = rule.getNodeWithText(errorText)
 
@@ -325,6 +348,11 @@ fun errorTest(
     setError()
 
     errorExist()
+
+    if (blockBlank) {
+        errorTextField().inputWithNoRestore(0, " ")
+        errorExist()
+    }
 
     errorTextField().input(TEST_INPUT)
     errorNotExist()
@@ -379,6 +407,18 @@ fun imeTest(
     doneTextField().focused()
     doneTextField().imeAction()
     assert(!keyboardCheck())
+}
+
+fun blockBlankTest(
+    rule: CustomTestRule,
+    textField: () -> CustomSemanticsNodeInteraction
+) {
+    textField().input(TEST_INPUT)
+
+    textField().inputWithNoRestore(0, " ")
+    rule.getNodeWithText("$TEST_INPUT ").notExist()
+    textField().inputWithNoRestore(6, " ")
+    rule.getNodeWithText(" $TEST_INPUT").notExist()
 }
 
 private fun CustomTestRule.testInputNode() = getNodeWithText(TEST_INPUT)

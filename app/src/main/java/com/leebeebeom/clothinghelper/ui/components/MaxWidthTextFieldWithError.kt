@@ -1,7 +1,4 @@
-@file:OptIn(
-    ExperimentalComposeUiApi::class, ExperimentalComposeUiApi::class,
-    ExperimentalComposeUiApi::class
-)
+@file:OptIn(ExperimentalComposeUiApi::class)
 
 package com.leebeebeom.clothinghelper.ui.components
 
@@ -211,14 +208,8 @@ open class MutableMaxWidthTextFieldState(
     override val focusRequester: FocusRequester = FocusRequester()
 
     fun onValueChange(newTextField: TextFieldValue) {
-        if (blockBlank) {
-            val newText = newTextField.text.trim()
-            if (textFieldValue.text != newText) error = null
-            textFieldValue = newTextField.copy(text = newText)
-        } else {
-            textFieldValue = newTextField
-            error = null
-        }
+        textFieldValue = if (blockBlank) newTextField.copy(text = newTextField.text.trim())
+        else newTextField
     }
 
     override fun showKeyboard(
@@ -325,7 +316,7 @@ private fun ShowKeyboard(
     keyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
 ) {
     var showedKeyboard by rememberSaveable { mutableStateOf(false) }
-    if (state.showKeyboard && !showedKeyboard) LaunchedEffect(key1 = Unit) {
+    if (!showedKeyboard) LaunchedEffect(key1 = Unit) {
         if (state.showKeyboard) state.showKeyboard(
             scope = this, keyboardController = keyboardController
         )

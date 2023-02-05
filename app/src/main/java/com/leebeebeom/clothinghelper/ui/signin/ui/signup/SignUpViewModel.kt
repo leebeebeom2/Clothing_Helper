@@ -79,8 +79,8 @@ interface SignUpUiState : EmailAndPasswordState {
 class MutableSignUpUiState : MutableEmailAndPasswordUiState(), SignUpUiState {
     override var passwordConfirmError: Int? by mutableStateOf(null)
 
-    var name = ""
-    var passwordConfirm = ""
+    var name by mutableStateOf("")
+    var passwordConfirm by mutableStateOf("")
 
     override val buttonEnabled by derivedStateOf {
         super.buttonEnabled && name.isNotBlank() && passwordConfirm.isNotBlank() && passwordConfirmError == null

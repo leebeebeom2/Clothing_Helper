@@ -1,15 +1,20 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui
 
-import androidx.compose.ui.test.junit4.StateRestorationTester
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.uiautomator.UiDevice
-import com.leebeebeom.clothinghelper.*
+import com.leebeebeom.clothinghelper.CustomTestRule
+import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.activityRule
 import com.leebeebeom.clothinghelper.ui.ActivityDestinations.SIGN_IN_ROUTE
+import com.leebeebeom.clothinghelper.ui.components.CENTER_DOT_PROGRESS_INDICATOR_TAG
+import com.leebeebeom.clothinghelper.ui.components.showKeyboardOnceTest
+import com.leebeebeom.clothinghelper.ui.signin.ui.resetpassword.RESET_PASSWORD_SCREEN_TAG
+import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SIGN_IN_SCREEN_TAG
+import com.leebeebeom.clothinghelper.ui.signin.ui.signup.SIGN_UP_SCREEN_TAG
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -17,69 +22,124 @@ import org.junit.Test
 class SignInNavHostTest {
     @get:Rule
     val rule = activityRule
-    private val restoreTester = restoreTester(rule)
+    private val customTestRule = CustomTestRule(rule = rule)
     private val device = UiDevice.getInstance(getInstrumentation())
 
-    private lateinit var uiState: MutableSignInNavUiState
+    private lateinit var viewModel: SignInNavViewModel
 
     @Before
     fun init() {
-        uiState = MutableSignInNavUiState()
-        restoreTester.setContent {
+        customTestRule.setContent {
+            viewModel = hiltViewModel()
             NavHost(
                 navController = rememberNavController(),
                 startDestination = SIGN_IN_ROUTE,
             ) {
-                composable(SIGN_IN_ROUTE) { SignInNavHost(uiState = uiState) }
+                composable(SIGN_IN_ROUTE) { SignInNavHost(viewModel = viewModel) }
             }
         }
     }
 
-    // centerDotProgressIndicator 테스트와 동시 진행
-    // 네비게이션 테스트 포함
     @Test
-    fun signInBlockBacKPressTest() = blockBackPressTest(restoreTester = restoreTester)
-
-    @Test
-    fun signUpBlockBacKPressTest() {
-        rule.waitUntil { keyboardCheck() }
-        device.pressBack() // 키보드 내리기
-        rule.onNodeWithText("이메일로 가입하기").performClick()
-        blockBackPressTest(restoreTester = restoreTester)
+    fun navigationTest() {
+        customTestRule.getNodeWithTag(SIGN_IN_NAV_TAG).exist()
+        navigateToSignUp()
+        customTestRule.getNodeWithTag(SIGN_UP_SCREEN_TAG).exist()
+        device.pressBack()
+        navigateToResetPassword()
+        customTestRule.getNodeWithTag(RESET_PASSWORD_SCREEN_TAG).exist()
+        device.pressBack()
+        navigateToResetPassword()
+        customTestRule.getNodeWithTag(SIGN_IN_NAV_TAG).exist()
     }
 
     @Test
-    fun resetPasswordBlockBacKPressTest() {
-        rule.onNodeWithText("비밀번호를 잊으셨나요?").performClick()
-        blockBackPressTest(restoreTester = restoreTester)
+    fun loadingTest() {
+        fun inputEmail() = customTestRule.emailTextField.input("test@a.com")
+        fun inputEmailAndPassword() {
+            inputEmail()
+            customTestRule.passwordTextField.invisibleInput("testPassWord")
+        }
+
+        fun loadingCheck() {
+            customTestRule.centerDotProgressIndicator.exist(false)
+            customTestRule.waitTagNotExist(CENTER_DOT_PROGRESS_INDICATOR_TAG, 5000)
+        }
+
+        inputEmailAndPassword()
+        customTestRule.signInButton.click()
+        loadingCheck()
+
+        navigateToSignUp()
+        customTestRule.waitTagExist(SIGN_UP_SCREEN_TAG)
+        inputEmailAndPassword()
+        customTestRule.getNodeWithText(rule.activity.getString(R.string.nickname)).input("닉네임")
+        customTestRule.getNodeWithText(rule.activity.getString(R.string.password_confirm))
+            .invisibleInput("testPassWord")
+        customTestRule.getNodeWithText(rule.activity.getString(R.string.sign_up)).click()
+        loadingCheck()
+
+        device.pressBack()
+        navigateToResetPassword()
+        inputEmail()
+        customTestRule.getNodeWithText(rule.activity.getString(R.string.send)).click()
+        loadingCheck()
     }
 
-    private fun blockBackPressTest(restoreTester: StateRestorationTester) {
-        blockBackPressTest()
-        restoreTester.emulateSavedInstanceStateRestore()
-        blockBackPressTest()
+    @Test
+    fun blockBackPressTest() {
+        fun blockBackPress() = customTestRule.restore(assert = ::doBlockBackPressTest)
+
+        blockBackPress()
+
+        navigateToSignUp()
+        blockBackPress()
+        customTestRule.waitTagNotExist(CENTER_DOT_PROGRESS_INDICATOR_TAG)
+        device.pressBack()
+
+        navigateToResetPassword()
+        blockBackPress()
     }
 
-    private fun blockBackPressTest() {
-        rule.centerDotProgressIndicator.assertDoesNotExist()
+    private fun doBlockBackPressTest() {
+        val uiState = viewModel.uiState as MutableSignInNavUiState
+
+        customTestRule.centerDotProgressIndicator.notExist()
         uiState.isSignInLoading = true
-        rule.centerDotProgressIndicator.assertExists()
-        device.pressBack()
-        device.pressBack()
-        device.pressBack()
-        device.pressBack()
-        rule.centerDotProgressIndicator.assertExists()
+        customTestRule.centerDotProgressIndicator.exist()
+        repeat(4) { device.pressBack() }
+        customTestRule.centerDotProgressIndicator.exist()
         uiState.isSignInLoading = false
     }
 
     @Test
-    fun showKeyboardOnceTest() {
+    fun showKeyboardOnceTestSignUp() =
         showKeyboardOnceTest(
-            move = { rule.onNodeWithText("이메일로 가입하기").performClick() },
-            moveBack = {
+            rule = customTestRule,
+            focusNode = { customTestRule.emailTextField },
+            firstScreenTag = SIGN_IN_SCREEN_TAG,
+            secondScreenTag = SIGN_UP_SCREEN_TAG,
+            move = {
                 device.pressBack()
-                device.pressBack()
-            }
+                navigateToSignUp()
+            },
+            moveBack = device::pressBack
         )
-    }
+
+    @Test
+    fun showKeyboardOnceTestResetPassword() =
+        showKeyboardOnceTest(
+            rule = customTestRule,
+            focusNode = { customTestRule.emailTextField },
+            firstScreenTag = SIGN_IN_SCREEN_TAG,
+            secondScreenTag = RESET_PASSWORD_SCREEN_TAG,
+            move = ::navigateToResetPassword,
+            moveBack = device::pressBack
+        )
+
+    private fun navigateToSignUp() =
+        customTestRule.getNodeWithText(rule.activity.getString(R.string.sign_up_with_email)).click()
+
+    private fun navigateToResetPassword() =
+        customTestRule.getNodeWithText(rule.activity.getString(R.string.forgot_password)).click()
 }

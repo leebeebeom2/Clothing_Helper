@@ -1,6 +1,8 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui.signup
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.ActivityViewModel
@@ -18,6 +20,8 @@ import com.leebeebeom.clothinghelper.ui.signin.components.textfield.PasswordText
 import com.leebeebeom.clothinghelper.ui.signin.ui.SignInNavUiState
 import com.leebeebeom.clothinghelper.ui.signin.ui.SignInNavViewModel
 
+const val SIGN_UP_SCREEN_TAG = "sign up screen"
+
 @Composable
 fun SignUpScreen(
     signInNavViewModel: SignInNavViewModel,
@@ -26,7 +30,7 @@ fun SignUpScreen(
     uiState: SignUpUiState = viewModel.uiState,
     activityViewModel: ActivityViewModel = activityViewModel()
 ) {
-    SignInBaseColumn {
+    SignInBaseColumn(modifier = Modifier.testTag(SIGN_UP_SCREEN_TAG)) {
         Logo()
         EmailTextField(error = { uiState.emailError }, onInputChange = viewModel::onEmailChange)
         NameTextField(onInputChange = viewModel::onNameChange)

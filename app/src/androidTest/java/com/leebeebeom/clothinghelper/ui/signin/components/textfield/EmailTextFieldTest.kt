@@ -22,7 +22,6 @@ class EmailTextFieldTest {
     private val customTestRule = CustomTestRule(rule)
     private lateinit var viewmodel: SignInViewModel
     private lateinit var uiState: MutableEmailUiState
-    private val CustomTestRule.dummyTextField get() = getNodeWithText(rule.activity.getString(check))
 
     @Before
     fun init() {

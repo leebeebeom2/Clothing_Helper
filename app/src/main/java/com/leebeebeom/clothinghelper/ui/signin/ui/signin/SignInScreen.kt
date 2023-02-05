@@ -8,6 +8,7 @@ import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.R
@@ -27,6 +28,8 @@ import com.leebeebeom.clothinghelper.ui.signin.state.EmailAndPasswordState
 import com.leebeebeom.clothinghelper.ui.signin.ui.SignInNavUiState
 import com.leebeebeom.clothinghelper.ui.signin.ui.SignInNavViewModel
 
+const val SIGN_IN_SCREEN_TAG = "sign in screen"
+
 @Composable
 fun SignInScreen(
     navigateToResetPassword: () -> Unit,
@@ -37,7 +40,7 @@ fun SignInScreen(
     uiState: EmailAndPasswordState = viewModel.uiState,
     activityViewModel: ActivityViewModel = activityViewModel()
 ) {
-    SignInBaseColumn {
+    SignInBaseColumn(Modifier.testTag(SIGN_IN_SCREEN_TAG)) {
         Logo()
         EmailTextField(error = { uiState.emailError }, onInputChange = viewModel::onEmailChange)
         PasswordTextField(

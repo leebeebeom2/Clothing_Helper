@@ -3,11 +3,9 @@ package com.leebeebeom.clothinghelper.ui.components
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.test.performClick
 import com.leebeebeom.clothinghelper.CustomTestRule
 import com.leebeebeom.clothinghelper.R.string.check
-import com.leebeebeom.clothinghelper.checkButton
-import com.leebeebeom.clothinghelper.composeRule
+import com.leebeebeom.clothinghelper.activityRule
 import com.leebeebeom.clothinghelper.ui.signin.components.textfield.EmailTextField
 import org.junit.Before
 import org.junit.Rule
@@ -15,7 +13,7 @@ import org.junit.Test
 
 class MaxWidthButtonTest {
     @get:Rule
-    val rule = composeRule
+    val rule = activityRule
     private val customTestRule = CustomTestRule(rule = rule)
     private val onClickTestText = "onClick"
     private lateinit var onClickTest: String
@@ -50,16 +48,13 @@ class MaxWidthButtonTest {
     )
 
     @Test
-    fun onClickTest() {
-        customTestRule.checkButton.click()
-        assert(onClickTest == onClickTestText)
+    fun onClickTest() =
+        customTestRule.restore {
+            customTestRule.checkButton.click()
+            assert(onClickTest == onClickTestText)
 
-        onClickTest = ""
-        customTestRule.restore()
-
-        rule.checkButton.performClick()
-        assert(onClickTest == onClickTestText)
-    }
+            onClickTest = ""
+        }
 }
 
 fun buttonFocusTest(

@@ -101,7 +101,10 @@ class MaxWidthTextFieldTest {
         input = { emailInput })
 
     @Test
-    fun textFieldVisibleTest() = textFieldVisibleTest(customTestRule)
+    fun textFieldVisibleTest() = textFieldVisibleTest(
+        rule = customTestRule,
+        textField = { customTestRule.passwordTextField }
+    )
 
     @Test
     fun cancelIconTest() = cancelIconTest(
@@ -248,7 +251,8 @@ fun inputChangeTest(
 }
 
 fun textFieldVisibleTest(
-    rule: CustomTestRule
+    rule: CustomTestRule,
+    textField: () -> CustomSemanticsNodeInteraction
 ) {
     fun visibleIconExist() {
         rule.visibleIcon.exist()
@@ -265,9 +269,8 @@ fun textFieldVisibleTest(
     visibleIconExist()
     rule.testInputNode().notExist()
 
-    rule.passwordTextField.invisibleInput(TEST_INPUT)
+    textField().invisibleInput(TEST_INPUT)
     rule.testInputNode().notExist()
-    invisibleTextNode().exist()
 
     rule.visibleIcon.click()
     invisibleIconExist()

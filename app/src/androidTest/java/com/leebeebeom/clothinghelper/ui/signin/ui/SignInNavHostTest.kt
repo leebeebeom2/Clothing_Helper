@@ -6,9 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.uiautomator.UiDevice
-import com.leebeebeom.clothinghelper.CustomTestRule
-import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.activityRule
+import com.leebeebeom.clothinghelper.*
 import com.leebeebeom.clothinghelper.ui.ActivityDestinations.SIGN_IN_ROUTE
 import com.leebeebeom.clothinghelper.ui.components.CENTER_DOT_PROGRESS_INDICATOR_TAG
 import com.leebeebeom.clothinghelper.ui.components.showKeyboardOnceTest
@@ -43,22 +41,22 @@ class SignInNavHostTest {
     @Test
     fun navigationTest() {
         customTestRule.getNodeWithTag(SIGN_IN_NAV_TAG).exist()
+
         navigateToSignUp()
-        customTestRule.getNodeWithTag(SIGN_UP_SCREEN_TAG).exist()
-        device.pressBack()
+        device.pressBack() // popBackStack
+
         navigateToResetPassword()
-        customTestRule.getNodeWithTag(RESET_PASSWORD_SCREEN_TAG).exist()
-        device.pressBack()
-        navigateToResetPassword()
+        device.pressBack() // popBackStack
+
         customTestRule.getNodeWithTag(SIGN_IN_NAV_TAG).exist()
     }
 
     @Test
     fun loadingTest() {
-        fun inputEmail() = customTestRule.emailTextField.input("test@a.com")
+        fun inputEmail() = customTestRule.emailTextField.input(NOT_EXIST_EMAIL)
         fun inputEmailAndPassword() {
             inputEmail()
-            customTestRule.passwordTextField.invisibleInput("testPassWord")
+            customTestRule.passwordTextField.invisibleInput(PASSWORD)
         }
 
         fun loadingCheck() {
@@ -71,15 +69,14 @@ class SignInNavHostTest {
         loadingCheck()
 
         navigateToSignUp()
-        customTestRule.waitTagExist(SIGN_UP_SCREEN_TAG)
         inputEmailAndPassword()
-        customTestRule.getNodeWithText(rule.activity.getString(R.string.nickname)).input("닉네임")
+        customTestRule.getNodeWithText(rule.activity.getString(R.string.nickname)).input(NICK_NAME)
         customTestRule.getNodeWithText(rule.activity.getString(R.string.password_confirm))
-            .invisibleInput("testPassWord")
+            .invisibleInput(PASSWORD)
         customTestRule.getNodeWithText(rule.activity.getString(R.string.sign_up)).click()
         loadingCheck()
-
         device.pressBack()
+
         navigateToResetPassword()
         inputEmail()
         customTestRule.getNodeWithText(rule.activity.getString(R.string.send)).click()
@@ -137,9 +134,14 @@ class SignInNavHostTest {
             moveBack = device::pressBack
         )
 
-    private fun navigateToSignUp() =
+    private fun navigateToSignUp() {
         customTestRule.getNodeWithText(rule.activity.getString(R.string.sign_up_with_email)).click()
+        customTestRule.getNodeWithTag(SIGN_UP_SCREEN_TAG).exist()
 
-    private fun navigateToResetPassword() =
+    }
+
+    private fun navigateToResetPassword() {
         customTestRule.getNodeWithText(rule.activity.getString(R.string.forgot_password)).click()
+        customTestRule.getNodeWithTag(RESET_PASSWORD_SCREEN_TAG).exist()
+    }
 }

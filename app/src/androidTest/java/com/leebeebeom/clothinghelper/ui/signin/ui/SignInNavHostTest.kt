@@ -40,7 +40,7 @@ class SignInNavHostTest {
 
     @Test
     fun navigationTest() {
-        customTestRule.getNodeWithTag(SIGN_IN_NAV_TAG).exist()
+        customTestRule.signInScreen.exist()
 
         navigateToSignUp()
         device.pressBack() // popBackStack
@@ -48,7 +48,7 @@ class SignInNavHostTest {
         navigateToResetPassword()
         device.pressBack() // popBackStack
 
-        customTestRule.getNodeWithTag(SIGN_IN_NAV_TAG).exist()
+        customTestRule.signInScreen.exist()
     }
 
     @Test
@@ -70,16 +70,15 @@ class SignInNavHostTest {
 
         navigateToSignUp()
         inputEmailAndPassword()
-        customTestRule.getNodeWithText(rule.activity.getString(R.string.nickname)).input(NICK_NAME)
-        customTestRule.getNodeWithText(rule.activity.getString(R.string.password_confirm))
-            .invisibleInput(PASSWORD)
-        customTestRule.getNodeWithText(rule.activity.getString(R.string.sign_up)).click()
+        customTestRule.nickNameTextField.input(NICK_NAME)
+        customTestRule.passwordConfirmTextField.invisibleInput(PASSWORD)
+        customTestRule.signUpButton.click()
         loadingCheck()
         device.pressBack()
 
         navigateToResetPassword()
         inputEmail()
-        customTestRule.getNodeWithText(rule.activity.getString(R.string.send)).click()
+        customTestRule.sendButton.click()
         loadingCheck()
     }
 
@@ -135,13 +134,15 @@ class SignInNavHostTest {
         )
 
     private fun navigateToSignUp() {
-        customTestRule.getNodeWithText(rule.activity.getString(R.string.sign_up_with_email)).click()
+        customTestRule.getNodeWithStringRes(R.string.sign_up_with_email).click()
         customTestRule.getNodeWithTag(SIGN_UP_SCREEN_TAG).exist()
 
     }
 
     private fun navigateToResetPassword() {
-        customTestRule.getNodeWithText(rule.activity.getString(R.string.forgot_password)).click()
+        customTestRule.getNodeWithStringRes(R.string.forgot_password).click()
         customTestRule.getNodeWithTag(RESET_PASSWORD_SCREEN_TAG).exist()
     }
+
+    private val CustomTestRule.signInScreen get() = getNodeWithTag(SIGN_IN_SCREEN_TAG)
 }

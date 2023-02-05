@@ -54,7 +54,7 @@ class PasswordTextFieldTest {
 
     @Test
     fun inputChangeTest() =
-        invisibleTest {
+        invisibleTest(customTestRule) {
             inputChangeTest(
                 rule = customTestRule,
                 textField = { customTestRule.passwordTextField },
@@ -71,7 +71,7 @@ class PasswordTextFieldTest {
 
     @Test
     fun errorTest() =
-        invisibleTest {
+        invisibleTest(customTestRule) {
             errorTest(
                 customTestRule,
                 { customTestRule.passwordTextField },
@@ -84,7 +84,7 @@ class PasswordTextFieldTest {
 
     @Test
     fun cursorTest() {
-        invisibleTest {
+        invisibleTest(customTestRule) {
             cursorTest(
                 rule = customTestRule,
                 textField1 = { customTestRule.passwordTextField },
@@ -95,7 +95,7 @@ class PasswordTextFieldTest {
 
         customTestRule.invisibleIcon.click()
 
-        invisibleTest {
+        invisibleTest(customTestRule) {
             cursorTest(
                 rule = customTestRule,
                 textField1 = { customTestRule.dummyTextField },
@@ -116,11 +116,5 @@ class PasswordTextFieldTest {
             rule = customTestRule,
             textField = { customTestRule.passwordTextField }
         )
-    }
-
-    private fun invisibleTest(test: (Boolean) -> Unit) {
-        test(true)
-        customTestRule.visibleIcon.click()
-        test(false)
     }
 }

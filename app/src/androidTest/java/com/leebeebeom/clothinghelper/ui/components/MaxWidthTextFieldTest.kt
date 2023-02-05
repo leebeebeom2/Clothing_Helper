@@ -364,13 +364,13 @@ fun cursorTest(
     textField2: () -> CustomSemanticsNodeInteraction
 ) {
     fun changeFocus() {
-        textField1().click()
-        textField1().focused()
-        textField2().notFocused()
-
         textField2().click()
         textField1().notFocused()
         textField2().focused()
+
+        textField1().click()
+        textField1().focused()
+        textField2().notFocused()
     }
 
     textField1().input(TEST_INPUT)

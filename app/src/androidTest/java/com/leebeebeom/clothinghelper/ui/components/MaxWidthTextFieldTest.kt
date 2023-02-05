@@ -127,7 +127,6 @@ class MaxWidthTextFieldTest {
             textField1 = { customTestRule.emailTextField },
             textField2 = { customTestRule.passwordTextField }
         )
-        customTestRule.emailTextField.textClear()
         cursorTest(
             customTestRule,
             textField1 = { customTestRule.passwordTextField },
@@ -382,6 +381,8 @@ fun cursorTest(
     repeat(2) { changeFocus() }
     textField1().inputWithNoRestore((TEST_INPUT + CURSOR_INPUT_TEXT).length, CURSOR_INPUT_TEXT)
     rule.getNodeWithText(TEST_INPUT + CURSOR_INPUT_TEXT + CURSOR_INPUT_TEXT).exist()
+
+    textField1().textClear()
 }
 
 fun imeTest(

@@ -267,6 +267,7 @@ fun textFieldVisibleTest(
 
     rule.passwordTextField.invisibleInput(TEST_INPUT)
     rule.testInputNode().notExist()
+    invisibleTextNode().exist()
 
     rule.visibleIcon.click()
     invisibleIconExist()

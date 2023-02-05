@@ -5,6 +5,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -16,6 +17,8 @@ import com.leebeebeom.clothinghelper.ui.components.ImeActionRoute
 import com.leebeebeom.clothinghelper.ui.components.MaxWidthButton
 import com.leebeebeom.clothinghelper.ui.signin.components.SignInBaseColumn
 import com.leebeebeom.clothinghelper.ui.signin.components.textfield.EmailTextField
+
+const val RESET_PASSWORD_SCREEN_TAG = "reset password screen"
 
 @Composable
 fun ResetPasswordScreen(
@@ -30,7 +33,7 @@ fun ResetPasswordScreen(
         consumeTaskSuccess = viewModel::consumeTaskSuccess
     )
 
-    SignInBaseColumn {
+    SignInBaseColumn(modifier = Modifier.testTag(RESET_PASSWORD_SCREEN_TAG)) {
         Text(
             text = stringResource(id = R.string.reset_password_text),
             style = MaterialTheme.typography.body2,

@@ -68,7 +68,7 @@ class EmailTextFieldTest {
     fun errorTest() = errorTest(
         rule = customTestRule,
         errorTextField = { customTestRule.emailTextField },
-        errorText = rule.activity.getString(error_test),
+        errorTextRes = error_test,
         setError = { uiState.emailError = error_test }
     )
 

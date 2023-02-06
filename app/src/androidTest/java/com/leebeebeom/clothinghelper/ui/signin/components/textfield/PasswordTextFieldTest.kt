@@ -1,9 +1,11 @@
 package com.leebeebeom.clothinghelper.ui.signin.components.textfield
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.ui.test.performClick
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.leebeebeom.clothinghelper.*
+import com.leebeebeom.clothinghelper.CustomTestRule
+import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.activityRule
+import com.leebeebeom.clothinghelper.isKeyboardNotShown
 import com.leebeebeom.clothinghelper.ui.components.*
 import com.leebeebeom.clothinghelper.ui.signin.state.MutableEmailAndPasswordUiState
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInViewModel
@@ -110,7 +112,7 @@ class PasswordTextFieldTest {
 
     @Test
     fun blockBlankTest() {
-        rule.visibleIcon.performClick()
+        customTestRule.visibleIcon.click()
 
         blockBlankTest(
             rule = customTestRule,

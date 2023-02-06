@@ -22,8 +22,16 @@ class SignInNavHostTest {
     val rule = activityRule
     private val customTestRule = CustomTestRule(rule = rule)
     private val device = UiDevice.getInstance(getInstrumentation())
-
     private lateinit var viewModel: SignInNavViewModel
+
+    private val emailTextField get() = emailTextField(customTestRule)
+    private val passwordTextField get() = passwordTextField(customTestRule)
+    private val nickNameTextField get() = nickNameTextField(customTestRule)
+    private val passwordConfirmTextField get() = passwordConfirmTextField(customTestRule)
+    private val signUpButton get() = signUpButton(customTestRule)
+    private val sendButton get() = sendButton(customTestRule)
+    private val signInButton get() = signInButton(customTestRule)
+    private val centerDotProgressIndicator get() = centerDotProgressIndicator(customTestRule)
 
     @Before
     fun init() {
@@ -53,32 +61,32 @@ class SignInNavHostTest {
 
     @Test
     fun loadingTest() {
-        fun inputEmail() = customTestRule.emailTextField.input(NOT_EXIST_EMAIL)
+        fun inputEmail() = emailTextField.input(NOT_EXIST_EMAIL)
         fun inputEmailAndPassword() {
             inputEmail()
-            customTestRule.passwordTextField.invisibleInput(PASSWORD)
+            passwordTextField.invisibleInput(PASSWORD)
         }
 
         fun loadingCheck() {
-            customTestRule.centerDotProgressIndicator.exist(false)
+            centerDotProgressIndicator.exist(false)
             customTestRule.waitTagNotExist(CENTER_DOT_PROGRESS_INDICATOR_TAG, 5000)
         }
 
         inputEmailAndPassword()
-        customTestRule.signInButton.click()
+        signInButton.click()
         loadingCheck()
 
         navigateToSignUp()
         inputEmailAndPassword()
-        customTestRule.nickNameTextField.input(NICK_NAME)
-        customTestRule.passwordConfirmTextField.invisibleInput(PASSWORD)
-        customTestRule.signUpButton.click()
+        nickNameTextField.input(NICK_NAME)
+        passwordConfirmTextField.invisibleInput(PASSWORD)
+        signUpButton.click()
         loadingCheck()
         device.pressBack()
 
         navigateToResetPassword()
         inputEmail()
-        customTestRule.sendButton.click()
+        sendButton.click()
         loadingCheck()
     }
 
@@ -100,11 +108,11 @@ class SignInNavHostTest {
     private fun doBlockBackPressTest() {
         val uiState = viewModel.uiState as MutableSignInNavUiState
 
-        customTestRule.centerDotProgressIndicator.notExist()
+        centerDotProgressIndicator.notExist()
         uiState.isSignInLoading = true
-        customTestRule.centerDotProgressIndicator.exist()
+        centerDotProgressIndicator.exist()
         repeat(4) { device.pressBack() }
-        customTestRule.centerDotProgressIndicator.exist()
+        centerDotProgressIndicator.exist()
         uiState.isSignInLoading = false
     }
 
@@ -112,7 +120,7 @@ class SignInNavHostTest {
     fun showKeyboardOnceTestSignUp() =
         showKeyboardOnceTest(
             rule = customTestRule,
-            focusNode = { customTestRule.emailTextField },
+            focusNode = { emailTextField },
             firstScreenTag = SIGN_IN_SCREEN_TAG,
             secondScreenTag = SIGN_UP_SCREEN_TAG,
             move = {
@@ -126,7 +134,7 @@ class SignInNavHostTest {
     fun showKeyboardOnceTestResetPassword() =
         showKeyboardOnceTest(
             rule = customTestRule,
-            focusNode = { customTestRule.emailTextField },
+            focusNode = { emailTextField },
             firstScreenTag = SIGN_IN_SCREEN_TAG,
             secondScreenTag = RESET_PASSWORD_SCREEN_TAG,
             move = ::navigateToResetPassword,

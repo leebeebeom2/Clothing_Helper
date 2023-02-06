@@ -6,6 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import com.leebeebeom.clothinghelper.CustomTestRule
 import com.leebeebeom.clothinghelper.R.string.check
 import com.leebeebeom.clothinghelper.activityRule
+import com.leebeebeom.clothinghelper.checkButton
+import com.leebeebeom.clothinghelper.emailTextField
 import com.leebeebeom.clothinghelper.ui.signin.components.textfield.EmailTextField
 import org.junit.Before
 import org.junit.Rule
@@ -18,6 +20,9 @@ class MaxWidthButtonTest {
     private val onClickTestText = "onClick"
     private lateinit var onClickTest: String
     private lateinit var enable: MutableState<Boolean>
+
+    private val emailTextField get() = emailTextField(customTestRule)
+    private val checkButton get() = checkButton(customTestRule)
 
     @Before
     fun init() {
@@ -35,26 +40,21 @@ class MaxWidthButtonTest {
     }
 
     @Test
-    fun buttonFocusTest() = buttonFocusTest(
-        focusNode = { customTestRule.emailTextField },
-        button = { customTestRule.checkButton }
-    )
+    fun buttonFocusTest() =
+        buttonFocusTest(focusNode = { emailTextField }, button = { checkButton })
 
     @Test
-    fun buttonEnabledTest() = buttonEnableTest(
-        button = { customTestRule.checkButton },
+    fun buttonEnabledTest() = buttonEnableTest(button = { checkButton },
         initialEnabled = true,
-        setEnable = { enable.value = it }
-    )
+        setEnable = { enable.value = it })
 
     @Test
-    fun onClickTest() =
-        customTestRule.restore {
-            customTestRule.checkButton.click()
-            assert(onClickTest == onClickTestText)
+    fun onClickTest() = customTestRule.restore {
+        checkButton.click()
+        assert(onClickTest == onClickTestText)
 
-            onClickTest = ""
-        }
+        onClickTest = ""
+    }
 }
 
 fun buttonFocusTest(

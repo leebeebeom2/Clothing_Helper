@@ -8,10 +8,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.leebeebeom.clothinghelper.CustomTestRule
 import com.leebeebeom.clothinghelper.EMAIL
 import com.leebeebeom.clothinghelper.PASSWORD
+import com.leebeebeom.clothinghelper.R.string.*
 import com.leebeebeom.clothinghelper.activityRule
 import com.leebeebeom.clothinghelper.ui.ActivityDestinations.MAIN_ROUTE
 import com.leebeebeom.clothinghelper.ui.ActivityDestinations.SIGN_IN_ROUTE
+import com.leebeebeom.clothinghelper.ui.components.CENTER_DOT_PROGRESS_INDICATOR_TAG
 import com.leebeebeom.clothinghelper.ui.main.MAIN_NAV_TAG
+import com.leebeebeom.clothinghelper.ui.main.drawer.SETTING_ICON
 import com.leebeebeom.clothinghelper.ui.signin.ui.SIGN_IN_NAV_TAG
 import org.junit.Before
 import org.junit.Rule
@@ -91,17 +94,17 @@ class MainActivitySignOutStartTest {
 }
 
 private fun CustomTestRule.uiSignIn() {
-    emailTextField.input(EMAIL)
-    passwordTextField.invisibleInput(PASSWORD)
-    signInButton.click()
-    centerDotProgressIndicator.exist(false)
+    getNodeWithStringRes(email).input(EMAIL)
+    getNodeWithStringRes(password).invisibleInput(PASSWORD)
+    getNodeWithStringRes(sign_in).click()
+    getNodeWithTag(CENTER_DOT_PROGRESS_INDICATOR_TAG).exist(false)
     waitMainNav()
 }
 
 private fun CustomTestRule.uiSignOut() {
     root.performTouchInput { swipeRight() }
-    settingIcon.click()
-    signOutButton.click()
+    getNodeWithDescription(SETTING_ICON).click()
+    getNodeWithStringRes(sign_out).click()
     waitSignInNav()
 }
 

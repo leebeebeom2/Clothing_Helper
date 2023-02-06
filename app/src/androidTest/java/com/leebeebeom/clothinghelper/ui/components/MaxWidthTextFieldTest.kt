@@ -1,5 +1,6 @@
 package com.leebeebeom.clothinghelper.ui.components
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -128,7 +129,7 @@ class MaxWidthTextFieldTest {
         errorTest(
             rule = customTestRule,
             errorTextField = { customTestRule.emailTextField },
-            errorText = rule.activity.getString(error_test),
+            errorTextRes = error_test,
             setError = { emailState.error = error_test },
             blockBlank = true
         )
@@ -136,7 +137,7 @@ class MaxWidthTextFieldTest {
             errorTest(
                 rule = customTestRule,
                 errorTextField = { customTestRule.passwordTextField },
-                errorText = rule.activity.getString(error_test),
+                errorTextRes = error_test,
                 setError = { passwordState.error = error_test },
                 blockBlank = true,
                 invisible = it
@@ -388,13 +389,14 @@ fun cancelIconTest(
 fun errorTest(
     rule: CustomTestRule,
     errorTextField: () -> CustomSemanticsNodeInteraction,
-    errorText: String,
+    @StringRes errorTextRes: Int,
     setError: () -> Unit,
     beforeText: String? = null,
     blockBlank: Boolean = false,
     invisible: Boolean = false,
     clearOtherTextField: () -> Unit = {}
 ) {
+    val errorText = rule.getString(errorTextRes)
     fun errorTextNode() = rule.getNodeWithText(errorText)
 
     fun errorNotExist() = errorTextNode().notExist()

@@ -27,6 +27,9 @@ private const val FIRST_SCREEN_ROUTE = "screen1"
 private const val SECOND_SCREEN_ROUTE = "screen2"
 private const val FIRST_SCREEN_TAG = "screen1"
 private const val SECOND_SCREEN_TAG = "screen2"
+private const val TEST_INPUT = "테스트 인풋"
+private const val CURSOR_INPUT_TEXT = "스"
+private const val CURSOR_INPUT = "테스스트 인풋"
 
 class MaxWidthTextFieldTest {
     private lateinit var emailInput: String
@@ -169,7 +172,8 @@ class MaxWidthTextFieldTest {
             blockBlankTest(
                 rule = customTestRule,
                 textField = { customTestRule.passwordTextField },
-                invisible = it)
+                invisible = it
+            )
         }
     }
 
@@ -386,14 +390,19 @@ fun errorTest(
     errorTextField: () -> CustomSemanticsNodeInteraction,
     errorText: String,
     setError: () -> Unit,
+    beforeText: String? = null,
     blockBlank: Boolean = false,
-    invisible: Boolean = false
+    invisible: Boolean = false,
+    clearOtherTextField: () -> Unit = {}
 ) {
     fun errorTextNode() = rule.getNodeWithText(errorText)
 
     fun errorNotExist() = errorTextNode().notExist()
 
-    fun errorExist() = errorTextNode().exist()
+    fun errorExist() = rule.waitTextExist(errorText, 5000)
+
+    fun textClear() =
+        errorTextField().textClear(beforeText = if (invisible) rule.getInvisibleText(TEST_INPUT) else TEST_INPUT)
 
     errorNotExist()
 
@@ -406,11 +415,20 @@ fun errorTest(
         errorExist()
     }
 
-    if (invisible) errorTextField().invisibleInput(TEST_INPUT)
-    else errorTextField().input(TEST_INPUT)
+    if (invisible) errorTextField().invisibleInput(text = TEST_INPUT, beforeText = beforeText)
+    else errorTextField().input(text = TEST_INPUT, beforeText = beforeText)
 
     errorNotExist()
-    errorTextField().textClear(if (invisible) rule.getInvisibleText(TEST_INPUT) else TEST_INPUT)
+
+    textClear()
+    clearOtherTextField()
+
+    beforeText?.let {
+        setError()
+        errorExist()
+        textClear()
+        errorNotExist()
+    }
 }
 
 fun cursorTest(

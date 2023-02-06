@@ -8,6 +8,7 @@ import com.leebeebeom.clothinghelper.CustomTestRule
 import com.leebeebeom.clothinghelper.R.string.check
 import com.leebeebeom.clothinghelper.R.string.error_test
 import com.leebeebeom.clothinghelper.activityRule
+import com.leebeebeom.clothinghelper.emailTextField
 import com.leebeebeom.clothinghelper.ui.components.*
 import com.leebeebeom.clothinghelper.ui.signin.state.MutableEmailUiState
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInViewModel
@@ -22,6 +23,9 @@ class EmailTextFieldTest {
     private val customTestRule = CustomTestRule(rule)
     private lateinit var viewmodel: SignInViewModel
     private lateinit var uiState: MutableEmailUiState
+
+    private val emailTextField get() = emailTextField(customTestRule)
+    private val dummyTextField get() = customTestRule.getNodeWithStringRes(check)
 
     @Before
     fun init() {
@@ -48,26 +52,26 @@ class EmailTextFieldTest {
     }
 
     @Test
-    fun showKeyboardTest() = showKeyboardTest(textField = customTestRule.emailTextField)
+    fun showKeyboardTest() = showKeyboardTest(textField = emailTextField)
 
     @Test
     fun inputChangeTest() = inputChangeTest(
         rule = customTestRule,
-        textField = { customTestRule.emailTextField },
+        textField = { emailTextField },
         input = { uiState.email }
     )
 
     @Test
     fun cancelIconTest() = cancelIconTest(
         rule = customTestRule,
-        cancelIconTextField = { customTestRule.emailTextField },
-        noCancelIconTextField = { customTestRule.dummyTextField }
+        cancelIconTextField = { emailTextField },
+        noCancelIconTextField = { dummyTextField }
     )
 
     @Test
     fun errorTest() = errorTest(
         rule = customTestRule,
-        errorTextField = { customTestRule.emailTextField },
+        errorTextField = { emailTextField },
         errorTextRes = error_test,
         setError = { uiState.emailError = error_test }
     )
@@ -75,26 +79,26 @@ class EmailTextFieldTest {
     @Test
     fun blockBlankTest() = blockBlankTest(
         rule = customTestRule,
-        textField = { customTestRule.emailTextField }
+        textField = { emailTextField }
     )
 
     @Test
     fun cursorTest() {
         cursorTest(
             rule = customTestRule,
-            textField1 = { customTestRule.emailTextField },
-            textField2 = { customTestRule.dummyTextField }
+            textField1 = { emailTextField },
+            textField2 = { dummyTextField }
         )
         cursorTest(
             rule = customTestRule,
-            textField1 = { customTestRule.dummyTextField },
-            textField2 = { customTestRule.emailTextField }
+            textField1 = { dummyTextField },
+            textField2 = { emailTextField }
         )
     }
 
     @Test
     fun imeTest() = imeTest(
-        { customTestRule.emailTextField },
-        doneTextField = { customTestRule.dummyTextField },
+        { emailTextField },
+        doneTextField = { dummyTextField },
     )
 }

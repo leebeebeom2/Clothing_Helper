@@ -23,10 +23,6 @@ class SignInScreenTest {
     private lateinit var viewModel: SignInViewModel
     private lateinit var uiState: MutableEmailAndPasswordUiState
 
-    private val invalidEmailError get() = rule.activity.getString(error_invalid_email)
-    private val notExistEmailError get() = rule.activity.getString(error_user_not_found)
-    private val wrongPasswordError get() = rule.activity.getString(error_wrong_password)
-
     @Before
     fun init() {
         customTestRule.setContent {
@@ -106,7 +102,7 @@ class SignInScreenTest {
         errorTest(
             rule = customTestRule,
             errorTextField = { customTestRule.emailTextField },
-            errorText = invalidEmailError,
+            errorTextRes = error_invalid_email,
             setError = {
                 customTestRule.emailTextField.input(INVALID_EMAIL)
                 customTestRule.passwordTextField.invisibleInput(PASSWORD)
@@ -122,7 +118,7 @@ class SignInScreenTest {
         errorTest(
             rule = customTestRule,
             errorTextField = { customTestRule.emailTextField },
-            errorText = notExistEmailError,
+            errorTextRes = error_user_not_found,
             setError = {
                 customTestRule.emailTextField.input(NOT_EXIST_EMAIL)
                 customTestRule.passwordTextField.invisibleInput(PASSWORD)
@@ -138,7 +134,7 @@ class SignInScreenTest {
         errorTest(
             rule = customTestRule,
             errorTextField = { customTestRule.passwordTextField },
-            errorText = wrongPasswordError,
+            errorTextRes = error_wrong_password,
             setError = {
                 customTestRule.emailTextField.input(EMAIL)
                 customTestRule.passwordTextField.invisibleInput(WRONG_PASSWORD)
@@ -155,7 +151,7 @@ class SignInScreenTest {
 
         errorTest(rule = customTestRule,
             errorTextField = { customTestRule.passwordTextField },
-            errorText = wrongPasswordError,
+            errorTextRes = error_wrong_password,
             setError = {
                 customTestRule.emailTextField.input(EMAIL)
                 customTestRule.passwordTextField.input(WRONG_PASSWORD)
@@ -217,14 +213,14 @@ class SignInScreenTest {
         buttonEnabled()
 
         customTestRule.signInButton.click() // invalid email error
-        customTestRule.waitTextExist(invalidEmailError)
+        customTestRule.waitTextExist(customTestRule.getString(error_invalid_email))
         buttonNotEnabled()
         customTestRule.emailTextField.input("1", INVALID_EMAIL) // remove invalid email error
         buttonEnabled()
 
         customTestRule.emailTextField.textReplace(NOT_EXIST_EMAIL)
         customTestRule.signInButton.click() // user not found error
-        customTestRule.waitTextExist(notExistEmailError)
+        customTestRule.waitTextExist(customTestRule.getString(error_user_not_found))
         buttonNotEnabled()
         customTestRule.emailTextField.input("1", NOT_EXIST_EMAIL) // remove user not found error
         buttonEnabled()
@@ -232,7 +228,7 @@ class SignInScreenTest {
         customTestRule.emailTextField.textReplace(EMAIL)
         customTestRule.passwordTextField.textReplace(WRONG_PASSWORD)
         customTestRule.signInButton.click() // wrong password error
-        customTestRule.waitTextExist(wrongPasswordError)
+        customTestRule.waitTextExist(customTestRule.getString(error_wrong_password))
         buttonNotEnabled()
         customTestRule.passwordTextField.input("1", WRONG_PASSWORD) // wrong password error
         buttonEnabled()

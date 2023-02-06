@@ -75,10 +75,10 @@ class PasswordTextFieldTest {
     fun errorTest() =
         invisibleTest(customTestRule) {
             errorTest(
-                customTestRule,
-                { customTestRule.passwordTextField },
-                rule.activity.getString(R.string.error_test),
-                { uiState.passwordError = R.string.error_test },
+                rule = customTestRule,
+                errorTextField = { customTestRule.passwordTextField },
+                errorTextRes = R.string.error_test,
+                setError = { uiState.passwordError = R.string.error_test },
                 blockBlank = true,
                 invisible = it
             )

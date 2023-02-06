@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.leebeebeom.clothinghelper.*
+import com.leebeebeom.clothinghelper.CustomTestRule.CustomSemanticsNodeInteraction
 import com.leebeebeom.clothinghelper.R.string.*
 import com.leebeebeom.clothinghelper.ui.ActivityDestinations.SIGN_IN_ROUTE
 import com.leebeebeom.clothinghelper.ui.components.*
@@ -187,7 +188,7 @@ class SignInScreenTest {
         fun buttonNotEnabled() = customTestRule.signInButton.notEnabled()
         fun buttonEnabled() = customTestRule.signInButton.enabled()
         fun oneTextFieldBlank(
-            inputTextFiled: () -> CustomTestRule.CustomSemanticsNodeInteraction,
+            inputTextFiled: () -> CustomSemanticsNodeInteraction,
             text: String,
             invisible: Boolean = false
         ) {
@@ -255,4 +256,30 @@ class SignInScreenTest {
 
         innerSignInTest(invisible = false)
     }
+
+    @Test
+    fun looseFocusTest() {
+        looseFocusTest(
+            rule = customTestRule,
+            textField = { customTestRule.emailTextField },
+            rootTag = SIGN_IN_SCREEN_TAG,
+        )
+
+        looseFocusTest(
+            rule = customTestRule,
+            textField = { customTestRule.passwordTextField },
+            rootTag = SIGN_IN_SCREEN_TAG,
+        )
+    }
+}
+
+fun looseFocusTest(
+    rule: CustomTestRule,
+    textField: () -> CustomSemanticsNodeInteraction,
+    rootTag: String
+) {
+    textField().click()
+    textField().focused()
+    rule.getNodeWithTag(rootTag).click()
+    textField().notFocused()
 }

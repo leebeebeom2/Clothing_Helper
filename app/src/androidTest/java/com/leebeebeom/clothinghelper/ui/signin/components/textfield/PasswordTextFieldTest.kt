@@ -2,10 +2,7 @@ package com.leebeebeom.clothinghelper.ui.signin.components.textfield
 
 import androidx.compose.foundation.layout.Column
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.leebeebeom.clothinghelper.CustomTestRule
-import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.activityRule
-import com.leebeebeom.clothinghelper.isKeyboardNotShown
+import com.leebeebeom.clothinghelper.*
 import com.leebeebeom.clothinghelper.ui.components.*
 import com.leebeebeom.clothinghelper.ui.signin.state.MutableEmailAndPasswordUiState
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInViewModel
@@ -20,6 +17,10 @@ class PasswordTextFieldTest {
     private val customTestRule = CustomTestRule(rule = rule)
     private lateinit var viewModel: SignInViewModel
     private lateinit var uiState: MutableEmailAndPasswordUiState
+    
+    private val passwordTextField get() = passwordTextField(customTestRule)
+    private val invisibleIcon get() = invisibleIcon(customTestRule)
+    private val dummyTextField get() = customTestRule.getNodeWithStringRes(R.string.check)
 
     @Before
     fun init() {
@@ -59,7 +60,7 @@ class PasswordTextFieldTest {
         invisibleTest(customTestRule) {
             inputChangeTest(
                 rule = customTestRule,
-                textField = { customTestRule.passwordTextField },
+                textField = { passwordTextField },
                 input = { uiState.password },
                 invisible = it
             )
@@ -68,7 +69,7 @@ class PasswordTextFieldTest {
     @Test
     fun textFieldVisibleTest() = textFieldVisibleTest(
         rule = customTestRule,
-        textField = { customTestRule.passwordTextField }
+        textField = { passwordTextField }
     )
 
     @Test
@@ -76,7 +77,7 @@ class PasswordTextFieldTest {
         invisibleTest(customTestRule) {
             errorTest(
                 rule = customTestRule,
-                errorTextField = { customTestRule.passwordTextField },
+                errorTextField = { passwordTextField },
                 errorTextRes = R.string.error_test,
                 setError = { uiState.passwordError = R.string.error_test },
                 blockBlank = true,
@@ -89,34 +90,34 @@ class PasswordTextFieldTest {
         invisibleTest(customTestRule) {
             cursorTest(
                 rule = customTestRule,
-                textField1 = { customTestRule.passwordTextField },
-                textField2 = { customTestRule.dummyTextField },
+                textField1 = { passwordTextField },
+                textField2 = { dummyTextField },
                 invisible = it
             )
         }
 
-        customTestRule.invisibleIcon.click()
+        invisibleIcon.click()
 
         invisibleTest(customTestRule) {
             cursorTest(
                 rule = customTestRule,
-                textField1 = { customTestRule.dummyTextField },
-                textField2 = { customTestRule.passwordTextField }
+                textField1 = { dummyTextField },
+                textField2 = { passwordTextField }
             )
         }
     }
 
     @Test
-    fun imeTest() = imeTest({ customTestRule.dummyTextField },
-        doneTextField = { customTestRule.passwordTextField })
+    fun imeTest() = imeTest({ dummyTextField },
+        doneTextField = { passwordTextField })
 
     @Test
     fun blockBlankTest() {
-        customTestRule.visibleIcon.click()
+        visibleIcon(customTestRule).click()
 
         blockBlankTest(
             rule = customTestRule,
-            textField = { customTestRule.passwordTextField }
+            textField = { passwordTextField }
         )
     }
 }

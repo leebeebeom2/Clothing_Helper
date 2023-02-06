@@ -260,26 +260,21 @@ class SignInScreenTest {
     @Test
     fun looseFocusTest() {
         looseFocusTest(
-            rule = customTestRule,
             textField = { customTestRule.emailTextField },
-            rootTag = SIGN_IN_SCREEN_TAG,
-        )
+        ) { customTestRule.getNodeWithTag(SIGN_IN_SCREEN_TAG) }
 
         looseFocusTest(
-            rule = customTestRule,
             textField = { customTestRule.passwordTextField },
-            rootTag = SIGN_IN_SCREEN_TAG,
-        )
+        ) { customTestRule.getNodeWithTag(SIGN_IN_SCREEN_TAG) }
     }
 }
 
 fun looseFocusTest(
-    rule: CustomTestRule,
     textField: () -> CustomSemanticsNodeInteraction,
-    rootTag: String
+    root: () -> CustomSemanticsNodeInteraction
 ) {
     textField().click()
     textField().focused()
-    rule.getNodeWithTag(rootTag).click()
+    root().click()
     textField().notFocused()
 }

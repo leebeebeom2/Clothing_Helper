@@ -60,7 +60,6 @@ class ResetPasswordScreenTest {
 //    @Test TODO 테스트 불가
 //    fun looseFocusTest() =
 //        looseFocusTest(
-//            rule = customTestRule,
 //            textField = { customTestRule.emailTextField },
 //            root = { customTestRule.getNodeWithTag(RESET_PASSWORD_SCREEN_TAG) }
 //        )

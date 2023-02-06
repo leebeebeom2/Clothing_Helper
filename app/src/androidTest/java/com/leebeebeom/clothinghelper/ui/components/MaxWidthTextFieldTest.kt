@@ -252,20 +252,14 @@ fun inputChangeTest(
     rule: CustomTestRule,
     textField: () -> CustomSemanticsNodeInteraction,
     input: () -> String,
-    invisible: Boolean = false,
-    visibleIcon: () -> CustomSemanticsNodeInteraction = { visibleIcon(rule) },
-    invisibleIcon: () -> CustomSemanticsNodeInteraction = { invisibleIcon(rule) }
+    invisible: Boolean = false
 ) {
     fun inputText() = if (invisible) textField().invisibleInput(TEST_INPUT)
     else textField().input(TEST_INPUT)
 
-    fun checkTextFieldInput(text: String) {
-        if (invisible) {
-            rule.getInvisibleTextNode(text).exist()
-            visibleIcon().click()
-        } else rule.getNodeWithText(text).exist()
-        if (invisible) invisibleIcon().click()
-    }
+    fun checkTextFieldInput(text: String) =
+        if (invisible) rule.getInvisibleTextNode(text).exist()
+        else rule.getNodeWithText(text).exist()
 
     fun checkInputSame(compareText: String) = assert(input() == compareText)
     fun checkInitState() {
@@ -303,8 +297,8 @@ fun inputChangeTest(
 fun textFieldVisibleTest(
     rule: CustomTestRule,
     textField: () -> CustomSemanticsNodeInteraction,
-    visibleIcon: () -> CustomSemanticsNodeInteraction = {visibleIcon(rule)},
-    invisibleIcon: () -> CustomSemanticsNodeInteraction = {invisibleIcon(rule)},
+    visibleIcon: () -> CustomSemanticsNodeInteraction = { visibleIcon(rule) },
+    invisibleIcon: () -> CustomSemanticsNodeInteraction = { invisibleIcon(rule) },
 ) {
 
     fun visibleIconExist() {

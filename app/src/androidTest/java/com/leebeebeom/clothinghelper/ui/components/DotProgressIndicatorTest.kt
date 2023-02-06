@@ -15,6 +15,8 @@ class DotProgressIndicatorTest {
     val rule = activityRule
     private val customTestRule = CustomTestRule(rule = rule)
 
+    private val centerDotProgressIndicator = centerDotProgressIndicator(customTestRule)
+
     @Test
     fun centerDotProgressIndicatorTest() {
         var isLoading by mutableStateOf(false)
@@ -27,14 +29,14 @@ class DotProgressIndicatorTest {
             }
         }
 
-        customTestRule.centerDotProgressIndicator.notExist()
+        centerDotProgressIndicator.notExist()
 
         isLoading = true
 
-        customTestRule.centerDotProgressIndicator.exist()
+        centerDotProgressIndicator.exist()
 
         isLoading = false
 
-        customTestRule.centerDotProgressIndicator.notExist()
+        centerDotProgressIndicator.notExist()
     }
 }

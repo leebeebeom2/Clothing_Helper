@@ -33,14 +33,17 @@ private const val CURSOR_INPUT_TEXT = "스"
 private const val CURSOR_INPUT = "테스스트 인풋"
 
 class MaxWidthTextFieldTest {
-    private lateinit var emailInput: String
+    private lateinit var input: String
     private lateinit var passwordInput: String
-    private lateinit var emailState: MutableMaxWidthTextFieldState
+    private lateinit var state: MutableMaxWidthTextFieldState
     private lateinit var passwordState: MutableMaxWidthTextFieldState
     private val moveButton get() = customTestRule.getNodeWithText(MOVE_BUTTON_TEXT)
     private val moveBackButton get() = customTestRule.getNodeWithText(MOVE_BACK_BUTTON_TEXT)
 
-    private val emailTextField get() = emailTextField(customTestRule)
+    private var showKeyboard = true
+    private var cancelIconEnable = true
+
+    private val textField get() = customTestRule.getNodeWithStringRes(text_field)
     private val passwordTextField get() = passwordTextField(customTestRule)
 
     @get:Rule
@@ -49,12 +52,13 @@ class MaxWidthTextFieldTest {
 
     @Before
     fun init() {
-        emailInput = ""
+        input = ""
         passwordInput = ""
 
         customTestRule.setContent {
             ClothingHelperTheme {
                 val navController = rememberNavController()
+
                 NavHost(navController = navController, startDestination = FIRST_SCREEN_ROUTE) {
                     composable(FIRST_SCREEN_ROUTE) {
                         Column(
@@ -63,7 +67,7 @@ class MaxWidthTextFieldTest {
                                 .testTag(FIRST_SCREEN_TAG),
                             verticalArrangement = Arrangement.Center
                         ) {
-                            emailTextField()()
+                            textField()()
                             passwordTextField()()
 
                             Button(onClick = { navController.navigate(SECOND_SCREEN_ROUTE) }) {
@@ -87,13 +91,14 @@ class MaxWidthTextFieldTest {
         }
     }
 
-    @Test
-    fun showKeyboardTest() = showKeyboardTest(textField = emailTextField)
+    @Test // 쇼키보드, 노쇼키보드 둘 다 테스트
+    fun showKeyboardTest() = showKeyboardTest(textField = textField, showKeyboard = showKeyboard)
+
 
     // 키보드는 최초 실행 시에만 보여야 함
     @Test
     fun showKeyboardOnceTest() = showKeyboardOnceTest(
-        focusNode = { emailTextField },
+        focusNode = { textField },
         rule = customTestRule,
         firstScreenTag = FIRST_SCREEN_TAG,
         secondScreenTag = SECOND_SCREEN_TAG,
@@ -102,96 +107,60 @@ class MaxWidthTextFieldTest {
     )
 
     @Test
-    fun inputChangeTest() {
-        inputChangeTest(rule = customTestRule,
-            textField = { emailTextField },
-            input = { emailInput })
-        invisibleTest(customTestRule) {
-            inputChangeTest(
-                rule = customTestRule,
-                textField = { passwordTextField },
-                input = { passwordInput },
-                invisible = it
-            )
-        }
-    }
+    fun inputChangeTest() =
+        inputChangeTest(rule = customTestRule, textField = { textField }, input = { input })
 
     @Test
-    fun textFieldVisibleTest() =
-        textFieldVisibleTest(rule = customTestRule, textField = { passwordTextField })
+    fun textFieldVisibleTest() = textFieldVisibleTest(rule = customTestRule,
+        textField = { passwordTextField },
+        input = { passwordInput })
 
     @Test
-    fun cancelIconTest() = cancelIconTest(rule = customTestRule,
-        cancelIconTextField = { emailTextField },
-        noCancelIconTextField = { passwordTextField })
-
-    @Test
-    fun errorTest() {
-        errorTest(
+    fun cancelIconTest() = // enable unable 둘 다 테스트
+        cancelIconTest(
             rule = customTestRule,
-            errorTextField = { emailTextField },
-            errorTextRes = error_test,
-            setError = { emailState.error = error_test },
-            blockBlank = true
+            cancelIconTextField = { textField },
+            looseFocus = { passwordTextField.click() },
+            enable = cancelIconEnable
         )
-        invisibleTest(customTestRule) {
-            errorTest(
-                rule = customTestRule,
-                errorTextField = { passwordTextField },
-                errorTextRes = error_test,
-                setError = { passwordState.error = error_test },
-                blockBlank = true,
-                invisible = it
-            )
-        }
-    }
 
     @Test
-    fun cursorTest() {
+    fun errorTest() = errorTest(
+        rule = customTestRule,
+        errorTextField = { textField },
+        errorTextRes = error_test,
+        setError = { state.error = error_test },
+        blockBlank = true
+    )
+
+    @Test
+    fun cursorTest() =
         cursorTest(customTestRule,
-            textField1 = { emailTextField },
-            textField2 = { passwordTextField })
-
-        invisibleTest(customTestRule) {
-            cursorTest(
-                customTestRule,
-                textField1 = { passwordTextField },
-                textField2 = { emailTextField },
-                invisible = it
-            )
-        }
-
-    }
+            textField = { textField },
+            looseFocus = { passwordTextField.click() })
 
     @Test
-    fun imeTest() = imeTest({ emailTextField }, doneTextField = { passwordTextField })
+    fun imeTest() = imeTest({ textField }, doneTextField = { passwordTextField })
 
     @Test
-    fun blockBlankTest() {
-        blockBlankTest(rule = customTestRule, textField = { emailTextField })
-        invisibleTest(customTestRule) {
-            blockBlankTest(
-                rule = customTestRule, textField = { passwordTextField }, invisible = it
-            )
-        }
-    }
+    fun blockBlankTest() = blockBlankTest(rule = customTestRule, textField = { textField })
 
-
-    private fun emailTextField(): @Composable () -> Unit = {
-        emailState = rememberMaxWidthTextFieldState(
-            label = email,
-            showKeyboard = true,
+    private fun textField(): @Composable () -> Unit = {
+        state = rememberMaxWidthTextFieldState(
+            label = text_field,
+            showKeyboard = showKeyboard,
             imeActionRoute = ImeActionRoute.NEXT,
-            blockBlank = true
+            blockBlank = true,
+            cancelIconEnabled = cancelIconEnable
         )
 
-        MaxWidthTextFieldWithError(state = emailState,
-            onValueChange = emailState::onValueChange,
-            onFocusChanged = emailState::onFocusChanged,
+        MaxWidthTextFieldWithError(state = state,
+            onValueChange = state::onValueChange,
+            onFocusChanged = state::onFocusChanged,
             onInputChange = {
-                if (emailInput != it) {
-                    emailInput = it
-                    emailState.error = null
+                if (input != it) {
+                    input = it
+                    state.error = null
                 }
             })
     }
@@ -224,10 +193,14 @@ class MaxWidthTextFieldTest {
     }
 }
 
-fun showKeyboardTest(textField: CustomSemanticsNodeInteraction) {
-    textField.focused()
-    isKeyboardShown()
-}
+fun showKeyboardTest(textField: CustomSemanticsNodeInteraction, showKeyboard: Boolean = true) =
+    if (showKeyboard) {
+        textField.focused()
+        isKeyboardShown()
+    } else {
+        textField.notFocused()
+        isKeyboardNotShown()
+    }
 
 fun showKeyboardOnceTest(
     rule: CustomTestRule,
@@ -237,8 +210,7 @@ fun showKeyboardOnceTest(
     move: () -> Unit,
     moveBack: () -> Unit
 ) {
-    focusNode().focused()
-    isKeyboardShown()
+    showKeyboardTest(textField = focusNode())
 
     move()
     rule.getNodeWithTag(secondScreenTag).exist()
@@ -254,52 +226,58 @@ fun inputChangeTest(
     input: () -> String,
     invisible: Boolean = false
 ) {
-    fun inputText() = if (invisible) textField().invisibleInput(TEST_INPUT)
-    else textField().input(TEST_INPUT)
+    fun input(text: String, beforeText: String = "") =
+        textField().input(text = text, beforeText = beforeText, invisible = invisible)
 
-    fun checkTextFieldInput(text: String) =
-        if (invisible) rule.getInvisibleTextNode(text).exist()
-        else rule.getNodeWithText(text).exist()
+    fun exist(text: String) = rule.getNodeWithText(text = text, invisible = invisible).exist()
 
     fun checkInputSame(compareText: String) = assert(input() == compareText)
+
     fun checkInitState() {
         checkInputSame(compareText = "")
-        rule.testInputNode().notExist()
+        rule.getNodeWithText(TEST_INPUT, invisible = invisible).notExist()
         checkInputSame(compareText = "")
-        rule.cursorInputNode().notExist()
+        rule.getNodeWithText(CURSOR_INPUT, invisible = invisible).notExist()
     }
 
     checkInitState()
 
-    inputText()
+    input(text = TEST_INPUT)
 
     checkInputSame(compareText = TEST_INPUT)
 
-    checkTextFieldInput(TEST_INPUT)
+    exist(text = TEST_INPUT)
 
     checkInputSame(compareText = TEST_INPUT)
+
+    input(text = CURSOR_INPUT_TEXT, beforeText = TEST_INPUT)
+
+    checkInputSame(compareText = TEST_INPUT + CURSOR_INPUT_TEXT)
+
+    exist(text = TEST_INPUT + CURSOR_INPUT_TEXT)
+
+    checkInputSame(compareText = TEST_INPUT + CURSOR_INPUT_TEXT)
 
     textField().click()
     textField().inputWithNoRestore(index = 1, text = CURSOR_INPUT_TEXT)
 
-    checkInputSame(compareText = CURSOR_INPUT)
+    checkInputSame(compareText = CURSOR_INPUT + CURSOR_INPUT_TEXT)
 
-    checkTextFieldInput(CURSOR_INPUT)
+    exist(text = CURSOR_INPUT + CURSOR_INPUT_TEXT)
 
-    checkInputSame(compareText = CURSOR_INPUT)
+    checkInputSame(compareText = CURSOR_INPUT + CURSOR_INPUT_TEXT)
 
-    if (invisible) textField().textClear(beforeText = rule.getInvisibleText(TEST_INPUT))
-    else textField().textClear(beforeText = TEST_INPUT)
+    textField().textClear(beforeText = CURSOR_INPUT + CURSOR_INPUT_TEXT, invisible = invisible)
 
     checkInitState()
 }
 
 fun textFieldVisibleTest(
-    rule: CustomTestRule,
-    textField: () -> CustomSemanticsNodeInteraction,
-    visibleIcon: () -> CustomSemanticsNodeInteraction = { visibleIcon(rule) },
-    invisibleIcon: () -> CustomSemanticsNodeInteraction = { invisibleIcon(rule) },
+    rule: CustomTestRule, textField: () -> CustomSemanticsNodeInteraction, input: () -> String
 ) {
+    fun visibleIcon() = visibleIcon(rule)
+    fun invisibleIcon() = invisibleIcon(rule)
+    fun inputCheck(text: String) = assert(input() == text)
 
     fun visibleIconExist() {
         visibleIcon().exist()
@@ -311,75 +289,120 @@ fun textFieldVisibleTest(
         invisibleIcon().exist()
     }
 
-    fun invisibleTextNode() = rule.getInvisibleTextNode(TEST_INPUT)
+    fun visibleTextNode(text: String, invisible: Boolean = false) =
+        rule.getNodeWithText(text = text, invisible = invisible)
+
+    fun invisibleTextNode(text: String) = visibleTextNode(text = text, invisible = true)
+
+    fun visible(text: String) {
+        visibleIcon().click()
+        invisibleIconExist()
+        invisibleTextNode(text = text).notExist()
+        visibleTextNode(text = text).exist()
+    }
+
+    fun invisible(text: String) {
+        invisibleIcon().click()
+        visibleIconExist()
+        invisibleTextNode(text = text).exist()
+        visibleTextNode(text = text).notExist()
+    }
+
+    fun invisibleInput(text: String, beforeText: String = "") {
+        textField().input(text = text, beforeText = beforeText, invisible = true)
+        inputCheck(beforeText + text)
+        invisibleTextNode(text = beforeText + text).exist()
+        visibleTextNode(text = beforeText + text).notExist()
+    }
+
+    fun visibleInput(text: String, beforeText: String = "") {
+        textField().input(text = text, beforeText = beforeText, invisible = false)
+        inputCheck(beforeText + text)
+        invisibleTextNode(text = beforeText + text).notExist()
+        visibleTextNode(text = beforeText + text).exist()
+    }
 
     visibleIconExist()
-    rule.testInputNode().notExist()
+    invisibleTextNode(TEST_INPUT).notExist()
+    visibleTextNode(TEST_INPUT).notExist()
 
-    textField().invisibleInput(TEST_INPUT)
-    rule.testInputNode().notExist()
+    invisibleInput(TEST_INPUT)
 
-    visibleIcon().click()
-    invisibleIconExist()
-    invisibleTextNode().notExist()
-    rule.testInputNode().exist()
+    visible(TEST_INPUT)
+    invisible(TEST_INPUT)
+    visible(TEST_INPUT)
 
-    invisibleIcon().click()
-    visibleIconExist()
-    invisibleTextNode().exist()
-    rule.testInputNode().notExist()
+    visibleInput(text = CURSOR_INPUT_TEXT, beforeText = TEST_INPUT)
+    invisible(TEST_INPUT + CURSOR_INPUT_TEXT)
+    visible(TEST_INPUT + CURSOR_INPUT_TEXT)
+    invisible(TEST_INPUT + CURSOR_INPUT_TEXT)
+
+    invisibleInput(text = CURSOR_INPUT_TEXT, beforeText = TEST_INPUT + CURSOR_INPUT_TEXT)
+    visible(TEST_INPUT + CURSOR_INPUT_TEXT + CURSOR_INPUT_TEXT)
+    invisible(TEST_INPUT + CURSOR_INPUT_TEXT + CURSOR_INPUT_TEXT)
+    visible(TEST_INPUT + CURSOR_INPUT_TEXT + CURSOR_INPUT_TEXT)
+
+    textField().textClear(beforeText = TEST_INPUT + CURSOR_INPUT_TEXT + CURSOR_INPUT_TEXT)
+    inputCheck("")
+    visibleInput(text = TEST_INPUT)
+    invisible(text = TEST_INPUT)
+    textField().textClear(beforeText = TEST_INPUT, invisible = false)
+    inputCheck("")
 }
 
 fun cancelIconTest(
     rule: CustomTestRule,
     cancelIconTextField: () -> CustomSemanticsNodeInteraction,
-    noCancelIconTextField: () -> CustomSemanticsNodeInteraction,
-    cancelIcon: () -> CustomSemanticsNodeInteraction = { cancelIcon(rule) }
+    looseFocus: () -> Unit,
+    enable: Boolean = true
 ) {
-    fun cancelIconNotExist() = rule.restore {
-        cancelIcon().notExist(false)
-        noCancelIconTextField().click() // loose focus
-        cancelIcon().notExist()
-        cancelIconTextField().click() // get focus
+    fun cancelIcon() = cancelIcon(rule)
+
+    fun getFocus() = cancelIconTextField().click()
+
+    cancelIcon().notExist() // init state
+    rule.restore {
+        getFocus()
         cancelIcon().notExist(false)
     }
+    looseFocus()
+    cancelIcon().notExist()
 
-    fun cancelIconExist() = rule.restore {
-        cancelIconTextField().click()
+    cancelIconTextField().input(text = TEST_INPUT, restore = false) // input(create cancel icon)
+    if (enable) {
         cancelIcon().exist(false)
-        noCancelIconTextField().click()
+        rule.restore()
+        rule.restore {
+            cancelIcon().notExist(false)
+            getFocus()
+            cancelIcon().exist(false)
+            looseFocus()
+            cancelIcon().notExist(false)
+        }
+    } else {
         cancelIcon().notExist(false)
-        cancelIconTextField().click()
-        cancelIcon().exist(false)
+        rule.restore()
+        rule.restore {
+            cancelIcon().notExist(false)
+            getFocus()
+            cancelIcon().notExist(false)
+            looseFocus()
+            cancelIcon().notExist(false)
+        }
     }
 
-    cancelIconNotExist() // 초기 화면
-
-    cancelIconTextField().input(TEST_INPUT) // 인풋 입력
-
-    cancelIconTextField().click() // get focus(포커스 없을 시 캔슬 아이콘 사라짐)
-    cancelIcon().exist(false) // 캔슬 아이콘 생성
-    rule.restore() // 액티비티 재구성
-    cancelIcon().notExist(false) // 캔슬 아이콘 사라짐(loose focus)
-    cancelIconExist() // 캔슬 아이콘 유지 확인
-
-    cancelIcon().click() // 캔슬 아이콘 기능 확인
+    getFocus()
+    if (enable) cancelIcon().click()
+    else cancelIconTextField().textClear(beforeText = TEST_INPUT)
 
     rule.restore {
-        rule.testInputNode().notExist(false) // 인풋 사라짐 확인
-        cancelIconTextField().click() // get focus
-        cancelIcon().notExist(false) // 캔슬 아이콘 사라짐 확인
-        noCancelIconTextField().click() // loose focus
-        cancelIcon().notExist(false) // 캔슬 아이콘 사라짐 확인
-        cancelIconTextField().click() // get focus
-        cancelIcon().notExist(false) // 캔슬 아이콘 사라짐 확인
+        rule.getNodeWithText(TEST_INPUT).notExist(false) // clear(remove cancel icon)
+        cancelIcon().notExist(false)
+        looseFocus()
+        cancelIcon().notExist(false)
+        getFocus()
+        cancelIcon().notExist(false)
     }
-
-    cancelIconTextField().input(TEST_INPUT)
-    cancelIconExist()
-
-    cancelIconTextField().textClear(TEST_INPUT)
-    cancelIconNotExist() // 캔슬 아이콘 사라짐 확인
 }
 
 fun errorTest(
@@ -387,20 +410,20 @@ fun errorTest(
     errorTextField: () -> CustomSemanticsNodeInteraction,
     @StringRes errorTextRes: Int,
     setError: () -> Unit,
-    beforeText: String? = null,
+    beforeText: String = "",
     blockBlank: Boolean = false,
     invisible: Boolean = false,
     clearOtherTextField: () -> Unit = {}
 ) {
     val errorText = rule.getString(errorTextRes)
+
     fun errorTextNode() = rule.getNodeWithText(errorText)
 
     fun errorNotExist() = errorTextNode().notExist()
 
     fun errorExist() = rule.waitTextExist(errorText, 5000)
 
-    fun textClear() =
-        errorTextField().textClear(beforeText = if (invisible) rule.getInvisibleText(TEST_INPUT) else TEST_INPUT)
+    fun textClear() = errorTextField().textClear(beforeText = TEST_INPUT, invisible = invisible)
 
     errorNotExist()
 
@@ -413,58 +436,48 @@ fun errorTest(
         errorExist()
     }
 
-    if (invisible) errorTextField().invisibleInput(text = TEST_INPUT, beforeText = beforeText)
-    else errorTextField().input(text = TEST_INPUT, beforeText = beforeText)
+    errorTextField().input(text = TEST_INPUT, beforeText = beforeText, invisible = invisible)
 
     errorNotExist()
 
     textClear()
     clearOtherTextField()
-
-    beforeText?.let {
-        setError()
-        errorExist()
-        textClear()
-        errorNotExist()
-    }
 }
 
 fun cursorTest(
     rule: CustomTestRule,
-    textField1: () -> CustomSemanticsNodeInteraction,
-    textField2: () -> CustomSemanticsNodeInteraction,
+    textField: () -> CustomSemanticsNodeInteraction,
+    looseFocus: () -> Unit,
     invisible: Boolean = false,
 ) {
     fun changeFocus() {
-        textField2().click()
-        textField1().notFocused()
-        textField2().focused()
+        looseFocus()
+        textField().notFocused()
 
-        textField1().click()
-        textField1().focused()
-        textField2().notFocused()
+        textField().click()
+        textField().focused()
     }
 
-    fun existTextCheck(text: String) {
-        if (invisible) rule.getInvisibleTextNode(text).exist()
-        else rule.getNodeWithText(text).exist()
-    }
+    fun existTextCheck(text: String) =
+        rule.getNodeWithText(text = text, invisible = invisible).exist()
 
-    if (invisible) textField1().invisibleInput(TEST_INPUT)
-    else textField1().input(TEST_INPUT)
+    fun input(text: String, beforeText: String = "") =
+        textField().input(text = text, beforeText = beforeText, invisible = invisible)
+
+    input(text = TEST_INPUT)
 
     changeFocus()
-    textField1().inputWithNoRestore(TEST_INPUT.length, CURSOR_INPUT_TEXT)
+    input(text = CURSOR_INPUT_TEXT, beforeText = TEST_INPUT)
 
     existTextCheck(TEST_INPUT + CURSOR_INPUT_TEXT)
 
     repeat(2) { changeFocus() }
 
-    textField1().inputWithNoRestore((TEST_INPUT + CURSOR_INPUT_TEXT).length, CURSOR_INPUT_TEXT)
+    input(text = CURSOR_INPUT_TEXT, beforeText = TEST_INPUT + CURSOR_INPUT_TEXT)
 
     existTextCheck(TEST_INPUT + CURSOR_INPUT_TEXT + CURSOR_INPUT_TEXT)
 
-    textField1().textClear()
+    textField().textClear()
 }
 
 fun imeTest(
@@ -490,6 +503,7 @@ fun imeTest(
     doneTextField().focused()
     doneTextField().imeAction()
     assert(!keyboardCheck())
+    doneTextField().notFocused()
 }
 
 fun blockBlankTest(
@@ -497,11 +511,9 @@ fun blockBlankTest(
     textField: () -> CustomSemanticsNodeInteraction,
     invisible: Boolean = false
 ) {
-    fun notExistText(text: String) = if (invisible) rule.getInvisibleTextNode(text).notExist()
-    else rule.getNodeWithText(text).notExist()
+    fun notExistText(text: String) = rule.getNodeWithText(text, invisible).notExist()
 
-    if (invisible) textField().invisibleInput(TEST_INPUT)
-    else textField().input(TEST_INPUT)
+    textField().input(text = TEST_INPUT, invisible = invisible)
 
     textField().inputWithNoRestore(0, " ")
 
@@ -511,7 +523,7 @@ fun blockBlankTest(
 
     notExistText("$TEST_INPUT ")
 
-    textField().textClear(if (invisible) rule.getInvisibleText(TEST_INPUT) else TEST_INPUT)
+    textField().textClear(beforeText = TEST_INPUT, invisible = invisible)
 }
 
 fun invisibleTest(rule: CustomTestRule, test: (Boolean) -> Unit) {
@@ -519,6 +531,3 @@ fun invisibleTest(rule: CustomTestRule, test: (Boolean) -> Unit) {
     visibleIcon(rule).click()
     test(false)
 }
-
-private fun CustomTestRule.testInputNode() = getNodeWithText(TEST_INPUT)
-private fun CustomTestRule.cursorInputNode() = getNodeWithText(CURSOR_INPUT)

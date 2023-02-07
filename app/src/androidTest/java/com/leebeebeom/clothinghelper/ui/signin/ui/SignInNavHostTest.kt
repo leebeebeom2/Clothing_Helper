@@ -6,10 +6,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.uiautomator.UiDevice
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelper.*
 import com.leebeebeom.clothinghelper.ui.ActivityDestinations.SIGN_IN_ROUTE
+import com.leebeebeom.clothinghelper.ui.MainActivityScreen
 import com.leebeebeom.clothinghelper.ui.components.CENTER_DOT_PROGRESS_INDICATOR_TAG
 import com.leebeebeom.clothinghelper.ui.components.showKeyboardOnceTest
+import com.leebeebeom.clothinghelper.ui.main.MAIN_NAV_TAG
 import com.leebeebeom.clothinghelper.ui.signin.ui.resetpassword.RESET_PASSWORD_SCREEN_TAG
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SIGN_IN_SCREEN_TAG
 import com.leebeebeom.clothinghelper.ui.signin.ui.signup.SIGN_UP_SCREEN_TAG
@@ -26,8 +31,6 @@ class SignInNavHostTest {
 
     private val emailTextField get() = emailTextField(customTestRule)
     private val passwordTextField get() = passwordTextField(customTestRule)
-    private val nickNameTextField get() = nickNameTextField(customTestRule)
-    private val passwordConfirmTextField get() = passwordConfirmTextField(customTestRule)
     private val signUpButton get() = signUpButton(customTestRule)
     private val sendButton get() = sendButton(customTestRule)
     private val signInButton get() = signInButton(customTestRule)
@@ -37,6 +40,7 @@ class SignInNavHostTest {
     fun init() {
         customTestRule.setContent {
             viewModel = hiltViewModel()
+
             NavHost(
                 navController = rememberNavController(),
                 startDestination = SIGN_IN_ROUTE,
@@ -51,20 +55,20 @@ class SignInNavHostTest {
         customTestRule.signInScreen.exist()
 
         navigateToSignUp()
-        device.pressBack() // popBackStack
+        device.pressBack() // pop backStack
 
         navigateToResetPassword()
-        device.pressBack() // popBackStack
+        device.pressBack() // pop backStack
 
         customTestRule.signInScreen.exist()
     }
 
     @Test
     fun loadingTest() {
-        fun inputEmail() = emailTextField.input(NOT_EXIST_EMAIL)
+        fun inputEmail() = emailTextField.input(EMAIL)
         fun inputEmailAndPassword() {
             inputEmail()
-            passwordTextField.invisibleInput(PASSWORD)
+            passwordTextField.invisibleInput(WRONG_PASSWORD)
         }
 
         fun loadingCheck() {
@@ -72,19 +76,19 @@ class SignInNavHostTest {
             customTestRule.waitTagNotExist(CENTER_DOT_PROGRESS_INDICATOR_TAG, 5000)
         }
 
-        inputEmailAndPassword()
+        inputEmailAndPassword() // sign in loading
         signInButton.click()
         loadingCheck()
 
-        navigateToSignUp()
+        navigateToSignUp() // sign up loading
         inputEmailAndPassword()
-        nickNameTextField.input(NICK_NAME)
-        passwordConfirmTextField.invisibleInput(PASSWORD)
+        nickNameTextField(customTestRule).input(NICK_NAME)
+        passwordConfirmTextField(customTestRule).invisibleInput(WRONG_PASSWORD)
         signUpButton.click()
         loadingCheck()
-        device.pressBack()
+        device.pressBack() // pop backstack
 
-        navigateToResetPassword()
+        navigateToResetPassword() // reset password loading
         inputEmail()
         sendButton.click()
         loadingCheck()
@@ -92,28 +96,28 @@ class SignInNavHostTest {
 
     @Test
     fun blockBackPressTest() {
-        fun blockBackPress() = customTestRule.restore(assert = ::doBlockBackPressTest)
+        fun innerBlockBackPressTest() {
+            customTestRule.restore {
+                val uiState = viewModel.uiState as MutableSignInNavUiState
 
-        blockBackPress()
+                centerDotProgressIndicator.notExist()
+                uiState.isSignInLoading = true
+                centerDotProgressIndicator.exist()
+                repeat(4) { device.pressBack() }
+                centerDotProgressIndicator.exist()
+                uiState.isSignInLoading = false
+                centerDotProgressIndicator.notExist()
+            }
+        }
+
+        innerBlockBackPressTest()
 
         navigateToSignUp()
-        blockBackPress()
-        customTestRule.waitTagNotExist(CENTER_DOT_PROGRESS_INDICATOR_TAG)
+        innerBlockBackPressTest()
         device.pressBack()
 
         navigateToResetPassword()
-        blockBackPress()
-    }
-
-    private fun doBlockBackPressTest() {
-        val uiState = viewModel.uiState as MutableSignInNavUiState
-
-        centerDotProgressIndicator.notExist()
-        uiState.isSignInLoading = true
-        centerDotProgressIndicator.exist()
-        repeat(4) { device.pressBack() }
-        centerDotProgressIndicator.exist()
-        uiState.isSignInLoading = false
+        innerBlockBackPressTest()
     }
 
     @Test
@@ -141,10 +145,17 @@ class SignInNavHostTest {
             moveBack = device::pressBack
         )
 
+    @Test
+    fun restPasswordGoBackTest() {
+        navigateToResetPassword()
+        emailTextField.input(EMAIL)
+        sendButton.click()
+        customTestRule.waitTagExist(SIGN_IN_SCREEN_TAG, 5000)
+    }
+
     private fun navigateToSignUp() {
         customTestRule.getNodeWithStringRes(R.string.sign_up_with_email).click()
         customTestRule.getNodeWithTag(SIGN_UP_SCREEN_TAG).exist()
-
     }
 
     private fun navigateToResetPassword() {
@@ -153,4 +164,41 @@ class SignInNavHostTest {
     }
 
     private val CustomTestRule.signInScreen get() = getNodeWithTag(SIGN_IN_SCREEN_TAG)
+}
+
+class SignUpTest {
+    @get:Rule
+    val rule = activityRule
+    private val customTestRule = CustomTestRule(rule)
+    private val device = UiDevice.getInstance(getInstrumentation())
+
+    @Before
+    fun init() {
+        FirebaseAuth.getInstance().signOut()
+        customTestRule.setContent { MainActivityScreen() }
+    }
+
+    @Test
+    fun signUpTest() {
+        customTestRule.wait { keyboardCheck() }
+        device.pressBack()
+
+        customTestRule.getNodeWithStringRes(R.string.sign_up_with_email).click()
+        customTestRule.getNodeWithTag(SIGN_UP_SCREEN_TAG).exist()
+
+        emailTextField(customTestRule).input(NOT_EXIST_EMAIL)
+        nickNameTextField(customTestRule).input(NICK_NAME)
+        passwordTextField(customTestRule).invisibleInput(PASSWORD)
+        passwordConfirmTextField(customTestRule).invisibleInput(PASSWORD)
+        signUpButton(customTestRule).click()
+
+        customTestRule.waitTagExist(MAIN_NAV_TAG, 5000)
+
+        customTestRule.wait(5000) { FirebaseAuth.getInstance().currentUser != null }
+
+        val user = FirebaseAuth.getInstance().currentUser!!
+        val uid = user.uid
+        user.delete()
+        Firebase.database.getReference(uid).removeValue()
+    }
 }

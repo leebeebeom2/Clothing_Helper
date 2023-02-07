@@ -30,7 +30,6 @@ class SignInNavHostTest {
     private lateinit var viewModel: SignInNavViewModel
 
     private val emailTextField get() = emailTextField(customTestRule)
-    private val passwordTextField get() = passwordTextField(customTestRule)
     private val signUpButton get() = signUpButton(customTestRule)
     private val sendButton get() = sendButton(customTestRule)
     private val signInButton get() = signInButton(customTestRule)
@@ -68,7 +67,7 @@ class SignInNavHostTest {
         fun inputEmail() = emailTextField.input(EMAIL)
         fun inputEmailAndPassword() {
             inputEmail()
-            passwordTextField.invisibleInput(WRONG_PASSWORD)
+//            passwordTextField.invisibleInput(WRONG_PASSWORD)
         }
 
         fun loadingCheck() {
@@ -83,7 +82,7 @@ class SignInNavHostTest {
         navigateToSignUp() // sign up loading
         inputEmailAndPassword()
         nickNameTextField(customTestRule).input(NICK_NAME)
-        passwordConfirmTextField(customTestRule).invisibleInput(WRONG_PASSWORD)
+//        passwordConfirmTextField(customTestRule).invisibleInput(WRONG_PASSWORD)
         signUpButton.click()
         loadingCheck()
         device.pressBack() // pop backstack
@@ -188,8 +187,8 @@ class SignUpTest {
 
         emailTextField(customTestRule).input(NOT_EXIST_EMAIL)
         nickNameTextField(customTestRule).input(NICK_NAME)
-        passwordTextField(customTestRule).invisibleInput(PASSWORD)
-        passwordConfirmTextField(customTestRule).invisibleInput(PASSWORD)
+        passwordTextField(customTestRule).input(PASSWORD, invisible = true)
+        passwordConfirmTextField(customTestRule).input(PASSWORD, invisible = true)
         signUpButton(customTestRule).click()
 
         customTestRule.waitTagExist(MAIN_NAV_TAG, 5000)

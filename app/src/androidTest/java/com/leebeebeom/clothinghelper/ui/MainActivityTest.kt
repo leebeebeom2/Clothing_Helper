@@ -95,7 +95,7 @@ class MainActivitySignOutStartTest {
 
 private fun CustomTestRule.uiSignIn() {
     getNodeWithStringRes(email).input(EMAIL)
-    getNodeWithStringRes(password).invisibleInput(PASSWORD)
+    getNodeWithStringRes(password).input(PASSWORD, invisible = true)
     getNodeWithStringRes(sign_in).click()
     getNodeWithTag(CENTER_DOT_PROGRESS_INDICATOR_TAG).exist(false)
     waitMainNav()

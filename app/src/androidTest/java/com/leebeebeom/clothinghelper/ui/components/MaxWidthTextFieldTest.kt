@@ -94,7 +94,6 @@ class MaxWidthTextFieldTest {
     @Test // 쇼키보드, 노쇼키보드 둘 다 테스트
     fun showKeyboardTest() = showKeyboardTest(textField = textField, showKeyboard = showKeyboard)
 
-
     // 키보드는 최초 실행 시에만 보여야 함
     @Test
     fun showKeyboardOnceTest() = showKeyboardOnceTest(

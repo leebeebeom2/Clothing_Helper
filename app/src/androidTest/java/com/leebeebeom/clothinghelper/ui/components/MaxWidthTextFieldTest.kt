@@ -532,8 +532,12 @@ fun blockBlankTest(
     textField().textClear(beforeText = TEST_INPUT, invisible = invisible)
 }
 
-fun invisibleTest(rule: CustomTestRule, test: (Boolean) -> Unit) {
+fun invisibleTest(
+    rule: CustomTestRule,
+    visibleIcon: () -> CustomSemanticsNodeInteraction = { visibleIcon(rule) },
+    test: (Boolean) -> Unit
+) {
     test(true)
-    visibleIcon(rule).click()
+    visibleIcon().click()
     test(false)
 }

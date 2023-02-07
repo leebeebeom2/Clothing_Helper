@@ -272,10 +272,12 @@ fun inputChangeTest(
 }
 
 fun textFieldVisibleTest(
-    rule: CustomTestRule, textField: () -> CustomSemanticsNodeInteraction, input: () -> String
+    rule: CustomTestRule,
+    textField: () -> CustomSemanticsNodeInteraction,
+    input: () -> String,
+    visibleIcon: () -> CustomSemanticsNodeInteraction = { visibleIcon(rule) },
+    invisibleIcon: () -> CustomSemanticsNodeInteraction = { invisibleIcon(rule) }
 ) {
-    fun visibleIcon() = visibleIcon(rule)
-    fun invisibleIcon() = invisibleIcon(rule)
     fun inputCheck(text: String) = assert(input() == text)
 
     fun visibleIconExist() {

@@ -27,7 +27,6 @@ class SignInScreenTest {
     private val emailTextField get() = emailTextField(customTestRule)
     private val passwordTextField get() = passwordTextField(customTestRule)
     private val signInButton get() = signInButton(customTestRule)
-    private val visibleIcon get() = visibleIcon(customTestRule)
 
     @Before
     fun init() {
@@ -61,6 +60,7 @@ class SignInScreenTest {
         inputChangeTest(rule = customTestRule,
             textField = { emailTextField },
             input = { uiState.email })
+
         invisibleTest(customTestRule) {
             inputChangeTest(
                 rule = customTestRule,
@@ -72,13 +72,27 @@ class SignInScreenTest {
     }
 
     @Test
-    fun textFieldVisibleTest() = textFieldVisibleTest(rule = customTestRule,
-        textField = { passwordTextField })
+    fun textFieldVisibleTest() =
+        textFieldVisibleTest(rule = customTestRule,
+            textField = { passwordTextField }, input = { uiState.password })
 
     @Test
-    fun cancelIconTest() = cancelIconTest(rule = customTestRule,
-        cancelIconTextField = { emailTextField },
-        noCancelIconTextField = { passwordTextField })
+    fun cancelIconTest() {
+        cancelIconTest(rule = customTestRule,
+            cancelIconTextField = { emailTextField },
+            looseFocus = { passwordTextField.click() }
+        )
+
+        invisibleTest(customTestRule) {
+            cancelIconTest(
+                rule = customTestRule,
+                cancelIconTextField = { passwordTextField },
+                looseFocus = { emailTextField.click() },
+                enable = false,
+                invisible = it
+            )
+        }
+    }
 
     @Test
     fun blockBlankTest() {
@@ -110,8 +124,8 @@ class SignInScreenTest {
             errorTextField = { emailTextField },
             errorTextRes = error_invalid_email,
             setError = {
-                emailTextField.input(INVALID_EMAIL)
-                passwordTextField.invisibleInput(PASSWORD)
+                emailTextField.input(text = INVALID_EMAIL)
+                passwordTextField.input(text = PASSWORD, invisible = true)
                 signInButton.click()
             },
             blockBlank = true,
@@ -126,8 +140,8 @@ class SignInScreenTest {
             errorTextField = { emailTextField },
             errorTextRes = error_user_not_found,
             setError = {
-                emailTextField.input(NOT_EXIST_EMAIL)
-                passwordTextField.invisibleInput(PASSWORD)
+                emailTextField.input(text = NOT_EXIST_EMAIL)
+                passwordTextField.input(text = PASSWORD, invisible = true)
                 signInButton.click()
             },
             blockBlank = true,
@@ -142,8 +156,8 @@ class SignInScreenTest {
             errorTextField = { passwordTextField },
             errorTextRes = error_wrong_password,
             setError = {
-                emailTextField.input(EMAIL)
-                passwordTextField.invisibleInput(WRONG_PASSWORD)
+                emailTextField.input(text = EMAIL)
+                passwordTextField.input(text = WRONG_PASSWORD, invisible = true)
                 signInButton.click()
             },
             blockBlank = true,
@@ -151,34 +165,19 @@ class SignInScreenTest {
             clearOtherTextField = { emailTextField.textClear(EMAIL) },
             invisible = true
         )
-
-        allFieldClear()
-        visibleIcon.click()
-
-        errorTest(rule = customTestRule,
-            errorTextField = { passwordTextField },
-            errorTextRes = error_wrong_password,
-            setError = {
-                emailTextField.input(EMAIL)
-                passwordTextField.input(WRONG_PASSWORD)
-                signInButton.click()
-            },
-            blockBlank = true,
-            beforeText = WRONG_PASSWORD,
-            clearOtherTextField = { emailTextField.textClear(EMAIL) })
     }
 
     @Test
     fun cursorTest() {
         cursorTest(rule = customTestRule,
-            textField1 = { emailTextField },
-            textField2 = { passwordTextField })
+            textField = { emailTextField },
+            looseFocus = { passwordTextField.click() })
 
         invisibleTest(customTestRule) {
             cursorTest(
                 rule = customTestRule,
-                textField1 = { passwordTextField },
-                textField2 = { emailTextField },
+                textField = { passwordTextField },
+                looseFocus = { emailTextField.click() },
                 invisible = it
             )
         }
@@ -197,10 +196,9 @@ class SignInScreenTest {
             text: String,
             invisible: Boolean = false
         ) {
-            if (invisible) inputTextFiled().invisibleInput(text)
-            else inputTextFiled().input(text)
+            inputTextFiled().input(text = text, invisible = invisible)
             buttonNotEnabled()
-            inputTextFiled().textClear(if (invisible) customTestRule.getInvisibleText(text) else text)
+            inputTextFiled().textClear(beforeText = text, invisible = invisible)
             buttonNotEnabled()
         }
 
@@ -242,24 +240,13 @@ class SignInScreenTest {
 
     @Test
     fun signInTest() {
-        fun innerSignInTest(invisible: Boolean = false) {
-            emailTextField.input(EMAIL)
-            if (invisible) passwordTextField.invisibleInput(PASSWORD)
-            else passwordTextField.input(PASSWORD)
-            signInButton.click()
+        emailTextField.input(EMAIL)
+        passwordTextField.input(text = PASSWORD, invisible = true)
+        signInButton.click()
 
-            rule.waitUntil { FirebaseAuth.getInstance().currentUser != null }
+        rule.waitUntil { FirebaseAuth.getInstance().currentUser != null }
 
-            FirebaseAuth.getInstance().signOut()
-        }
-
-
-        emailTextField.textClear(EMAIL)
-        passwordTextField.textClear(customTestRule.getInvisibleText(PASSWORD))
-
-        visibleIcon.click()
-
-        innerSignInTest(invisible = false)
+        FirebaseAuth.getInstance().signOut()
     }
 
     @Test

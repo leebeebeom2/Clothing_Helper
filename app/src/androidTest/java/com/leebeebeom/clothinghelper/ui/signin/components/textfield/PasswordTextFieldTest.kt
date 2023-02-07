@@ -3,6 +3,7 @@ package com.leebeebeom.clothinghelper.ui.signin.components.textfield
 import androidx.compose.foundation.layout.Column
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.leebeebeom.clothinghelper.*
+import com.leebeebeom.clothinghelper.R.string.dummy
 import com.leebeebeom.clothinghelper.ui.components.*
 import com.leebeebeom.clothinghelper.ui.signin.state.MutableEmailAndPasswordUiState
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInViewModel
@@ -17,10 +18,9 @@ class PasswordTextFieldTest {
     private val customTestRule = CustomTestRule(rule = rule)
     private lateinit var viewModel: SignInViewModel
     private lateinit var uiState: MutableEmailAndPasswordUiState
-    
+
     private val passwordTextField get() = passwordTextField(customTestRule)
-    private val invisibleIcon get() = invisibleIcon(customTestRule)
-    private val dummyTextField get() = customTestRule.getNodeWithStringRes(R.string.check)
+    private val dummyButton get() = customTestRule.getNodeWithStringRes(dummy)
 
     @Before
     fun init() {
@@ -28,24 +28,13 @@ class PasswordTextFieldTest {
             ClothingHelperTheme {
                 viewModel = hiltViewModel()
                 uiState = viewModel.uiState as MutableEmailAndPasswordUiState
-
-                val state2 = rememberMaxWidthTextFieldState(
-                    label = R.string.check,
-                    imeActionRoute = ImeActionRoute.NEXT
-                )
-
                 Column {
-                    MaxWidthTextFieldWithError(
-                        state = state2,
-                        onValueChange = state2::onValueChange,
-                        onFocusChanged = state2::onFocusChanged,
-                        onInputChange = {}
-                    )
                     PasswordTextField(
                         error = { uiState.passwordError },
                         onInputChange = viewModel::onPasswordChange,
                         state = rememberPasswordTextFieldState(imeActionRoute = ImeActionRoute.DONE)
                     )
+                    MaxWidthButton(text = dummy) {}
                 }
 
             }
@@ -53,7 +42,10 @@ class PasswordTextFieldTest {
     }
 
     @Test
-    fun showKeyboardTest() = isKeyboardNotShown()
+    fun showKeyboardTest() = showKeyboardTest(
+        textField = passwordTextField,
+        showKeyboard = false
+    )
 
     @Test
     fun inputChangeTest() =
@@ -69,7 +61,8 @@ class PasswordTextFieldTest {
     @Test
     fun textFieldVisibleTest() = textFieldVisibleTest(
         rule = customTestRule,
-        textField = { passwordTextField }
+        textField = { passwordTextField },
+        input = { uiState.password }
     )
 
     @Test
@@ -86,38 +79,22 @@ class PasswordTextFieldTest {
         }
 
     @Test
-    fun cursorTest() {
+    fun cursorTest() =
         invisibleTest(customTestRule) {
             cursorTest(
                 rule = customTestRule,
-                textField1 = { passwordTextField },
-                textField2 = { dummyTextField },
+                textField = { passwordTextField },
+                looseFocus = { dummyButton.click() },
                 invisible = it
             )
         }
 
-        invisibleIcon.click()
-
-        invisibleTest(customTestRule) {
-            cursorTest(
-                rule = customTestRule,
-                textField1 = { dummyTextField },
-                textField2 = { passwordTextField }
-            )
-        }
-    }
-
     @Test
-    fun imeTest() = imeTest({ dummyTextField },
-        doneTextField = { passwordTextField })
-
-    @Test
-    fun blockBlankTest() {
-        visibleIcon(customTestRule).click()
-
+    fun blockBlankTest() = invisibleTest(customTestRule) {
         blockBlankTest(
             rule = customTestRule,
-            textField = { passwordTextField }
+            textField = { passwordTextField },
+            invisible = it
         )
     }
 }

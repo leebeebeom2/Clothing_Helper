@@ -4,10 +4,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.leebeebeom.clothinghelper.CustomTestRule
-import com.leebeebeom.clothinghelper.R.string.check
+import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.R.string.dummy
 import com.leebeebeom.clothinghelper.activityRule
-import com.leebeebeom.clothinghelper.checkButton
 import com.leebeebeom.clothinghelper.dummyNode
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import org.junit.Before
@@ -22,7 +21,7 @@ class MaxWidthButtonTest {
     private lateinit var onClickTestText: String
     private lateinit var enable: MutableState<Boolean>
 
-    private val checkButton get() = checkButton(customTestRule)
+    private val button get() = customTestRule.getNodeWithStringRes(R.string.button)
     private val dummyNode get() = dummyNode(customTestRule)
 
     @Before
@@ -39,7 +38,7 @@ class MaxWidthButtonTest {
                         onFocusChanged = {},
                         onInputChange = {}
                     )
-                    MaxWidthButton(text = check,
+                    MaxWidthButton(text = R.string.button,
                         enabled = { enable.value },
                         onClick = { onClickTestText = testText })
                 }
@@ -49,16 +48,16 @@ class MaxWidthButtonTest {
 
     @Test
     fun buttonFocusTest() =
-        buttonFocusTest(focusNode = { dummyNode }, button = { checkButton })
+        buttonFocusTest(focusNode = { dummyNode }, button = { button })
 
     @Test
-    fun buttonEnabledTest() = buttonEnableTest(button = { checkButton },
+    fun buttonEnabledTest() = buttonEnableTest(button = { button },
         initialEnabled = enable.value,
         setEnable = { enable.value = it })
 
     @Test
     fun onClickTest() = customTestRule.restore {
-        checkButton.click()
+        button.click()
         assert(onClickTestText == testText)
 
         onClickTestText = ""

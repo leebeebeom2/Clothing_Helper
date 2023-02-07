@@ -5,10 +5,11 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.leebeebeom.clothinghelper.CustomTestRule
 import com.leebeebeom.clothinghelper.R.string.check
+import com.leebeebeom.clothinghelper.R.string.dummy
 import com.leebeebeom.clothinghelper.activityRule
 import com.leebeebeom.clothinghelper.checkButton
-import com.leebeebeom.clothinghelper.emailTextField
-import com.leebeebeom.clothinghelper.ui.signin.components.textfield.EmailTextField
+import com.leebeebeom.clothinghelper.dummyNode
+import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -17,43 +18,50 @@ class MaxWidthButtonTest {
     @get:Rule
     val rule = activityRule
     private val customTestRule = CustomTestRule(rule = rule)
-    private val onClickTestText = "onClick"
-    private lateinit var onClickTest: String
+    private val testText = "onClick"
+    private lateinit var onClickTestText: String
     private lateinit var enable: MutableState<Boolean>
 
-    private val emailTextField get() = emailTextField(customTestRule)
     private val checkButton get() = checkButton(customTestRule)
+    private val dummyNode get() = dummyNode(customTestRule)
 
     @Before
     fun init() {
         enable = mutableStateOf(true)
-        onClickTest = ""
+        onClickTestText = ""
 
         customTestRule.setContent {
-            Column {
-                EmailTextField(error = { null }, onInputChange = {})
-                MaxWidthButton(text = check,
-                    enabled = { enable.value },
-                    onClick = { onClickTest = onClickTestText })
+            ClothingHelperTheme {
+                Column {
+                    MaxWidthTextFieldWithError(
+                        state = rememberMaxWidthTextFieldState(label = dummy),
+                        onValueChange = {},
+                        onFocusChanged = {},
+                        onInputChange = {}
+                    )
+                    MaxWidthButton(text = check,
+                        enabled = { enable.value },
+                        onClick = { onClickTestText = testText })
+                }
             }
         }
     }
 
     @Test
     fun buttonFocusTest() =
-        buttonFocusTest(focusNode = { emailTextField }, button = { checkButton })
+        buttonFocusTest(focusNode = { dummyNode }, button = { checkButton })
 
     @Test
     fun buttonEnabledTest() = buttonEnableTest(button = { checkButton },
-        initialEnabled = true,
+        initialEnabled = enable.value,
         setEnable = { enable.value = it })
 
     @Test
     fun onClickTest() = customTestRule.restore {
         checkButton.click()
-        assert(onClickTest == onClickTestText)
+        assert(onClickTestText == testText)
 
-        onClickTest = ""
+        onClickTestText = ""
     }
 }
 
@@ -84,4 +92,8 @@ fun buttonEnableTest(
     setEnable(initialEnabled)
 
     enableCheck(initialEnabled)
+
+    setEnable(!initialEnabled)
+
+    enableCheck(!initialEnabled)
 }

@@ -354,7 +354,8 @@ fun cancelIconTest(
     rule: CustomTestRule,
     cancelIconTextField: () -> CustomSemanticsNodeInteraction,
     looseFocus: () -> Unit,
-    enable: Boolean = true
+    enable: Boolean = true,
+    invisible: Boolean = false
 ) {
     fun cancelIcon() = cancelIcon(rule)
 
@@ -368,7 +369,11 @@ fun cancelIconTest(
     looseFocus()
     cancelIcon().notExist()
 
-    cancelIconTextField().input(text = TEST_INPUT, restore = false) // input(create cancel icon)
+    cancelIconTextField().input( // input(create cancel icon)
+        text = TEST_INPUT,
+        restore = false,
+        invisible = invisible
+    )
     if (enable) {
         cancelIcon().exist(false)
         rule.restore()
@@ -393,7 +398,7 @@ fun cancelIconTest(
 
     getFocus()
     if (enable) cancelIcon().click()
-    else cancelIconTextField().textClear(beforeText = TEST_INPUT)
+    else cancelIconTextField().textClear(beforeText = TEST_INPUT, invisible = invisible)
 
     rule.restore {
         rule.getNodeWithText(TEST_INPUT).notExist(false) // clear(remove cancel icon)

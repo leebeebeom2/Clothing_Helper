@@ -16,7 +16,9 @@ fun PasswordTextField(
         imeActionRoute = imeActionRoute,
         label = label
     ),
-    onInputChange: (String) -> Unit
+    onInputChange: (String) -> Unit,
+    visibleIconDescription: String = VISIBLE_ICON,
+    invisibleIconDescription: String = INVISIBLE_ICON,
 ) {
     MaxWidthTextFieldWithError(
         state = state,
@@ -26,7 +28,9 @@ fun PasswordTextField(
         trailingIcon = {
             VisibleIcon(
                 isVisible = { state.isVisible },
-                onClick = state::visibilityToggle
+                onClick = state::visibilityToggle,
+                visibleIconDescription = visibleIconDescription,
+                invisibleIconDescription = invisibleIconDescription
             )
         }
     )
@@ -40,14 +44,16 @@ const val INVISIBLE_ICON = "invisible icon"
 @Composable
 fun VisibleIcon(
     isVisible: () -> Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    visibleIconDescription: String = VISIBLE_ICON,
+    invisibleIconDescription: String = INVISIBLE_ICON
 ) {
     CustomIconButton(
         drawable = if (isVisible()) R.drawable.ic_visibility_off else R.drawable.ic_visibility,
         tint = LocalContentColor.current.copy(0.4f),
         onClick = onClick,
         size = 24.dp,
-        contentDescription = if (isVisible()) INVISIBLE_ICON else VISIBLE_ICON
+        contentDescription = if (isVisible()) invisibleIconDescription else visibleIconDescription
     )
 }
 

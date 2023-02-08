@@ -1,13 +1,13 @@
-package com.leebeebeom.clothinghelperdata.repository.base
+package com.leebeebeom.clothinghelper.data.repository.base
 
-import com.leebeebeom.clothinghelperdomain.repository.LoadingRepository
+import com.leebeebeom.clothinghelper.domain.repository.LoadingStateProvider
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 
-class LoadingRepositoryImpl(initialLoading: Boolean) : LoadingRepository {
+class LoadingStateProviderImpl(initialLoading: Boolean) : LoadingStateProvider {
     private val _isLoading = MutableStateFlow(initialLoading)
     override val isLoading = _isLoading.asStateFlow()
 

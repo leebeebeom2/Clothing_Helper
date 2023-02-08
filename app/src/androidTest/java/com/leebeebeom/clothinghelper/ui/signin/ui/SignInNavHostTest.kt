@@ -22,6 +22,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
+// TODO 구글 로그인 테스트
+// TODO 구글 이메일 가입 테스트 시 이메일 등록 및 데이터 생성 확인
+
 class SignInNavHostTest {
     @get:Rule
     val rule = activityRule
@@ -67,7 +70,7 @@ class SignInNavHostTest {
         fun inputEmail() = emailTextField.input(EMAIL)
         fun inputEmailAndPassword() {
             inputEmail()
-//            passwordTextField.invisibleInput(WRONG_PASSWORD)
+            passwordTextField(customTestRule).input(WRONG_PASSWORD, invisible = true)
         }
 
         fun loadingCheck() {
@@ -82,7 +85,7 @@ class SignInNavHostTest {
         navigateToSignUp() // sign up loading
         inputEmailAndPassword()
         nickNameTextField(customTestRule).input(NICK_NAME)
-//        passwordConfirmTextField(customTestRule).invisibleInput(WRONG_PASSWORD)
+        passwordConfirmTextField(customTestRule).input(text = WRONG_PASSWORD, invisible = true)
         signUpButton.click()
         loadingCheck()
         device.pressBack() // pop backstack

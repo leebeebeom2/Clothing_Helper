@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.data.repository.base
+package com.leebeebeom.clothinghelper.data.repository
 
 object DatabasePath {
     const val SUB_CATEGORIES = "sub categories"

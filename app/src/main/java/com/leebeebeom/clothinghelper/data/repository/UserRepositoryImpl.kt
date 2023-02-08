@@ -8,7 +8,6 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
-import com.leebeebeom.clothinghelper.data.repository.base.DatabasePath
 import com.leebeebeom.clothinghelper.util.LoadingStateProviderImpl
 import com.leebeebeom.clothinghelper.data.repository.util.AuthCallSite
 import com.leebeebeom.clothinghelper.data.repository.util.logE

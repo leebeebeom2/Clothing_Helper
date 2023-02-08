@@ -16,7 +16,7 @@ import com.leebeebeom.clothinghelper.ui.util.noRippleClickable
 fun SignInBaseColumn(
     modifier: Modifier = Modifier,
     focusManager: FocusManager = LocalFocusManager.current,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
         modifier = modifier

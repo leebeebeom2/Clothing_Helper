@@ -19,7 +19,7 @@ import com.leebeebeom.clothinghelper.ui.components.MaxWidthButton
 
 @Composable
 fun GoogleSignInButton(
-    enabled: () -> Boolean, onActivityResult: (ActivityResult) -> Unit, disable: () -> Unit
+    enabled: () -> Boolean, onActivityResult: (ActivityResult) -> Unit, disable: () -> Unit,
 ) {
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(), onResult = onActivityResult

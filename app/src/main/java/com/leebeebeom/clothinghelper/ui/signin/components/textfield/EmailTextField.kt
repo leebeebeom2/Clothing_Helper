@@ -9,7 +9,7 @@ fun EmailTextField(
     error: () -> Int?,
     imeActionRoute: ImeActionRoute = ImeActionRoute.NEXT,
     state: MutableMaxWidthTextFieldState = rememberEmailTextFieldState(imeActionRoute = imeActionRoute),
-    onInputChange: (String) -> Unit
+    onInputChange: (String) -> Unit,
 ) {
     MaxWidthTextFieldWithError(
         state = state,
@@ -23,7 +23,7 @@ fun EmailTextField(
 
 @Composable
 fun rememberEmailTextFieldState(
-    imeActionRoute: ImeActionRoute
+    imeActionRoute: ImeActionRoute,
 ) = rememberMaxWidthTextFieldState(
     label = R.string.email,
     placeholder = R.string.email_place_holder,

@@ -38,7 +38,7 @@ fun SignInScreen(
     signInNavUiState: SignInNavUiState = signInNavViewModel.uiState,
     viewModel: SignInViewModel = hiltViewModel(),
     uiState: EmailAndPasswordState = viewModel.uiState,
-    activityViewModel: ActivityViewModel = activityViewModel()
+    activityViewModel: ActivityViewModel = activityViewModel(),
 ) {
     SignInBaseColumn(Modifier.testTag(SIGN_IN_SCREEN_TAG)) {
         Logo()

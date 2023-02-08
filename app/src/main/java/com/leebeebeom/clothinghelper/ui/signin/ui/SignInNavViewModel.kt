@@ -30,7 +30,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SignInNavViewModel @Inject constructor(
     private val googleSignInUseCase: GoogleSignInUseCase,
-    private val getSignInLoadingStateUseCase: GetSignInLoadingStateUseCase
+    private val getSignInLoadingStateUseCase: GetSignInLoadingStateUseCase,
 ) : ViewModel() {
     private val _signInNavUiState = MutableSignInNavUiState()
     val uiState: SignInNavUiState = _signInNavUiState

@@ -31,7 +31,7 @@ object SignInDestinations {
 fun SignInNavHost(
     navController: NavHostController = rememberNavController(),
     viewModel: SignInNavViewModel = hiltViewModel(),
-    uiState: SignInNavUiState = viewModel.uiState
+    uiState: SignInNavUiState = viewModel.uiState,
 ) {
     NavHost(
         modifier = Modifier.testTag(SIGN_IN_NAV_TAG),

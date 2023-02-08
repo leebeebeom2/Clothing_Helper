@@ -25,7 +25,7 @@ fun ResetPasswordScreen(
     popBackStack: () -> Unit,
     viewModel: ResetPasswordViewModel = hiltViewModel(),
     uiState: ResetPasswordUiState = viewModel.uiState,
-    activityViewModel: ActivityViewModel = activityViewModel()
+    activityViewModel: ActivityViewModel = activityViewModel(),
 ) {
     PopBackStack(
         taskSuccess = { uiState.isTaskSuccess },
@@ -57,7 +57,7 @@ fun ResetPasswordScreen(
 private fun PopBackStack(
     taskSuccess: () -> Boolean,
     popBackStack: () -> Unit,
-    consumeTaskSuccess: () -> Unit
+    consumeTaskSuccess: () -> Unit,
 ) {
     if (taskSuccess()) {
         popBackStack()

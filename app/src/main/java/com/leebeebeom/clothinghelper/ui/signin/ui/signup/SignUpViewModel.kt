@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val signUpUseCase: SignUpUseCase
+    private val signUpUseCase: SignUpUseCase,
 ) : EmailAndPasswordViewModel() {
 
     override val mutableUiState: MutableSignUpUiState = MutableSignUpUiState()

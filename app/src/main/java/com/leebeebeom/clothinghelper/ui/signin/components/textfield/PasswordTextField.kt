@@ -46,7 +46,7 @@ fun VisibleIcon(
     isVisible: () -> Boolean,
     onClick: () -> Unit,
     visibleIconDescription: String = VISIBLE_ICON,
-    invisibleIconDescription: String = INVISIBLE_ICON
+    invisibleIconDescription: String = INVISIBLE_ICON,
 ) {
     CustomIconButton(
         drawable = if (isVisible()) R.drawable.ic_visibility_off else R.drawable.ic_visibility,
@@ -60,7 +60,7 @@ fun VisibleIcon(
 @Composable
 fun rememberPasswordTextFieldState(
     imeActionRoute: ImeActionRoute,
-    label: Int = R.string.password
+    label: Int = R.string.password,
 ) = rememberMaxWidthTextFieldState(
     initialVisibility = false,
     keyboardRoute = KeyboardRoute.PASSWORD,

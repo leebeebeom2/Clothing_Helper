@@ -50,7 +50,7 @@ fun MaxWidthTextFieldWithError(
     onValueChange: (TextFieldValue) -> Unit,
     onFocusChanged: (FocusState) -> Unit,
     onInputChange: (String) -> Unit,
-    trailingIcon: @Composable (() -> Unit)? = null
+    trailingIcon: @Composable (() -> Unit)? = null,
 ) {
     Column {
         MaxWidthTextField(
@@ -71,7 +71,7 @@ private fun MaxWidthTextField(
     trailingIcon: @Composable (() -> Unit)?,
     onValueChange: (TextFieldValue) -> Unit,
     onFocusChanged: (FocusState) -> Unit,
-    focusManager: FocusManager = LocalFocusManager.current
+    focusManager: FocusManager = LocalFocusManager.current,
 ) {
     OutlinedTextField(
         modifier = Modifier
@@ -148,7 +148,7 @@ interface MaxWidthTextFieldState {
 
     @Composable
     fun TrailingIcon(
-        trailingIcon: @Composable (() -> Unit)?, onValueChange: (TextFieldValue) -> Unit
+        trailingIcon: @Composable (() -> Unit)?, onValueChange: (TextFieldValue) -> Unit,
     ) {
         if (trailingIcon != null || cancelIconEnabled) trailingIcon?.run { invoke() } ?: CancelIcon(
             onValueChange = onValueChange
@@ -185,7 +185,7 @@ open class MutableMaxWidthTextFieldState(
     override val placeholder: Int?,
     override val showKeyboard: Boolean,
     override val cancelIconEnabled: Boolean,
-    private val blockBlank: Boolean
+    private val blockBlank: Boolean,
 ) : MaxWidthTextFieldState {
     override var textFieldValue by mutableStateOf(TextFieldValue(initialText))
     override var error: Int? by mutableStateOf(initialError)
@@ -214,7 +214,7 @@ open class MutableMaxWidthTextFieldState(
     }
 
     override fun showKeyboard(
-        scope: CoroutineScope, keyboardController: SoftwareKeyboardController?
+        scope: CoroutineScope, keyboardController: SoftwareKeyboardController?,
     ) {
         scope.launch {
             focusRequester.requestFocus()
@@ -225,11 +225,9 @@ open class MutableMaxWidthTextFieldState(
 
     fun onFocusChanged(focusState: FocusState) {
         hasFocus = focusState.hasFocus
-        if (hasFocus) textFieldValue =
-            textFieldValue.copy(
-                text = textFieldValue.text,
-                selection = TextRange(textFieldValue.text.length)
-            )
+        if (hasFocus) textFieldValue = textFieldValue.copy(
+            text = textFieldValue.text, selection = TextRange(textFieldValue.text.length)
+        )
     }
 
     override fun getKeyboardActions(focusManager: FocusManager) =
@@ -287,7 +285,7 @@ fun rememberMaxWidthTextFieldState(
     @StringRes placeholder: Int? = null,
     showKeyboard: Boolean = false,
     cancelIconEnabled: Boolean = true,
-    blockBlank: Boolean = false
+    blockBlank: Boolean = false,
 ): MutableMaxWidthTextFieldState = rememberSaveable(
     saver = MutableMaxWidthTextFieldState.Saver, inputs = arrayOf(
         initialInput,
@@ -319,7 +317,7 @@ fun rememberMaxWidthTextFieldState(
 @Composable
 private fun ShowKeyboard(
     state: MaxWidthTextFieldState,
-    keyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
+    keyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current,
 ) {
     var showedKeyboard by rememberSaveable { mutableStateOf(false) }
     if (!showedKeyboard) LaunchedEffect(key1 = Unit) {

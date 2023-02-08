@@ -9,7 +9,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
 import com.leebeebeom.clothinghelper.data.repository.base.DatabasePath
-import com.leebeebeom.clothinghelper.data.repository.base.LoadingStateImpl
+import com.leebeebeom.clothinghelper.util.LoadingStateProviderImpl
 import com.leebeebeom.clothinghelper.data.repository.util.AuthCallSite
 import com.leebeebeom.clothinghelper.data.repository.util.logE
 import com.leebeebeom.clothinghelper.domain.model.AuthResult
@@ -30,7 +30,7 @@ import javax.inject.Singleton
 
 @Singleton
 class UserRepositoryImpl @Inject constructor() : UserRepository {
-    private val loadingStateImpl = LoadingStateImpl(false)
+    private val loadingStateImpl = LoadingStateProviderImpl(false)
 
     override val isLoading get() = loadingStateImpl.isLoading
     private val auth = FirebaseAuth.getInstance()

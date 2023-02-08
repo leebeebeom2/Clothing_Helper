@@ -13,7 +13,7 @@ private val LightColorPalette = lightColors(
 
 @Composable
 fun ClothingHelperTheme(
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     MaterialTheme(
         colors = LightColorPalette,

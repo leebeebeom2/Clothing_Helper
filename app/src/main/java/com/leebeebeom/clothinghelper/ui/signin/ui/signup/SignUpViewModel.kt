@@ -22,8 +22,8 @@ class SignUpViewModel @Inject constructor(
     override val mutableUiState: MutableSignUpUiState = MutableSignUpUiState()
     val uiState: SignUpUiState = mutableUiState
 
-    fun onNameChange(name: String) {
-        mutableUiState.name = name
+    fun onNickNameChange(name: String) {
+        mutableUiState.nickName = name
     }
 
     override fun onPasswordChange(password: String) {
@@ -56,7 +56,7 @@ class SignUpViewModel @Inject constructor(
         viewModelScope.launch {
             val result = signUpUseCase.signUp(email = mutableUiState.email,
                 password = mutableUiState.password,
-                name = mutableUiState.name,
+                name = mutableUiState.nickName,
                 onSubCategoryLoadFail = { showToast(R.string.data_load_failed) })
             when (result) {
                 is Success -> showToast(R.string.sign_up_complete)
@@ -79,10 +79,10 @@ interface SignUpUiState : EmailAndPasswordState {
 class MutableSignUpUiState : MutableEmailAndPasswordUiState(), SignUpUiState {
     override var passwordConfirmError: Int? by mutableStateOf(null)
 
-    var name by mutableStateOf("")
+    var nickName by mutableStateOf("")
     var passwordConfirm by mutableStateOf("")
 
     override val buttonEnabled by derivedStateOf {
-        super.buttonEnabled && name.isNotBlank() && passwordConfirm.isNotBlank() && passwordConfirmError == null
+        super.buttonEnabled && nickName.isNotBlank() && passwordConfirm.isNotBlank() && passwordConfirmError == null
     }
 }

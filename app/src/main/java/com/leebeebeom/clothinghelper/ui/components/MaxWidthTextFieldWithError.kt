@@ -18,6 +18,7 @@ import androidx.compose.ui.focus.*
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
@@ -114,7 +115,7 @@ private fun ErrorText(state: MaxWidthTextFieldState) {
     }
 }
 
-const val CANCEL_ICON_TAG = "cancel Icon"
+const val CANCEL_ICON = "cancel Icon"
 
 @Stable
 @OptIn(ExperimentalComposeUiApi::class)
@@ -166,7 +167,7 @@ interface MaxWidthTextFieldState {
                 drawable = R.drawable.ic_cancel,
                 tint = VeryDarkGray,
                 size = 20.dp,
-                contentDescription = CANCEL_ICON_TAG
+                contentDescription = CANCEL_ICON
             )
         }
     }
@@ -224,6 +225,11 @@ open class MutableMaxWidthTextFieldState(
 
     fun onFocusChanged(focusState: FocusState) {
         hasFocus = focusState.hasFocus
+        if (hasFocus) textFieldValue =
+            textFieldValue.copy(
+                text = textFieldValue.text,
+                selection = TextRange(textFieldValue.text.length)
+            )
     }
 
     override fun getKeyboardActions(focusManager: FocusManager) =

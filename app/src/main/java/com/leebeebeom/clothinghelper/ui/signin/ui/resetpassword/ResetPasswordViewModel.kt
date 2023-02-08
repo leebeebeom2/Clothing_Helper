@@ -6,7 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.domain.model.AuthResult.*
+import com.leebeebeom.clothinghelper.domain.model.AuthResult.EmptySuccess
+import com.leebeebeom.clothinghelper.domain.model.AuthResult.Fail
 import com.leebeebeom.clothinghelper.domain.usecase.user.ResetPasswordUseCase
 import com.leebeebeom.clothinghelper.ui.signin.base.EmailViewModel
 import com.leebeebeom.clothinghelper.ui.signin.state.EmailUiState
@@ -32,7 +33,7 @@ class ResetPasswordViewModel @Inject constructor(private val resetPasswordUseCas
         viewModelScope.launch {
             when (val result =
                 resetPasswordUseCase.sendResetPasswordEmail(email = mutableUiState.email)) {
-                is Success -> {
+                is EmptySuccess -> {
                     showToast(R.string.email_send_complete)
                     mutableUiState.isTaskSuccess = true
                 }
@@ -42,7 +43,7 @@ class ResetPasswordViewModel @Inject constructor(private val resetPasswordUseCas
                         updateEmailError = { mutableUiState.emailError = it },
                         showToast = showToast
                     )
-                is UnknownFail -> showToast(R.string.unknown_error)
+                else -> showToast(R.string.unknown_error)
             }
         }
     }

@@ -5,7 +5,9 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.leebeebeom.clothinghelper.*
+import com.leebeebeom.clothinghelper.CustomTestRule
+import com.leebeebeom.clothinghelper.activityRule
+import com.leebeebeom.clothinghelper.centerDotProgressIndicator
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import org.junit.Rule
 import org.junit.Test

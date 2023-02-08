@@ -2,8 +2,11 @@ package com.leebeebeom.clothinghelper.ui.signin.components.textfield
 
 import androidx.compose.foundation.layout.Column
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.leebeebeom.clothinghelper.*
+import com.leebeebeom.clothinghelper.CustomTestRule
+import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.R.string.dummy
+import com.leebeebeom.clothinghelper.activityRule
+import com.leebeebeom.clothinghelper.passwordTextField
 import com.leebeebeom.clothinghelper.ui.components.*
 import com.leebeebeom.clothinghelper.ui.signin.state.MutableEmailAndPasswordUiState
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInViewModel

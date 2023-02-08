@@ -66,7 +66,7 @@ class MaxWidthButtonTest {
 
 fun buttonFocusTest(
     focusNode: () -> CustomTestRule.CustomSemanticsNodeInteraction,
-    button: () -> CustomTestRule.CustomSemanticsNodeInteraction
+    button: () -> CustomTestRule.CustomSemanticsNodeInteraction,
 ) {
     focusNode().click()
     focusNode().focused()

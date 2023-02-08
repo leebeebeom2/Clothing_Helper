@@ -72,16 +72,15 @@ class SignInScreenTest {
     }
 
     @Test
-    fun textFieldVisibleTest() =
-        textFieldVisibleTest(rule = customTestRule,
-            textField = { passwordTextField }, input = { uiState.password })
+    fun textFieldVisibleTest() = textFieldVisibleTest(rule = customTestRule,
+        textField = { passwordTextField },
+        input = { uiState.password })
 
     @Test
     fun cancelIconTest() {
         cancelIconTest(rule = customTestRule,
             cancelIconTextField = { emailTextField },
-            looseFocus = { passwordTextField.click() }
-        )
+            looseFocus = { passwordTextField.click() })
 
         invisibleTest(customTestRule) {
             cancelIconTest(
@@ -99,9 +98,7 @@ class SignInScreenTest {
         blockBlankTest(rule = customTestRule, textField = { emailTextField })
         invisibleTest(customTestRule) {
             blockBlankTest(
-                rule = customTestRule,
-                textField = { passwordTextField },
-                invisible = it
+                rule = customTestRule, textField = { passwordTextField }, invisible = it
             )
         }
     }
@@ -184,8 +181,7 @@ class SignInScreenTest {
     }
 
     @Test
-    fun imeTest() = imeTest({ emailTextField },
-        doneTextField = { passwordTextField })
+    fun imeTest() = imeTest({ emailTextField }, doneTextField = { passwordTextField })
 
     @Test
     fun buttonEnabledTest() {
@@ -194,7 +190,7 @@ class SignInScreenTest {
         fun oneTextFieldBlank(
             inputTextFiled: () -> CustomSemanticsNodeInteraction,
             text: String,
-            invisible: Boolean = false
+            invisible: Boolean = false,
         ) {
             inputTextFiled().input(text = text, invisible = invisible)
             buttonNotEnabled()
@@ -207,8 +203,7 @@ class SignInScreenTest {
         oneTextFieldBlank(inputTextFiled = { emailTextField }, text = EMAIL)
         invisibleTest(customTestRule) {
             oneTextFieldBlank(
-                inputTextFiled = { passwordTextField }, text = PASSWORD,
-                invisible = it
+                inputTextFiled = { passwordTextField }, text = PASSWORD, invisible = it
             )
         }
 
@@ -263,7 +258,7 @@ class SignInScreenTest {
 
 fun looseFocusTest(
     textField: () -> CustomSemanticsNodeInteraction,
-    root: () -> CustomSemanticsNodeInteraction
+    root: () -> CustomSemanticsNodeInteraction,
 ) {
     textField().click()
     textField().focused()

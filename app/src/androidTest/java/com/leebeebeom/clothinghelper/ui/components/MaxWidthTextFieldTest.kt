@@ -133,10 +133,9 @@ class MaxWidthTextFieldTest {
     )
 
     @Test
-    fun cursorTest() =
-        cursorTest(customTestRule,
-            textField = { textField },
-            looseFocus = { passwordTextField.click() })
+    fun cursorTest() = cursorTest(customTestRule,
+        textField = { textField },
+        looseFocus = { passwordTextField.click() })
 
     @Test
     fun imeTest() = imeTest({ textField }, doneTextField = { passwordTextField })
@@ -207,7 +206,7 @@ fun showKeyboardOnceTest(
     firstScreenTag: String,
     secondScreenTag: String,
     move: () -> Unit,
-    moveBack: () -> Unit
+    moveBack: () -> Unit,
 ) {
     showKeyboardTest(textField = focusNode())
 
@@ -223,7 +222,7 @@ fun inputChangeTest(
     rule: CustomTestRule,
     textField: () -> CustomSemanticsNodeInteraction,
     input: () -> String,
-    invisible: Boolean = false
+    invisible: Boolean = false,
 ) {
     fun input(text: String, beforeText: String = "") =
         textField().input(text = text, beforeText = beforeText, invisible = invisible)
@@ -276,7 +275,7 @@ fun textFieldVisibleTest(
     textField: () -> CustomSemanticsNodeInteraction,
     input: () -> String,
     visibleIcon: () -> CustomSemanticsNodeInteraction = { visibleIcon(rule) },
-    invisibleIcon: () -> CustomSemanticsNodeInteraction = { invisibleIcon(rule) }
+    invisibleIcon: () -> CustomSemanticsNodeInteraction = { invisibleIcon(rule) },
 ) {
     fun inputCheck(text: String) = assert(input() == text)
 
@@ -356,7 +355,7 @@ fun cancelIconTest(
     cancelIconTextField: () -> CustomSemanticsNodeInteraction,
     looseFocus: () -> Unit,
     enable: Boolean = true,
-    invisible: Boolean = false
+    invisible: Boolean = false,
 ) {
     fun cancelIcon() = cancelIcon(rule)
 
@@ -371,9 +370,7 @@ fun cancelIconTest(
     cancelIcon().notExist()
 
     cancelIconTextField().input( // input(create cancel icon)
-        text = TEST_INPUT,
-        restore = false,
-        invisible = invisible
+        text = TEST_INPUT, restore = false, invisible = invisible
     )
     if (enable) {
         cancelIcon().exist(false)
@@ -419,7 +416,7 @@ fun errorTest(
     beforeText: String = "",
     blockBlank: Boolean = false,
     invisible: Boolean = false,
-    clearOtherTextField: () -> Unit = {}
+    clearOtherTextField: () -> Unit = {},
 ) {
     val errorText = rule.getString(errorTextRes)
 
@@ -488,7 +485,7 @@ fun cursorTest(
 
 fun imeTest(
     vararg nextTextField: () -> CustomSemanticsNodeInteraction,
-    doneTextField: () -> CustomSemanticsNodeInteraction
+    doneTextField: () -> CustomSemanticsNodeInteraction,
 ) {
     if (nextTextField.isEmpty()) throw java.lang.IllegalStateException("nextTextField is empty")
 
@@ -515,7 +512,7 @@ fun imeTest(
 fun blockBlankTest(
     rule: CustomTestRule,
     textField: () -> CustomSemanticsNodeInteraction,
-    invisible: Boolean = false
+    invisible: Boolean = false,
 ) {
     fun notExistText(text: String) = rule.getNodeWithText(text, invisible).notExist()
 
@@ -535,7 +532,7 @@ fun blockBlankTest(
 fun invisibleTest(
     rule: CustomTestRule,
     visibleIcon: () -> CustomSemanticsNodeInteraction = { visibleIcon(rule) },
-    test: (Boolean) -> Unit
+    test: (Boolean) -> Unit,
 ) {
     test(true)
     visibleIcon().click()

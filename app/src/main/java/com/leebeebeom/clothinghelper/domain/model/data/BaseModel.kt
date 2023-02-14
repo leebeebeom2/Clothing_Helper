@@ -1,7 +1,9 @@
-package com.leebeebeom.clothinghelperdomain.model.data
+package com.leebeebeom.clothinghelper.domain.model.data
+
+import com.leebeebeom.clothinghelper.ui.main.drawer.MainCategoryType
 
 abstract class BaseModel {
-    abstract val parent: SubCategoryParent
+    abstract val parent: MainCategoryType
     abstract val name: String
     abstract val key: String
     abstract val createDate: Long

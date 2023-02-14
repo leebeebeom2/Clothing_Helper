@@ -1,5 +1,6 @@
-package com.leebeebeom.clothinghelperdomain.model.data
+package com.leebeebeom.clothinghelper.domain.model.data
 
+import com.leebeebeom.clothinghelper.ui.main.drawer.MainCategoryType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
@@ -16,7 +17,7 @@ data class SizeChart(
     override val key: String = "",
     override val createDate: Long = 0,
     override val editDate: Long = 0,
-    override val parent: SubCategoryParent = SubCategoryParent.TOP
+    override val parent: MainCategoryType = MainCategoryType.TOP
 ) : BaseFolderModel() {
     override fun addKey(key: String) = copy(key = key)
 }

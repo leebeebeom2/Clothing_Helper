@@ -1,6 +1,7 @@
-package com.leebeebeom.clothinghelperdomain.model.data
+package com.leebeebeom.clothinghelper.domain.model.data
 
 import android.os.Parcelable
+import com.leebeebeom.clothinghelper.ui.main.drawer.MainCategoryType
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -11,7 +12,7 @@ data class Folder(
     override val name: String = "",
     override val key: String = "",
     override val editDate: Long = 0,
-    override val parent: SubCategoryParent = SubCategoryParent.TOP
+    override val parent: MainCategoryType = MainCategoryType.TOP
 ) : BaseFolderModel(), Parcelable {
     override fun addKey(key: String) = copy(key = key)
 }

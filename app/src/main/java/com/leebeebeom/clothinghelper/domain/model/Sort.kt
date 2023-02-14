@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelperdomain.model
+package com.leebeebeom.clothinghelper.domain.model
 
 enum class Sort {
     NAME, CREATE, EDIT

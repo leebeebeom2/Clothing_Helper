@@ -8,7 +8,6 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
-import com.leebeebeom.clothinghelper.util.LoadingStateProviderImpl
 import com.leebeebeom.clothinghelper.data.repository.util.AuthCallSite
 import com.leebeebeom.clothinghelper.data.repository.util.logE
 import com.leebeebeom.clothinghelper.domain.model.AuthResult
@@ -17,6 +16,7 @@ import com.leebeebeom.clothinghelper.domain.model.data.User
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import com.leebeebeom.clothinghelper.ui.util.FirebaseAuthErrorCode.A_NETWORK_ERROR
 import com.leebeebeom.clothinghelper.ui.util.FirebaseAuthErrorCode.TOO_MANY_REQUEST
+import com.leebeebeom.clothinghelper.util.LoadingStateProviderImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableStateFlow

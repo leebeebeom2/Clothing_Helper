@@ -88,7 +88,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         }
     }
 
-    private suspend fun databaseTryWithLoading(
+    protected suspend fun databaseTryWithLoading(
         callSite: DatabaseCallSite,
         task: suspend () -> FirebaseResult,
     ) = withContext(Dispatchers.IO) {

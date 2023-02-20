@@ -11,7 +11,7 @@ interface LoadingStateProvider {
     val isLoading: StateFlow<Boolean>
 }
 
-class LoadingStateProviderImpl(initialLoading: Boolean) : LoadingStateProvider {
+open class LoadingStateProviderImpl(initialLoading: Boolean) : LoadingStateProvider {
     private val _isLoading = MutableStateFlow(initialLoading)
     override val isLoading = _isLoading.asStateFlow()
 

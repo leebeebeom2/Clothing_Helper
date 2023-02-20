@@ -4,6 +4,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelper.data.repository.util.DatabaseCallSite
+import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProviderImpl
 import com.leebeebeom.clothinghelper.data.repository.util.logE
 import com.leebeebeom.clothinghelper.domain.model.FirebaseResult
 import com.leebeebeom.clothinghelper.domain.model.FirebaseResult.Success
@@ -13,7 +14,6 @@ import com.leebeebeom.clothinghelper.domain.model.Sort.*
 import com.leebeebeom.clothinghelper.domain.model.SortPreferences
 import com.leebeebeom.clothinghelper.domain.model.data.BaseModel
 import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
-import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProviderImpl
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.tasks.await
@@ -22,6 +22,8 @@ import kotlinx.coroutines.tasks.await
  * setPersistenceEnabled는 네트워크 미 연결 시에도 데이터를 조회할 수 있게 해줌
  */
 val root = Firebase.database.apply { setPersistenceEnabled(true) }.reference
+
+fun DatabaseReference.getContainerRef(uid: String, path: String) = child(uid).child(path)
 
 abstract class BaseDataRepositoryImpl<T : BaseModel>(
     sortFlow: Flow<SortPreferences>,
@@ -179,7 +181,4 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         task(temp)
         update { temp }
     }
-
-    private fun DatabaseReference.getContainerRef(uid: String, path: String) =
-        child(uid).child(path)
 }

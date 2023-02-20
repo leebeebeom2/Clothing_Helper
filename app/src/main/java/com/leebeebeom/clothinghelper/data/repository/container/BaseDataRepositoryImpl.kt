@@ -13,7 +13,7 @@ import com.leebeebeom.clothinghelper.domain.model.Sort.*
 import com.leebeebeom.clothinghelper.domain.model.SortPreferences
 import com.leebeebeom.clothinghelper.domain.model.data.BaseModel
 import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
-import com.leebeebeom.clothinghelper.util.LoadingStateProviderImpl
+import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProviderImpl
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.tasks.await

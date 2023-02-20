@@ -1,7 +1,7 @@
 package com.leebeebeom.clothinghelper.domain.repository
 
 import com.leebeebeom.clothinghelper.domain.model.FirebaseResult
-import com.leebeebeom.clothinghelper.util.LoadingStateProvider
+import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProvider
 import kotlinx.coroutines.flow.Flow
 
 interface BaseDataRepository<T> : LoadingStateProvider {

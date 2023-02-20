@@ -3,7 +3,7 @@ package com.leebeebeom.clothinghelper.domain.repository
 import com.google.firebase.auth.AuthCredential
 import com.leebeebeom.clothinghelper.domain.model.AuthResult
 import com.leebeebeom.clothinghelper.domain.model.data.User
-import com.leebeebeom.clothinghelper.util.LoadingStateProvider
+import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProvider
 import kotlinx.coroutines.flow.StateFlow
 
 interface UserRepository : LoadingStateProvider {

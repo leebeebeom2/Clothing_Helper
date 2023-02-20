@@ -16,7 +16,7 @@ import com.leebeebeom.clothinghelper.domain.model.data.User
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import com.leebeebeom.clothinghelper.ui.util.FirebaseAuthErrorCode.A_NETWORK_ERROR
 import com.leebeebeom.clothinghelper.ui.util.FirebaseAuthErrorCode.TOO_MANY_REQUEST
-import com.leebeebeom.clothinghelper.util.LoadingStateProviderImpl
+import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProviderImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableStateFlow

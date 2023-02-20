@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.util
+package com.leebeebeom.clothinghelper.data.repository.util
 
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableStateFlow

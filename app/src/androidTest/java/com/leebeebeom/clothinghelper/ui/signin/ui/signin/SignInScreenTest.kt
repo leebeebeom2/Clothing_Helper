@@ -17,6 +17,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
+// TODO 구글 로그인 테스트
+
 class SignInScreenTest {
     @get:Rule
     val rule = activityRule

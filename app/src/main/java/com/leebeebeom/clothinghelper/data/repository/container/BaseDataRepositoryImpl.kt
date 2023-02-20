@@ -136,7 +136,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
      *
      * @param callSite 예외 발생 시 로그에 찍힐 Site
      */
-    protected suspend fun databaseTryWithLoading(
+    private suspend fun databaseTryWithLoading(
         callSite: DatabaseCallSite,
         task: suspend () -> FirebaseResult,
     ) = withContext(Dispatchers.IO) {
@@ -151,9 +151,9 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         }
     }
 
-    protected fun getKey(containerRef: DatabaseReference) = containerRef.push().key!!
+    private fun getKey(containerRef: DatabaseReference) = containerRef.push().key!!
 
-    protected suspend fun push(containerRef: DatabaseReference, t: T) =
+    private suspend fun push(containerRef: DatabaseReference, t: T) =
         withContext(Dispatchers.IO) { containerRef.child(t.key).setValue(t) }
 
     private fun <T : BaseModel> getSortedData(
@@ -179,6 +179,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         task(temp)
         update { temp }
     }
-}
 
-fun DatabaseReference.getContainerRef(uid: String, path: String) = child(uid).child(path)
+    private fun DatabaseReference.getContainerRef(uid: String, path: String) =
+        child(uid).child(path)
+}

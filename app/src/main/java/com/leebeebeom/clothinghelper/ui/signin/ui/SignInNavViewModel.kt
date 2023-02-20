@@ -63,8 +63,7 @@ class SignInNavViewModel @Inject constructor(
     private fun googleSignIn(activityResult: ActivityResult, showToast: ShowToast) {
         viewModelScope.launch {
             val result =
-                googleSignInUseCase.googleSignIn(credential = getGoogleCredential(activityResult = activityResult),
-                    onSubCategoriesLoadFail = { showToast(R.string.data_load_failed) })
+                googleSignInUseCase.googleSignIn(credential = getGoogleCredential(activityResult = activityResult))
 
             when (result) {
                 is Success -> {
@@ -72,7 +71,6 @@ class SignInNavViewModel @Inject constructor(
                     _signInNavUiState.googleButtonEnabled = true
                 }
                 is Fail -> if (result.errorCode == A_NETWORK_ERROR) showToast(R.string.network_error)
-                else unknownFail(showToast = showToast)
                 is UnknownFail -> unknownFail(showToast = showToast)
             }
         }

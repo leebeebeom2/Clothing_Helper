@@ -54,10 +54,11 @@ class SignUpViewModel @Inject constructor(
 
     fun signUpWithEmailAndPassword(showToast: ShowToast) {
         viewModelScope.launch {
-            val result = signUpUseCase.signUp(email = mutableUiState.email,
+            val result = signUpUseCase.signUp(
+                email = mutableUiState.email,
                 password = mutableUiState.password,
-                name = mutableUiState.nickName,
-                onSubCategoryLoadFail = { showToast(R.string.data_load_failed) })
+                name = mutableUiState.nickName
+            )
             when (result) {
                 is Success -> showToast(R.string.sign_up_complete)
                 is Fail -> fireBaseError(

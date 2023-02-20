@@ -16,6 +16,7 @@ import java.io.IOException
 
 abstract class SortPreferenceRepositoryImpl(private val dataStore: DataStore<Preferences>) :
     SortPreferenceRepository {
+
     override val sort: Flow<SortPreferences> = dataStore.data.catch {
         if (it is IOException) emit(emptyPreferences()) else throw it
     }.map {

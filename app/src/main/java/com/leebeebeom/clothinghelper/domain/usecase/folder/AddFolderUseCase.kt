@@ -14,7 +14,7 @@ class AddFolderUseCase @Inject constructor(private val folderRepository: FolderR
         subCategoryKey: String,
         name: String,
         mainCategoryType: MainCategoryType,
-        uid: String
+        uid: String,
     ): FirebaseResult {
         val currentTime = System.currentTimeMillis()
 

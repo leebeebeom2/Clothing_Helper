@@ -13,7 +13,7 @@ class EditFolderNameUseCase @Inject constructor(private val folderRepository: Fo
         name: String,
         uid: String,
     ): FirebaseResult {
-        val newFolder = oldFolder.copy(name = name)
+        val newFolder = oldFolder.copy(name = name, editDate = System.currentTimeMillis())
 
         return folderRepository.edit(newData = newFolder, uid = uid)
     }

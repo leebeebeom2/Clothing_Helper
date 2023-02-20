@@ -1,6 +1,6 @@
-package com.leebeebeom.clothinghelperdomain.usecase.user
+package com.leebeebeom.clothinghelper.domain.usecase.user
 
-import com.leebeebeom.clothinghelperdomain.repository.UserRepository
+import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 

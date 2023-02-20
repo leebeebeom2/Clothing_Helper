@@ -14,13 +14,13 @@ import com.leebeebeom.clothinghelper.domain.model.SortPreferences
 import com.leebeebeom.clothinghelper.domain.model.data.BaseModel
 import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
 import com.leebeebeom.clothinghelper.util.LoadingStateProviderImpl
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeout
 
+/**
+ * setPersistenceEnabled는 네트워크 미 연결 시에도 데이터를 조회할 수 있게 해줌
+ */
 val root = Firebase.database.apply { setPersistenceEnabled(true) }.reference
 
 abstract class BaseDataRepositoryImpl<T : BaseModel>(
@@ -28,44 +28,70 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     private val refPath: String,
 ) : BaseDataRepository<T>, LoadingStateProviderImpl(true) {
     private val _allData = MutableStateFlow(emptyList<T>())
+
+    /**
+     * _allData 혹은 sortFlow가 변경되면 업데이트 됨
+     */
     override val allData = combine(flow = _allData, flow2 = sortFlow, transform = ::getSortedData)
 
-    override suspend fun load(uid: String?, type: Class<T>) = databaseTryWithLoading(
-        DatabaseCallSite(callSite = "$type: update")
-    ) {
-        uid?.let {
-            val temp = mutableListOf<T>()
 
-            root.getContainerRef(uid = uid, path = refPath).get().await().children.forEach {
-                temp.add((it.getValue(type))!!)
+    /**
+     * 성공 시 [FirebaseResult.Success] 반환
+     *
+     * 실패 시 [Exception]이 담긴 [FirebaseResult.Fail] 반환
+     *
+     * @param uid [uid]가 null 일 경우 [_allData]는 [emptyList]로 업데이트 됨
+     */
+    override suspend fun load(uid: String?, type: Class<T>) =
+        databaseTryWithLoading(callSite = DatabaseCallSite(callSite = "$type: update")) {
+            uid?.let {
+                val temp = mutableListOf<T>()
+
+                root.getContainerRef(uid = uid, path = refPath).get().await().children.forEach {
+                    temp.add((it.getValue(type))!!)
+                }
+
+                _allData.update { temp }
+                Success
+            } ?: let {
+                _allData.update { emptyList() }
+                Success
             }
-
-            _allData.update { temp }
-            Success
-        } ?: let {
-            _allData.update { emptyList() }
-            Success
         }
-    }
 
+    /**
+     * 성공 시 [FirebaseResult.Success] 반환
+     *
+     * 실패 시 [Exception]이 담긴 [FirebaseResult.Fail] 반환
+     *
+     * 응답이 3를 초과할 경우 네트워크 미 연결로 간주, [TimeoutCancellationException]이 담긴 [FirebaseResult.Fail] 반환
+     */
     override suspend fun add(data: T, uid: String): FirebaseResult =
-        databaseTryWithTimeOut(1000, DatabaseCallSite("${data.javaClass}: add")) {
+        databaseTryWithTimeOut(3000, DatabaseCallSite("${data.javaClass}: add")) {
             val containerRef = root.getContainerRef(uid = uid, path = refPath)
 
             @Suppress("UNCHECKED_CAST")
-            val tWithKey = data.addKey(key = getKey(containerRef = containerRef)) as T
+            val dataWithKey = data.addKey(key = getKey(containerRef = containerRef)) as T
 
-            push(containerRef = containerRef, t = tWithKey).await()
-            _allData.updateList { it.add(tWithKey) }
+            push(containerRef = containerRef, t = dataWithKey).await()
+            _allData.updateList { it.add(dataWithKey) }
             Success
         }
 
+    /**
+     * 성공 시 [FirebaseResult.Success] 반환
+     *
+     * 실패 시 [Exception]이 담긴 [FirebaseResult.Fail] 반환
+     *
+     * 응답이 3를 초과할 경우 네트워크 미 연결로 간주, [TimeoutCancellationException]이 담긴 [FirebaseResult.Fail] 반환
+     */
     override suspend fun edit(
         newData: T,
         uid: String,
     ): FirebaseResult =
-        databaseTryWithTimeOut(1000, DatabaseCallSite(callSite = "${newData::class.java}: edit")) {
-            root.getContainerRef(uid = uid, path = refPath).child(newData.key).setValue(newData).await()
+        databaseTryWithTimeOut(3000, DatabaseCallSite(callSite = "${newData::javaClass}: edit")) {
+            root.getContainerRef(uid = uid, path = refPath).child(newData.key).setValue(newData)
+                .await()
 
             _allData.updateList {
                 val oldData = it.first { oldT -> oldT.key == newData.key }
@@ -75,6 +101,17 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
             Success
         }
 
+    /**
+     * 호출 시 로딩 없음
+     *
+     * 취소할 수 없음
+     *
+     * 응답 시간이 [time]을 초과할 경우 네트워크 미 연결로 간주하며 [TimeoutCancellationException]이 담긴 [FirebaseResult.Fail] 반환
+     *
+     * 다른 예외 발생 시 해당 [Exception]이 담긴 [FirebaseResult.Fail] 반환
+     *
+     * @param callSite 예외 발생 시 로그에 찍힐 Site
+     */
     private suspend fun databaseTryWithTimeOut(
         time: Long,
         callSite: DatabaseCallSite,
@@ -88,6 +125,17 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         }
     }
 
+    /**
+     * 호출 시 로딩 On
+     *
+     * 작업이 끝날 시 로딩 Off
+     *
+     * 취소할 수 없음
+     *
+     * 예외 발생 시 [Exception]이 담긴 [FirebaseResult.Fail] 반환
+     *
+     * @param callSite 예외 발생 시 로그에 찍힐 Site
+     */
     protected suspend fun databaseTryWithLoading(
         callSite: DatabaseCallSite,
         task: suspend () -> FirebaseResult,

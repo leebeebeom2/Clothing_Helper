@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
 fun MainActivityScreen(
     viewModel: ActivityViewModel = activityViewModel(),
     uiState: ActivityUiState = viewModel.activityUiState,
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
 ) {
     val isSignIn by viewModel.isSignIn.collectAsStateWithLifecycle()
 

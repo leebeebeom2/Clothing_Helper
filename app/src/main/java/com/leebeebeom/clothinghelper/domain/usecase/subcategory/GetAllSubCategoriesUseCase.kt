@@ -1,6 +1,6 @@
-package com.leebeebeom.clothinghelperdomain.usecase.subcategory
+package com.leebeebeom.clothinghelper.domain.usecase.subcategory
 
-import com.leebeebeom.clothinghelperdomain.repository.SubCategoryRepository
+import com.leebeebeom.clothinghelper.domain.repository.SubCategoryRepository
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 

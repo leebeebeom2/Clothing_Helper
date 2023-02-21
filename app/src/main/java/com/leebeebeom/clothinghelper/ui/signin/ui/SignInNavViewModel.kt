@@ -15,10 +15,10 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.data.repository.util.TAG
-import com.leebeebeom.clothinghelper.domain.model.AuthResult.*
+import com.leebeebeom.clothinghelper.domain.model.FirebaseResult
+import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.GetSignInLoadingStateUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
-import com.leebeebeom.clothinghelper.ui.util.FirebaseAuthErrorCode.A_NETWORK_ERROR
 import com.leebeebeom.clothinghelper.ui.util.ShowToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -31,6 +31,7 @@ import javax.inject.Inject
 class SignInNavViewModel @Inject constructor(
     private val googleSignInUseCase: GoogleSignInUseCase,
     private val getSignInLoadingStateUseCase: GetSignInLoadingStateUseCase,
+    private val firebaseAuthErrorUseCase: FirebaseAuthErrorUseCase,
 ) : ViewModel() {
     private val _signInNavUiState = MutableSignInNavUiState()
     val uiState: SignInNavUiState = _signInNavUiState
@@ -62,17 +63,19 @@ class SignInNavViewModel @Inject constructor(
 
     private fun googleSignIn(activityResult: ActivityResult, showToast: ShowToast) {
         viewModelScope.launch {
-            val result =
-                googleSignInUseCase.googleSignIn(credential = getGoogleCredential(activityResult = activityResult))
+            googleSignInUseCase.googleSignIn(credential = getGoogleCredential(activityResult = activityResult),
+                firebaseResult = object : FirebaseResult {
+                    override fun success() {
+                        showToast(R.string.google_sign_in_complete)
+                        _signInNavUiState.googleButtonEnabled = true
+                    }
 
-            when (result) {
-                is Success -> {
-                    showToast(R.string.google_sign_in_complete)
-                    _signInNavUiState.googleButtonEnabled = true
-                }
-                is Fail -> if (result.errorCode == A_NETWORK_ERROR) showToast(R.string.network_error)
-                is UnknownFail -> unknownFail(showToast = showToast)
-            }
+                    override fun fail(exception: Exception) =
+                        firebaseAuthErrorUseCase.firebaseAuthError(
+                            exception = exception,
+                            showToast = showToast
+                        )
+                })
         }
     }
 

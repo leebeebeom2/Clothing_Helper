@@ -11,6 +11,7 @@ import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.E
 import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.ERROR_WRONG_PASSWORD
 import com.leebeebeom.clothinghelper.ui.util.ShowToast
 import dagger.hilt.android.scopes.ViewModelScoped
+import javax.inject.Inject
 
 object FirebaseAuthErrorCode {
     const val ERROR_INVALID_EMAIL = "ERROR_INVALID_EMAIL"
@@ -20,7 +21,7 @@ object FirebaseAuthErrorCode {
 }
 
 @ViewModelScoped
-class FirebaseAuthErrorUseCase {
+class FirebaseAuthErrorUseCase @Inject constructor() {
     fun firebaseAuthError(
         exception: Exception,
         updateEmailError: (error: Int) -> Unit,

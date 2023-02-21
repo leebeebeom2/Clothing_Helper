@@ -6,7 +6,6 @@ import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelper.data.repository.util.DatabaseCallSite
 import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProviderImpl
 import com.leebeebeom.clothinghelper.data.repository.util.logE
-import com.leebeebeom.clothinghelper.domain.model.FirebaseResult
 import com.leebeebeom.clothinghelper.domain.model.Order.ASCENDING
 import com.leebeebeom.clothinghelper.domain.model.Order.DESCENDING
 import com.leebeebeom.clothinghelper.domain.model.Sort.*
@@ -39,9 +38,9 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     /**
      * @param uid [uid]가 null 일 경우 [_allData]는 [emptyList]로 업데이트 됨
      */
-    override suspend fun load(uid: String?, type: Class<T>, firebaseResult: FirebaseResult) =
+    override suspend fun load(uid: String?, type: Class<T>, onFail: (Exception) -> Unit) =
         databaseTryWithLoading(
-            callSite = DatabaseCallSite(callSite = "$type: update"), onFail = firebaseResult::fail
+            callSite = DatabaseCallSite(callSite = "$type: update"), onFail = onFail
         ) {
             uid?.let {
                 val temp = mutableListOf<T>()
@@ -51,15 +50,14 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
 
                 _allData.update { temp }
             } ?: let { _allData.update { emptyList() } }
-            firebaseResult.success()
         }
 
     /**
      * 응답이 3를 초과할 경우 네트워크 미 연결로 간주, [TimeoutCancellationException] 발생
      */
-    override suspend fun add(data: T, uid: String, firebaseResult: FirebaseResult) =
+    override suspend fun add(data: T, uid: String, onFail: (Exception) -> Unit) =
         databaseTryWithTimeOut(
-            3000, DatabaseCallSite("${data.javaClass}: add"), onFail = firebaseResult::fail
+            3000, DatabaseCallSite("${data.javaClass}: add"), onFail = onFail
         ) {
             val containerRef = dbRoot.getContainerRef(uid = uid, path = refPath)
 
@@ -68,7 +66,6 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
 
             push(containerRef = containerRef, t = dataWithKey).await()
             _allData.updateList { it.add(dataWithKey) }
-            firebaseResult.success()
         }
 
     /**
@@ -77,11 +74,11 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     override suspend fun edit(
         newData: T,
         uid: String,
-        firebaseResult: FirebaseResult,
+        onFail: (Exception) -> Unit,
     ) = databaseTryWithTimeOut(
         3000,
         DatabaseCallSite(callSite = "${newData::javaClass}: edit"),
-        onFail = firebaseResult::fail
+        onFail = onFail
     ) {
         dbRoot.getContainerRef(uid = uid, path = refPath).child(newData.key).setValue(newData)
             .await()
@@ -91,7 +88,6 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
             it.remove(oldData)
             it.add(newData)
         }
-        firebaseResult.success()
     }
 
     /**

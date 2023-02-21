@@ -29,10 +29,7 @@ class SignInViewModel @Inject constructor(
                 email = mutableUiState.email,
                 password = mutableUiState.password,
                 firebaseResult = object : FirebaseResult {
-                    override fun success() {
-                        showToast(R.string.sign_in_complete)
-                    }
-
+                    override fun success() = showToast(R.string.sign_in_complete)
                     override fun fail(exception: Exception) =
                         firebaseAuthErrorUseCase.firebaseAuthError(
                             exception = exception,

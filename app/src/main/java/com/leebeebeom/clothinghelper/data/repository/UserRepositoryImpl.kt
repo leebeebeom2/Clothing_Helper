@@ -92,12 +92,11 @@ class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStatePro
             firebaseResult.success()
         }
 
-    override suspend fun signOut(firebaseResult: FirebaseResult) =
-        authTry(callSite = AuthCallSite("signOut"), onFail = firebaseResult::fail) {
+    override suspend fun signOut(onFail: (Exception) -> Unit) =
+        authTry(callSite = AuthCallSite("signOut"), onFail = onFail) {
             auth.signOut()
             _user.update { null }
             _isSignIn.update { false }
-            firebaseResult.success()
         }
 
     /**

@@ -3,13 +3,13 @@ package com.leebeebeom.clothinghelper.ui.signin.ui.signup
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.domain.model.AuthResult.*
+import com.leebeebeom.clothinghelper.domain.model.FirebaseResult
+import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.SignUpUseCase
 import com.leebeebeom.clothinghelper.ui.signin.base.EmailAndPasswordViewModel
 import com.leebeebeom.clothinghelper.ui.signin.state.EmailAndPasswordState
 import com.leebeebeom.clothinghelper.ui.signin.state.MutableEmailAndPasswordUiState
 import com.leebeebeom.clothinghelper.ui.util.ShowToast
-import com.leebeebeom.clothinghelper.ui.util.fireBaseError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,6 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val signUpUseCase: SignUpUseCase,
+    private val firebaseAuthErrorUseCase: FirebaseAuthErrorUseCase,
 ) : EmailAndPasswordViewModel() {
 
     override val mutableUiState: MutableSignUpUiState = MutableSignUpUiState()
@@ -54,20 +55,22 @@ class SignUpViewModel @Inject constructor(
 
     fun signUpWithEmailAndPassword(showToast: ShowToast) {
         viewModelScope.launch {
-            val result = signUpUseCase.signUp(
+            signUpUseCase.signUp(
                 email = mutableUiState.email,
                 password = mutableUiState.password,
-                name = mutableUiState.nickName
+                name = mutableUiState.nickName,
+                firebaseResult = object : FirebaseResult {
+                    override fun success() = showToast(R.string.sign_up_complete)
+
+                    override fun fail(exception: Exception) =
+                        firebaseAuthErrorUseCase.firebaseAuthError(
+                            exception = exception,
+                            updateEmailError = { mutableUiState.emailError = it },
+                            showToast = showToast
+                        )
+
+                }
             )
-            when (result) {
-                is Success -> showToast(R.string.sign_up_complete)
-                is Fail -> fireBaseError(
-                    errorCode = result.errorCode,
-                    updateEmailError = { mutableUiState.emailError = it },
-                    showToast = showToast
-                )
-                is UnknownFail -> showToast(R.string.unknown_error)
-            }
         }
     }
 }

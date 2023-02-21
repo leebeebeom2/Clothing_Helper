@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.domain.usecase.folder
 
-import com.leebeebeom.clothinghelper.domain.model.FirebaseResult
 import com.leebeebeom.clothinghelper.domain.model.data.Folder
 import com.leebeebeom.clothinghelper.domain.repository.FolderRepository
 import dagger.hilt.android.scopes.ViewModelScoped
@@ -12,9 +11,10 @@ class EditFolderNameUseCase @Inject constructor(private val folderRepository: Fo
         oldFolder: Folder,
         name: String,
         uid: String,
-    ): FirebaseResult {
+        onFail: (Exception) -> Unit,
+    ) {
         val newFolder = oldFolder.copy(name = name, editDate = System.currentTimeMillis())
 
-        return folderRepository.edit(newData = newFolder, uid = uid)
+        folderRepository.edit(newData = newFolder, uid = uid, onFail = onFail)
     }
 }

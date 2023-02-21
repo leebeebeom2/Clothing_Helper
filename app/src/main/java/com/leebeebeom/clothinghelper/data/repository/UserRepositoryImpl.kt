@@ -37,9 +37,10 @@ class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStatePro
 
     init {
         auth.addAuthStateListener {
-            val currentUser = it.currentUser
-            _isSignIn.update { currentUser != null }
-            _user.update { currentUser.toUser() }
+            if (it.currentUser == null) {
+                _isSignIn.update { false }
+                _user.update { null }
+            }
         }
     }
 

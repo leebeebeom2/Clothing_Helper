@@ -7,16 +7,14 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
-import com.google.firebase.database.FirebaseDatabase
+import com.leebeebeom.clothinghelper.data.repository.container.dbRoot
 import com.leebeebeom.clothinghelper.data.repository.util.AuthCallSite
+import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProviderImpl
 import com.leebeebeom.clothinghelper.data.repository.util.logE
 import com.leebeebeom.clothinghelper.domain.model.AuthResult
-import com.leebeebeom.clothinghelper.domain.model.AuthResult.*
+import com.leebeebeom.clothinghelper.domain.model.FirebaseResult
 import com.leebeebeom.clothinghelper.domain.model.data.User
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
-import com.leebeebeom.clothinghelper.ui.util.FirebaseAuthErrorCode.A_NETWORK_ERROR
-import com.leebeebeom.clothinghelper.ui.util.FirebaseAuthErrorCode.TOO_MANY_REQUEST
-import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProviderImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -52,8 +50,8 @@ class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStatePro
      *
      * [AuthResult.Fail]의 경우 처리 가능, [AuthResult.UnknownFail]의 경우 처리 불가능
      */
-    override suspend fun googleSignIn(credential: AuthCredential): AuthResult =
-        authTry(callSite = AuthCallSite("googleSignIn")) {
+    override suspend fun googleSignIn(credential: AuthCredential, firebaseResult: FirebaseResult) =
+        authTry(callSite = AuthCallSite("googleSignIn"), onFail = firebaseResult::fail) {
 
             val authResult = auth.signInWithCredential(credential).await()
 
@@ -67,7 +65,7 @@ class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStatePro
              */
             if (isNewer) pushNewUser(user) else updateUserAndUpdateSignIn(user)
 
-            Success
+            firebaseResult.success()
         }
 
     /**
@@ -77,11 +75,11 @@ class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStatePro
      *
      * [AuthResult.Fail]의 경우 처리 가능, [AuthResult.UnknownFail]의 경우 처리 불가능
      */
-    override suspend fun signIn(email: String, password: String) =
-        authTry(callSite = AuthCallSite("signIn")) {
+    override suspend fun signIn(email: String, password: String, firebaseResult: FirebaseResult) =
+        authTry(callSite = AuthCallSite("signIn"), onFail = firebaseResult::fail) {
             val user = auth.signInWithEmailAndPassword(email, password).await().user.toUser()!!
             updateUserAndUpdateSignIn(user)
-            Success
+            firebaseResult.success()
         }
 
     /**
@@ -95,57 +93,57 @@ class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStatePro
         email: String,
         password: String,
         name: String,
-    ): AuthResult =
-        authTry(callSite = AuthCallSite("signUp")) {
-            val firebaseUser = auth.createUserWithEmailAndPassword(email, password).await().user!!
+        firebaseResult: FirebaseResult,
+    ) = authTry(callSite = AuthCallSite("signUp"), onFail = firebaseResult::fail) {
+        val firebaseUser = auth.createUserWithEmailAndPassword(email, password).await().user!!
 
-            val request = userProfileChangeRequest { displayName = name }
-            firebaseUser.updateProfile(request).await()
+        val request = userProfileChangeRequest { displayName = name }
+        firebaseUser.updateProfile(request).await()
 
-            val user = firebaseUser.toUser()!!.copy(name = name)
+        val user = firebaseUser.toUser()!!.copy(name = name)
 
-            pushNewUser(user)
+        pushNewUser(user)
 
-            Success
-        }
-
-    /**
-     * 성공 시 [AuthResult.Success] 반환
-     *
-     * 실패 시 [FirebaseAuthException]이 담긴 [AuthResult.Fail] 혹은 [AuthResult.UnknownFail] 반환
-     *
-     * [AuthResult.Fail]의 경우 처리 가능, [AuthResult.UnknownFail]의 경우 처리 불가능
-     */
-    override suspend fun resetPasswordEmail(email: String) =
-        authTry(callSite = AuthCallSite("resetPasswordEmail")) {
-            auth.sendPasswordResetEmail(email).await()
-            Success
-        }
-
-    /**
-     * 성공 시 [AuthResult.Success] 반환
-     *
-     * 실패 시 [FirebaseAuthException]이 담긴 [AuthResult.Fail] 혹은 [AuthResult.UnknownFail] 반환
-     *
-     * [AuthResult.Fail]의 경우 처리 가능, [AuthResult.UnknownFail]의 경우 처리 불가능
-     */
-    override suspend fun signOut() = authTry(callSite = AuthCallSite("signOut")) {
-        auth.signOut()
-        _user.update { null }
-        _isSignIn.update { false }
-        Success
+        firebaseResult.success()
     }
+
+    /**
+     * 성공 시 [AuthResult.Success] 반환
+     *
+     * 실패 시 [FirebaseAuthException]이 담긴 [AuthResult.Fail] 혹은 [AuthResult.UnknownFail] 반환
+     *
+     * [AuthResult.Fail]의 경우 처리 가능, [AuthResult.UnknownFail]의 경우 처리 불가능
+     */
+    override suspend fun resetPasswordEmail(email: String, firebaseResult: FirebaseResult) =
+        authTry(callSite = AuthCallSite("resetPasswordEmail"), onFail = firebaseResult::fail) {
+            auth.sendPasswordResetEmail(email).await()
+            firebaseResult.success()
+        }
+
+    /**
+     * 성공 시 [AuthResult.Success] 반환
+     *
+     * 실패 시 [FirebaseAuthException]이 담긴 [AuthResult.Fail] 혹은 [AuthResult.UnknownFail] 반환
+     *
+     * [AuthResult.Fail]의 경우 처리 가능, [AuthResult.UnknownFail]의 경우 처리 불가능
+     */
+    override suspend fun signOut(firebaseResult: FirebaseResult) =
+        authTry(callSite = AuthCallSite("signOut"), onFail = firebaseResult::fail) {
+            auth.signOut()
+            _user.update { null }
+            _isSignIn.update { false }
+            firebaseResult.success()
+        }
 
     /**
      * 데이터 베이스에 유저 정보 입력 후 [_user], [_isSignIn] 업데이트
      */
-    private suspend fun pushNewUser(user: User) = withContext(Dispatchers.IO) {
-        FirebaseDatabase.getInstance().reference.child(user.uid).child(DatabasePath.USER_INFO)
-            .setValue(user)
+    private suspend fun pushNewUser(user: User) {
+        dbRoot.child(user.uid).child(DatabasePath.USER_INFO).setValue(user).await()
         updateUserAndUpdateSignIn(user)
     }
 
-    private suspend fun updateUserAndUpdateSignIn(user: User) = withContext(NonCancellable) {
+    private fun updateUserAndUpdateSignIn(user: User) {
         _user.update { user }
         _isSignIn.update { true }
     }
@@ -169,21 +167,22 @@ class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStatePro
      */
     private suspend fun authTry(
         callSite: AuthCallSite,
-        task: suspend () -> AuthResult,
+        onFail: (Exception) -> Unit,
+        task: suspend () -> Unit,
     ) = withContext(context = Dispatchers.IO) {
         try {
             loadingOn()
             withContext(context = NonCancellable) { task() }
         } catch (e: FirebaseAuthException) {
             logE(site = callSite.site, e = e)
-            Fail(errorCode = e.errorCode)
+            onFail(e)
         } catch (e: FirebaseNetworkException) {
-            Fail(errorCode = A_NETWORK_ERROR)
+            onFail(e)
         } catch (e: FirebaseTooManyRequestsException) {
-            Fail(errorCode = TOO_MANY_REQUEST)
+            onFail(e)
         } catch (e: Exception) {
             logE(site = callSite.site, e = e)
-            UnknownFail
+            onFail(e)
         } finally {
             loadingOff()
         }

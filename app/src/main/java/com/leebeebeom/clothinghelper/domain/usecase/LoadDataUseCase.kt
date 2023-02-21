@@ -15,6 +15,9 @@ class LoadDataUseCase @Inject constructor(
     private val subCategoryRepository: SubCategoryRepository,
     private val folderRepository: FolderRepository,
 ) {
+    /**
+     * 유저 상태 변경(로그인, 로그아웃) 시 모든 데이터 다시 로드
+     */
     suspend fun load(
         subCategoryLoadFail: (Exception) -> Unit,
         folderLoadFail: (Exception) -> Unit,

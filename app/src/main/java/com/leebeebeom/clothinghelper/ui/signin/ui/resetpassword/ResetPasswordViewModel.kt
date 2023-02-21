@@ -6,20 +6,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.domain.model.AuthResult
-import com.leebeebeom.clothinghelper.domain.model.AuthResult.Fail
+import com.leebeebeom.clothinghelper.domain.model.FirebaseResult
+import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.ResetPasswordUseCase
 import com.leebeebeom.clothinghelper.ui.signin.base.EmailViewModel
 import com.leebeebeom.clothinghelper.ui.signin.state.EmailUiState
 import com.leebeebeom.clothinghelper.ui.signin.state.MutableEmailUiState
 import com.leebeebeom.clothinghelper.ui.util.ShowToast
-import com.leebeebeom.clothinghelper.ui.util.fireBaseError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ResetPasswordViewModel @Inject constructor(private val resetPasswordUseCase: ResetPasswordUseCase) :
+class ResetPasswordViewModel @Inject constructor(
+    private val resetPasswordUseCase: ResetPasswordUseCase,
+    private val firebaseAuthErrorUseCase: FirebaseAuthErrorUseCase,
+) :
     EmailViewModel() {
 
     override val mutableUiState: MutableResetPasswordUiState = MutableResetPasswordUiState()
@@ -31,20 +33,23 @@ class ResetPasswordViewModel @Inject constructor(private val resetPasswordUseCas
 
     fun sendResetPasswordEmail(showToast: ShowToast) {
         viewModelScope.launch {
-            when (val result =
-                resetPasswordUseCase.sendResetPasswordEmail(email = mutableUiState.email)) {
-                is AuthResult.Success -> {
-                    showToast(R.string.email_send_complete)
-                    mutableUiState.isTaskSuccess = true
+            resetPasswordUseCase.sendResetPasswordEmail(
+                email = mutableUiState.email,
+                firebaseResult = object : FirebaseResult {
+                    override fun success() {
+                        showToast(R.string.email_send_complete)
+                        mutableUiState.isTaskSuccess = true
+                    }
+
+                    override fun fail(exception: Exception) =
+                        firebaseAuthErrorUseCase.firebaseAuthError(
+                            exception = exception,
+                            updateEmailError = { mutableUiState.emailError = it },
+                            showToast = showToast
+                        )
+
                 }
-                is Fail ->
-                    fireBaseError(
-                        errorCode = result.errorCode,
-                        updateEmailError = { mutableUiState.emailError = it },
-                        showToast = showToast
-                    )
-                else -> showToast(R.string.unknown_error)
-            }
+            )
         }
     }
 }

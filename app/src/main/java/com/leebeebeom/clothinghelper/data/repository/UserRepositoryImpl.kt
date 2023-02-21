@@ -56,15 +56,18 @@ class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStatePro
              * 새 유저일 시 데이터베이스에 유저 정보 Push
              * 기존 유저일 시 [_user], [_isSignIn] 업데이트
              */
-            if (isNewer) pushNewUser(user) else updateUserAndUpdateSignIn(user)
+            if (isNewer) pushNewUser(user) else updateUserAndSignIn(user)
 
             firebaseResult.success()
         }
 
     override suspend fun signIn(email: String, password: String, firebaseResult: FirebaseResult) =
         authTry(callSite = AuthCallSite("signIn"), onFail = firebaseResult::fail) {
+
             val user = auth.signInWithEmailAndPassword(email, password).await().user.toUser()!!
-            updateUserAndUpdateSignIn(user)
+
+            updateUserAndSignIn(user)
+
             firebaseResult.success()
         }
 
@@ -74,6 +77,7 @@ class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStatePro
         name: String,
         firebaseResult: FirebaseResult,
     ) = authTry(callSite = AuthCallSite("signUp"), onFail = firebaseResult::fail) {
+
         val firebaseUser = auth.createUserWithEmailAndPassword(email, password).await().user!!
 
         val request = userProfileChangeRequest { displayName = name }
@@ -88,13 +92,17 @@ class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStatePro
 
     override suspend fun resetPasswordEmail(email: String, firebaseResult: FirebaseResult) =
         authTry(callSite = AuthCallSite("resetPasswordEmail"), onFail = firebaseResult::fail) {
+
             auth.sendPasswordResetEmail(email).await()
+
             firebaseResult.success()
         }
 
     override suspend fun signOut(onFail: (Exception) -> Unit) =
         authTry(callSite = AuthCallSite("signOut"), onFail = onFail) {
+
             auth.signOut()
+
             _user.update { null }
             _isSignIn.update { false }
         }
@@ -104,10 +112,10 @@ class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStatePro
      */
     private suspend fun pushNewUser(user: User) {
         dbRoot.child(user.uid).child(DatabasePath.USER_INFO).setValue(user).await()
-        updateUserAndUpdateSignIn(user)
+        updateUserAndSignIn(user)
     }
 
-    private fun updateUserAndUpdateSignIn(user: User) {
+    private fun updateUserAndSignIn(user: User) {
         _user.update { user }
         _isSignIn.update { true }
     }
@@ -133,8 +141,10 @@ class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStatePro
             logE(site = callSite.site, e = e)
             onFail(e)
         } catch (e: FirebaseNetworkException) {
+            logE(site = callSite.site, e = e)
             onFail(e)
         } catch (e: FirebaseTooManyRequestsException) {
+            logE(site = callSite.site, e = e)
             onFail(e)
         } catch (e: Exception) {
             logE(site = callSite.site, e = e)

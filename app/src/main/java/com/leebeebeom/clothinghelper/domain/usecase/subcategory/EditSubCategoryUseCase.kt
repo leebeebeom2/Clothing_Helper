@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.domain.usecase.subcategory
 
-import com.leebeebeom.clothinghelper.domain.model.FirebaseResult
 import com.leebeebeom.clothinghelper.domain.model.data.SubCategory
 import com.leebeebeom.clothinghelper.domain.repository.SubCategoryRepository
 import dagger.hilt.android.scopes.ViewModelScoped
@@ -12,9 +11,10 @@ class EditSubCategoryUseCase @Inject constructor(private val subCategoryReposito
         oldSubCategory: SubCategory,
         name: String,
         uid: String,
-    ): FirebaseResult {
+        onFail: (Exception) -> Unit,
+    ) {
         val newSubCategory = oldSubCategory.copy(name = name, editDate = System.currentTimeMillis())
 
-        return subCategoryRepository.edit(newData = newSubCategory, uid = uid)
+        subCategoryRepository.edit(newData = newSubCategory, uid = uid, onFail = onFail)
     }
 }

@@ -45,7 +45,7 @@ class FirebaseAuthErrorUseCase @Inject constructor() {
             }
             else -> {
                 showToast(R.string.unknown_error)
-                logE("setFirebaseError", exception)
+                logE("FirebaseAuthErrorUseCase: firebaseAuthError", exception)
             }
         }
     }

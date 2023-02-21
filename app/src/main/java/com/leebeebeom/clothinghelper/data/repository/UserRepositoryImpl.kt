@@ -48,6 +48,8 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun googleSignIn(credential: AuthCredential, firebaseResult: FirebaseResult) =
         authTry(callSite = AuthCallSite("googleSignIn"), onFail = firebaseResult::fail) {
+            // 어떠한 경우로 비정상적 로그아웃이 되었을 경우 다시 로그인 시 로컬 데이터 삭제
+            allLocalDataClear()
 
             val authResult = auth.signInWithCredential(credential).await()
 
@@ -66,6 +68,8 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun signIn(email: String, password: String, firebaseResult: FirebaseResult) =
         authTry(callSite = AuthCallSite("signIn"), onFail = firebaseResult::fail) {
+            // 어떠한 경우로 비정상적 로그아웃이 되었을 경우 다시 로그인 시 로컬 데이터 삭제
+            allLocalDataClear()
 
             val user = auth.signInWithEmailAndPassword(email, password).await().user.toUser()!!
 
@@ -80,6 +84,8 @@ class UserRepositoryImpl @Inject constructor(
         name: String,
         firebaseResult: FirebaseResult,
     ) = authTry(callSite = AuthCallSite("signUp"), onFail = firebaseResult::fail) {
+        // 어떠한 경우로 비정상적 로그아웃이 되었을 경우 다시 로그인 시 로컬 데이터 삭제
+        allLocalDataClear()
 
         val firebaseUser = auth.createUserWithEmailAndPassword(email, password).await().user!!
 
@@ -108,8 +114,7 @@ class UserRepositoryImpl @Inject constructor(
         authTry(callSite = AuthCallSite("signOut"), onFail = onFail) {
 
             auth.signOut()
-            launch { subCategoryRoomDataSource.deleteAll() } // TODO 속도 테스트
-            launch { folderRoomDataSource.deleteAll() }
+            allLocalDataClear()
 
             _user.update { null }
             _isSignIn.update { false }
@@ -127,6 +132,12 @@ class UserRepositoryImpl @Inject constructor(
         _user.update { user }
         _isSignIn.update { true }
     }
+
+    private suspend fun allLocalDataClear() =
+        coroutineScope {
+            launch { subCategoryRoomDataSource.deleteAll() }
+            launch { folderRoomDataSource.deleteAll() }
+        }
 
     /**
      * 호출 시 로딩 On

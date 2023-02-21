@@ -7,7 +7,6 @@ import com.leebeebeom.clothinghelper.data.repository.util.DatabaseCallSite
 import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProviderImpl
 import com.leebeebeom.clothinghelper.data.repository.util.logE
 import com.leebeebeom.clothinghelper.domain.model.FirebaseResult
-import com.leebeebeom.clothinghelper.domain.model.FirebaseResult.Success
 import com.leebeebeom.clothinghelper.domain.model.Order.ASCENDING
 import com.leebeebeom.clothinghelper.domain.model.Order.DESCENDING
 import com.leebeebeom.clothinghelper.domain.model.Sort.*
@@ -21,7 +20,7 @@ import kotlinx.coroutines.tasks.await
 /**
  * setPersistenceEnabled는 네트워크 미 연결 시에도 데이터를 조회할 수 있게 해줌
  */
-val root = Firebase.database.apply { setPersistenceEnabled(true) }.reference
+val dbRoot = Firebase.database.apply { setPersistenceEnabled(true) }.reference
 
 fun DatabaseReference.getContainerRef(uid: String, path: String) = child(uid).child(path)
 
@@ -38,92 +37,83 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
 
 
     /**
-     * 성공 시 [FirebaseResult.Success] 반환
-     *
-     * 실패 시 [Exception]이 담긴 [FirebaseResult.Fail] 반환
-     *
      * @param uid [uid]가 null 일 경우 [_allData]는 [emptyList]로 업데이트 됨
      */
-    override suspend fun load(uid: String?, type: Class<T>) =
-        databaseTryWithLoading(callSite = DatabaseCallSite(callSite = "$type: update")) {
+    override suspend fun load(uid: String?, type: Class<T>, firebaseResult: FirebaseResult) =
+        databaseTryWithLoading(
+            callSite = DatabaseCallSite(callSite = "$type: update"), onFail = firebaseResult::fail
+        ) {
             uid?.let {
                 val temp = mutableListOf<T>()
 
-                root.getContainerRef(uid = uid, path = refPath).get().await().children.forEach {
-                    temp.add((it.getValue(type))!!)
-                }
+                dbRoot.getContainerRef(uid = uid, path = refPath).get()
+                    .await().children.forEach { temp.add((it.getValue(type))!!) }
 
                 _allData.update { temp }
-                Success
-            } ?: let {
-                _allData.update { emptyList() }
-                Success
-            }
+            } ?: let { _allData.update { emptyList() } }
+            firebaseResult.success()
         }
 
     /**
-     * 성공 시 [FirebaseResult.Success] 반환
-     *
-     * 실패 시 [Exception]이 담긴 [FirebaseResult.Fail] 반환
-     *
-     * 응답이 3를 초과할 경우 네트워크 미 연결로 간주, [TimeoutCancellationException]이 담긴 [FirebaseResult.Fail] 반환
+     * 응답이 3를 초과할 경우 네트워크 미 연결로 간주, [TimeoutCancellationException] 발생
      */
-    override suspend fun add(data: T, uid: String): FirebaseResult =
-        databaseTryWithTimeOut(3000, DatabaseCallSite("${data.javaClass}: add")) {
-            val containerRef = root.getContainerRef(uid = uid, path = refPath)
+    override suspend fun add(data: T, uid: String, firebaseResult: FirebaseResult) =
+        databaseTryWithTimeOut(
+            3000, DatabaseCallSite("${data.javaClass}: add"), onFail = firebaseResult::fail
+        ) {
+            val containerRef = dbRoot.getContainerRef(uid = uid, path = refPath)
 
-            @Suppress("UNCHECKED_CAST")
-            val dataWithKey = data.addKey(key = getKey(containerRef = containerRef)) as T
+            @Suppress("UNCHECKED_CAST") val dataWithKey =
+                data.addKey(key = getKey(containerRef = containerRef)) as T
 
             push(containerRef = containerRef, t = dataWithKey).await()
             _allData.updateList { it.add(dataWithKey) }
-            Success
+            firebaseResult.success()
         }
 
     /**
-     * 성공 시 [FirebaseResult.Success] 반환
-     *
-     * 실패 시 [Exception]이 담긴 [FirebaseResult.Fail] 반환
-     *
-     * 응답이 3를 초과할 경우 네트워크 미 연결로 간주, [TimeoutCancellationException]이 담긴 [FirebaseResult.Fail] 반환
+     * 응답이 3를 초과할 경우 네트워크 미 연결로 간주, [TimeoutCancellationException] 발생
      */
     override suspend fun edit(
         newData: T,
         uid: String,
-    ): FirebaseResult =
-        databaseTryWithTimeOut(3000, DatabaseCallSite(callSite = "${newData::javaClass}: edit")) {
-            root.getContainerRef(uid = uid, path = refPath).child(newData.key).setValue(newData)
-                .await()
+        firebaseResult: FirebaseResult,
+    ) = databaseTryWithTimeOut(
+        3000,
+        DatabaseCallSite(callSite = "${newData::javaClass}: edit"),
+        onFail = firebaseResult::fail
+    ) {
+        dbRoot.getContainerRef(uid = uid, path = refPath).child(newData.key).setValue(newData)
+            .await()
 
-            _allData.updateList {
-                val oldData = it.first { oldT -> oldT.key == newData.key }
-                it.remove(oldData)
-                it.add(newData)
-            }
-            Success
+        _allData.updateList {
+            val oldData = it.first { oldT -> oldT.key == newData.key }
+            it.remove(oldData)
+            it.add(newData)
         }
+        firebaseResult.success()
+    }
 
     /**
      * 호출 시 로딩 없음
      *
      * 취소할 수 없음
      *
-     * 응답 시간이 [time]을 초과할 경우 네트워크 미 연결로 간주하며 [TimeoutCancellationException]이 담긴 [FirebaseResult.Fail] 반환
-     *
-     * 다른 예외 발생 시 해당 [Exception]이 담긴 [FirebaseResult.Fail] 반환
+     * 응답 시간이 [time]을 초과할 경우 네트워크 미 연결로 간주하며 [TimeoutCancellationException] 발생
      *
      * @param callSite 예외 발생 시 로그에 찍힐 Site
      */
     private suspend fun databaseTryWithTimeOut(
         time: Long,
         callSite: DatabaseCallSite,
-        task: suspend () -> FirebaseResult,
+        onFail: (Exception) -> Unit,
+        task: suspend () -> Unit,
     ) = withContext(Dispatchers.IO) {
         try {
             withContext(context = NonCancellable) { withTimeout(timeMillis = time) { task() } }
         } catch (e: Exception) {
             logE(site = callSite.site, e = e)
-            FirebaseResult.Fail(exception = e)
+            onFail(e)
         }
     }
 
@@ -134,20 +124,19 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
      *
      * 취소할 수 없음
      *
-     * 예외 발생 시 [Exception]이 담긴 [FirebaseResult.Fail] 반환
-     *
      * @param callSite 예외 발생 시 로그에 찍힐 Site
      */
     private suspend fun databaseTryWithLoading(
         callSite: DatabaseCallSite,
-        task: suspend () -> FirebaseResult,
+        onFail: (Exception) -> Unit,
+        task: suspend () -> Unit,
     ) = withContext(Dispatchers.IO) {
         try {
             loadingOn()
             withContext(context = NonCancellable) { task() }
         } catch (e: Exception) {
             logE(site = callSite.site, e = e)
-            FirebaseResult.Fail(exception = e)
+            onFail(e)
         } finally {
             loadingOff()
         }

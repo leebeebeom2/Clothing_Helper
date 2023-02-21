@@ -7,25 +7,28 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
-import com.leebeebeom.clothinghelper.data.repository.container.dbRoot
+import com.leebeebeom.clothinghelper.data.datasourse.folder.FolderRoomDataSource
+import com.leebeebeom.clothinghelper.data.datasourse.subcategory.SubCategoryRoomDataSource
+import com.leebeebeom.clothinghelper.data.repository.container.firebaseDbRoot
 import com.leebeebeom.clothinghelper.data.repository.util.AuthCallSite
 import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProviderImpl
 import com.leebeebeom.clothinghelper.data.repository.util.logE
 import com.leebeebeom.clothinghelper.domain.model.FirebaseResult
 import com.leebeebeom.clothinghelper.domain.model.data.User
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStateProviderImpl(false) {
+class UserRepositoryImpl @Inject constructor(
+    private val subCategoryRoomDataSource: SubCategoryRoomDataSource,
+    private val folderRoomDataSource: FolderRoomDataSource,
+) : UserRepository, LoadingStateProviderImpl(false) {
     private val auth = FirebaseAuth.getInstance()
 
     private val _isSignIn = MutableStateFlow(auth.currentUser != null)
@@ -98,10 +101,15 @@ class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStatePro
             firebaseResult.success()
         }
 
+    /**
+     * 로그아웃 시 로컬데이터 모두 삭제
+     */
     override suspend fun signOut(onFail: (Exception) -> Unit) =
         authTry(callSite = AuthCallSite("signOut"), onFail = onFail) {
 
             auth.signOut()
+            launch { subCategoryRoomDataSource.deleteAll() } // TODO 속도 테스트
+            launch { folderRoomDataSource.deleteAll() }
 
             _user.update { null }
             _isSignIn.update { false }
@@ -111,7 +119,7 @@ class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStatePro
      * 데이터 베이스에 유저 정보 입력 후 [_user], [_isSignIn] 업데이트
      */
     private suspend fun pushNewUser(user: User) {
-        dbRoot.child(user.uid).child(DatabasePath.USER_INFO).setValue(user).await()
+        firebaseDbRoot.child(user.uid).child(DatabasePath.USER_INFO).setValue(user).await()
         updateUserAndSignIn(user)
     }
 
@@ -132,7 +140,7 @@ class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStatePro
     private suspend fun authTry(
         callSite: AuthCallSite,
         onFail: (Exception) -> Unit,
-        task: suspend () -> Unit,
+        task: suspend CoroutineScope.() -> Unit,
     ) = withContext(context = Dispatchers.IO) {
         try {
             loadingOn()

@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.domain.usecase.subcategory
 
-import com.leebeebeom.clothinghelper.domain.model.FirebaseResult
 import com.leebeebeom.clothinghelper.domain.model.data.SubCategory
 import com.leebeebeom.clothinghelper.domain.repository.SubCategoryRepository
 import com.leebeebeom.clothinghelper.ui.main.drawer.MainCategoryType
@@ -13,7 +12,8 @@ class AddSubCategoryUseCase @Inject constructor(private val subCategoryRepositor
         name: String,
         parent: MainCategoryType,
         uid: String,
-    ): FirebaseResult {
+        onFail: (Exception) -> Unit,
+    ) {
         val currentTime = System.currentTimeMillis()
 
         val subCategory = SubCategory(
@@ -23,6 +23,6 @@ class AddSubCategoryUseCase @Inject constructor(private val subCategoryRepositor
             editDate = currentTime
         )
 
-        return subCategoryRepository.add(data = subCategory, uid = uid)
+        subCategoryRepository.add(data = subCategory, uid = uid, onFail = onFail)
     }
 }

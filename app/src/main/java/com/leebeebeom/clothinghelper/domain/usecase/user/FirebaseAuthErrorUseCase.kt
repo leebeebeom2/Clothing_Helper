@@ -24,7 +24,7 @@ object FirebaseAuthErrorCode {
 class FirebaseAuthErrorUseCase @Inject constructor() {
     fun firebaseAuthError(
         exception: Exception,
-        updateEmailError: (error: Int) -> Unit,
+        updateEmailError: (error: Int) -> Unit = {},
         updatePasswordError: (error: Int) -> Unit = {},
         showToast: ShowToast,
     ) {

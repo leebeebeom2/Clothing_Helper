@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.domain.usecase.folder
 
-import com.leebeebeom.clothinghelper.domain.model.FirebaseResult
 import com.leebeebeom.clothinghelper.domain.model.data.Folder
 import com.leebeebeom.clothinghelper.domain.repository.FolderRepository
 import com.leebeebeom.clothinghelper.ui.main.drawer.MainCategoryType
@@ -15,7 +14,8 @@ class AddFolderUseCase @Inject constructor(private val folderRepository: FolderR
         name: String,
         mainCategoryType: MainCategoryType,
         uid: String,
-    ): FirebaseResult {
+        onFail: (Exception) -> Unit,
+    ) {
         val currentTime = System.currentTimeMillis()
 
         val folder = Folder(
@@ -27,6 +27,6 @@ class AddFolderUseCase @Inject constructor(private val folderRepository: FolderR
             editDate = currentTime
         )
 
-        return folderRepository.add(data = folder, uid = uid)
+        folderRepository.add(data = folder, uid = uid, onFail = onFail)
     }
 }

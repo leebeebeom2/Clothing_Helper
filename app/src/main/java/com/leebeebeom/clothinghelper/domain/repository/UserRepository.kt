@@ -25,5 +25,5 @@ interface UserRepository : LoadingStateProvider {
     )
 
     suspend fun resetPasswordEmail(email: String, firebaseResult: FirebaseResult)
-    suspend fun signOut(firebaseResult: FirebaseResult)
+    suspend fun signOut(onFail: (Exception) -> Unit)
 }

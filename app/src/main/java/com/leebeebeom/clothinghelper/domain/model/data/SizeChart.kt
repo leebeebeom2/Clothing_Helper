@@ -21,4 +21,5 @@ data class SizeChart(
     override val isSynced: Boolean = false,
 ) : BaseFolderModel() {
     override fun addKey(key: String) = copy(key = key)
+    override fun synced() = copy(isSynced = true)
 }

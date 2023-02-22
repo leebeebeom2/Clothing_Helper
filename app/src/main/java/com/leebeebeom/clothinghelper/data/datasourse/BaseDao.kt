@@ -3,8 +3,11 @@ package com.leebeebeom.clothinghelper.data.datasourse
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 
 interface BaseDao<T> {
+    fun getAll(): Flow<List<T>>
+
     @Insert
     suspend fun insert(data: T)
 

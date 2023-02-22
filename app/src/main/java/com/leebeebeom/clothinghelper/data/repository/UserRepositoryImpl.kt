@@ -4,7 +4,6 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
-import com.leebeebeom.clothinghelper.data.repository.container.firebaseDbRoot
 import com.leebeebeom.clothinghelper.data.repository.util.AuthCallSite
 import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProviderImpl
 import com.leebeebeom.clothinghelper.data.repository.util.logE

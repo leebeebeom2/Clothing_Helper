@@ -8,4 +8,5 @@ interface BaseDataRepository<T> : LoadingStateProvider {
     suspend fun load(uid: String?, type: Class<T>, onFail: (Exception) -> Unit)
     suspend fun add(data: T, uid: String, onFail: (Exception) -> Unit)
     suspend fun edit(newData: T, uid: String, onFail: (Exception) -> Unit)
+    suspend fun allLocalDataClear()
 }

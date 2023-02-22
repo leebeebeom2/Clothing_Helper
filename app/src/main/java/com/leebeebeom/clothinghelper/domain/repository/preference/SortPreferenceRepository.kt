@@ -1,8 +1,8 @@
 package com.leebeebeom.clothinghelper.domain.repository.preference
 
-import com.leebeebeom.clothinghelper.domain.model.Order
-import com.leebeebeom.clothinghelper.domain.model.Sort
-import com.leebeebeom.clothinghelper.domain.model.SortPreferences
+import com.leebeebeom.clothinghelper.data.repository.preference.Order
+import com.leebeebeom.clothinghelper.data.repository.preference.Sort
+import com.leebeebeom.clothinghelper.data.repository.preference.SortPreferences
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Qualifier
 

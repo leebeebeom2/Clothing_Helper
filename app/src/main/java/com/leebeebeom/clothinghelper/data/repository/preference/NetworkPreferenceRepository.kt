@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.leebeebeom.clothinghelper.domain.repository.preference.NetworkPreferenceRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -15,7 +16,7 @@ import javax.inject.Singleton
 
 @Singleton
 class NetworkPreferenceRepositoryImpl @Inject constructor(@ApplicationContext context: Context) :
-    com.leebeebeom.clothinghelper.domain.repository.preference.NetworkPreferenceRepository {
+    NetworkPreferenceRepository {
     private val dataStore = context.networkDatastore
     private val key = stringPreferencesKey("network")
 

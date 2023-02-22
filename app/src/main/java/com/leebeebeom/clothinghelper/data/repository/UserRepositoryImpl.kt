@@ -1,14 +1,9 @@
 package com.leebeebeom.clothinghelper.data.repository
 
-import com.google.firebase.FirebaseNetworkException
-import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
-import com.leebeebeom.clothinghelper.data.datasourse.folder.FolderRoomDataSource
-import com.leebeebeom.clothinghelper.data.datasourse.subcategory.SubCategoryRoomDataSource
 import com.leebeebeom.clothinghelper.data.repository.container.firebaseDbRoot
 import com.leebeebeom.clothinghelper.data.repository.util.AuthCallSite
 import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProviderImpl
@@ -16,19 +11,19 @@ import com.leebeebeom.clothinghelper.data.repository.util.logE
 import com.leebeebeom.clothinghelper.domain.model.FirebaseResult
 import com.leebeebeom.clothinghelper.domain.model.data.User
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UserRepositoryImpl @Inject constructor(
-    private val subCategoryRoomDataSource: SubCategoryRoomDataSource,
-    private val folderRoomDataSource: FolderRoomDataSource,
-) : UserRepository, LoadingStateProviderImpl(false) {
+class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStateProviderImpl(false) {
     private val auth = FirebaseAuth.getInstance()
 
     private val _isSignIn = MutableStateFlow(auth.currentUser != null)
@@ -46,45 +41,52 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun googleSignIn(credential: AuthCredential, firebaseResult: FirebaseResult) =
-        authTry(callSite = AuthCallSite("googleSignIn"), onFail = firebaseResult::fail) {
-            // 어떠한 경우로 비정상적 로그아웃이 되었을 경우 다시 로그인 시 로컬 데이터 삭제
-            allLocalDataClear()
+    override suspend fun googleSignIn(
+        credential: AuthCredential,
+        firebaseResult: FirebaseResult,
+        allLocalDataClear: suspend () -> Unit,
+    ) = authTry(callSite = AuthCallSite("googleSignIn"), onFail = firebaseResult::fail) {
 
-            val authResult = auth.signInWithCredential(credential).await()
+        allLocalDataClear()
 
-            val user = authResult.user.toUser()!!
+        val authResult = auth.signInWithCredential(credential).await()
 
-            val isNewer = authResult.additionalUserInfo!!.isNewUser
+        val user = authResult.user.toUser()!!
 
-            /**
-             * 새 유저일 시 데이터베이스에 유저 정보 Push
-             * 기존 유저일 시 [_user], [_isSignIn] 업데이트
-             */
-            if (isNewer) pushNewUser(user) else updateUserAndSignIn(user)
+        val isNewer = authResult.additionalUserInfo!!.isNewUser
 
-            firebaseResult.success()
-        }
+        /**
+         * 새 유저일 시 데이터베이스에 유저 정보 Push
+         */
+        if (isNewer) pushNewUser(user) else updateUserAndSignIn(user)
 
-    override suspend fun signIn(email: String, password: String, firebaseResult: FirebaseResult) =
-        authTry(callSite = AuthCallSite("signIn"), onFail = firebaseResult::fail) {
-            // 어떠한 경우로 비정상적 로그아웃이 되었을 경우 다시 로그인 시 로컬 데이터 삭제
-            allLocalDataClear()
+        firebaseResult.success()
+    }
 
-            val user = auth.signInWithEmailAndPassword(email, password).await().user.toUser()!!
+    override suspend fun signIn(
+        email: String,
+        password: String,
+        firebaseResult: FirebaseResult,
+        allLocalDataClear: suspend () -> Unit,
+    ) = authTry(callSite = AuthCallSite("signIn"), onFail = firebaseResult::fail) {
 
-            updateUserAndSignIn(user)
+        allLocalDataClear()
 
-            firebaseResult.success()
-        }
+        val user = auth.signInWithEmailAndPassword(email, password).await().user.toUser()!!
+
+        updateUserAndSignIn(user)
+
+        firebaseResult.success()
+    }
 
     override suspend fun signUp(
         email: String,
         password: String,
         name: String,
         firebaseResult: FirebaseResult,
+        allLocalDataClear: suspend () -> Unit,
     ) = authTry(callSite = AuthCallSite("signUp"), onFail = firebaseResult::fail) {
-        // 어떠한 경우로 비정상적 로그아웃이 되었을 경우 다시 로그인 시 로컬 데이터 삭제
+
         allLocalDataClear()
 
         val firebaseUser = auth.createUserWithEmailAndPassword(email, password).await().user!!
@@ -110,15 +112,18 @@ class UserRepositoryImpl @Inject constructor(
     /**
      * 로그아웃 시 로컬데이터 모두 삭제
      */
-    override suspend fun signOut(onFail: (Exception) -> Unit) =
-        authTry(callSite = AuthCallSite("signOut"), onFail = onFail) {
+    override suspend fun signOut(
+        onFail: (Exception) -> Unit,
+        allLocalDataClear: suspend () -> Unit,
+    ) = authTry(callSite = AuthCallSite("signOut"), onFail = onFail) {
 
-            auth.signOut()
-            allLocalDataClear()
+        auth.signOut()
 
-            _user.update { null }
-            _isSignIn.update { false }
-        }
+        _user.update { null }
+        _isSignIn.update { false }
+
+        allLocalDataClear()
+    }
 
     /**
      * 데이터 베이스에 유저 정보 입력 후 [_user], [_isSignIn] 업데이트
@@ -132,12 +137,6 @@ class UserRepositoryImpl @Inject constructor(
         _user.update { user }
         _isSignIn.update { true }
     }
-
-    private suspend fun allLocalDataClear() =
-        coroutineScope {
-            launch { subCategoryRoomDataSource.deleteAll() }
-            launch { folderRoomDataSource.deleteAll() }
-        }
 
     /**
      * 호출 시 로딩 On
@@ -156,15 +155,6 @@ class UserRepositoryImpl @Inject constructor(
         try {
             loadingOn()
             withContext(context = NonCancellable) { task() }
-        } catch (e: FirebaseAuthException) {
-            logE(site = callSite.site, e = e)
-            onFail(e)
-        } catch (e: FirebaseNetworkException) {
-            logE(site = callSite.site, e = e)
-            onFail(e)
-        } catch (e: FirebaseTooManyRequestsException) {
-            logE(site = callSite.site, e = e)
-            onFail(e)
         } catch (e: Exception) {
             logE(site = callSite.site, e = e)
             onFail(e)

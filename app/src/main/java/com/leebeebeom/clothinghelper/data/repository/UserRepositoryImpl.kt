@@ -44,10 +44,7 @@ class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStatePro
     override suspend fun googleSignIn(
         credential: AuthCredential,
         firebaseResult: FirebaseResult,
-        allLocalDataClear: suspend () -> Unit,
     ) = authTry(callSite = AuthCallSite("googleSignIn"), onFail = firebaseResult::fail) {
-
-        allLocalDataClear()
 
         val authResult = auth.signInWithCredential(credential).await()
 
@@ -67,10 +64,7 @@ class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStatePro
         email: String,
         password: String,
         firebaseResult: FirebaseResult,
-        allLocalDataClear: suspend () -> Unit,
     ) = authTry(callSite = AuthCallSite("signIn"), onFail = firebaseResult::fail) {
-
-        allLocalDataClear()
 
         val user = auth.signInWithEmailAndPassword(email, password).await().user.toUser()!!
 
@@ -84,10 +78,7 @@ class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStatePro
         password: String,
         name: String,
         firebaseResult: FirebaseResult,
-        allLocalDataClear: suspend () -> Unit,
     ) = authTry(callSite = AuthCallSite("signUp"), onFail = firebaseResult::fail) {
-
-        allLocalDataClear()
 
         val firebaseUser = auth.createUserWithEmailAndPassword(email, password).await().user!!
 
@@ -114,15 +105,12 @@ class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStatePro
      */
     override suspend fun signOut(
         onFail: (Exception) -> Unit,
-        allLocalDataClear: suspend () -> Unit,
     ) = authTry(callSite = AuthCallSite("signOut"), onFail = onFail) {
 
         auth.signOut()
 
         _user.update { null }
         _isSignIn.update { false }
-
-        allLocalDataClear()
     }
 
     /**

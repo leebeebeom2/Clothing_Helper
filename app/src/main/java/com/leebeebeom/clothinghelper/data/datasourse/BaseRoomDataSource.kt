@@ -3,10 +3,10 @@ package com.leebeebeom.clothinghelper.data.datasourse
 import com.leebeebeom.clothinghelper.domain.model.data.BaseModel
 import kotlinx.coroutines.flow.Flow
 
-abstract class BaseRoomDataSource<T : BaseModel> {
-    abstract fun getAll(): Flow<List<T>>
-    abstract suspend fun deleteAll()
-    abstract suspend fun insert(data: T)
-    abstract suspend fun insert(data: List<T>)
-    abstract suspend fun update(data: T)
+abstract class BaseRoomDataSource<T : BaseModel>(private val dao: BaseDao<T>) {
+    fun getAll(): Flow<List<T>> = dao.getAll()
+    suspend fun deleteAll() = dao.deleteAll()
+    suspend fun insert(data: T) = dao.insert(data)
+    suspend fun insert(data: List<T>) = dao.insert(data)
+    suspend fun update(data: T) = dao.update(data)
 }

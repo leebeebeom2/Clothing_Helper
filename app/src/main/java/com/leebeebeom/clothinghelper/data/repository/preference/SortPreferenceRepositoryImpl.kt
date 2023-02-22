@@ -5,9 +5,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.leebeebeom.clothinghelper.domain.model.Order
-import com.leebeebeom.clothinghelper.domain.model.Sort
-import com.leebeebeom.clothinghelper.domain.model.SortPreferences
 import com.leebeebeom.clothinghelper.domain.repository.preference.SortPreferenceRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -42,3 +39,16 @@ abstract class SortPreferenceRepositoryImpl(private val dataStore: DataStore<Pre
         val ORDER = stringPreferencesKey("order")
     }
 }
+
+enum class Sort {
+    NAME, CREATE, EDIT
+}
+
+enum class Order {
+    ASCENDING, DESCENDING
+}
+
+data class SortPreferences(
+    val sort: Sort = Sort.NAME,
+    val order: Order = Order.ASCENDING,
+)

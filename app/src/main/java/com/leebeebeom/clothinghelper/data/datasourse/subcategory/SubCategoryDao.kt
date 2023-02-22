@@ -8,11 +8,11 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface SubCategoryDao : BaseDao<SubCategory> {
     @Query("SELECT * FROM SubCategory")
-    override fun getAll(): Flow<List<SubCategory>>
+    fun getAll(): Flow<List<SubCategory>>
 
     @Query("SELECT * FROM SubCategory WHERE isSynced = false")
-    override suspend fun getAllAsync(): List<SubCategory>
+    suspend fun getAllAsync(): List<SubCategory>
 
     @Query("DELETE FROM SubCategory")
-    override suspend fun deleteAll()
+    suspend fun deleteAll()
 }

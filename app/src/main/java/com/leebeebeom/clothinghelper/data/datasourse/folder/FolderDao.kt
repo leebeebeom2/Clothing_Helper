@@ -9,11 +9,11 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface FolderDao : BaseDao<Folder> {
     @Query("SELECT * FROM Folder")
-    override fun getAll(): Flow<List<Folder>>
+    fun getAll(): Flow<List<Folder>>
 
     @Query("SELECT * FROM Folder WHERE isSynced = false")
-    override suspend fun getAllAsync(): List<Folder>
+    suspend fun getAllAsync(): List<Folder>
 
     @Query("DELETE FROM Folder")
-    override suspend fun deleteAll()
+    suspend fun deleteAll()
 }

@@ -9,11 +9,11 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TodoDao : BaseDao<Todo> {
     @Query("SELECT * FROM Todo")
-    override fun getAll(): Flow<List<Todo>>
+    fun getAll(): Flow<List<Todo>>
 
     @Query("SELECT * FROM Todo WHERE isSynced = false")
-    override suspend fun getAllAsync(): List<Todo>
+    suspend fun getAllAsync(): List<Todo>
 
     @Query("DELETE FROM Todo")
-    override suspend fun deleteAll()
+    suspend fun deleteAll()
 }

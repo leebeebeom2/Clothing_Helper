@@ -12,5 +12,5 @@ interface SubCategoryDao : BaseDao<SubCategory> {
     override fun getAll(): Flow<List<SubCategory>>
 
     @Query("DELETE FROM SubCategory")
-    suspend fun deleteAll()
+    override suspend fun deleteAll()
 }

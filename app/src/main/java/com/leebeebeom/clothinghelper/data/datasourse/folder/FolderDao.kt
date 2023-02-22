@@ -12,5 +12,5 @@ interface FolderDao : BaseDao<Folder> {
     override fun getAll(): Flow<List<Folder>>
 
     @Query("DELETE FROM Folder")
-    suspend fun deleteAll()
+    override suspend fun deleteAll()
 }

@@ -10,4 +10,7 @@ import kotlinx.coroutines.flow.Flow
 interface TodoDao : BaseDao<Todo> {
     @Query("SELECT * FROM Todo")
     override fun getAll(): Flow<List<Todo>>
+
+    @Query("DELETE FROM Todo")
+    override suspend fun deleteAll()
 }

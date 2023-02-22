@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface BaseDao<T> {
     fun getAll(): Flow<List<T>>
+    suspend fun deleteAll()
 
     @Insert
     suspend fun insert(data: T)

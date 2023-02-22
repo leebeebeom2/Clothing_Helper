@@ -14,15 +14,16 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class NetworkPreferenceRepository @Inject constructor(@ApplicationContext context: Context) {
+class NetworkPreferenceRepositoryImpl @Inject constructor(@ApplicationContext context: Context) :
+    com.leebeebeom.clothinghelper.domain.repository.preference.NetworkPreferenceRepository {
     private val dataStore = context.networkDatastore
     private val key = stringPreferencesKey("network")
 
-    val network: Flow<NetworkPreferences> = dataStore.data.catch {
+    override val network: Flow<NetworkPreferences> = dataStore.data.catch {
         if (it is IOException) emit(emptyPreferences()) else throw it
     }.map { enumValueOf(it[key] ?: NetworkPreferences.MOBILE.name) }
 
-    suspend fun networkSelected(network: NetworkPreferences) {
+    override suspend fun networkSelected(network: NetworkPreferences) {
         dataStore.edit { it[key] = network.name }
     }
 }

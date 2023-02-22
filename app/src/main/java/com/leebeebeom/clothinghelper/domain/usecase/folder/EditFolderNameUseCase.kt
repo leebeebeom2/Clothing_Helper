@@ -13,7 +13,7 @@ class EditFolderNameUseCase @Inject constructor(private val folderRepository: Fo
         uid: String,
         onFail: (Exception) -> Unit,
     ) {
-        val newFolder = oldFolder.copy(name = name, editDate = System.currentTimeMillis())
+        val newFolder = oldFolder.copy(name = name, editDate = System.currentTimeMillis(), isSynced = false)
 
         folderRepository.edit(newData = newFolder, uid = uid, onFail = onFail)
     }

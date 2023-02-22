@@ -17,5 +17,7 @@ abstract class BaseFirebaseDataSource<T : BaseModel>(private val refPath: String
         return temp
     }
 
-    suspend fun push(uid: String, t: T) = firebaseDbRoot.getContainerRef(uid, refPath).child(t.key).setValue(t).await()
+    suspend fun push(uid: String, t: T) {
+        firebaseDbRoot.getContainerRef(uid, refPath).child(t.key).setValue(t).await()
+    }
 }

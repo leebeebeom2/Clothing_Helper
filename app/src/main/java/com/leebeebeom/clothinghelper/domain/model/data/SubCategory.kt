@@ -17,4 +17,5 @@ data class SubCategory(
     override val isSynced: Boolean = false,
 ) : BaseContainerModel(), Parcelable {
     override fun addKey(key: String) = copy(key = key)
+    override fun synced() = copy(isSynced = true)
 }

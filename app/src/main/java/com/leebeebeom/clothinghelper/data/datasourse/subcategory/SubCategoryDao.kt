@@ -1,7 +1,6 @@
 package com.leebeebeom.clothinghelper.data.datasourse.subcategory
 
-import androidx.room.Dao
-import androidx.room.Query
+import androidx.room.*
 import com.leebeebeom.clothinghelper.data.datasourse.BaseDao
 import com.leebeebeom.clothinghelper.domain.model.data.SubCategory
 import kotlinx.coroutines.flow.Flow
@@ -12,7 +11,7 @@ interface SubCategoryDao : BaseDao<SubCategory> {
     override fun getAll(): Flow<List<SubCategory>>
 
     @Query("SELECT * FROM SubCategory WHERE isSynced = false")
-    override suspend fun getAllAsync(): List<SubCategory>
+    override fun getAllAsync(): Flow<List<SubCategory>>
 
     @Query("DELETE FROM SubCategory")
     override suspend fun deleteAll()

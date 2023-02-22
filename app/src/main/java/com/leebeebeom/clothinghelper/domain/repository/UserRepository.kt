@@ -10,11 +10,17 @@ interface UserRepository : LoadingStateProvider {
     val isSignIn: StateFlow<Boolean>
     val user: StateFlow<User?>
 
-    suspend fun googleSignIn(credential: AuthCredential, firebaseResult: FirebaseResult)
+    suspend fun googleSignIn(
+        credential: AuthCredential,
+        firebaseResult: FirebaseResult,
+        allLocalDataClear: suspend () -> Unit,
+    )
+
     suspend fun signIn(
         email: String,
         password: String,
         firebaseResult: FirebaseResult,
+        allLocalDataClear: suspend () -> Unit,
     )
 
     suspend fun signUp(
@@ -22,8 +28,9 @@ interface UserRepository : LoadingStateProvider {
         password: String,
         name: String,
         firebaseResult: FirebaseResult,
+        allLocalDataClear: suspend () -> Unit,
     )
 
     suspend fun resetPasswordEmail(email: String, firebaseResult: FirebaseResult)
-    suspend fun signOut(onFail: (Exception) -> Unit)
+    suspend fun signOut(onFail: (Exception) -> Unit, allLocalDataClear: suspend () -> Unit)
 }

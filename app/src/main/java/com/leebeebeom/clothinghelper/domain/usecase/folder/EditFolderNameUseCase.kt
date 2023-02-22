@@ -5,6 +5,7 @@ import com.leebeebeom.clothinghelper.domain.repository.FolderRepository
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 
+// TODO edit -> nameEdit 으로 변경
 @ViewModelScoped
 class EditFolderNameUseCase @Inject constructor(private val folderRepository: FolderRepository) {
     suspend fun edit(

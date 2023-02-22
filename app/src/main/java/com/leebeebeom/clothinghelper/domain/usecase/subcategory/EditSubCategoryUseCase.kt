@@ -5,6 +5,8 @@ import com.leebeebeom.clothinghelper.domain.repository.SubCategoryRepository
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 
+// TODO edit -> nameEdit 으로 변경
+
 @ViewModelScoped
 class EditSubCategoryUseCase @Inject constructor(private val subCategoryRepository: SubCategoryRepository) {
     suspend fun edit(

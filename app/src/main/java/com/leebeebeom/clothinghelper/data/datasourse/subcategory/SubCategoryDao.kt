@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface SubCategoryDao : BaseDao<SubCategory> {
     @Query("SELECT * FROM SubCategory")
-    fun getAll(): Flow<List<SubCategory>>
+    override fun getAll(): Flow<List<SubCategory>>
 
     @Query("DELETE FROM SubCategory")
     suspend fun deleteAll()

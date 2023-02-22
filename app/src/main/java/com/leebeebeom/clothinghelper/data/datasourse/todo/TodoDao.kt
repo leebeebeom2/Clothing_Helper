@@ -9,5 +9,5 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TodoDao : BaseDao<Todo> {
     @Query("SELECT * FROM Todo")
-    fun getAll(): Flow<List<Todo>>
+    override fun getAll(): Flow<List<Todo>>
 }

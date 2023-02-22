@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface FolderDao : BaseDao<Folder> {
     @Query("SELECT * FROM Folder")
-    fun getAll(): Flow<List<Folder>>
+    override fun getAll(): Flow<List<Folder>>
 
     @Query("DELETE FROM Folder")
     suspend fun deleteAll()

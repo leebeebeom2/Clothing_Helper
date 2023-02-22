@@ -97,6 +97,8 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         baseRoomDataSource.update(data = syncedData)
     }
 
+    override suspend fun getAllAsync(): List<T> = baseRoomDataSource.getAllAsync()
+
     /**
      * 호출 시 로딩 On
      *

@@ -7,7 +7,6 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelper.data.datasourse.BaseFirebaseDataSource
 import com.leebeebeom.clothinghelper.data.datasourse.BaseRoomDataSource
-import com.leebeebeom.clothinghelper.data.repository.preference.NetworkPreferenceRepository
 import com.leebeebeom.clothinghelper.data.repository.preference.NetworkPreferences
 import com.leebeebeom.clothinghelper.data.repository.util.DatabaseCallSite
 import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProviderImpl
@@ -15,6 +14,7 @@ import com.leebeebeom.clothinghelper.data.repository.util.logE
 import com.leebeebeom.clothinghelper.data.repository.util.networkCheck
 import com.leebeebeom.clothinghelper.domain.model.data.BaseModel
 import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
+import com.leebeebeom.clothinghelper.domain.repository.preference.NetworkPreferenceRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.tasks.await

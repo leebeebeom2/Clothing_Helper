@@ -3,12 +3,12 @@ package com.leebeebeom.clothinghelper.data.repository.container
 import android.content.Context
 import com.leebeebeom.clothinghelper.data.datasourse.BaseFirebaseDataSource
 import com.leebeebeom.clothinghelper.data.datasourse.BaseRoomDataSource
-import com.leebeebeom.clothinghelper.data.repository.preference.NetworkPreferenceRepository
 import com.leebeebeom.clothinghelper.data.repository.preference.Order.ASCENDING
 import com.leebeebeom.clothinghelper.data.repository.preference.Order.DESCENDING
 import com.leebeebeom.clothinghelper.data.repository.preference.Sort.*
 import com.leebeebeom.clothinghelper.data.repository.preference.SortPreferences
 import com.leebeebeom.clothinghelper.domain.model.data.BaseContainerModel
+import com.leebeebeom.clothinghelper.domain.repository.preference.NetworkPreferenceRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 

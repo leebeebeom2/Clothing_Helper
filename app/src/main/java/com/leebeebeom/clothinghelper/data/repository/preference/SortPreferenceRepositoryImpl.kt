@@ -23,15 +23,11 @@ abstract class SortPreferenceRepositoryImpl(private val dataStore: DataStore<Pre
     }
 
     override suspend fun changeSort(sort: Sort) {
-        dataStore.edit {
-            it[SortPreferenceKeys.SORT] = sort.name
-        }
+        dataStore.edit { it[SortPreferenceKeys.SORT] = sort.name }
     }
 
     override suspend fun changeOrder(order: Order) {
-        dataStore.edit {
-            it[SortPreferenceKeys.ORDER] = order.name
-        }
+        dataStore.edit { it[SortPreferenceKeys.ORDER] = order.name }
     }
 
     private object SortPreferenceKeys {

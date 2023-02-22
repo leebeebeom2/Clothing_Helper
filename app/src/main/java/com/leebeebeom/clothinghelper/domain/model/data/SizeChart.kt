@@ -17,7 +17,8 @@ data class SizeChart(
     override val key: String = "",
     override val createDate: Long = 0,
     override val editDate: Long = 0,
-    override val parent: MainCategoryType = MainCategoryType.TOP
+    override val parent: MainCategoryType = MainCategoryType.TOP,
+    override val isSynced: Boolean = false,
 ) : BaseFolderModel() {
     override fun addKey(key: String) = copy(key = key)
 }

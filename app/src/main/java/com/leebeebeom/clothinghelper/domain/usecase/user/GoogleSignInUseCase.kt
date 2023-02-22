@@ -12,8 +12,10 @@ class GoogleSignInUseCase @Inject constructor(
     private val userRepository: UserRepository,
     private val allLocalDataClearUseCase: AllLocalDataClearUseCase,
 ) {
-    suspend fun googleSignIn(credential: AuthCredential, firebaseResult: FirebaseResult) {
-        allLocalDataClearUseCase.allLocalDataClear()
-        userRepository.googleSignIn(credential = credential, firebaseResult = firebaseResult)
-    }
+    suspend fun googleSignIn(credential: AuthCredential, firebaseResult: FirebaseResult) =
+        userRepository.googleSignIn(
+            credential = credential,
+            firebaseResult = firebaseResult,
+            allLocalDataClear = allLocalDataClearUseCase::allLocalDataClear
+        )
 }

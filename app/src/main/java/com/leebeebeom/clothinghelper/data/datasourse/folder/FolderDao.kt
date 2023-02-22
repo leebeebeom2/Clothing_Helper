@@ -12,7 +12,7 @@ interface FolderDao : BaseDao<Folder> {
     override fun getAll(): Flow<List<Folder>>
 
     @Query("SELECT * FROM Folder WHERE isSynced = false")
-    override fun getAllAsync(): Flow<List<Folder>>
+    override suspend fun getAllAsync(): List<Folder>
 
     @Query("DELETE FROM Folder")
     override suspend fun deleteAll()

@@ -4,9 +4,9 @@ import android.content.Context
 import com.leebeebeom.clothinghelper.data.datasourse.subcategory.SubCategoryFirebaseDataSource
 import com.leebeebeom.clothinghelper.data.datasourse.subcategory.SubCategoryRoomDataSource
 import com.leebeebeom.clothinghelper.data.repository.DatabasePath
-import com.leebeebeom.clothinghelper.data.repository.preference.NetworkPreferenceRepository
 import com.leebeebeom.clothinghelper.domain.model.data.SubCategory
 import com.leebeebeom.clothinghelper.domain.repository.SubCategoryRepository
+import com.leebeebeom.clothinghelper.domain.repository.preference.NetworkPreferenceRepository
 import com.leebeebeom.clothinghelper.domain.repository.preference.SortPreferenceRepository
 import com.leebeebeom.clothinghelper.domain.repository.preference.SubCategoryPreferencesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext

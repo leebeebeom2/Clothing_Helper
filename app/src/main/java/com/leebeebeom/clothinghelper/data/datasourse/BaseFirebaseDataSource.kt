@@ -5,10 +5,9 @@ import com.leebeebeom.clothinghelper.data.repository.getContainerRef
 import com.leebeebeom.clothinghelper.domain.model.data.BaseModel
 import kotlinx.coroutines.tasks.await
 
-abstract class BaseFirebaseDataSource<T : BaseModel> {
+abstract class BaseFirebaseDataSource<T : BaseModel>(private val refPath: String) {
     suspend fun getAll(
         uid: String,
-        refPath: String,
         type: Class<T>,
     ): List<T> {
         val temp = mutableListOf<T>()
@@ -17,4 +16,6 @@ abstract class BaseFirebaseDataSource<T : BaseModel> {
             .await().children.forEach { temp.add((it.getValue(type))!!) }
         return temp
     }
+
+    suspend fun push(uid: String, t: T) = firebaseDbRoot.getContainerRef(uid, refPath).child(t.key).setValue(t).await()
 }

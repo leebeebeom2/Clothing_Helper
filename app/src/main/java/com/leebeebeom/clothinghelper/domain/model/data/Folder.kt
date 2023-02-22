@@ -19,4 +19,5 @@ data class Folder(
     override val isSynced: Boolean = false,
 ) : BaseFolderModel(), Parcelable {
     override fun addKey(key: String) = copy(key = key)
+    override fun synced() = copy(isSynced = true)
 }

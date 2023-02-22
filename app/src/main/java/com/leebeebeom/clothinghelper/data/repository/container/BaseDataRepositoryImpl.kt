@@ -36,12 +36,15 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
      * 로그인 상태로 앱 실행 시 로컬 데이터를 가져옴
      * 새 로그인 시([uid]가 null이 아닐 경우) 로컬 데이터가 없기 때문에 서버에서 가져옴
      * 로그아웃 시([uid]가 null일 경우) 로컬 데이터 삭제
+     *
+     * @param uid 로그아웃 상태일 경우 null
      */
     override suspend fun load(uid: String?, type: Class<T>, onFail: (Exception) -> Unit) =
         databaseTry(
             callSite = DatabaseCallSite(callSite = "$type: update"), onFail = onFail
         ) {
-            uid?.let {
+            // TODO 로그인 시 최초 로드 후 원래 데이터 사용 설정으로 변경하도록
+            uid?.let { // 로그인 상태
                 // 로컬 데이터가 존재할 경우
                 if (allData.last().isNotEmpty()) return@databaseTry
                 // 데이터를 사용하지 않을 경우(로그아웃 된 경우 데이터 사용하도록 되어있음)
@@ -54,7 +57,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
                 // 서버에도 데이터가 없을 경우
                 if (allRemoteData.isEmpty()) return@databaseTry
                 baseRoomDataSource.insert(data = allRemoteData)
-            } ?: baseRoomDataSource.deleteAll()
+            } ?: baseRoomDataSource.deleteAll() // 로그아웃 상태
         }
 
     @Suppress("UNCHECKED_CAST")
@@ -65,15 +68,14 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
 
         val dataWithKey = data.addKey(key = getKey(containerRef = containerRef)) as T
 
-        baseRoomDataSource.insert(data = dataWithKey)
-
-        if (isSelectedNetworkLocal()) return@databaseTry
-
-        if (networkCheck(context)) {
-            val syncedData = dataWithKey.isSynced as T
-            push(containerRef = containerRef, t = syncedData).await()
-            baseRoomDataSource.update(data = syncedData)
+        if (isSelectedNetworkLocal() || !networkCheck(context)) {
+            baseRoomDataSource.insert(data = dataWithKey)
+            return@databaseTry
         }
+
+        val syncedData = dataWithKey.isSynced as T
+        push(containerRef = containerRef, t = syncedData).await()
+        baseRoomDataSource.insert(data = syncedData)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -84,16 +86,15 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     ) = databaseTry(
         DatabaseCallSite(callSite = "${newData::javaClass}: edit"), loading = false, onFail = onFail
     ) {
-        baseRoomDataSource.update(data = newData)
-
-        if (isSelectedNetworkLocal()) return@databaseTry
-
-        if (networkCheck(context)) {
-            val syncedData = newData.isSynced as T
-            firebaseDbRoot.getContainerRef(uid = uid, path = refPath).child(newData.key)
-                .setValue(newData).await()
-            baseRoomDataSource.update(data = syncedData)
+        if (isSelectedNetworkLocal() || !networkCheck(context)) {
+            baseRoomDataSource.update(data = newData)
+            return@databaseTry
         }
+
+        val syncedData = newData.isSynced as T
+        firebaseDbRoot.getContainerRef(uid = uid, path = refPath)
+            .child(newData.key).setValue(newData).await()
+        baseRoomDataSource.update(data = syncedData)
     }
 
     /**

@@ -11,6 +11,9 @@ interface TodoDao : BaseDao<Todo> {
     @Query("SELECT * FROM Todo")
     override fun getAll(): Flow<List<Todo>>
 
+    @Query("SELECT * FROM Todo WHERE isSynced = false")
+    override fun getAllAsync(): Flow<List<Todo>>
+
     @Query("DELETE FROM Todo")
     override suspend fun deleteAll()
 }

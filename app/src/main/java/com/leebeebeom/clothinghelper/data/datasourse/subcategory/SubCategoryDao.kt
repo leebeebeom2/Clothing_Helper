@@ -11,6 +11,9 @@ interface SubCategoryDao : BaseDao<SubCategory> {
     @Query("SELECT * FROM SubCategory")
     override fun getAll(): Flow<List<SubCategory>>
 
+    @Query("SELECT * FROM SubCategory WHERE isSynced = false")
+    override fun getAllAsync(): Flow<List<SubCategory>>
+
     @Query("DELETE FROM SubCategory")
     override suspend fun deleteAll()
 }

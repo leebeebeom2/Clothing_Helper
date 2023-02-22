@@ -20,7 +20,7 @@ class FolderRepositoryImpl @Inject constructor(
     folderRoomDataSource: FolderRoomDataSource,
     folderFirebaseDataSource: FolderFirebaseDataSource,
     networkPreferenceRepository: NetworkPreferenceRepository,
-) : BaseContainerRepository<Folder>(
+) : BaseContainerRepositoryImpl<Folder>(
     sortFlow = folderPreferencesRepository.sort,
     refPath = DatabasePath.FOLDERS,
     context = context,

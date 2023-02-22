@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.data.repository.container
+package com.leebeebeom.clothinghelper.data.repository
 
 import android.content.Context
 import com.google.firebase.FirebaseNetworkException

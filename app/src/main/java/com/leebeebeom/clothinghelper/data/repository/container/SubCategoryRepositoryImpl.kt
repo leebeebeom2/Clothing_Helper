@@ -20,7 +20,7 @@ class SubCategoryRepositoryImpl @Inject constructor(
     subCategoryFirebaseDataSource: SubCategoryFirebaseDataSource,
     subCateRoomDataSource: SubCategoryRoomDataSource,
     networkPreferenceRepository: NetworkPreferenceRepository,
-) : BaseContainerRepository<SubCategory>(
+) : BaseContainerRepositoryImpl<SubCategory>(
     sortFlow = subCategoryPreferencesRepository.sort,
     refPath = DatabasePath.SUB_CATEGORIES,
     context = context,

@@ -12,10 +12,13 @@ class AllLocalDataClearUseCase @Inject constructor(
     private val subCategoryRepository: SubCategoryRepository,
     private val folderRepository: FolderRepository,
 ) {
-    suspend fun allLocalDataClear() {
+    suspend fun allLocalDataClear(
+        onSubCategoryClearFail: (Exception) -> Unit,
+        onFolderClearFail: (Exception) -> Unit,
+    ) {
         coroutineScope {
-            launch { subCategoryRepository.allLocalDataClear() }
-            launch { folderRepository.allLocalDataClear() }
+            launch { subCategoryRepository.allLocalDataClear(onSubCategoryClearFail) }
+            launch { folderRepository.allLocalDataClear(onFolderClearFail) }
         }
     }
 }

@@ -19,16 +19,16 @@ abstract class BaseContainerRepository<T : BaseContainerModel>(
     refPath: String,
     baseFirebaseDataSource: BaseFirebaseDataSource<T>,
     baseRoomDataSource: BaseRoomDataSource<T>,
-    networkPreferences: NetworkPreferenceRepository,
+    networkPreferenceRepository: NetworkPreferenceRepository,
 ) : BaseDataRepositoryImpl<T>(
     context = context,
     refPath = refPath,
     baseFirebaseDataSource = baseFirebaseDataSource,
     baseRoomDataSource = baseRoomDataSource,
-    networkPreferences = networkPreferences
+    networkPreferences = networkPreferenceRepository
 ) {
     /**
-     * [allData] 혹은 [sortFlow]가 변경되면 업데이트 됨
+     * TODO [allData] 혹은 [sortFlow]가 변경되면 업데이트 됨 TODO isSynced 업데이트 될 때 변경되니까 막아야됨
      */
     override val allData = combine(flow = baseRoomDataSource.getAll(), flow2 = sortFlow, transform = ::getSortedData) // TODO 되나?
 

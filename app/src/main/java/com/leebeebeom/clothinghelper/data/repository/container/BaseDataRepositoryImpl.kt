@@ -1,115 +1,98 @@
 package com.leebeebeom.clothinghelper.data.repository.container
 
+import android.content.Context
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.leebeebeom.clothinghelper.data.datasourse.BaseFirebaseDataSource
+import com.leebeebeom.clothinghelper.data.datasourse.BaseRoomDataSource
+import com.leebeebeom.clothinghelper.data.repository.preference.NetworkPreferenceRepository
+import com.leebeebeom.clothinghelper.data.repository.preference.NetworkPreferences
 import com.leebeebeom.clothinghelper.data.repository.util.DatabaseCallSite
 import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProviderImpl
 import com.leebeebeom.clothinghelper.data.repository.util.logE
-import com.leebeebeom.clothinghelper.domain.model.Order.ASCENDING
-import com.leebeebeom.clothinghelper.domain.model.Order.DESCENDING
-import com.leebeebeom.clothinghelper.domain.model.Sort.*
-import com.leebeebeom.clothinghelper.domain.model.SortPreferences
+import com.leebeebeom.clothinghelper.data.repository.util.networkCheck
 import com.leebeebeom.clothinghelper.domain.model.data.BaseModel
 import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.tasks.await
 
-/**
- * setPersistenceEnabled는 네트워크 미 연결 시에도 데이터를 조회할 수 있게 해줌
- */
-val dbRoot = Firebase.database.apply { setPersistenceEnabled(true) }.reference
+val firebaseDbRoot = Firebase.database.reference
 
 fun DatabaseReference.getContainerRef(uid: String, path: String) = child(uid).child(path)
 
 abstract class BaseDataRepositoryImpl<T : BaseModel>(
-    sortFlow: Flow<SortPreferences>,
+    private val context: Context,
     private val refPath: String,
+    private val baseFirebaseDataSource: BaseFirebaseDataSource<T>,
+    private val baseRoomDataSource: BaseRoomDataSource<T>,
+    private val networkPreferences: NetworkPreferenceRepository,
 ) : BaseDataRepository<T>, LoadingStateProviderImpl(true) {
-    private val _allData = MutableStateFlow(emptyList<T>())
+    override val allData = baseRoomDataSource.getAll()
 
     /**
-     * _allData 혹은 sortFlow가 변경되면 업데이트 됨
-     */
-    override val allData = combine(flow = _allData, flow2 = sortFlow, transform = ::getSortedData)
-
-
-    /**
-     * @param uid [uid]가 null 일 경우 [_allData]는 [emptyList]로 업데이트 됨
+     * 로그인 상태로 앱 실행 시 로컬 데이터를 가져옴
+     * 새 로그인 시([uid]가 null이 아닐 경우) 로컬 데이터가 없기 때문에 서버에서 가져옴
+     * 로그아웃 시([uid]가 null일 경우) 로컬 데이터 삭제
      */
     override suspend fun load(uid: String?, type: Class<T>, onFail: (Exception) -> Unit) =
-        databaseTryWithLoading(
+        databaseTry(
             callSite = DatabaseCallSite(callSite = "$type: update"), onFail = onFail
         ) {
             uid?.let {
-                val temp = mutableListOf<T>()
+                // 로컬 데이터가 존재할 경우
+                if (allData.last().isNotEmpty()) return@databaseTry
+                // 데이터를 사용하지 않을 경우(로그아웃 된 경우 데이터 사용하도록 되어있음)
+                if (isSelectedNetworkLocal()) return@databaseTry
+                // 인터넷에 연결되어있지 않은 경우
+                if (!networkCheck(context)) throw FirebaseNetworkException("인터넷 미연결")
 
-                dbRoot.getContainerRef(uid = uid, path = refPath).get()
-                    .await().children.forEach { temp.add((it.getValue(type))!!) }
-
-                _allData.update { temp }
-            } ?: let { _allData.update { emptyList() } }
+                val allRemoteData =
+                    baseFirebaseDataSource.getAll(uid = uid, refPath = refPath, type = type)
+                // 서버에도 데이터가 없을 경우
+                if (allRemoteData.isEmpty()) return@databaseTry
+                baseRoomDataSource.insert(data = allRemoteData)
+            } ?: baseRoomDataSource.deleteAll()
         }
 
-    /**
-     * 응답이 3를 초과할 경우 네트워크 미 연결로 간주, [TimeoutCancellationException] 발생
-     */
-    override suspend fun add(data: T, uid: String, onFail: (Exception) -> Unit) =
-        databaseTryWithTimeOut(
-            3000, DatabaseCallSite("${data.javaClass}: add"), onFail = onFail
-        ) {
-            val containerRef = dbRoot.getContainerRef(uid = uid, path = refPath)
+    @Suppress("UNCHECKED_CAST")
+    override suspend fun add(data: T, uid: String, onFail: (Exception) -> Unit) = databaseTry(
+        callSite = DatabaseCallSite("${data.javaClass}: add"), loading = false, onFail = onFail
+    ) {
+        val containerRef = firebaseDbRoot.getContainerRef(uid = uid, path = refPath)
 
-            @Suppress("UNCHECKED_CAST") val dataWithKey =
-                data.addKey(key = getKey(containerRef = containerRef)) as T
+        val dataWithKey = data.addKey(key = getKey(containerRef = containerRef)) as T
 
-            push(containerRef = containerRef, t = dataWithKey).await()
-            _allData.updateList { it.add(dataWithKey) }
+        baseRoomDataSource.insert(data = dataWithKey)
+
+        if (isSelectedNetworkLocal()) return@databaseTry
+
+        if (networkCheck(context)) {
+            val syncedData = dataWithKey.isSynced as T
+            push(containerRef = containerRef, t = syncedData).await()
+            baseRoomDataSource.update(data = syncedData)
         }
+    }
 
-    /**
-     * 응답이 3를 초과할 경우 네트워크 미 연결로 간주, [TimeoutCancellationException] 발생
-     */
+    @Suppress("UNCHECKED_CAST")
     override suspend fun edit(
         newData: T,
         uid: String,
         onFail: (Exception) -> Unit,
-    ) = databaseTryWithTimeOut(
-        3000,
-        DatabaseCallSite(callSite = "${newData::javaClass}: edit"),
-        onFail = onFail
+    ) = databaseTry(
+        DatabaseCallSite(callSite = "${newData::javaClass}: edit"), loading = false, onFail = onFail
     ) {
-        dbRoot.getContainerRef(uid = uid, path = refPath).child(newData.key).setValue(newData)
-            .await()
+        baseRoomDataSource.update(data = newData)
 
-        _allData.updateList {
-            val oldData = it.first { oldT -> oldT.key == newData.key }
-            it.remove(oldData)
-            it.add(newData)
-        }
-    }
+        if (isSelectedNetworkLocal()) return@databaseTry
 
-    /**
-     * 호출 시 로딩 없음
-     *
-     * 취소할 수 없음
-     *
-     * 응답 시간이 [time]을 초과할 경우 네트워크 미 연결로 간주하며 [TimeoutCancellationException] 발생
-     *
-     * @param callSite 예외 발생 시 로그에 찍힐 Site
-     */
-    private suspend fun databaseTryWithTimeOut(
-        time: Long,
-        callSite: DatabaseCallSite,
-        onFail: (Exception) -> Unit,
-        task: suspend () -> Unit,
-    ) = withContext(Dispatchers.IO) {
-        try {
-            withContext(context = NonCancellable) { withTimeout(timeMillis = time) { task() } }
-        } catch (e: Exception) {
-            logE(site = callSite.site, e = e)
-            onFail(e)
+        if (networkCheck(context)) {
+            val syncedData = newData.isSynced as T
+            firebaseDbRoot.getContainerRef(uid = uid, path = refPath).child(newData.key)
+                .setValue(newData).await()
+            baseRoomDataSource.update(data = syncedData)
         }
     }
 
@@ -121,49 +104,31 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
      * 취소할 수 없음
      *
      * @param callSite 예외 발생 시 로그에 찍힐 Site
+     * @param loading true 일 경우 호출 시 로딩 On, 작업이 끝난 후 로딩 Off
      */
-    private suspend fun databaseTryWithLoading(
+    private suspend fun databaseTry(
         callSite: DatabaseCallSite,
+        loading: Boolean = true,
         onFail: (Exception) -> Unit,
-        task: suspend () -> Unit,
+        task: suspend CoroutineScope.() -> Unit,
     ) = withContext(Dispatchers.IO) {
         try {
-            loadingOn()
+            if (loading) loadingOn()
             withContext(context = NonCancellable) { task() }
         } catch (e: Exception) {
             logE(site = callSite.site, e = e)
             onFail(e)
         } finally {
-            loadingOff()
+            if (loading) loadingOff()
         }
     }
 
+    // 오프라인에서도 작동함
     private fun getKey(containerRef: DatabaseReference) = containerRef.push().key!!
 
     private suspend fun push(containerRef: DatabaseReference, t: T) =
         withContext(Dispatchers.IO) { containerRef.child(t.key).setValue(t) }
 
-    private fun <T : BaseModel> getSortedData(
-        allData: List<T>,
-        sortPreferences: SortPreferences,
-    ): List<T> {
-        val sort = sortPreferences.sort
-        val order = sortPreferences.order
-
-        return when {
-            sort == NAME && order == ASCENDING -> allData.sortedBy { it.name }
-            sort == NAME && order == DESCENDING -> allData.sortedByDescending { it.name }
-            sort == CREATE && order == ASCENDING -> allData.sortedBy { it.createDate }
-            sort == CREATE && order == DESCENDING -> allData.sortedByDescending { it.createDate }
-            sort == EDIT && order == ASCENDING -> allData.sortedBy { it.editDate }
-            sort == EDIT && order == DESCENDING -> allData.sortedByDescending { it.editDate }
-            else -> throw Exception("정렬 정보 없음: sort: $sort, order: $order")
-        }
-    }
-
-    private fun <T> MutableStateFlow<List<T>>.updateList(task: (MutableList<T>) -> Unit) {
-        val temp = value.toMutableList()
-        task(temp)
-        update { temp }
-    }
+    private suspend fun isSelectedNetworkLocal() =
+        networkPreferences.network.last() == NetworkPreferences.LOCAL
 }

@@ -13,7 +13,7 @@ class EditSubCategoryUseCase @Inject constructor(private val subCategoryReposito
         uid: String,
         onFail: (Exception) -> Unit,
     ) {
-        val newSubCategory = oldSubCategory.copy(name = name, editDate = System.currentTimeMillis())
+        val newSubCategory = oldSubCategory.copy(name = name, editDate = System.currentTimeMillis(), isSynced = false)
 
         subCategoryRepository.edit(newData = newSubCategory, uid = uid, onFail = onFail)
     }

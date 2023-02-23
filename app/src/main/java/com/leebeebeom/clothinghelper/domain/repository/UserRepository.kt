@@ -7,7 +7,6 @@ import com.leebeebeom.clothinghelper.domain.model.data.User
 import kotlinx.coroutines.flow.StateFlow
 
 interface UserRepository : LoadingStateProvider {
-    val isSignIn: StateFlow<Boolean>
     val user: StateFlow<User?>
 
     suspend fun googleSignIn(credential: AuthCredential, firebaseResult: FirebaseResult)

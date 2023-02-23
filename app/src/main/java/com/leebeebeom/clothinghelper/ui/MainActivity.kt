@@ -14,6 +14,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.leebeebeom.clothinghelper.domain.model.data.User
 import com.leebeebeom.clothinghelper.ui.ActivityDestinations.MAIN_ROUTE
 import com.leebeebeom.clothinghelper.ui.ActivityDestinations.SIGN_IN_ROUTE
 import com.leebeebeom.clothinghelper.ui.main.MainNavHost
@@ -40,7 +41,7 @@ fun MainActivityScreen(
     uiState: ActivityUiState = viewModel.activityUiState,
     navController: NavHostController = rememberNavController(),
 ) {
-    val isSignIn by viewModel.isSignIn.collectAsStateWithLifecycle()
+    val user by viewModel.user.collectAsStateWithLifecycle()
 
     ClothingHelperTheme {
         NavHost(
@@ -53,7 +54,7 @@ fun MainActivityScreen(
     }
 
     MainActivityNavigateWrapper(
-        isSignIn = { isSignIn },
+        user = { user },
         navigateToMainGraph = navController::navigateToMainGraph,
         navigateToSignInGraph = navController::navigateToSignInGraph
     )
@@ -62,11 +63,11 @@ fun MainActivityScreen(
 
 @Composable
 private fun MainActivityNavigateWrapper(
-    isSignIn: () -> Boolean,
+    user: () -> User?,
     navigateToMainGraph: () -> Unit,
     navigateToSignInGraph: () -> Unit,
 ) {
-    if (isSignIn()) navigateToMainGraph() else navigateToSignInGraph()
+    user()?.let { navigateToMainGraph() } ?: navigateToSignInGraph()
 }
 
 private fun NavHostController.navigateToSignInGraph() =

@@ -19,30 +19,38 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
 
+    @Singleton
     @Binds
     abstract fun userRepository(impl: UserRepositoryImpl): UserRepository
 
+    @Singleton
     @Binds
     abstract fun subCategoryRepository(impl: SubCategoryRepositoryImpl): SubCategoryRepository
 
+    @Singleton
     @Binds
     abstract fun folderRepository(impl: FolderRepositoryImpl): FolderRepository
 
+    @Singleton
     @Binds
     abstract fun todoRepository(impl: TodoRepositoryImpl): TodoRepository
 
+    @Singleton
     @Binds
     abstract fun networkPreferenceRepository(impl: NetworkPreferenceRepositoryImpl): NetworkPreferenceRepository
 
+    @Singleton
     @Binds
     @SubCategoryPreferencesRepository
     abstract fun subCategoryPreferencesRepository(impl: SubCategoryPreferencesRepositoryImpl): SortPreferenceRepository
 
+    @Singleton
     @Binds
     @FolderPreferencesRepository
     abstract fun folderPreferencesRepository(impl: FolderPreferencesRepositoryImpl): SortPreferenceRepository

@@ -32,6 +32,4 @@ class NetworkPreferenceRepositoryImpl @Inject constructor(@ApplicationContext co
 private const val NETWORK = "network preferences"
 private val Context.networkDatastore by preferencesDataStore(name = NETWORK)
 
-enum class NetworkPreferences {
-    LOCAL, WIFI, MOBILE
-}
+enum class NetworkPreferences { WIFI, MOBILE }

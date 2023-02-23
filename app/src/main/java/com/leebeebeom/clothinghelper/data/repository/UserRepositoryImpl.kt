@@ -13,7 +13,6 @@ import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -33,7 +32,7 @@ class UserRepositoryImpl @Inject constructor(
          * 로그아웃 시에만 작동
          */
         auth.addAuthStateListener {
-            if (it.currentUser == null) _user.update { null }
+            if (it.currentUser == null) signOut()
         }
     }
 
@@ -51,7 +50,7 @@ class UserRepositoryImpl @Inject constructor(
          * 새 유저일 시 데이터베이스에 유저 정보 Push
          */
         if (isNewer) pushNewUser(user)
-        _user.emit(user)
+        signIn(user)
 
         firebaseResult.success()
     }
@@ -64,7 +63,7 @@ class UserRepositoryImpl @Inject constructor(
 
         val user = auth.signInWithEmailAndPassword(email, password).await().user.toUser()!!
 
-        _user.emit(user)
+        signIn(user)
 
         firebaseResult.success()
     }
@@ -84,7 +83,7 @@ class UserRepositoryImpl @Inject constructor(
         val user = firebaseUser.toUser()!!.copy(name = name)
 
         pushNewUser(user)
-        _user.emit(user)
+        signIn(user)
 
         firebaseResult.success()
     }
@@ -103,10 +102,16 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun signOut(
         onFail: (Exception) -> Unit,
     ) = withExternalScope(callSite = AuthCallSite("signOut"), onFail = onFail) {
-
         auth.signOut()
+        signOut()
+    }
 
-        _user.emit(null)
+    private fun signIn(user: User) {
+        _user.value = user
+    }
+
+    private fun signOut() {
+        _user.value = null
     }
 
     private suspend fun pushNewUser(user: User) =

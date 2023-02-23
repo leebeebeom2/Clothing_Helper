@@ -100,9 +100,6 @@ class UserRepositoryImpl @Inject constructor(
             firebaseResult.success()
         }
 
-    /**
-     * 로그아웃 시 로컬데이터 모두 삭제
-     */
     override suspend fun signOut(
         onFail: (Exception) -> Unit,
     ) = withExternalScope(callSite = AuthCallSite("signOut"), onFail = onFail) {

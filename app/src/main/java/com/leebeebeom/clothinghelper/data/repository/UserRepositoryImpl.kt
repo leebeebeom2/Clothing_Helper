@@ -11,40 +11,36 @@ import com.leebeebeom.clothinghelper.domain.model.FirebaseResult
 import com.leebeebeom.clothinghelper.domain.model.data.User
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStateProviderImpl(false) {
+class UserRepositoryImpl @Inject constructor(
+    private val appCoroutineScope: CoroutineScope,
+) : UserRepository, LoadingStateProviderImpl(false) {
     private val auth = FirebaseAuth.getInstance()
-
-    private val _isSignIn = MutableStateFlow(auth.currentUser != null)
-    override val isSignIn = _isSignIn.asStateFlow()
 
     private val _user = MutableStateFlow(auth.currentUser.toUser())
     override val user = _user.asStateFlow()
 
     init {
+        /**
+         * 로그아웃 시에만 작동
+         */
         auth.addAuthStateListener {
-            if (it.currentUser == null) {
-                _isSignIn.update { false }
-                _user.update { null }
-            }
+            if (it.currentUser == null) _user.update { null }
         }
     }
 
     override suspend fun googleSignIn(
         credential: AuthCredential,
         firebaseResult: FirebaseResult,
-    ) = authTry(callSite = AuthCallSite("googleSignIn"), onFail = firebaseResult::fail) {
-
+    ) = withExternalScope(callSite = AuthCallSite("googleSignIn"), onFail = firebaseResult::fail) {
         val authResult = auth.signInWithCredential(credential).await()
 
         val user = authResult.user.toUser()!!
@@ -54,7 +50,8 @@ class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStatePro
         /**
          * 새 유저일 시 데이터베이스에 유저 정보 Push
          */
-        if (isNewer) pushNewUser(user) else updateUserAndSignIn(user)
+        if (isNewer) pushNewUser(user)
+        _user.emit(user)
 
         firebaseResult.success()
     }
@@ -63,11 +60,11 @@ class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStatePro
         email: String,
         password: String,
         firebaseResult: FirebaseResult,
-    ) = authTry(callSite = AuthCallSite("signIn"), onFail = firebaseResult::fail) {
+    ) = withExternalScope(callSite = AuthCallSite("signIn"), onFail = firebaseResult::fail) {
 
         val user = auth.signInWithEmailAndPassword(email, password).await().user.toUser()!!
 
-        updateUserAndSignIn(user)
+        _user.emit(user)
 
         firebaseResult.success()
     }
@@ -77,7 +74,7 @@ class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStatePro
         password: String,
         name: String,
         firebaseResult: FirebaseResult,
-    ) = authTry(callSite = AuthCallSite("signUp"), onFail = firebaseResult::fail) {
+    ) = withExternalScope(callSite = AuthCallSite("signUp"), onFail = firebaseResult::fail) {
 
         val firebaseUser = auth.createUserWithEmailAndPassword(email, password).await().user!!
 
@@ -87,12 +84,16 @@ class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStatePro
         val user = firebaseUser.toUser()!!.copy(name = name)
 
         pushNewUser(user)
+        _user.emit(user)
 
         firebaseResult.success()
     }
 
     override suspend fun resetPasswordEmail(email: String, firebaseResult: FirebaseResult) =
-        authTry(callSite = AuthCallSite("resetPasswordEmail"), onFail = firebaseResult::fail) {
+        withExternalScope(
+            callSite = AuthCallSite("resetPasswordEmail"),
+            onFail = firebaseResult::fail
+        ) {
 
             auth.sendPasswordResetEmail(email).await()
 
@@ -104,49 +105,41 @@ class UserRepositoryImpl @Inject constructor() : UserRepository, LoadingStatePro
      */
     override suspend fun signOut(
         onFail: (Exception) -> Unit,
-    ) = authTry(callSite = AuthCallSite("signOut"), onFail = onFail) {
+    ) = withExternalScope(callSite = AuthCallSite("signOut"), onFail = onFail) {
 
         auth.signOut()
 
-        _user.update { null }
-        _isSignIn.update { false }
+        _user.emit(null)
     }
 
     /**
      * 데이터 베이스에 유저 정보 입력 후 [_user], [_isSignIn] 업데이트
      */
-    private suspend fun pushNewUser(user: User) {
+    private suspend fun pushNewUser(user: User) =
         firebaseDbRoot.child(user.uid).child(DatabasePath.USER_INFO).setValue(user).await()
-        updateUserAndSignIn(user)
-    }
-
-    private fun updateUserAndSignIn(user: User) {
-        _user.update { user }
-        _isSignIn.update { true }
-    }
 
     /**
      * 호출 시 로딩 On
      *
      * 작업이 끌날 시 로딩 Off
      *
-     * 취소할 수 없음
-     *
      * @param callSite 예외 발생 시 로그에 찍힐 Site
      */
-    private suspend fun authTry(
+    private suspend fun withExternalScope(
         callSite: AuthCallSite,
         onFail: (Exception) -> Unit,
         task: suspend CoroutineScope.() -> Unit,
-    ) = withContext(context = Dispatchers.IO) {
-        try {
-            loadingOn()
-            withContext(context = NonCancellable) { task() }
-        } catch (e: Exception) {
-            logE(site = callSite.site, e = e)
-            onFail(e)
-        } finally {
-            loadingOff()
+    ) {
+        appCoroutineScope.launch {
+            try {
+                loadingOn()
+                task()
+            } catch (e: Exception) {
+                logE(callSite.site, e)
+                onFail(e)
+            } finally {
+                loadingOff()
+            }
         }
     }
 

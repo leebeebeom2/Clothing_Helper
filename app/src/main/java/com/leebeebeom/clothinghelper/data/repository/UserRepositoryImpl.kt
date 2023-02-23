@@ -112,9 +112,6 @@ class UserRepositoryImpl @Inject constructor(
         _user.emit(null)
     }
 
-    /**
-     * 데이터 베이스에 유저 정보 입력 후 [_user], [_isSignIn] 업데이트
-     */
     private suspend fun pushNewUser(user: User) =
         firebaseDbRoot.child(user.uid).child(DatabasePath.USER_INFO).setValue(user).await()
 

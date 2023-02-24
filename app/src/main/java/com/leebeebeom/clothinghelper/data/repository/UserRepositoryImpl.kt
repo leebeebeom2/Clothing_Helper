@@ -7,7 +7,6 @@ import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.leebeebeom.clothinghelper.data.repository.util.AuthCallSite
 import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProviderImpl
 import com.leebeebeom.clothinghelper.data.repository.util.logE
-import com.leebeebeom.clothinghelper.domain.model.User
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -20,6 +19,7 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import com.leebeebeom.clothinghelper.domain.model.FirebaseUser as FirebaseUserModel
 
 @Singleton
 class UserRepositoryImpl @Inject constructor(
@@ -28,7 +28,8 @@ class UserRepositoryImpl @Inject constructor(
     private val auth = FirebaseAuth.getInstance()
 
     override val user = callbackFlow {
-        val callback = FirebaseAuth.AuthStateListener { launch { send(it.currentUser.toUser()) } }
+        val callback =
+            FirebaseAuth.AuthStateListener { launch { send(it.currentUser.toFirebaseUser()) } }
         auth.addAuthStateListener(callback)
         awaitClose { auth.removeAuthStateListener(callback) }
     }.stateIn(appCoroutineScope, SharingStarted.WhileSubscribed(), null)
@@ -44,7 +45,7 @@ class UserRepositoryImpl @Inject constructor(
     ) {
         val authResult = auth.signInWithCredential(credential).await()
 
-        val user = authResult.user.toUser()!!
+        val user = authResult.user.toFirebaseUser()!!
 
         val isNewer = authResult.additionalUserInfo!!.isNewUser
 
@@ -85,7 +86,7 @@ class UserRepositoryImpl @Inject constructor(
         val request = userProfileChangeRequest { displayName = name }
         firebaseUser.updateProfile(request).await()
 
-        val user = firebaseUser.toUser()!!.copy(name = name)
+        val user = firebaseUser.toFirebaseUser()!!.copy(name = name)
 
         pushNewUser(user)
 
@@ -112,7 +113,7 @@ class UserRepositoryImpl @Inject constructor(
             callSite = AuthCallSite("signOut"), onFail = onFail, dispatcher = dispatcher
         ) { auth.signOut() }
 
-    private suspend fun pushNewUser(user: User) =
+    private suspend fun pushNewUser(user: FirebaseUserModel) =
         firebaseDbRoot.child(user.uid).child(DatabasePath.USER_INFO).setValue(user).await()
 
     /**
@@ -141,6 +142,6 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun FirebaseUser?.toUser() =
-        this?.let { User(email = "$email", name = "$displayName", uid = uid) }
+    private fun FirebaseUser?.toFirebaseUser() =
+        this?.let { FirebaseUserModel(email = "$email", name = "$displayName", uid = uid) }
 }

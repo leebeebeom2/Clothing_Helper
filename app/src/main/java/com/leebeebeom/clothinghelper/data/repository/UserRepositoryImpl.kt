@@ -11,9 +11,7 @@ import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -32,7 +30,7 @@ class UserRepositoryImpl @Inject constructor(
             FirebaseAuth.AuthStateListener { launch { send(it.currentUser.toFirebaseUser()) } }
         auth.addAuthStateListener(callback)
         awaitClose { auth.removeAuthStateListener(callback) }
-    }.stateIn(appCoroutineScope, SharingStarted.WhileSubscribed(), null)
+    }
 
     override suspend fun googleSignIn(
         credential: AuthCredential,

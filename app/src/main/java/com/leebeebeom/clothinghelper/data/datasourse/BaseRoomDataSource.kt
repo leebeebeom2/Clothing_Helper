@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 abstract class BaseRoomDataSource<T : BaseRoomModel, U : BaseModel>(private val dao: BaseDao<T>) {
     abstract fun getAll(): Flow<List<U>>
-    abstract suspend fun getAllAsync(): List<U>
     abstract suspend fun deleteAll()
     suspend fun insert(data: T) = dao.insert(data)
     suspend fun insert(data: List<T>) = dao.insert(data)

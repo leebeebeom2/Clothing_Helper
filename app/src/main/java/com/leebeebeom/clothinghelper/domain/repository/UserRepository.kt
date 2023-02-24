@@ -4,10 +4,10 @@ import com.google.firebase.auth.AuthCredential
 import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProvider
 import com.leebeebeom.clothinghelper.domain.model.FirebaseResult
 import com.leebeebeom.clothinghelper.domain.model.data.User
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.Flow
 
 interface UserRepository : LoadingStateProvider {
-    val user: StateFlow<User?>
+    val user: Flow<User?>
 
     suspend fun googleSignIn(credential: AuthCredential, firebaseResult: FirebaseResult)
 

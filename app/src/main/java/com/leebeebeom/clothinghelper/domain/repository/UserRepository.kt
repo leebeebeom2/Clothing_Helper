@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 
 interface UserRepository : LoadingStateProvider {
-    val user: StateFlow<FirebaseUser?>
+    val firebaseUser: StateFlow<FirebaseUser?>
 
     suspend fun googleSignIn(
         credential: AuthCredential,

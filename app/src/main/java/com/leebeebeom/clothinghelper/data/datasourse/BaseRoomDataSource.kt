@@ -1,9 +1,9 @@
 package com.leebeebeom.clothinghelper.data.datasourse
 
-import com.leebeebeom.clothinghelper.domain.model.data.BaseModel
+import com.leebeebeom.clothinghelper.domain.model.BaseRoomModel
 import kotlinx.coroutines.flow.Flow
 
-abstract class BaseRoomDataSource<T : BaseModel>(private val dao: BaseDao<T>) {
+abstract class BaseRoomDataSource<T : BaseRoomModel>(private val dao: BaseDao<T>) {
     abstract fun getAll(): Flow<List<T>>
     abstract suspend fun getAllAsync(): List<T>
     abstract suspend fun deleteAll()

@@ -7,8 +7,7 @@ import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.leebeebeom.clothinghelper.data.repository.util.AuthCallSite
 import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProviderImpl
 import com.leebeebeom.clothinghelper.data.repository.util.logE
-import com.leebeebeom.clothinghelper.domain.model.FirebaseResult
-import com.leebeebeom.clothinghelper.domain.model.data.User
+import com.leebeebeom.clothinghelper.domain.model.User
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope

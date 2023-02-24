@@ -10,7 +10,7 @@ interface SubCategoryDao : BaseDao<SubCategory> {
     @Query("SELECT * FROM SubCategory")
     fun getAll(): Flow<List<SubCategory>>
 
-    @Query("SELECT * FROM SubCategory WHERE isSynced = false")
+    @Query("SELECT * FROM SubCategory WHERE isSynced = 0")
     suspend fun getAllAsync(): List<SubCategory>
 
     @Query("DELETE FROM SubCategory")

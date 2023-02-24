@@ -11,7 +11,7 @@ interface FolderDao : BaseDao<Folder> {
     @Query("SELECT * FROM Folder")
     fun getAll(): Flow<List<Folder>>
 
-    @Query("SELECT * FROM Folder WHERE isSynced = false")
+    @Query("SELECT * FROM Folder WHERE isSynced = 0")
     suspend fun getAllAsync(): List<Folder>
 
     @Query("DELETE FROM Folder")

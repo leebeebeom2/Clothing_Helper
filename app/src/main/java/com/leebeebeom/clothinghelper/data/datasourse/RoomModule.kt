@@ -23,4 +23,7 @@ class RoomModule {
 
     @Provides
     fun todoDao(roomDb: LocalDataBase) = roomDb.todoDao()
+
+    @Provides
+    fun userDao(roomDb: LocalDataBase) = roomDb.userDao()
 }

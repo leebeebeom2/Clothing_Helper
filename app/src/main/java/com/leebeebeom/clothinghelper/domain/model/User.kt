@@ -14,3 +14,5 @@ data class FirebaseUser(
     val name: String = "",
     val uid: String = "",
 )
+
+fun FirebaseUser.toUser() = User(email = email, name = name)

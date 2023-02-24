@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.domain.model
+package com.leebeebeom.clothinghelper.data.repository
 
 interface FirebaseResult {
     fun success()

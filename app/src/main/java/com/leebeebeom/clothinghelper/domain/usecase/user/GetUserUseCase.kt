@@ -19,7 +19,7 @@ class GetUserUseCase @Inject constructor(
     private lateinit var user: StateFlow<User?>
     fun getUser(): StateFlow<User?> = if (::user.isInitialized) user
     else {
-        user = userRepository.user.map { it?.toUser() }.stateIn(
+        user = userRepository.firebaseUser.map { it?.toUser() }.stateIn(
             scope = appCoroutineScope,
             started = SharingStarted.WhileSubscribed(),
             initialValue = null

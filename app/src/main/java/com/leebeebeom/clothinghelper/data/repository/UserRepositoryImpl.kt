@@ -28,7 +28,7 @@ class UserRepositoryImpl @Inject constructor() :
         credential: AuthCredential,
         firebaseResult: FirebaseResult,
         dispatcher: CoroutineDispatcher,
-    ) = withExternalScope(
+    ) = withContext(
         callSite = AuthCallSite("googleSignIn"),
         onFail = firebaseResult::fail,
         dispatcher = dispatcher
@@ -42,7 +42,7 @@ class UserRepositoryImpl @Inject constructor() :
         password: String,
         firebaseResult: FirebaseResult,
         dispatcher: CoroutineDispatcher,
-    ) = withExternalScope(
+    ) = withContext(
         callSite = AuthCallSite("signIn"), onFail = firebaseResult::fail, dispatcher = dispatcher
     ) {
         firebaseUser.value =
@@ -56,7 +56,7 @@ class UserRepositoryImpl @Inject constructor() :
         name: String,
         firebaseResult: FirebaseResult,
         dispatcher: CoroutineDispatcher,
-    ) = withExternalScope(
+    ) = withContext(
         callSite = AuthCallSite("signUp"), onFail = firebaseResult::fail, dispatcher = dispatcher
     ) {
         val request = userProfileChangeRequest { displayName = name }
@@ -74,7 +74,7 @@ class UserRepositoryImpl @Inject constructor() :
         email: String,
         firebaseResult: FirebaseResult,
         dispatcher: CoroutineDispatcher,
-    ) = withExternalScope(
+    ) = withContext(
         callSite = AuthCallSite("resetPasswordEmail"),
         onFail = firebaseResult::fail,
         dispatcher = dispatcher
@@ -85,7 +85,7 @@ class UserRepositoryImpl @Inject constructor() :
     }
 
     override suspend fun signOut(onFail: (Exception) -> Unit, dispatcher: CoroutineDispatcher) =
-        withExternalScope(
+        withContext(
             callSite = AuthCallSite("signOut"),
             onFail = onFail,
             dispatcher = dispatcher
@@ -98,7 +98,7 @@ class UserRepositoryImpl @Inject constructor() :
      *
      * @param callSite 예외 발생 시 로그에 찍힐 Site
      */
-    private suspend fun withExternalScope(
+    private suspend fun withContext(
         callSite: AuthCallSite,
         onFail: (Exception) -> Unit,
         dispatcher: CoroutineDispatcher,

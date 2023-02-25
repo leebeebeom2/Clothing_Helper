@@ -7,14 +7,11 @@ import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.leebeebeom.clothinghelper.data.repository.util.AuthCallSite
 import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProviderImpl
 import com.leebeebeom.clothinghelper.data.repository.util.logE
+import com.leebeebeom.clothinghelper.di.AppScope
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -22,17 +19,11 @@ import javax.inject.Singleton
 import com.leebeebeom.clothinghelper.domain.model.FirebaseUser as FirebaseUserModel
 
 @Singleton
-class UserRepositoryImpl @Inject constructor(
-    private val appCoroutineScope: CoroutineScope,
-) : UserRepository, LoadingStateProviderImpl(false) {
+class UserRepositoryImpl @Inject constructor(@AppScope private val appCoroutineScope: CoroutineScope) :
+    UserRepository, LoadingStateProviderImpl(false) {
     private val auth = FirebaseAuth.getInstance()
 
-    override val firebaseUser = callbackFlow {
-        val callback =
-            FirebaseAuth.AuthStateListener { launch { send(it.currentUser.toFirebaseUser()) } }
-        auth.addAuthStateListener(callback)
-        awaitClose { auth.removeAuthStateListener(callback) }
-    }.stateIn(appCoroutineScope, SharingStarted.WhileSubscribed(), null)
+    override val firebaseUser = MutableStateFlow(auth.currentUser.toFirebaseUser())
 
     override suspend fun googleSignIn(
         credential: AuthCredential,
@@ -43,17 +34,7 @@ class UserRepositoryImpl @Inject constructor(
         onFail = firebaseResult::fail,
         dispatcher = dispatcher
     ) {
-        val authResult = auth.signInWithCredential(credential).await()
-
-        val user = authResult.user.toFirebaseUser()!!
-
-        val isNewer = authResult.additionalUserInfo!!.isNewUser
-
-        /**
-         * 새 유저일 시 데이터베이스에 유저 정보 Push
-         */
-        if (isNewer) pushNewUser(user)
-
+        firebaseUser.value = auth.signInWithCredential(credential).await().user.toFirebaseUser()!!
         firebaseResult.success()
     }
 
@@ -65,9 +46,8 @@ class UserRepositoryImpl @Inject constructor(
     ) = withExternalScope(
         callSite = AuthCallSite("signIn"), onFail = firebaseResult::fail, dispatcher = dispatcher
     ) {
-
-        auth.signInWithEmailAndPassword(email, password).await()
-
+        firebaseUser.value =
+            auth.signInWithEmailAndPassword(email, password).await().user.toFirebaseUser()!!
         firebaseResult.success()
     }
 
@@ -80,15 +60,13 @@ class UserRepositoryImpl @Inject constructor(
     ) = withExternalScope(
         callSite = AuthCallSite("signUp"), onFail = firebaseResult::fail, dispatcher = dispatcher
     ) {
+        val request = userProfileChangeRequest { displayName = name }
 
         val firebaseUser = auth.createUserWithEmailAndPassword(email, password).await().user!!
 
-        val request = userProfileChangeRequest { displayName = name }
         firebaseUser.updateProfile(request).await()
 
-        val user = firebaseUser.toFirebaseUser()!!.copy(name = name)
-
-        pushNewUser(user)
+        this@UserRepositoryImpl.firebaseUser.value = firebaseUser.toFirebaseUser()
 
         firebaseResult.success()
     }
@@ -102,7 +80,6 @@ class UserRepositoryImpl @Inject constructor(
         onFail = firebaseResult::fail,
         dispatcher = dispatcher
     ) {
-
         auth.sendPasswordResetEmail(email).await()
 
         firebaseResult.success()
@@ -110,11 +87,10 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun signOut(onFail: (Exception) -> Unit, dispatcher: CoroutineDispatcher) =
         withExternalScope(
-            callSite = AuthCallSite("signOut"), onFail = onFail, dispatcher = dispatcher
+            callSite = AuthCallSite("signOut"),
+            onFail = onFail,
+            dispatcher = dispatcher
         ) { auth.signOut() }
-
-    private suspend fun pushNewUser(user: FirebaseUserModel) =
-        firebaseDbRoot.child(user.uid).child(DatabasePath.USER_INFO).setValue(user).await()
 
     /**
      * 호출 시 로딩 On

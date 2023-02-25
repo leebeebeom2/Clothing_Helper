@@ -4,9 +4,7 @@ abstract class BaseModel {
     abstract val key: String
 }
 
-abstract class BaseFirebaseModel : BaseModel()
-
-abstract class BaseRoomModel : BaseFirebaseModel() {
+abstract class BaseDatabaseModel : BaseModel() {
     abstract fun addKey(key: String): BaseModel
 }
 
@@ -14,13 +12,7 @@ abstract class BaseContainerModel : BaseModel() {
     abstract val name: String
 }
 
-abstract class BaseRoomContainerModel : BaseRoomModel() {
-    abstract val name: String
-    abstract val createDate: Long
-    abstract val editDate: Long
-}
-
-abstract class BaseFirebaseContainerModel : BaseFirebaseModel() {
+abstract class BaseDatabaseContainerModel : BaseDatabaseModel() {
     abstract val name: String
     abstract val createDate: Long
     abstract val editDate: Long
@@ -31,12 +23,7 @@ abstract class BaseFolderModel : BaseContainerModel() {
     abstract val subCategoryKey: String
 }
 
-abstract class BaseRoomFolderModel : BaseRoomContainerModel() {
-    abstract val parentKey: String
-    abstract val subCategoryKey: String
-}
-
-abstract class BaseFirebaseFolderModel : BaseFirebaseContainerModel() {
+abstract class BaseDatabaseFolderModel : BaseDatabaseContainerModel() {
     abstract val parentKey: String
     abstract val subCategoryKey: String
 }

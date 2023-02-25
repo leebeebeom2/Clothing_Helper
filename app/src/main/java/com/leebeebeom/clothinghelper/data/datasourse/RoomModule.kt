@@ -12,15 +12,15 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 class RoomModule {
     @Provides
-    fun roomDb(@ApplicationContext context: Context) =
-        Room.databaseBuilder(context, LocalDataBase::class.java, "clothing_helper_db").build()
+    fun roomDB(@ApplicationContext context: Context) =
+        Room.databaseBuilder(context, RoomDB::class.java, "clothing_helper_db").build()
 
     @Provides
-    fun subCategoryDao(roomDb: LocalDataBase) = roomDb.subCategoryDao()
+    fun subCategoryDao(roomDB: RoomDB) = roomDB.subCategoryDao()
 
     @Provides
-    fun folderDao(roomDb: LocalDataBase) = roomDb.folderDao()
+    fun folderDao(roomDB: RoomDB) = roomDB.folderDao()
 
     @Provides
-    fun todoDao(roomDb: LocalDataBase) = roomDb.todoDao()
+    fun todoDao(roomDB: RoomDB) = roomDB.todoDao()
 }

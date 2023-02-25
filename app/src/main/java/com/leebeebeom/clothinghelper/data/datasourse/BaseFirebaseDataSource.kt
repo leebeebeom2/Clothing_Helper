@@ -2,13 +2,13 @@ package com.leebeebeom.clothinghelper.data.datasourse
 
 import com.leebeebeom.clothinghelper.data.repository.firebaseDbRoot
 import com.leebeebeom.clothinghelper.data.repository.getContainerRef
-import com.leebeebeom.clothinghelper.domain.model.BaseFirebaseModel
+import com.leebeebeom.clothinghelper.domain.model.BaseDatabaseModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-abstract class BaseFirebaseDataSource<T : BaseFirebaseModel>(private val refPath: String) {
+abstract class BaseFirebaseDataSource<T : BaseDatabaseModel>(private val refPath: String) {
     suspend fun getAll(
         uid: String,
         type: Class<T>,

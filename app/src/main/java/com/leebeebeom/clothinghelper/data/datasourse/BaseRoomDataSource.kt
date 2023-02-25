@@ -10,5 +10,4 @@ abstract class BaseRoomDataSource<T : BaseRoomModel, U : BaseModel>(private val 
     suspend fun insert(data: T) = dao.insert(data)
     suspend fun insert(data: List<T>) = dao.insert(data)
     suspend fun update(data: T) = dao.update(data)
-    suspend fun update(data: List<T>) = dao.update(data)
 }

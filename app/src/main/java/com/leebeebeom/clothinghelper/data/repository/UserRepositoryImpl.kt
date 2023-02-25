@@ -7,7 +7,6 @@ import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.leebeebeom.clothinghelper.data.repository.util.AuthCallSite
 import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProviderImpl
 import com.leebeebeom.clothinghelper.data.repository.util.logE
-import com.leebeebeom.clothinghelper.di.AppScope
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -19,7 +18,7 @@ import javax.inject.Singleton
 import com.leebeebeom.clothinghelper.domain.model.FirebaseUser as FirebaseUserModel
 
 @Singleton
-class UserRepositoryImpl @Inject constructor(@AppScope private val appCoroutineScope: CoroutineScope) :
+class UserRepositoryImpl @Inject constructor() :
     UserRepository, LoadingStateProviderImpl(false) {
     private val auth = FirebaseAuth.getInstance()
 
@@ -104,17 +103,15 @@ class UserRepositoryImpl @Inject constructor(@AppScope private val appCoroutineS
         onFail: (Exception) -> Unit,
         dispatcher: CoroutineDispatcher,
         task: suspend CoroutineScope.() -> Unit,
-    ) = withContext(appCoroutineScope.coroutineContext) {
-        withContext(dispatcher) {
-            try {
-                loadingOn()
-                task()
-            } catch (e: Exception) {
-                logE(callSite.site, e)
-                onFail(e)
-            } finally {
-                loadingOff()
-            }
+    ) = withContext(dispatcher) {
+        try {
+            loadingOn()
+            task()
+        } catch (e: Exception) {
+            logE(callSite.site, e)
+            onFail(e)
+        } finally {
+            loadingOff()
         }
     }
 

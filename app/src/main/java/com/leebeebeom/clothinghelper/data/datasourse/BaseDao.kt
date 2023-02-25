@@ -4,9 +4,9 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Update
-import com.leebeebeom.clothinghelper.domain.model.BaseRoomModel
+import com.leebeebeom.clothinghelper.domain.model.BaseDatabaseModel
 
-interface BaseDao<T : BaseRoomModel> {
+interface BaseDao<T : BaseDatabaseModel> {
     @Insert
     suspend fun insert(data: T)
 

@@ -4,14 +4,14 @@ import androidx.room.Dao
 import androidx.room.Query
 import com.leebeebeom.clothinghelper.data.datasourse.BaseDao
 import com.leebeebeom.clothinghelper.domain.model.Folder
-import com.leebeebeom.clothinghelper.domain.model.RoomFolder
+import com.leebeebeom.clothinghelper.domain.model.DatabaseFolder
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface FolderDao : BaseDao<RoomFolder> {
-    @Query("SELECT `key`,name,parentKey,subCategoryKey FROM RoomFolder")
+interface FolderDao : BaseDao<DatabaseFolder> {
+    @Query("SELECT `key`,name,parentKey,subCategoryKey FROM DatabaseFolder")
     fun getAll(): Flow<List<Folder>>
 
-    @Query("DELETE FROM RoomFolder")
+    @Query("DELETE FROM DatabaseFolder")
     suspend fun deleteAll()
 }

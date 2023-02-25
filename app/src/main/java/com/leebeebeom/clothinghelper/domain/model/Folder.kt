@@ -14,22 +14,13 @@ data class Folder(
 ) : BaseFolderModel(), Parcelable
 
 @Entity
-data class RoomFolder(
+data class DatabaseFolder(
     @PrimaryKey override val key: String = "",
     override val name: String = "",
     override val parentKey: String = "",
     override val subCategoryKey: String = "",
     override val createDate: Long = 0,
     override val editDate: Long = 0,
-) : BaseRoomFolderModel() {
+) : BaseDatabaseFolderModel() {
     override fun addKey(key: String) = copy(key = key)
 }
-
-data class FirebaseFolder(
-    override val key: String = "",
-    override val name: String = "",
-    override val parentKey: String = "",
-    override val subCategoryKey: String = "",
-    override val createDate: Long = 0,
-    override val editDate: Long = 0,
-) : BaseFirebaseFolderModel()

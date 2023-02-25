@@ -11,18 +11,11 @@ data class Todo(
 ) : BaseModel()
 
 @Entity
-data class RoomTodo(
+data class DatabaseTodo(
     @PrimaryKey override val key: String,
     val text: String = "",
     val done: Boolean = false,
     val order: Int = 0,
-) : BaseRoomModel() {
+) : BaseDatabaseModel() {
     override fun addKey(key: String) = copy(key = key)
 }
-
-data class FirebaseTodo(
-    override val key: String,
-    val text: String = "",
-    val done: Boolean = false,
-    val order: Int = 0,
-) : BaseFirebaseModel()

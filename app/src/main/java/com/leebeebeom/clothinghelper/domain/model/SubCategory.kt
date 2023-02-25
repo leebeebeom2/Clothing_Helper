@@ -14,20 +14,12 @@ data class SubCategory(
 ) : BaseContainerModel(), Parcelable
 
 @Entity
-data class RoomSubCategory(
+data class DatabaseSubCategory(
     @PrimaryKey override val key: String = "",
     override val name: String = "",
     val parent: MainCategoryType = MainCategoryType.TOP,
     override val createDate: Long = 0,
     override val editDate: Long = 0,
-) : BaseRoomContainerModel() {
+) : BaseDatabaseContainerModel() {
     override fun addKey(key: String) = copy(key = key)
 }
-
-data class FirebaseSubCategory(
-    override val key: String = "",
-    override val name: String = "",
-    val parent: MainCategoryType = MainCategoryType.TOP,
-    override val createDate: Long = 0,
-    override val editDate: Long = 0,
-) : BaseFirebaseContainerModel()

@@ -22,7 +22,7 @@ class NetworkPreferenceRepositoryImpl @Inject constructor(@ApplicationContext co
 
     override val network: Flow<NetworkPreferences> = dataStore.data.catch {
         if (it is IOException) emit(emptyPreferences()) else throw it
-    }.map { enumValueOf(it[key] ?: NetworkPreferences.MOBILE.name) }
+    }.map { enumValueOf(it[key] ?: NetworkPreferences.ANY.name) }
 
     override suspend fun networkSelected(network: NetworkPreferences) {
         dataStore.edit { it[key] = network.name }
@@ -32,4 +32,4 @@ class NetworkPreferenceRepositoryImpl @Inject constructor(@ApplicationContext co
 private const val NETWORK = "network preferences"
 private val Context.networkDatastore by preferencesDataStore(name = NETWORK)
 
-enum class NetworkPreferences { WIFI, MOBILE }
+enum class NetworkPreferences { WIFI, ANY }

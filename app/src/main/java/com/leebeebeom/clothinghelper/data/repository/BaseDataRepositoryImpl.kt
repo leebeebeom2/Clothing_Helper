@@ -22,9 +22,6 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
 
     // TODO 미로그인 시 데이터 사용 Any로 변경
     // TODO 로그인 시 최초 로드 후 원래 데이터 사용 설정으로 변경
-    // TODO collect catch 추가
-    // TODO collect catch-emit 추가
-    // TODO WIFI or ANY 분기
 
     override suspend fun load(
         uid: String?,

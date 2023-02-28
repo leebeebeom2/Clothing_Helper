@@ -7,12 +7,18 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class CoroutineScopeModule {
+object CoroutineScopeModule {
     @Singleton
     @Provides
-    fun appCoroutineScope() = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    @AppScope
+    fun appScope() = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 }
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class AppScope

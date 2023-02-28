@@ -23,7 +23,6 @@ class LoadDataUseCase @Inject constructor(
     private val networkChecker: NetworkChecker,
 ) {
     suspend fun load(onFail: (Exception) -> Unit) {
-        // 인터넷 확인 여기서, 실패 여기서
         userRepository.firebaseUser.collectLatest {
             try {
                 networkChecker.checkNetWork()

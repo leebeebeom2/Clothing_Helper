@@ -1,40 +1,43 @@
 package com.leebeebeom.clothinghelper.data.repository.container
 
-import android.content.Context
-import com.leebeebeom.clothinghelper.data.datasourse.BaseFirebaseDataSource
-import com.leebeebeom.clothinghelper.data.datasourse.BaseRoomDataSource
 import com.leebeebeom.clothinghelper.data.repository.BaseDataRepositoryImpl
 import com.leebeebeom.clothinghelper.data.repository.preference.Order.ASCENDING
 import com.leebeebeom.clothinghelper.data.repository.preference.Order.DESCENDING
 import com.leebeebeom.clothinghelper.data.repository.preference.Sort.*
 import com.leebeebeom.clothinghelper.data.repository.preference.SortPreferences
-import com.leebeebeom.clothinghelper.domain.model.data.BaseContainerModel
+import com.leebeebeom.clothinghelper.data.repository.util.NetworkChecker
+import com.leebeebeom.clothinghelper.domain.model.BaseDatabaseContainerModel
+import com.leebeebeom.clothinghelper.domain.repository.BaseContainerRepository
 import com.leebeebeom.clothinghelper.domain.repository.preference.NetworkPreferenceRepository
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 
 
-abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
+abstract class BaseContainerRepositoryImpl<T : BaseDatabaseContainerModel>(
     sortFlow: Flow<SortPreferences>,
-    context: Context,
     refPath: String,
-    baseFirebaseDataSource: BaseFirebaseDataSource<T>,
-    baseRoomDataSource: BaseRoomDataSource<T>,
     networkPreferenceRepository: NetworkPreferenceRepository,
-) : BaseDataRepositoryImpl<T>(
-    context = context,
+    appCoroutineScope: CoroutineScope,
+    networkChecker: NetworkChecker,
+) : BaseContainerRepository<T>, BaseDataRepositoryImpl<T>(
     refPath = refPath,
-    baseFirebaseDataSource = baseFirebaseDataSource,
-    baseRoomDataSource = baseRoomDataSource,
-    networkPreferences = networkPreferenceRepository
+    networkPreferences = networkPreferenceRepository,
+    networkChecker = networkChecker
 ) {
     /**
-     * TODO [allData] 혹은 sortFlow가 변경되면 업데이트 됨 TODO isSynced 업데이트 될 때 변경되니까 막아야됨
+     * TODO [allData] 혹은 sortFlow가 변경되면 업데이트 됨
      */
-    override val allData = combine(  // TODO 되나?
-        flow = baseRoomDataSource.getAll(),
+    override val allSortedData = combine(
+        flow = super.allData,
         flow2 = sortFlow,
         transform = ::getSortedData
+    ).stateIn(
+        scope = appCoroutineScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = emptyList()
     )
 
     private fun getSortedData(

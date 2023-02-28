@@ -50,7 +50,8 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
         networkChecker.checkNetWork()
 
         val dataWithCreateDate = data.addCreateData()
-        val dataWithKey = dataWithCreateDate.addKey(key = getKey(uid = uid)) as T
+        val dataWithEditDate = dataWithCreateDate.addEditDate()
+        val dataWithKey = dataWithEditDate.addKey(key = getKey(uid = uid)) as T
 
         val value = allData.value
         value.add(dataWithKey)

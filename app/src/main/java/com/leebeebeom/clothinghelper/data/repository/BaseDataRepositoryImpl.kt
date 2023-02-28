@@ -54,14 +54,11 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
     ) {
         checkNetWork()
 
-        val dataWithKey = data.addKey(key = getKey(uid = uid)) as T
+        val dataWithCreateDate = data.addCreateData()
+        val dataWithKey = dataWithCreateDate.addKey(key = getKey(uid = uid)) as T
 
         val value = allData.value
-        val result = value.add(dataWithKey)
-        if (!result) {
-            onFail(Exception("add 실패"))
-            return@withContext
-        }
+        value.add(dataWithKey)
         allData.value = value
 
         push(uid = uid, t = dataWithKey)
@@ -77,21 +74,28 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
     ) {
         checkNetWork()
 
+        val newDataWithEditDate = newData.addEditDate() as T
+
         val value = allData.value
         val oldData = value.find { it.key == newData.key }
+
         if (oldData == null) {
             onFail(NullPointerException("edit: 본래 파일 찾기 실패"))
             return@withContext
         }
 
-        val result = value.remove(oldData)
-        if (!result) {
-            onFail(Exception("edit 실패"))
-            if (!value.any { it.key == oldData.key }) {
-                value.add(oldData)
-            }
+        val removeResult = value.remove(oldData)
+
+        fun restore() {
+            if (!value.any { it.key == oldData.key }) value.add(oldData)
+        }
+        if (!removeResult) {
+            onFail(Exception("edit: 본래 파일 삭제 실패"))
+            restore()
             return@withContext
         }
+
+        value.add(newDataWithEditDate)
         allData.value = value
 
         push(uid = uid, t = newData)

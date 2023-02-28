@@ -38,9 +38,8 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
         callSite = DatabaseCallSite(callSite = "$type: update"), onFail = onFail
     ) {
         uid?.let {// 로그인 시
-            checkNetWork()
-
             val temp = mutableListOf<T>()
+
             dbRoot.getContainerRef(it, refPath).get()
                 .await().children.forEach { snapshot -> temp.add(snapshot.getValue(type)!!) }
 

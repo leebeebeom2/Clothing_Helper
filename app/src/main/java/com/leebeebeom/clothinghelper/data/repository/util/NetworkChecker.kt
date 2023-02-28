@@ -23,7 +23,7 @@ class NetworkChecker @Inject constructor(
     private val networkCapabilities = connectivityManager.activeNetwork
     private val actNw = connectivityManager.getNetworkCapabilities(networkCapabilities)
 
-    private suspend fun checkNetWork() {
+    suspend fun checkNetWork() {
         if (!networkCheck()) throw FirebaseNetworkException("인터넷 미연결")
         // 와이파이 선택 시 와이파이에 연결되지 않은 경우
         if (networkPreferenceRepository.network.first() == NetworkPreferences.WIFI && !isWifiConnected()) throw WifiException

@@ -1,22 +1,19 @@
 package com.leebeebeom.clothinghelper.domain.usecase.subcategory
 
-import com.leebeebeom.clothinghelper.domain.model.data.SubCategory
+import com.leebeebeom.clothinghelper.domain.model.SubCategory
+import com.leebeebeom.clothinghelper.domain.model.toDatabaseModel
 import com.leebeebeom.clothinghelper.domain.repository.SubCategoryRepository
-import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 
-// TODO edit -> nameEdit 으로 변경
-
-@ViewModelScoped
 class EditSubCategoryUseCase @Inject constructor(private val subCategoryRepository: SubCategoryRepository) {
-    suspend fun edit(
+    suspend fun nameEdit(
         oldSubCategory: SubCategory,
         name: String,
         uid: String,
         onFail: (Exception) -> Unit,
     ) {
-        val newSubCategory = oldSubCategory.copy(name = name, editDate = System.currentTimeMillis(), isSynced = false)
+        val newSubCategory = oldSubCategory.copy(name = name)
 
-        subCategoryRepository.edit(newData = newSubCategory, uid = uid, onFail = onFail)
+        subCategoryRepository.edit(newData = newSubCategory.toDatabaseModel(), uid = uid, onFail = onFail)
     }
 }

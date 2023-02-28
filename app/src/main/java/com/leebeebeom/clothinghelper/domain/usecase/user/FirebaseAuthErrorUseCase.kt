@@ -10,7 +10,6 @@ import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.E
 import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.ERROR_USER_NOT_FOUND
 import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.ERROR_WRONG_PASSWORD
 import com.leebeebeom.clothinghelper.ui.util.ShowToast
-import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 
 object FirebaseAuthErrorCode {
@@ -20,7 +19,6 @@ object FirebaseAuthErrorCode {
     const val ERROR_WRONG_PASSWORD = "ERROR_WRONG_PASSWORD"
 }
 
-@ViewModelScoped
 class FirebaseAuthErrorUseCase @Inject constructor() {
     fun firebaseAuthError(
         exception: Exception,
@@ -37,12 +35,8 @@ class FirebaseAuthErrorUseCase @Inject constructor() {
                     ERROR_WRONG_PASSWORD -> updatePasswordError(R.string.error_wrong_password)
                 }
             }
-            is FirebaseTooManyRequestsException -> {
-                showToast(R.string.network_error)
-            }
-            is FirebaseNetworkException -> {
-                showToast(R.string.too_many_requst_error)
-            }
+            is FirebaseTooManyRequestsException -> showToast(R.string.too_many_requst_error)
+            is FirebaseNetworkException -> showToast(R.string.network_error)
             else -> {
                 showToast(R.string.unknown_error)
                 logE("FirebaseAuthErrorUseCase: firebaseAuthError", exception)

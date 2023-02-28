@@ -127,5 +127,3 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
         dbRoot.getContainerRef(uid = uid, path = refPath).child(t.key).setValue(t).await()
     }
 }
-
-object WifiException : Exception()

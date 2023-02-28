@@ -15,6 +15,8 @@ data class SubCategory(
     override fun addKey(key: String) = copy(key = key)
 }
 
+fun SubCategory.toDatabaseModel() = DatabaseSubCategory(key = key, name = name, parent = parent)
+
 @Entity
 data class DatabaseSubCategory(
     @PrimaryKey override val key: String = "",

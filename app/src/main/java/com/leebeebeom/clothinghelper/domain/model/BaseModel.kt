@@ -9,8 +9,8 @@ abstract class BaseDatabaseModel : BaseModel() {
     abstract val createDate: Long
     abstract val editDate: Long
 
-    abstract fun addCreateData() : BaseModel
-    abstract fun addEditDate() : BaseModel
+    abstract fun addCreateData() : BaseDatabaseModel
+    abstract fun addEditDate() : BaseDatabaseModel
 }
 
 abstract class BaseContainerModel : BaseModel() {

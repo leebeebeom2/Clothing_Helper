@@ -1,5 +1,6 @@
 package com.leebeebeom.clothinghelper.domain.usecase.user
 
+import com.leebeebeom.clothinghelper.di.AppScope
 import com.leebeebeom.clothinghelper.domain.model.User
 import com.leebeebeom.clothinghelper.domain.model.toUser
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
@@ -14,16 +15,16 @@ import javax.inject.Singleton
 @Singleton
 class GetUserUseCase @Inject constructor(
     private val userRepository: UserRepository,
-    private val appCoroutineScope: CoroutineScope,
+    @AppScope private val appScope: CoroutineScope,
 ) {
     private lateinit var user: StateFlow<User?>
-    fun getUser(): StateFlow<User?> = if (::user.isInitialized) user
-    else {
-        user = userRepository.firebaseUser.map { it?.toUser() }.stateIn(
-            scope = appCoroutineScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = null
-        )
-        user
+    fun getUser(): StateFlow<User?> {
+        if (!::user.isInitialized)
+            user = userRepository.firebaseUser.map { it?.toUser() }.stateIn(
+                scope = appScope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = null
+            )
+        return user
     }
 }

@@ -3,20 +3,26 @@ package com.leebeebeom.clothinghelper.data.repository.util
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-fun networkCheck(context: Context): Boolean {
-    val connectivityManager =
+@Singleton
+class NetworkChecker @Inject constructor(@ApplicationContext context: Context) {
+    private val connectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-    val networkCapabilities = connectivityManager.activeNetwork ?: return false
-    val actNw = connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
+    private val networkCapabilities = connectivityManager.activeNetwork
+    private val actNw = connectivityManager.getNetworkCapabilities(networkCapabilities)
 
-    return when {
-        actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-        actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-        actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-        else -> false
-    }
+    fun isWifiConnected() =
+        actNw?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ?: false
+
+    fun networkCheck() = actNw?.let {
+        actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+    } ?: false
 }
 
 

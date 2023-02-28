@@ -8,7 +8,6 @@ import com.leebeebeom.clothinghelper.data.repository.preference.SortPreferences
 import com.leebeebeom.clothinghelper.data.repository.util.NetworkChecker
 import com.leebeebeom.clothinghelper.domain.model.BaseDatabaseContainerModel
 import com.leebeebeom.clothinghelper.domain.repository.BaseContainerRepository
-import com.leebeebeom.clothinghelper.domain.repository.preference.NetworkPreferenceRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,12 +18,10 @@ import kotlinx.coroutines.flow.stateIn
 abstract class BaseContainerRepositoryImpl<T : BaseDatabaseContainerModel>(
     sortFlow: Flow<SortPreferences>,
     refPath: String,
-    networkPreferenceRepository: NetworkPreferenceRepository,
     appScope: CoroutineScope,
     networkChecker: NetworkChecker,
 ) : BaseContainerRepository<T>, BaseDataRepositoryImpl<T>(
     refPath = refPath,
-    networkPreferences = networkPreferenceRepository,
     networkChecker = networkChecker
 ) {
     /**

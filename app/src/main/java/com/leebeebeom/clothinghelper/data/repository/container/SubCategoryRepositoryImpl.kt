@@ -5,7 +5,6 @@ import com.leebeebeom.clothinghelper.data.repository.util.NetworkChecker
 import com.leebeebeom.clothinghelper.di.AppScope
 import com.leebeebeom.clothinghelper.domain.model.DatabaseSubCategory
 import com.leebeebeom.clothinghelper.domain.repository.SubCategoryRepository
-import com.leebeebeom.clothinghelper.domain.repository.preference.NetworkPreferenceRepository
 import com.leebeebeom.clothinghelper.domain.repository.preference.SortPreferenceRepository
 import com.leebeebeom.clothinghelper.domain.repository.preference.SubCategoryPreferencesRepository
 import kotlinx.coroutines.CoroutineScope
@@ -15,13 +14,11 @@ import javax.inject.Singleton
 @Singleton
 class SubCategoryRepositoryImpl @Inject constructor(
     @SubCategoryPreferencesRepository subCategoryPreferencesRepository: SortPreferenceRepository,
-    networkPreferenceRepository: NetworkPreferenceRepository,
     @AppScope appScope: CoroutineScope,
     networkChecker: NetworkChecker,
 ) : BaseContainerRepositoryImpl<DatabaseSubCategory>(
     sortFlow = subCategoryPreferencesRepository.sort,
     refPath = DatabasePath.SUB_CATEGORIES,
-    networkPreferenceRepository = networkPreferenceRepository,
     appScope = appScope,
     networkChecker = networkChecker
 ), SubCategoryRepository

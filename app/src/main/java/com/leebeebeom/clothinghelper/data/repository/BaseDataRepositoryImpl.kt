@@ -1,14 +1,11 @@
 package com.leebeebeom.clothinghelper.data.repository
 
-import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.leebeebeom.clothinghelper.data.repository.preference.NetworkPreferences.WIFI
 import com.leebeebeom.clothinghelper.data.repository.util.*
 import com.leebeebeom.clothinghelper.domain.model.BaseDatabaseModel
 import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
-import com.leebeebeom.clothinghelper.domain.repository.preference.NetworkPreferenceRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.tasks.await
@@ -19,7 +16,6 @@ fun getDbRoot() = Firebase.database.reference
 abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
     private val refPath: String,
     private val networkChecker: NetworkChecker,
-    private val networkPreferences: NetworkPreferenceRepository,
 ) : BaseDataRepository<T>, LoadingStateProviderImpl(true) {
     private val dbRoot = getDbRoot()
     override val allData = MutableStateFlow(mutableListOf<T>())
@@ -51,7 +47,7 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
     override suspend fun add(data: T, uid: String, onFail: (Exception) -> Unit) = withContext(
         callSite = DatabaseCallSite("${data.javaClass}: add"), loading = false, onFail = onFail
     ) {
-        checkNetWork()
+        networkChecker.checkNetWork()
 
         val dataWithCreateDate = data.addCreateData()
         val dataWithKey = dataWithCreateDate.addKey(key = getKey(uid = uid)) as T
@@ -71,7 +67,7 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
     ) = withContext(
         DatabaseCallSite(callSite = "${newData::javaClass}: edit"), loading = false, onFail = onFail
     ) {
-        checkNetWork()
+        networkChecker.checkNetWork()
 
         val newDataWithEditDate = newData.addEditDate() as T
 
@@ -122,12 +118,6 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
     }
 
     private fun getKey(uid: String) = dbRoot.getContainerRef(uid, refPath).push().key!!
-
-    private suspend fun checkNetWork() {
-        if (!networkChecker.networkCheck()) throw FirebaseNetworkException("인터넷 미연결")
-        // 와이파이 선택 시 와이파이에 연결되지 않은 경우
-        if (networkPreferences.network.first() == WIFI && !networkChecker.isWifiConnected()) throw WifiException
-    }
 
     private suspend fun push(
         uid: String,

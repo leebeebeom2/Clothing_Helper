@@ -1,21 +1,19 @@
 package com.leebeebeom.clothinghelper.domain.usecase.folder
 
-import com.leebeebeom.clothinghelper.domain.model.data.Folder
+import com.leebeebeom.clothinghelper.domain.model.Folder
+import com.leebeebeom.clothinghelper.domain.model.toDatabaseModel
 import com.leebeebeom.clothinghelper.domain.repository.FolderRepository
-import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 
-// TODO edit -> nameEdit 으로 변경
-@ViewModelScoped
 class EditFolderNameUseCase @Inject constructor(private val folderRepository: FolderRepository) {
-    suspend fun edit(
+    suspend fun editName(
         oldFolder: Folder,
         name: String,
         uid: String,
         onFail: (Exception) -> Unit,
     ) {
-        val newFolder = oldFolder.copy(name = name, editDate = System.currentTimeMillis(), isSynced = false)
+        val newFolder = oldFolder.copy(name = name)
 
-        folderRepository.edit(newData = newFolder, uid = uid, onFail = onFail)
+        folderRepository.edit(newData = newFolder.toDatabaseModel(), uid = uid, onFail = onFail)
     }
 }

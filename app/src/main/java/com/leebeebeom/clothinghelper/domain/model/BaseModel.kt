@@ -5,14 +5,17 @@ abstract class BaseModel {
     abstract fun addKey(key: String): BaseModel
 }
 
+abstract class BaseDatabaseModel : BaseModel() {
+    abstract val createDate: Long
+    abstract val editDate: Long
+}
+
 abstract class BaseContainerModel : BaseModel() {
     abstract val name: String
 }
 
-abstract class BaseDatabaseContainerModel : BaseModel() {
+abstract class BaseDatabaseContainerModel : BaseDatabaseModel() {
     abstract val name: String
-    abstract val createDate: Long
-    abstract val editDate: Long
 }
 
 abstract class BaseFolderModel : BaseContainerModel() {

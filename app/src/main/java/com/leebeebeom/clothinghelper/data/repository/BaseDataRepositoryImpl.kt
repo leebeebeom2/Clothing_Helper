@@ -82,12 +82,9 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
 
         val removeResult = value.remove(oldData)
 
-        fun restore() {
-            if (!value.any { it.key == oldData.key }) value.add(oldData)
-        }
         if (!removeResult) {
             onFail(Exception("edit: 본래 파일 삭제 실패"))
-            restore()
+            if (!value.any { it.key == oldData.key }) value.add(oldData)
             return@withContext
         }
 

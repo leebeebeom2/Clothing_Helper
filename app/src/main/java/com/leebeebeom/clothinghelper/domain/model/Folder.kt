@@ -11,7 +11,9 @@ data class Folder(
     override val name: String = "",
     override val parentKey: String = "",
     override val subCategoryKey: String = "",
-) : BaseFolderModel(), Parcelable
+) : BaseFolderModel(), Parcelable {
+    override fun addKey(key: String) = copy(key = key)
+}
 
 @Entity
 data class DatabaseFolder(

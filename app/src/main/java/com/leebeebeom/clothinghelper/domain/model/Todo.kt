@@ -8,7 +8,9 @@ data class Todo(
     val text: String = "",
     val done: Boolean = false,
     val order: Int = 0,
-) : BaseModel()
+) : BaseModel() {
+    override fun addKey(key: String) = copy(key = key)
+}
 
 @Entity
 data class DatabaseTodo(
@@ -16,6 +18,6 @@ data class DatabaseTodo(
     val text: String = "",
     val done: Boolean = false,
     val order: Int = 0,
-) : BaseDatabaseModel() {
+) : BaseModel() {
     override fun addKey(key: String) = copy(key = key)
 }

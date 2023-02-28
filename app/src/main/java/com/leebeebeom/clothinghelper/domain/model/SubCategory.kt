@@ -11,7 +11,9 @@ data class SubCategory(
     override val key: String = "",
     override val name: String = "",
     val parent: MainCategoryType = MainCategoryType.TOP,
-) : BaseContainerModel(), Parcelable
+) : BaseContainerModel(), Parcelable {
+    override fun addKey(key: String) = copy(key = key)
+}
 
 @Entity
 data class DatabaseSubCategory(

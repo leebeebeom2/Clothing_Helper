@@ -70,8 +70,6 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
     ) {
         networkChecker.checkNetWork()
 
-        val newDataWithEditDate = newData.addEditDate() as T
-
         val value = allData.value
         val oldData = value.find { it.key == newData.key }
 
@@ -80,6 +78,8 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
             return@withContext
         }
 
+        val newDataWithCreateDate = newData.addCreateData(oldData.createDate)
+        val newDataWithEditDate = newDataWithCreateDate.addEditDate() as T
         val removeResult = value.remove(oldData)
 
         if (!removeResult) {

@@ -24,7 +24,7 @@ class ActivityViewModel @Inject constructor(private val getUserUseCase: GetUserU
         _activityUiState.toastText = null
     }
 
-    val user get() = getUserUseCase.user
+    val user get() = getUserUseCase.getUser()
 }
 
 @Stable

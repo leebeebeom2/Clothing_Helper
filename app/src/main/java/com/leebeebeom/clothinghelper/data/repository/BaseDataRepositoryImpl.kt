@@ -67,7 +67,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         }
         allData.value = value
 
-        push(uid = uid, t = dataWithKey) // TODO Wokrker
+        push(uid = uid, t = dataWithKey)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -97,7 +97,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         }
         allData.value = value
 
-        push(uid = uid, t = newData) //TODO workder
+        push(uid = uid, t = newData)
     }
 
     /**

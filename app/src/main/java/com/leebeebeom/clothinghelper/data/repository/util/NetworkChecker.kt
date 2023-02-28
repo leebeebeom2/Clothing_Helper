@@ -29,10 +29,10 @@ class NetworkChecker @Inject constructor(
         if (networkPreferenceRepository.network.first() == NetworkPreferences.WIFI && !isWifiConnected()) throw WifiException
     }
 
-    fun isWifiConnected() =
+    private fun isWifiConnected() =
         actNw?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ?: false
 
-    fun networkCheck() = actNw?.let {
+    private fun networkCheck() = actNw?.let {
         actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
                 actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
                 actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)

@@ -61,11 +61,11 @@ class UserRepositoryImpl @Inject constructor() :
     ) {
         val request = userProfileChangeRequest { displayName = name }
 
-        val firebaseUser = auth.createUserWithEmailAndPassword(email, password).await().user!!
+        val user = auth.createUserWithEmailAndPassword(email, password).await().user!!
 
-        firebaseUser.updateProfile(request).await()
+        user.updateProfile(request).await()
 
-        this@UserRepositoryImpl.firebaseUser.value = firebaseUser.toFirebaseUser()
+        firebaseUser.value = user.toFirebaseUser()
 
         firebaseResult.success()
     }

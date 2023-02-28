@@ -9,7 +9,6 @@ import com.leebeebeom.clothinghelper.domain.repository.FolderRepository
 import com.leebeebeom.clothinghelper.domain.repository.SubCategoryRepository
 import com.leebeebeom.clothinghelper.domain.repository.TodoRepository
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
-import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -31,7 +30,7 @@ class LoadDataUseCase @Inject constructor(
 
                 coroutineScope {
 
-                    val deferreds = listOf(
+                    val deferred = listOf(
                         async {
                             subCategoryRepository.load(
                                 uid = it?.uid,
@@ -54,7 +53,7 @@ class LoadDataUseCase @Inject constructor(
                             )
                         }
                     )
-                    deferreds.awaitAll()
+                    deferred.awaitAll()
                 }
             } catch (e: Exception) {
                 onFail(e)

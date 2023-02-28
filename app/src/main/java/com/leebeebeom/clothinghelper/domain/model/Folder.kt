@@ -17,6 +17,14 @@ data class Folder(
     override fun addKey(key: String) = copy(key = key)
 }
 
+fun Folder.toDatabaseModel() =
+    DatabaseFolder(
+        key = key,
+        name = name,
+        parentKey = parentKey,
+        subCategoryKey = subCategoryKey, mainCategoryType = mainCategoryType
+    )
+
 @Entity
 data class DatabaseFolder(
     @PrimaryKey override val key: String = "",

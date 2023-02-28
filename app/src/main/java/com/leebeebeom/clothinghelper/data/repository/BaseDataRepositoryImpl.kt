@@ -1,13 +1,12 @@
 package com.leebeebeom.clothinghelper.data.repository
 
-import android.content.Context
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelper.data.repository.preference.NetworkPreferences.WIFI
 import com.leebeebeom.clothinghelper.data.repository.util.*
-import com.leebeebeom.clothinghelper.domain.model.BaseModel
+import com.leebeebeom.clothinghelper.domain.model.BaseDatabaseModel
 import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
 import com.leebeebeom.clothinghelper.domain.repository.preference.NetworkPreferenceRepository
 import kotlinx.coroutines.*
@@ -17,12 +16,10 @@ import kotlinx.coroutines.tasks.await
 fun DatabaseReference.getContainerRef(uid: String, path: String) = child(uid).child(path)
 fun getDbRoot() = Firebase.database.reference
 
-abstract class BaseDataRepositoryImpl<T : BaseModel>(
-    private val context: Context,
+abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
     private val refPath: String,
     private val networkChecker: NetworkChecker,
     private val networkPreferences: NetworkPreferenceRepository,
-    private val appCoroutineScope: CoroutineScope,
 ) : BaseDataRepository<T>, LoadingStateProviderImpl(true) {
     private val dbRoot = getDbRoot()
     override val allData = MutableStateFlow(mutableListOf<T>())

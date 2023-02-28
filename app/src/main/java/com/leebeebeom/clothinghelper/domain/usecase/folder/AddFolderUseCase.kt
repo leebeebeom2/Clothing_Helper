@@ -1,12 +1,12 @@
 package com.leebeebeom.clothinghelper.domain.usecase.folder
 
-import com.leebeebeom.clothinghelper.domain.model.data.Folder
+import com.leebeebeom.clothinghelper.domain.model.Folder
+import com.leebeebeom.clothinghelper.domain.model.toDatabaseModel
 import com.leebeebeom.clothinghelper.domain.repository.FolderRepository
 import com.leebeebeom.clothinghelper.ui.main.drawer.MainCategoryType
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 
-@ViewModelScoped
 class AddFolderUseCase @Inject constructor(private val folderRepository: FolderRepository) {
     suspend fun add(
         parentKey: String,
@@ -16,17 +16,13 @@ class AddFolderUseCase @Inject constructor(private val folderRepository: FolderR
         uid: String,
         onFail: (Exception) -> Unit,
     ) {
-        val currentTime = System.currentTimeMillis()
-
         val folder = Folder(
             parentKey = parentKey,
             subCategoryKey = subCategoryKey,
             name = name,
-            parent = mainCategoryType,
-            createDate = currentTime,
-            editDate = currentTime
+            mainCategoryType = mainCategoryType
         )
 
-        folderRepository.add(data = folder, uid = uid, onFail = onFail)
+        folderRepository.add(data = folder.toDatabaseModel(), uid = uid, onFail = onFail)
     }
 }

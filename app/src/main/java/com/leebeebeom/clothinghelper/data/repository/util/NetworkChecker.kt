@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import com.google.firebase.FirebaseNetworkException
-import com.leebeebeom.clothinghelper.data.repository.WifiException
 import com.leebeebeom.clothinghelper.data.repository.preference.NetworkPreferences
 import com.leebeebeom.clothinghelper.domain.repository.preference.NetworkPreferenceRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -23,6 +22,10 @@ class NetworkChecker @Inject constructor(
     private val networkCapabilities = connectivityManager.activeNetwork
     private val actNw = connectivityManager.getNetworkCapabilities(networkCapabilities)
 
+    /**
+     * 인터넷 미 연결 시 [FirebaseNetworkException] 발생
+     * 와이파이 미 연결 시 [WifiException] 발생
+     */
     suspend fun checkNetWork() {
         if (!networkCheck()) throw FirebaseNetworkException("인터넷 미연결")
         // 와이파이 선택 시 와이파이에 연결되지 않은 경우
@@ -39,4 +42,4 @@ class NetworkChecker @Inject constructor(
     } ?: false
 }
 
-
+object WifiException : Exception()

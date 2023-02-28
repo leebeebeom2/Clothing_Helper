@@ -16,7 +16,6 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
-@ViewModelScoped
 class LoadDataUseCase @Inject constructor(
     private val userRepository: UserRepository,
     private val subCategoryRepository: SubCategoryRepository,

@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.tasks.await
 
 fun DatabaseReference.getContainerRef(uid: String, path: String) = child(uid).child(path)
+fun getDbRoot() = Firebase.database.reference
 
 abstract class BaseDataRepositoryImpl<T : BaseModel>(
     private val context: Context,
@@ -23,7 +24,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     private val networkPreferences: NetworkPreferenceRepository,
     private val appCoroutineScope: CoroutineScope,
 ) : BaseDataRepository<T>, LoadingStateProviderImpl(true) {
-    private val dbRoot = Firebase.database.reference
+    private val dbRoot = getDbRoot()
     override val allData = MutableStateFlow(mutableListOf<T>())
 
     // TODO 미로그인 시 데이터 사용 Any로 변경

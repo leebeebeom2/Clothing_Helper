@@ -4,7 +4,6 @@ import com.leebeebeom.clothinghelper.domain.model.Folder
 import com.leebeebeom.clothinghelper.domain.model.toDatabaseModel
 import com.leebeebeom.clothinghelper.domain.repository.FolderRepository
 import com.leebeebeom.clothinghelper.ui.main.drawer.MainCategoryType
-import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 
 class AddFolderUseCase @Inject constructor(private val folderRepository: FolderRepository) {

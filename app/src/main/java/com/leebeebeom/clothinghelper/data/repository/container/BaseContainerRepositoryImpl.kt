@@ -20,7 +20,7 @@ abstract class BaseContainerRepositoryImpl<T : BaseDatabaseContainerModel>(
     sortFlow: Flow<SortPreferences>,
     refPath: String,
     networkPreferenceRepository: NetworkPreferenceRepository,
-    appCoroutineScope: CoroutineScope,
+    appScope: CoroutineScope,
     networkChecker: NetworkChecker,
 ) : BaseContainerRepository<T>, BaseDataRepositoryImpl<T>(
     refPath = refPath,
@@ -35,7 +35,7 @@ abstract class BaseContainerRepositoryImpl<T : BaseDatabaseContainerModel>(
         flow2 = sortFlow,
         transform = ::getSortedData
     ).stateIn(
-        scope = appCoroutineScope,
+        scope = appScope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = emptyList()
     )

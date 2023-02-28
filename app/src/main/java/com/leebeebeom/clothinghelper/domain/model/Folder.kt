@@ -24,7 +24,7 @@ data class DatabaseFolder(
     override val createDate: Long = 0,
     override val editDate: Long = 0,
 ) : BaseDatabaseFolderModel() {
-    override fun addCreateData() = copy(createDate = System.currentTimeMillis())
+    override fun addCreateData(date: Long): BaseDatabaseModel = copy(createDate = date)
 
     override fun addEditDate() = copy(editDate = System.currentTimeMillis())
 

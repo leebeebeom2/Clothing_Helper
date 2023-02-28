@@ -21,7 +21,7 @@ data class DatabaseTodo(
     override val createDate: Long = 0,
     override val editDate: Long = 0,
 ) : BaseDatabaseModel() {
-    override fun addCreateData() = copy(createDate = System.currentTimeMillis())
+    override fun addCreateData(date: Long): BaseDatabaseModel = copy(createDate = date)
 
     override fun addEditDate() = copy(editDate = System.currentTimeMillis())
     override fun addKey(key: String) = copy(key = key)

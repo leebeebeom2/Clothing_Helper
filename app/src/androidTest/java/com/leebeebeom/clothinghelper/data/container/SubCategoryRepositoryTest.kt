@@ -8,6 +8,8 @@ import com.leebeebeom.clothinghelper.data.repository.preference.SubCategoryPrefe
 import com.leebeebeom.clothinghelper.data.repository.util.NetworkChecker
 import com.leebeebeom.clothinghelper.data.repositoryCrudTest
 import com.leebeebeom.clothinghelper.domain.model.DatabaseSubCategory
+import com.leebeebeom.clothinghelper.domain.model.SubCategory
+import com.leebeebeom.clothinghelper.domain.model.toDatabaseModel
 import com.leebeebeom.clothinghelper.domain.repository.SubCategoryRepository
 import com.leebeebeom.clothinghelper.domain.repository.preference.NetworkPreferenceRepository
 import com.leebeebeom.clothinghelper.domain.repository.preference.SortPreferenceRepository
@@ -43,10 +45,10 @@ class SubCategoryRepositoryTest {
 
     @Test
     fun crudTest() {
-        val subCategory = DatabaseSubCategory(name = "subcategory test")
+        val subCategory = SubCategory(name = "subcategory test")
 
         repositoryCrudTest(
-            data = subCategory,
+            data = subCategory.toDatabaseModel(),
             repository = subCategoryRepository,
             uid = uid,
             type = DatabaseSubCategory::class.java,

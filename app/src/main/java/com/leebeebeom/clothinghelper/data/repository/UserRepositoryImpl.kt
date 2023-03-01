@@ -88,7 +88,7 @@ class UserRepositoryImpl @Inject constructor() :
      * @throws FirebaseTooManyRequestsException - 너무 많은 요청이 발생했을 경우
      * @throws FirebaseAuthException - InvalidEmail, NotFoundUser 등
      */
-    override suspend fun resetPasswordEmail(
+    override suspend fun sendResetPasswordEmail(
         email: String,
         firebaseResult: FirebaseResult,
         dispatcher: CoroutineDispatcher,

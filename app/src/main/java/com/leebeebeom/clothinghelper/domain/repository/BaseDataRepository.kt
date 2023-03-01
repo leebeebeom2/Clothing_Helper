@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 interface BaseDataRepository<T : BaseDatabaseModel> : LoadingStateProvider {
     val allData: StateFlow<List<T>>
     suspend fun load(
-        dispatcher: CoroutineDispatcher = Dispatchers.IO,
+        dispatcher: CoroutineDispatcher,
         uid: String?,
         type: Class<T>,
         onFail: (Exception) -> Unit,

@@ -17,5 +17,5 @@ open class LoadingStateProviderImpl(initialLoading: Boolean) : LoadingStateProvi
 
     fun loadingOn() = _isLoading.update { true }
 
-    suspend fun loadingOff() = withContext(NonCancellable) { _isLoading.update { false } }
+    fun loadingOff() = _isLoading.update { false }
 }

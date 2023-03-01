@@ -87,6 +87,8 @@ class UserRepositoryTest {
             dispatcher = dispatcher
         )
 
+        assert(FirebaseAuth.getInstance().currentUser!!.displayName == name)
+
         FirebaseAuth.getInstance().currentUser!!.delete()
     }
 

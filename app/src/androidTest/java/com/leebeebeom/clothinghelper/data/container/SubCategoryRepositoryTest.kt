@@ -52,7 +52,10 @@ class SubCategoryRepositoryTest {
             repository = subCategoryRepository,
             uid = uid,
             type = DatabaseSubCategory::class.java,
-            addAssert = { assert(it.name == subCategory.name) },
+            addAssert = {
+                assert(it.name == subCategory.name)
+                assert(it.createDate == it.editDate)
+            },
             newData = { it.copy(name = "new subCategory") },
             editAssert = { origin, new ->
                 assert(origin.key == new.key)

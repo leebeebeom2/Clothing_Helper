@@ -107,7 +107,10 @@ class UserRepositoryImpl @Inject constructor() :
             callSite = AuthCallSite("signOut"),
             onFail = onFail,
             dispatcher = dispatcher
-        ) { auth.signOut() }
+        ) {
+            auth.signOut()
+            firebaseUser.value = null
+        }
 
     /**
      * 호출 시 로딩 On

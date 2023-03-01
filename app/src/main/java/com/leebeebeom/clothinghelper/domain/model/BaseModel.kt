@@ -4,15 +4,10 @@ import com.leebeebeom.clothinghelper.ui.main.drawer.MainCategoryType
 
 abstract class BaseModel {
     abstract val key: String
-    abstract fun addKey(key: String): BaseModel
 }
 
 abstract class BaseDatabaseModel : BaseModel() {
-    abstract val createDate: Long
-    abstract val editDate: Long
-
-    abstract fun addCreateData(date: Long = System.currentTimeMillis()): BaseDatabaseModel
-    abstract fun addEditDate(): BaseDatabaseModel
+    abstract fun addKey(key: String): BaseModel
 }
 
 abstract class BaseContainerModel : BaseModel() {
@@ -21,6 +16,12 @@ abstract class BaseContainerModel : BaseModel() {
 
 abstract class BaseDatabaseContainerModel : BaseDatabaseModel() {
     abstract val name: String
+
+    abstract val createDate: Long
+    abstract val editDate: Long
+
+    abstract fun addCreateData(date: Long = System.currentTimeMillis()): BaseDatabaseContainerModel
+    abstract fun addEditDate(): BaseDatabaseContainerModel
 }
 
 abstract class BaseFolderModel : BaseContainerModel() {

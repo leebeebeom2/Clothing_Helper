@@ -8,9 +8,7 @@ data class Todo(
     val text: String = "",
     val done: Boolean = false,
     val order: Int = 0,
-) : BaseModel() {
-    override fun addKey(key: String) = copy(key = key)
-}
+) : BaseModel()
 
 @Entity
 data class DatabaseTodo(
@@ -18,11 +16,6 @@ data class DatabaseTodo(
     val text: String = "",
     val done: Boolean = false,
     val order: Int = 0,
-    override val createDate: Long = 0,
-    override val editDate: Long = 0,
 ) : BaseDatabaseModel() {
-    override fun addCreateData(date: Long): BaseDatabaseModel = copy(createDate = date)
-
-    override fun addEditDate() = copy(editDate = System.currentTimeMillis())
     override fun addKey(key: String) = copy(key = key)
 }

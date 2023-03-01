@@ -13,9 +13,7 @@ data class Folder(
     override val parentKey: String = "",
     override val subCategoryKey: String = "",
     override val mainCategoryType: MainCategoryType = MainCategoryType.TOP,
-) : BaseFolderModel(), Parcelable {
-    override fun addKey(key: String) = copy(key = key)
-}
+) : BaseFolderModel(), Parcelable
 
 fun Folder.toDatabaseModel() =
     DatabaseFolder(
@@ -35,7 +33,7 @@ data class DatabaseFolder(
     override val editDate: Long = 0,
     override val mainCategoryType: MainCategoryType = MainCategoryType.TOP,
 ) : BaseDatabaseFolderModel() {
-    override fun addCreateData(date: Long): BaseDatabaseModel = copy(createDate = date)
+    override fun addCreateData(date: Long) = copy(createDate = date)
 
     override fun addEditDate() = copy(editDate = System.currentTimeMillis())
 

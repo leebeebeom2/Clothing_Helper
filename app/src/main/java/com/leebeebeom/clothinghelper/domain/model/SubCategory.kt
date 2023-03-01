@@ -11,9 +11,7 @@ data class SubCategory(
     override val key: String = "",
     override val name: String = "",
     val parent: MainCategoryType = MainCategoryType.TOP,
-) : BaseContainerModel(), Parcelable {
-    override fun addKey(key: String) = copy(key = key)
-}
+) : BaseContainerModel(), Parcelable
 
 fun SubCategory.toDatabaseModel() = DatabaseSubCategory(key = key, name = name, parent = parent)
 
@@ -25,7 +23,7 @@ data class DatabaseSubCategory(
     override val createDate: Long = 0,
     override val editDate: Long = 0,
 ) : BaseDatabaseContainerModel() {
-    override fun addCreateData(date: Long): BaseDatabaseModel = copy(createDate = date)
+    override fun addCreateData(date: Long) = copy(createDate = date)
 
     override fun addEditDate() = copy(editDate = System.currentTimeMillis())
     override fun addKey(key: String) = copy(key = key)

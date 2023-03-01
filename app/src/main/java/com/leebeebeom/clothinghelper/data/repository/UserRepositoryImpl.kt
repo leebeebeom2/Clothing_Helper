@@ -1,7 +1,10 @@
 package com.leebeebeom.clothinghelper.data.repository
 
+import com.google.firebase.FirebaseNetworkException
+import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.leebeebeom.clothinghelper.data.repository.util.AuthCallSite
@@ -37,6 +40,11 @@ class UserRepositoryImpl @Inject constructor() :
         firebaseResult.success()
     }
 
+    /**
+     * @throws FirebaseNetworkException - 인터넷에 연결되지 않았을 경우
+     * @throws FirebaseTooManyRequestsException - 너무 많은 요청이 발생했을 경우
+     * @throws FirebaseAuthException - InvalidEmail, NotFoundUser, WrongPassword 등
+     */
     override suspend fun signIn(
         email: String,
         password: String,
@@ -50,6 +58,11 @@ class UserRepositoryImpl @Inject constructor() :
         firebaseResult.success()
     }
 
+    /**
+     * @throws FirebaseNetworkException - 인터넷에 연결되지 않았을 경우
+     * @throws FirebaseTooManyRequestsException - 너무 많은 요청이 발생했을 경우
+     * @throws FirebaseAuthException - InvalidEmail, EmailAlreadyInUse 등
+     */
     override suspend fun signUp(
         email: String,
         password: String,
@@ -70,6 +83,11 @@ class UserRepositoryImpl @Inject constructor() :
         firebaseResult.success()
     }
 
+    /**
+     * @throws FirebaseNetworkException - 인터넷에 연결되지 않았을 경우
+     * @throws FirebaseTooManyRequestsException - 너무 많은 요청이 발생했을 경우
+     * @throws FirebaseAuthException - InvalidEmail, NotFoundUser 등
+     */
     override suspend fun resetPasswordEmail(
         email: String,
         firebaseResult: FirebaseResult,

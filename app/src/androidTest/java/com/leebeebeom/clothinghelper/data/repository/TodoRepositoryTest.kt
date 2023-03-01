@@ -2,21 +2,17 @@ package com.leebeebeom.clothinghelper.data.repository
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
-import com.leebeebeom.clothinghelper.data.repository.preference.NetworkPreferenceRepositoryImpl
-import com.leebeebeom.clothinghelper.data.repository.util.NetworkChecker
+import com.leebeebeom.clothinghelper.RepositoryProvider
 import com.leebeebeom.clothinghelper.data.repositoryCrudTest
 import com.leebeebeom.clothinghelper.data.repositorySignOutTest
 import com.leebeebeom.clothinghelper.domain.model.DatabaseTodo
 import com.leebeebeom.clothinghelper.domain.model.Todo
 import com.leebeebeom.clothinghelper.domain.model.toDatabaseModel
 import com.leebeebeom.clothinghelper.domain.repository.TodoRepository
-import com.leebeebeom.clothinghelper.domain.repository.preference.NetworkPreferenceRepository
 import org.junit.Before
 import org.junit.Test
 
 class TodoRepositoryTest {
-    private lateinit var networkPreferenceRepository: NetworkPreferenceRepository
-    private lateinit var netWorkChecker: NetworkChecker
     private lateinit var todoRepository: TodoRepository
 
     private val uid = "todo test"
@@ -24,20 +20,14 @@ class TodoRepositoryTest {
     @Before
     fun init() {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        networkPreferenceRepository = NetworkPreferenceRepositoryImpl(context = context)
-        netWorkChecker = NetworkChecker(
-            context = context,
-            networkPreferenceRepository = networkPreferenceRepository
-        )
-        todoRepository = TodoRepositoryImpl(netWorkChecker)
+        todoRepository = RepositoryProvider.getTodoRepository(context)
     }
 
     @Test
     fun crudTest() {
         val todo = Todo(text = "todo")
 
-        repositoryCrudTest(
-            data = todo.toDatabaseModel(),
+        repositoryCrudTest(data = todo.toDatabaseModel(),
             repository = todoRepository,
             uid = uid,
             type = DatabaseTodo::class.java,
@@ -52,8 +42,7 @@ class TodoRepositoryTest {
                 assert(new.done)
                 assert(new.order == 1)
                 assert(new.text == "new todo")
-            }
-        )
+            })
     }
 
     @Test

@@ -6,7 +6,7 @@ import com.leebeebeom.clothinghelper.domain.repository.preference.SortPreference
 import org.junit.Before
 import org.junit.Test
 
-class SortPreferencesRepositoryImplTest {
+class SortPreferencesRepositoryTest {
     private lateinit var folderPreferencesRepository: SortPreferenceRepository
     private lateinit var subCategoryPreferencesRepository: SortPreferenceRepository
 

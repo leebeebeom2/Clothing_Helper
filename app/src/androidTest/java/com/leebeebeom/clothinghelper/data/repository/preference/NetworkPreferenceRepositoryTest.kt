@@ -10,7 +10,7 @@ import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class NetworkPreferenceRepositoryImplTest {
+class NetworkPreferenceRepositoryTest {
     private lateinit var networkPreferenceRepository: NetworkPreferenceRepository
 
     @Before

@@ -14,7 +14,7 @@ fun Todo.toDatabaseModel() = DatabaseTodo(key = key, text = text, done = done, o
 
 @Entity
 data class DatabaseTodo(
-    @PrimaryKey override val key: String,
+    @PrimaryKey override val key: String = "",
     val text: String = "",
     val done: Boolean = false,
     val order: Int = 0,

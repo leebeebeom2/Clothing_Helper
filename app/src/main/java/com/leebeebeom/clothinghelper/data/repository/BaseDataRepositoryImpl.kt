@@ -46,15 +46,11 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
     ) {
         networkChecker.checkNetWork()
 
-        val dataWithCreateDate = data.addCreateData()
-        val dataWithEditDate = dataWithCreateDate.addEditDate()
-        val dataWithKey = dataWithEditDate.addKey(key = getKey(uid = uid)) as T
-
         val value = allData.value
-        value.add(dataWithKey)
+        value.add(data)
         allData.value = value
 
-        push(uid = uid, t = dataWithKey)
+        push(uid = uid, t = data)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -68,15 +64,8 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
         networkChecker.checkNetWork()
 
         val value = allData.value
-        val oldData = value.find { it.key == newData.key }
+        val oldData = value.first { it.key == newData.key }
 
-        if (oldData == null) {
-            onFail(NullPointerException("edit: 본래 파일 찾기 실패"))
-            return@withContext
-        }
-
-        val newDataWithCreateDate = newData.addCreateData(oldData.createDate)
-        val newDataWithEditDate = newDataWithCreateDate.addEditDate() as T
         val removeResult = value.remove(oldData)
 
         if (!removeResult) {
@@ -85,7 +74,7 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
             return@withContext
         }
 
-        value.add(newDataWithEditDate)
+        value.add(newData)
         allData.value = value
 
         push(uid = uid, t = newData)
@@ -112,7 +101,7 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
         }
     }
 
-    private fun getKey(uid: String) = dbRoot.getContainerRef(uid, refPath).push().key!!
+    protected fun getKey(uid: String) = dbRoot.getContainerRef(uid, refPath).push().key!!
 
     private suspend fun push(
         uid: String,

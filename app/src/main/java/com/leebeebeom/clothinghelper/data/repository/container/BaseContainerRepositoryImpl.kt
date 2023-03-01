@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 
 
+@Suppress("UNCHECKED_CAST")
 abstract class BaseContainerRepositoryImpl<T : BaseDatabaseContainerModel>(
     sortFlow: Flow<SortPreferences>,
     refPath: String,
@@ -53,5 +54,25 @@ abstract class BaseContainerRepositoryImpl<T : BaseDatabaseContainerModel>(
             sort == EDIT && order == DESCENDING -> allData.sortedByDescending { it.editDate }
             else -> throw Exception("정렬 정보 없음: sort: $sort, order: $order")
         }
+    }
+
+    override suspend fun add(data: T, uid: String, onFail: (Exception) -> Unit) {
+        val dataWithCreateDate = data.addCreateData()
+        val dataWithEditDate = dataWithCreateDate.addEditDate()
+        val dataWithKey = dataWithEditDate.addKey(key = getKey(uid = uid)) as T
+
+        super.add(data = dataWithKey, uid = uid, onFail = onFail)
+    }
+
+    // TODO NoSuchElementException 처리
+    // TODO 주석에 Throw 추가
+    override suspend fun edit(newData: T, uid: String, onFail: (Exception) -> Unit) {
+        val value = allData.value
+        val oldData = value.first { it.key == newData.key }
+
+        val newDataWithCreateDate = newData.addCreateData(oldData.createDate)
+        val newDataWithEditDate = newDataWithCreateDate.addEditDate() as T
+
+        super.edit(newData = newDataWithEditDate, uid = uid, onFail = onFail)
     }
 }

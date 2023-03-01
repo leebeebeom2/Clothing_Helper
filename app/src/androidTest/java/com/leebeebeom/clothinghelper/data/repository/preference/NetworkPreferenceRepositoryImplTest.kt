@@ -21,19 +21,15 @@ class NetworkPreferenceRepositoryImplTest {
 
     @Test
     fun networkFlowTest() = runTest {
+        suspend fun assert(networkPreferences: NetworkPreferences) =
+            assert(networkPreferenceRepository.network.first() == networkPreferences)
 
-        var netWork: NetworkPreferences = NetworkPreferences.ANY
+        assert(networkPreferences = NetworkPreferences.ANY) // 초기값
 
-        networkPreferenceRepository.networkSelected(network = netWork)
+        networkPreferenceRepository.networkSelected(NetworkPreferences.WIFI)
+        assert(networkPreferences = NetworkPreferences.WIFI)
 
-        assert(networkPreferenceRepository.network.first() == netWork)
-
-        netWork = NetworkPreferences.WIFI
-        networkPreferenceRepository.networkSelected(network = netWork)
-        assert(networkPreferenceRepository.network.first() == netWork)
-
-        netWork = NetworkPreferences.ANY
-        networkPreferenceRepository.networkSelected(network = netWork)
-        assert(networkPreferenceRepository.network.first() == netWork)
+        networkPreferenceRepository.networkSelected(NetworkPreferences.ANY)
+        assert(networkPreferences = NetworkPreferences.ANY)
     }
 }

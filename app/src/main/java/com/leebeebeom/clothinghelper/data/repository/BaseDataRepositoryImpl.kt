@@ -2,8 +2,7 @@ package com.leebeebeom.clothinghelper.data.repository
 
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.database.FirebaseDatabase
 import com.leebeebeom.clothinghelper.data.repository.util.*
 import com.leebeebeom.clothinghelper.domain.model.BaseDatabaseModel
 import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
@@ -12,7 +11,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.tasks.await
 
 fun DatabaseReference.getContainerRef(uid: String, path: String) = child(uid).child(path)
-fun getDbRoot() = Firebase.database.reference
+fun getDbRoot() = FirebaseDatabase.getInstance().reference
 
 abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
     private val refPath: String,
@@ -129,7 +128,9 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
         uid: String,
         t: T,
         dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    ): Void = withContext(dispatcher) {
-        dbRoot.getContainerRef(uid = uid, path = refPath).child(t.key).setValue(t).await()
+    ) {
+        withContext(dispatcher) {
+            dbRoot.getContainerRef(uid = uid, path = refPath).child(t.key).setValue(t).await()
+        }
     }
 }

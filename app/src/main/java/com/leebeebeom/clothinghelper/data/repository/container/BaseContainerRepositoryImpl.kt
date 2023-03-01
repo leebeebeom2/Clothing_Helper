@@ -10,6 +10,7 @@ import com.leebeebeom.clothinghelper.data.repository.util.NetworkChecker
 import com.leebeebeom.clothinghelper.data.repository.util.WifiException
 import com.leebeebeom.clothinghelper.domain.model.BaseDatabaseContainerModel
 import com.leebeebeom.clothinghelper.domain.repository.BaseContainerRepository
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -62,12 +63,17 @@ abstract class BaseContainerRepositoryImpl<T : BaseDatabaseContainerModel>(
      * @throws FirebaseNetworkException 인터넷 미 연결 시
      * @throws WifiException 사용자가 와이파이로만 연결 선택 시 와이파이 미 연결됐을 경우
      */
-    override suspend fun add(data: T, uid: String, onFail: (Exception) -> Unit) {
+    override suspend fun add(
+        dispatcher: CoroutineDispatcher,
+        data: T,
+        uid: String,
+        onFail: (Exception) -> Unit,
+    ) {
         val dataWithCreateDate = data.addCreateData()
         val dataWithEditDate = dataWithCreateDate.addEditDate()
         val dataWithKey = dataWithEditDate.addKey(key = getKey(uid = uid)) as T
 
-        super.add(data = dataWithKey, uid = uid, onFail = onFail)
+        super.add(dispatcher = dispatcher, data = dataWithKey, uid = uid, onFail = onFail)
     }
 
     /**
@@ -76,13 +82,23 @@ abstract class BaseContainerRepositoryImpl<T : BaseDatabaseContainerModel>(
      * @throws NoSuchElementException 본래 데이터를 찾지 못했을 경우
      * @throws IllegalArgumentException 본래 데이터를 삭제하지 못했을 경우
      */
-    override suspend fun edit(newData: T, uid: String, onFail: (Exception) -> Unit) {
+    override suspend fun edit(
+        dispatcher: CoroutineDispatcher,
+        newData: T,
+        uid: String,
+        onFail: (Exception) -> Unit,
+    ) {
         val value = allData.value
         val oldData = value.first { it.key == newData.key }
 
         val newDataWithCreateDate = newData.addCreateData(oldData.createDate)
         val newDataWithEditDate = newDataWithCreateDate.addEditDate() as T
 
-        super.edit(newData = newDataWithEditDate, uid = uid, onFail = onFail)
+        super.edit(
+            dispatcher = dispatcher,
+            newData = newDataWithEditDate,
+            uid = uid,
+            onFail = onFail
+        )
     }
 }

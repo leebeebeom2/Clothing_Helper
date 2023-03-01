@@ -1,5 +1,6 @@
 package com.leebeebeom.clothinghelper.data.repository
 
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -40,6 +41,10 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
         } ?: run { allData.value = mutableListOf() } // 로그아웃 시
     }
 
+    /**
+     * @throws FirebaseNetworkException 인터넷 미 연결 시
+     * @throws WifiException 사용자가 와이파이로만 연결 선택 시 와이파이 미 연결됐을 경우
+     */
     @Suppress("UNCHECKED_CAST")
     override suspend fun add(data: T, uid: String, onFail: (Exception) -> Unit) = withContext(
         callSite = DatabaseCallSite("${data.javaClass}: add"), loading = false, onFail = onFail
@@ -53,6 +58,12 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
         push(uid = uid, t = data)
     }
 
+    /**
+     * @throws FirebaseNetworkException 인터넷 미 연결 시
+     * @throws WifiException 사용자가 와이파이로만 연결 선택 시 와이파이 미 연결됐을 경우
+     * @throws NoSuchElementException 본래 데이터를 찾지 못했을 경우
+     * @throws IllegalArgumentException 본래 데이터를 삭제하지 못했을 경우
+     */
     @Suppress("UNCHECKED_CAST")
     override suspend fun edit(
         newData: T,
@@ -69,7 +80,7 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
         val removeResult = value.remove(oldData)
 
         if (!removeResult) {
-            onFail(Exception("edit: 본래 파일 삭제 실패"))
+            onFail(IllegalArgumentException("edit: 본래 데이터 삭제 실패"))
             if (!value.any { it.key == oldData.key }) value.add(oldData)
             return@withContext
         }

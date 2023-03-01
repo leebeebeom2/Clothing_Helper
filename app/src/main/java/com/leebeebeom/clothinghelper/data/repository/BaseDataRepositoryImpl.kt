@@ -25,10 +25,12 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
     // TODO 로그인 시 최초 로드 후 원래 데이터 사용 설정으로 변경
 
     override suspend fun load(
+        dispatcher: CoroutineDispatcher,
         uid: String?,
         type: Class<T>,
         onFail: (Exception) -> Unit,
     ) = withContext(
+        dispatcher = dispatcher,
         callSite = DatabaseCallSite(callSite = "$type: update"), onFail = onFail
     ) {
         uid?.let {// 로그인 시
@@ -46,7 +48,13 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
      * @throws WifiException 사용자가 와이파이로만 연결 선택 시 와이파이 미 연결됐을 경우
      */
     @Suppress("UNCHECKED_CAST")
-    override suspend fun add(data: T, uid: String, onFail: (Exception) -> Unit) = withContext(
+    override suspend fun add(
+        dispatcher: CoroutineDispatcher,
+        data: T,
+        uid: String,
+        onFail: (Exception) -> Unit,
+    ) = withContext(
+        dispatcher = dispatcher,
         callSite = DatabaseCallSite("${data.javaClass}: add"), loading = false, onFail = onFail
     ) {
         networkChecker.checkNetWork()
@@ -66,10 +74,12 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
      */
     @Suppress("UNCHECKED_CAST")
     override suspend fun edit(
+        dispatcher: CoroutineDispatcher,
         newData: T,
         uid: String,
         onFail: (Exception) -> Unit,
     ) = withContext(
+        dispatcher = dispatcher,
         DatabaseCallSite(callSite = "${newData::javaClass}: edit"), loading = false, onFail = onFail
     ) {
         networkChecker.checkNetWork()
@@ -96,11 +106,12 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
      * @param loading true 일 경우 호출 시 로딩 On, 작업이 끝난 후 로딩 Off
      */
     private suspend fun withContext(
+        dispatcher: CoroutineDispatcher,
         callSite: DatabaseCallSite,
         loading: Boolean = true,
         onFail: (Exception) -> Unit,
         task: suspend () -> Unit,
-    ) = withContext(Dispatchers.IO) {
+    ) = withContext(context = dispatcher) {
         try {
             if (loading) loadingOn()
             task()

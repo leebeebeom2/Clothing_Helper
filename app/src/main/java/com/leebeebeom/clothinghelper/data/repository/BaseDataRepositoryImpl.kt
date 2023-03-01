@@ -58,11 +58,13 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
     ) {
         networkChecker.checkNetWork()
 
+        val dataWithKey = data.addKey(key = getKey(uid = uid)) as T
+
         val value = allData.value
-        value.add(data)
+        value.add(dataWithKey)
         allData.value = value
 
-        push(uid = uid, t = data)
+        push(uid = uid, t = dataWithKey)
     }
 
     /**

@@ -70,10 +70,9 @@ abstract class BaseContainerRepositoryImpl<T : BaseDatabaseContainerModel>(
         onFail: (Exception) -> Unit,
     ) {
         val dataWithCreateDate = data.addCreateData()
-        val dataWithEditDate = dataWithCreateDate.addEditDate()
-        val dataWithKey = dataWithEditDate.addKey(key = getKey(uid = uid)) as T
+        val dataWithEditDate = dataWithCreateDate.addEditDate() as T
 
-        super.add(dispatcher = dispatcher, data = dataWithKey, uid = uid, onFail = onFail)
+        super.add(dispatcher = dispatcher, data = dataWithEditDate, uid = uid, onFail = onFail)
     }
 
     /**

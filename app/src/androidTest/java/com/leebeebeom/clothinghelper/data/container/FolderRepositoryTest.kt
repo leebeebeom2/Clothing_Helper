@@ -7,6 +7,7 @@ import com.leebeebeom.clothinghelper.data.repository.preference.FolderPreference
 import com.leebeebeom.clothinghelper.data.repository.preference.NetworkPreferenceRepositoryImpl
 import com.leebeebeom.clothinghelper.data.repository.util.NetworkChecker
 import com.leebeebeom.clothinghelper.data.repositoryCrudTest
+import com.leebeebeom.clothinghelper.data.repositorySignOutTest
 import com.leebeebeom.clothinghelper.domain.model.DatabaseFolder
 import com.leebeebeom.clothinghelper.domain.model.Folder
 import com.leebeebeom.clothinghelper.domain.model.toDatabaseModel
@@ -66,6 +67,17 @@ class FolderRepositoryTest {
                 assert(origin.editDate != new.editDate)
                 assert(origin.editDate < new.editDate)
             }
+        )
+    }
+
+    @Test
+    fun signOutTest() {
+        repositorySignOutTest(
+            data1 = Folder("folder 1").toDatabaseModel(),
+            data2 = Folder("folder 2").toDatabaseModel(),
+            repository = folderRepository,
+            uid = uid,
+            type = DatabaseFolder::class.java
         )
     }
 }

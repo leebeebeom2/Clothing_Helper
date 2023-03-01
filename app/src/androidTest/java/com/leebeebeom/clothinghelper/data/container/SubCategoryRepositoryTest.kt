@@ -7,9 +7,8 @@ import com.leebeebeom.clothinghelper.data.repository.preference.NetworkPreferenc
 import com.leebeebeom.clothinghelper.data.repository.preference.SubCategoryPreferencesRepositoryImpl
 import com.leebeebeom.clothinghelper.data.repository.util.NetworkChecker
 import com.leebeebeom.clothinghelper.data.repositoryCrudTest
-import com.leebeebeom.clothinghelper.domain.model.DatabaseSubCategory
-import com.leebeebeom.clothinghelper.domain.model.SubCategory
-import com.leebeebeom.clothinghelper.domain.model.toDatabaseModel
+import com.leebeebeom.clothinghelper.data.repositorySignOutTest
+import com.leebeebeom.clothinghelper.domain.model.*
 import com.leebeebeom.clothinghelper.domain.repository.SubCategoryRepository
 import com.leebeebeom.clothinghelper.domain.repository.preference.NetworkPreferenceRepository
 import com.leebeebeom.clothinghelper.domain.repository.preference.SortPreferenceRepository
@@ -67,6 +66,17 @@ class SubCategoryRepositoryTest {
                 assert(origin.editDate != new.editDate)
                 assert(origin.editDate < new.editDate)
             }
+        )
+    }
+
+    @Test
+    fun signOutTest() {
+        repositorySignOutTest(
+            data1 = SubCategory("subCategory 1").toDatabaseModel(),
+            data2 = SubCategory("subCategory 2").toDatabaseModel(),
+            repository = subCategoryRepository,
+            uid = uid,
+            type = DatabaseSubCategory::class.java
         )
     }
 }

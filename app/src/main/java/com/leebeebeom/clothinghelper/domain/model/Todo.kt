@@ -10,6 +10,8 @@ data class Todo(
     val order: Int = 0,
 ) : BaseModel()
 
+fun Todo.toDatabaseModel() = DatabaseTodo(key = key, text = text, done = done, order = order)
+
 @Entity
 data class DatabaseTodo(
     @PrimaryKey override val key: String,

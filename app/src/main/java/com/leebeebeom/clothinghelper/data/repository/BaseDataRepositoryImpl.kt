@@ -60,11 +60,11 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
 
         val dataWithKey = data.addKey(key = getKey(uid = uid)) as T
 
+        push(uid = uid, t = dataWithKey)
+
         val value = allData.value
         value.add(dataWithKey)
         allData.value = value
-
-        push(uid = uid, t = dataWithKey)
     }
 
     /**
@@ -96,10 +96,10 @@ abstract class BaseDataRepositoryImpl<T : BaseDatabaseModel>(
             return@withContext
         }
 
+        push(uid = uid, t = newData)
+
         value.add(newData)
         allData.value = value
-
-        push(uid = uid, t = newData)
     }
 
     /**

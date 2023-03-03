@@ -1,13 +1,13 @@
 package com.leebeebeom.clothinghelper.domain.usecase
 
-import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
+import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 
 abstract class BaseGetIsDataLoadingStateUseCase(
-    private val repository: BaseDataRepository<*>,
+    private val repository: LoadingStateProvider,
     private val appScope: CoroutineScope,
 ) {
     private lateinit var isLoading: StateFlow<Boolean>

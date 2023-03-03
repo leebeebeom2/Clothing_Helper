@@ -27,7 +27,10 @@ import javax.inject.Singleton
 @Singleton
 class UserRepositoryImpl @Inject constructor(
     @AppScope private val appScope: CoroutineScope,
-) : UserRepository, LoadingStateProviderImpl() {
+) : UserRepository, LoadingStateProviderImpl(
+    initialValue = false,
+    appScope = appScope
+) {
     private val auth = FirebaseAuth.getInstance()
 
     override val user = callbackFlow {

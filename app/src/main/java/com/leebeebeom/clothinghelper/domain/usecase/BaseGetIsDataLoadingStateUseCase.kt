@@ -11,13 +11,13 @@ abstract class BaseGetIsDataLoadingStateUseCase(
     private val appScope: CoroutineScope,
 ) {
     private lateinit var isLoading: StateFlow<Boolean>
-    fun getLoadingFlow(): StateFlow<Boolean> {
+    fun getLoadingFlow(initialValue: Boolean): StateFlow<Boolean> {
         if (::isLoading.isInitialized) return isLoading
 
         isLoading = repository.isLoading.stateIn(
             scope = appScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = true
+            initialValue = initialValue
         )
         return isLoading
     }

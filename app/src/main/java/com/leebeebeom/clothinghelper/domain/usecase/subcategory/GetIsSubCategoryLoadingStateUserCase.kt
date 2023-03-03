@@ -8,5 +8,5 @@ import javax.inject.Inject
 
 class GetIsSubCategoryLoadingStateUserCase @Inject constructor(
     subCategoryRepository: SubCategoryRepository,
-    @AppScope appScope: CoroutineScope
+    @AppScope appScope: CoroutineScope,
 ) : BaseGetIsDataLoadingStateUseCase(repository = subCategoryRepository, appScope = appScope)

@@ -10,6 +10,7 @@ import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.leebeebeom.clothinghelper.data.repository.util.AuthCallSite
 import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProviderImpl
 import com.leebeebeom.clothinghelper.data.repository.util.logE
+import com.leebeebeom.clothinghelper.domain.model.User
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -18,14 +19,13 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
-import com.leebeebeom.clothinghelper.domain.model.FirebaseUser as FirebaseUserModel
 
 @Singleton
 class UserRepositoryImpl @Inject constructor() :
     UserRepository, LoadingStateProviderImpl(false) {
     private val auth = FirebaseAuth.getInstance()
 
-    override val firebaseUser = MutableStateFlow(auth.currentUser.toFirebaseUser())
+    override val firebaseUser = MutableStateFlow(auth.currentUser.toUserModel())
 
     override suspend fun googleSignIn(
         credential: AuthCredential,
@@ -36,7 +36,7 @@ class UserRepositoryImpl @Inject constructor() :
         onFail = firebaseResult::fail,
         dispatcher = dispatcher
     ) {
-        firebaseUser.value = auth.signInWithCredential(credential).await().user.toFirebaseUser()!!
+        firebaseUser.value = auth.signInWithCredential(credential).await().user.toUserModel()!!
         firebaseResult.success()
     }
 
@@ -54,7 +54,7 @@ class UserRepositoryImpl @Inject constructor() :
         callSite = AuthCallSite("signIn"), onFail = firebaseResult::fail, dispatcher = dispatcher
     ) {
         firebaseUser.value =
-            auth.signInWithEmailAndPassword(email, password).await().user.toFirebaseUser()!!
+            auth.signInWithEmailAndPassword(email, password).await().user.toUserModel()!!
         firebaseResult.success()
     }
 
@@ -78,7 +78,7 @@ class UserRepositoryImpl @Inject constructor() :
 
         user.updateProfile(request).await()
 
-        firebaseUser.value = user.toFirebaseUser()
+        firebaseUser.value = user.toUserModel()
 
         firebaseResult.success()
     }
@@ -136,6 +136,6 @@ class UserRepositoryImpl @Inject constructor() :
         }
     }
 
-    private fun FirebaseUser?.toFirebaseUser() =
-        this?.let { FirebaseUserModel(email = "$email", name = "$displayName", uid = uid) }
+    private fun FirebaseUser?.toUserModel() =
+        this?.let { User(email = "$email", name = "$displayName", uid = uid) }
 }

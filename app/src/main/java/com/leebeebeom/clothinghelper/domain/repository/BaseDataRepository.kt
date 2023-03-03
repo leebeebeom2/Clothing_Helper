@@ -6,10 +6,10 @@ import com.leebeebeom.clothinghelper.data.repository.util.WifiException
 import com.leebeebeom.clothinghelper.domain.model.BaseDatabaseModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.Flow
 
 interface BaseDataRepository<T : BaseDatabaseModel> : LoadingStateProvider {
-    val allData: StateFlow<List<T>>
+    val allData: Flow<List<T>>
     suspend fun load(
         dispatcher: CoroutineDispatcher,
         uid: String?,

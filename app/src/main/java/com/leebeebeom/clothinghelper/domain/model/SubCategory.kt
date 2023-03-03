@@ -8,7 +8,7 @@ import kotlinx.parcelize.Parcelize
 data class SubCategory(
     override val key: String = "",
     override val name: String = "",
-    val parent: MainCategoryType = MainCategoryType.TOP,
+    val mainCategoryType: MainCategoryType = MainCategoryType.TOP,
     override val createDate: Long = System.currentTimeMillis(),
     override val editDate: Long = System.currentTimeMillis(),
 ) : BaseContainerModel(), Parcelable {

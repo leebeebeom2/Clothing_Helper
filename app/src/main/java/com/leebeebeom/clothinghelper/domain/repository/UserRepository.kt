@@ -17,7 +17,7 @@ interface UserRepository : LoadingStateProvider {
     suspend fun googleSignIn(
         credential: AuthCredential,
         firebaseResult: FirebaseResult,
-        dispatcher: CoroutineDispatcher = Dispatchers.IO,
+        dispatcher: CoroutineDispatcher
     )
 
     /**
@@ -29,7 +29,7 @@ interface UserRepository : LoadingStateProvider {
         email: String,
         password: String,
         firebaseResult: FirebaseResult,
-        dispatcher: CoroutineDispatcher = Dispatchers.IO,
+        dispatcher: CoroutineDispatcher
     )
 
     /**
@@ -42,7 +42,7 @@ interface UserRepository : LoadingStateProvider {
         password: String,
         name: String,
         firebaseResult: FirebaseResult,
-        dispatcher: CoroutineDispatcher = Dispatchers.IO,
+        dispatcher: CoroutineDispatcher
     )
 
     /**
@@ -52,11 +52,11 @@ interface UserRepository : LoadingStateProvider {
      */
     suspend fun sendResetPasswordEmail(
         email: String, firebaseResult: FirebaseResult,
-        dispatcher: CoroutineDispatcher = Dispatchers.IO,
+        dispatcher: CoroutineDispatcher
     )
 
     suspend fun signOut(
         onFail: (Exception) -> Unit,
-        dispatcher: CoroutineDispatcher = Dispatchers.IO,
+        dispatcher: CoroutineDispatcher
     )
 }

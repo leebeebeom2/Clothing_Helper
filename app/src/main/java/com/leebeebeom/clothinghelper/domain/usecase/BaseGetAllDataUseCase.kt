@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.withContext
 
 abstract class BaseGetAllDataUseCase<T : BaseModel>(
     private val repository: BaseDataRepository<T>,
@@ -19,11 +20,11 @@ abstract class BaseGetAllDataUseCase<T : BaseModel>(
         dispatcher: CoroutineDispatcher = Dispatchers.IO,
         uid: String,
         onFail: (Exception) -> Unit,
-    ): StateFlow<List<T>> {
-        if (::allDataFlow.isInitialized) return allDataFlow
+    ) = withContext(dispatcher) {
+        if (::allDataFlow.isInitialized) return@withContext allDataFlow
 
         allDataFlow = repository.getAllData(dispatcher = dispatcher, uid = uid, onFail = onFail)
             .stateIn(appScope, SharingStarted.WhileSubscribed(5000), emptyList())
-        return allDataFlow
+        return@withContext allDataFlow
     }
 }

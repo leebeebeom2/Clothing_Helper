@@ -26,7 +26,6 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     override suspend fun load(
         dispatcher: CoroutineDispatcher,
         uid: String?,
-        type: Class<T>,
         onFail: (Exception) -> Unit,
     ): Flow<List<T>> {
 
@@ -37,7 +36,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
 
         return withContext(
             dispatcher = dispatcher,
-            callSite = DatabaseCallSite(callSite = "$type: update"), onFail = ::onFailWithEmptyFlow
+            callSite = DatabaseCallSite(callSite = "BaseDataRepository: load"), onFail = ::onFailWithEmptyFlow
         ) {
             uid?.let { getAllDataFlow(uid = it, onFail = ::onFailWithEmptyFlow) } // 로그인 시
                 ?: emptyFlow() // 로그아웃 시

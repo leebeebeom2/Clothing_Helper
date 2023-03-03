@@ -17,6 +17,7 @@ fun getDbRoot() = FirebaseDatabase.getInstance().reference
 abstract class BaseDataRepositoryImpl<T : BaseModel>(
     private val refPath: String,
     private val networkChecker: NetworkChecker,
+    private val appScope: CoroutineScope,
 ) : BaseDataRepository<T>, LoadingStateProviderImpl() {
     private val dbRoot = getDbRoot()
 
@@ -28,11 +29,11 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         uid: String?,
         type: Class<T>,
         onFail: (Exception) -> Unit,
-    ): Flow<List<T>> {
+    ): StateFlow<List<T>> {
 
-        fun onFailWithEmptyFlow(exception: Exception): Flow<List<T>> {
+        fun onFailWithEmptyFlow(exception: Exception): StateFlow<List<T>> {
             onFail(exception)
-            return emptyFlow()
+            return MutableStateFlow(emptyList())
         }
 
         return withContext(
@@ -47,7 +48,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
                     onFail = ::onFailWithEmptyFlow
                 )
             } // 로그인 시
-                ?: emptyFlow() // 로그아웃 시
+                ?: MutableStateFlow(emptyList()) // 로그아웃 시
         }
     }
 
@@ -135,7 +136,11 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
 
             containerRef.addValueEventListener(valueEventListener)
             awaitClose { containerRef.removeEventListener(valueEventListener) }
-        }
+        }.stateIn(
+            scope = appScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
     private fun getKey(uid: String) = dbRoot.getContainerRef(uid, refPath).push().key!!
 

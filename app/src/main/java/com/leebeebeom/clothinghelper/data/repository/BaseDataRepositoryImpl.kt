@@ -44,14 +44,13 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
             callSite = DatabaseCallSite(callSite = "BaseDataRepository: load"),
             onFail = ::onFailWithEmptyFlow
         ) {
-            uid?.let {
+            uid?.let {  // 로그인 시
                 getAllDataFlow(
                     uid = it,
                     type = type,
                     onFail = ::onFailWithEmptyFlow
                 )
-            } // 로그인 시
-                ?: MutableStateFlow(emptyList()) // 로그아웃 시
+            } ?: MutableStateFlow(emptyList()) // 로그아웃 시
         }
     }
 

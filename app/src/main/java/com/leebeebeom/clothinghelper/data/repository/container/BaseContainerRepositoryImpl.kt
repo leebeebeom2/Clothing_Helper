@@ -8,38 +8,33 @@ import com.leebeebeom.clothinghelper.data.repository.preference.Sort.*
 import com.leebeebeom.clothinghelper.data.repository.preference.SortPreferences
 import com.leebeebeom.clothinghelper.data.repository.util.NetworkChecker
 import com.leebeebeom.clothinghelper.data.repository.util.WifiException
-import com.leebeebeom.clothinghelper.domain.model.BaseDatabaseContainerModel
-import com.leebeebeom.clothinghelper.domain.repository.BaseContainerRepository
+import com.leebeebeom.clothinghelper.domain.model.BaseContainerModel
+import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
 
 
 @Suppress("UNCHECKED_CAST")
-abstract class BaseContainerRepositoryImpl<T : BaseDatabaseContainerModel>(
-    sortFlow: Flow<SortPreferences>,
+abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
+    private val sortFlow: Flow<SortPreferences>,
     refPath: String,
-    appScope: CoroutineScope,
     networkChecker: NetworkChecker,
-) : BaseContainerRepository<T>, BaseDataRepositoryImpl<T>(
-    refPath = refPath,
-    networkChecker = networkChecker
+) : BaseDataRepository<T>, BaseDataRepositoryImpl<T>(
+    refPath = refPath, networkChecker = networkChecker
 ) {
-    /**
-     * TODO [allData] 혹은 sortFlow가 변경되면 업데이트 됨
-     */
-    override val allSortedData = combine(
-        flow = super.allData,
-        flow2 = sortFlow,
-        transform = ::getSortedData
-    ).stateIn(
-        scope = appScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = emptyList()
-    )
+    override suspend fun load(
+        dispatcher: CoroutineDispatcher,
+        uid: String?,
+        type: Class<T>,
+        onFail: (Exception) -> Unit,
+    ): Flow<List<T>> {
+        val allDataFLow = super.load(
+            dispatcher = dispatcher, uid = uid, type = type, onFail = onFail
+        )
+
+        return allDataFLow.combine(flow = sortFlow, transform = ::getSortedData)
+    }
 
     private fun getSortedData(
         allData: List<T>,
@@ -62,22 +57,6 @@ abstract class BaseContainerRepositoryImpl<T : BaseDatabaseContainerModel>(
     /**
      * @throws FirebaseNetworkException 인터넷 미 연결 시
      * @throws WifiException 사용자가 와이파이로만 연결 선택 시 와이파이 미 연결됐을 경우
-     */
-    override suspend fun add(
-        dispatcher: CoroutineDispatcher,
-        data: T,
-        uid: String,
-        onFail: (Exception) -> Unit,
-    ) {
-        val dataWithCreateDate = data.addCreateData()
-        val dataWithEditDate = dataWithCreateDate.addEditDate() as T
-
-        super.add(dispatcher = dispatcher, data = dataWithEditDate, uid = uid, onFail = onFail)
-    }
-
-    /**
-     * @throws FirebaseNetworkException 인터넷 미 연결 시
-     * @throws WifiException 사용자가 와이파이로만 연결 선택 시 와이파이 미 연결됐을 경우
      * @throws NoSuchElementException 본래 데이터를 찾지 못했을 경우
      * @throws IllegalArgumentException 본래 데이터를 삭제하지 못했을 경우
      */
@@ -87,17 +66,10 @@ abstract class BaseContainerRepositoryImpl<T : BaseDatabaseContainerModel>(
         uid: String,
         onFail: (Exception) -> Unit,
     ) {
-        val value = allData.value
-        val oldData = value.first { it.key == newData.key }
-
-        val newDataWithCreateDate = newData.addCreateData(oldData.createDate)
-        val newDataWithEditDate = newDataWithCreateDate.addEditDate() as T
+        val newDataWithEditDate = newData.changeEditDate() as T
 
         super.edit(
-            dispatcher = dispatcher,
-            newData = newDataWithEditDate,
-            uid = uid,
-            onFail = onFail
+            dispatcher = dispatcher, newData = newDataWithEditDate, uid = uid, onFail = onFail
         )
     }
 }

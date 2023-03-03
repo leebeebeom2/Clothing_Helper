@@ -1,5 +1,5 @@
 package com.leebeebeom.clothinghelper.domain.repository
 
-import com.leebeebeom.clothinghelper.domain.model.DatabaseTodo
+import com.leebeebeom.clothinghelper.domain.model.Todo
 
-interface TodoRepository : BaseDataRepository<DatabaseTodo>
+interface TodoRepository : BaseDataRepository<Todo>

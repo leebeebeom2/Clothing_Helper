@@ -3,19 +3,18 @@ package com.leebeebeom.clothinghelper.domain.repository
 import com.google.firebase.FirebaseNetworkException
 import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProvider
 import com.leebeebeom.clothinghelper.data.repository.util.WifiException
-import com.leebeebeom.clothinghelper.domain.model.BaseDatabaseModel
+import com.leebeebeom.clothinghelper.domain.model.BaseModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
-interface BaseDataRepository<T : BaseDatabaseModel> : LoadingStateProvider {
-    val allData: Flow<List<T>>
+interface BaseDataRepository<T : BaseModel> : LoadingStateProvider {
     suspend fun load(
         dispatcher: CoroutineDispatcher,
         uid: String?,
         type: Class<T>,
         onFail: (Exception) -> Unit,
-    )
+    ): Flow<List<T>>
 
     /**
      * @throws FirebaseNetworkException 인터넷 미 연결 시

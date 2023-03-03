@@ -1,5 +1,5 @@
 package com.leebeebeom.clothinghelper.domain.repository
 
-import com.leebeebeom.clothinghelper.domain.model.DatabaseSubCategory
+import com.leebeebeom.clothinghelper.domain.model.SubCategory
 
-interface SubCategoryRepository : BaseDataRepository<DatabaseSubCategory>
+interface SubCategoryRepository : BaseDataRepository<SubCategory>

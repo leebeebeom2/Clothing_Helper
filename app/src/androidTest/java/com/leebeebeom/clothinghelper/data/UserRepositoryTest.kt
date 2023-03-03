@@ -9,7 +9,10 @@ import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.E
 import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.ERROR_INVALID_EMAIL
 import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.ERROR_USER_NOT_FOUND
 import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.ERROR_WRONG_PASSWORD
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -27,7 +30,7 @@ class UserRepositoryTest {
 
     @Before
     fun init() {
-        userRepository = UserRepositoryImpl()
+        userRepository = UserRepositoryImpl(CoroutineScope(SupervisorJob() + Dispatchers.IO))
     }
 
     @Test

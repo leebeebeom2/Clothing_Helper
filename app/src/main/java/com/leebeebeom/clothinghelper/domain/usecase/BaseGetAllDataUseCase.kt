@@ -17,13 +17,15 @@ abstract class BaseGetAllDataUseCase<T : BaseModel>(
 
     suspend fun getAllData(
         dispatcher: CoroutineDispatcher = Dispatchers.IO,
+        type: Class<T>,
         uid: String,
         onFail: (Exception) -> Unit,
     ): StateFlow<List<T>> {
         if (::allDataFlow.isInitialized) return allDataFlow
 
-        allDataFlow = repository.getAllData(dispatcher = dispatcher, uid = uid, onFail = onFail)
-            .stateIn(appScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        allDataFlow =
+            repository.getAllData(dispatcher = dispatcher, uid = uid, type = type, onFail = onFail)
+                .stateIn(appScope, SharingStarted.WhileSubscribed(5000), emptyList())
         return allDataFlow
     }
 }

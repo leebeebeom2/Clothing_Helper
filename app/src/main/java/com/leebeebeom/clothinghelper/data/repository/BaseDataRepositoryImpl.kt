@@ -26,6 +26,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     override suspend fun getAllData(
         dispatcher: CoroutineDispatcher,
         uid: String?,
+        type: Class<T>,
         onFail: (Exception) -> Unit,
     ): Flow<List<T>> {
 
@@ -36,9 +37,16 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
 
         return withContext(
             dispatcher = dispatcher,
-            callSite = DatabaseCallSite(callSite = "BaseDataRepository: load"), onFail = ::onFailWithEmptyFlow
+            callSite = DatabaseCallSite(callSite = "BaseDataRepository: load"),
+            onFail = ::onFailWithEmptyFlow
         ) {
-            uid?.let { getAllDataFlow(uid = it, onFail = ::onFailWithEmptyFlow) } // 로그인 시
+            uid?.let {
+                getAllDataFlow(
+                    uid = it,
+                    type = type,
+                    onFail = ::onFailWithEmptyFlow
+                )
+            } // 로그인 시
                 ?: emptyFlow() // 로그아웃 시
         }
     }
@@ -107,26 +115,27 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         }
     }
 
-    private fun getAllDataFlow(uid: String, onFail: (Exception) -> Flow<List<T>>) = callbackFlow {
-        MutableStateFlow(mutableListOf<T>())
+    private fun getAllDataFlow(uid: String, type: Class<T>, onFail: (Exception) -> Flow<List<T>>) =
+        callbackFlow {
+            MutableStateFlow(mutableListOf<T>())
 
-        val valueEventListener = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                trySend(snapshot.children.map { it.value as T })
+            val valueEventListener = object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    trySend(snapshot.children.map { it.getValue(type) as T })
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    val exception = error.toException()
+                    onFail(exception)
+                }
+
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                val exception = error.toException()
-                onFail(exception)
-            }
+            val containerRef = getDbRoot().getContainerRef(uid = uid, path = refPath)
 
+            containerRef.addValueEventListener(valueEventListener)
+            awaitClose { containerRef.removeEventListener(valueEventListener) }
         }
-
-        val containerRef = getDbRoot().getContainerRef(uid = uid, path = refPath)
-
-        containerRef.addValueEventListener(valueEventListener)
-        awaitClose { containerRef.removeEventListener(valueEventListener) }
-    }
 
     private fun getKey(uid: String) = dbRoot.getContainerRef(uid, refPath).push().key!!
 

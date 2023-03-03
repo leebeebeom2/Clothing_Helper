@@ -11,6 +11,7 @@ interface BaseDataRepository<T : BaseModel> : LoadingStateProvider {
     suspend fun getAllData(
         dispatcher: CoroutineDispatcher,
         uid: String?,
+        type: Class<T>,
         onFail: (Exception) -> Unit,
     ): Flow<List<T>>
 

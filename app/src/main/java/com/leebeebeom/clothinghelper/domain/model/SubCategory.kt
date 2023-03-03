@@ -1,8 +1,6 @@
 package com.leebeebeom.clothinghelper.domain.model
 
 import android.os.Parcelable
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import com.leebeebeom.clothinghelper.ui.main.drawer.MainCategoryType
 import kotlinx.parcelize.Parcelize
 

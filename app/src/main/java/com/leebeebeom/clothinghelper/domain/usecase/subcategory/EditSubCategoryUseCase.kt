@@ -4,6 +4,7 @@ import com.leebeebeom.clothinghelper.domain.model.SubCategory
 import com.leebeebeom.clothinghelper.domain.repository.SubCategoryRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class EditSubCategoryUseCase @Inject constructor(private val subCategoryRepository: SubCategoryRepository) {
@@ -13,9 +14,14 @@ class EditSubCategoryUseCase @Inject constructor(private val subCategoryReposito
         name: String,
         uid: String,
         onFail: (Exception) -> Unit,
-    ) {
+    ) = withContext(dispatcher) {
         val newSubCategory = oldSubCategory.copy(name = name)
 
-        subCategoryRepository.edit(newData = newSubCategory, uid = uid, onFail = onFail, dispatcher = dispatcher)
+        subCategoryRepository.edit(
+            newData = newSubCategory,
+            uid = uid,
+            onFail = onFail,
+            dispatcher = dispatcher
+        )
     }
 }

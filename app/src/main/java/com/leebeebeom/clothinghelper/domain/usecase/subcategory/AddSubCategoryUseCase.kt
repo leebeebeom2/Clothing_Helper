@@ -18,6 +18,11 @@ class AddSubCategoryUseCase @Inject constructor(private val subCategoryRepositor
     ) = withContext(dispatcher) {
         val subCategory = SubCategory(name = name, mainCategoryType = mainCategoryType)
 
-        subCategoryRepository.add(data = subCategory, uid = uid, onFail = onFail, dispatcher = dispatcher)
+        subCategoryRepository.add(
+            data = subCategory,
+            uid = uid,
+            onFail = onFail,
+            dispatcher = dispatcher
+        )
     }
 }

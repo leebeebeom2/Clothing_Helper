@@ -5,7 +5,9 @@ import com.leebeebeom.clothinghelper.domain.repository.SubCategoryRepository
 import com.leebeebeom.clothinghelper.domain.usecase.BaseGetIsDataLoadingStateUseCase
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class GetIsSubCategoryLoadingStateUserCase @Inject constructor(
     subCategoryRepository: SubCategoryRepository,
     @AppScope appScope: CoroutineScope,

@@ -23,26 +23,21 @@ fun <T : BaseModel, U : BaseDataRepository<T>> repositoryCrudTest(
 
     val dispatcher = UnconfinedTestDispatcher(testScheduler)
 
-    repository.getAllData(dispatcher = dispatcher, uid = uid, type = type) {
-        assert(false)
-    }
-
-    repository.add(dispatcher = dispatcher, data = data, uid = uid) {
-        assert(false)
-    }
-
-    val addedData =
+    val allDataFlow =
         repository.getAllData(dispatcher = dispatcher, uid = uid, type = type) { assert(false) }
-            .first().first()
+
+    repository.add(dispatcher = dispatcher, data = data, uid = uid) { assert(false) }
+
+    val addedData = allDataFlow.first().first()
     addAssert(addedData)
 
-    repository.edit(dispatcher = dispatcher, newData = newData(addedData), uid = uid) {
-        assert(false)
-    }
+    repository.edit(
+        dispatcher = dispatcher,
+        newData = newData(addedData),
+        uid = uid
+    ) { assert(false) }
 
-    val editData =
-        repository.getAllData(dispatcher = dispatcher, uid = uid, type = type) { assert(false) }
-            .first().first()
+    val editData = allDataFlow.first().first()
     editAssert(addedData, editData)
 
     FirebaseDatabase.getInstance().reference.child(uid).removeValue()

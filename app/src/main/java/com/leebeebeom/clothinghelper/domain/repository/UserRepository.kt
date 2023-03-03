@@ -8,7 +8,6 @@ import com.leebeebeom.clothinghelper.data.repository.FirebaseResult
 import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProvider
 import com.leebeebeom.clothinghelper.domain.model.User
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository : LoadingStateProvider {
@@ -17,7 +16,7 @@ interface UserRepository : LoadingStateProvider {
     suspend fun googleSignIn(
         credential: AuthCredential,
         firebaseResult: FirebaseResult,
-        dispatcher: CoroutineDispatcher
+        dispatcher: CoroutineDispatcher,
     )
 
     /**
@@ -29,7 +28,7 @@ interface UserRepository : LoadingStateProvider {
         email: String,
         password: String,
         firebaseResult: FirebaseResult,
-        dispatcher: CoroutineDispatcher
+        dispatcher: CoroutineDispatcher,
     )
 
     /**
@@ -42,7 +41,7 @@ interface UserRepository : LoadingStateProvider {
         password: String,
         name: String,
         firebaseResult: FirebaseResult,
-        dispatcher: CoroutineDispatcher
+        dispatcher: CoroutineDispatcher,
     )
 
     /**
@@ -52,11 +51,8 @@ interface UserRepository : LoadingStateProvider {
      */
     suspend fun sendResetPasswordEmail(
         email: String, firebaseResult: FirebaseResult,
-        dispatcher: CoroutineDispatcher
+        dispatcher: CoroutineDispatcher,
     )
 
-    suspend fun signOut(
-        onFail: (Exception) -> Unit,
-        dispatcher: CoroutineDispatcher
-    )
+    fun signOut()
 }

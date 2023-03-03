@@ -13,7 +13,7 @@ abstract class BaseContainerModel : BaseModel() {
     abstract val createDate: Long
     abstract val editDate: Long
 
-    abstract fun changeEditDate(editDate: Long): BaseContainerModel
+    abstract fun changeEditDate(): BaseContainerModel
 }
 
 abstract class BaseFolderModel : BaseContainerModel() {

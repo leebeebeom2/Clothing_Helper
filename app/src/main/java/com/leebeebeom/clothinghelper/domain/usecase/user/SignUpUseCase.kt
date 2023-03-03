@@ -4,7 +4,6 @@ import com.leebeebeom.clothinghelper.data.repository.FirebaseResult
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SignUpUseCase @Inject constructor(private val userRepository: UserRepository) {
@@ -14,13 +13,11 @@ class SignUpUseCase @Inject constructor(private val userRepository: UserReposito
         password: String,
         name: String,
         firebaseResult: FirebaseResult,
-    ) = withContext(dispatcher) {
-        userRepository.signUp(
-            email = email,
-            password = password,
-            name = name,
-            firebaseResult = firebaseResult,
-            dispatcher = dispatcher
-        )
-    }
+    ) = userRepository.signUp(
+        email = email,
+        password = password,
+        name = name,
+        firebaseResult = firebaseResult,
+        dispatcher = dispatcher
+    )
 }

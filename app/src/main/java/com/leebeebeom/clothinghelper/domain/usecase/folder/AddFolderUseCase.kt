@@ -5,7 +5,6 @@ import com.leebeebeom.clothinghelper.domain.repository.FolderRepository
 import com.leebeebeom.clothinghelper.ui.main.drawer.MainCategoryType
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class AddFolderUseCase @Inject constructor(private val folderRepository: FolderRepository) {
@@ -17,7 +16,7 @@ class AddFolderUseCase @Inject constructor(private val folderRepository: FolderR
         mainCategoryType: MainCategoryType,
         uid: String,
         onFail: (Exception) -> Unit,
-    ) = withContext(dispatcher) {
+    ) {
         val folder = Folder(
             parentKey = parentKey,
             subCategoryKey = subCategoryKey,

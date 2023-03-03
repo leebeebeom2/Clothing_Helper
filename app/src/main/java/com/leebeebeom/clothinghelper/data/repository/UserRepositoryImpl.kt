@@ -109,12 +109,7 @@ class UserRepositoryImpl @Inject constructor(
         firebaseResult.success()
     }
 
-    override suspend fun signOut(onFail: (Exception) -> Unit, dispatcher: CoroutineDispatcher) =
-        withAppScope(
-            callSite = AuthCallSite("signOut"),
-            onFail = onFail,
-            dispatcher = dispatcher
-        ) { auth.signOut() }
+    override fun signOut() = auth.signOut()
 
     /**
      * 호출 시 로딩 On

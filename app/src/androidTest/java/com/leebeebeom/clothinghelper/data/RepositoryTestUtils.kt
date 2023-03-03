@@ -11,6 +11,7 @@ import kotlinx.coroutines.test.runTest
 
 @OptIn(ExperimentalCoroutinesApi::class)
 fun <T : BaseModel, U : BaseDataRepository<T>> repositoryCrudTest(
+    type: Class<T>,
     data: T,
     repository: U,
     uid: String,
@@ -22,7 +23,7 @@ fun <T : BaseModel, U : BaseDataRepository<T>> repositoryCrudTest(
 
     val dispatcher = UnconfinedTestDispatcher(testScheduler)
 
-    repository.getAllData(dispatcher = dispatcher, uid = uid) {
+    repository.getAllData(dispatcher = dispatcher, uid = uid, type = type) {
         assert(false)
     }
 
@@ -30,14 +31,18 @@ fun <T : BaseModel, U : BaseDataRepository<T>> repositoryCrudTest(
         assert(false)
     }
 
-    val addedData = repository.getAllData(dispatcher, uid) { assert(false) }.first().first()
+    val addedData =
+        repository.getAllData(dispatcher = dispatcher, uid = uid, type = type) { assert(false) }
+            .first().first()
     addAssert(addedData)
 
     repository.edit(dispatcher = dispatcher, newData = newData(addedData), uid = uid) {
         assert(false)
     }
 
-    val editData = repository.getAllData(dispatcher, uid) { assert(false) }.first().first()
+    val editData =
+        repository.getAllData(dispatcher = dispatcher, uid = uid, type = type) { assert(false) }
+            .first().first()
     editAssert(addedData, editData)
 
     FirebaseDatabase.getInstance().reference.child(uid).removeValue()
@@ -45,6 +50,7 @@ fun <T : BaseModel, U : BaseDataRepository<T>> repositoryCrudTest(
 
 @OptIn(ExperimentalCoroutinesApi::class)
 fun <T : BaseModel, U : BaseDataRepository<T>> repositorySignOutTest(
+    type: Class<T>,
     data1: T,
     data2: T,
     repository: U,
@@ -54,15 +60,13 @@ fun <T : BaseModel, U : BaseDataRepository<T>> repositorySignOutTest(
 
     signIn()
 
-    repository.getAllData(dispatcher = dispatcher, uid = uid) { assert(false) }
+    val allDataFlow =
+        repository.getAllData(dispatcher = dispatcher, uid = uid, type = type) { assert(false) }
 
     repository.add(dispatcher = dispatcher, data = data1, uid = uid) { assert(false) }
     repository.add(dispatcher = dispatcher, data = data2, uid = uid) { assert(false) }
 
-    val allData = repository.getAllData(dispatcher, uid) { assert(false) }.first()
-    assert(allData.size == 2)
-
-    repository.getAllData(dispatcher = dispatcher, uid = null) { assert(false) }
+    assert(allDataFlow.first().size == 2)
 
     FirebaseDatabase.getInstance().reference.child(uid).removeValue()
 }

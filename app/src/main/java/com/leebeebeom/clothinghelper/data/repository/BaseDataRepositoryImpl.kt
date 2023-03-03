@@ -17,7 +17,7 @@ fun getDbRoot() = FirebaseDatabase.getInstance().reference
 abstract class BaseDataRepositoryImpl<T : BaseModel>(
     private val refPath: String,
     private val networkChecker: NetworkChecker,
-    private val appScope: CoroutineScope,
+    protected val appScope: CoroutineScope,
 ) : BaseDataRepository<T>, LoadingStateProviderImpl() {
     private val dbRoot = getDbRoot()
 

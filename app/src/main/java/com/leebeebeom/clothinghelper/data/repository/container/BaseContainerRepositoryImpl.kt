@@ -11,8 +11,8 @@ import com.leebeebeom.clothinghelper.data.repository.util.WifiException
 import com.leebeebeom.clothinghelper.domain.model.BaseContainerModel
 import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.*
 
 
 @Suppress("UNCHECKED_CAST")
@@ -20,20 +20,25 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
     private val sortFlow: Flow<SortPreferences>,
     refPath: String,
     networkChecker: NetworkChecker,
+    appScope: CoroutineScope,
 ) : BaseDataRepository<T>, BaseDataRepositoryImpl<T>(
-    refPath = refPath, networkChecker = networkChecker
+    refPath = refPath, networkChecker = networkChecker, appScope = appScope
 ) {
     override suspend fun getAllData(
         dispatcher: CoroutineDispatcher,
         uid: String?,
         type: Class<T>,
         onFail: (Exception) -> Unit,
-    ): Flow<List<T>> {
+    ): StateFlow<List<T>> {
         val allDataFLow = super.getAllData(
             dispatcher = dispatcher, uid = uid, type = type, onFail = onFail
         )
 
-        return allDataFLow.combine(flow = sortFlow, transform = ::getSortedData)
+        return allDataFLow.combine(flow = sortFlow, transform = ::getSortedData).stateIn(
+            scope = appScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
     }
 
     private fun getSortedData(

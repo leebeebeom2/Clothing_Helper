@@ -17,7 +17,7 @@ fun getDbRoot() = FirebaseDatabase.getInstance().reference
 abstract class BaseDataRepositoryImpl<T : BaseModel>(
     private val refPath: String,
     private val networkChecker: NetworkChecker,
-) : BaseDataRepository<T>, LoadingStateProviderImpl(true) {
+) : BaseDataRepository<T>, LoadingStateProviderImpl() {
     private val dbRoot = getDbRoot()
 
     // TODO 미로그인 시 데이터 사용 Any로 변경

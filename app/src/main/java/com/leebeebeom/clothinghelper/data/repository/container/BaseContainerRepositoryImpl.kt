@@ -23,14 +23,13 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
 ) : BaseDataRepository<T>, BaseDataRepositoryImpl<T>(
     refPath = refPath, networkChecker = networkChecker
 ) {
-    override suspend fun load(
+    override suspend fun getAllData(
         dispatcher: CoroutineDispatcher,
         uid: String?,
-        type: Class<T>,
         onFail: (Exception) -> Unit,
     ): Flow<List<T>> {
-        val allDataFLow = super.load(
-            dispatcher = dispatcher, uid = uid, type = type, onFail = onFail
+        val allDataFLow = super.getAllData(
+            dispatcher = dispatcher, uid = uid, onFail = onFail
         )
 
         return allDataFLow.combine(flow = sortFlow, transform = ::getSortedData)

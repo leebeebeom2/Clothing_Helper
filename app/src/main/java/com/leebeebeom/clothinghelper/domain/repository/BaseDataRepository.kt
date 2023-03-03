@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
 interface BaseDataRepository<T : BaseModel> : LoadingStateProvider {
-    suspend fun load(
+    suspend fun getAllData(
         dispatcher: CoroutineDispatcher,
         uid: String?,
         onFail: (Exception) -> Unit,

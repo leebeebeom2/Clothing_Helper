@@ -23,7 +23,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     // TODO 미로그인 시 데이터 사용 Any로 변경
     // TODO 로그인 시 최초 로드 후 원래 데이터 사용 설정으로 변경
 
-    override suspend fun load(
+    override suspend fun getAllData(
         dispatcher: CoroutineDispatcher,
         uid: String?,
         onFail: (Exception) -> Unit,

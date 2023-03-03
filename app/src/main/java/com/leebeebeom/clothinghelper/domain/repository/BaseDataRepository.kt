@@ -5,7 +5,6 @@ import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProvider
 import com.leebeebeom.clothinghelper.data.repository.util.WifiException
 import com.leebeebeom.clothinghelper.domain.model.BaseModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
 interface BaseDataRepository<T : BaseModel> : LoadingStateProvider {
@@ -20,7 +19,7 @@ interface BaseDataRepository<T : BaseModel> : LoadingStateProvider {
      * @throws WifiException 사용자가 와이파이로만 연결 선택 시 와이파이 미 연결됐을 경우
      */
     suspend fun add(
-        dispatcher: CoroutineDispatcher = Dispatchers.IO,
+        dispatcher: CoroutineDispatcher,
         data: T,
         uid: String,
         onFail: (Exception) -> Unit,
@@ -33,7 +32,7 @@ interface BaseDataRepository<T : BaseModel> : LoadingStateProvider {
      * @throws IllegalArgumentException 본래 데이터를 삭제하지 못했을 경우
      */
     suspend fun edit(
-        dispatcher: CoroutineDispatcher = Dispatchers.IO,
+        dispatcher: CoroutineDispatcher,
         newData: T,
         uid: String,
         onFail: (Exception) -> Unit,

@@ -1,19 +1,38 @@
 package com.leebeebeom.clothinghelper.data.repository.util
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 
 interface LoadingStateProvider {
-    val isLoading: StateFlow<Boolean>
+    val isLoading: Flow<Boolean>
 }
 
-open class LoadingStateProviderImpl(initialLoading: Boolean) : LoadingStateProvider {
-    private val _isLoading = MutableStateFlow(initialLoading)
-    override val isLoading = _isLoading.asStateFlow()
+open class LoadingStateProviderImpl : LoadingStateProvider {
+    override val isLoading = callbackFlow {
 
-    fun loadingOn() = _isLoading.update { true }
+        val callBack = object : LoadingStateCallBack {
+            override fun loadingOn() {
+                trySend(true)
+            }
 
-    fun loadingOff() = _isLoading.update { false }
+            override fun loadingOff() {
+                trySend(false)
+            }
+        }
+
+        this@LoadingStateProviderImpl.loadingStateCallBack = callBack
+        awaitClose { this@LoadingStateProviderImpl.loadingStateCallBack = null }
+    }
+
+    private var loadingStateCallBack: LoadingStateCallBack? = null
+
+    fun loadingOn() = loadingStateCallBack?.loadingOn()
+
+    fun loadingOff() = loadingStateCallBack?.loadingOff()
+}
+
+interface LoadingStateCallBack {
+    fun loadingOn()
+    fun loadingOff()
 }

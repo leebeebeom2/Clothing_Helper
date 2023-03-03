@@ -10,33 +10,43 @@ import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.leebeebeom.clothinghelper.data.repository.util.AuthCallSite
 import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProviderImpl
 import com.leebeebeom.clothinghelper.data.repository.util.logE
+import com.leebeebeom.clothinghelper.di.AppScope
 import com.leebeebeom.clothinghelper.domain.model.User
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UserRepositoryImpl @Inject constructor() :
-    UserRepository, LoadingStateProviderImpl(false) {
+class UserRepositoryImpl @Inject constructor(
+    @AppScope private val appScope: CoroutineScope,
+) : UserRepository, LoadingStateProviderImpl(false) {
     private val auth = FirebaseAuth.getInstance()
 
-    override val firebaseUser = MutableStateFlow(auth.currentUser.toUserModel())
+    override val user = callbackFlow {
+        val callback = FirebaseAuth.AuthStateListener {
+            trySend(it.currentUser.toUserModel())
+        }
+        auth.addAuthStateListener(callback)
+
+        awaitClose { auth.removeAuthStateListener(callback) }
+    }
 
     override suspend fun googleSignIn(
         credential: AuthCredential,
         firebaseResult: FirebaseResult,
         dispatcher: CoroutineDispatcher,
-    ) = withContext(
+    ) = withAppScope(
         callSite = AuthCallSite("googleSignIn"),
         onFail = firebaseResult::fail,
         dispatcher = dispatcher
     ) {
-        firebaseUser.value = auth.signInWithCredential(credential).await().user.toUserModel()!!
+        auth.signInWithCredential(credential).await()
         firebaseResult.success()
     }
 
@@ -50,11 +60,10 @@ class UserRepositoryImpl @Inject constructor() :
         password: String,
         firebaseResult: FirebaseResult,
         dispatcher: CoroutineDispatcher,
-    ) = withContext(
+    ) = withAppScope(
         callSite = AuthCallSite("signIn"), onFail = firebaseResult::fail, dispatcher = dispatcher
     ) {
-        firebaseUser.value =
-            auth.signInWithEmailAndPassword(email, password).await().user.toUserModel()!!
+        auth.signInWithEmailAndPassword(email, password).await()
         firebaseResult.success()
     }
 
@@ -69,7 +78,7 @@ class UserRepositoryImpl @Inject constructor() :
         name: String,
         firebaseResult: FirebaseResult,
         dispatcher: CoroutineDispatcher,
-    ) = withContext(
+    ) = withAppScope(
         callSite = AuthCallSite("signUp"), onFail = firebaseResult::fail, dispatcher = dispatcher
     ) {
         val request = userProfileChangeRequest { displayName = name }
@@ -77,8 +86,6 @@ class UserRepositoryImpl @Inject constructor() :
         val user = auth.createUserWithEmailAndPassword(email, password).await().user!!
 
         user.updateProfile(request).await()
-
-        firebaseUser.value = user.toUserModel()
 
         firebaseResult.success()
     }
@@ -92,7 +99,7 @@ class UserRepositoryImpl @Inject constructor() :
         email: String,
         firebaseResult: FirebaseResult,
         dispatcher: CoroutineDispatcher,
-    ) = withContext(
+    ) = withAppScope(
         callSite = AuthCallSite("resetPasswordEmail"),
         onFail = firebaseResult::fail,
         dispatcher = dispatcher
@@ -103,14 +110,11 @@ class UserRepositoryImpl @Inject constructor() :
     }
 
     override suspend fun signOut(onFail: (Exception) -> Unit, dispatcher: CoroutineDispatcher) =
-        withContext(
+        withAppScope(
             callSite = AuthCallSite("signOut"),
             onFail = onFail,
             dispatcher = dispatcher
-        ) {
-            auth.signOut()
-            firebaseUser.value = null
-        }
+        ) { auth.signOut() }
 
     /**
      * 호출 시 로딩 On
@@ -119,20 +123,22 @@ class UserRepositoryImpl @Inject constructor() :
      *
      * @param callSite 예외 발생 시 로그에 찍힐 Site
      */
-    private suspend fun withContext(
+    private suspend fun withAppScope(
         callSite: AuthCallSite,
         onFail: (Exception) -> Unit,
         dispatcher: CoroutineDispatcher,
         task: suspend CoroutineScope.() -> Unit,
-    ) = withContext(dispatcher) {
-        try {
-            loadingOn()
-            task()
-        } catch (e: Exception) {
-            logE(callSite.site, e)
-            onFail(e)
-        } finally {
-            loadingOff()
+    ) = withContext(appScope.coroutineContext) {
+        withContext(dispatcher) {
+            try {
+                loadingOn()
+                task()
+            } catch (e: Exception) {
+                logE(callSite.site, e)
+                onFail(e)
+            } finally {
+                loadingOff()
+            }
         }
     }
 

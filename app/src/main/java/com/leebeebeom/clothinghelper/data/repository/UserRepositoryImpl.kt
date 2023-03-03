@@ -16,7 +16,9 @@ import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -35,7 +37,7 @@ class UserRepositoryImpl @Inject constructor(
         auth.addAuthStateListener(callback)
 
         awaitClose { auth.removeAuthStateListener(callback) }
-    }
+    }.stateIn(appScope, SharingStarted.WhileSubscribed(5000), null)
 
     override suspend fun googleSignIn(
         credential: AuthCredential,

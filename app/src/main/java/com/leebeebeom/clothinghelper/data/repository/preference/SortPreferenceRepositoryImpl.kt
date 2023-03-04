@@ -19,7 +19,7 @@ abstract class SortPreferenceRepositoryImpl(private val dataStore: DataStore<Pre
     }.map {
         val sort = it[SortPreferenceKeys.SORT] ?: Sort.NAME.name
         val order = it[SortPreferenceKeys.ORDER] ?: Order.ASCENDING.name
-        SortPreferences(enumValueOf(sort), enumValueOf(order))
+        SortPreferences(sort = enumValueOf(sort), order = enumValueOf(order))
     }
 
     override suspend fun changeSort(sort: Sort) {

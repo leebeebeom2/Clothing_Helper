@@ -21,17 +21,17 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
     refPath: String,
     networkChecker: NetworkChecker,
     appScope: CoroutineScope,
+    type: Class<T>,
 ) : BaseDataRepository<T>, BaseDataRepositoryImpl<T>(
-    refPath = refPath, networkChecker = networkChecker, appScope = appScope
+    refPath = refPath, networkChecker = networkChecker, appScope = appScope, type = type
 ) {
     override suspend fun getAllData(
         dispatcher: CoroutineDispatcher,
         uid: String?,
-        type: Class<T>,
         onFail: (Exception) -> Unit,
     ): StateFlow<List<T>> {
         val allDataFLow = super.getAllData(
-            dispatcher = dispatcher, uid = uid, type = type, onFail = onFail
+            dispatcher = dispatcher, uid = uid, onFail = onFail
         )
 
         return allDataFLow.combine(flow = sortFlow, transform = ::getSortedData).stateIn(

@@ -2,11 +2,11 @@ package com.leebeebeom.clothinghelper.data.repository
 
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.database.*
+import com.leebeebeom.clothinghelper.data.repository.BaseDataRepositoryImpl.DataCallback
 import com.leebeebeom.clothinghelper.data.repository.util.*
 import com.leebeebeom.clothinghelper.domain.model.BaseModel
 import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.tasks.await
@@ -24,38 +24,38 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     initialValue = true, appScope = appScope
 ) {
     private val dbRoot = getDbRoot()
+    private var dataCallback: DataCallback<T>? = null
+
     protected var uid: String? = null
 
-    private lateinit var allData: StateFlow<List<T>>
+    override val allData = callbackFlow<List<T>> {
+        val callback = DataCallback { trySend(it) }
+        this@BaseDataRepositoryImpl.dataCallback = callback
+
+        awaitClose { this@BaseDataRepositoryImpl.dataCallback = null }
+    }.stateIn(
+        scope = appScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = emptyList()
+    )
 
     // TODO 미로그인 시 데이터 사용 Any로 변경
     // TODO 로그인 시 최초 로드 후 원래 데이터 사용 설정으로 변경
 
-    override suspend fun getAllData(
+    override suspend fun load(
         dispatcher: CoroutineDispatcher,
         uid: String?,
         onFail: (Exception) -> Unit,
-    ): StateFlow<List<T>> = withContext(
+    ) = withContext(
         dispatcher = dispatcher,
         callSite = DatabaseCallSite("${type.javaClass}: getAllData"),
         onFail = { onFailWithEmptyListFlow(onFail = onFail, exception = it) }
     ) {
-        if (uid == null) // 로그아웃
-            allData = emptyListFlow()
-        else if (uid != this.uid) // 새 로그인
-            allData = callbackFlow {
-                val containerRef = getDbRoot().getContainerRef(uid = uid, path = refPath)
-                val valueEventListener = valueEventListener(onFail = onFail)
-
-                containerRef.addValueEventListener(valueEventListener)
-                awaitClose { containerRef.removeEventListener(valueEventListener) }
-            }.stateIn(
-                scope = appScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = emptyList()
-            )
-        this.uid = uid
-        allData
+        uid?.let {
+            val allData = dbRoot.getContainerRef(uid = it, path = refPath).get()
+                .await().children.map { data -> data.getValue(type)!! }
+            dataCallback!!.changed(allData)
+        } ?: dataCallback!!.changed(emptyList())
     }
 
     /**
@@ -79,6 +79,10 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         val dataWithKey = data.addKey(key = getKey(uid = uid)) as T
 
         push(uid = uid, t = dataWithKey, dispatcher = dispatcher)
+
+        val allData = allData.value.toMutableList()
+        allData.add(dataWithKey)
+        dataCallback!!.changed(allData)
     }
 
     /**
@@ -90,6 +94,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     @Suppress("UNCHECKED_CAST")
     override suspend fun edit(
         dispatcher: CoroutineDispatcher,
+        oldData: T,
         newData: T,
         uid: String,
         onFail: (Exception) -> Unit,
@@ -102,18 +107,23 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         networkChecker.checkNetWork()
 
         push(uid = uid, t = newData, dispatcher = dispatcher)
+
+        val allData = allData.value.toMutableList()
+        allData.remove(element = oldData)
+        allData.add(element = newData)
+        dataCallback!!.changed(allData)
     }
 
     /**
      * @param callSite 예외 발생 시 로그에 찍힐 Site
      * @param loading true 일 경우 호출 시 로딩 On, 작업이 끝난 후 로딩 Off
      */
-    protected suspend fun <T> withContext(
+    protected suspend fun withContext(
         dispatcher: CoroutineDispatcher,
         callSite: DatabaseCallSite,
         loading: Boolean = true,
-        onFail: (Exception) -> T,
-        task: suspend () -> T,
+        onFail: (Exception) -> Unit,
+        task: suspend () -> Unit,
     ) = withContext(context = dispatcher) {
         try {
             if (loading) loadingOn()
@@ -150,16 +160,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         return emptyListFlow()
     }
 
-    private fun ProducerScope<List<T>>.valueEventListener(onFail: (Exception) -> Unit) =
-        object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                trySend(snapshot.children.map { it.getValue(type) as T })
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                val exception = error.toException()
-                onFail(exception)
-                trySend(emptyList())
-            }
-        }
+    private fun interface DataCallback<U : BaseModel> {
+        fun changed(data: List<U>)
+    }
 }

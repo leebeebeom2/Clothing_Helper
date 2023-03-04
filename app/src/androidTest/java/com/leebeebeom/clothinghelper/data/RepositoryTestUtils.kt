@@ -1,69 +1,94 @@
 package com.leebeebeom.clothinghelper.data
 
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.leebeebeom.clothinghelper.data.repository.FirebaseResult
 import com.leebeebeom.clothinghelper.domain.model.BaseModel
 import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
+import com.leebeebeom.clothinghelper.domain.repository.UserRepository
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 
 @OptIn(ExperimentalCoroutinesApi::class)
 fun <T : BaseModel, U : BaseDataRepository<T>> repositoryCrudTest(
-    type: Class<T>,
+    userRepository: UserRepository,
     data: T,
     repository: U,
-    uid: String,
     addAssert: (T) -> Unit,
     newData: (origin: T) -> T,
     editAssert: (origin: T, new: T) -> Unit,
 ) = runTest {
-    signIn()
+    val dispatcher = StandardTestDispatcher(testScheduler)
 
-    val dispatcher = UnconfinedTestDispatcher(testScheduler)
+    userRepository.signOut()
 
-    val allDataFlow =
-        repository.getAllData(dispatcher = dispatcher, uid = uid, type = type) { assert(false) }
+    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+        userRepository.user.collectLatest { }
+    }
 
-    repository.add(dispatcher = dispatcher, data = data, uid = uid) { assert(false) }
-
-    val addedData = allDataFlow.first().first()
-    addAssert(addedData)
-
-    repository.edit(
+    userRepository.signIn(
+        "1@a.com",
+        "111111",
         dispatcher = dispatcher,
+        firebaseResult = object : FirebaseResult {
+            override fun success() = assert(true)
+
+            override fun fail(exception: Exception) = assert(false)
+        })
+
+    withContext(Dispatchers.Default) {
+        delay(1000)
+        assert(userRepository.user.value != null)
+    }
+
+    val allDataFlow = repository.getAllData(
+        dispatcher = dispatcher,
+        uid = userRepository.user.value!!.uid,
+        onFail = { assert(false) })
+
+    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+        allDataFlow.collectLatest {}
+    }
+
+    repository.add(dispatcher = dispatcher,
+        data = data,
+        uid = userRepository.user.value!!.uid,
+        onFail = { assert(false) })
+
+    val addedData: T
+
+    withContext(Dispatchers.Default) {
+        delay(1000)
+        addedData = allDataFlow.value.first()
+        addAssert(addedData)
+    }
+
+    repository.edit(dispatcher = dispatcher,
         newData = newData(addedData),
-        uid = uid
-    ) { assert(false) }
+        uid = userRepository.user.value!!.uid,
+        onFail = { assert(false) })
 
-    val editData = allDataFlow.first().first()
-    editAssert(addedData, editData)
+    withContext(Dispatchers.Default) {
+        delay(1000)
+        val editData = allDataFlow.value.first()
+        editAssert(addedData, editData)
+    }
 
-    FirebaseDatabase.getInstance().reference.child(uid).removeValue()
+    val signOutData = repository.getAllData(dispatcher, null, onFail = { assert(false) }) // signOut
+
+    backgroundScope.launch {
+        signOutData.collectLatest { assert(it.isEmpty()) }
+    }
+
+    val allData = repository.getAllData(dispatcher,
+        userRepository.user.value!!.uid,
+        onFail = { assert(false) })
+
+    backgroundScope.launch {
+        allData.collectLatest { assert(it.size == 2) }
+    }
+
+    FirebaseDatabase.getInstance().reference.child(userRepository.user.value!!.uid).removeValue()
 }
-
-@OptIn(ExperimentalCoroutinesApi::class)
-fun <T : BaseModel, U : BaseDataRepository<T>> repositorySignOutTest(
-    type: Class<T>,
-    data1: T,
-    data2: T,
-    repository: U,
-    uid: String,
-) = runTest {
-    val dispatcher = UnconfinedTestDispatcher(testScheduler)
-
-    signIn()
-
-    val allDataFlow =
-        repository.getAllData(dispatcher = dispatcher, uid = uid, type = type) { assert(false) }
-
-    repository.add(dispatcher = dispatcher, data = data1, uid = uid) { assert(false) }
-    repository.add(dispatcher = dispatcher, data = data2, uid = uid) { assert(false) }
-
-    assert(allDataFlow.first().size == 2)
-
-    FirebaseDatabase.getInstance().reference.child(uid).removeValue()
-}
-
-private fun signIn() = FirebaseAuth.getInstance().signInWithEmailAndPassword("1@a.com", "111111")

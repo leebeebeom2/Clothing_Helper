@@ -6,7 +6,6 @@ import com.leebeebeom.clothinghelper.data.repository.preference.Order.ASCENDING
 import com.leebeebeom.clothinghelper.data.repository.preference.Order.DESCENDING
 import com.leebeebeom.clothinghelper.data.repository.preference.Sort.*
 import com.leebeebeom.clothinghelper.data.repository.preference.SortPreferences
-import com.leebeebeom.clothinghelper.data.repository.util.DatabaseCallSite
 import com.leebeebeom.clothinghelper.data.repository.util.NetworkChecker
 import com.leebeebeom.clothinghelper.data.repository.util.WifiException
 import com.leebeebeom.clothinghelper.domain.model.BaseContainerModel
@@ -18,7 +17,7 @@ import kotlinx.coroutines.flow.*
 
 @Suppress("UNCHECKED_CAST")
 abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
-    private val sortFlow: Flow<SortPreferences>,
+    sortFlow: Flow<SortPreferences>,
     refPath: String,
     networkChecker: NetworkChecker,
     appScope: CoroutineScope,
@@ -26,38 +25,12 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
 ) : BaseDataRepository<T>, BaseDataRepositoryImpl<T>(
     refPath = refPath, networkChecker = networkChecker, appScope = appScope, type = type
 ) {
-    private lateinit var allSortedData: StateFlow<List<T>>
-
-    override suspend fun getAllData(
-        dispatcher: CoroutineDispatcher,
-        uid: String?,
-        onFail: (Exception) -> Unit,
-    ): StateFlow<List<T>> =
-        withContext(
-            dispatcher = dispatcher,
-            callSite = DatabaseCallSite("${type.javaClass}: getAllSortedData"),
-            onFail = { onFailWithEmptyListFlow(onFail = onFail, exception = it) })
-        {
-            if (uid == null)
-                allSortedData = flowOf(emptyList<T>()).stateIn(
-                    appScope, SharingStarted.WhileSubscribed(5000), emptyList()
-                )
-            else if (uid != this.uid) {
-                val allDataFLow = super.getAllData(
-                    dispatcher = dispatcher, uid = uid, onFail = onFail
-                )
-
-                allSortedData =
-                    allDataFLow.combine(flow = sortFlow, transform = ::getSortedData).stateIn(
-                        scope = appScope,
-                        started = SharingStarted.WhileSubscribed(5000),
-                        initialValue = emptyList()
-                    )
-            }
-            this.uid = uid
-            allSortedData
-        }
-
+    override val allData =
+        super.allData.combine(flow = sortFlow, transform = ::getSortedData).stateIn(
+                scope = appScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = emptyList()
+            )
 
     private fun getSortedData(
         allData: List<T>,
@@ -85,6 +58,7 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
      */
     override suspend fun edit(
         dispatcher: CoroutineDispatcher,
+        oldData: T,
         newData: T,
         uid: String,
         onFail: (Exception) -> Unit,
@@ -92,7 +66,11 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
         val newDataWithEditDate = newData.changeEditDate() as T
 
         super.edit(
-            dispatcher = dispatcher, newData = newDataWithEditDate, uid = uid, onFail = onFail
+            dispatcher = dispatcher,
+            oldData = oldData,
+            newData = newDataWithEditDate,
+            uid = uid,
+            onFail = onFail
         )
     }
 }

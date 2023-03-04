@@ -15,5 +15,6 @@ class TodoRepositoryImpl @Inject constructor(
 ) : BaseDataRepositoryImpl<Todo>(
     refPath = DatabasePath.TODOS,
     networkChecker = networkChecker,
-    appScope = appScope
+    appScope = appScope,
+    type = Todo::class.java
 ), TodoRepository

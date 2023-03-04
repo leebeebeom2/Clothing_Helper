@@ -35,7 +35,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         awaitClose { this@BaseDataRepositoryImpl.dataCallback = null }
     }.stateIn(
         scope = appScope,
-        started = SharingStarted.WhileSubscribed(),
+        started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
 

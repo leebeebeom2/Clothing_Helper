@@ -19,7 +19,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     private val refPath: String,
     private val networkChecker: NetworkChecker,
     protected val appScope: CoroutineScope,
-    private val type: Class<T>,
+    protected val type: Class<T>,
 ) : BaseDataRepository<T>, LoadingStateProviderImpl(
     initialValue = true, appScope = appScope
 ) {
@@ -35,38 +35,27 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         dispatcher: CoroutineDispatcher,
         uid: String?,
         onFail: (Exception) -> Unit,
-    ): StateFlow<List<T>> {
-        fun emptyListFlow() = flowOf(emptyList<T>()).stateIn(
-            appScope, SharingStarted.WhileSubscribed(5000), emptyList()
-        )
+    ): StateFlow<List<T>> = withContext(
+        dispatcher = dispatcher,
+        callSite = DatabaseCallSite("${type.javaClass}: getAllData"),
+        onFail = { onFailWithEmptyListFlow(onFail = onFail, exception = it) }
+    ) {
+        if (uid == null) // 로그아웃
+            allData = emptyListFlow()
+        else if (uid != this.uid) // 새 로그인
+            allData = callbackFlow {
+                val containerRef = getDbRoot().getContainerRef(uid = uid, path = refPath)
+                val valueEventListener = valueEventListener(onFail = onFail)
 
-        fun onFailWithEmptyListFlow(exception: Exception): StateFlow<List<T>> {
-            onFail(exception)
-            return emptyListFlow()
-        }
-
-        return withContext(
-            dispatcher = dispatcher,
-            callSite = DatabaseCallSite("${type.javaClass}: getAllData"),
-            onFail = ::onFailWithEmptyListFlow
-        ) {
-            if (uid == null) // 로그아웃
-                allData = emptyListFlow()
-            else if (uid != this.uid) // 새 로그인
-                allData = callbackFlow {
-                    val containerRef = getDbRoot().getContainerRef(uid = uid, path = refPath)
-                    val valueEventListener = valueEventListener(onFail = onFail)
-
-                    containerRef.addValueEventListener(valueEventListener)
-                    awaitClose { containerRef.removeEventListener(valueEventListener) }
-                }.stateIn(
-                    scope = appScope,
-                    started = SharingStarted.WhileSubscribed(5000),
-                    initialValue = emptyList()
-                )
-            this.uid = uid
-            allData
-        }
+                containerRef.addValueEventListener(valueEventListener)
+                awaitClose { containerRef.removeEventListener(valueEventListener) }
+            }.stateIn(
+                scope = appScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = emptyList()
+            )
+        this.uid = uid
+        allData
     }
 
     /**
@@ -119,7 +108,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
      * @param callSite 예외 발생 시 로그에 찍힐 Site
      * @param loading true 일 경우 호출 시 로딩 On, 작업이 끝난 후 로딩 Off
      */
-    private suspend fun <T> withContext(
+    protected suspend fun <T> withContext(
         dispatcher: CoroutineDispatcher,
         callSite: DatabaseCallSite,
         loading: Boolean = true,
@@ -147,6 +136,18 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         withContext(dispatcher) {
             dbRoot.getContainerRef(uid = uid, path = refPath).child(t.key).setValue(t).await()
         }
+    }
+
+    protected fun emptyListFlow() = flowOf(emptyList<T>()).stateIn(
+        appScope, SharingStarted.WhileSubscribed(5000), emptyList()
+    )
+
+    protected fun onFailWithEmptyListFlow(
+        onFail: (Exception) -> Unit,
+        exception: Exception,
+    ): StateFlow<List<T>> {
+        onFail(exception)
+        return emptyListFlow()
     }
 
     private fun ProducerScope<List<T>>.valueEventListener(onFail: (Exception) -> Unit) =

@@ -6,6 +6,7 @@ import com.leebeebeom.clothinghelper.data.repository.preference.Order.ASCENDING
 import com.leebeebeom.clothinghelper.data.repository.preference.Order.DESCENDING
 import com.leebeebeom.clothinghelper.data.repository.preference.Sort.*
 import com.leebeebeom.clothinghelper.data.repository.preference.SortPreferences
+import com.leebeebeom.clothinghelper.data.repository.util.DatabaseCallSite
 import com.leebeebeom.clothinghelper.data.repository.util.NetworkChecker
 import com.leebeebeom.clothinghelper.data.repository.util.WifiException
 import com.leebeebeom.clothinghelper.domain.model.BaseContainerModel
@@ -31,26 +32,32 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
         dispatcher: CoroutineDispatcher,
         uid: String?,
         onFail: (Exception) -> Unit,
-    ): StateFlow<List<T>> {
-        if (uid == null)
-            allSortedData = flowOf(emptyList<T>()).stateIn(
-                appScope, SharingStarted.WhileSubscribed(5000), emptyList()
-            )
-        else if (uid != this.uid) {
-            val allDataFLow = super.getAllData(
-                dispatcher = dispatcher, uid = uid, onFail = onFail
-            )
-
-            allSortedData =
-                allDataFLow.combine(flow = sortFlow, transform = ::getSortedData).stateIn(
-                    scope = appScope,
-                    started = SharingStarted.WhileSubscribed(5000),
-                    initialValue = emptyList()
+    ): StateFlow<List<T>> =
+        withContext(
+            dispatcher = dispatcher,
+            callSite = DatabaseCallSite("${type.javaClass}: getAllSortedData"),
+            onFail = { onFailWithEmptyListFlow(onFail = onFail, exception = it) })
+        {
+            if (uid == null)
+                allSortedData = flowOf(emptyList<T>()).stateIn(
+                    appScope, SharingStarted.WhileSubscribed(5000), emptyList()
                 )
+            else if (uid != this.uid) {
+                val allDataFLow = super.getAllData(
+                    dispatcher = dispatcher, uid = uid, onFail = onFail
+                )
+
+                allSortedData =
+                    allDataFLow.combine(flow = sortFlow, transform = ::getSortedData).stateIn(
+                        scope = appScope,
+                        started = SharingStarted.WhileSubscribed(5000),
+                        initialValue = emptyList()
+                    )
+            }
+            this.uid = uid
+            allSortedData
         }
-        this.uid = uid
-        return allSortedData
-    }
+
 
     private fun getSortedData(
         allData: List<T>,

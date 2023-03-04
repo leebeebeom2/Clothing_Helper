@@ -3,22 +3,23 @@ package com.leebeebeom.clothinghelper.data.container
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.leebeebeom.clothinghelper.RepositoryProvider
+import com.leebeebeom.clothinghelper.data.repository.UserRepositoryImpl
 import com.leebeebeom.clothinghelper.data.repositoryCrudTest
-import com.leebeebeom.clothinghelper.data.repositorySignOutTest
 import com.leebeebeom.clothinghelper.domain.model.Folder
 import com.leebeebeom.clothinghelper.domain.repository.FolderRepository
+import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import org.junit.Before
 import org.junit.Test
 
 class FolderRepositoryTest {
+    private lateinit var userRepository: UserRepository
     private lateinit var folderRepository: FolderRepository
-
-    private val uid = "folder test"
 
     @Before
     fun init() {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        folderRepository = RepositoryProvider.getFolderRepository(context)
+        folderRepository = RepositoryProvider.getFolderRepository(context = context)
+        userRepository = UserRepositoryImpl(appScope = RepositoryProvider.getAppScope())
     }
 
     @Test
@@ -26,10 +27,9 @@ class FolderRepositoryTest {
         val folder = Folder("folder")
 
         repositoryCrudTest(
-            type = Folder::class.java,
+            userRepository = userRepository,
             data = folder,
             repository = folderRepository,
-            uid = uid,
             addAssert = {
                 assert(it.name == folder.name)
                 assert(it.createDate == it.editDate)
@@ -45,16 +45,5 @@ class FolderRepositoryTest {
             assert(origin.editDate != new.editDate)
             assert(origin.editDate < new.editDate)
         }
-    }
-
-    @Test
-    fun signOutTest() {
-        repositorySignOutTest(
-            type = Folder::class.java,
-            data1 = Folder("folder 1"),
-            data2 = Folder("folder 2"),
-            repository = folderRepository,
-            uid = uid
-        )
     }
 }

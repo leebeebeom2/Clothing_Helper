@@ -3,22 +3,23 @@ package com.leebeebeom.clothinghelper.data.container
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.leebeebeom.clothinghelper.RepositoryProvider
+import com.leebeebeom.clothinghelper.data.repository.UserRepositoryImpl
 import com.leebeebeom.clothinghelper.data.repositoryCrudTest
-import com.leebeebeom.clothinghelper.data.repositorySignOutTest
 import com.leebeebeom.clothinghelper.domain.model.SubCategory
 import com.leebeebeom.clothinghelper.domain.repository.SubCategoryRepository
+import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import org.junit.Before
 import org.junit.Test
 
 class SubCategoryRepositoryTest {
+    private lateinit var userRepository: UserRepository
     private lateinit var subCategoryRepository: SubCategoryRepository
-
-    private val uid = "subcategory test"
 
     @Before
     fun init() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         subCategoryRepository = RepositoryProvider.getSubCategoryRepository(context = context)
+        userRepository = UserRepositoryImpl(appScope = RepositoryProvider.getAppScope())
     }
 
 
@@ -27,10 +28,9 @@ class SubCategoryRepositoryTest {
         val subCategory = SubCategory(name = "subcategory test")
 
         repositoryCrudTest(
-            type = SubCategory::class.java,
+            userRepository = userRepository,
             data = subCategory,
             repository = subCategoryRepository,
-            uid = uid,
             addAssert = {
                 assert(it.name == subCategory.name)
                 assert(it.createDate == it.editDate)
@@ -46,16 +46,5 @@ class SubCategoryRepositoryTest {
             assert(origin.editDate != new.editDate)
             assert(origin.editDate < new.editDate)
         }
-    }
-
-    @Test
-    fun signOutTest() {
-        repositorySignOutTest(
-            type = SubCategory::class.java,
-            data1 = SubCategory("subCategory 1"),
-            data2 = SubCategory("subCategory 2"),
-            repository = subCategoryRepository,
-            uid = uid
-        )
     }
 }

@@ -17,8 +17,8 @@ class TodoRepositoryTest {
     @Before
     fun init() {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        todoRepository = RepositoryProvider.getTodoRepository(context)
-        userRepository = UserRepositoryImpl(RepositoryProvider.getAppScope())
+        todoRepository = RepositoryProvider.getTodoRepository(context = context)
+        userRepository = UserRepositoryImpl(appScope = RepositoryProvider.getAppScope())
     }
 
     @Test

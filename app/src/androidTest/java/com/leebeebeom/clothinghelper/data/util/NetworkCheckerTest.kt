@@ -2,6 +2,7 @@ package com.leebeebeom.clothinghelper.data.util
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
+import com.leebeebeom.clothinghelper.RepositoryProvider
 import com.leebeebeom.clothinghelper.data.repository.preference.NetworkPreferenceRepositoryImpl
 import com.leebeebeom.clothinghelper.data.repository.preference.NetworkPreferences
 import com.leebeebeom.clothinghelper.data.repository.util.NetworkChecker
@@ -19,7 +20,10 @@ class NetworkCheckerTest {
     @Before
     fun init() {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        networkPreferenceRepository = NetworkPreferenceRepositoryImpl(context)
+        networkPreferenceRepository = NetworkPreferenceRepositoryImpl(
+            context = context,
+            appScope = RepositoryProvider.getAppScope()
+        )
         networkChecker = NetworkChecker(
             context = context,
             networkPreferenceRepository = networkPreferenceRepository

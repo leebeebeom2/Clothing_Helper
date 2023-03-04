@@ -8,11 +8,12 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.StateFlow
 
 interface BaseDataRepository<T : BaseModel> : LoadingStateProvider {
-    suspend fun getAllData(
+    val allData: StateFlow<List<T>>
+    suspend fun load(
         dispatcher: CoroutineDispatcher,
         uid: String?,
         onFail: (Exception) -> Unit,
-    ): StateFlow<List<T>>
+    )
 
     /**
      * @throws FirebaseNetworkException 인터넷 미 연결 시
@@ -33,6 +34,7 @@ interface BaseDataRepository<T : BaseModel> : LoadingStateProvider {
      */
     suspend fun edit(
         dispatcher: CoroutineDispatcher,
+        oldData: T,
         newData: T,
         uid: String,
         onFail: (Exception) -> Unit,

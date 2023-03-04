@@ -138,7 +138,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         }
     }
 
-    protected fun emptyListFlow() = flowOf(emptyList<T>()).stateIn(
+    private fun emptyListFlow() = flowOf(emptyList<T>()).stateIn(
         appScope, SharingStarted.WhileSubscribed(5000), emptyList()
     )
 

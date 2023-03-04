@@ -12,8 +12,7 @@ import javax.inject.Singleton
 class SubCategoryPreferencesRepositoryImpl @Inject constructor(
     @ApplicationContext context: Context,
     @AppScope appScope: CoroutineScope,
-) :
-    SortPreferenceRepositoryImpl(dataStore = context.subCategoryDatastore, appScope = appScope)
+) : SortPreferenceRepositoryImpl(dataStore = context.subCategoryDatastore, appScope = appScope)
 
 private const val SUBCATEGORY = "subCategory preferences"
 private val Context.subCategoryDatastore by preferencesDataStore(name = SUBCATEGORY)

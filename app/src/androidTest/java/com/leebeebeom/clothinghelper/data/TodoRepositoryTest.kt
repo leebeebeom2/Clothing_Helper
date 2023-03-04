@@ -3,20 +3,22 @@ package com.leebeebeom.clothinghelper.data
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.leebeebeom.clothinghelper.RepositoryProvider
+import com.leebeebeom.clothinghelper.data.repository.UserRepositoryImpl
 import com.leebeebeom.clothinghelper.domain.model.Todo
 import com.leebeebeom.clothinghelper.domain.repository.TodoRepository
+import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import org.junit.Before
 import org.junit.Test
 
 class TodoRepositoryTest {
+    private lateinit var userRepository: UserRepository
     private lateinit var todoRepository: TodoRepository
-
-    private val uid = "todo test"
 
     @Before
     fun init() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         todoRepository = RepositoryProvider.getTodoRepository(context)
+        userRepository = UserRepositoryImpl(RepositoryProvider.getAppScope())
     }
 
     @Test
@@ -24,10 +26,9 @@ class TodoRepositoryTest {
         val todo = Todo(text = "todo")
 
         repositoryCrudTest(
-            type = Todo::class.java,
+            userRepository = userRepository,
             data = todo,
             repository = todoRepository,
-            uid = uid,
             addAssert = {
                 assert(it.text == todo.text)
                 assert(it.done == todo.done)
@@ -40,16 +41,5 @@ class TodoRepositoryTest {
             assert(new.order == 1)
             assert(new.text == "new todo")
         }
-    }
-
-    @Test
-    fun signOutTest() {
-        repositorySignOutTest(
-            type = Todo::class.java,
-            data1 = Todo("todo 1"),
-            data2 = Todo("todo 2"),
-            repository = todoRepository,
-            uid = uid
-        )
     }
 }

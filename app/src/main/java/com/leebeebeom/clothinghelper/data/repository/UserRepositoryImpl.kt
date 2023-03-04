@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
+import com.leebeebeom.clothinghelper.data.repository.UserRepositoryImpl.NameUpdateCallback
 import com.leebeebeom.clothinghelper.data.repository.util.AuthCallSite
 import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProviderImpl
 import com.leebeebeom.clothinghelper.data.repository.util.logE
@@ -32,14 +33,21 @@ class UserRepositoryImpl @Inject constructor(
     appScope = appScope
 ) {
     private val auth = FirebaseAuth.getInstance()
+    private var nameUpdateCallback: NameUpdateCallback? = null
 
     override val user = callbackFlow {
         val callback = FirebaseAuth.AuthStateListener {
             trySend(it.currentUser.toUserModel())
         }
-        auth.addAuthStateListener(callback)
 
-        awaitClose { auth.removeAuthStateListener(callback) }
+        val nameUpdateCallback = NameUpdateCallback { trySend(it.toUserModel()) }
+        auth.addAuthStateListener(callback)
+        this@UserRepositoryImpl.nameUpdateCallback = nameUpdateCallback
+
+        awaitClose {
+            auth.removeAuthStateListener(callback)
+            this@UserRepositoryImpl.nameUpdateCallback = null
+        }
     }.stateIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), initialValue = null)
 
     override suspend fun googleSignIn(
@@ -86,12 +94,13 @@ class UserRepositoryImpl @Inject constructor(
     ) = withAppScope(
         callSite = AuthCallSite("signUp"), onFail = firebaseResult::fail, dispatcher = dispatcher
     ) {
-        val request = userProfileChangeRequest { displayName = name }
-
         val user = auth.createUserWithEmailAndPassword(email, password).await().user!!
+
+        val request = userProfileChangeRequest { displayName = name }
 
         user.updateProfile(request).await()
 
+        nameUpdateCallback?.nameUpdate(user = user)
         firebaseResult.success()
     }
 
@@ -144,4 +153,8 @@ class UserRepositoryImpl @Inject constructor(
 
     private fun FirebaseUser?.toUserModel() =
         this?.let { User(email = "$email", name = "$displayName", uid = uid) }
+
+    private fun interface NameUpdateCallback {
+        fun nameUpdate(user: FirebaseUser)
+    }
 }

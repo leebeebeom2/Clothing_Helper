@@ -118,7 +118,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
      * @param callSite 예외 발생 시 로그에 찍힐 Site
      * @param loading true 일 경우 호출 시 로딩 On, 작업이 끝난 후 로딩 Off
      */
-    protected suspend fun withContext(
+    private suspend fun withContext(
         dispatcher: CoroutineDispatcher,
         callSite: DatabaseCallSite,
         loading: Boolean = true,

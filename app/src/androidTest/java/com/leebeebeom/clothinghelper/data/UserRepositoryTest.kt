@@ -11,6 +11,7 @@ import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.E
 import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.ERROR_USER_NOT_FOUND
 import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.ERROR_WRONG_PASSWORD
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -39,7 +40,7 @@ class UserRepositoryTest {
         val dispatcher = StandardTestDispatcher(testScheduler)
 
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            userRepository.user.collect {}
+            userRepository.user.collectLatest {}
         }
 
         assert(userRepository.user.value == null)

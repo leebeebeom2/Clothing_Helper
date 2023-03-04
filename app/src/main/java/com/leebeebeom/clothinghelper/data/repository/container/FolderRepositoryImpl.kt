@@ -20,5 +20,6 @@ class FolderRepositoryImpl @Inject constructor(
     sortFlow = folderPreferencesRepository.sort,
     refPath = DatabasePath.FOLDERS,
     networkChecker = networkChecker,
-    appScope = appScope
+    appScope = appScope,
+    type = Folder::class.java
 ), FolderRepository

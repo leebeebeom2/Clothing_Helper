@@ -20,5 +20,6 @@ class SubCategoryRepositoryImpl @Inject constructor(
     sortFlow = subCategoryPreferencesRepository.sort,
     refPath = DatabasePath.SUB_CATEGORIES,
     networkChecker = networkChecker,
-    appScope = appScope
+    appScope = appScope,
+    type = SubCategory::class.java
 ), SubCategoryRepository

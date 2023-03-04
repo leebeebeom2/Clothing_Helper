@@ -40,7 +40,7 @@ class UserRepositoryImpl @Inject constructor(
         auth.addAuthStateListener(callback)
 
         awaitClose { auth.removeAuthStateListener(callback) }
-    }.stateIn(appScope, SharingStarted.WhileSubscribed(5000), null)
+    }.stateIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), initialValue = null)
 
     override suspend fun googleSignIn(
         credential: AuthCredential,

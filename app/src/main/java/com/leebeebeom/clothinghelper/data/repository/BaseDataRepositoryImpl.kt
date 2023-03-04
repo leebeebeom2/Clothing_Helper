@@ -24,7 +24,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     initialValue = true, appScope = appScope
 ) {
     private val dbRoot = getDbRoot()
-    private var uid: String? = null
+    protected var uid: String? = null
 
     private lateinit var allData: StateFlow<List<T>>
 

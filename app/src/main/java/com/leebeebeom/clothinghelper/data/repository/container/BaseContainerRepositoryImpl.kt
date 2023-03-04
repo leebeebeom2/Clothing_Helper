@@ -25,20 +25,31 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
 ) : BaseDataRepository<T>, BaseDataRepositoryImpl<T>(
     refPath = refPath, networkChecker = networkChecker, appScope = appScope, type = type
 ) {
+    private lateinit var allSortedData: StateFlow<List<T>>
+
     override suspend fun getAllData(
         dispatcher: CoroutineDispatcher,
         uid: String?,
         onFail: (Exception) -> Unit,
     ): StateFlow<List<T>> {
-        val allDataFLow = super.getAllData(
-            dispatcher = dispatcher, uid = uid, onFail = onFail
-        )
+        if (uid == null)
+            allSortedData = flowOf(emptyList<T>()).stateIn(
+                appScope, SharingStarted.WhileSubscribed(5000), emptyList()
+            )
+        else if (uid != this.uid) {
+            val allDataFLow = super.getAllData(
+                dispatcher = dispatcher, uid = uid, onFail = onFail
+            )
 
-        return allDataFLow.combine(flow = sortFlow, transform = ::getSortedData).stateIn(
-            scope = appScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        )
+            allSortedData =
+                allDataFLow.combine(flow = sortFlow, transform = ::getSortedData).stateIn(
+                    scope = appScope,
+                    started = SharingStarted.WhileSubscribed(5000),
+                    initialValue = emptyList()
+                )
+        }
+        this.uid = uid
+        return allSortedData
     }
 
     private fun getSortedData(

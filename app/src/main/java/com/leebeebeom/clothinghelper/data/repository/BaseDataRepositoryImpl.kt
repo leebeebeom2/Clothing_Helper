@@ -34,7 +34,6 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     override suspend fun getAllData(
         dispatcher: CoroutineDispatcher,
         uid: String?,
-        type: Class<T>,
         onFail: (Exception) -> Unit,
     ): StateFlow<List<T>> {
         fun emptyListFlow() = flowOf(emptyList<T>()).stateIn(

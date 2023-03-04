@@ -61,7 +61,7 @@ class UserRepositoryImpl @Inject constructor(
         credential: AuthCredential,
         firebaseResult: FirebaseResult,
         dispatcher: CoroutineDispatcher,
-    ) = withAppScope(
+    ) = withContext(
         callSite = AuthCallSite("googleSignIn"),
         onFail = firebaseResult::fail,
         dispatcher = dispatcher
@@ -81,7 +81,7 @@ class UserRepositoryImpl @Inject constructor(
         password: String,
         firebaseResult: FirebaseResult,
         dispatcher: CoroutineDispatcher,
-    ) = withAppScope(
+    ) = withContext(
         callSite = AuthCallSite("signIn"), onFail = firebaseResult::fail, dispatcher = dispatcher
     ) {
         val user = auth.signInWithEmailAndPassword(email, password).await().user!!
@@ -100,7 +100,7 @@ class UserRepositoryImpl @Inject constructor(
         name: String,
         firebaseResult: FirebaseResult,
         dispatcher: CoroutineDispatcher,
-    ) = withAppScope(
+    ) = withContext(
         callSite = AuthCallSite("signUp"), onFail = firebaseResult::fail, dispatcher = dispatcher
     ) {
         val user = auth.createUserWithEmailAndPassword(email, password).await().user!!
@@ -122,7 +122,7 @@ class UserRepositoryImpl @Inject constructor(
         email: String,
         firebaseResult: FirebaseResult,
         dispatcher: CoroutineDispatcher,
-    ) = withAppScope(
+    ) = withContext(
         callSite = AuthCallSite("resetPasswordEmail"),
         onFail = firebaseResult::fail,
         dispatcher = dispatcher
@@ -144,22 +144,20 @@ class UserRepositoryImpl @Inject constructor(
      *
      * @param callSite 예외 발생 시 로그에 찍힐 Site
      */
-    private suspend fun withAppScope(
+    private suspend fun withContext(
         callSite: AuthCallSite,
         onFail: (Exception) -> Unit,
         dispatcher: CoroutineDispatcher,
         task: suspend CoroutineScope.() -> Unit,
-    ) = withContext(appScope.coroutineContext) {
-        withContext(dispatcher) {
-            try {
-                loadingOn()
-                task()
-            } catch (e: Exception) {
-                logE(callSite.site, e)
-                onFail(e)
-            } finally {
-                loadingOff()
-            }
+    ) = withContext(dispatcher) {
+        try {
+            loadingOn()
+            task()
+        } catch (e: Exception) {
+            logE(callSite.site, e)
+            onFail(e)
+        } finally {
+            loadingOff()
         }
     }
 

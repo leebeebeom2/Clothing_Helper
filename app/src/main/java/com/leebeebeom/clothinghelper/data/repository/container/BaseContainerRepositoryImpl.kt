@@ -55,7 +55,7 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
             sort == CREATE && order == DESCENDING -> allData.sortedByDescending { it.createDate }
             sort == EDIT && order == ASCENDING -> allData.sortedBy { it.editDate }
             sort == EDIT && order == DESCENDING -> allData.sortedByDescending { it.editDate }
-            else -> throw Exception("정렬 정보 없음: sort: $sort, order: $order")
+            else -> allData
         }
     }
 

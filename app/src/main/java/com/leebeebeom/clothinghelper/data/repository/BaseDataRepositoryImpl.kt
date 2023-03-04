@@ -6,6 +6,7 @@ import com.leebeebeom.clothinghelper.data.repository.util.*
 import com.leebeebeom.clothinghelper.domain.model.BaseModel
 import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.tasks.await
@@ -18,11 +19,14 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     private val refPath: String,
     private val networkChecker: NetworkChecker,
     protected val appScope: CoroutineScope,
+    private val type: Class<T>,
 ) : BaseDataRepository<T>, LoadingStateProviderImpl(
-    initialValue = true,
-    appScope = appScope
+    initialValue = true, appScope = appScope
 ) {
     private val dbRoot = getDbRoot()
+    private var uid: String? = null
+
+    private lateinit var allData: StateFlow<List<T>>
 
     // TODO 미로그인 시 데이터 사용 Any로 변경
     // TODO 로그인 시 최초 로드 후 원래 데이터 사용 설정으로 변경
@@ -33,24 +37,36 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         type: Class<T>,
         onFail: (Exception) -> Unit,
     ): StateFlow<List<T>> {
+        fun emptyListFlow() = flowOf(emptyList<T>()).stateIn(
+            appScope, SharingStarted.WhileSubscribed(5000), emptyList()
+        )
 
-        fun onFailWithEmptyFlow(exception: Exception): StateFlow<List<T>> {
+        fun onFailWithEmptyListFlow(exception: Exception): StateFlow<List<T>> {
             onFail(exception)
-            return MutableStateFlow(emptyList())
+            return emptyListFlow()
         }
 
         return withContext(
             dispatcher = dispatcher,
-            callSite = DatabaseCallSite(callSite = "BaseDataRepository: load"),
-            onFail = ::onFailWithEmptyFlow
+            callSite = DatabaseCallSite("${type.javaClass}: getAllData"),
+            onFail = ::onFailWithEmptyListFlow
         ) {
-            uid?.let {  // 로그인 시
-                getAllDataFlow(
-                    uid = it,
-                    type = type,
-                    onFail = ::onFailWithEmptyFlow
+            if (uid == null) // 로그아웃
+                allData = emptyListFlow()
+            else if (uid != this.uid) // 새 로그인
+                allData = callbackFlow {
+                    val containerRef = getDbRoot().getContainerRef(uid = uid, path = refPath)
+                    val valueEventListener = valueEventListener(onFail = onFail)
+
+                    containerRef.addValueEventListener(valueEventListener)
+                    awaitClose { containerRef.removeEventListener(valueEventListener) }
+                }.stateIn(
+                    scope = appScope,
+                    started = SharingStarted.WhileSubscribed(5000),
+                    initialValue = emptyList()
                 )
-            } ?: MutableStateFlow(emptyList()) // 로그아웃 시
+            this.uid = uid
+            allData
         }
     }
 
@@ -66,7 +82,9 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         onFail: (Exception) -> Unit,
     ) = withContext(
         dispatcher = dispatcher,
-        callSite = DatabaseCallSite("${data.javaClass}: add"), loading = false, onFail = onFail
+        callSite = DatabaseCallSite("${data.javaClass}: add"),
+        loading = false,
+        onFail = onFail
     ) {
         networkChecker.checkNetWork()
 
@@ -89,7 +107,9 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         onFail: (Exception) -> Unit,
     ) = withContext(
         dispatcher = dispatcher,
-        DatabaseCallSite(callSite = "${newData::javaClass}: edit"), loading = false, onFail = onFail
+        DatabaseCallSite(callSite = "${newData::javaClass}: edit"),
+        loading = false,
+        onFail = onFail
     ) {
         networkChecker.checkNetWork()
 
@@ -118,32 +138,6 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         }
     }
 
-    private fun getAllDataFlow(uid: String, type: Class<T>, onFail: (Exception) -> Flow<List<T>>) =
-        callbackFlow {
-            MutableStateFlow(mutableListOf<T>())
-
-            val valueEventListener = object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    trySend(snapshot.children.map { it.getValue(type) as T })
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    val exception = error.toException()
-                    onFail(exception)
-                }
-
-            }
-
-            val containerRef = getDbRoot().getContainerRef(uid = uid, path = refPath)
-
-            containerRef.addValueEventListener(valueEventListener)
-            awaitClose { containerRef.removeEventListener(valueEventListener) }
-        }.stateIn(
-            scope = appScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        )
-
     private fun getKey(uid: String) = dbRoot.getContainerRef(uid, refPath).push().key!!
 
     private suspend fun push(
@@ -155,4 +149,17 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
             dbRoot.getContainerRef(uid = uid, path = refPath).child(t.key).setValue(t).await()
         }
     }
+
+    private fun ProducerScope<List<T>>.valueEventListener(onFail: (Exception) -> Unit) =
+        object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                trySend(snapshot.children.map { it.getValue(type) as T })
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                val exception = error.toException()
+                onFail(exception)
+                trySend(emptyList())
+            }
+        }
 }

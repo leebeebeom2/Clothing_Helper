@@ -6,21 +6,25 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.leebeebeom.clothinghelper.domain.repository.preference.SortPreferenceRepository
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import java.io.IOException
 
-abstract class SortPreferenceRepositoryImpl(private val dataStore: DataStore<Preferences>) :
-    SortPreferenceRepository {
+abstract class SortPreferenceRepositoryImpl(
+    private val dataStore: DataStore<Preferences>,
+    appScope: CoroutineScope,
+) : SortPreferenceRepository {
 
-    override val sort: Flow<SortPreferences> = dataStore.data.catch {
+    override val sort = dataStore.data.catch {
         if (it is IOException) emit(emptyPreferences()) else throw it
     }.map {
         val sort = it[SortPreferenceKeys.SORT] ?: Sort.NAME.name
         val order = it[SortPreferenceKeys.ORDER] ?: Order.ASCENDING.name
         SortPreferences(sort = enumValueOf(sort), order = enumValueOf(order))
-    }
+    }.stateIn(appScope, SharingStarted.WhileSubscribed(5000), SortPreferences())
 
     override suspend fun changeSort(sort: Sort) {
         dataStore.edit { it[SortPreferenceKeys.SORT] = sort.name }

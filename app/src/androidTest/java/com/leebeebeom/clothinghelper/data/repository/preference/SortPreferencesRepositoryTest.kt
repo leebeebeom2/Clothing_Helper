@@ -2,6 +2,7 @@ package com.leebeebeom.clothinghelper.data.repository.preference
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
+import com.leebeebeom.clothinghelper.RepositoryProvider
 import com.leebeebeom.clothinghelper.domain.repository.preference.SortPreferenceRepository
 import org.junit.Before
 import org.junit.Test
@@ -13,8 +14,14 @@ class SortPreferencesRepositoryTest {
     @Before
     fun init() {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        folderPreferencesRepository = FolderPreferencesRepositoryImpl(context)
-        subCategoryPreferencesRepository = SubCategoryPreferencesRepositoryImpl(context)
+        folderPreferencesRepository = FolderPreferencesRepositoryImpl(
+            context = context,
+            appScope = RepositoryProvider.getAppScope()
+        )
+        subCategoryPreferencesRepository = SubCategoryPreferencesRepositoryImpl(
+            context = context,
+            appScope = RepositoryProvider.getAppScope()
+        )
     }
 
     @Test

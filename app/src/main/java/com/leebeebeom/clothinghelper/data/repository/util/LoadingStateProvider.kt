@@ -36,9 +36,8 @@ open class LoadingStateProviderImpl(
     fun loadingOn() = loadingStateCallBack?.loadingOn()
 
     fun loadingOff() = loadingStateCallBack?.loadingOff()
-}
-
-interface LoadingStateCallBack {
-    fun loadingOn()
-    fun loadingOff()
+    private interface LoadingStateCallBack {
+        fun loadingOn()
+        fun loadingOff()
+    }
 }

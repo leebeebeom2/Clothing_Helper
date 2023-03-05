@@ -10,6 +10,7 @@ import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.leebeebeom.clothinghelper.data.repository.UserRepositoryImpl.UserCallback
 import com.leebeebeom.clothinghelper.data.repository.util.AuthCallSite
 import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProviderImpl
+import com.leebeebeom.clothinghelper.data.repository.util.callbackFlowEmit
 import com.leebeebeom.clothinghelper.data.repository.util.logE
 import com.leebeebeom.clothinghelper.di.AppScope
 import com.leebeebeom.clothinghelper.domain.model.User
@@ -32,7 +33,7 @@ class UserRepositoryImpl @Inject constructor(
     initialValue = false, appScope = appScope
 ) {
     private val auth = FirebaseAuth.getInstance()
-    private lateinit var userCallback: UserCallback
+    private var userCallback: UserCallback? = null
 
     override val user = callbackFlow {
         val userCallback = UserCallback { trySend(it.toUserModel()) }
@@ -46,6 +47,7 @@ class UserRepositoryImpl @Inject constructor(
 
         awaitClose {
             auth.removeAuthStateListener(callback)
+            this@UserRepositoryImpl.userCallback = null
         }
     }.stateIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), initialValue = null)
 
@@ -59,7 +61,7 @@ class UserRepositoryImpl @Inject constructor(
         dispatcher = dispatcher
     ) {
         val user = auth.signInWithCredential(credential).await().user!!
-        userCallback(user = user)
+        callbackFlowEmitWrapper { it(user) }
         firebaseResult.success()
     }
 
@@ -77,7 +79,7 @@ class UserRepositoryImpl @Inject constructor(
         callSite = AuthCallSite("signIn"), onFail = firebaseResult::fail, dispatcher = dispatcher
     ) {
         val user = auth.signInWithEmailAndPassword(email, password).await().user!!
-        userCallback(user = user)
+        callbackFlowEmitWrapper { it(user) }
         firebaseResult.success()
     }
 
@@ -101,7 +103,7 @@ class UserRepositoryImpl @Inject constructor(
 
         user.updateProfile(request).await()
 
-        userCallback(user = auth.currentUser)
+        callbackFlowEmitWrapper { it(auth.currentUser) }
         firebaseResult.success()
     }
 
@@ -124,9 +126,9 @@ class UserRepositoryImpl @Inject constructor(
         firebaseResult.success()
     }
 
-    override fun signOut() {
+    override suspend fun signOut() {
         auth.signOut()
-        userCallback(user = null)
+        callbackFlowEmitWrapper { it(null) }
     }
 
     /**
@@ -159,4 +161,12 @@ class UserRepositoryImpl @Inject constructor(
     private fun interface UserCallback {
         operator fun invoke(user: FirebaseUser?)
     }
+
+    private suspend fun callbackFlowEmitWrapper(
+        emit: suspend (UserCallback) -> Unit,
+    ) = callbackFlowEmit(
+        { userCallback },
+        flow = user,
+        emit = emit
+    )
 }

@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
+import com.leebeebeom.clothinghelper.data.repository.UserRepositoryImpl.UserCallback
 import com.leebeebeom.clothinghelper.data.repository.util.AuthCallSite
 import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProviderImpl
 import com.leebeebeom.clothinghelper.data.repository.util.logE
@@ -31,21 +32,13 @@ class UserRepositoryImpl @Inject constructor(
     initialValue = false, appScope = appScope
 ) {
     private val auth = FirebaseAuth.getInstance()
-    private var userCallback: UserCallback? = null
+    private lateinit var userCallback: UserCallback
 
     override val user = callbackFlow {
+        val userCallback = UserCallback { trySend(it.toUserModel()) }
+
         val callback = FirebaseAuth.AuthStateListener {
             if (it.currentUser == null) trySend(null)
-        }
-
-        val userCallback = object : UserCallback {
-            override fun signIn(user: FirebaseUser) {
-                trySend(user.toUserModel())
-            }
-
-            override fun signOut() {
-                trySend(null)
-            }
         }
 
         auth.addAuthStateListener(callback)
@@ -53,7 +46,6 @@ class UserRepositoryImpl @Inject constructor(
 
         awaitClose {
             auth.removeAuthStateListener(callback)
-            this@UserRepositoryImpl.userCallback = null
         }
     }.stateIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), initialValue = null)
 
@@ -67,7 +59,7 @@ class UserRepositoryImpl @Inject constructor(
         dispatcher = dispatcher
     ) {
         val user = auth.signInWithCredential(credential).await().user!!
-        userCallback!!.signIn(user)
+        userCallback(user = user)
         firebaseResult.success()
     }
 
@@ -85,7 +77,7 @@ class UserRepositoryImpl @Inject constructor(
         callSite = AuthCallSite("signIn"), onFail = firebaseResult::fail, dispatcher = dispatcher
     ) {
         val user = auth.signInWithEmailAndPassword(email, password).await().user!!
-        userCallback!!.signIn(user)
+        userCallback(user = user)
         firebaseResult.success()
     }
 
@@ -109,7 +101,7 @@ class UserRepositoryImpl @Inject constructor(
 
         user.updateProfile(request).await()
 
-        userCallback!!.signIn(user = user)
+        userCallback(user = user)
         firebaseResult.success()
     }
 
@@ -134,7 +126,7 @@ class UserRepositoryImpl @Inject constructor(
 
     override fun signOut() {
         auth.signOut()
-        userCallback!!.signOut()
+        userCallback(user = null)
     }
 
     /**
@@ -164,8 +156,7 @@ class UserRepositoryImpl @Inject constructor(
     private fun FirebaseUser?.toUserModel() =
         this?.let { User(email = "$email", name = "$displayName", uid = uid) }
 
-    private interface UserCallback {
-        fun signIn(user: FirebaseUser)
-        fun signOut()
+    private fun interface UserCallback {
+        operator fun invoke(user: FirebaseUser?)
     }
 }

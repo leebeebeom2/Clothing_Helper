@@ -38,7 +38,7 @@ class UserRepositoryImpl @Inject constructor(
         val userCallback = UserCallback { trySend(it.toUserModel()) }
 
         val callback = FirebaseAuth.AuthStateListener {
-            if (it.currentUser == null) trySend(null)
+            trySend(it.currentUser.toUserModel())
         }
 
         auth.addAuthStateListener(callback)

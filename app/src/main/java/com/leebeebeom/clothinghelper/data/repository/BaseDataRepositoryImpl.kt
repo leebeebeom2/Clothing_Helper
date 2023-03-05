@@ -30,9 +30,9 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
 
     override val allData = callbackFlow<List<T>> {
         val callback = DataCallback { trySend(it) }
-        this@BaseDataRepositoryImpl.dataCallback = callback
 
-        awaitClose { this@BaseDataRepositoryImpl.dataCallback = null }
+        this@BaseDataRepositoryImpl.dataCallback = callback
+        awaitClose { dataCallback = null }
     }.stateIn(
         scope = appScope,
         started = SharingStarted.WhileSubscribed(5000),
@@ -48,14 +48,16 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         onFail: (Exception) -> Unit,
     ) = withContext(
         dispatcher = dispatcher,
-        callSite = DatabaseCallSite("${type.javaClass}: getAllData"),
-        onFail = { onFailWithEmptyListFlow(onFail = onFail, exception = it) }
+        callSite = DatabaseCallSite("${type.javaClass}: load"),
+        onFail = onFail
     ) {
-        uid?.let {
-            val allData = dbRoot.getContainerRef(uid = it, path = refPath).get()
-                .await().children.map { data -> data.getValue(type)!! }
-            dataCallback!!.changed(allData)
-        } ?: dataCallback!!.changed(emptyList())
+        callbackFlowEmitWrapper { callback ->
+            uid?.let {
+                val allData = dbRoot.getContainerRef(uid = it, path = refPath).get()
+                    .await().children.map { data -> data.getValue(type)!! }
+                callback(data = allData)
+            } ?: callback(data = emptyList())
+        }
     }
 
     /**
@@ -82,7 +84,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
 
         val allData = allData.value.toMutableList()
         allData.add(dataWithKey)
-        dataCallback!!.changed(allData)
+        callbackFlowEmitWrapper { it(allData) }
     }
 
     /**
@@ -111,7 +113,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         val allData = allData.value.toMutableList()
         allData.remove(element = oldData)
         allData.add(element = newData)
-        dataCallback!!.changed(allData)
+        callbackFlowEmitWrapper { it(allData) }
     }
 
     /**
@@ -148,19 +150,15 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         }
     }
 
-    private fun emptyListFlow() = flowOf(emptyList<T>()).stateIn(
-        appScope, SharingStarted.WhileSubscribed(5000), emptyList()
-    )
-
-    protected fun onFailWithEmptyListFlow(
-        onFail: (Exception) -> Unit,
-        exception: Exception,
-    ): StateFlow<List<T>> {
-        onFail(exception)
-        return emptyListFlow()
-    }
-
     private fun interface DataCallback<U : BaseModel> {
-        fun changed(data: List<U>)
+        operator fun invoke(data: List<U>)
     }
+
+    private suspend fun callbackFlowEmitWrapper(
+        emit: suspend (DataCallback<T>) -> Unit,
+    ) = callbackFlowEmit(
+        callback = { dataCallback },
+        flow = allData,
+        emit = emit
+    )
 }

@@ -101,7 +101,7 @@ class UserRepositoryImpl @Inject constructor(
 
         user.updateProfile(request).await()
 
-        userCallback(user = user)
+        userCallback(user = auth.currentUser)
         firebaseResult.success()
     }
 

@@ -7,87 +7,78 @@ import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
-fun <T : BaseModel, U : BaseDataRepository<T>> repositoryCrudTest(
+suspend fun <T : BaseModel, U : BaseDataRepository<T>> TestScope.repositoryCrudTest(
+    dispatcher: TestDispatcher,
     userRepository: UserRepository,
     data: T,
     repository: U,
     addAssert: (T) -> Unit,
     newData: (origin: T) -> T,
     editAssert: (origin: T, new: T) -> Unit,
-) = runTest {
-    val dispatcher = StandardTestDispatcher(testScheduler)
-
-    userRepository.signOut()
-
-    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-        userRepository.user.collectLatest { }
+) {
+    backgroundScope.launch(dispatcher) {
+        userRepository.user.collectLatest {
+            repository.load(dispatcher = dispatcher, uid = it?.uid, onFail = { })
+        }
     }
 
-    userRepository.signIn(
-        "1@a.com",
-        "111111",
+    backgroundScope.launch(dispatcher) { repository.allData.collectLatest { } }
+
+    userRepository.signIn(email = "1@a.com",
+        password = "111111",
         dispatcher = dispatcher,
         firebaseResult = object : FirebaseResult {
             override fun success() = assert(true)
 
             override fun fail(exception: Exception) = assert(false)
         })
-
-    withContext(Dispatchers.Default) {
-        delay(1000)
-        assert(userRepository.user.value != null)
-    }
-
-    val allDataFlow = repository.getAllData(
-        dispatcher = dispatcher,
-        uid = userRepository.user.value!!.uid,
-        onFail = { assert(false) })
-
-    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-        allDataFlow.collectLatest {}
-    }
+    advanceUntilIdle()
+    assert(userRepository.user.value != null)
+    assert(repository.allData.value.isEmpty())
 
     repository.add(dispatcher = dispatcher,
         data = data,
         uid = userRepository.user.value!!.uid,
         onFail = { assert(false) })
+    advanceUntilIdle()
+    assert(repository.allData.value.size == 1)
 
-    val addedData: T
-
-    withContext(Dispatchers.Default) {
-        delay(1000)
-        addedData = allDataFlow.value.first()
-        addAssert(addedData)
-    }
+    val addedData = repository.allData.value.first()
+    addAssert(addedData)
 
     repository.edit(dispatcher = dispatcher,
+        oldData = addedData,
         newData = newData(addedData),
         uid = userRepository.user.value!!.uid,
         onFail = { assert(false) })
+    advanceUntilIdle()
+
+    val editData = repository.allData.value.first()
+    editAssert(addedData, editData)
+
+    userRepository.signOut()
+    advanceUntilIdle()
 
     withContext(Dispatchers.Default) {
         delay(1000)
-        val editData = allDataFlow.value.first()
-        editAssert(addedData, editData)
+        assert(repository.allData.value.isEmpty())
     }
 
-    val signOutData = repository.getAllData(dispatcher, null, onFail = { assert(false) }) // signOut
+    userRepository.signIn(email = "1@a.com",
+        password = "111111",
+        dispatcher = dispatcher,
+        firebaseResult = object : FirebaseResult {
+            override fun success() = assert(true)
 
-    backgroundScope.launch {
-        signOutData.collectLatest { assert(it.isEmpty()) }
-    }
-
-    val allData = repository.getAllData(dispatcher,
-        userRepository.user.value!!.uid,
-        onFail = { assert(false) })
-
-    backgroundScope.launch {
-        allData.collectLatest { assert(it.size == 2) }
+            override fun fail(exception: Exception) = assert(false)
+        })
+    advanceUntilIdle()
+    withContext(Dispatchers.Default) {
+        delay(1000)
+        assert(repository.allData.value.size == 1)
     }
 
     FirebaseDatabase.getInstance().reference.child(userRepository.user.value!!.uid).removeValue()

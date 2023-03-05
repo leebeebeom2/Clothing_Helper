@@ -31,6 +31,7 @@ class UserRepositoryTest {
 
     @Before
     fun init() {
+        FirebaseAuth.getInstance().signOut()
         userRepository = repositoryProvider.getUserRepository()
     }
 

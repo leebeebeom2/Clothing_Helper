@@ -4,18 +4,19 @@ import com.leebeebeom.clothinghelper.domain.repository.preference.SortPreference
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.TestDispatcher
+import kotlinx.coroutines.test.TestScope
 
 @OptIn(ExperimentalCoroutinesApi::class)
-fun preferenceSortFlowTest(repository: SortPreferenceRepository) = runTest {
+suspend fun TestScope.preferenceSortFlowTest(
+    dispatcher: TestDispatcher,
+    repository: SortPreferenceRepository,
+) {
     val sortFlow = repository.sort
 
-    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-        sortFlow.collect()
-    }
+    backgroundScope.launch(dispatcher) { sortFlow.collect() }
 
-    assert(sortFlow.value == SortPreferences())
+    assert(sortFlow.value == SortPreferences()) // initial
 
     fun assert(sort: SortPreferences) = assert(sortFlow.value == sort)
 

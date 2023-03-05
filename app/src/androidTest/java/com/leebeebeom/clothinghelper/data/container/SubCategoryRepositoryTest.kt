@@ -1,33 +1,37 @@
 package com.leebeebeom.clothinghelper.data.container
 
-import android.content.Context
-import androidx.test.core.app.ApplicationProvider
 import com.leebeebeom.clothinghelper.RepositoryProvider
-import com.leebeebeom.clothinghelper.data.repository.UserRepositoryImpl
 import com.leebeebeom.clothinghelper.data.repositoryCrudTest
 import com.leebeebeom.clothinghelper.domain.model.SubCategory
 import com.leebeebeom.clothinghelper.domain.repository.SubCategoryRepository
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class SubCategoryRepositoryTest {
     private lateinit var userRepository: UserRepository
     private lateinit var subCategoryRepository: SubCategoryRepository
+    private val dispatcher = StandardTestDispatcher()
+    private val repositoryProvider = RepositoryProvider(dispatcher = dispatcher)
 
     @Before
     fun init() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        subCategoryRepository = RepositoryProvider.getSubCategoryRepository(context = context)
-        userRepository = UserRepositoryImpl(appScope = RepositoryProvider.getAppScope())
+        userRepository = repositoryProvider.getUserRepository()
+        subCategoryRepository = repositoryProvider.getSubCategoryRepository()
     }
 
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun crudTest() {
+    fun crudTest() = runTest(dispatcher) {
         val subCategory = SubCategory(name = "subcategory test")
 
         repositoryCrudTest(
+            dispatcher = dispatcher,
             userRepository = userRepository,
             data = subCategory,
             repository = subCategoryRepository,

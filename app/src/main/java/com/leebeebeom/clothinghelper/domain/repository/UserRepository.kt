@@ -54,5 +54,5 @@ interface UserRepository : LoadingStateProvider {
         dispatcher: CoroutineDispatcher,
     )
 
-    fun signOut()
+    suspend fun signOut()
 }

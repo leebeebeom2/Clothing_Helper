@@ -4,5 +4,5 @@ import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import javax.inject.Inject
 
 class SignOutUseCase @Inject constructor(private val userRepository: UserRepository) {
-    fun signOut() = userRepository.signOut()
+    suspend fun signOut() = userRepository.signOut()
 }

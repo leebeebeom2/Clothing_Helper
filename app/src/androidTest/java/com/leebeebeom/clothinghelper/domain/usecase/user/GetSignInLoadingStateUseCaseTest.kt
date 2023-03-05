@@ -32,6 +32,8 @@ class GetSignInLoadingStateUseCaseTest {
     fun loadingFlowTest() = runTest(dispatcher) {
         backgroundScope.launch(dispatcher) { getSignInLoadingStateUseCase.isLoading.collectLatest {} }
 
+        assert(!getSignInLoadingStateUseCase.isLoading.value)
+
         userRepository.signIn(
             email = "1@a.com", password = "111111",
             firebaseResult = successResult,

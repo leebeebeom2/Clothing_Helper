@@ -1,7 +1,6 @@
 package com.leebeebeom.clothinghelper.data
 
 import com.google.firebase.database.FirebaseDatabase
-import com.leebeebeom.clothinghelper.data.repository.FirebaseResult
 import com.leebeebeom.clothinghelper.domain.model.BaseModel
 import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
@@ -27,14 +26,12 @@ suspend fun <T : BaseModel, U : BaseDataRepository<T>> TestScope.repositoryCrudT
 
     backgroundScope.launch(dispatcher) { repository.allData.collectLatest { } }
 
-    userRepository.signIn(email = "1@a.com",
+    userRepository.signIn(
+        email = "1@a.com",
         password = "111111",
         dispatcher = dispatcher,
-        firebaseResult = object : FirebaseResult {
-            override fun success() = assert(true)
-
-            override fun fail(exception: Exception) = assert(false)
-        })
+        firebaseResult = successResult
+    )
     advanceUntilIdle()
     assert(userRepository.user.value != null)
     assert(repository.allData.value.isEmpty())
@@ -67,14 +64,12 @@ suspend fun <T : BaseModel, U : BaseDataRepository<T>> TestScope.repositoryCrudT
         assert(repository.allData.value.isEmpty())
     }
 
-    userRepository.signIn(email = "1@a.com",
+    userRepository.signIn(
+        email = "1@a.com",
         password = "111111",
         dispatcher = dispatcher,
-        firebaseResult = object : FirebaseResult {
-            override fun success() = assert(true)
-
-            override fun fail(exception: Exception) = assert(false)
-        })
+        firebaseResult = successResult
+    )
     advanceUntilIdle()
     withContext(Dispatchers.Default) {
         delay(1000)

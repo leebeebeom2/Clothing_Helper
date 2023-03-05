@@ -177,46 +177,46 @@ class UserRepositoryTest {
             email = email, firebaseResult = successResult, dispatcher = dispatcher
         )
     }
+}
 
-    private val invalidEmailResult = object : FirebaseResult {
-        override fun success() = assert(false)
+val invalidEmailResult = object : FirebaseResult {
+    override fun success() = assert(false)
 
-        override fun fail(exception: Exception) {
-            val firebaseAuthException = exception as FirebaseAuthException
-            assert(firebaseAuthException.errorCode == ERROR_INVALID_EMAIL)
-        }
+    override fun fail(exception: Exception) {
+        val firebaseAuthException = exception as FirebaseAuthException
+        assert(firebaseAuthException.errorCode == ERROR_INVALID_EMAIL)
     }
+}
 
-    private val userNotFoundResult = object : FirebaseResult {
-        override fun success() = assert(false)
+val userNotFoundResult = object : FirebaseResult {
+    override fun success() = assert(false)
 
-        override fun fail(exception: Exception) {
-            val firebaseAuthException = exception as FirebaseAuthException
-            assert(firebaseAuthException.errorCode == ERROR_USER_NOT_FOUND)
-        }
+    override fun fail(exception: Exception) {
+        val firebaseAuthException = exception as FirebaseAuthException
+        assert(firebaseAuthException.errorCode == ERROR_USER_NOT_FOUND)
     }
+}
 
-    private val wrongPasswordResult = object : FirebaseResult {
-        override fun success() = assert(false)
+val wrongPasswordResult = object : FirebaseResult {
+    override fun success() = assert(false)
 
-        override fun fail(exception: Exception) {
-            val firebaseAuthException = exception as FirebaseAuthException
-            assert(firebaseAuthException.errorCode == ERROR_WRONG_PASSWORD)
-        }
+    override fun fail(exception: Exception) {
+        val firebaseAuthException = exception as FirebaseAuthException
+        assert(firebaseAuthException.errorCode == ERROR_WRONG_PASSWORD)
     }
+}
 
-    private val successResult = object : FirebaseResult {
-        override fun success() = assert(true)
+val successResult = object : FirebaseResult {
+    override fun success() = assert(true)
 
-        override fun fail(exception: Exception) = assert(false)
-    }
+    override fun fail(exception: Exception) = assert(false)
+}
 
-    private val emailAlreadyInUserResult = object : FirebaseResult {
-        override fun success() = assert(false)
+val emailAlreadyInUserResult = object : FirebaseResult {
+    override fun success() = assert(false)
 
-        override fun fail(exception: Exception) {
-            val firebaseAuthException = exception as FirebaseAuthException
-            assert(firebaseAuthException.errorCode == ERROR_EMAIL_ALREADY_IN_USE)
-        }
+    override fun fail(exception: Exception) {
+        val firebaseAuthException = exception as FirebaseAuthException
+        assert(firebaseAuthException.errorCode == ERROR_EMAIL_ALREADY_IN_USE)
     }
 }

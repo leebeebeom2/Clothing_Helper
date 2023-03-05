@@ -1,32 +1,35 @@
 package com.leebeebeom.clothinghelper.data.container
 
-import android.content.Context
-import androidx.test.core.app.ApplicationProvider
 import com.leebeebeom.clothinghelper.RepositoryProvider
-import com.leebeebeom.clothinghelper.data.repository.UserRepositoryImpl
 import com.leebeebeom.clothinghelper.data.repositoryCrudTest
 import com.leebeebeom.clothinghelper.domain.model.Folder
 import com.leebeebeom.clothinghelper.domain.repository.FolderRepository
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class FolderRepositoryTest {
     private lateinit var userRepository: UserRepository
     private lateinit var folderRepository: FolderRepository
+    private val dispatcher = StandardTestDispatcher()
+    private val repositoryProvider = RepositoryProvider(dispatcher = dispatcher)
 
     @Before
     fun init() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        folderRepository = RepositoryProvider.getFolderRepository(context = context)
-        userRepository = UserRepositoryImpl(appScope = RepositoryProvider.getAppScope())
+        userRepository = repositoryProvider.getUserRepository()
+        folderRepository = repositoryProvider.getFolderRepository()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun crudTest() {
-        val folder = Folder("folder")
+    fun crudTest() = runTest(dispatcher) {
+        val folder = Folder(name = "folder")
 
-        repositoryCrudTest(
+        repositoryCrudTest(dispatcher = dispatcher,
             userRepository = userRepository,
             data = folder,
             repository = folderRepository,
@@ -34,8 +37,7 @@ class FolderRepositoryTest {
                 assert(it.name == folder.name)
                 assert(it.createDate == it.editDate)
             },
-            newData = { it.copy(name = "new folder") }
-        ) { origin, new ->
+            newData = { it.copy(name = "new folder") }) { origin, new ->
             assert(origin.key == new.key)
             assert(origin.name != new.name)
             assert(new.name == "new folder")

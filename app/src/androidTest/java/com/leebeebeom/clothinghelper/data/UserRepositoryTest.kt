@@ -27,10 +27,11 @@ class UserRepositoryTest {
     private val name = "test"
     private lateinit var userRepository: UserRepository
     private val dispatcher = StandardTestDispatcher()
+    private val repositoryProvider = RepositoryProvider(dispatcher)
 
     @Before
     fun init() {
-        userRepository = RepositoryProvider.getUserRepository(dispatcher)
+        userRepository = repositoryProvider.getUserRepository()
     }
 
     @Test

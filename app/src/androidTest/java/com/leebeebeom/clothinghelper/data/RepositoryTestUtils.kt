@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalCoroutinesApi::class)
+@file:OptIn(ExperimentalCoroutinesApi::class, ExperimentalCoroutinesApi::class)
 
 package com.leebeebeom.clothinghelper.data
 
@@ -8,6 +8,7 @@ import com.leebeebeom.clothinghelper.data.repository.preference.Order
 import com.leebeebeom.clothinghelper.data.repository.preference.Sort
 import com.leebeebeom.clothinghelper.domain.model.BaseContainerModel
 import com.leebeebeom.clothinghelper.domain.model.BaseModel
+import com.leebeebeom.clothinghelper.domain.model.User
 import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import com.leebeebeom.clothinghelper.domain.repository.preference.SortPreferenceRepository
@@ -25,23 +26,14 @@ suspend fun <T : BaseModel, U : BaseDataRepository<T>> TestScope.repositoryCrudT
     newData: (origin: T) -> T,
     editAssert: (origin: T, new: T) -> Unit,
 ) {
-    backgroundScope.launch(dispatcher) {
-        userRepository.user.collectLatest {
-            repository.load(dispatcher = dispatcher, uid = it?.uid, onFail = { })
-        }
-    }
-
-    backgroundScope.launch(dispatcher) { repository.allData.collectLatest { } }
-
-    userRepository.signIn(
-        email = "1@a.com",
-        password = "111111",
-        dispatcher = dispatcher,
-        firebaseResult = successResult
+    allDataCollect(
+        dispatcher = dispatcher, userRepository = userRepository, repository = repository
     )
-    advanceUntilIdle()
-    assert(userRepository.user.value != null)
-    assert(repository.allData.value.isEmpty())
+
+    signIn(dispatcher = dispatcher, userRepository = userRepository)
+
+    assert(userRepository.user.value != null) // signIn
+    assert(repository.allData.value.isEmpty()) // initValue
 
     repository.add(dispatcher = dispatcher,
         data = data,
@@ -163,6 +155,73 @@ suspend fun <T : BaseContainerModel, U : BaseDataRepository<T>> TestScope.sortTe
     assert(repository.allData.value.first().name == "0")
     assert(repository.allData.value.last().name == "8")
 
-    FirebaseDatabase.getInstance().reference.child(userRepository.user.value!!.uid)
-        .child(refPath).removeValue()
+    FirebaseDatabase.getInstance().reference.child(userRepository.user.value!!.uid).child(refPath)
+        .removeValue()
+}
+
+suspend fun <T : BaseContainerModel, U : BaseDataRepository<T>> TestScope.addUseCaseTest(
+    dispatcher: TestDispatcher,
+    userRepository: UserRepository,
+    repository: U,
+    refPath: String,
+    add: suspend (name: String) -> Unit,
+) {
+    allDataCollect(
+        dispatcher = dispatcher, userRepository = userRepository, repository = repository
+    )
+
+    userRepository.signIn(
+        email = "1@a.com",
+        password = "111111",
+        firebaseResult = successResult,
+        dispatcher = dispatcher
+    )
+    advanceUntilIdle()
+    assert(repository.allData.value.isEmpty())
+
+    val name1 = "sub category"
+    add(name1)
+    advanceUntilIdle()
+    assert(repository.allData.value.size == 1)
+    assert(repository.allData.value.first().name == name1)
+
+    val name2 = "sub category2"
+    add(name2)
+    advanceUntilIdle()
+    val allSubCategories = repository.allData.value
+    assert(allSubCategories.size == 2)
+    assert(allSubCategories.any { it.name == name1 })
+    assert(allSubCategories.any { it.name == name2 })
+
+    FirebaseDatabase.getInstance().reference.child(userRepository.user.value!!.uid).child(refPath)
+        .removeValue()
+}
+
+suspend fun TestScope.userCollect(
+    dispatcher: TestDispatcher,
+    userRepository: UserRepository,
+    collect: suspend (User?) -> Unit = {},
+) = backgroundScope.launch(dispatcher) { userRepository.user.collectLatest(action = collect) }
+
+suspend fun <T : BaseModel, U : BaseDataRepository<T>> TestScope.allDataCollect(
+    dispatcher: TestDispatcher,
+    userRepository: UserRepository,
+    repository: U,
+    collect: suspend (List<T>) -> Unit = {},
+) {
+    userCollect(dispatcher = dispatcher, userRepository = userRepository) {
+        repository.load(dispatcher = dispatcher, uid = it?.uid, onFail = { assert(false) })
+        advanceUntilIdle()
+    }
+    backgroundScope.launch(dispatcher) { repository.allData.collectLatest(collect) }
+}
+
+suspend fun TestScope.signIn(dispatcher: TestDispatcher, userRepository: UserRepository) {
+    userRepository.signIn(
+        email = "1@a.com",
+        password = "111111",
+        firebaseResult = successResult,
+        dispatcher = dispatcher
+    )
+    advanceUntilIdle()
 }

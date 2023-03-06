@@ -2,10 +2,9 @@ package com.leebeebeom.clothinghelper.domain.usecase.user
 
 import com.leebeebeom.clothinghelper.RepositoryProvider
 import com.leebeebeom.clothinghelper.data.successResult
+import com.leebeebeom.clothinghelper.data.userCollect
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -27,7 +26,7 @@ class SignOutUseCaseTest {
 
     @Test
     fun signOutTest() = runTest(dispatcher) {
-        backgroundScope.launch(dispatcher) { userRepository.user.collectLatest { } }
+        userCollect(dispatcher = dispatcher, userRepository = userRepository)
 
         assert(userRepository.user.value == null)
 

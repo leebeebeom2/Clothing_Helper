@@ -13,6 +13,7 @@ import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProviderIm
 import com.leebeebeom.clothinghelper.data.repository.util.callbackFlowEmit
 import com.leebeebeom.clothinghelper.data.repository.util.logE
 import com.leebeebeom.clothinghelper.di.AppScope
+import com.leebeebeom.clothinghelper.di.DispatcherIO
 import com.leebeebeom.clothinghelper.domain.model.User
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.CancellationException
@@ -30,6 +31,7 @@ import javax.inject.Singleton
 @Singleton
 class UserRepositoryImpl @Inject constructor(
     @AppScope private val appScope: CoroutineScope,
+    @DispatcherIO private val dispatcher: CoroutineDispatcher,
 ) : UserRepository, LoadingStateProviderImpl(
     initialValue = false, appScope = appScope
 ) {
@@ -55,11 +57,9 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun googleSignIn(
         credential: AuthCredential,
         firebaseResult: FirebaseResult,
-        dispatcher: CoroutineDispatcher,
     ) = withContext(
         callSite = AuthCallSite("googleSignIn"),
-        onFail = firebaseResult::fail,
-        dispatcher = dispatcher
+        onFail = firebaseResult::fail
     ) {
         val user = auth.signInWithCredential(credential).await().user!!
         callbackFlowEmitWrapper { it(user) }
@@ -71,18 +71,15 @@ class UserRepositoryImpl @Inject constructor(
      * @throws FirebaseTooManyRequestsException - 너무 많은 요청이 발생했을 경우
      * @throws FirebaseAuthException - InvalidEmail, NotFoundUser, WrongPassword 등
      */
-    override suspend fun signIn(
-        email: String,
-        password: String,
-        firebaseResult: FirebaseResult,
-        dispatcher: CoroutineDispatcher,
-    ) = withContext(
-        callSite = AuthCallSite("signIn"), onFail = firebaseResult::fail, dispatcher = dispatcher
-    ) {
-        val user = auth.signInWithEmailAndPassword(email, password).await().user!!
-        callbackFlowEmitWrapper { it(user) }
-        firebaseResult.success()
-    }
+    override suspend fun signIn(email: String, password: String, firebaseResult: FirebaseResult) =
+        withContext(
+            callSite = AuthCallSite("signIn"),
+            onFail = firebaseResult::fail
+        ) {
+            val user = auth.signInWithEmailAndPassword(email, password).await().user!!
+            callbackFlowEmitWrapper { it(user) }
+            firebaseResult.success()
+        }
 
     /**
      * @throws FirebaseNetworkException - 인터넷에 연결되지 않았을 경우
@@ -94,9 +91,8 @@ class UserRepositoryImpl @Inject constructor(
         password: String,
         name: String,
         firebaseResult: FirebaseResult,
-        dispatcher: CoroutineDispatcher,
     ) = withContext(
-        callSite = AuthCallSite("signUp"), onFail = firebaseResult::fail, dispatcher = dispatcher
+        callSite = AuthCallSite("signUp"), onFail = firebaseResult::fail
     ) {
         val user = auth.createUserWithEmailAndPassword(email, password).await().user!!
 
@@ -116,11 +112,9 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun sendResetPasswordEmail(
         email: String,
         firebaseResult: FirebaseResult,
-        dispatcher: CoroutineDispatcher,
     ) = withContext(
         callSite = AuthCallSite("resetPasswordEmail"),
-        onFail = firebaseResult::fail,
-        dispatcher = dispatcher
+        onFail = firebaseResult::fail
     ) {
         auth.sendPasswordResetEmail(email).await()
 
@@ -142,7 +136,6 @@ class UserRepositoryImpl @Inject constructor(
     private suspend fun withContext(
         callSite: AuthCallSite,
         onFail: (Exception) -> Unit,
-        dispatcher: CoroutineDispatcher,
         task: suspend CoroutineScope.() -> Unit,
     ) = withContext(dispatcher) {
         try {
@@ -167,8 +160,6 @@ class UserRepositoryImpl @Inject constructor(
     private suspend fun callbackFlowEmitWrapper(
         emit: suspend (UserCallback) -> Unit,
     ) = callbackFlowEmit(
-        { userCallback },
-        flow = user,
-        emit = emit
+        { userCallback }, flow = user, emit = emit
     )
 }

@@ -20,6 +20,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     private val networkChecker: NetworkChecker,
     protected val appScope: CoroutineScope,
     protected val type: Class<T>,
+    private val dispatcher: CoroutineDispatcher,
 ) : BaseDataRepository<T>, LoadingStateProviderImpl(
     initialValue = true, appScope = appScope
 ) {
@@ -43,11 +44,9 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     // TODO 로그인 시 최초 로드 후 원래 데이터 사용 설정으로 변경
 
     override suspend fun load(
-        dispatcher: CoroutineDispatcher,
         uid: String?,
         onFail: (Exception) -> Unit,
     ) = withContext(
-        dispatcher = dispatcher,
         callSite = DatabaseCallSite("${type.javaClass}: load"),
         onFail = onFail
     ) {
@@ -66,12 +65,10 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
      */
     @Suppress("UNCHECKED_CAST")
     override suspend fun add(
-        dispatcher: CoroutineDispatcher,
         data: T,
         uid: String,
         onFail: (Exception) -> Unit,
     ) = withContext(
-        dispatcher = dispatcher,
         callSite = DatabaseCallSite("${data.javaClass}: add"),
         loading = false,
         onFail = onFail
@@ -80,7 +77,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
 
         val dataWithKey = data.addKey(key = getKey(uid = uid)) as T
 
-        push(uid = uid, t = dataWithKey, dispatcher = dispatcher)
+        push(uid = uid, t = dataWithKey)
 
         val allData = allData.value.toMutableList()
         allData.add(dataWithKey)
@@ -95,20 +92,18 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
      */
     @Suppress("UNCHECKED_CAST")
     override suspend fun edit(
-        dispatcher: CoroutineDispatcher,
         oldData: T,
         newData: T,
         uid: String,
         onFail: (Exception) -> Unit,
     ) = withContext(
-        dispatcher = dispatcher,
         DatabaseCallSite(callSite = "${newData::javaClass}: edit"),
         loading = false,
         onFail = onFail
     ) {
         networkChecker.checkNetWork()
 
-        push(uid = uid, t = newData, dispatcher = dispatcher)
+        push(uid = uid, t = newData)
 
         val allData = allData.value.toMutableList()
         allData.remove(element = oldData)
@@ -121,12 +116,11 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
      * @param loading true 일 경우 호출 시 로딩 On, 작업이 끝난 후 로딩 Off
      */
     private suspend fun withContext(
-        dispatcher: CoroutineDispatcher,
         callSite: DatabaseCallSite,
         loading: Boolean = true,
         onFail: (Exception) -> Unit,
         task: suspend () -> Unit,
-    ) = withContext(context = dispatcher) {
+    ) = withContext(dispatcher) {
         try {
             if (loading) loadingOn()
             task()
@@ -141,11 +135,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
 
     private fun getKey(uid: String) = dbRoot.getContainerRef(uid, refPath).push().key!!
 
-    private suspend fun push(
-        uid: String,
-        t: T,
-        dispatcher: CoroutineDispatcher,
-    ) {
+    private suspend fun push(uid: String, t: T) {
         withContext(dispatcher) {
             dbRoot.getContainerRef(uid = uid, path = refPath).child(t.key).setValue(t).await()
         }

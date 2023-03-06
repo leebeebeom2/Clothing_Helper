@@ -22,15 +22,20 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
     networkChecker: NetworkChecker,
     appScope: CoroutineScope,
     type: Class<T>,
+    dispatcher: CoroutineDispatcher,
 ) : BaseDataRepository<T>, BaseDataRepositoryImpl<T>(
-    refPath = refPath, networkChecker = networkChecker, appScope = appScope, type = type
+    refPath = refPath,
+    networkChecker = networkChecker,
+    appScope = appScope,
+    type = type,
+    dispatcher = dispatcher
 ) {
     override val allData =
         super.allData.combine(flow = sortFlow, transform = ::getSortedData).stateIn(
-                scope = appScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = emptyList()
-            )
+            scope = appScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
     private fun getSortedData(
         allData: List<T>,
@@ -57,7 +62,6 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
      * @throws IllegalArgumentException 본래 데이터를 삭제하지 못했을 경우
      */
     override suspend fun edit(
-        dispatcher: CoroutineDispatcher,
         oldData: T,
         newData: T,
         uid: String,
@@ -66,7 +70,6 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
         val newDataWithEditDate = newData.changeEditDate() as T
 
         super.edit(
-            dispatcher = dispatcher,
             oldData = oldData,
             newData = newDataWithEditDate,
             uid = uid,

@@ -18,12 +18,12 @@ class FolderRepositoryImpl @Inject constructor(
     @FolderPreferencesRepository folderPreferencesRepository: SortPreferenceRepository,
     networkChecker: NetworkChecker,
     @AppScope appScope: CoroutineScope,
-    @DispatcherIO dispatcherIO: CoroutineDispatcher,
+    @DispatcherIO dispatcher: CoroutineDispatcher,
 ) : BaseContainerRepositoryImpl<Folder>(
     sortFlow = folderPreferencesRepository.sort,
     refPath = DatabasePath.FOLDERS,
     networkChecker = networkChecker,
     appScope = appScope,
     type = Folder::class.java,
-    dispatcher = dispatcherIO
+    dispatcher = dispatcher
 ), FolderRepository

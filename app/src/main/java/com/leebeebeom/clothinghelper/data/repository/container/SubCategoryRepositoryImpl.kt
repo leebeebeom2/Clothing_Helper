@@ -18,12 +18,12 @@ class SubCategoryRepositoryImpl @Inject constructor(
     @SubCategoryPreferencesRepository subCategoryPreferencesRepository: SortPreferenceRepository,
     networkChecker: NetworkChecker,
     @AppScope appScope: CoroutineScope,
-    @DispatcherIO dispatcherIO: CoroutineDispatcher,
+    @DispatcherIO dispatcher: CoroutineDispatcher,
 ) : BaseContainerRepositoryImpl<SubCategory>(
     sortFlow = subCategoryPreferencesRepository.sort,
     refPath = DatabasePath.SUB_CATEGORIES,
     networkChecker = networkChecker,
     appScope = appScope,
     type = SubCategory::class.java,
-    dispatcher = dispatcherIO
+    dispatcher = dispatcher
 ), SubCategoryRepository

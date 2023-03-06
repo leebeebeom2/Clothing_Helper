@@ -14,11 +14,11 @@ import javax.inject.Singleton
 class TodoRepositoryImpl @Inject constructor(
     networkChecker: NetworkChecker,
     @AppScope appScope: CoroutineScope,
-    @DispatcherIO dispatcherIO: CoroutineDispatcher,
+    @DispatcherIO dispatcher: CoroutineDispatcher,
 ) : BaseDataRepositoryImpl<Todo>(
     refPath = DatabasePath.TODOS,
     networkChecker = networkChecker,
     appScope = appScope,
     type = Todo::class.java,
-    dispatcher = dispatcherIO
+    dispatcher = dispatcher
 ), TodoRepository

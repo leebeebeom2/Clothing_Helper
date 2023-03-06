@@ -15,6 +15,7 @@ import com.leebeebeom.clothinghelper.data.repository.util.logE
 import com.leebeebeom.clothinghelper.di.AppScope
 import com.leebeebeom.clothinghelper.domain.model.User
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
@@ -147,6 +148,7 @@ class UserRepositoryImpl @Inject constructor(
         try {
             loadingOn()
             task()
+        } catch (_: CancellationException) {
         } catch (e: Exception) {
             logE(callSite.site, e)
             onFail(e)

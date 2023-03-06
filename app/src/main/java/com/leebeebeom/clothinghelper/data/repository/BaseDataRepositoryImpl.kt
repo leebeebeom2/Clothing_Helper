@@ -130,6 +130,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         try {
             if (loading) loadingOn()
             task()
+        } catch (_: CancellationException) {
         } catch (e: Exception) {
             logE(site = callSite.site, e = e)
             onFail(e)

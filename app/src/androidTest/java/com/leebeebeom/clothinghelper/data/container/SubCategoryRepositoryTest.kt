@@ -1,10 +1,13 @@
 package com.leebeebeom.clothinghelper.data.container
 
 import com.leebeebeom.clothinghelper.RepositoryProvider
+import com.leebeebeom.clothinghelper.data.repository.DatabasePath
 import com.leebeebeom.clothinghelper.data.repositoryCrudTest
+import com.leebeebeom.clothinghelper.data.sortTest
 import com.leebeebeom.clothinghelper.domain.model.SubCategory
 import com.leebeebeom.clothinghelper.domain.repository.SubCategoryRepository
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
+import com.leebeebeom.clothinghelper.domain.repository.preference.SortPreferenceRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -14,6 +17,7 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class SubCategoryRepositoryTest {
     private lateinit var userRepository: UserRepository
+    private lateinit var subCategoryPreferencesRepository: SortPreferenceRepository
     private lateinit var subCategoryRepository: SubCategoryRepository
     private val dispatcher = StandardTestDispatcher()
     private val repositoryProvider = RepositoryProvider(dispatcher = dispatcher)
@@ -21,7 +25,9 @@ class SubCategoryRepositoryTest {
     @Before
     fun init() {
         userRepository = repositoryProvider.getUserRepository()
-        subCategoryRepository = repositoryProvider.getSubCategoryRepository()
+        subCategoryPreferencesRepository = repositoryProvider.getSubCategoryPreferenceRepository()
+        subCategoryRepository =
+            repositoryProvider.getSubCategoryRepository(subCategoryPreferencesRepository)
     }
 
 
@@ -51,4 +57,20 @@ class SubCategoryRepositoryTest {
             assert(origin.editDate < new.editDate)
         }
     }
+
+    @Test
+    fun sortTest() = runTest(dispatcher) {
+        sortTest(
+            dispatcher = dispatcher,
+            preferencesRepository = subCategoryPreferencesRepository,
+            userRepository = userRepository,
+            repository = subCategoryRepository,
+            data = subCategories,
+            refPath = DatabasePath.SUB_CATEGORIES
+        )
+    }
+
+    private var createdData = System.currentTimeMillis()
+    private val subCategories =
+        List(9) { SubCategory(name = "$it", createDate = createdData++, editDate = createdData++) }
 }

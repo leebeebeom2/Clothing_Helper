@@ -12,13 +12,21 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object CoroutineScopeModule {
+object CoroutineModule {
     @Singleton
     @Provides
     @AppScope
     fun appScope() = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
+    @Provides
+    @DispatcherIO
+    fun dispatcherIO() = Dispatchers.IO
 }
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class AppScope
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class DispatcherIO

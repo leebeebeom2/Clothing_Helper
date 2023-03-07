@@ -2,7 +2,7 @@ package com.leebeebeom.clothinghelper.domain.usecase.folder
 
 import com.leebeebeom.clothinghelper.RepositoryProvider
 import com.leebeebeom.clothinghelper.data.DataRepositoryTestUtil
-import com.leebeebeom.clothinghelper.data.editUseCaseTest
+import com.leebeebeom.clothinghelper.data.editContainerUseCaseTest
 import com.leebeebeom.clothinghelper.domain.model.Folder
 import com.leebeebeom.clothinghelper.domain.repository.FolderRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,7 +32,8 @@ class EditFolderNameUseCaseTest {
     @Test
     fun editFolderUseCaseTest() = runTest(dispatcher) {
         val folder = Folder(name = "test")
-        editUseCaseTest(
+
+        editContainerUseCaseTest(
             dataRepositoryTestUtil = dataRepositoryTestUtil,
             addData = folder,
             edit = { oldData, name ->

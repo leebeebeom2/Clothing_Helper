@@ -2,7 +2,7 @@ package com.leebeebeom.clothinghelper.domain.usecase.subcategory
 
 import com.leebeebeom.clothinghelper.RepositoryProvider
 import com.leebeebeom.clothinghelper.data.DataRepositoryTestUtil
-import com.leebeebeom.clothinghelper.data.editUseCaseTest
+import com.leebeebeom.clothinghelper.data.editContainerUseCaseTest
 import com.leebeebeom.clothinghelper.domain.model.SubCategory
 import com.leebeebeom.clothinghelper.domain.repository.SubCategoryRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -36,7 +36,7 @@ class EditSubCategoryNameUseCaseTest {
     fun nameEditTest() = runTest(dispatcher) {
         val subCategory = SubCategory(name = "test")
 
-        editUseCaseTest(
+        editContainerUseCaseTest(
             dataRepositoryTestUtil,
             addData = subCategory,
             edit = { oldData, name ->

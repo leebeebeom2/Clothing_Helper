@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package com.leebeebeom.clothinghelper.data
 
 import com.google.firebase.database.FirebaseDatabase
@@ -182,10 +184,26 @@ suspend fun <T : BaseContainerModel, U : BaseDataRepository<T>> TestScope.sortTe
     dataRepositoryTestUtil.removeAllData()
 }
 
-@OptIn(ExperimentalCoroutinesApi::class)
-suspend fun <T : BaseContainerModel, U : BaseDataRepository<T>> TestScope.addUseCaseTest(
+suspend fun <T : BaseContainerModel, U : BaseDataRepository<T>> TestScope.addContainerUseCaseTest(
     dataRepositoryTestUtil: DataRepositoryTestUtil<T, U>,
     add: suspend (name: String) -> Unit,
+) = addUseCaseTest(
+    dataRepositoryTestUtil = dataRepositoryTestUtil,
+    add = add,
+    addAssert = { addedData, text ->
+        assert(addedData.name == text)
+    },
+    addListAssert = { addedDataList, textList ->
+        assert(addedDataList.map { it.name } == textList)
+    }
+)
+
+@OptIn(ExperimentalCoroutinesApi::class)
+suspend fun <T : BaseModel, U : BaseDataRepository<T>> TestScope.addUseCaseTest(
+    dataRepositoryTestUtil: DataRepositoryTestUtil<T, U>,
+    add: suspend (text: String) -> Unit,
+    addAssert: (addedData: T, text: String) -> Unit,
+    addListAssert: (addedDataList: List<T>, textList: List<String>) -> Unit,
 ) {
     val userRepositoryTestUtil = dataRepositoryTestUtil.userRepositoryTestUtil
     userRepositoryTestUtil.signOut()
@@ -200,26 +218,50 @@ suspend fun <T : BaseContainerModel, U : BaseDataRepository<T>> TestScope.addUse
     userRepositoryTestUtil.assertSignIn() // sign in
     dataRepositoryTestUtil.assertAllDataIsEmpty() // loaded but data is empty
 
-    val name1 = "data1"
-    add(name1)
+    val text1 = "data1"
+    add(text1)
     advanceUntilIdle()
     dataRepositoryTestUtil.assertAllDataSize(1)
-    assert(dataRepositoryTestUtil.allData.first().name == name1)
+    addAssert(dataRepositoryTestUtil.allData.first(), text1)
 
-    val name2 = "data2"
-    add(name2)
+    val text2 = "data2"
+    add(text2)
     advanceUntilIdle()
     dataRepositoryTestUtil.assertAllDataSize(2)
-    assert(dataRepositoryTestUtil.allData.map { it.name } == listOf(name1, name2))
+    addListAssert(dataRepositoryTestUtil.allData, listOf(text1, text2))
 
     dataRepositoryTestUtil.removeAllData()
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
-suspend fun <T : BaseContainerModel, U : BaseDataRepository<T>> TestScope.editUseCaseTest(
+suspend fun <T : BaseContainerModel, U : BaseDataRepository<T>> TestScope.editContainerUseCaseTest(
     dataRepositoryTestUtil: DataRepositoryTestUtil<T, U>,
     addData: T,
     edit: suspend (oldData: T, name: String) -> Unit,
+) {
+    val editName = "edit test"
+
+    editUseCaseTest(
+        dataRepositoryTestUtil,
+        addData = addData,
+        addAssert = { addedDta ->
+            assert(addedDta.name == addedDta.name)
+        },
+        edit = { edit(it, editName) },
+        editAssert = { oldData, newData ->
+            assert(oldData.name != newData.name)
+            assert(newData.name == editName)
+        }
+    )
+}
+
+@OptIn(ExperimentalCoroutinesApi::class)
+suspend fun <T : BaseModel, U : BaseDataRepository<T>> TestScope.editUseCaseTest(
+    dataRepositoryTestUtil: DataRepositoryTestUtil<T, U>,
+    addData: T,
+    addAssert: (addedDta: T) -> Unit,
+    edit: suspend (oldData: T) -> Unit,
+    editAssert: (oldData: T, newData: T) -> Unit,
 ) {
     val userRepositoryTestUtil = dataRepositoryTestUtil.userRepositoryTestUtil
     userRepositoryTestUtil.signOut()
@@ -237,14 +279,14 @@ suspend fun <T : BaseContainerModel, U : BaseDataRepository<T>> TestScope.editUs
     dataRepositoryTestUtil.add(addData)
     advanceUntilIdle()
     dataRepositoryTestUtil.assertAllDataSize(1)
-    assert(dataRepositoryTestUtil.allData.first().name == addData.name)
 
     val oldData = dataRepositoryTestUtil.allData.first()
-    val newName = "edited data"
-    edit(oldData, newName)
+    addAssert(oldData)
+
+    edit(oldData)
     advanceUntilIdle()
     dataRepositoryTestUtil.assertAllDataSize(1)
-    assert(dataRepositoryTestUtil.allData.first().name == newName)
+    editAssert(oldData, dataRepositoryTestUtil.allData.first())
 
     dataRepositoryTestUtil.removeAllData()
 }

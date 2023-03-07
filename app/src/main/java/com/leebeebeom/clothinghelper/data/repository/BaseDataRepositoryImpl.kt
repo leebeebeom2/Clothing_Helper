@@ -48,7 +48,10 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         onFail: (Exception) -> Unit,
     ) = withContext(
         callSite = DatabaseCallSite("${type.javaClass}: load"),
-        onFail = onFail
+        onFail = {
+            callbackFlowEmitWrapper { dataCallback -> dataCallback(data = emptyList()) }
+            onFail(it)
+        }
     ) {
         callbackFlowEmitWrapper { callback ->
             uid?.let {
@@ -118,7 +121,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     private suspend fun withContext(
         callSite: DatabaseCallSite,
         loading: Boolean = true,
-        onFail: (Exception) -> Unit,
+        onFail: suspend (Exception) -> Unit,
         task: suspend () -> Unit,
     ) = withContext(dispatcher) {
         try {

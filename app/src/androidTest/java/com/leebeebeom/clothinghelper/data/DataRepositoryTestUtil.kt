@@ -9,6 +9,7 @@ import com.leebeebeom.clothinghelper.domain.model.BaseModel
 import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
 import com.leebeebeom.clothinghelper.domain.repository.preference.SortPreferenceRepository
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.test.*
 
@@ -205,8 +206,7 @@ suspend fun <T : BaseContainerModel, U : BaseDataRepository<T>> TestScope.addUse
     add(name2)
     advanceUntilIdle()
     dataRepositoryTestUtil.assertAllDataSize(2)
-    assert(dataRepositoryTestUtil.allData.first().name == name1)
-    assert(dataRepositoryTestUtil.allData.last().name == name2)
+    assert(dataRepositoryTestUtil.allData.map { it.name } == listOf(name1, name2))
 
     dataRepositoryTestUtil.removeAllData()
 }
@@ -241,6 +241,50 @@ suspend fun <T : BaseContainerModel, U : BaseDataRepository<T>> TestScope.editUs
     advanceUntilIdle()
     dataRepositoryTestUtil.assertAllDataSize(1)
     assert(dataRepositoryTestUtil.allData.first().name == newName)
+
+    dataRepositoryTestUtil.removeAllData()
+}
+
+@OptIn(ExperimentalCoroutinesApi::class)
+suspend fun <T : BaseModel, U : BaseDataRepository<T>> TestScope.getAllDataUseCaseTest(
+    dataRepositoryTestUtil: DataRepositoryTestUtil<T, U>,
+    initDataList: List<T>,
+    allDataFlow: StateFlow<List<T>>,
+    assertLoadedData: (initDataList: List<T>, loadedDataList: List<T>) -> Unit,
+) {
+    val userRepositoryTestUtil = dataRepositoryTestUtil.userRepositoryTestUtil
+    userRepositoryTestUtil.signOut()
+
+    dataRepositoryTestUtil.allDataCollect(backgroundScope)
+
+    userRepositoryTestUtil.assertSignOut() // not sign in
+    dataRepositoryTestUtil.assertAllDataIsEmpty() // not loaded
+
+    userRepositoryTestUtil.signIn()
+    advanceUntilIdle()
+    userRepositoryTestUtil.assertSignIn() // sign in
+    dataRepositoryTestUtil.assertAllDataIsEmpty() // loaded but data is empty
+
+    initDataList.forEach { dataRepositoryTestUtil.add(it) }
+    advanceUntilIdle()
+
+    assert(allDataFlow.value.size == initDataList.size)
+
+    assertLoadedData(initDataList, allDataFlow.value)
+
+    userRepositoryTestUtil.signOut()
+    advanceUntilIdle()
+    userRepositoryTestUtil.assertSignOut() // sign out
+    dataRepositoryTestUtil.assertAllDataIsEmpty() // not loaded
+
+    userRepositoryTestUtil.signIn()
+    advanceUntilIdle()
+    userRepositoryTestUtil.assertSignIn() // sign out
+    withContext(Dispatchers.Default){
+        delay(1000)
+        dataRepositoryTestUtil.assertAllDataSize(10) // not loaded
+    }
+    assertLoadedData(initDataList, allDataFlow.value)
 
     dataRepositoryTestUtil.removeAllData()
 }

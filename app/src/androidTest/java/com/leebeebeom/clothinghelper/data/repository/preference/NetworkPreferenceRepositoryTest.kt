@@ -4,6 +4,7 @@ import com.leebeebeom.clothinghelper.RepositoryProvider
 import com.leebeebeom.clothinghelper.domain.repository.preference.NetworkPreferenceRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -17,7 +18,8 @@ class NetworkPreferenceRepositoryTest {
 
     @Before
     fun init() {
-        networkPreferenceRepository = RepositoryProvider(dispatcher).createNetworkPreferenceRepository()
+        networkPreferenceRepository =
+            RepositoryProvider(dispatcher).createNetworkPreferenceRepository()
     }
 
     @Test
@@ -26,8 +28,8 @@ class NetworkPreferenceRepositoryTest {
 
         backgroundScope.launch(dispatcher) { networkFlow.collectLatest { } }
 
-        fun assert(networkPreferences: NetworkPreferences) =
-            assert(networkFlow.value == networkPreferences)
+        suspend fun assert(networkPreferences: NetworkPreferences) =
+            assert(networkFlow.first() == networkPreferences)
 
         assert(networkPreferences = NetworkPreferences.ANY) // init value
 

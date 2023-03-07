@@ -15,15 +15,15 @@ class NetworkCheckerTest {
     private lateinit var networkPreferenceRepository: NetworkPreferenceRepository
     private lateinit var networkChecker: NetworkChecker
     private val dispatcher = StandardTestDispatcher()
-    private val repositoryProvider = RepositoryProvider(dispatcher)
 
     @Before
     fun init() {
-        networkPreferenceRepository = repositoryProvider.getNetworkPreferenceRepository()
+        val repositoryProvider = RepositoryProvider(dispatcher)
+        networkPreferenceRepository = repositoryProvider.createNetworkPreferenceRepository()
         networkChecker =
-            repositoryProvider.getNetWorkChecker(networkPreferenceRepository = networkPreferenceRepository)
+            repositoryProvider.createNetWorkChecker(networkPreferenceRepository = networkPreferenceRepository)
     }
-
+    // 에뮬레이터 수동 조작 해야됨
     @Test
     fun wifiCheckTest() = runTest(dispatcher) {
         networkPreferenceRepository.networkSelected(network = NetworkPreferences.WIFI)

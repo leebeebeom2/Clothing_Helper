@@ -195,18 +195,52 @@ suspend fun <T : BaseContainerModel, U : BaseDataRepository<T>> TestScope.addUse
     userRepositoryTestUtil.assertSignIn() // sign in
     dataRepositoryTestUtil.assertAllDataIsEmpty() // loaded but data is empty
 
-    val name1 = "sub category"
+    val name1 = "data1"
     add(name1)
     advanceUntilIdle()
     dataRepositoryTestUtil.assertAllDataSize(1)
     assert(dataRepositoryTestUtil.allData.first().name == name1)
 
-    val name2 = "sub category2"
+    val name2 = "data2"
     add(name2)
     advanceUntilIdle()
     dataRepositoryTestUtil.assertAllDataSize(2)
     assert(dataRepositoryTestUtil.allData.first().name == name1)
     assert(dataRepositoryTestUtil.allData.last().name == name2)
+
+    dataRepositoryTestUtil.removeAllData()
+}
+
+@OptIn(ExperimentalCoroutinesApi::class)
+suspend fun <T : BaseContainerModel, U : BaseDataRepository<T>> TestScope.editUseCaseTest(
+    dataRepositoryTestUtil: DataRepositoryTestUtil<T, U>,
+    addData: T,
+    edit: suspend (oldData: T, name: String) -> Unit,
+) {
+    val userRepositoryTestUtil = dataRepositoryTestUtil.userRepositoryTestUtil
+    userRepositoryTestUtil.signOut()
+
+    dataRepositoryTestUtil.allDataCollect(backgroundScope)
+    advanceUntilIdle()
+    userRepositoryTestUtil.assertSignOut() // not sign in
+    dataRepositoryTestUtil.assertAllDataIsEmpty() // not loaded
+
+    userRepositoryTestUtil.signIn()
+    advanceUntilIdle()
+    userRepositoryTestUtil.assertSignIn()
+    dataRepositoryTestUtil.assertAllDataIsEmpty() // loaded but data is empty
+
+    dataRepositoryTestUtil.add(addData)
+    advanceUntilIdle()
+    dataRepositoryTestUtil.assertAllDataSize(1)
+    assert(dataRepositoryTestUtil.allData.first().name == addData.name)
+
+    val oldData = dataRepositoryTestUtil.allData.first()
+    val newName = "edited data"
+    edit(oldData, newName)
+    advanceUntilIdle()
+    dataRepositoryTestUtil.assertAllDataSize(1)
+    assert(dataRepositoryTestUtil.allData.first().name == newName)
 
     dataRepositoryTestUtil.removeAllData()
 }

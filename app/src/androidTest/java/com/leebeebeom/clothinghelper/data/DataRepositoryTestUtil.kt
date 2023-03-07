@@ -248,8 +248,7 @@ suspend fun <T : BaseContainerModel, U : BaseDataRepository<T>> TestScope.editCo
             assert(addedDta.name == addedDta.name)
         },
         edit = { edit(it, editName) },
-        editAssert = { oldData, newData ->
-            assert(oldData.name != newData.name)
+        editAssert = { newData ->
             assert(newData.name == editName)
         }
     )
@@ -261,7 +260,7 @@ suspend fun <T : BaseModel, U : BaseDataRepository<T>> TestScope.editUseCaseTest
     addData: T,
     addAssert: (addedDta: T) -> Unit,
     edit: suspend (oldData: T) -> Unit,
-    editAssert: (oldData: T, newData: T) -> Unit,
+    editAssert: (newData: T) -> Unit,
 ) {
     val userRepositoryTestUtil = dataRepositoryTestUtil.userRepositoryTestUtil
     userRepositoryTestUtil.signOut()
@@ -286,7 +285,7 @@ suspend fun <T : BaseModel, U : BaseDataRepository<T>> TestScope.editUseCaseTest
     edit(oldData)
     advanceUntilIdle()
     dataRepositoryTestUtil.assertAllDataSize(1)
-    editAssert(oldData, dataRepositoryTestUtil.allData.first())
+    editAssert(dataRepositoryTestUtil.allData.first())
 
     dataRepositoryTestUtil.removeAllData()
 }

@@ -14,17 +14,17 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.leebeebeom.clothinghelper.domain.model.data.User
-import com.leebeebeom.clothinghelper.ui.ActivityDestinations.MAIN_ROUTE
-import com.leebeebeom.clothinghelper.ui.ActivityDestinations.SIGN_IN_ROUTE
+import com.leebeebeom.clothinghelper.domain.model.User
+import com.leebeebeom.clothinghelper.ui.MainActivityDestinations.MainGraphDestination
+import com.leebeebeom.clothinghelper.ui.MainActivityDestinations.SignInGraphDestination
 import com.leebeebeom.clothinghelper.ui.main.MainNavHost
 import com.leebeebeom.clothinghelper.ui.signin.ui.SignInNavHost
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import dagger.hilt.android.AndroidEntryPoint
 
-object ActivityDestinations {
-    const val SIGN_IN_ROUTE = "signIn"
-    const val MAIN_ROUTE = "main"
+object MainActivityDestinations {
+    const val SignInGraphDestination = "sign in graph"
+    const val MainGraphDestination = "main graph"
 }
 
 @AndroidEntryPoint
@@ -38,23 +38,22 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainActivityScreen(
     viewModel: ActivityViewModel = activityViewModel(),
-    uiState: ActivityUiState = viewModel.activityUiState,
     navController: NavHostController = rememberNavController(),
 ) {
-    val user by viewModel.user.collectAsStateWithLifecycle()
+    val uiState by viewModel.activityUiState.collectAsStateWithLifecycle()
 
     ClothingHelperTheme {
         NavHost(
             navController = navController,
-            startDestination = SIGN_IN_ROUTE,
+            startDestination = SignInGraphDestination,
         ) {
-            composable(SIGN_IN_ROUTE) { SignInNavHost() }
-            composable(MAIN_ROUTE) { MainNavHost() }
+            composable(SignInGraphDestination) { SignInNavHost() }
+            composable(MainGraphDestination) { MainNavHost() }
         }
     }
 
     MainActivityNavigateWrapper(
-        user = { user },
+        user = { uiState.user },
         navigateToMainGraph = navController::navigateToMainGraph,
         navigateToSignInGraph = navController::navigateToSignInGraph
     )
@@ -71,14 +70,14 @@ private fun MainActivityNavigateWrapper(
 }
 
 private fun NavHostController.navigateToSignInGraph() =
-    navigate(SIGN_IN_ROUTE) {
-        popUpTo(MAIN_ROUTE) { inclusive = true }
+    navigate(SignInGraphDestination) {
+        popUpTo(MainGraphDestination) { inclusive = true }
         launchSingleTop = true
     }
 
 private fun NavHostController.navigateToMainGraph() =
-    navigate(MAIN_ROUTE) {
-        popUpTo(SIGN_IN_ROUTE) { inclusive = true }
+    navigate(MainGraphDestination) {
+        popUpTo(SignInGraphDestination) { inclusive = true }
         launchSingleTop = true
     }
 

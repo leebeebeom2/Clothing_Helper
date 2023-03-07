@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalCoroutinesApi::class, ExperimentalCoroutinesApi::class)
-
 package com.leebeebeom.clothinghelper.data
 
 import com.google.firebase.database.FirebaseDatabase
@@ -17,7 +15,7 @@ import kotlinx.coroutines.test.*
 @OptIn(ExperimentalCoroutinesApi::class)
 class DataRepositoryTestUtil<T : BaseModel, U : BaseDataRepository<T>>(
     repositoryProvider: RepositoryProvider,
-    private val repository: U,
+    val repository: U,
 ) {
     val userRepositoryTestUtil = UserRepositoryTestUtil(repositoryProvider = repositoryProvider)
     private val dispatcher = repositoryProvider.dispatcher
@@ -106,6 +104,7 @@ suspend fun <T : BaseModel, U : BaseDataRepository<T>> TestScope.repositoryCrudT
     dataRepositoryTestUtil.removeAllData()
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
 suspend fun <T : BaseContainerModel, U : BaseDataRepository<T>> TestScope.sortTest(
     dataRepositoryTestUtil: DataRepositoryTestUtil<T, U>,
     preferencesRepository: SortPreferenceRepository,
@@ -178,11 +177,13 @@ suspend fun <T : BaseContainerModel, U : BaseDataRepository<T>> TestScope.sortTe
     dataRepositoryTestUtil.removeAllData()
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
 suspend fun <T : BaseContainerModel, U : BaseDataRepository<T>> TestScope.addUseCaseTest(
     dataRepositoryTestUtil: DataRepositoryTestUtil<T, U>,
     add: suspend (name: String) -> Unit,
 ) {
     val userRepositoryTestUtil = dataRepositoryTestUtil.userRepositoryTestUtil
+    userRepositoryTestUtil.signOut()
 
     dataRepositoryTestUtil.allDataCollect(backgroundScope)
     advanceUntilIdle()

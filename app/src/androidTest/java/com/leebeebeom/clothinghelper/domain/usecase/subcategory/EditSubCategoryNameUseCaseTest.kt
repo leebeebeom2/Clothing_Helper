@@ -12,10 +12,10 @@ import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class EditSubCategoryUseCaseTest {
+class EditSubCategoryNameUseCaseTest {
     private lateinit var dataRepositoryTestUtil: DataRepositoryTestUtil<SubCategory, SubCategoryRepository>
     private lateinit var addSubCategoryUseCase: AddSubCategoryUseCase
-    private lateinit var editSubCategoryUseCase: EditSubCategoryUseCase
+    private lateinit var editSubCategoryNameUseCase: EditSubCategoryNameUseCase
     private val dispatcher = StandardTestDispatcher()
 
     @Before
@@ -27,8 +27,8 @@ class EditSubCategoryUseCaseTest {
         )
         addSubCategoryUseCase =
             AddSubCategoryUseCase(subCategoryRepository = dataRepositoryTestUtil.repository)
-        editSubCategoryUseCase =
-            EditSubCategoryUseCase(subCategoryRepository = dataRepositoryTestUtil.repository)
+        editSubCategoryNameUseCase =
+            EditSubCategoryNameUseCase(subCategoryRepository = dataRepositoryTestUtil.repository)
 
     }
 
@@ -40,7 +40,7 @@ class EditSubCategoryUseCaseTest {
             dataRepositoryTestUtil,
             addData = subCategory,
             edit = { oldData, name ->
-                editSubCategoryUseCase.nameEdit(
+                editSubCategoryNameUseCase.nameEdit(
                     oldSubCategory = oldData,
                     name = name,
                     uid = dataRepositoryTestUtil.userRepositoryTestUtil.uid!!,

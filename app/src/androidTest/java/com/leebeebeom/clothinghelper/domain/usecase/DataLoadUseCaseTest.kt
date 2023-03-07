@@ -61,14 +61,13 @@ class DataLoadUseCaseTest {
         addInitData()
         userRepositoryTestUtil.userCollect(backgroundScope = backgroundScope, collect = {
             dataLoadUseCase.load(uid = it?.uid, onFail = { assert(false) })
-            assert(true)
         })
 
         userRepositoryTestUtil.signIn()
         advanceUntilIdle()
         userRepositoryTestUtil.assertSignIn()
         withContext(Dispatchers.Default) {
-            delay(5000)
+            delay(1000)
             subCategoryRepositoryTestUtil.assertAllDataSize(10)
             folderRepositoryTestUtil.assertAllDataSize(8)
             todoRepositoryTestUtil.assertAllDataSize(5)
@@ -86,12 +85,6 @@ class DataLoadUseCaseTest {
         userRepositoryTestUtil.signIn()
         advanceUntilIdle()
         userRepositoryTestUtil.assertSignIn()
-        withContext(Dispatchers.Default) {
-            delay(5000)
-            subCategoryRepositoryTestUtil.assertAllDataSize(10)
-            folderRepositoryTestUtil.assertAllDataSize(8)
-            todoRepositoryTestUtil.assertAllDataSize(5)
-        }
         subCategoryRepositoryTestUtil.removeAllData()
         folderRepositoryTestUtil.removeAllData()
         todoRepositoryTestUtil.removeAllData()

@@ -1,9 +1,7 @@
 package com.leebeebeom.clothinghelper.domain.usecase.user
 
-import com.google.firebase.auth.FirebaseAuth
 import com.leebeebeom.clothinghelper.RepositoryProvider
-import com.leebeebeom.clothinghelper.data.successResult
-import com.leebeebeom.clothinghelper.domain.repository.UserRepository
+import com.leebeebeom.clothinghelper.data.UserRepositoryTestUtil
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -15,16 +13,16 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class GetSignInLoadingStateUseCaseTest {
-    private lateinit var userRepository: UserRepository
+    private lateinit var userRepositoryTestUtil: UserRepositoryTestUtil
     private lateinit var getSignInLoadingStateUseCase: GetSignInLoadingStateUseCase
     private val dispatcher = StandardTestDispatcher()
-    private val repositoryProvider = RepositoryProvider(dispatcher)
 
 
     @Before
     fun init() {
-        userRepository = repositoryProvider.getUserRepository()
-        getSignInLoadingStateUseCase = GetSignInLoadingStateUseCase(userRepository = userRepository)
+        userRepositoryTestUtil = UserRepositoryTestUtil(RepositoryProvider(dispatcher))
+        getSignInLoadingStateUseCase =
+            GetSignInLoadingStateUseCase(userRepository = userRepositoryTestUtil.userRepository)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -32,30 +30,20 @@ class GetSignInLoadingStateUseCaseTest {
     fun loadingFlowTest() = runTest(dispatcher) {
         backgroundScope.launch(dispatcher) { getSignInLoadingStateUseCase.isLoading.collectLatest {} }
 
-        assert(!getSignInLoadingStateUseCase.isLoading.value)
+        assert(!getSignInLoadingStateUseCase.isLoading.value) // not loading
 
-        userRepository.signIn(
-            email = "1@a.com", password = "111111",
-            firebaseResult = successResult,
-            dispatcher = dispatcher
-        )
+        userRepositoryTestUtil.signIn()
         assert(getSignInLoadingStateUseCase.isLoading.value)
         advanceUntilIdle()
         assert(!getSignInLoadingStateUseCase.isLoading.value)
 
-        userRepository.signUp(
-            email = "notExistEmail@a.com", password = "111111", name = "test",
-            firebaseResult = successResult,
-            dispatcher = dispatcher
-        )
+        userRepositoryTestUtil.signUp()
         assert(getSignInLoadingStateUseCase.isLoading.value)
         advanceUntilIdle()
         assert(!getSignInLoadingStateUseCase.isLoading.value)
-        FirebaseAuth.getInstance().currentUser!!.delete()
+        userRepositoryTestUtil.deleteUser()
 
-        userRepository.sendResetPasswordEmail(
-            email = "1@a.com", firebaseResult = successResult, dispatcher = dispatcher
-        )
+        userRepositoryTestUtil.sendResetPasswordEmail()
         assert(getSignInLoadingStateUseCase.isLoading.value)
         advanceUntilIdle()
         assert(!getSignInLoadingStateUseCase.isLoading.value)

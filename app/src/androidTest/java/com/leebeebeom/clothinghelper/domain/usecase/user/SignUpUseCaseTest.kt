@@ -1,11 +1,7 @@
 package com.leebeebeom.clothinghelper.domain.usecase.user
 
-import com.google.firebase.auth.FirebaseAuth
 import com.leebeebeom.clothinghelper.RepositoryProvider
-import com.leebeebeom.clothinghelper.data.emailAlreadyInUserResult
-import com.leebeebeom.clothinghelper.data.invalidEmailResult
-import com.leebeebeom.clothinghelper.data.successResult
-import com.leebeebeom.clothinghelper.domain.repository.UserRepository
+import com.leebeebeom.clothinghelper.data.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -15,57 +11,54 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SignUpUseCaseTest {
-    lateinit var userRepository: UserRepository
-    lateinit var signUpUseCase: SignUpUseCase
+    private lateinit var userRepositoryTestUtil: UserRepositoryTestUtil
+    private lateinit var signUpUseCase: SignUpUseCase
     private val dispatcher = StandardTestDispatcher()
-    private val repositoryProvider = RepositoryProvider(dispatcher)
 
     @Before
     fun init() {
-        userRepository = repositoryProvider.getUserRepository()
-        signUpUseCase = SignUpUseCase(userRepository)
+        userRepositoryTestUtil =
+            UserRepositoryTestUtil(repositoryProvider = RepositoryProvider(dispatcher = dispatcher))
+        signUpUseCase = SignUpUseCase(userRepository = userRepositoryTestUtil.userRepository)
     }
 
     @Test
     fun signUpTest() = runTest(dispatcher) {
-        var email = "invalidEmail"
-        val password = "111111"
-        val name = "test"
+        userRepositoryTestUtil.signOut()
 
-        userRepository.signUp(
-            email = email,
-            password = password,
-            name = name,
+        userRepositoryTestUtil.userCollect(backgroundScope)
+        advanceUntilIdle()
+        userRepositoryTestUtil.assertSignOut()
+
+
+        signUpUseCase.signUp(
+            email = invalidEmail,
+            password = signInPassword,
+            name = signUpName,
             firebaseResult = invalidEmailResult,
-            dispatcher = dispatcher
         )
         advanceUntilIdle()
-        assert(userRepository.user.value == null)
+        userRepositoryTestUtil.assertSignOut()
 
-        email = "1@a.com"
-        userRepository.signUp(
-            email = email,
-            password = password,
-            name = name,
+
+        signUpUseCase.signUp(
+            email = signInEmail,
+            password = signInPassword,
+            name = signUpName,
             firebaseResult = emailAlreadyInUserResult,
-            dispatcher = dispatcher
         )
         advanceUntilIdle()
-        assert(userRepository.user.value == null)
+        userRepositoryTestUtil.assertSignOut()
 
-        email = "2@a.com"
-        userRepository.signUp(
-            email = email,
-            password = password,
-            name = name,
+        signUpUseCase.signUp(
+            email = signUpEmail,
+            password = signInPassword,
+            name = signUpName,
             firebaseResult = successResult,
-            dispatcher = dispatcher
         )
         advanceUntilIdle()
-        assert(userRepository.user.value != null)
-        assert(userRepository.user.value!!.email == email)
-        assert(userRepository.user.value!!.name == name)
+        userRepositoryTestUtil.assertSignUp()
 
-        FirebaseAuth.getInstance().currentUser!!.delete()
+        userRepositoryTestUtil.deleteUser()
     }
 }

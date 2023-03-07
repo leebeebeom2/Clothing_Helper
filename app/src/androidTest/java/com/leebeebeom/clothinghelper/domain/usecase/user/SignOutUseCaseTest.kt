@@ -1,9 +1,7 @@
 package com.leebeebeom.clothinghelper.domain.usecase.user
 
 import com.leebeebeom.clothinghelper.RepositoryProvider
-import com.leebeebeom.clothinghelper.data.successResult
-import com.leebeebeom.clothinghelper.data.userCollect
-import com.leebeebeom.clothinghelper.domain.repository.UserRepository
+import com.leebeebeom.clothinghelper.data.UserRepositoryTestUtil
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -13,35 +11,28 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SignOutUseCaseTest {
-    lateinit var userRepository: UserRepository
-    lateinit var signOutUseCase: SignOutUseCase
+    private lateinit var userRepositoryTestUtil: UserRepositoryTestUtil
+    private lateinit var signOutUseCase: SignOutUseCase
     private val dispatcher = StandardTestDispatcher()
-    private val repositoryProvider = RepositoryProvider(dispatcher)
 
     @Before
     fun init() {
-        userRepository = repositoryProvider.getUserRepository()
-        signOutUseCase = SignOutUseCase(userRepository)
+        userRepositoryTestUtil = UserRepositoryTestUtil(repositoryProvider = RepositoryProvider(dispatcher))
+        signOutUseCase = SignOutUseCase(userRepository = userRepositoryTestUtil.userRepository)
     }
 
     @Test
     fun signOutTest() = runTest(dispatcher) {
-        userCollect(dispatcher = dispatcher, userRepository = userRepository)
-
-        assert(userRepository.user.value == null)
-
-        userRepository.signIn(
-            email = "1@a.com",
-            password = "111111",
-            dispatcher = dispatcher,
-            firebaseResult = successResult
-        )
+        userRepositoryTestUtil.userCollect(backgroundScope)
         advanceUntilIdle()
-        assert(userRepository.user.value != null)
-        assert(userRepository.user.value!!.email == "1@a.com")
+        userRepositoryTestUtil.assertSignOut() // not sign in
 
-        userRepository.signOut()
+        userRepositoryTestUtil.signIn()
         advanceUntilIdle()
-        assert(userRepository.user.value == null)
+        userRepositoryTestUtil.assertSignIn() // sign in
+
+        signOutUseCase.signOut()
+        advanceUntilIdle()
+        userRepositoryTestUtil.assertSignOut() // sign out
     }
 }

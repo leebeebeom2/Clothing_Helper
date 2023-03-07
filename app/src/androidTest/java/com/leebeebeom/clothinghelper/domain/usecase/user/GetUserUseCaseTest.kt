@@ -2,10 +2,10 @@ package com.leebeebeom.clothinghelper.domain.usecase.user
 
 import com.google.firebase.auth.FirebaseAuth
 import com.leebeebeom.clothinghelper.RepositoryProvider
-import com.leebeebeom.clothinghelper.data.successResult
-import com.leebeebeom.clothinghelper.data.userCollect
-import com.leebeebeom.clothinghelper.domain.repository.UserRepository
+import com.leebeebeom.clothinghelper.data.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -14,50 +14,40 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class GetUserUseCaseTest {
-    lateinit var userRepository: UserRepository
-    lateinit var getUserUseCase: GetUserUseCase
+    private lateinit var userRepositoryTestUtil: UserRepositoryTestUtil
+    private lateinit var getUserUseCase: GetUserUseCase
     private val dispatcher = StandardTestDispatcher()
-    private val repositoryProvider = RepositoryProvider(dispatcher)
 
     @Before
     fun init() {
         FirebaseAuth.getInstance().signOut()
-        userRepository = repositoryProvider.getUserRepository()
-        getUserUseCase = GetUserUseCase(userRepository)
+
+        userRepositoryTestUtil =
+            UserRepositoryTestUtil(repositoryProvider = RepositoryProvider(dispatcher))
+        getUserUseCase = GetUserUseCase(userRepository = userRepositoryTestUtil.userRepository)
     }
 
     @Test
     fun getUserTest() = runTest(dispatcher) {
-        userCollect(dispatcher = dispatcher, userRepository = userRepository)
-
-        assert(getUserUseCase.user.value == null)
-
-        userRepository.signIn(
-            email = "1@a.com",
-            password = "111111",
-            firebaseResult = successResult,
-            dispatcher = dispatcher
-        )
-        advanceUntilIdle()
-        assert(getUserUseCase.user.value != null)
-        assert(getUserUseCase.user.value!!.email == "1@a.com")
-
-        userRepository.signOut()
+        backgroundScope.launch(dispatcher) { getUserUseCase.user.collectLatest { } }
         advanceUntilIdle()
         assert(getUserUseCase.user.value == null)
 
-        userRepository.signUp(
-            email = "2@a.com",
-            password = "111111",
-            name = "test",
-            firebaseResult = successResult,
-            dispatcher = dispatcher
-        )
+        userRepositoryTestUtil.signIn()
         advanceUntilIdle()
         assert(getUserUseCase.user.value != null)
-        assert(getUserUseCase.user.value!!.email == "2@a.com")
-        assert(getUserUseCase.user.value!!.name == "test")
+        assert(getUserUseCase.user.value!!.email == signInEmail)
 
-        FirebaseAuth.getInstance().currentUser!!.delete()
+        userRepositoryTestUtil.signOut()
+        advanceUntilIdle()
+        assert(getUserUseCase.user.value == null)
+
+        userRepositoryTestUtil.signUp()
+        advanceUntilIdle()
+        assert(getUserUseCase.user.value != null)
+        assert(getUserUseCase.user.value!!.email == signUpEmail)
+        assert(getUserUseCase.user.value!!.name == signUpName)
+
+        userRepositoryTestUtil.deleteUser()
     }
 }

@@ -21,12 +21,12 @@ suspend fun <T, U> callbackFlowEmit(
         val collectJob = launch { flow.collect() }
 
         while (collectJob.isActive) {
-            delay(500)
             val callback2 = callback()
             if (callback2 != null) {
                 emit(callback2)
                 collectJob.cancel()
             }
+            delay(500)
         }
     }
 }

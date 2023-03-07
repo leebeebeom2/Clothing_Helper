@@ -4,7 +4,7 @@ import com.leebeebeom.clothinghelper.domain.model.Todo
 import com.leebeebeom.clothinghelper.domain.repository.TodoRepository
 import javax.inject.Inject
 
-class EditTodoOrder @Inject constructor(
+class EditTodoOrderUseCase @Inject constructor(
     private val todoRepository: TodoRepository,
 ) {
     suspend fun editOrder(

@@ -13,13 +13,13 @@ class SortPreferencesRepositoryTest {
     private lateinit var folderPreferencesRepository: SortPreferenceRepository
     private lateinit var subCategoryPreferencesRepository: SortPreferenceRepository
     private val dispatcher = StandardTestDispatcher()
-    private val repositoryProvider = RepositoryProvider(dispatcher)
 
 
     @Before
     fun init() {
-        folderPreferencesRepository = repositoryProvider.getFolderPreferenceRepository()
-        subCategoryPreferencesRepository = repositoryProvider.getSubCategoryPreferenceRepository()
+        val repositoryProvider = RepositoryProvider(dispatcher)
+        folderPreferencesRepository = repositoryProvider.createFolderPreferenceRepository()
+        subCategoryPreferencesRepository = repositoryProvider.createSubCategoryPreferenceRepository()
     }
 
     @Test

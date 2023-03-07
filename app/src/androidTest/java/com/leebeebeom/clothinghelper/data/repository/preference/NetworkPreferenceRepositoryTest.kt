@@ -14,11 +14,10 @@ import org.junit.Test
 class NetworkPreferenceRepositoryTest {
     private lateinit var networkPreferenceRepository: NetworkPreferenceRepository
     private val dispatcher = StandardTestDispatcher()
-    private val repositoryProvider = RepositoryProvider(dispatcher)
 
     @Before
     fun init() {
-        networkPreferenceRepository = repositoryProvider.getNetworkPreferenceRepository()
+        networkPreferenceRepository = RepositoryProvider(dispatcher).createNetworkPreferenceRepository()
     }
 
     @Test
@@ -30,7 +29,7 @@ class NetworkPreferenceRepositoryTest {
         fun assert(networkPreferences: NetworkPreferences) =
             assert(networkFlow.value == networkPreferences)
 
-        assert(networkPreferences = NetworkPreferences.ANY) // 초기값
+        assert(networkPreferences = NetworkPreferences.ANY) // init value
 
         networkPreferenceRepository.networkSelected(NetworkPreferences.WIFI)
         assert(networkPreferences = NetworkPreferences.WIFI)

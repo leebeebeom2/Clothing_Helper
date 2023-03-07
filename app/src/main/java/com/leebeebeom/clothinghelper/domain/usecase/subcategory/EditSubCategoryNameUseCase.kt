@@ -4,7 +4,7 @@ import com.leebeebeom.clothinghelper.domain.model.SubCategory
 import com.leebeebeom.clothinghelper.domain.repository.SubCategoryRepository
 import javax.inject.Inject
 
-class EditSubCategoryUseCase @Inject constructor(private val subCategoryRepository: SubCategoryRepository) {
+class EditSubCategoryNameUseCase @Inject constructor(private val subCategoryRepository: SubCategoryRepository) {
     suspend fun nameEdit(
         oldSubCategory: SubCategory,
         name: String,

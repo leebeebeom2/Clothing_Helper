@@ -4,6 +4,7 @@ import com.leebeebeom.clothinghelper.data.repository.util.NetworkChecker
 import com.leebeebeom.clothinghelper.domain.repository.FolderRepository
 import com.leebeebeom.clothinghelper.domain.repository.SubCategoryRepository
 import com.leebeebeom.clothinghelper.domain.repository.TodoRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,6 +24,7 @@ class DataLoadUseCase @Inject constructor(
                 launch { folderRepository.load(uid = uid, onFail = { throw it }) }
                 launch { todoRepository.load(uid = uid, onFail = { throw it }) }
             }
+        } catch (_: CancellationException) {
         } catch (e: Exception) {
             onFail(e)
         }

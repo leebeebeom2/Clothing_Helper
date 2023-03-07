@@ -2,7 +2,7 @@ package com.leebeebeom.clothinghelper.domain.usecase.folder
 
 import com.leebeebeom.clothinghelper.RepositoryProvider
 import com.leebeebeom.clothinghelper.data.DataRepositoryTestUtil
-import com.leebeebeom.clothinghelper.data.addUseCaseTest
+import com.leebeebeom.clothinghelper.data.addContainerUseCaseTest
 import com.leebeebeom.clothinghelper.domain.model.Folder
 import com.leebeebeom.clothinghelper.domain.repository.FolderRepository
 import com.leebeebeom.clothinghelper.ui.main.drawer.MainCategoryType
@@ -30,7 +30,7 @@ class AddFolderUseCaseTest {
 
     @Test
     fun addFolderUseCaseTest() = runTest(dispatcher) {
-        addUseCaseTest(
+        addContainerUseCaseTest(
             dataRepositoryTestUtil = dataRepositoryTestUtil,
             add = {
                 addFolderUseCase.add(

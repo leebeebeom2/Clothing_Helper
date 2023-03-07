@@ -13,9 +13,9 @@ import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class GetIsSubCategoryLoadingStateUserCaseTest {
+class GetIsSubCategoryLoadingStateUseCaseTest {
     private lateinit var dataRepositoryTestUtil: DataRepositoryTestUtil<SubCategory, SubCategoryRepository>
-    private lateinit var getIsSubCategoryLoadingStateUserCase: GetIsSubCategoryLoadingStateUserCase
+    private lateinit var getIsSubCategoryLoadingStateUseCase: GetIsSubCategoryLoadingStateUseCase
     private val dispatcher = StandardTestDispatcher()
 
     @Before
@@ -25,7 +25,7 @@ class GetIsSubCategoryLoadingStateUserCaseTest {
             repositoryProvider = repositoryProvider,
             repository = repositoryProvider.createSubCategoryRepository()
         )
-        getIsSubCategoryLoadingStateUserCase = GetIsSubCategoryLoadingStateUserCase(
+        getIsSubCategoryLoadingStateUseCase = GetIsSubCategoryLoadingStateUseCase(
             dataRepositoryTestUtil.repository
         )
     }
@@ -35,7 +35,7 @@ class GetIsSubCategoryLoadingStateUserCaseTest {
         dataLoadingFlowTest(
             dataRepositoryTestUtil = dataRepositoryTestUtil,
             initDataList = iniDataList,
-            loadingFlow = getIsSubCategoryLoadingStateUserCase.isLoading
+            loadingFlow = getIsSubCategoryLoadingStateUseCase.isLoading
         )
     }
 

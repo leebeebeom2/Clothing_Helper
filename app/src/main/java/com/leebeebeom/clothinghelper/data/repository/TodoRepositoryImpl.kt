@@ -7,9 +7,15 @@ import com.leebeebeom.clothinghelper.domain.model.Todo
 import com.leebeebeom.clothinghelper.domain.repository.TodoRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Singleton
 class TodoRepositoryImpl @Inject constructor(
     networkChecker: NetworkChecker,
@@ -21,4 +27,8 @@ class TodoRepositoryImpl @Inject constructor(
     appScope = appScope,
     type = Todo::class.java,
     dispatcher = dispatcher
-), TodoRepository
+), TodoRepository {
+    override val allData: StateFlow<List<Todo>> =
+        super.allData.mapLatest { it.sortedBy { todoList -> todoList.order } }
+            .stateIn(appScope, SharingStarted.WhileSubscribed(5000), emptyList())
+}

@@ -2,7 +2,7 @@ package com.leebeebeom.clothinghelper.domain.usecase.subcategory
 
 import com.leebeebeom.clothinghelper.RepositoryProvider
 import com.leebeebeom.clothinghelper.data.DataRepositoryTestUtil
-import com.leebeebeom.clothinghelper.data.addUseCaseTest
+import com.leebeebeom.clothinghelper.data.addContainerUseCaseTest
 import com.leebeebeom.clothinghelper.domain.model.SubCategory
 import com.leebeebeom.clothinghelper.domain.repository.SubCategoryRepository
 import com.leebeebeom.clothinghelper.ui.main.drawer.MainCategoryType
@@ -32,7 +32,7 @@ class AddSubCategoryUseCaseTest {
 
     @Test
     fun subCategoryAddTest() = runTest(dispatcher) {
-        addUseCaseTest(
+        addContainerUseCaseTest(
             dataRepositoryTestUtil = dataRepositoryTestUtil,
             add = {
                 addSubCategoryUseCase.add(

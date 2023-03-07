@@ -12,8 +12,8 @@ import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class GetIsFolderLoadingStateUserCaseTest {
-    private lateinit var getIsFolderLoadingStateUserCase: GetIsFolderLoadingStateUserCase
+class GetIsFolderLoadingStateUseCaseTest {
+    private lateinit var getIsFolderLoadingStateUseCase: GetIsFolderLoadingStateUseCase
     private lateinit var dataRepositoryTestUtil: DataRepositoryTestUtil<Folder, FolderRepository>
     private val dispatcher = StandardTestDispatcher()
 
@@ -25,8 +25,8 @@ class GetIsFolderLoadingStateUserCaseTest {
                 repositoryProvider = repositoryProvider,
                 repository = repositoryProvider.createFolderRepository()
             )
-        getIsFolderLoadingStateUserCase =
-            GetIsFolderLoadingStateUserCase(dataRepositoryTestUtil.repository)
+        getIsFolderLoadingStateUseCase =
+            GetIsFolderLoadingStateUseCase(dataRepositoryTestUtil.repository)
     }
 
     @Test
@@ -34,7 +34,7 @@ class GetIsFolderLoadingStateUserCaseTest {
         dataLoadingFlowTest(
             dataRepositoryTestUtil = dataRepositoryTestUtil,
             initDataList = initDataList,
-            loadingFlow = getIsFolderLoadingStateUserCase.isLoading
+            loadingFlow = getIsFolderLoadingStateUseCase.isLoading
         )
     }
 

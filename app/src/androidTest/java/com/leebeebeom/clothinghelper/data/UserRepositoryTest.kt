@@ -4,7 +4,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.RepositoryProvider
 import com.leebeebeom.clothinghelper.data.repository.FirebaseResult
-import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.ERROR_EMAIL_ALREADY_IN_USE
 import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.ERROR_INVALID_EMAIL
 import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.ERROR_USER_NOT_FOUND
@@ -16,165 +15,127 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 
+const val signInEmail = "1@a.com"
+const val signUpEmail = "2@a.com"
+const val invalidEmail = "invalidemail"
+const val notFoundEmail = "notfoundemail@a.com"
+const val signInPassword = "111111"
+const val wrongPassword = "123456"
+const val signUpName = "test"
+const val sendPasswordEmail = "boole92@naver.com"
+
 @OptIn(ExperimentalCoroutinesApi::class)
 class UserRepositoryTest {
-    private val email = "1@a.com"
-    private val password = "111111"
-    private val invalidEmail = "invalidemail"
-    private val notFoundEmail = "notfoundemail@a.com"
-    private val wrongPassword = "123456"
-    private val name = "test"
-    private lateinit var userRepository: UserRepository
+    private lateinit var userRepositoryTestUtil: UserRepositoryTestUtil
     private val dispatcher = StandardTestDispatcher()
-    private val repositoryProvider = RepositoryProvider(dispatcher = dispatcher)
 
     @Before
     fun init() {
+        userRepositoryTestUtil =
+            UserRepositoryTestUtil(repositoryProvider = RepositoryProvider(dispatcher))
         FirebaseAuth.getInstance().signOut()
-        userRepository = repositoryProvider.getUserRepository()
     }
 
     @Test
     fun userFlowTest() = runTest(dispatcher) {
 
-        userCollect(dispatcher = dispatcher, userRepository = userRepository)
-
-        assert(userRepository.user.value == null)
-
-        userRepository.signIn(
-            email = "1@a.com",
-            password = "111111",
-            dispatcher = dispatcher,
-            firebaseResult = successResult
-        )
+        userRepositoryTestUtil.userCollect(backgroundScope = backgroundScope)
         advanceUntilIdle()
+        userRepositoryTestUtil.assertSignOut()
 
-        assert(userRepository.user.value != null)
-        assert(userRepository.user.value?.email == "1@a.com")
-
-        userRepository.signOut()
+        userRepositoryTestUtil.signIn()
         advanceUntilIdle()
+        userRepositoryTestUtil.assertSignIn()
 
-        assert(userRepository.user.value == null)
-
-        userRepository.signUp(
-            email = "2@a.com",
-            password = "111111",
-            name = "test",
-            dispatcher = dispatcher,
-            firebaseResult = successResult
-        )
+        userRepositoryTestUtil.signOut()
         advanceUntilIdle()
+        userRepositoryTestUtil.assertSignOut()
 
-        assert(userRepository.user.value != null)
-        assert(userRepository.user.value?.email == "2@a.com")
-        assert(userRepository.user.value?.name == "test")
+        userRepositoryTestUtil.signUp()
+        advanceUntilIdle()
+        userRepositoryTestUtil.assertSignUp()
 
-        FirebaseAuth.getInstance().currentUser!!.delete()
+        userRepositoryTestUtil.deleteUser()
     }
 
     @Test
     fun signInTest() = runTest(dispatcher) {
-        userCollect(dispatcher = dispatcher, userRepository = userRepository)
+        userRepositoryTestUtil.userCollect(backgroundScope)
+        advanceUntilIdle()
+        userRepositoryTestUtil.assertSignOut()
 
-        assert(userRepository.user.value == null)
-
-        userRepository.signIn( // InvalidEmail
-            email = invalidEmail,
-            password = password,
-            firebaseResult = invalidEmailResult,
-            dispatcher = dispatcher
+        userRepositoryTestUtil.signIn( // invalidEmail
+            email = invalidEmail, firebaseResult = invalidEmailResult
         )
         advanceUntilIdle()
-        assert(userRepository.user.value == null)
+        userRepositoryTestUtil.assertSignOut()
 
-        userRepository.signIn( // UserNotFound
-            email = notFoundEmail,
-            password = password,
-            firebaseResult = userNotFoundResult,
-            dispatcher = dispatcher
+        userRepositoryTestUtil.signIn( // notFoundEmail
+            email = notFoundEmail, firebaseResult = userNotFoundResult
         )
         advanceUntilIdle()
-        assert(userRepository.user.value == null)
+        userRepositoryTestUtil.assertSignOut()
 
-        userRepository.signIn( // WrongPassword
-            email = email,
-            password = wrongPassword,
-            firebaseResult = wrongPasswordResult,
-            dispatcher = dispatcher
+        userRepositoryTestUtil.signIn( // WrongPassword
+            password = wrongPassword, firebaseResult = wrongPasswordResult
         )
         advanceUntilIdle()
-        assert(userRepository.user.value == null)
+        userRepositoryTestUtil.assertSignOut()
 
-        userRepository.signIn( // success
-            email = email,
-            password = password,
-            firebaseResult = successResult,
-            dispatcher = dispatcher
-        )
+        userRepositoryTestUtil.signIn()
         advanceUntilIdle()
-        assert(userRepository.user.value != null)
-        assert(userRepository.user.value!!.email == email)
+        userRepositoryTestUtil.assertSignIn()
 
-        userRepository.signOut()
+        userRepositoryTestUtil.signOut()
         advanceUntilIdle()
-        assert(userRepository.user.value == null)
+        userRepositoryTestUtil.assertSignOut()
     }
 
     @Test
     fun signUpTest() = runTest(dispatcher) {
-        userCollect(dispatcher = dispatcher, userRepository = userRepository)
+        userRepositoryTestUtil.userCollect(backgroundScope = backgroundScope)
+        advanceUntilIdle()
+        userRepositoryTestUtil.assertSignOut()
 
-        assert(userRepository.user.value == null)
-
-        userRepository.signUp( // InvalidEmail
+        userRepositoryTestUtil.signUp(
+            // invalidEmail
             email = invalidEmail,
-            password = password,
-            name = name,
             firebaseResult = invalidEmailResult,
-            dispatcher = dispatcher
         )
         advanceUntilIdle()
-        assert(userRepository.user.value == null)
+        userRepositoryTestUtil.assertSignOut()
 
-        userRepository.signUp( // EmailAlreadyInUse
-            email = email,
-            password = password,
-            name = name,
+        userRepositoryTestUtil.signUp(
+            // EmailAlreadyInUse
+            email = signInEmail,
             firebaseResult = emailAlreadyInUserResult,
-            dispatcher = dispatcher
         )
         advanceUntilIdle()
-        assert(userRepository.user.value == null)
+        userRepositoryTestUtil.assertSignOut()
 
-        userRepository.signUp( // success
-            email = notFoundEmail,
-            password = password,
-            name = name,
-            firebaseResult = successResult,
-            dispatcher = dispatcher
-        )
+        userRepositoryTestUtil.signUp()
         advanceUntilIdle()
-        assert(userRepository.user.value != null)
-        assert(userRepository.user.value?.email == notFoundEmail)
-        assert(userRepository.user.value?.name == name)
+        userRepositoryTestUtil.assertSignUp()
 
         FirebaseAuth.getInstance().currentUser!!.delete()
     }
 
     @Test
     fun resetPasswordTest() = runTest(dispatcher) {
-        userRepository.sendResetPasswordEmail( // invalidEmail
-            email = invalidEmail, firebaseResult = invalidEmailResult, dispatcher = dispatcher
+        userRepositoryTestUtil.sendResetPasswordEmail( // invalidEmail
+            email = invalidEmail,
+            firebaseResult = invalidEmailResult
         )
+        advanceUntilIdle()
 
-        userRepository.sendResetPasswordEmail( // userNotFound
-            email = notFoundEmail, firebaseResult = userNotFoundResult, dispatcher = dispatcher
+        userRepositoryTestUtil.sendResetPasswordEmail( // userNotFound
+            email = notFoundEmail,
+            firebaseResult = userNotFoundResult
         )
+        advanceUntilIdle()
 
-        userRepository.sendResetPasswordEmail(
-            email = email, firebaseResult = successResult, dispatcher = dispatcher
-        )
+        userRepositoryTestUtil.sendResetPasswordEmail()
+        advanceUntilIdle()
     }
 }
 

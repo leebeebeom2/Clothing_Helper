@@ -10,8 +10,8 @@ import com.leebeebeom.clothinghelper.EMAIL
 import com.leebeebeom.clothinghelper.PASSWORD
 import com.leebeebeom.clothinghelper.R.string.*
 import com.leebeebeom.clothinghelper.activityRule
-import com.leebeebeom.clothinghelper.ui.ActivityDestinations.MAIN_ROUTE
-import com.leebeebeom.clothinghelper.ui.ActivityDestinations.SIGN_IN_ROUTE
+import com.leebeebeom.clothinghelper.ui.MainActivityDestinations.MainGraphDestination
+import com.leebeebeom.clothinghelper.ui.MainActivityDestinations.SignInGraphDestination
 import com.leebeebeom.clothinghelper.ui.components.CENTER_DOT_PROGRESS_INDICATOR_TAG
 import com.leebeebeom.clothinghelper.ui.main.MAIN_NAV_TAG
 import com.leebeebeom.clothinghelper.ui.main.drawer.SETTING_ICON
@@ -80,8 +80,8 @@ class MainActivitySignOutStartTest {
         notExistMainBackStack()
     }
 
-    private fun notExistSignInBackStack() = checkBackStack(SIGN_IN_ROUTE)
-    private fun notExistMainBackStack() = checkBackStack(MAIN_ROUTE)
+    private fun notExistSignInBackStack() = checkBackStack(SignInGraphDestination)
+    private fun notExistMainBackStack() = checkBackStack(MainGraphDestination)
 
     private fun checkBackStack(route: String) {
         try {

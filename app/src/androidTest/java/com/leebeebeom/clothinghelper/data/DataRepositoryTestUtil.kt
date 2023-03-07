@@ -17,8 +17,8 @@ import kotlinx.coroutines.test.*
 class DataRepositoryTestUtil<T : BaseModel, U : BaseDataRepository<T>>(
     repositoryProvider: RepositoryProvider,
     val repository: U,
+    val userRepositoryTestUtil: UserRepositoryTestUtil = UserRepositoryTestUtil(repositoryProvider = repositoryProvider),
 ) {
-    val userRepositoryTestUtil = UserRepositoryTestUtil(repositoryProvider = repositoryProvider)
     val dispatcher = repositoryProvider.dispatcher
     val allData get() = repository.allData.value
 
@@ -286,7 +286,7 @@ suspend fun <T : BaseModel, U : BaseDataRepository<T>> TestScope.getAllDataUseCa
     userRepositoryTestUtil.assertSignIn() // sign out
     withContext(Dispatchers.Default) {
         delay(1000)
-        dataRepositoryTestUtil.assertAllDataSize(10) // not loaded
+        dataRepositoryTestUtil.assertAllDataSize(initDataList.size)
     }
     assertLoadedData(initDataList, allDataFlow.value)
 

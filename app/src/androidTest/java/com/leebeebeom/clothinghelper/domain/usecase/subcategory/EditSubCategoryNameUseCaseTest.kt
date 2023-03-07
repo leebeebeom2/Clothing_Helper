@@ -37,7 +37,7 @@ class EditSubCategoryNameUseCaseTest {
         val subCategory = SubCategory(name = "test")
 
         editContainerUseCaseTest(
-            dataRepositoryTestUtil,
+            dataRepositoryTestUtil = dataRepositoryTestUtil,
             addData = subCategory,
             edit = { oldData, name ->
                 editSubCategoryNameUseCase.nameEdit(

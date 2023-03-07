@@ -19,17 +19,21 @@ class DataRepositoryTestUtil<T : BaseModel, U : BaseDataRepository<T>>(
     val repository: U,
 ) {
     val userRepositoryTestUtil = UserRepositoryTestUtil(repositoryProvider = repositoryProvider)
-    private val dispatcher = repositoryProvider.dispatcher
+    val dispatcher = repositoryProvider.dispatcher
     val allData get() = repository.allData.value
 
     suspend fun allDataCollect(backgroundScope: CoroutineScope) {
         backgroundScope.launch(dispatcher) {
             userRepositoryTestUtil.userCollect(backgroundScope) {
-                repository.load(uid = it?.uid, onFail = { assert(false) })
+                load(uid = it?.uid)
             }
         }
         backgroundScope.launch(dispatcher) { repository.allData.collectLatest { } }
     }
+
+    suspend fun load(uid: String? = userRepositoryTestUtil.uid) = repository.load(
+        uid = uid, onFail = { assert(false) }
+    )
 
     suspend fun add(data: T) =
         repository.add(data = data, uid = userRepositoryTestUtil.uid!!, onFail = { assert(false) })
@@ -280,11 +284,49 @@ suspend fun <T : BaseModel, U : BaseDataRepository<T>> TestScope.getAllDataUseCa
     userRepositoryTestUtil.signIn()
     advanceUntilIdle()
     userRepositoryTestUtil.assertSignIn() // sign out
-    withContext(Dispatchers.Default){
+    withContext(Dispatchers.Default) {
         delay(1000)
         dataRepositoryTestUtil.assertAllDataSize(10) // not loaded
     }
     assertLoadedData(initDataList, allDataFlow.value)
+
+    dataRepositoryTestUtil.removeAllData()
+}
+
+@OptIn(ExperimentalCoroutinesApi::class)
+suspend fun <T : BaseModel, U : BaseDataRepository<T>> TestScope.dataLoadingFlowTest(
+    dataRepositoryTestUtil: DataRepositoryTestUtil<T, U>,
+    initDataList: List<T>,
+    loadingFlow: StateFlow<Boolean>,
+) {
+    val userRepositoryTestUtil = dataRepositoryTestUtil.userRepositoryTestUtil
+    userRepositoryTestUtil.signIn()
+    advanceUntilIdle()
+    initDataList.forEach { dataRepositoryTestUtil.add(it) }
+    advanceUntilIdle()
+
+    backgroundScope.launch(dataRepositoryTestUtil.dispatcher) { loadingFlow.collectLatest { } }
+    assert(loadingFlow.value)
+
+    dataRepositoryTestUtil.load()
+    assert(loadingFlow.value)
+    advanceUntilIdle()
+    assert(!loadingFlow.value)
+
+    dataRepositoryTestUtil.allDataCollect(backgroundScope)
+
+    userRepositoryTestUtil.signOut()
+    advanceUntilIdle()
+    userRepositoryTestUtil.assertSignOut()
+    dataRepositoryTestUtil.assertAllDataIsEmpty()
+
+    userRepositoryTestUtil.signIn()
+    assert(loadingFlow.value)
+    advanceUntilIdle()
+    withContext(Dispatchers.Default) {
+        delay(1000)
+        assert(!loadingFlow.value)
+    }
 
     dataRepositoryTestUtil.removeAllData()
 }

@@ -20,7 +20,7 @@ suspend fun <T, U> callbackFlowEmit(
     coroutineScope {
         val collectJob = launch { flow.collect() }
 
-        while (collectJob.isActive) {
+        while (!collectJob.isCancelled) {
             val callback2 = callback()
             if (callback2 != null) {
                 emit(callback2)

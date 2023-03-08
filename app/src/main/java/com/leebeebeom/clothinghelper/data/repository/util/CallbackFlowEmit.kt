@@ -2,13 +2,13 @@ package com.leebeebeom.clothinghelper.data.repository.util
 
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 suspend fun <T, U> callbackFlowEmit(
     callback: () -> U?,
-    flow: StateFlow<T>,
+    flow: Flow<T>,
     emit: suspend (callback: U) -> Unit,
 ) {
     val callback1 = callback()

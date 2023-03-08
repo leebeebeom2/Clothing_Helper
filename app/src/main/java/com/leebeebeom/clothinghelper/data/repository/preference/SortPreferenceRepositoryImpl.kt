@@ -10,7 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.shareIn
 import java.io.IOException
 
 abstract class SortPreferenceRepositoryImpl(
@@ -24,7 +24,7 @@ abstract class SortPreferenceRepositoryImpl(
         val sort = it[SortPreferenceKeys.SORT] ?: Sort.NAME.name
         val order = it[SortPreferenceKeys.ORDER] ?: Order.ASCENDING.name
         SortPreferences(sort = enumValueOf(sort), order = enumValueOf(order))
-    }.stateIn(appScope, SharingStarted.WhileSubscribed(5000), SortPreferences())
+    }.shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000))
 
     override suspend fun changeSort(sort: Sort) {
         dataStore.edit { it[SortPreferenceKeys.SORT] = sort.name }

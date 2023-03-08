@@ -2,12 +2,11 @@ package com.leebeebeom.clothinghelper.data.repository
 
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.database.*
-import com.leebeebeom.clothinghelper.data.repository.BaseDataRepositoryImpl.DataCallback
 import com.leebeebeom.clothinghelper.data.repository.util.*
 import com.leebeebeom.clothinghelper.domain.model.BaseModel
 import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.tasks.await
 
@@ -21,24 +20,15 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     protected val appScope: CoroutineScope,
     protected val type: Class<T>,
     private val dispatcher: CoroutineDispatcher,
-) : BaseDataRepository<T>, LoadingStateProviderImpl(
-    initialValue = true, appScope = appScope
-) {
+) : BaseDataRepository<T>, LoadingStateProviderImpl() {
     private val dbRoot = getDbRoot()
-    private var dataCallback: DataCallback<T>? = null
 
-    protected var uid: String? = null
-
-    override val allData = callbackFlow<List<T>> {
-        val callback = DataCallback { trySend(it) }
-
-        this@BaseDataRepositoryImpl.dataCallback = callback
-        awaitClose { dataCallback = null }
-    }.stateIn(
-        scope = appScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList()
+    private val _allData = MutableSharedFlow<List<T>>(
+        replay = 0,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
+    override val allData = _allData
 
     // TODO 미로그인 시 데이터 사용 Any로 변경
     // TODO 로그인 시 최초 로드 후 원래 데이터 사용 설정으로 변경
@@ -49,17 +39,15 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     ) = withContext(
         callSite = DatabaseCallSite("${type.javaClass}: load"),
         onFail = {
-            callbackFlowEmitWrapper { dataCallback -> dataCallback(data = emptyList()) }
+            _allData.emit(value = emptyList())
             onFail(it)
         }
     ) {
-        callbackFlowEmitWrapper { callback ->
-            uid?.let {
-                val allData = dbRoot.getContainerRef(uid = it, path = refPath).get()
-                    .await().children.map { data -> data.getValue(type)!! }
-                callback(data = allData)
-            } ?: callback(data = emptyList())
-        }
+        uid?.let {
+            val allData = dbRoot.getContainerRef(uid = it, path = refPath).get()
+                .await().children.map { data -> data.getValue(type)!! }
+            _allData.emit(value = allData)
+        } ?: _allData.emit(value = emptyList())
     }
 
     /**
@@ -82,9 +70,9 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
 
         push(uid = uid, t = dataWithKey)
 
-        val allData = allData.value.toMutableList()
-        allData.add(dataWithKey)
-        callbackFlowEmitWrapper { it(allData) }
+        val mutableList = _allData.first().toMutableList()
+        mutableList.add(dataWithKey)
+        _allData.emit(mutableList)
     }
 
     /**
@@ -108,10 +96,10 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
 
         push(uid = uid, t = newData)
 
-        val allData = allData.value.toMutableList()
-        allData.remove(element = oldData)
-        allData.add(element = newData)
-        callbackFlowEmitWrapper { it(allData) }
+        val mutableList = allData.first().toMutableList()
+        mutableList.remove(element = oldData)
+        mutableList.add(element = newData)
+        _allData.emit(mutableList)
     }
 
     /**
@@ -143,16 +131,4 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
             dbRoot.getContainerRef(uid = uid, path = refPath).child(t.key).setValue(t).await()
         }
     }
-
-    private fun interface DataCallback<U : BaseModel> {
-        operator fun invoke(data: List<U>)
-    }
-
-    private suspend fun callbackFlowEmitWrapper(
-        emit: suspend (DataCallback<T>) -> Unit,
-    ) = callbackFlowEmit(
-        callback = { dataCallback },
-        flow = allData,
-        emit = emit
-    )
 }

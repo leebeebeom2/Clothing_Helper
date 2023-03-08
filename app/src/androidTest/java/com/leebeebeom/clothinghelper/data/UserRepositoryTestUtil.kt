@@ -58,8 +58,10 @@ class UserRepositoryTestUtil(repositoryProvider: RepositoryProvider) {
         email: String = signUpEmail,
         name: String = signUpName,
     ) {
-        assertSignIn(email)
-        assert(getUser()?.name == name)
+        val user = getUser()
+        assert(user != null)
+        assert(user?.email == email)
+        assert(user?.name == name)
     }
 
     suspend fun sendResetPasswordEmail(
@@ -71,4 +73,6 @@ class UserRepositoryTestUtil(repositoryProvider: RepositoryProvider) {
     )
 
     private suspend fun getUser() = userRepository.user.first()
+
+    suspend fun getUid() = getUser()?.uid
 }

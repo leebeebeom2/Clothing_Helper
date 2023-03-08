@@ -38,30 +38,33 @@ class UserRepositoryTest {
 
     @Test
     fun userFlowTest() = runTest(dispatcher) {
-
-        userRepositoryTestUtil.userCollect(backgroundScope = backgroundScope)
-        advanceUntilIdle()
         userRepositoryTestUtil.assertSignOut()
+
+        suspend fun signOut() {
+            userRepositoryTestUtil.signOut()
+            advanceUntilIdle()
+            userRepositoryTestUtil.assertSignOut()
+        }
+
+        signOut()
 
         userRepositoryTestUtil.signIn()
         advanceUntilIdle()
         userRepositoryTestUtil.assertSignIn()
 
-        userRepositoryTestUtil.signOut()
-        advanceUntilIdle()
-        userRepositoryTestUtil.assertSignOut()
+        signOut()
 
         userRepositoryTestUtil.signUp()
         advanceUntilIdle()
         userRepositoryTestUtil.assertSignUp()
 
         userRepositoryTestUtil.deleteUser()
+
+        signOut()
     }
 
     @Test
     fun signInTest() = runTest(dispatcher) {
-        userRepositoryTestUtil.userCollect(backgroundScope)
-        advanceUntilIdle()
         userRepositoryTestUtil.assertSignOut()
 
         userRepositoryTestUtil.signIn( // invalidEmail
@@ -93,8 +96,6 @@ class UserRepositoryTest {
 
     @Test
     fun signUpTest() = runTest(dispatcher) {
-        userRepositoryTestUtil.userCollect(backgroundScope = backgroundScope)
-        advanceUntilIdle()
         userRepositoryTestUtil.assertSignOut()
 
         userRepositoryTestUtil.signUp(
@@ -117,7 +118,7 @@ class UserRepositoryTest {
         advanceUntilIdle()
         userRepositoryTestUtil.assertSignUp()
 
-        FirebaseAuth.getInstance().currentUser!!.delete()
+        userRepositoryTestUtil.deleteUser()
     }
 
     @Test

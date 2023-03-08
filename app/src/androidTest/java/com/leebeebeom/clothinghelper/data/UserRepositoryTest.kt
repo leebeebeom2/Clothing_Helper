@@ -10,6 +10,7 @@ import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.E
 import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.ERROR_WRONG_PASSWORD
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -31,36 +32,25 @@ class UserRepositoryTest {
 
     @Before
     fun init() {
+        FirebaseAuth.getInstance().signOut()
+
         userRepositoryTestUtil =
             UserRepositoryTestUtil(repositoryProvider = RepositoryProvider(dispatcher))
-        FirebaseAuth.getInstance().signOut()
     }
 
     @Test
     fun userFlowTest() = runTest(dispatcher) {
         userRepositoryTestUtil.assertSignOut()
 
-        suspend fun signOut() {
-            userRepositoryTestUtil.signOut()
-            advanceUntilIdle()
-            userRepositoryTestUtil.assertSignOut()
-        }
+        signInAndAssert(userRepositoryTestUtil = userRepositoryTestUtil)
 
-        signOut()
+        signOutAndAssert(userRepositoryTestUtil = userRepositoryTestUtil)
 
-        userRepositoryTestUtil.signIn()
-        advanceUntilIdle()
-        userRepositoryTestUtil.assertSignIn()
-
-        signOut()
-
-        userRepositoryTestUtil.signUp()
-        advanceUntilIdle()
-        userRepositoryTestUtil.assertSignUp()
+        signUpAndAssert(userRepositoryTestUtil = userRepositoryTestUtil)
 
         userRepositoryTestUtil.deleteUser()
 
-        signOut()
+        signOutAndAssert(userRepositoryTestUtil = userRepositoryTestUtil)
     }
 
     @Test
@@ -85,13 +75,8 @@ class UserRepositoryTest {
         advanceUntilIdle()
         userRepositoryTestUtil.assertSignOut()
 
-        userRepositoryTestUtil.signIn()
-        advanceUntilIdle()
-        userRepositoryTestUtil.assertSignIn()
-
-        userRepositoryTestUtil.signOut()
-        advanceUntilIdle()
-        userRepositoryTestUtil.assertSignOut()
+        signInAndAssert(userRepositoryTestUtil = userRepositoryTestUtil)
+        signOutAndAssert(userRepositoryTestUtil = userRepositoryTestUtil)
     }
 
     @Test
@@ -180,4 +165,25 @@ val emailAlreadyInUserResult = object : FirebaseResult {
         val firebaseAuthException = exception as FirebaseAuthException
         assert(firebaseAuthException.errorCode == ERROR_EMAIL_ALREADY_IN_USE)
     }
+}
+
+@OptIn(ExperimentalCoroutinesApi::class)
+suspend fun TestScope.signOutAndAssert(userRepositoryTestUtil: UserRepositoryTestUtil) {
+    userRepositoryTestUtil.signOut()
+    advanceUntilIdle()
+    userRepositoryTestUtil.assertSignOut()
+}
+
+@OptIn(ExperimentalCoroutinesApi::class)
+suspend fun TestScope.signUpAndAssert(userRepositoryTestUtil: UserRepositoryTestUtil) {
+    userRepositoryTestUtil.signUp()
+    advanceUntilIdle()
+    userRepositoryTestUtil.assertSignUp()
+}
+
+@OptIn(ExperimentalCoroutinesApi::class)
+suspend fun TestScope.signInAndAssert(userRepositoryTestUtil: UserRepositoryTestUtil) {
+    userRepositoryTestUtil.signIn()
+    advanceUntilIdle()
+    userRepositoryTestUtil.assertSignIn()
 }

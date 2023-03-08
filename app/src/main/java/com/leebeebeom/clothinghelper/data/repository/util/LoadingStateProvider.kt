@@ -11,13 +11,13 @@ interface LoadingStateProvider {
 open class LoadingStateProviderImpl : LoadingStateProvider {
 
     private val _isLoading = MutableSharedFlow<Boolean>(
-        replay = 0,
-        extraBufferCapacity = 1,
+        replay = 1,
+        extraBufferCapacity = 0,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
     override val isLoading = _isLoading
 
-    suspend fun loadingOn() = _isLoading.emit(true)
+    protected fun loadingOn() = _isLoading.tryEmit(true)
 
-    suspend fun loadingOff() = _isLoading.emit(false)
+    protected fun loadingOff() = _isLoading.tryEmit(false)
 }

@@ -28,7 +28,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         extraBufferCapacity = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
-    override val allData = _allData
+    override val allData = _allData.asSharedFlow()
 
     // TODO 미로그인 시 데이터 사용 Any로 변경
     // TODO 로그인 시 최초 로드 후 원래 데이터 사용 설정으로 변경

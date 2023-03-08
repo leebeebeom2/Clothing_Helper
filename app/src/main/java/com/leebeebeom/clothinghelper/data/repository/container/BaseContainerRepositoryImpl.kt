@@ -31,11 +31,11 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
     dispatcher = dispatcher
 ) {
     override val allData =
-        super.allData.combine(flow = sortFlow, transform = ::getSortedData).stateIn(
-            scope = appScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        )
+        super.allData.combine(flow = sortFlow, transform = ::getSortedData)
+            .shareIn(
+                scope = appScope,
+                started = SharingStarted.WhileSubscribed(5000)
+            )
 
     private fun getSortedData(
         allData: List<T>,

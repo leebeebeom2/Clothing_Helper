@@ -21,8 +21,7 @@ import javax.inject.Singleton
 class NetworkPreferenceRepositoryImpl @Inject constructor(
     @ApplicationContext context: Context,
     @AppScope appScope: CoroutineScope,
-) :
-    NetworkPreferenceRepository {
+) : NetworkPreferenceRepository {
     private val dataStore = context.networkDatastore
     private val key = stringPreferencesKey("network")
 

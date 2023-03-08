@@ -7,15 +7,13 @@ import com.leebeebeom.clothinghelper.domain.model.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class UserRepositoryTestUtil(repositoryProvider: RepositoryProvider) {
     val userRepository = repositoryProvider.createUserRepository()
     private val dispatcher = repositoryProvider.dispatcher
-
-    val user get() = userRepository.user.value
-    val uid get() = user?.uid
 
     suspend fun userCollect(
         backgroundScope: CoroutineScope,
@@ -48,19 +46,20 @@ class UserRepositoryTestUtil(repositoryProvider: RepositoryProvider) {
 
     fun deleteUser() = FirebaseAuth.getInstance().currentUser!!.delete()
 
-    fun assertSignIn(email: String = signInEmail) {
+    suspend fun assertSignIn(email: String = signInEmail) {
+        val user = getUser()
         assert(user != null)
         assert(user?.email == email)
     }
 
-    fun assertSignOut() = assert(user == null)
+    suspend fun assertSignOut() = assert(getUser() == null)
 
-    fun assertSignUp(
+    suspend fun assertSignUp(
         email: String = signUpEmail,
         name: String = signUpName,
     ) {
         assertSignIn(email)
-        assert(user?.name == name)
+        assert(getUser()?.name == name)
     }
 
     suspend fun sendResetPasswordEmail(
@@ -70,4 +69,6 @@ class UserRepositoryTestUtil(repositoryProvider: RepositoryProvider) {
         email = email,
         firebaseResult = firebaseResult
     )
+
+    private suspend fun getUser() = userRepository.user.first()
 }

@@ -8,15 +8,12 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.leebeebeom.clothinghelper.data.repository.UserRepositoryImpl.UserCallback
-import com.leebeebeom.clothinghelper.data.repository.util.AuthCallSite
 import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProviderImpl
 import com.leebeebeom.clothinghelper.data.repository.util.callbackFlowEmit
-import com.leebeebeom.clothinghelper.data.repository.util.logE
 import com.leebeebeom.clothinghelper.di.AppScope
 import com.leebeebeom.clothinghelper.di.DispatcherIO
 import com.leebeebeom.clothinghelper.domain.model.User
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
@@ -35,31 +32,39 @@ class UserRepositoryImpl @Inject constructor(
     @DispatcherIO private val dispatcher: CoroutineDispatcher,
 ) : UserRepository, LoadingStateProviderImpl() {
     private val auth = FirebaseAuth.getInstance()
+    private var authCallback: FirebaseAuth.AuthStateListener? = null
     private var userCallback: UserCallback? = null
 
     override val user = callbackFlow {
-        if (userCallback == null) userCallback = UserCallback { trySend(it.toUserModel()) }
+        userCallback ?: run {
+            userCallback = UserCallback {
+                trySend(it.toUserModel())
+                loadingOff()
+            }
+        }
+        authCallback ?: run {
+            authCallback = FirebaseAuth.AuthStateListener {
+                trySend(it.currentUser.toUserModel())
+                loadingOff()
+            }
+        }
 
-        val listener = FirebaseAuth.AuthStateListener { trySend(it.currentUser.toUserModel()) }
-
-        auth.addAuthStateListener(listener)
+        authCallback?.let { auth.addAuthStateListener(it) }
 
         awaitClose {
-            auth.removeAuthStateListener(listener)
-            this@UserRepositoryImpl.userCallback = null
+            authCallback?.let { auth.removeAuthStateListener(it) }
+            authCallback = null
+            userCallback = null
         }
-    }.distinctUntilChanged()
-        .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000))
+    }.distinctUntilChanged().shareIn(
+        scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
+    )
 
     override suspend fun googleSignIn(
         credential: AuthCredential,
         firebaseResult: FirebaseResult,
-    ) = withContext(
-        callSite = AuthCallSite("googleSignIn"),
-        onFail = firebaseResult::fail
-    ) {
-        val user = auth.signInWithCredential(credential).await().user!!
-        callbackFlowEmitWrapper { it(user = user) }
+    ) = withContext {
+        auth.signInWithCredential(credential).await()
         firebaseResult.success()
     }
 
@@ -69,12 +74,8 @@ class UserRepositoryImpl @Inject constructor(
      * @throws FirebaseAuthException - InvalidEmail, NotFoundUser, WrongPassword 등
      */
     override suspend fun signIn(email: String, password: String, firebaseResult: FirebaseResult) =
-        withContext(
-            callSite = AuthCallSite("signIn"),
-            onFail = firebaseResult::fail
-        ) {
-            val user = auth.signInWithEmailAndPassword(email, password).await().user!!
-            callbackFlowEmitWrapper { it(user = user) }
+        withContext {
+            auth.signInWithEmailAndPassword(email, password).await()
             firebaseResult.success()
         }
 
@@ -88,17 +89,17 @@ class UserRepositoryImpl @Inject constructor(
         password: String,
         name: String,
         firebaseResult: FirebaseResult,
-    ) = withContext(
-        callSite = AuthCallSite("signUp"), onFail = firebaseResult::fail
-    ) {
-        val user = auth.createUserWithEmailAndPassword(email, password).await().user!!
+    ) = withContext(appScope.coroutineContext) {
+        withContext {
+            val user = auth.createUserWithEmailAndPassword(email, password).await().user!!
 
-        val request = userProfileChangeRequest { displayName = name }
+            val request = userProfileChangeRequest { displayName = name }
 
-        user.updateProfile(request).await()
+            user.updateProfile(request).await()
 
-        callbackFlowEmitWrapper { it(user = user) }
-        firebaseResult.success()
+            callbackFlowEmitWrapper { it(user = user) }
+            firebaseResult.success()
+        }
     }
 
     /**
@@ -109,43 +110,26 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun sendResetPasswordEmail(
         email: String,
         firebaseResult: FirebaseResult,
-    ) = withContext(
-        callSite = AuthCallSite("resetPasswordEmail"),
-        onFail = firebaseResult::fail
-    ) {
+    ) = withContext {
         auth.sendPasswordResetEmail(email).await()
-
         firebaseResult.success()
     }
 
-    override suspend fun signOut() {
-        auth.signOut()
-        callbackFlowEmitWrapper { it(user = null) }
-    }
+    override fun signOut() = auth.signOut()
 
     /**
      * 호출 시 로딩 On
-     *
-     * 작업 끌날 시 로딩 Off
-     *
-     * @param callSite 예외 발생 시 로그에 찍힐 Site
      */
-    private suspend fun withContext(
-        callSite: AuthCallSite,
-        onFail: (Exception) -> Unit,
-        task: suspend CoroutineScope.() -> Unit,
-    ) = withContext(dispatcher) {
-        try {
-            loadingOn()
-            task()
-        } catch (_: CancellationException) {
-        } catch (e: Exception) {
-            logE(callSite.site, e)
-            onFail(e)
-        } finally {
-            loadingOff()
+    private suspend fun withContext(task: suspend CoroutineScope.() -> Unit) =
+        withContext(dispatcher) {
+            try {
+                loadingOn()
+                task()
+            } catch (e: Exception) {
+                loadingOff()
+                throw e
+            }
         }
-    }
 
     private fun FirebaseUser?.toUserModel() =
         this?.let { User(email = "$email", name = "$displayName", uid = uid) }

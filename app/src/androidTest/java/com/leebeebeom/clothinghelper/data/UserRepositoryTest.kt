@@ -32,7 +32,7 @@ class UserRepositoryTest {
 
     @Before
     fun init() {
-        FirebaseAuth.getInstance().signOut()
+        firebaseSignOut()
 
         userRepositoryTestUtil =
             UserRepositoryTestUtil(repositoryProvider = RepositoryProvider(dispatcher))
@@ -187,3 +187,5 @@ suspend fun TestScope.signInAndAssert(userRepositoryTestUtil: UserRepositoryTest
     advanceUntilIdle()
     userRepositoryTestUtil.assertSignIn()
 }
+
+private fun firebaseSignOut() = FirebaseAuth.getInstance().signOut()

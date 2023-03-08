@@ -4,10 +4,10 @@ import com.google.firebase.FirebaseNetworkException
 import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProvider
 import com.leebeebeom.clothinghelper.data.repository.util.WifiException
 import com.leebeebeom.clothinghelper.domain.model.BaseModel
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.SharedFlow
 
 interface BaseDataRepository<T : BaseModel> : LoadingStateProvider {
-    val allData: StateFlow<List<T>>
+    val allData: SharedFlow<List<T>>
     suspend fun load(
         uid: String?,
         onFail: (Exception) -> Unit,

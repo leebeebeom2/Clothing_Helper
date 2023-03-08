@@ -22,7 +22,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -32,27 +33,23 @@ import javax.inject.Singleton
 class UserRepositoryImpl @Inject constructor(
     @AppScope private val appScope: CoroutineScope,
     @DispatcherIO private val dispatcher: CoroutineDispatcher,
-) : UserRepository, LoadingStateProviderImpl(
-    initialValue = false, appScope = appScope
-) {
+) : UserRepository, LoadingStateProviderImpl() {
     private val auth = FirebaseAuth.getInstance()
     private var userCallback: UserCallback? = null
 
     override val user = callbackFlow {
-        val userCallback = UserCallback { trySend(it.toUserModel()) }
+        if (userCallback == null) userCallback = UserCallback { trySend(it.toUserModel()) }
 
-        val callback = FirebaseAuth.AuthStateListener {
-            trySend(it.currentUser.toUserModel())
-        }
+        val listener = FirebaseAuth.AuthStateListener { trySend(it.currentUser.toUserModel()) }
 
-        auth.addAuthStateListener(callback)
-        this@UserRepositoryImpl.userCallback = userCallback
+        auth.addAuthStateListener(listener)
 
         awaitClose {
-            auth.removeAuthStateListener(callback)
+            auth.removeAuthStateListener(listener)
             this@UserRepositoryImpl.userCallback = null
         }
-    }.stateIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), initialValue = null)
+    }.distinctUntilChanged()
+        .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000))
 
     override suspend fun googleSignIn(
         credential: AuthCredential,
@@ -62,7 +59,7 @@ class UserRepositoryImpl @Inject constructor(
         onFail = firebaseResult::fail
     ) {
         val user = auth.signInWithCredential(credential).await().user!!
-        callbackFlowEmitWrapper { it(user) }
+        callbackFlowEmitWrapper { it(user = user) }
         firebaseResult.success()
     }
 
@@ -77,7 +74,7 @@ class UserRepositoryImpl @Inject constructor(
             onFail = firebaseResult::fail
         ) {
             val user = auth.signInWithEmailAndPassword(email, password).await().user!!
-            callbackFlowEmitWrapper { it(user) }
+            callbackFlowEmitWrapper { it(user = user) }
             firebaseResult.success()
         }
 
@@ -100,7 +97,7 @@ class UserRepositoryImpl @Inject constructor(
 
         user.updateProfile(request).await()
 
-        callbackFlowEmitWrapper { it(auth.currentUser) }
+        callbackFlowEmitWrapper { it(user = user) }
         firebaseResult.success()
     }
 
@@ -123,7 +120,7 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun signOut() {
         auth.signOut()
-        callbackFlowEmitWrapper { it(null) }
+        callbackFlowEmitWrapper { it(user = null) }
     }
 
     /**
@@ -157,9 +154,6 @@ class UserRepositoryImpl @Inject constructor(
         operator fun invoke(user: FirebaseUser?)
     }
 
-    private suspend fun callbackFlowEmitWrapper(
-        emit: suspend (UserCallback) -> Unit,
-    ) = callbackFlowEmit(
-        { userCallback }, flow = user, emit = emit
-    )
+    private suspend fun callbackFlowEmitWrapper(emit: suspend (UserCallback) -> Unit) =
+        callbackFlowEmit({ userCallback }, flow = user, emit = emit)
 }

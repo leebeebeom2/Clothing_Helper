@@ -188,4 +188,4 @@ suspend fun TestScope.signInAndAssert(userRepositoryTestUtil: UserRepositoryTest
     userRepositoryTestUtil.assertSignIn()
 }
 
-private fun firebaseSignOut() = FirebaseAuth.getInstance().signOut()
+fun firebaseSignOut() = FirebaseAuth.getInstance().signOut()

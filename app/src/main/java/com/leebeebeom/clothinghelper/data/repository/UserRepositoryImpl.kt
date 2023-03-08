@@ -35,6 +35,9 @@ class UserRepositoryImpl @Inject constructor(
     private var authCallback: FirebaseAuth.AuthStateListener? = null
     private var userCallback: UserCallback? = null
 
+    /**
+     * @throws NullPointerException [authCallback]이 null일 경우
+     */
     override val user = callbackFlow {
         userCallback ?: run {
             userCallback = UserCallback {
@@ -42,6 +45,7 @@ class UserRepositoryImpl @Inject constructor(
                 loadingOff()
             }
         }
+
         authCallback ?: run {
             authCallback = FirebaseAuth.AuthStateListener {
                 trySend(it.currentUser.toUserModel())
@@ -49,10 +53,10 @@ class UserRepositoryImpl @Inject constructor(
             }
         }
 
-        authCallback?.let { auth.addAuthStateListener(it) }
+        auth.addAuthStateListener(authCallback!!)
 
         awaitClose {
-            authCallback?.let { auth.removeAuthStateListener(it) }
+            auth.removeAuthStateListener(authCallback!!)
             authCallback = null
             userCallback = null
         }

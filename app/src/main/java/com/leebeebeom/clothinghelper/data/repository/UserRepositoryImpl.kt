@@ -64,60 +64,42 @@ class UserRepositoryImpl @Inject constructor(
         scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
     )
 
-    override suspend fun googleSignIn(
-        credential: AuthCredential,
-        firebaseResult: FirebaseResult,
-    ) = withContext {
-        auth.signInWithCredential(credential).await()
-        firebaseResult.success()
-    }
+    override suspend fun googleSignIn(credential: AuthCredential) =
+        withContext { auth.signInWithCredential(credential).await() }
 
     /**
      * @throws FirebaseNetworkException - 인터넷에 연결되지 않았을 경우
      * @throws FirebaseTooManyRequestsException - 너무 많은 요청이 발생했을 경우
      * @throws FirebaseAuthException - InvalidEmail, NotFoundUser, WrongPassword 등
      */
-    override suspend fun signIn(email: String, password: String, firebaseResult: FirebaseResult) =
-        withContext {
-            auth.signInWithEmailAndPassword(email, password).await()
-            firebaseResult.success()
-        }
+    override suspend fun signIn(email: String, password: String) =
+        withContext { auth.signInWithEmailAndPassword(email, password).await() }
 
     /**
      * @throws FirebaseNetworkException - 인터넷에 연결되지 않았을 경우
      * @throws FirebaseTooManyRequestsException - 너무 많은 요청이 발생했을 경우
      * @throws FirebaseAuthException - InvalidEmail, EmailAlreadyInUse 등
      */
-    override suspend fun signUp(
-        email: String,
-        password: String,
-        name: String,
-        firebaseResult: FirebaseResult,
-    ) = withContext(appScope.coroutineContext) {
-        withContext {
-            val user = auth.createUserWithEmailAndPassword(email, password).await().user!!
+    override suspend fun signUp(email: String, password: String, name: String) =
+        withContext(appScope.coroutineContext) {
+            withContext {
+                val user = auth.createUserWithEmailAndPassword(email, password).await().user!!
 
-            val request = userProfileChangeRequest { displayName = name }
+                val request = userProfileChangeRequest { displayName = name }
 
-            user.updateProfile(request).await()
+                user.updateProfile(request).await()
 
-            callbackFlowEmitWrapper { it(user = user) }
-            firebaseResult.success()
+                callbackFlowEmitWrapper { it(user = user) }
+            }
         }
-    }
 
     /**
      * @throws FirebaseNetworkException - 인터넷에 연결되지 않았을 경우
      * @throws FirebaseTooManyRequestsException - 너무 많은 요청이 발생했을 경우
      * @throws FirebaseAuthException - InvalidEmail, NotFoundUser 등
      */
-    override suspend fun sendResetPasswordEmail(
-        email: String,
-        firebaseResult: FirebaseResult,
-    ) = withContext {
-        auth.sendPasswordResetEmail(email).await()
-        firebaseResult.success()
-    }
+    override suspend fun sendResetPasswordEmail(email: String) =
+        withContext { auth.sendPasswordResetEmail(email).await() }
 
     override fun signOut() = auth.signOut()
 

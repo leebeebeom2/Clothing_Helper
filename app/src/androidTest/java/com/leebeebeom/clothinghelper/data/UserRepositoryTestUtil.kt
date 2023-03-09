@@ -2,7 +2,6 @@ package com.leebeebeom.clothinghelper.data
 
 import com.google.firebase.auth.FirebaseAuth
 import com.leebeebeom.clothinghelper.RepositoryProvider
-import com.leebeebeom.clothinghelper.data.repository.FirebaseResult
 import com.leebeebeom.clothinghelper.domain.model.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,31 +17,22 @@ class UserRepositoryTestUtil(repositoryProvider: RepositoryProvider) {
     suspend fun userCollect(
         backgroundScope: CoroutineScope,
         collect: suspend (User?) -> Unit = {},
-    ) = backgroundScope.launch(dispatcher) { userRepository.user.collectLatest(action = collect) }
+    ) = backgroundScope.launch(dispatcher) {
+        userRepository.user.collectLatest(action = collect)
+    }
 
     suspend fun signIn(
         email: String = signInEmail,
         password: String = signInPassword,
-        firebaseResult: FirebaseResult = successResult,
-    ) = userRepository.signIn(
-        email = email,
-        password = password,
-        firebaseResult = firebaseResult
-    )
+    ) = userRepository.signIn(email = email, password = password)
 
     suspend fun signUp(
         email: String = signUpEmail,
         password: String = signInPassword,
         name: String = signUpName,
-        firebaseResult: FirebaseResult = successResult,
-    ) = userRepository.signUp(
-        email = email,
-        password = password,
-        name = name,
-        firebaseResult = firebaseResult
-    )
+    ) = userRepository.signUp(email = email, password = password, name = name)
 
-    suspend fun signOut() = userRepository.signOut()
+    fun signOut() = userRepository.signOut()
 
     fun deleteUser() = FirebaseAuth.getInstance().currentUser!!.delete()
 
@@ -64,13 +54,8 @@ class UserRepositoryTestUtil(repositoryProvider: RepositoryProvider) {
         assert(user?.name == name)
     }
 
-    suspend fun sendResetPasswordEmail(
-        email: String = sendPasswordEmail,
-        firebaseResult: FirebaseResult = successResult,
-    ) = userRepository.sendResetPasswordEmail(
-        email = email,
-        firebaseResult = firebaseResult
-    )
+    suspend fun sendResetPasswordEmail(email: String = sendPasswordEmail) =
+        userRepository.sendResetPasswordEmail(email = email)
 
     private suspend fun getUser() = userRepository.user.first()
 

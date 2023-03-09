@@ -89,7 +89,7 @@ class UserRepositoryImpl @Inject constructor(
 
                 user.updateProfile(request).await()
 
-                callbackFlowEmitWrapper { it(user = user) }
+                callbackFlowEmitWrapper { it(user = auth.currentUser) }
             }
         }
 

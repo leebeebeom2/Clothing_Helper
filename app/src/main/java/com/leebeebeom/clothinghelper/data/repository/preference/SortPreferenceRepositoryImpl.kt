@@ -24,7 +24,7 @@ abstract class SortPreferenceRepositoryImpl(
         val sort = it[SortPreferenceKeys.SORT] ?: Sort.NAME.name
         val order = it[SortPreferenceKeys.ORDER] ?: Order.ASCENDING.name
         SortPreferences(sort = enumValueOf(sort), order = enumValueOf(order))
-    }.shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000))
+    }.shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
     override suspend fun changeSort(sort: Sort) {
         dataStore.edit { it[SortPreferenceKeys.SORT] = sort.name }

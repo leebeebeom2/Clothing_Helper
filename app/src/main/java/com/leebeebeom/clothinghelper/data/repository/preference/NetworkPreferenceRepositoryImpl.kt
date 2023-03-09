@@ -30,7 +30,8 @@ class NetworkPreferenceRepositoryImpl @Inject constructor(
     }.map { enumValueOf<NetworkPreferences>(it[key] ?: NetworkPreferences.ANY.name) }
         .shareIn(
             scope = appScope,
-            started = SharingStarted.WhileSubscribed(5000)
+            started = SharingStarted.WhileSubscribed(5000),
+            replay = 1
         )
 
     override suspend fun networkSelected(network: NetworkPreferences) {

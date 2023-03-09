@@ -6,10 +6,10 @@ import com.leebeebeom.clothinghelper.data.repository.preference.Order.ASCENDING
 import com.leebeebeom.clothinghelper.data.repository.preference.Order.DESCENDING
 import com.leebeebeom.clothinghelper.data.repository.preference.Sort.*
 import com.leebeebeom.clothinghelper.data.repository.preference.SortPreferences
-import com.leebeebeom.clothinghelper.data.repository.util.NetworkChecker
 import com.leebeebeom.clothinghelper.data.repository.util.WifiException
 import com.leebeebeom.clothinghelper.domain.model.BaseContainerModel
 import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
+import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
@@ -19,22 +19,23 @@ import kotlinx.coroutines.flow.*
 abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
     sortFlow: Flow<SortPreferences>,
     refPath: String,
-    networkChecker: NetworkChecker,
     appScope: CoroutineScope,
     type: Class<T>,
     dispatcher: CoroutineDispatcher,
+    userRepository: UserRepository,
 ) : BaseDataRepository<T>, BaseDataRepositoryImpl<T>(
     refPath = refPath,
-    networkChecker = networkChecker,
     appScope = appScope,
     type = type,
-    dispatcher = dispatcher
+    dispatcher = dispatcher,
+    userRepository = userRepository
 ) {
     override val allData =
         super.allData.combine(flow = sortFlow, transform = ::getSortedData)
             .shareIn(
                 scope = appScope,
-                started = SharingStarted.WhileSubscribed(5000)
+                started = SharingStarted.WhileSubscribed(5000),
+                replay = 1
             )
 
     private fun getSortedData(
@@ -58,22 +59,6 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
     /**
      * @throws FirebaseNetworkException 인터넷 미 연결 시
      * @throws WifiException 사용자가 와이파이로만 연결 선택 시 와이파이 미 연결됐을 경우
-     * @throws NoSuchElementException 본래 데이터를 찾지 못했을 경우
-     * @throws IllegalArgumentException 본래 데이터를 삭제하지 못했을 경우
      */
-    override suspend fun edit(
-        oldData: T,
-        newData: T,
-        uid: String,
-        onFail: (Exception) -> Unit,
-    ) {
-        val newDataWithEditDate = newData.changeEditDate() as T
-
-        super.edit(
-            oldData = oldData,
-            newData = newDataWithEditDate,
-            uid = uid,
-            onFail = onFail
-        )
-    }
+    override suspend fun push(data: T) = super.push(data = data.changeEditDate() as T)
 }

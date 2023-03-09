@@ -1,14 +1,15 @@
 package com.leebeebeom.clothinghelper.data
 
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelper.RepositoryProvider
-import com.leebeebeom.clothinghelper.data.repository.FirebaseResult
 import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.ERROR_EMAIL_ALREADY_IN_USE
 import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.ERROR_INVALID_EMAIL
 import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.ERROR_USER_NOT_FOUND
 import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.ERROR_WRONG_PASSWORD
 import kotlinx.coroutines.*
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -29,163 +30,235 @@ const val sendPasswordEmail = "boole92@naver.com"
 class UserRepositoryTest {
     private lateinit var userRepositoryTestUtil: UserRepositoryTestUtil
     private val dispatcher = StandardTestDispatcher()
+    private suspend fun getUser() = userRepositoryTestUtil.getUser()
+    private suspend fun TestScope.failRunCatching(
+        errorCode: String,
+        test: suspend () -> Unit,
+    ) = runCatching {
+        test()
+    }.onSuccess { assert(false) }
+        .onFailure {
+            val firebaseAuthException = it as FirebaseAuthException
+            assert(firebaseAuthException.errorCode == errorCode)
+        }
+
+    private suspend fun TestScope.successRunCatching(
+        test: suspend () -> Unit,
+    ) = runCatching {
+        test()
+    }.onSuccess { assert(true) }
+        .onFailure { assert(false) }
 
     @Before
     fun init() {
-        firebaseSignOut()
+        runBlocking { launch { Firebase.auth.signOut() }.join() }
 
         userRepositoryTestUtil =
             UserRepositoryTestUtil(repositoryProvider = RepositoryProvider(dispatcher))
     }
 
     @Test
-    fun userFlowTest() = runTest(dispatcher) {
-        userRepositoryTestUtil.assertSignOut()
-
-        signInAndAssert(userRepositoryTestUtil = userRepositoryTestUtil)
-
-        signOutAndAssert(userRepositoryTestUtil = userRepositoryTestUtil)
-
-        signUpAndAssert(userRepositoryTestUtil = userRepositoryTestUtil)
-
-        userRepositoryTestUtil.deleteUser()
-
-        signOutAndAssert(userRepositoryTestUtil = userRepositoryTestUtil)
-    }
-
-    @Test
     fun signInTest() = runTest(dispatcher) {
-        userRepositoryTestUtil.assertSignOut()
+        userRepositoryTestUtil.userCollect(backgroundScope)
+        assert(getUser() == null)
 
-        userRepositoryTestUtil.signIn( // invalidEmail
-            email = invalidEmail, firebaseResult = invalidEmailResult
-        )
+        failRunCatching(ERROR_INVALID_EMAIL) {
+            userRepositoryTestUtil.signIn( // invalidEmail
+                email = invalidEmail
+            )
+        }
         advanceUntilIdle()
-        userRepositoryTestUtil.assertSignOut()
+        assert(getUser() == null)
 
-        userRepositoryTestUtil.signIn( // notFoundEmail
-            email = notFoundEmail, firebaseResult = userNotFoundResult
-        )
+        failRunCatching(ERROR_USER_NOT_FOUND) {
+            userRepositoryTestUtil.signIn( // notFoundEmail
+                email = notFoundEmail
+            )
+        }
         advanceUntilIdle()
-        userRepositoryTestUtil.assertSignOut()
+        assert(getUser() == null)
 
-        userRepositoryTestUtil.signIn( // WrongPassword
-            password = wrongPassword, firebaseResult = wrongPasswordResult
-        )
+        failRunCatching(ERROR_WRONG_PASSWORD) {
+            userRepositoryTestUtil.signIn( // WrongPassword
+                password = wrongPassword
+            )
+        }
         advanceUntilIdle()
-        userRepositoryTestUtil.assertSignOut()
+        assert(getUser() == null)
 
-        signInAndAssert(userRepositoryTestUtil = userRepositoryTestUtil)
-        signOutAndAssert(userRepositoryTestUtil = userRepositoryTestUtil)
+        successRunCatching {
+            userRepositoryTestUtil.signIn()
+        }
+        advanceUntilIdle()
+        assert(getUser() != null)
+        assert(getUser()?.email == signInEmail)
+
+        userRepositoryTestUtil.signOut()
+        withContext(Dispatchers.Default) {
+            delay(500)
+            assert(getUser() == null)
+        }
     }
 
     @Test
     fun signUpTest() = runTest(dispatcher) {
-        userRepositoryTestUtil.assertSignOut()
+        userRepositoryTestUtil.userCollect(backgroundScope)
 
-        userRepositoryTestUtil.signUp(
-            // invalidEmail
-            email = invalidEmail,
-            firebaseResult = invalidEmailResult,
-        )
-        advanceUntilIdle()
-        userRepositoryTestUtil.assertSignOut()
+        assert(getUser() == null)
 
-        userRepositoryTestUtil.signUp(
-            // EmailAlreadyInUse
-            email = signInEmail,
-            firebaseResult = emailAlreadyInUserResult,
-        )
+        failRunCatching(ERROR_INVALID_EMAIL) {
+            userRepositoryTestUtil.signUp( // invalidEmail
+                email = invalidEmail
+            )
+        }
         advanceUntilIdle()
-        userRepositoryTestUtil.assertSignOut()
+        assert(getUser() == null)
 
-        userRepositoryTestUtil.signUp()
+        failRunCatching(ERROR_EMAIL_ALREADY_IN_USE) {
+            userRepositoryTestUtil.signUp( // EmailAlreadyInUse
+                email = signInEmail
+            )
+        }
         advanceUntilIdle()
-        userRepositoryTestUtil.assertSignUp()
+        assert(getUser() == null)
+
+        successRunCatching {
+            userRepositoryTestUtil.signUp()
+        }
+        advanceUntilIdle()
+        assert(getUser() != null)
+        assert(getUser()?.email == signUpEmail)
+        assert(getUser()?.name == signUpName)
 
         userRepositoryTestUtil.deleteUser()
+
+        userRepositoryTestUtil.signOut()
+        withContext(Dispatchers.Default) {
+            delay(1000)
+            assert(getUser() == null)
+        }
     }
 
     @Test
     fun resetPasswordTest() = runTest(dispatcher) {
-        userRepositoryTestUtil.sendResetPasswordEmail( // invalidEmail
-            email = invalidEmail,
-            firebaseResult = invalidEmailResult
-        )
+        userRepositoryTestUtil.userCollect(backgroundScope)
+
+        failRunCatching(ERROR_INVALID_EMAIL) {
+            userRepositoryTestUtil.sendResetPasswordEmail( // invalidEmail
+                email = invalidEmail
+            )
+        }
         advanceUntilIdle()
 
-        userRepositoryTestUtil.sendResetPasswordEmail( // userNotFound
-            email = notFoundEmail,
-            firebaseResult = userNotFoundResult
-        )
+        failRunCatching(ERROR_USER_NOT_FOUND) {
+            userRepositoryTestUtil.sendResetPasswordEmail( // userNotFound
+                email = notFoundEmail
+            )
+        }
         advanceUntilIdle()
 
-        userRepositoryTestUtil.sendResetPasswordEmail()
+        successRunCatching {
+            userRepositoryTestUtil.sendResetPasswordEmail()
+        }
         advanceUntilIdle()
-    }
-}
-
-val invalidEmailResult = object : FirebaseResult {
-    override fun success() = assert(false)
-
-    override fun fail(exception: Exception) {
-        val firebaseAuthException = exception as FirebaseAuthException
-        assert(firebaseAuthException.errorCode == ERROR_INVALID_EMAIL)
-    }
-}
-
-val userNotFoundResult = object : FirebaseResult {
-    override fun success() = assert(false)
-
-    override fun fail(exception: Exception) {
-        val firebaseAuthException = exception as FirebaseAuthException
-        assert(firebaseAuthException.errorCode == ERROR_USER_NOT_FOUND)
-    }
-}
-
-val wrongPasswordResult = object : FirebaseResult {
-    override fun success() = assert(false)
-
-    override fun fail(exception: Exception) {
-        val firebaseAuthException = exception as FirebaseAuthException
-        assert(firebaseAuthException.errorCode == ERROR_WRONG_PASSWORD)
-    }
-}
-
-val successResult = object : FirebaseResult {
-    override fun success() = assert(true)
-
-    override fun fail(exception: Exception) = assert(false)
-}
-
-val emailAlreadyInUserResult = object : FirebaseResult {
-    override fun success() = assert(false)
-
-    override fun fail(exception: Exception) {
-        val firebaseAuthException = exception as FirebaseAuthException
-        assert(firebaseAuthException.errorCode == ERROR_EMAIL_ALREADY_IN_USE)
     }
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
-suspend fun TestScope.signOutAndAssert(userRepositoryTestUtil: UserRepositoryTestUtil) {
-    userRepositoryTestUtil.signOut()
-    advanceUntilIdle()
-    userRepositoryTestUtil.assertSignOut()
+class UserFlowTestWithSignInStart {
+    private lateinit var userRepositoryTestUtil: UserRepositoryTestUtil
+    private val dispatcher = StandardTestDispatcher()
+
+    @Before
+    fun init() {
+        runBlocking {
+            Firebase.auth.signInWithEmailAndPassword(signInEmail, signInPassword).await()
+        }
+        userRepositoryTestUtil = UserRepositoryTestUtil(RepositoryProvider(dispatcher))
+    }
+
+    @Test
+    fun signInRun() = runTest(dispatcher) {
+        userRepositoryTestUtil.userCollect(backgroundScope)
+
+        suspend fun getUser() = userRepositoryTestUtil.getUser()
+
+        assert(getUser() != null)
+        assert(getUser()?.email == signInEmail)
+
+        userRepositoryTestUtil.signOut()
+        withContext(Dispatchers.Default) {
+            delay(500)
+            assert(getUser() == null)
+        }
+
+        userRepositoryTestUtil.signIn()
+        advanceUntilIdle()
+        assert(getUser() != null)
+        assert(getUser()?.email == signInEmail)
+
+        userRepositoryTestUtil.signOut()
+        withContext(Dispatchers.Default) {
+            delay(500)
+            assert(getUser() == null)
+        }
+        userRepositoryTestUtil.signUp()
+        advanceUntilIdle()
+        assert(getUser() != null)
+        assert(getUser()?.email == signUpEmail)
+        assert(getUser()?.name == signUpName)
+
+        userRepositoryTestUtil.deleteUser()
+
+        userRepositoryTestUtil.signOut()
+        withContext(Dispatchers.Default) {
+            delay(500)
+            assert(getUser() == null)
+        }
+    }
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
-suspend fun TestScope.signUpAndAssert(userRepositoryTestUtil: UserRepositoryTestUtil) {
-    userRepositoryTestUtil.signUp()
-    advanceUntilIdle()
-    userRepositoryTestUtil.assertSignUp()
-}
+class UserFlowTestWithSignOutStart {
+    private lateinit var userRepositoryTestUtil: UserRepositoryTestUtil
+    private val dispatcher = StandardTestDispatcher()
 
-@OptIn(ExperimentalCoroutinesApi::class)
-suspend fun TestScope.signInAndAssert(userRepositoryTestUtil: UserRepositoryTestUtil) {
-    userRepositoryTestUtil.signIn()
-    advanceUntilIdle()
-    userRepositoryTestUtil.assertSignIn()
-}
+    @Before
+    fun init() {
+        runBlocking { launch { Firebase.auth.signOut() }.join() }
+        userRepositoryTestUtil = UserRepositoryTestUtil(RepositoryProvider(dispatcher))
+    }
 
-fun firebaseSignOut() = FirebaseAuth.getInstance().signOut()
+    @Test
+    fun signInRun() = runTest(dispatcher) {
+        userRepositoryTestUtil.userCollect(backgroundScope)
+
+        suspend fun getUser() = userRepositoryTestUtil.getUser()
+
+        assert(getUser() == null)
+
+        userRepositoryTestUtil.signIn()
+        advanceUntilIdle()
+        assert(getUser() != null)
+        assert(getUser()?.email == signInEmail)
+
+        userRepositoryTestUtil.signOut()
+        withContext(Dispatchers.Default) {
+            delay(500)
+            assert(getUser() == null)
+        }
+        userRepositoryTestUtil.signUp()
+        advanceUntilIdle()
+        assert(getUser() != null)
+        assert(getUser()?.email == signUpEmail)
+        assert(getUser()?.name == signUpName)
+
+        userRepositoryTestUtil.deleteUser()
+
+        userRepositoryTestUtil.signOut()
+        withContext(Dispatchers.Default) {
+            delay(500)
+            assert(getUser() == null)
+        }
+    }
+}

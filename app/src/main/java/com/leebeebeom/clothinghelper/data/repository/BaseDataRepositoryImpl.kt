@@ -57,7 +57,6 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
      * 모든 collect가 취소되고 다시 collect 시작 시 [callbackFlow] 빌더 호출
      *
      * @throws FirebaseNetworkException 인터넷 미 연결 시
-     * @throws WifiException 와이파이로만 연결 선택했으나 와이파이 미 연결 시
      * @throws DatabaseException onCancelled 호출 시 발생, [emptyList]로 초기화 됨
      * @throws NullPointerException [dataCallback], [ref] 중 하나라도 null일 경우
      */
@@ -101,15 +100,14 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
             ref!!.removeEventListener(dataCallback!!)
         }
     }.shareIn(
-            scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
-        )
+        scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
+    )
 
     // TODO 미로그인 시 데이터 사용 Any로 변경
     // TODO 로그인 시 최초 로드 후 원래 데이터 사용 설정으로 변경
 
     /**
      * @throws FirebaseNetworkException 인터넷 미 연결 시
-     * @throws WifiException 사용자가 와이파이로만 연결 선택 시 와이파이 미 연결됐을 경우
      */
     @Suppress("UNCHECKED_CAST")
     override suspend fun add(data: T) = withContext {
@@ -120,7 +118,6 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
 
     /**
      * @throws FirebaseNetworkException 인터넷 미 연결 시
-     * @throws WifiException 사용자가 와이파이로만 연결 선택 시 와이파이 미 연결됐을 경우
      */
     override suspend fun push(data: T) {
         withContext { ref!!.child(data.key).setValue(data).await() }

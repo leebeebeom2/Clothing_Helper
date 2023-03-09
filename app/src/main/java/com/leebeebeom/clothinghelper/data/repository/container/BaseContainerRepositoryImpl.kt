@@ -6,7 +6,6 @@ import com.leebeebeom.clothinghelper.data.repository.preference.Order.ASCENDING
 import com.leebeebeom.clothinghelper.data.repository.preference.Order.DESCENDING
 import com.leebeebeom.clothinghelper.data.repository.preference.Sort.*
 import com.leebeebeom.clothinghelper.data.repository.preference.SortPreferences
-import com.leebeebeom.clothinghelper.data.repository.util.WifiException
 import com.leebeebeom.clothinghelper.domain.model.BaseContainerModel
 import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
@@ -31,11 +30,8 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
     userRepository = userRepository
 ) {
     override val allData =
-        super.allData.combine(flow = sortFlow, transform = ::getSortedData)
-            .shareIn(
-                scope = appScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                replay = 1
+        super.allData.combine(flow = sortFlow, transform = ::getSortedData).shareIn(
+                scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
             )
 
     private fun getSortedData(
@@ -58,7 +54,6 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
 
     /**
      * @throws FirebaseNetworkException 인터넷 미 연결 시
-     * @throws WifiException 사용자가 와이파이로만 연결 선택 시 와이파이 미 연결됐을 경우
      */
     override suspend fun push(data: T) = super.push(data = data.changeEditDate() as T)
 }

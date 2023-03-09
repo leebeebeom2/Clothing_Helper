@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.data.repository.container
 
-import com.google.firebase.FirebaseNetworkException
 import com.leebeebeom.clothinghelper.data.repository.BaseDataRepositoryImpl
 import com.leebeebeom.clothinghelper.data.repository.preference.Order.ASCENDING
 import com.leebeebeom.clothinghelper.data.repository.preference.Order.DESCENDING
@@ -31,8 +30,8 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
 ) {
     override val allData =
         super.allData.combine(flow = sortFlow, transform = ::getSortedData).shareIn(
-                scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
-            )
+            scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
+        )
 
     private fun getSortedData(
         allData: List<T>,
@@ -52,8 +51,5 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
         }
     }
 
-    /**
-     * @throws FirebaseNetworkException 인터넷 미 연결 시
-     */
     override suspend fun push(data: T) = super.push(data = data.changeEditDate() as T)
 }

@@ -7,14 +7,9 @@ import javax.inject.Inject
 class EditTodoOrderUseCase @Inject constructor(
     private val todoRepository: TodoRepository,
 ) {
-    suspend fun editOrder(
-        oldTodo: Todo,
-        order: Int,
-        uid: String,
-        onFail: (Exception) -> Unit,
-    ) {
+    suspend fun editOrder(oldTodo: Todo, order: Int) {
         val newTodo = oldTodo.copy(order = order)
 
-        todoRepository.edit(oldData = oldTodo, newData = newTodo, uid = uid, onFail = onFail)
+        todoRepository.push(data = newTodo)
     }
 }

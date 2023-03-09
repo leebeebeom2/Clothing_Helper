@@ -5,19 +5,9 @@ import com.leebeebeom.clothinghelper.domain.repository.FolderRepository
 import javax.inject.Inject
 
 class EditFolderNameUseCase @Inject constructor(private val folderRepository: FolderRepository) {
-    suspend fun editName(
-        oldFolder: Folder,
-        name: String,
-        uid: String,
-        onFail: (Exception) -> Unit,
-    ) {
+    suspend fun editName(oldFolder: Folder, name: String) {
         val newFolder = oldFolder.copy(name = name)
 
-        folderRepository.edit(
-            oldData = oldFolder,
-            newData = newFolder,
-            uid = uid,
-            onFail = onFail
-        )
+        folderRepository.push(data = newFolder)
     }
 }

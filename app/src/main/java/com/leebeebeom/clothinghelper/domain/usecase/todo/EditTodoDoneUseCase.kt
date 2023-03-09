@@ -7,19 +7,9 @@ import javax.inject.Inject
 class EditTodoDoneUseCase @Inject constructor(
     private val todoRepository: TodoRepository,
 ) {
-    suspend fun editDone(
-        oldTodo: Todo,
-        done: Boolean,
-        uid: String,
-        onFail: (Exception) -> Unit,
-    ) {
+    suspend fun editDone(oldTodo: Todo, done: Boolean) {
         val newTodo = oldTodo.copy(done = done)
 
-        todoRepository.edit(
-            oldData = oldTodo,
-            newData = newTodo,
-            uid = uid,
-            onFail = onFail
-        )
+        todoRepository.push(data = newTodo)
     }
 }

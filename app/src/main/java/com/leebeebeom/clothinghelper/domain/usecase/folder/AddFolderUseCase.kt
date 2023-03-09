@@ -11,8 +11,6 @@ class AddFolderUseCase @Inject constructor(private val folderRepository: FolderR
         subCategoryKey: String,
         name: String,
         mainCategoryType: MainCategoryType,
-        uid: String,
-        onFail: (Exception) -> Unit,
     ) {
         val folder = Folder(
             parentKey = parentKey,
@@ -21,6 +19,6 @@ class AddFolderUseCase @Inject constructor(private val folderRepository: FolderR
             mainCategoryType = mainCategoryType
         )
 
-        folderRepository.add(data = folder, uid = uid, onFail = onFail)
+        folderRepository.add(data = folder)
     }
 }

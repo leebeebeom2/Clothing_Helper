@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.data.repository
 
-import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -31,10 +30,9 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     private var ref: DatabaseReference? = null
 
     // TODO 콜렉트 쪽에서 예외 처리
-    // TODO allData, user 내부 설명, 예외 주석 작성
-    // TODO 근데 collect 이후 인터넷 끊어지면 어캄?
     // TODO 네트워크 미 연결 시 스낵바나 알림같을 걸 띄우는 게 나을듯
-    // TODO 네트워크 체커 삭제
+    // TODO 미로그인 시 데이터 사용 Any로 변경
+    // TODO 로그인 시 최초 로드 후 원래 데이터 사용 설정으로 변경
 
     /**
      * 최초 [collect] 시 [loadingOn] -> [UserRepository.user] collect 시작
@@ -56,8 +54,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
      *
      * 모든 collect가 취소되고 다시 collect 시작 시 [callbackFlow] 빌더 호출
      *
-     * @throws FirebaseNetworkException 인터넷 미 연결 시
-     * @throws DatabaseException onCancelled 호출 시 발생, [emptyList]로 초기화 됨
+     * @throws DatabaseException onCancelled 호출 시 발생
      * @throws NullPointerException [dataCallback], [ref] 중 하나라도 null일 경우
      */
     override val allData = callbackFlow {
@@ -103,12 +100,6 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
     )
 
-    // TODO 미로그인 시 데이터 사용 Any로 변경
-    // TODO 로그인 시 최초 로드 후 원래 데이터 사용 설정으로 변경
-
-    /**
-     * @throws FirebaseNetworkException 인터넷 미 연결 시
-     */
     @Suppress("UNCHECKED_CAST")
     override suspend fun add(data: T) = withContext {
         val dataWithKey = data.addKey(key = getKey()) as T
@@ -116,9 +107,6 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         push(data = dataWithKey)
     }
 
-    /**
-     * @throws FirebaseNetworkException 인터넷 미 연결 시
-     */
     override suspend fun push(data: T) {
         withContext { ref!!.child(data.key).setValue(data).await() }
     }

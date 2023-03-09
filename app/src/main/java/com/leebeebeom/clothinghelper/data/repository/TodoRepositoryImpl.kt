@@ -1,34 +1,31 @@
 package com.leebeebeom.clothinghelper.data.repository
 
-import com.leebeebeom.clothinghelper.data.repository.util.NetworkChecker
 import com.leebeebeom.clothinghelper.di.AppScope
 import com.leebeebeom.clothinghelper.di.DispatcherIO
 import com.leebeebeom.clothinghelper.domain.model.Todo
 import com.leebeebeom.clothinghelper.domain.repository.TodoRepository
+import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Singleton
 class TodoRepositoryImpl @Inject constructor(
-    networkChecker: NetworkChecker,
     @AppScope appScope: CoroutineScope,
     @DispatcherIO dispatcher: CoroutineDispatcher,
+    userRepository: UserRepository,
 ) : BaseDataRepositoryImpl<Todo>(
     refPath = DatabasePath.TODOS,
-    networkChecker = networkChecker,
     appScope = appScope,
     type = Todo::class.java,
-    dispatcher = dispatcher
+    dispatcher = dispatcher,
+    userRepository = userRepository
 ), TodoRepository {
-    override val allData: StateFlow<List<Todo>> =
+    override val allData =
         super.allData.mapLatest { it.sortedBy { todoList -> todoList.order } }
-            .stateIn(appScope, SharingStarted.WhileSubscribed(5000), emptyList())
+            .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 }

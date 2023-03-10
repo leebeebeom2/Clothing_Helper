@@ -9,7 +9,7 @@ import com.leebeebeom.clothinghelper.domain.model.User
 import kotlinx.coroutines.flow.SharedFlow
 
 interface UserRepository : LoadingStateProvider {
-    val user: SharedFlow<User?>
+    val user: SharedFlow<Result<User?>>
 
     suspend fun googleSignIn(credential: AuthCredential)
 

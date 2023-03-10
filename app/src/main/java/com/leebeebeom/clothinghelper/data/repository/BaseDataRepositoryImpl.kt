@@ -42,33 +42,47 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     override val allData = callbackFlow {
         loadingOn()
 
-        if (dataCallback == null)
-            dataCallback = object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
+        if (dataCallback == null) dataCallback = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                runCatching {
                     lastCachedData = snapshot.children.map { it.getValue(type)!! }
-                    trySend(lastCachedData)
-                    loadingOff()
+                    trySend(element = DataResult.Success(lastCachedData))
+                }.onFailure {
+                    trySend(
+                        element = DataResult.Fail(
+                            lastCachedData = lastCachedData, throwable = it
+                        )
+                    )
                 }
-
-                override fun onCancelled(error: DatabaseError) {
-                    trySend(lastCachedData)
-                    loadingOff()
-                    throw error.toException()
-                }
-
+                loadingOff()
             }
 
+            override fun onCancelled(error: DatabaseError) {
+                trySend(
+                    DataResult.Fail(
+                        lastCachedData = lastCachedData, throwable = error.toException()
+                    )
+                )
+                loadingOff()
+            }
+        }
+
         val collectJob = launch {
-            userRepository.user.collect { user ->
+            userRepository.user.collect { result ->
                 loadingOn()
 
-                user?.let {
-                    ref = dbRoot.getContainerRef(uid = it.uid, path = refPath)
+                result.getOrNull()?.let { user ->
+                    if (ref != null) {
+                        ref!!.keepSynced(false)
+                        ref = null
+                    }
+                    ref = dbRoot.getContainerRef(uid = user.uid, path = refPath)
                     ref!!.keepSynced(true)
                     ref!!.addValueEventListener(dataCallback!!)
                 } ?: run {
+                    ref!!.keepSynced(false)
                     ref = null
-                    trySend(emptyList())
+                    trySend(DataResult.Success(emptyList()))
                     loadingOff()
                 }
             }
@@ -78,11 +92,12 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
             collectJob.cancel()
             ref!!.keepSynced(false)
             ref!!.removeEventListener(dataCallback!!)
+            ref = null
+            dataCallback = null
         }
-    }.flowOn(dispatcher)
-        .shareIn(
-            scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
-        )
+    }.flowOn(dispatcher).shareIn(
+        scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
+    )
 
     @Suppress("UNCHECKED_CAST")
     override suspend fun add(data: T) = withContext {
@@ -99,4 +114,10 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
 
     private fun getKey() = ref!!.push().key!!
 
+}
+
+sealed class DataResult {
+    data class Success<T : BaseModel>(val allData: List<T>) : DataResult()
+    data class Fail<T : BaseModel>(val lastCachedData: List<T>, val throwable: Throwable) :
+        DataResult()
 }

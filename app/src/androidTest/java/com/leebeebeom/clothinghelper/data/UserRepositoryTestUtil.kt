@@ -16,7 +16,7 @@ class UserRepositoryTestUtil(repositoryProvider: RepositoryProvider) {
 
     suspend fun userCollect(
         backgroundScope: CoroutineScope,
-        collect: suspend (User?) -> Unit = {},
+        collect: suspend (Result<User?>) -> Unit = {},
     ) = backgroundScope.launch(dispatcher) {
         userRepository.user.collectLatest(action = collect)
     }
@@ -36,28 +36,10 @@ class UserRepositoryTestUtil(repositoryProvider: RepositoryProvider) {
 
     fun deleteUser() = FirebaseAuth.getInstance().currentUser!!.delete()
 
-    suspend fun assertSignIn(email: String = signInEmail) {
-        val user = getUser()
-        assert(user != null)
-        assert(user?.email == email)
-    }
-
-    suspend fun assertSignOut() = assert(getUser() == null)
-
-    suspend fun assertSignUp(
-        email: String = signUpEmail,
-        name: String = signUpName,
-    ) {
-        val user = getUser()
-        assert(user != null)
-        assert(user?.email == email)
-        assert(user?.name == name)
-    }
-
     suspend fun sendResetPasswordEmail(email: String = sendPasswordEmail) =
         userRepository.sendResetPasswordEmail(email = email)
 
-    private suspend fun getUser() = userRepository.user.first()
+    suspend fun getUser() = userRepository.user.first().getOrNull()
 
     suspend fun getUid() = getUser()?.uid
 }

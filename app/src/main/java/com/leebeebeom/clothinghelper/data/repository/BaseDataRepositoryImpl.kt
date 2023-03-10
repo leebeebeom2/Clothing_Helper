@@ -28,6 +28,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     private val dbRoot = getDbRoot()
     private var dataCallback: ValueEventListener? = null
     private var ref: DatabaseReference? = null
+    private var lastCachedData = emptyList<T>()
 
     // TODO 콜렉트 쪽에서 예외 처리
     // TODO 네트워크 미 연결 시 스낵바나 알림같을 걸 띄우는 게 나을듯
@@ -35,45 +36,27 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     // TODO 로그인 시 최초 로드 후 원래 데이터 사용 설정으로 변경
 
     /**
-     * 최초 [collect] 시 [loadingOn] -> [UserRepository.user] collect 시작
-     *
-     * -> [loadingOn] 호출(user가 변경될때마다 호출됨)
-     *
-     * -> [UserRepository.user]가 null 일 시 (비 로그인)
-     *
-     * [emptyList]로 초기화, [loadingOff] 호출
-     *
-     * -> [UserRepository.user]가 null이 아닐 시 (로그인)
-     *
-     * [ref] 초기화, [ref]에 [dataCallback] 등록 [dataCallback]의 함수 호출
-     *
-     * -> [ValueEventListener.onDataChange] 호출 시 데이터 초기 화 후 [loadingOff] 호출
-     *
-     * -> [ValueEventListener.onCancelled] 호출 시 [loadingOff]만 호출
-     * TODO [ValueEventListener.onCancelled] 호출 시 원본 데이터가 없다면 데이터 방출 x
-     *
-     * 모든 collect가 취소되고 다시 collect 시작 시 [callbackFlow] 빌더 호출
-     *
      * @throws DatabaseException onCancelled 호출 시 발생
      * @throws NullPointerException [dataCallback], [ref] 중 하나라도 null일 경우
      */
     override val allData = callbackFlow {
         loadingOn()
 
-        dataCallback ?: run {
+        if (dataCallback == null)
             dataCallback = object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    trySend(snapshot.children.map { it.getValue(type)!! })
+                    lastCachedData = snapshot.children.map { it.getValue(type)!! }
+                    trySend(lastCachedData)
                     loadingOff()
                 }
 
                 override fun onCancelled(error: DatabaseError) {
+                    trySend(lastCachedData)
                     loadingOff()
                     throw error.toException()
                 }
 
             }
-        }
 
         val collectJob = launch {
             userRepository.user.collect { user ->

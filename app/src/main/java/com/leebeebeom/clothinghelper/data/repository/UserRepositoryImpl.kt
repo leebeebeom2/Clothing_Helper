@@ -19,7 +19,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -39,18 +38,21 @@ class UserRepositoryImpl @Inject constructor(
      * @throws NullPointerException [authCallback]이 null일 경우
      */
     override val user = callbackFlow {
-        userCallback ?: run {
-            userCallback = UserCallback {
-                trySend(it.toUserModel())
+        if (userCallback == null) userCallback = UserCallback {
+            trySend(element = runCatching {
+                val user = it.toUserModel()
                 loadingOff()
-            }
+                return@runCatching user
+            })
         }
 
-        authCallback ?: run {
-            authCallback = FirebaseAuth.AuthStateListener {
-                trySend(it.currentUser.toUserModel())
+        if (authCallback == null) authCallback = FirebaseAuth.AuthStateListener {
+            trySend(element = runCatching {
+                val user = it.currentUser.toUserModel()
                 loadingOff()
+                return@runCatching user
             }
+            )
         }
 
         auth.addAuthStateListener(authCallback!!)
@@ -60,7 +62,7 @@ class UserRepositoryImpl @Inject constructor(
             authCallback = null
             userCallback = null
         }
-    }.distinctUntilChanged().shareIn(
+    }.shareIn(
         scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
     )
 

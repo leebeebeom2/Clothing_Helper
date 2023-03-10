@@ -116,8 +116,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
 
 }
 
-sealed class DataResult {
-    data class Success<T : BaseModel>(val allData: List<T>) : DataResult()
-    data class Fail<T : BaseModel>(val lastCachedData: List<T>, val throwable: Throwable) :
-        DataResult()
+sealed class DataResult<T> {
+    data class Success<T>(val allData: List<T>) : DataResult<T>()
+    data class Fail<T>(val lastCachedData: List<T>, val throwable: Throwable) : DataResult<T>()
 }

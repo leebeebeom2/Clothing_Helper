@@ -1,6 +1,7 @@
 package com.leebeebeom.clothinghelper.data.repository.container
 
 import com.leebeebeom.clothinghelper.data.repository.BaseDataRepositoryImpl
+import com.leebeebeom.clothinghelper.data.repository.DataResult
 import com.leebeebeom.clothinghelper.data.repository.preference.Order.ASCENDING
 import com.leebeebeom.clothinghelper.data.repository.preference.Order.DESCENDING
 import com.leebeebeom.clothinghelper.data.repository.preference.Sort.*
@@ -34,21 +35,27 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
         )
 
     private fun getSortedData(
-        allData: List<T>,
+        dataResult: DataResult<T>,
         sortPreferences: SortPreferences,
-    ): List<T> {
-        val sort = sortPreferences.sort
-        val order = sortPreferences.order
+    ) = when (dataResult) {
+        is DataResult.Success -> {
+            val sort = sortPreferences.sort
+            val order = sortPreferences.order
+            val allData = dataResult.allData
 
-        return when {
-            sort == NAME && order == ASCENDING -> allData.sortedBy { it.name }
-            sort == NAME && order == DESCENDING -> allData.sortedByDescending { it.name }
-            sort == CREATE && order == ASCENDING -> allData.sortedBy { it.createDate }
-            sort == CREATE && order == DESCENDING -> allData.sortedByDescending { it.createDate }
-            sort == EDIT && order == ASCENDING -> allData.sortedBy { it.editDate }
-            sort == EDIT && order == DESCENDING -> allData.sortedByDescending { it.editDate }
-            else -> allData
+            DataResult.Success(
+                when {
+                    sort == NAME && order == ASCENDING -> allData.sortedBy { it.name }
+                    sort == NAME && order == DESCENDING -> allData.sortedByDescending { it.name }
+                    sort == CREATE && order == ASCENDING -> allData.sortedBy { it.createDate }
+                    sort == CREATE && order == DESCENDING -> allData.sortedByDescending { it.createDate }
+                    sort == EDIT && order == ASCENDING -> allData.sortedBy { it.editDate }
+                    sort == EDIT && order == DESCENDING -> allData.sortedByDescending { it.editDate }
+                    else -> allData
+                }
+            )
         }
+        is DataResult.Fail -> dataResult
     }
 
     override suspend fun push(data: T) = super.push(data = data.changeEditDate() as T)

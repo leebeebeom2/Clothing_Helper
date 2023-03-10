@@ -79,9 +79,10 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
             ref!!.keepSynced(false)
             ref!!.removeEventListener(dataCallback!!)
         }
-    }.shareIn(
-        scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
-    )
+    }.flowOn(dispatcher)
+        .shareIn(
+            scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
+        )
 
     @Suppress("UNCHECKED_CAST")
     override suspend fun add(data: T) = withContext {

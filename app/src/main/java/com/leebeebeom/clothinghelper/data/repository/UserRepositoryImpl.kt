@@ -51,8 +51,7 @@ class UserRepositoryImpl @Inject constructor(
                 val user = it.currentUser.toUserModel()
                 loadingOff()
                 return@runCatching user
-            }
-            )
+            })
         }
 
         auth.addAuthStateListener(authCallback!!)

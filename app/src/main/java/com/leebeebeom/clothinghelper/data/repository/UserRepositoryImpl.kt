@@ -39,19 +39,13 @@ class UserRepositoryImpl @Inject constructor(
      */
     override val user = callbackFlow {
         if (userCallback == null) userCallback = UserCallback {
-            trySend(element = runCatching {
-                val user = it.toUserModel()
-                loadingOff()
-                return@runCatching user
-            })
+            trySend(element = runCatching { it.toUserModel() })
+            loadingOff()
         }
 
         if (authCallback == null) authCallback = FirebaseAuth.AuthStateListener {
-            trySend(element = runCatching {
-                val user = it.currentUser.toUserModel()
-                loadingOff()
-                return@runCatching user
-            })
+            trySend(element = runCatching { it.currentUser.toUserModel() })
+            loadingOff()
         }
 
         auth.addAuthStateListener(authCallback!!)

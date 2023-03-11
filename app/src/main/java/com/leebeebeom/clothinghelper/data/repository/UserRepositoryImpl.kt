@@ -94,7 +94,10 @@ class UserRepositoryImpl @Inject constructor(
      * @throws FirebaseAuthException - InvalidEmail, NotFoundUser 등
      */
     override suspend fun sendResetPasswordEmail(email: String) =
-        withContext { auth.sendPasswordResetEmail(email).await() }
+        withContext {
+            auth.sendPasswordResetEmail(email).await()
+            loadingOff()
+        }
 
     override fun signOut() = auth.signOut()
 

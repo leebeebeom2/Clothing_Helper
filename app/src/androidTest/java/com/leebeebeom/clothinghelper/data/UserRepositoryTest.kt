@@ -183,6 +183,26 @@ class UserRepositoryTest {
             userRepositoryTestUtil.sendResetPasswordEmail()
         }
     }
+
+    @Test
+    fun userRepositoryLoadingTest() = runTest(dispatcher) {
+        // check the logCat
+        userRepositoryTestUtil.userCollect(backgroundScope)
+        userRepositoryTestUtil.loadingCollect(backgroundScope)
+
+        userRepositoryTestUtil.signIn()
+        advanceUntilIdle()
+
+        userRepositoryTestUtil.signUp()
+        advanceUntilIdle()
+        wait()
+        userRepositoryTestUtil.deleteUser()
+        advanceUntilIdle()
+
+        userRepositoryTestUtil.sendResetPasswordEmail()
+        advanceUntilIdle()
+        wait()
+    }
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)

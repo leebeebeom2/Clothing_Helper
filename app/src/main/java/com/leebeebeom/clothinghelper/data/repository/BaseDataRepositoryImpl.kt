@@ -39,7 +39,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
      * @throws DatabaseException onCancelled 호출 시 발생
      * @throws NullPointerException [dataCallback], [ref] 중 하나라도 null일 경우
      */
-    override val allData = callbackFlow {
+    override val allData = callbackFlow<DataResult<T>> {
         loadingOn()
 
         if (dataCallback == null) dataCallback = object : ValueEventListener {
@@ -54,7 +54,6 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
                         )
                     )
                 }
-                loadingOff()
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -63,7 +62,6 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
                         lastCachedData = lastCachedData, throwable = error.toException()
                     )
                 )
-                loadingOff()
             }
         }
 
@@ -74,27 +72,32 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
                 result.getOrNull()?.let { user ->
                     if (ref != null) {
                         ref!!.keepSynced(false)
+                        ref!!.removeEventListener(dataCallback!!)
                         ref = null
                     }
                     ref = dbRoot.getContainerRef(uid = user.uid, path = refPath)
                     ref!!.keepSynced(true)
                     ref!!.addValueEventListener(dataCallback!!)
                 } ?: run {
-                    ref!!.keepSynced(false)
-                    ref = null
+                    if (ref != null) {
+                        ref!!.keepSynced(false)
+                        ref!!.removeEventListener(dataCallback!!)
+                        ref = null
+                    }
                     trySend(DataResult.Success(emptyList()))
-                    loadingOff()
                 }
             }
         }
 
         awaitClose {
             collectJob.cancel()
-            ref!!.keepSynced(false)
-            ref!!.removeEventListener(dataCallback!!)
+            ref?.keepSynced(false)
+            ref?.removeEventListener(dataCallback!!)
             ref = null
             dataCallback = null
         }
+    }.onEach {
+        loadingOff()
     }.flowOn(dispatcher).shareIn(
         scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
     )

@@ -1,5 +1,6 @@
 package com.leebeebeom.clothinghelper.data
 
+import android.util.Log
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.ktx.auth
@@ -187,18 +188,23 @@ class UserRepositoryTest {
     @Test
     fun userRepositoryLoadingTest() = runTest(dispatcher) {
         // check the logCat
+        Log.d(userLoadingTag, "userCollect start")
         userRepositoryTestUtil.userCollect(backgroundScope)
+        Log.d(userLoadingTag, "loadingCollect start")
         userRepositoryTestUtil.loadingCollect(backgroundScope)
 
+        Log.d(userLoadingTag, "sign in start")
         userRepositoryTestUtil.signIn()
         advanceUntilIdle()
 
+        Log.d(userLoadingTag, "sign up start")
         userRepositoryTestUtil.signUp()
         advanceUntilIdle()
         wait()
         userRepositoryTestUtil.deleteUser()
         advanceUntilIdle()
 
+        Log.d(userLoadingTag, "send reset password start")
         userRepositoryTestUtil.sendResetPasswordEmail()
         advanceUntilIdle()
         wait()

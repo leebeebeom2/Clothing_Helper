@@ -213,10 +213,8 @@ class UserFlowTestWithSignInStart {
         assert(getUser()?.email == signInEmail)
 
         userRepositoryTestUtil.signOut()
-        withContext(Dispatchers.Default) {
-            delay(500)
-            assert(getUser() == null)
-        }
+        wait()
+        assert(getUser() == null)
 
         userRepositoryTestUtil.signIn()
         advanceUntilIdle()
@@ -224,12 +222,12 @@ class UserFlowTestWithSignInStart {
         assert(getUser()?.email == signInEmail)
 
         userRepositoryTestUtil.signOut()
-        withContext(Dispatchers.Default) {
-            delay(500)
-            assert(getUser() == null)
-        }
+        wait()
+        assert(getUser() == null)
+
         userRepositoryTestUtil.signUp()
         advanceUntilIdle()
+        wait()
         assert(getUser() != null)
         assert(getUser()?.email == signUpEmail)
         assert(getUser()?.name == signUpName)
@@ -268,10 +266,9 @@ class UserFlowTestWithSignOutStart {
         assert(getUser()?.email == signInEmail)
 
         userRepositoryTestUtil.signOut()
-        withContext(Dispatchers.Default) {
-            delay(500)
-            assert(getUser() == null)
-        }
+        wait()
+        assert(getUser() == null)
+
         userRepositoryTestUtil.signUp()
         advanceUntilIdle()
         assert(getUser() != null)

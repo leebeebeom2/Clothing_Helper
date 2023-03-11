@@ -39,7 +39,7 @@ class UserRepositoryTestUtil(repositoryProvider: RepositoryProvider) {
     suspend fun sendResetPasswordEmail(email: String = sendPasswordEmail) =
         userRepository.sendResetPasswordEmail(email = email)
 
-    suspend fun getUser() = userRepository.user.first().getOrNull()
+    suspend fun getUser() = userRepository.user.first().getOrThrow()
 
     suspend fun getUid() = getUser()?.uid
 }

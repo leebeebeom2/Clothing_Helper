@@ -17,9 +17,7 @@ import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -40,12 +38,10 @@ class UserRepositoryImpl @Inject constructor(
     override val user = callbackFlow {
         if (userCallback == null) userCallback = UserCallback {
             trySend(element = runCatching { it.toUserModel() })
-            loadingOff()
         }
 
         if (authCallback == null) authCallback = FirebaseAuth.AuthStateListener {
             trySend(element = runCatching { it.currentUser.toUserModel() })
-            loadingOff()
         }
 
         auth.addAuthStateListener(authCallback!!)
@@ -55,9 +51,11 @@ class UserRepositoryImpl @Inject constructor(
             authCallback = null
             userCallback = null
         }
-    }.shareIn(
-        scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
-    )
+    }.distinctUntilChanged()
+        .onEach { loadingOff() }
+        .shareIn(
+            scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
+        )
 
     override suspend fun googleSignIn(credential: AuthCredential) =
         withContext { auth.signInWithCredential(credential).await() }

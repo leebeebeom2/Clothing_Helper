@@ -1,5 +1,6 @@
 package com.leebeebeom.clothinghelper.data
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.leebeebeom.clothinghelper.RepositoryProvider
 import com.leebeebeom.clothinghelper.domain.model.User
@@ -9,6 +10,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+
+const val userLoadingTag = "loading"
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class UserRepositoryTestUtil(repositoryProvider: RepositoryProvider) {
@@ -49,7 +52,7 @@ class UserRepositoryTestUtil(repositoryProvider: RepositoryProvider) {
     fun loadingCollect(backgroundScope: CoroutineScope) =
         backgroundScope.launch(dispatcher) {
             userRepository.isLoading.collect {
-                println("userRepository loading collect 호출: $it ")
+                Log.d(userLoadingTag, "userRepository loading collect 호출: $it")
             }
         }
 }

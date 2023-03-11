@@ -18,6 +18,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -47,6 +48,7 @@ class UserRepositoryImpl @Inject constructor(
         auth.addAuthStateListener(authCallback!!)
 
         awaitClose {
+            launch { loadingOff() }
             auth.removeAuthStateListener(authCallback!!)
             authCallback = null
             userCallback = null

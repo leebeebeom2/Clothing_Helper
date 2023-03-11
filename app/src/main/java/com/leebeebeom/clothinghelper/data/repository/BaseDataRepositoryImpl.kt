@@ -90,6 +90,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
         }
 
         awaitClose {
+            launch { loadingOff() }
             collectJob.cancel()
             ref?.keepSynced(false)
             ref?.removeEventListener(dataCallback!!)

@@ -53,8 +53,8 @@ class UserRepositoryImpl @Inject constructor(
             authCallback = null
             userCallback = null
         }
-    }.distinctUntilChanged()
-        .onEach { loadingOff() }
+    }.onEach { loadingOff() }
+        .distinctUntilChanged()
         .shareIn(
             scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
         )

@@ -42,4 +42,6 @@ class UserRepositoryTestUtil(repositoryProvider: RepositoryProvider) {
     suspend fun getUser() = userRepository.user.first().getOrThrow()
 
     suspend fun getUid() = getUser()?.uid
+
+    suspend fun isLoading() = userRepository.isLoading.first()
 }

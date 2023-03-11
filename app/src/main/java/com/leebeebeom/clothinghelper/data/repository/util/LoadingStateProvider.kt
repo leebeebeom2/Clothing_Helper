@@ -18,7 +18,7 @@ open class LoadingStateProviderImpl : LoadingStateProvider {
     )
     override val isLoading = _isLoading.asSharedFlow()
 
-    protected fun loadingOn() = _isLoading.tryEmit(true)
+    protected suspend fun loadingOn() = _isLoading.emit(true)
 
-    protected fun loadingOff() = _isLoading.tryEmit(false)
+    protected suspend fun loadingOff() = _isLoading.emit(false)
 }

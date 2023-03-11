@@ -8,6 +8,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class UserRepositoryTestUtil(repositoryProvider: RepositoryProvider) {
@@ -34,7 +35,9 @@ class UserRepositoryTestUtil(repositoryProvider: RepositoryProvider) {
 
     fun signOut() = userRepository.signOut()
 
-    fun deleteUser() = FirebaseAuth.getInstance().currentUser!!.delete()
+    suspend fun deleteUser() {
+        FirebaseAuth.getInstance().currentUser!!.delete().await()
+    }
 
     suspend fun sendResetPasswordEmail(email: String = sendPasswordEmail) =
         userRepository.sendResetPasswordEmail(email = email)
@@ -43,5 +46,10 @@ class UserRepositoryTestUtil(repositoryProvider: RepositoryProvider) {
 
     suspend fun getUid() = getUser()?.uid
 
-    suspend fun isLoading() = userRepository.isLoading.first()
+    fun loadingCollect(backgroundScope: CoroutineScope) =
+        backgroundScope.launch(dispatcher) {
+            userRepository.isLoading.collect {
+                println("userRepository loading collect 호출: $it ")
+            }
+        }
 }

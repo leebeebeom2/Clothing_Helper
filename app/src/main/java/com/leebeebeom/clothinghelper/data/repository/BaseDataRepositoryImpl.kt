@@ -115,7 +115,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
 
     private suspend fun withContext(task: suspend () -> Unit) = withContext(dispatcher) { task() }
 
-    private fun getKey() = ref!!.push().key!!
+    protected fun getKey() = ref!!.push().key!!
 
 }
 

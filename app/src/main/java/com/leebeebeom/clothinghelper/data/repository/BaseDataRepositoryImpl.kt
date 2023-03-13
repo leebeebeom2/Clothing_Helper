@@ -10,7 +10,6 @@ import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.tasks.await
 
 fun DatabaseReference.getContainerRef(uid: String, path: String) =
     child(uid).child(path).also { keepSynced(true) }
@@ -111,7 +110,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     }
 
     override suspend fun push(data: T) {
-        withContext { ref!!.child(data.key).setValue(data).await() }
+        withContext { ref!!.child(data.key).setValue(data) }
     }
 
     private suspend fun withContext(task: suspend () -> Unit) = withContext(dispatcher) { task() }

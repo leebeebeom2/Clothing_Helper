@@ -15,7 +15,7 @@ import com.leebeebeom.clothinghelper.ui.MainActivityDestinations.SignInGraphDest
 import com.leebeebeom.clothinghelper.ui.components.CENTER_DOT_PROGRESS_INDICATOR_TAG
 import com.leebeebeom.clothinghelper.ui.main.MAIN_NAV_TAG
 import com.leebeebeom.clothinghelper.ui.main.drawer.SETTING_ICON
-import com.leebeebeom.clothinghelper.ui.signin.ui.SIGN_IN_NAV_TAG
+import com.leebeebeom.clothinghelper.ui.signin.ui.SignInNavTag
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -108,5 +108,5 @@ private fun CustomTestRule.uiSignOut() {
     waitSignInNav()
 }
 
-private fun CustomTestRule.waitSignInNav() = waitTagExist(tag = SIGN_IN_NAV_TAG)
+private fun CustomTestRule.waitSignInNav() = waitTagExist(tag = SignInNavTag)
 private fun CustomTestRule.waitMainNav() = waitTagExist(tag = MAIN_NAV_TAG)

@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
@@ -57,7 +56,7 @@ fun MainActivityScreen(
         navigateToMainGraph = navController::navigateToMainGraph,
         navigateToSignInGraph = navController::navigateToSignInGraph
     )
-    ToastWrapper(text = { uiState.toastText }, toastShown = viewModel::toastShown) // 테스트 불가
+    ToastWrapper(textList = { uiState.toastText }, toastShown = viewModel::toastShown) // 테스트 불가
 }
 
 @Composable
@@ -69,21 +68,19 @@ private fun MainActivityNavigateWrapper(
     user()?.let { navigateToMainGraph() } ?: navigateToSignInGraph()
 }
 
-private fun NavHostController.navigateToSignInGraph() =
-    navigate(SignInGraphDestination) {
-        popUpTo(MainGraphDestination) { inclusive = true }
-        launchSingleTop = true
-    }
+private fun NavHostController.navigateToSignInGraph() = navigate(SignInGraphDestination) {
+    popUpTo(MainGraphDestination) { inclusive = true }
+    launchSingleTop = true
+}
 
-private fun NavHostController.navigateToMainGraph() =
-    navigate(MainGraphDestination) {
-        popUpTo(SignInGraphDestination) { inclusive = true }
-        launchSingleTop = true
-    }
+private fun NavHostController.navigateToMainGraph() = navigate(MainGraphDestination) {
+    popUpTo(SignInGraphDestination) { inclusive = true }
+    launchSingleTop = true
+}
 
 @Composable
-fun ToastWrapper(@StringRes text: () -> Int?, toastShown: () -> Unit) {
-    text()?.let {
+fun ToastWrapper(textList: () -> List<Int>, toastShown: () -> Unit) {
+    textList().firstOrNull()?.let {
         Toast.makeText(LocalContext.current, stringResource(id = it), Toast.LENGTH_SHORT).show()
         toastShown()
     }

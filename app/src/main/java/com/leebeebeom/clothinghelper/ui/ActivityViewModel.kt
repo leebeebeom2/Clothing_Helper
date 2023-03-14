@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
-const val toastTextKey = "toastText"
+const val ToastTextKey = "toastText"
 
 @HiltViewModel
 class ActivityViewModel @Inject constructor(
@@ -25,7 +25,7 @@ class ActivityViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val toastTestList = savedStateHandle.getStateFlow(toastTextKey, emptyList<Int>())
+    private val toastTestList = savedStateHandle.getStateFlow(ToastTextKey, emptyList<Int>())
     private val user =
         getUserUseCase.getUser(onFail = { showToast(R.string.error_fail_get_user_info_by_unknow_error) })
 
@@ -39,13 +39,13 @@ class ActivityViewModel @Inject constructor(
     fun showToast(toastText: Int) {
         val mutableToastTextList = toastTestList.value.toMutableList()
         mutableToastTextList.add(toastText)
-        savedStateHandle[toastTextKey] = mutableToastTextList
+        savedStateHandle[ToastTextKey] = mutableToastTextList
     }
 
     fun toastShown() {
         val mutableToastTextList = toastTestList.value.toMutableList()
         mutableToastTextList.removeAt(0)
-        savedStateHandle[toastTextKey] = mutableToastTextList
+        savedStateHandle[ToastTextKey] = mutableToastTextList
     }
 }
 

@@ -28,7 +28,7 @@ class ActivityViewModelTest {
         val getUserUseCase = GetUserUseCase(userRepositoryTestUtil.userRepository)
         activityViewModel = ActivityViewModel(
             getUserUseCase = getUserUseCase,
-            savedStateHandle = SavedStateHandle(mapOf(toastTextKey to emptyList<Int>()))
+            savedStateHandle = SavedStateHandle(mapOf(ToastTextKey to emptyList<Int>()))
         )
     }
 

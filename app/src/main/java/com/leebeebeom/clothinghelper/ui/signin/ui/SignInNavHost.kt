@@ -20,7 +20,7 @@ import com.leebeebeom.clothinghelper.ui.signin.ui.resetpassword.ResetPasswordScr
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInScreen
 import com.leebeebeom.clothinghelper.ui.signin.ui.signup.SignUpScreen
 
-const val signInNavTag = "sign in nav"
+const val SignInNavTag = "sign in nav"
 
 object SignInDestinations {
     const val SignInNavRoute = "signInNav"
@@ -37,7 +37,7 @@ fun SignInNavHost(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     NavHost(
-        modifier = Modifier.testTag(signInNavTag),
+        modifier = Modifier.testTag(SignInNavTag),
         navController = navController,
         startDestination = SignInRoute,
         route = SignInNavRoute

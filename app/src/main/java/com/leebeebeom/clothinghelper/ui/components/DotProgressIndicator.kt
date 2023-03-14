@@ -24,17 +24,14 @@ const val CENTER_DOT_PROGRESS_INDICATOR_TAG = "center dot progress indicator"
 @Composable
 fun CenterDotProgressIndicator(
     backGround: Color = Disabled,
-    show: () -> Boolean
+    show: () -> Boolean,
 ) {
     if (show()) Surface(color = backGround) {
-        Box(modifier =
-        Modifier
+        Box(modifier = Modifier
             .fillMaxSize()
             // background click block
             .clickable(enabled = false) { }
-            .testTag(CENTER_DOT_PROGRESS_INDICATOR_TAG)
-        ) {
-
+            .testTag(CENTER_DOT_PROGRESS_INDICATOR_TAG)) {
             DotProgressIndicator(
                 modifier = Modifier.align(Alignment.Center),
                 size = 8.dp,
@@ -48,7 +45,7 @@ fun CenterDotProgressIndicator(
 fun DotProgressIndicator(
     modifier: Modifier,
     size: Dp,
-    color: Color = MaterialTheme.colors.primary.copy(ContentAlpha.disabled)
+    color: Color = MaterialTheme.colors.primary.copy(ContentAlpha.disabled),
 ) {
     val maxOffset = 4f
     val delayUnit = 300

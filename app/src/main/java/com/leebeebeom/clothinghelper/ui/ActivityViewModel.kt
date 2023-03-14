@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
-private const val toastTextKey = "toastText"
+const val toastTextKey = "toastText"
 
 @HiltViewModel
 class ActivityViewModel @Inject constructor(

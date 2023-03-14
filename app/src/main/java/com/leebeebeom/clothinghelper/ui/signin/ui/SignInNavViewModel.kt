@@ -3,10 +3,7 @@ package com.leebeebeom.clothinghelper.ui.signin.ui
 import android.app.Activity
 import android.util.Log
 import androidx.activity.result.ActivityResult
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -15,14 +12,18 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.data.repository.util.TAG
-import com.leebeebeom.clothinghelper.domain.model.FirebaseResult
 import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.GetSignInLoadingStateUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelper.ui.util.ShowToast
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+const val GoogleButtonEnabledKey = "google button enable"
 
 /**
  * Google 로그인 로직
@@ -30,52 +31,58 @@ import javax.inject.Inject
 @HiltViewModel
 class SignInNavViewModel @Inject constructor(
     private val googleSignInUseCase: GoogleSignInUseCase,
-    private val getSignInLoadingStateUseCase: GetSignInLoadingStateUseCase,
+    getSignInLoadingStateUseCase: GetSignInLoadingStateUseCase,
     private val firebaseAuthErrorUseCase: FirebaseAuthErrorUseCase,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    private val _signInNavUiState = MutableSignInNavUiState()
-    val uiState: SignInNavUiState = _signInNavUiState
+    private val googleButtonEnabled =
+        savedStateHandle.getStateFlow(key = GoogleButtonEnabledKey, initialValue = true)
 
-    init {
-        viewModelScope.launch {
-            getSignInLoadingStateUseCase.isLoading.collect {
-                _signInNavUiState.isSignInLoading = it
-            }
-        }
-    }
+    val uiState = combine(
+        flow = googleButtonEnabled, flow2 = getSignInLoadingStateUseCase.isLoading
+    ) { googleButtonEnabled, isLoading ->
+        SignInNavUiState(googleButtonEnabled = googleButtonEnabled, isLoading = isLoading)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = SignInNavUiState()
+    )
 
     fun signInWithGoogleEmail(activityResult: ActivityResult, showToast: ShowToast) {
         when (activityResult.resultCode) {
             Activity.RESULT_OK -> googleSignIn(
-                activityResult = activityResult, showToast = showToast
+                activityResult = activityResult,
+                showToast = showToast
             )
             Activity.RESULT_CANCELED -> {
                 showToast(R.string.canceled)
-                _signInNavUiState.googleButtonEnabled = true
+                savedStateHandle[GoogleButtonEnabledKey] = true
             }
-            // TODO 인터넷 미 연결 시 에러 메세지
             else -> {
                 Log.e(TAG, "signInWithGoogleEmail: resultCode = ${activityResult.resultCode}")
-                unknownFail(showToast)
+                showToast(R.string.unknown_error)
+                savedStateHandle[GoogleButtonEnabledKey] = true
             }
         }
     }
 
     private fun googleSignIn(activityResult: ActivityResult, showToast: ShowToast) {
-        viewModelScope.launch {
-            googleSignInUseCase.googleSignIn(credential = getGoogleCredential(activityResult = activityResult),
-                firebaseResult = object : FirebaseResult {
-                    override fun success() {
-                        showToast(R.string.google_sign_in_complete)
-                        _signInNavUiState.googleButtonEnabled = true
-                    }
-
-                    override fun fail(exception: Exception) =
-                        firebaseAuthErrorUseCase.firebaseAuthError(
-                            exception = exception,
-                            showToast = showToast
-                        )
-                })
+        runCatching {
+            viewModelScope.launch {
+                googleSignInUseCase.googleSignIn(
+                    credential = getGoogleCredential(
+                        activityResult = activityResult
+                    )
+                )
+            }
+        }.onSuccess {
+            showToast(R.string.google_sign_in_complete)
+        }.onFailure {
+            firebaseAuthErrorUseCase.firebaseAuthError(
+                exception = it,
+                showToast = showToast
+            )
+            savedStateHandle[GoogleButtonEnabledKey] = true
         }
     }
 
@@ -85,23 +92,12 @@ class SignInNavViewModel @Inject constructor(
         return GoogleAuthProvider.getCredential(account.idToken, null)
     }
 
-    private fun unknownFail(showToast: ShowToast) {
-        showToast(R.string.unknown_error)
-        _signInNavUiState.googleButtonEnabled = true
-    }
-
     fun setGoogleButtonEnable(enable: Boolean) {
-        _signInNavUiState.googleButtonEnabled = enable
+        savedStateHandle[GoogleButtonEnabledKey] = enable
     }
 }
 
-@Stable
-interface SignInNavUiState {
-    val googleButtonEnabled: Boolean
-    val isSignInLoading: Boolean
-}
-
-class MutableSignInNavUiState : SignInNavUiState {
-    override var googleButtonEnabled by mutableStateOf(true)
-    override var isSignInLoading by mutableStateOf(false)
-}
+data class SignInNavUiState(
+    val googleButtonEnabled: Boolean = true,
+    val isLoading: Boolean = false,
+)

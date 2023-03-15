@@ -3,10 +3,12 @@ package com.leebeebeom.clothinghelper.ui.signin.ui
 import androidx.lifecycle.SavedStateHandle
 import com.leebeebeom.clothinghelper.RepositoryProvider
 import com.leebeebeom.clothinghelper.data.UserRepositoryTestUtil
+import com.leebeebeom.clothinghelper.data.wait
 import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.GetSignInLoadingStateUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -36,12 +38,15 @@ class SignInNavViewModelTest {
 
     @Test
     fun signInNavUiStateTest() = runTest(dispatcher) {
-        backgroundScope.launch(dispatcher) { signInNavViewModel.uiState.collect {} }
+        val uiState = signInNavViewModel.uiState
+        backgroundScope.launch(dispatcher) { uiState.collectLatest {} }
 
         signInNavViewModel.setGoogleButtonEnable(false)
-        assert(!signInNavViewModel.uiState.value.googleButtonEnabled)
+        wait()
+        assert(!uiState.value.googleButtonEnabled)
 
         signInNavViewModel.setGoogleButtonEnable(true)
-        assert(signInNavViewModel.uiState.value.googleButtonEnabled)
+        wait()
+        assert(uiState.value.googleButtonEnabled)
     }
 }

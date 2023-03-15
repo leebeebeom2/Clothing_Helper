@@ -14,6 +14,7 @@ import com.leebeebeom.clothinghelper.di.AppScope
 import com.leebeebeom.clothinghelper.di.DispatcherIO
 import com.leebeebeom.clothinghelper.domain.model.User
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
+import com.leebeebeom.clothinghelper.util.buildConfigDelay
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
@@ -68,7 +69,10 @@ class UserRepositoryImpl @Inject constructor(
      * @throws FirebaseAuthException InvalidEmail, NotFoundUser, WrongPassword 등
      */
     override suspend fun signIn(email: String, password: String) =
-        withContext { auth.signInWithEmailAndPassword(email, password).await() }
+        withContext {
+            buildConfigDelay()
+            auth.signInWithEmailAndPassword(email, password).await()
+        }
 
     /**
      * @throws FirebaseNetworkException 인터넷에 연결되지 않았을 경우
@@ -78,6 +82,8 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun signUp(email: String, password: String, name: String) =
         withContext(appScope.coroutineContext) {
             withContext {
+                buildConfigDelay()
+
                 val user = auth.createUserWithEmailAndPassword(email, password).await().user!!
 
                 val request = userProfileChangeRequest { displayName = name }
@@ -94,6 +100,7 @@ class UserRepositoryImpl @Inject constructor(
      * @throws FirebaseAuthException InvalidEmail, NotFoundUser 등
      */
     override suspend fun sendResetPasswordEmail(email: String) = withContext {
+        buildConfigDelay()
         auth.sendPasswordResetEmail(email).await()
         loadingOff()
     }

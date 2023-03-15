@@ -10,12 +10,14 @@ import com.leebeebeom.clothinghelper.EMAIL
 import com.leebeebeom.clothinghelper.PASSWORD
 import com.leebeebeom.clothinghelper.R.string.*
 import com.leebeebeom.clothinghelper.activityRule
-import com.leebeebeom.clothinghelper.ui.MainActivityDestinations.MainGraphDestination
-import com.leebeebeom.clothinghelper.ui.MainActivityDestinations.SignInGraphDestination
+import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.MainGraphRoute
+import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.SignInGraphRoute
 import com.leebeebeom.clothinghelper.ui.components.CENTER_DOT_PROGRESS_INDICATOR_TAG
-import com.leebeebeom.clothinghelper.ui.main.MAIN_NAV_TAG
+import com.leebeebeom.clothinghelper.ui.main.MainNavTag
 import com.leebeebeom.clothinghelper.ui.main.drawer.SETTING_ICON
 import com.leebeebeom.clothinghelper.ui.signin.ui.SignInNavTag
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -27,18 +29,19 @@ class MainActivitySignInStartTest {
 
     @Before
     fun init() {
-        FirebaseAuth.getInstance().signInWithEmailAndPassword(EMAIL, PASSWORD)
+        runBlocking { FirebaseAuth.getInstance().signInWithEmailAndPassword(EMAIL, PASSWORD).await() }
         customTestRule.setContent { MainActivityScreen() }
     }
 
     // 로그인 상태로 앱 실행 시 로그인 화면 안 보이는 지
     // TODO 구글은 따로 테스트 필요
     @Test
-    fun doesSeeSignInScreenTest() = customTestRule.waitMainNav()
+    fun mainScreenTest() {
+        customTestRule.getNodeWithTag(SignInNavTag).notExist()
+    }
 
     @Test
     fun signOutTest() {
-        // 로그아웃 시 로그인 스크린 이동
         customTestRule.uiSignOut()
         customTestRule.waitSignInNav()
     }
@@ -60,36 +63,44 @@ class MainActivitySignOutStartTest {
     }
 
     @Test
-    fun signInTest() = customTestRule.uiSignIn()
+    fun signInScreenTest() {
+        customTestRule.getNodeWithTag(SignInNavTag).exist()
+    }
+
+    @Test
+    fun signInTest() {
+        customTestRule.uiSignIn()
+        customTestRule.waitMainNav()
+    }
 
     @Test
     fun backStackTest() {
+        fun isBackStackExist(route: String): Boolean {
+            return try {
+                navController.getBackStackEntry(route)
+                true
+            } catch (e: Exception) {
+                false
+            }
+        }
         // 로그인, 로그아웃 시 백스택은 하나여야함.
-        notExistMainBackStack()
+        assert(!isBackStackExist(MainGraphRoute))
 
         customTestRule.uiSignIn()
-        notExistSignInBackStack()
+        customTestRule.waitMainNav()
+        assert(!isBackStackExist(SignInGraphRoute))
 
         customTestRule.uiSignOut()
-        notExistMainBackStack()
+        customTestRule.waitSignInNav()
+        assert(!isBackStackExist(MainGraphRoute))
 
         repeat(2) {
             customTestRule.uiSignIn()
+            customTestRule.waitMainNav()
             customTestRule.uiSignOut()
+            customTestRule.waitSignInNav()
         }
-        notExistMainBackStack()
-    }
-
-    private fun notExistSignInBackStack() = checkBackStack(SignInGraphDestination)
-    private fun notExistMainBackStack() = checkBackStack(MainGraphDestination)
-
-    private fun checkBackStack(route: String) {
-        try {
-            navController.getBackStackEntry(route)
-            assert(false)
-        } catch (e: IllegalArgumentException) {
-            assert(true)
-        }
+        assert(!isBackStackExist(MainGraphRoute))
     }
 }
 
@@ -98,15 +109,13 @@ private fun CustomTestRule.uiSignIn() {
     getNodeWithStringRes(password).input(PASSWORD, invisible = true)
     getNodeWithStringRes(sign_in).click()
     getNodeWithTag(CENTER_DOT_PROGRESS_INDICATOR_TAG).exist(false)
-    waitMainNav()
 }
 
 private fun CustomTestRule.uiSignOut() {
     root.performTouchInput { swipeRight() }
     getNodeWithDescription(SETTING_ICON).click()
     getNodeWithStringRes(sign_out).click()
-    waitSignInNav()
 }
 
 private fun CustomTestRule.waitSignInNav() = waitTagExist(tag = SignInNavTag)
-private fun CustomTestRule.waitMainNav() = waitTagExist(tag = MAIN_NAV_TAG)
+private fun CustomTestRule.waitMainNav() = waitTagExist(tag = MainNavTag)

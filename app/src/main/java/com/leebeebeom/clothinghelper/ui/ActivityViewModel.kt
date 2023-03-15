@@ -27,7 +27,7 @@ class ActivityViewModel @Inject constructor(
 
     private val toastTestList = savedStateHandle.getStateFlow(ToastTextKey, emptyList<Int>())
     private val user =
-        getUserUseCase.getUser(onFail = { showToast(R.string.error_fail_get_user_info_by_unknow_error) })
+        getUserUseCase.getUser(onFail = { addToastTextAtLast(R.string.error_fail_get_user_info_by_unknow_error) })
 
     val activityUiState = combine(
         flow = toastTestList,
@@ -39,13 +39,13 @@ class ActivityViewModel @Inject constructor(
         initialValue = ActivityUiState(user = getUserUseCase.getUserImmediate())
     )
 
-    fun showToast(toastText: Int) {
+    fun addToastTextAtLast(toastText: Int) {
         val mutableToastTextList = toastTestList.value.toMutableList()
         mutableToastTextList.add(toastText)
         savedStateHandle[ToastTextKey] = mutableToastTextList
     }
 
-    fun toastShown() {
+    fun removeFirstToastText() {
         val mutableToastTextList = toastTestList.value.toMutableList()
         mutableToastTextList.removeAt(0)
         savedStateHandle[ToastTextKey] = mutableToastTextList

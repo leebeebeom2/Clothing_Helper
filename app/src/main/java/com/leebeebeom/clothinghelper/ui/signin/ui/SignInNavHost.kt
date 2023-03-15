@@ -10,7 +10,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.leebeebeom.clothinghelper.ui.components.BlockBacKPressWhenLoading
 import com.leebeebeom.clothinghelper.ui.components.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelper.ui.signin.ui.SignInDestinations.ResetPasswordRoute
 import com.leebeebeom.clothinghelper.ui.signin.ui.SignInDestinations.SignInNavRoute
@@ -58,7 +57,6 @@ fun SignInNavHost(
     }
 
     CenterDotProgressIndicator(show = { uiState.isLoading })
-    BlockBacKPressWhenLoading { uiState.isLoading }
 }
 
 private fun NavHostController.navigateToSignUp() = navigate(SignUpRoute)

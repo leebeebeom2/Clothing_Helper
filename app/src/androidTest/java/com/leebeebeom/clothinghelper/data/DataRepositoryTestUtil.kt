@@ -21,7 +21,7 @@ class DataRepositoryTestUtil<T : BaseModel, U : BaseDataRepository<T>>(
     val repository: U,
     val userRepositoryTestUtil: UserRepositoryTestUtil = UserRepositoryTestUtil(repositoryProvider = repositoryProvider),
 ) {
-    val dispatcher = repositoryProvider.dispatcher
+    private val dispatcher = repositoryProvider.dispatcher
 
     suspend fun allDataCollect(backgroundScope: CoroutineScope) =
         backgroundScope.launch(dispatcher) { repository.allData.collect() }

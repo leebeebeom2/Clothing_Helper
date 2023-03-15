@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuthException
+import com.leebeebeom.clothinghelper.BuildConfig
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.ERROR_EMAIL_ALREADY_IN_USE
 import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.ERROR_INVALID_EMAIL
@@ -40,7 +41,7 @@ class FirebaseAuthErrorUseCase @Inject constructor() {
             is FirebaseNetworkException -> showToast(R.string.network_error)
             else -> {
                 showToast(R.string.unknown_error)
-                Log.e(Tag, "firebaseAuthError: ", exception)
+                if (BuildConfig.DEBUG) Log.e(Tag, "firebaseAuthError: ", exception)
             }
         }
     }

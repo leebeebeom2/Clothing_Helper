@@ -69,7 +69,7 @@ class SignInNavViewModel @Inject constructor(
 
     private fun googleSignIn(activityResult: ActivityResult, showToast: ShowToast) {
         val handler = CoroutineExceptionHandler { _, throwable ->
-            firebaseAuthErrorUseCase.firebaseAuthError(exception = throwable, showToast = showToast)
+            firebaseAuthErrorUseCase.firebaseAuthError(throwable = throwable, showToast = showToast)
             savedStateHandle[GoogleButtonEnabledKey] = true
         }
 

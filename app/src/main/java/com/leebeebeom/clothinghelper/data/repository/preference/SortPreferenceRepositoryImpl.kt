@@ -21,34 +21,34 @@ abstract class SortPreferenceRepositoryImpl(
     override val sort = dataStore.data.catch {
         if (it is IOException) emit(emptyPreferences()) else throw it
     }.map {
-        val sort = it[SortPreferenceKeys.SORT] ?: Sort.NAME.name
-        val order = it[SortPreferenceKeys.ORDER] ?: Order.ASCENDING.name
+        val sort = it[SortPreferenceKeys.sort] ?: Sort.Name.name
+        val order = it[SortPreferenceKeys.order] ?: Order.Ascending.name
         SortPreferences(sort = enumValueOf(sort), order = enumValueOf(order))
     }.shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
     override suspend fun changeSort(sort: Sort) {
-        dataStore.edit { it[SortPreferenceKeys.SORT] = sort.name }
+        dataStore.edit { it[SortPreferenceKeys.sort] = sort.name }
     }
 
     override suspend fun changeOrder(order: Order) {
-        dataStore.edit { it[SortPreferenceKeys.ORDER] = order.name }
+        dataStore.edit { it[SortPreferenceKeys.order] = order.name }
     }
 
     private object SortPreferenceKeys {
-        val SORT = stringPreferencesKey("sort")
-        val ORDER = stringPreferencesKey("order")
+        val sort = stringPreferencesKey("sort")
+        val order = stringPreferencesKey("order")
     }
 }
 
 enum class Sort {
-    NAME, CREATE, EDIT
+    Name, Create, Edit
 }
 
 enum class Order {
-    ASCENDING, DESCENDING
+    Ascending, Descending
 }
 
 data class SortPreferences(
-    val sort: Sort = Sort.NAME,
-    val order: Order = Order.ASCENDING,
+    val sort: Sort = Sort.Name,
+    val order: Order = Order.Ascending,
 )

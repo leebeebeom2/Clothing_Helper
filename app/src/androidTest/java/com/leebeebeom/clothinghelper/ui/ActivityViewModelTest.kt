@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.RepositoryProvider
 import com.leebeebeom.clothinghelper.data.UserRepositoryTestUtil
-import com.leebeebeom.clothinghelper.data.signInEmail
+import com.leebeebeom.clothinghelper.data.SignInEmail
 import com.leebeebeom.clothinghelper.data.wait
 import com.leebeebeom.clothinghelper.domain.usecase.user.GetUserUseCase
 import kotlinx.coroutines.*
@@ -42,7 +42,7 @@ class ActivityViewModelTest {
         userRepositoryTestUtil.signIn()
         advanceUntilIdle()
         assert(uiState.value.user != null)
-        assert(uiState.value.user!!.email == signInEmail)
+        assert(uiState.value.user!!.email == SignInEmail)
 
         userRepositoryTestUtil.signOut()
         advanceUntilIdle()

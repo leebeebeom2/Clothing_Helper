@@ -57,9 +57,9 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
         }
         is DataResult.Fail -> dataResult
     }
-    
+
     override suspend fun add(data: T) {
-        // push override 때문에 editDate 개판 됨
+        // push override 때문에 editDate 변경 됨
         val dataWithKey = data.addKey(key = getKey()) as T
 
         super.push(dataWithKey)

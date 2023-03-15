@@ -23,20 +23,18 @@ const val repositoryTestEmail = "repositorytest@a.com"
 @OptIn(ExperimentalCoroutinesApi::class)
 class BaseRepositoryChildTest {
     private lateinit var subCategoryTestUtil: DataRepositoryTestUtil<SubCategory, SubCategoryRepository>
-    private lateinit var subCategoryPreferencesRepository: SortPreferenceRepository
-    private lateinit var folderPreferencesRepository: SortPreferenceRepository
     private lateinit var folderTestUtil: DataRepositoryTestUtil<Folder, FolderRepository>
     private lateinit var todoTestUtil: DataRepositoryTestUtil<Todo, TodoRepository>
+
     private val dispatcher = StandardTestDispatcher()
     private val repositoryProvider = RepositoryProvider(dispatcher)
     private val userRepositoryTestUtil = UserRepositoryTestUtil(repositoryProvider)
+    private val subCategoryPreferencesRepository =
+        repositoryProvider.createSubCategoryPreferenceRepository()
+    private val folderPreferencesRepository = repositoryProvider.createFolderPreferenceRepository()
 
     @Before
     fun init() {
-        subCategoryPreferencesRepository =
-            repositoryProvider.createSubCategoryPreferenceRepository()
-        folderPreferencesRepository = repositoryProvider.createFolderPreferenceRepository()
-
         subCategoryTestUtil = DataRepositoryTestUtil(
             repositoryProvider = repositoryProvider,
             repository = repositoryProvider.createSubCategoryRepository(
@@ -66,19 +64,20 @@ class BaseRepositoryChildTest {
 
         repositoryCrudTest(testUtil = subCategoryTestUtil, data = subCategory, addAssert = {
             assert(it.name == subCategory.name)
-        }, editData = { it.copy(name = "subCategory edit") }, editAssert = { old, new ->
+        }, editData = { it.copy(name = "subCategory edit") }) { old, new ->
             assert(old.key == new.key)
             assert(old.mainCategoryType == new.mainCategoryType)
             assert(old.createDate == new.createDate)
             assert(old.editDate != new.editDate)
+            assert(old.editDate < new.editDate)
             assert(new.name == "subCategory edit")
-        }, loadAssert = { origin, loaded -> assert(origin == loaded) })
+        }
 
         val folder = Folder(name = "folder test")
 
         repositoryCrudTest(testUtil = folderTestUtil, data = folder, addAssert = {
             assert(it.name == folder.name)
-        }, editData = { it.copy(name = "folder edit test") }, editAssert = { old, new ->
+        }, editData = { it.copy(name = "folder edit test") }) { old, new ->
             assert(new.name == "folder edit test")
             assert(old.key == new.key)
             assert(old.createDate == new.createDate)
@@ -86,7 +85,7 @@ class BaseRepositoryChildTest {
             assert(old.mainCategoryType == new.mainCategoryType)
             assert(old.parentKey == new.parentKey)
             assert(old.subCategoryKey == new.subCategoryKey)
-        }, loadAssert = { origin, loaded -> assert(origin == loaded) })
+        }
 
         val todo = Todo(text = "todo")
 
@@ -97,14 +96,13 @@ class BaseRepositoryChildTest {
                 assert(it.done == todo.done)
                 assert(it.order == todo.order)
             },
-            editData = { it.copy(text = "new todo", done = true, order = 1) },
-            editAssert = { old, new ->
-                assert(old.key == new.key)
-                assert(new.done)
-                assert(new.order == 1)
-                assert(new.text == "new todo")
-            },
-            loadAssert = { origin, loaded -> assert(origin == loaded) })
+            editData = { it.copy(text = "new todo", done = true, order = 1) }
+        ) { old, new ->
+            assert(old.key == new.key)
+            assert(new.done)
+            assert(new.order == 1)
+            assert(new.text == "new todo")
+        }
     }
 
     @Test
@@ -158,14 +156,11 @@ class BaseRepositoryChildTest {
     fun containerSortTest() = runTest(dispatcher) {
         var createdData = System.currentTimeMillis()
 
-        val subCategories =
-            List(9) {
-                SubCategory(
-                    name = "$it",
-                    createDate = createdData++,
-                    editDate = createdData++
-                )
-            }
+        val subCategories = List(9) {
+            SubCategory(
+                name = "$it", createDate = createdData++, editDate = createdData++
+            )
+        }
         containerSortTest(
             testUtil = subCategoryTestUtil,
             preferencesRepository = subCategoryPreferencesRepository,
@@ -180,6 +175,17 @@ class BaseRepositoryChildTest {
             preferencesRepository = folderPreferencesRepository,
             data = folders
         )
+
+        val todos = List(9) { Todo(text = "$it", order = it) }
+        todoTestUtil.allDataCollect(backgroundScope)
+        advanceUntilIdle()
+        wait()
+
+        todos.shuffled().forEach { todoTestUtil.add(it) }
+        advanceUntilIdle()
+        wait()
+        assert(todoTestUtil.getAllData().map { it.text } == todos.map { it.text })
+        todoTestUtil.removeAllData()
     }
 }
 
@@ -190,7 +196,6 @@ private suspend fun <T : BaseModel, U : BaseDataRepository<T>> TestScope.reposit
     addAssert: (T) -> Unit,
     editData: (oldData: T) -> T,
     editAssert: (old: T, new: T) -> Unit,
-    loadAssert: (origin: T, loaded: T) -> Unit,
 ) {
     val userRepositoryTestUtil = testUtil.userRepositoryTestUtil
 
@@ -224,7 +229,7 @@ private suspend fun <T : BaseModel, U : BaseDataRepository<T>> TestScope.reposit
     userRepositoryTestUtil.signIn()
     advanceUntilIdle()
     wait()
-    loadAssert(editedData, testUtil.getFirstData())
+    assert(editedData == testUtil.getFirstData())
 
     testUtil.removeAllData()
 }
@@ -239,6 +244,8 @@ private suspend fun <T : BaseModel> TestScope.repositoryOrderTest(
 
     testUtil.userRepositoryTestUtil.signIn()
     advanceUntilIdle()
+    wait()
+    assert(testUtil.getAllData().isEmpty())
 
     initDataList.shuffled().forEach { testUtil.add(it) }
     advanceUntilIdle()
@@ -255,10 +262,10 @@ private suspend fun TestScope.repositoryLoadingTest(testUtil: DataRepositoryTest
     userRepositoryTestUtil.signOut()
     wait()
 
-    Log.d(dataLoadingTag, "allDataCollect start")
-    testUtil.allDataCollect(backgroundScope = backgroundScope)
     Log.d(dataLoadingTag, "loadingCollect start")
     testUtil.loadingCollect(backgroundScope = backgroundScope)
+    Log.d(dataLoadingTag, "allDataCollect start")
+    testUtil.allDataCollect(backgroundScope = backgroundScope)
     wait()
 
     Log.d(dataLoadingTag, "sign in start")
@@ -338,16 +345,13 @@ suspend fun <T : BaseContainerModel, U : BaseDataRepository<T>> TestScope.contai
     val userRepositoryTestUtil = testUtil.userRepositoryTestUtil
 
     suspend fun sortInit() {
-        preferencesRepository.changeSort(Sort.NAME)
-        preferencesRepository.changeOrder(Order.ASCENDING)
+        preferencesRepository.changeSort(Sort.Name)
+        preferencesRepository.changeOrder(Order.Ascending)
     }
 
     sortInit()
 
     userRepositoryTestUtil.signIn()
-    advanceUntilIdle()
-    wait()
-    testUtil.removeAllData()
     advanceUntilIdle()
     wait()
 
@@ -356,7 +360,7 @@ suspend fun <T : BaseContainerModel, U : BaseDataRepository<T>> TestScope.contai
     wait()
     assert(testUtil.getAllData().isEmpty())
 
-    data.forEach { testUtil.add(it) } // add data list
+    data.forEach { testUtil.add(it) }
     advanceUntilIdle()
     wait()
     assert(testUtil.getAllData().size == data.size)
@@ -368,42 +372,39 @@ suspend fun <T : BaseContainerModel, U : BaseDataRepository<T>> TestScope.contai
 
     assertSort(firstItemName = "0", lastItemName = "8") // Sort: Name, Order: Ascending
 
-    preferencesRepository.changeOrder(Order.DESCENDING)
+    preferencesRepository.changeOrder(Order.Descending)
     advanceUntilIdle()
     assertSort(firstItemName = "8", lastItemName = "0") // Sort: Name, Order: Descending
 
-    preferencesRepository.changeOrder(Order.ASCENDING)
+    preferencesRepository.changeOrder(Order.Ascending)
     advanceUntilIdle()
     assertSort(firstItemName = "0", lastItemName = "8") // Sort: Name, Order: Ascending
 
-    preferencesRepository.changeSort(Sort.CREATE)
+    preferencesRepository.changeSort(Sort.Create)
     advanceUntilIdle()
     assertSort(firstItemName = "0", lastItemName = "8") // Sort: CREATE, Order: Ascending
 
-    preferencesRepository.changeOrder(Order.DESCENDING)
+    preferencesRepository.changeOrder(Order.Descending)
     advanceUntilIdle()
     assertSort(firstItemName = "8", lastItemName = "0") // Sort: CREATE, Order: Descending
 
-    preferencesRepository.changeOrder(Order.ASCENDING)
+    preferencesRepository.changeOrder(Order.Ascending)
     advanceUntilIdle()
     assertSort(firstItemName = "0", lastItemName = "8") // Sort: CREATE, Order: Ascending
 
-    preferencesRepository.changeSort(Sort.EDIT)
+    preferencesRepository.changeSort(Sort.Edit)
     advanceUntilIdle()
     assertSort(firstItemName = "0", lastItemName = "8") // Sort: EDIT, Order: Ascending
 
-    preferencesRepository.changeOrder(Order.DESCENDING)
+    preferencesRepository.changeOrder(Order.Descending)
     advanceUntilIdle()
-    testUtil.getAllData().forEach {
-        println("순서 : ${it}")
-    }
-//    assertSort(firstItemName = "8", lastItemName = "0")  // Sort: EDIT, Order: Descending
+    assertSort(firstItemName = "8", lastItemName = "0")  // Sort: EDIT, Order: Descending
 
-    preferencesRepository.changeOrder(Order.ASCENDING)
+    preferencesRepository.changeOrder(Order.Ascending)
     advanceUntilIdle()
     assertSort(firstItemName = "0", lastItemName = "8")  // Sort: EDIT, Order: Ascending
 
-    sortInit() // init
+    sortInit()
 
     testUtil.removeAllData()
 }

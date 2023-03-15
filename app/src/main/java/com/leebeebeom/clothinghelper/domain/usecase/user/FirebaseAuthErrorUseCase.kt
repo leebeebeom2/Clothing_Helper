@@ -21,14 +21,14 @@ object FirebaseAuthErrorCode {
 
 class FirebaseAuthErrorUseCase @Inject constructor() {
     fun firebaseAuthError(
-        exception: Throwable,
+        throwable: Throwable,
         updateEmailError: (error: Int) -> Unit = {},
         updatePasswordError: (error: Int) -> Unit = {},
         showToast: ShowToast,
     ) {
-        when (exception) {
+        when (throwable) {
             is FirebaseAuthException -> {
-                when (exception.errorCode) {
+                when (throwable.errorCode) {
                     ERROR_INVALID_EMAIL -> updateEmailError(R.string.error_invalid_email)
                     ERROR_EMAIL_ALREADY_IN_USE -> updateEmailError(R.string.error_email_already_in_use)
                     ERROR_USER_NOT_FOUND -> updateEmailError(R.string.error_user_not_found)
@@ -39,7 +39,7 @@ class FirebaseAuthErrorUseCase @Inject constructor() {
             is FirebaseNetworkException -> showToast(R.string.network_error)
             else -> {
                 showToast(R.string.unknown_error)
-                buildConfigLog(site = "firebaseAuthError", throwable = exception)
+                buildConfigLog(site = "firebaseAuthError", throwable = throwable)
             }
         }
     }

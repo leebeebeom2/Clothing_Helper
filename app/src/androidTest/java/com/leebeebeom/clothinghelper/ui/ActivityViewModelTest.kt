@@ -23,9 +23,9 @@ class ActivityViewModelTest {
 
     @Before
     fun init() {
-        val repositoryProvider = RepositoryProvider(dispatcher)
-        userRepositoryTestUtil = UserRepositoryTestUtil(repositoryProvider)
-        val getUserUseCase = GetUserUseCase(userRepositoryTestUtil.userRepository)
+        val repositoryProvider = RepositoryProvider(dispatcher = dispatcher)
+        userRepositoryTestUtil = UserRepositoryTestUtil(repositoryProvider = repositoryProvider)
+        val getUserUseCase = GetUserUseCase(userRepository = userRepositoryTestUtil.userRepository)
         activityViewModel = ActivityViewModel(
             getUserUseCase = getUserUseCase,
             savedStateHandle = SavedStateHandle(mapOf(ToastTextKey to emptyList<Int>()))
@@ -50,14 +50,14 @@ class ActivityViewModelTest {
         assert(uiState.value.user == null)
 
         val toastText = R.string.sign_in_complete
-        activityViewModel.showToast(toastText = toastText)
+        activityViewModel.addToastTextAtLast(toastText = toastText)
         advanceUntilIdle()
         wait()
         assert(uiState.value.user == null)
         assert(uiState.value.toastText.isNotEmpty())
         assert(uiState.value.toastText.first() == toastText)
 
-        activityViewModel.toastShown()
+        activityViewModel.removeFirstToastText()
         advanceUntilIdle()
         wait()
         assert(uiState.value.user == null)

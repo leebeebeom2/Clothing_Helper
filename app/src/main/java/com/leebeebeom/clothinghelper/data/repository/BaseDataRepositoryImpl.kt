@@ -48,9 +48,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
                     trySend(element = DataResult.Success(lastCachedData))
                 }.onFailure {
                     trySend(
-                        element = DataResult.Fail(
-                            lastCachedData = lastCachedData, throwable = it
-                        )
+                        element = DataResult.Fail(lastCachedData = lastCachedData, throwable = it)
                     )
                 }
             }
@@ -83,7 +81,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
                         ref!!.removeEventListener(dataCallback!!)
                         ref = null
                     }
-                    trySend(DataResult.Success(emptyList()))
+                    trySend(element = DataResult.Success(emptyList()))
                 }
             }
         }
@@ -103,20 +101,17 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     )
 
     @Suppress("UNCHECKED_CAST")
-    override suspend fun add(data: T) = withContext {
+    override suspend fun add(data: T) {
         val dataWithKey = data.addKey(key = getKey()) as T
 
         push(data = dataWithKey)
     }
 
     override suspend fun push(data: T) {
-        withContext { ref!!.child(data.key).setValue(data) }
+        withContext(dispatcher) { ref!!.child(data.key).setValue(data) }
     }
 
-    private suspend fun withContext(task: suspend () -> Unit) = withContext(dispatcher) { task() }
-
     protected fun getKey() = ref!!.push().key!!
-
 }
 
 sealed class DataResult<T> {

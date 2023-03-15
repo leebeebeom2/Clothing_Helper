@@ -34,7 +34,10 @@ class ActivityViewModel @Inject constructor(
         flow2 = user,
     ) { toastText, userResult ->
         ActivityUiState(toastText = toastText, user = userResult)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ActivityUiState())
+    }.stateIn(
+        scope = viewModelScope, started = SharingStarted.WhileSubscribed(5000),
+        initialValue = ActivityUiState(user = getUserUseCase.getUserImmediate())
+    )
 
     fun showToast(toastText: Int) {
         val mutableToastTextList = toastTestList.value.toMutableList()

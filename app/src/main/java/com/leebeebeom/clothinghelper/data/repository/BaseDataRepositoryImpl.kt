@@ -92,6 +92,8 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
             ref?.keepSynced(false)
             ref?.removeEventListener(dataCallback!!)
             ref = null
+            dataCallback = null
+
         }
     }.onEach {
         loadingOff()

@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -18,6 +19,14 @@ class SortPreferencesRepositoryTest {
     private val folderPreferencesRepository = repositoryProvider.createFolderPreferenceRepository()
     private val subCategoryPreferencesRepository =
         repositoryProvider.createSubCategoryPreferenceRepository()
+
+    @After
+    fun init() = runTest(dispatcher) {
+        folderPreferencesRepository.changeSort(Sort.Name)
+        folderPreferencesRepository.changeOrder(Order.Ascending)
+        subCategoryPreferencesRepository.changeSort(Sort.Name)
+        subCategoryPreferencesRepository.changeOrder(Order.Ascending)
+    }
 
     @Test
     fun sotFlowTest() = runTest(dispatcher) {

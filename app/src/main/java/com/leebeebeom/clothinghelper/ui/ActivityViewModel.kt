@@ -25,35 +25,31 @@ class ActivityViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val toastTestList = savedStateHandle.getStateFlow(ToastTextKey, emptyList<Int>())
-    private val user =
-        getUserUseCase.getUser(onFail = { addToastTextAtLast(R.string.error_fail_get_user_info_by_unknow_error) })
-
     val activityUiState = combine(
-        flow = toastTestList,
-        flow2 = user,
-    ) { toastText, userResult ->
-        ActivityUiState(toastText = toastText, user = userResult)
+        flow = savedStateHandle.getStateFlow(ToastTextKey, emptyList<Int>()),
+        flow2 = getUserUseCase.getUser(onFail = { addToastTextAtLast(R.string.error_fail_get_user_info_by_unknow_error) }),
+    ) { toastTexts, userResult ->
+        ActivityUiState(toastTexts = toastTexts, user = userResult)
     }.stateIn(
         scope = viewModelScope, started = SharingStarted.WhileSubscribed(5000),
         initialValue = ActivityUiState(user = getUserUseCase.getUserImmediate())
     )
 
     fun addToastTextAtLast(toastText: Int) {
-        val mutableToastTextList = toastTestList.value.toMutableList()
+        val mutableToastTextList = activityUiState.value.toastTexts.toMutableList()
         mutableToastTextList.add(toastText)
         savedStateHandle[ToastTextKey] = mutableToastTextList
     }
 
     fun removeFirstToastText() {
-        val mutableToastTextList = toastTestList.value.toMutableList()
+        val mutableToastTextList = activityUiState.value.toastTexts.toMutableList()
         mutableToastTextList.removeAt(0)
         savedStateHandle[ToastTextKey] = mutableToastTextList
     }
 }
 
 data class ActivityUiState(
-    val toastText: List<Int> = emptyList(),
+    val toastTexts: List<Int> = emptyList(),
     val user: User? = null,
 )
 

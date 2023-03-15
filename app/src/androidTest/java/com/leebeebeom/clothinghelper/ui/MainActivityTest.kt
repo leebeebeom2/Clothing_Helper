@@ -6,10 +6,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.leebeebeom.clothinghelper.CustomTestRule
-import com.leebeebeom.clothinghelper.EMAIL
-import com.leebeebeom.clothinghelper.PASSWORD
 import com.leebeebeom.clothinghelper.R.string.*
 import com.leebeebeom.clothinghelper.activityRule
+import com.leebeebeom.clothinghelper.data.SignInEmail
+import com.leebeebeom.clothinghelper.data.SignInPassword
 import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.MainGraphRoute
 import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.SignInGraphRoute
 import com.leebeebeom.clothinghelper.ui.components.CENTER_DOT_PROGRESS_INDICATOR_TAG
@@ -29,7 +29,10 @@ class MainActivitySignInStartTest {
 
     @Before
     fun init() {
-        runBlocking { FirebaseAuth.getInstance().signInWithEmailAndPassword(EMAIL, PASSWORD).await() }
+        runBlocking {
+            FirebaseAuth.getInstance().signInWithEmailAndPassword(SignInEmail, SignInPassword)
+                .await()
+        }
         customTestRule.setContent { MainActivityScreen() }
     }
 
@@ -105,8 +108,8 @@ class MainActivitySignOutStartTest {
 }
 
 private fun CustomTestRule.uiSignIn() {
-    getNodeWithStringRes(email).input(EMAIL)
-    getNodeWithStringRes(password).input(PASSWORD, invisible = true)
+    getNodeWithStringRes(email).input(SignInEmail)
+    getNodeWithStringRes(password).input(SignInPassword, invisible = true)
     getNodeWithStringRes(sign_in).click()
     getNodeWithTag(CENTER_DOT_PROGRESS_INDICATOR_TAG).exist(false)
 }

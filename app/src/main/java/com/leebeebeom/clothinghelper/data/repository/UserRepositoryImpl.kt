@@ -54,6 +54,8 @@ class UserRepositoryImpl @Inject constructor(
         scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
     )
 
+    override fun getUserImmediate() = auth.currentUser.toUserModel()
+
     /**
      * @throws FirebaseNetworkException 인터넷에 연결되지 않았을 경우
      */

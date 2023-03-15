@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.SharedFlow
 
 interface UserRepository : LoadingStateProvider {
     val user: SharedFlow<Result<User?>>
-
+    fun getUserImmediate(): User?
     suspend fun googleSignIn(credential: AuthCredential)
 
     /**

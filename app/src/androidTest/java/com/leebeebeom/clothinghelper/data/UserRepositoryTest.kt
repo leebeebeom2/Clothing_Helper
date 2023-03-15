@@ -187,11 +187,11 @@ class UserRepositoryTest {
 
     @Test
     fun userRepositoryLoadingTest() = runTest(dispatcher) {
-        // check the logCat
-        Log.d(userLoadingTag, "userCollect start")
-        userRepositoryTestUtil.userCollect(backgroundScope)
+        // check the logcat
         Log.d(userLoadingTag, "loadingCollect start")
         userRepositoryTestUtil.loadingCollect(backgroundScope)
+        Log.d(userLoadingTag, "userCollect start")
+        userRepositoryTestUtil.userCollect(backgroundScope)
 
         Log.d(userLoadingTag, "sign in start")
         userRepositoryTestUtil.signIn()

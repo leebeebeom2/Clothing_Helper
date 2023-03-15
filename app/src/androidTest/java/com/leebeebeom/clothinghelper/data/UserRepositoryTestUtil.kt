@@ -26,14 +26,14 @@ class UserRepositoryTestUtil(repositoryProvider: RepositoryProvider) {
     }
 
     suspend fun signIn(
-        email: String = signInEmail,
-        password: String = signInPassword,
+        email: String = SignInEmail,
+        password: String = SignInPassword,
     ) = userRepository.signIn(email = email, password = password)
 
     suspend fun signUp(
-        email: String = signUpEmail,
-        password: String = signInPassword,
-        name: String = signUpName,
+        email: String = SignUpEmail,
+        password: String = SignInPassword,
+        name: String = SignUpName,
     ) = userRepository.signUp(email = email, password = password, name = name)
 
     fun signOut() = userRepository.signOut()
@@ -42,7 +42,7 @@ class UserRepositoryTestUtil(repositoryProvider: RepositoryProvider) {
         FirebaseAuth.getInstance().currentUser!!.delete().await()
     }
 
-    suspend fun sendResetPasswordEmail(email: String = sendPasswordEmail) =
+    suspend fun sendResetPasswordEmail(email: String = SendPasswordEmail) =
         userRepository.sendResetPasswordEmail(email = email)
 
     suspend fun getUser() = userRepository.user.first().getOrThrow()

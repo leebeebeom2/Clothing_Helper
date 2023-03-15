@@ -21,14 +21,14 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-const val signInEmail = "1@a.com"
-const val signUpEmail = "2@a.com"
-const val invalidEmail = "invalidemail"
-const val notFoundEmail = "notfoundemail@a.com"
-const val signInPassword = "111111"
-const val wrongPassword = "123456"
-const val signUpName = "test"
-const val sendPasswordEmail = "boole92@naver.com"
+const val SignInEmail = "1@a.com"
+const val SignUpEmail = "2@a.com"
+const val InvalidEmail = "invalidemail"
+const val NotFoundEmail = "notfoundemail@a.com"
+const val SignInPassword = "111111"
+const val WrongPassword = "123456"
+const val SignUpName = "test"
+const val SendPasswordEmail = "boole92@naver.com"
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class UserRepositoryTest {
@@ -72,7 +72,7 @@ class UserRepositoryTest {
 
         failRunCatching(errorCode = ERROR_INVALID_EMAIL) {
             userRepositoryTestUtil.signIn( // invalidEmail
-                email = invalidEmail
+                email = InvalidEmail
             )
         }
         advanceUntilIdle()
@@ -80,7 +80,7 @@ class UserRepositoryTest {
 
         failRunCatching(errorCode = ERROR_USER_NOT_FOUND) {
             userRepositoryTestUtil.signIn( // notFoundEmail
-                email = notFoundEmail
+                email = NotFoundEmail
             )
         }
         advanceUntilIdle()
@@ -88,7 +88,7 @@ class UserRepositoryTest {
 
         failRunCatching(errorCode = ERROR_WRONG_PASSWORD) {
             userRepositoryTestUtil.signIn( // WrongPassword
-                password = wrongPassword
+                password = WrongPassword
             )
         }
         advanceUntilIdle()
@@ -99,7 +99,7 @@ class UserRepositoryTest {
         }
         advanceUntilIdle()
         assert(getUser() != null)
-        assert(getUser()?.email == signInEmail)
+        assert(getUser()?.email == SignInEmail)
     }
 
     @Test
@@ -110,7 +110,7 @@ class UserRepositoryTest {
 
         failRunCatching(errorCode = ERROR_INVALID_EMAIL) {
             userRepositoryTestUtil.signUp( // invalidEmail
-                email = invalidEmail
+                email = InvalidEmail
             )
         }
         advanceUntilIdle()
@@ -118,7 +118,7 @@ class UserRepositoryTest {
 
         failRunCatching(errorCode = ERROR_EMAIL_ALREADY_IN_USE) {
             userRepositoryTestUtil.signUp( // EmailAlreadyInUse
-                email = signInEmail
+                email = SignInEmail
             )
         }
         advanceUntilIdle()
@@ -129,8 +129,8 @@ class UserRepositoryTest {
         }
         advanceUntilIdle()
         assert(getUser() != null)
-        assert(getUser()?.email == signUpEmail)
-        assert(getUser()?.name == signUpName)
+        assert(getUser()?.email == SignUpEmail)
+        assert(getUser()?.name == SignUpName)
 
         userRepositoryTestUtil.deleteUser()
     }
@@ -141,14 +141,14 @@ class UserRepositoryTest {
 
         failRunCatching(errorCode = ERROR_INVALID_EMAIL) {
             userRepositoryTestUtil.sendResetPasswordEmail( // invalidEmail
-                email = invalidEmail
+                email = InvalidEmail
             )
         }
         advanceUntilIdle()
 
         failRunCatching(errorCode = ERROR_USER_NOT_FOUND) {
             userRepositoryTestUtil.sendResetPasswordEmail( // userNotFound
-                email = notFoundEmail
+                email = NotFoundEmail
             )
         }
         advanceUntilIdle()
@@ -219,7 +219,7 @@ class UserFlowTestWithSignInStart {
     @Before
     fun init() {
         runBlocking {
-            Firebase.auth.signInWithEmailAndPassword(signInEmail, signInPassword).await()
+            Firebase.auth.signInWithEmailAndPassword(SignInEmail, SignInPassword).await()
         }
         userRepositoryTestUtil = UserRepositoryTestUtil(RepositoryProvider(dispatcher))
     }
@@ -236,7 +236,7 @@ class UserFlowTestWithSignInStart {
         suspend fun getUser() = userRepositoryTestUtil.getUser()
 
         assert(getUser() != null)
-        assert(getUser()?.email == signInEmail)
+        assert(getUser()?.email == SignInEmail)
 
         userRepositoryTestUtil.signOut()
         wait()
@@ -245,7 +245,7 @@ class UserFlowTestWithSignInStart {
         userRepositoryTestUtil.signIn()
         advanceUntilIdle()
         assert(getUser() != null)
-        assert(getUser()?.email == signInEmail)
+        assert(getUser()?.email == SignInEmail)
 
         userRepositoryTestUtil.signOut()
         wait()
@@ -255,8 +255,8 @@ class UserFlowTestWithSignInStart {
         advanceUntilIdle()
         wait()
         assert(getUser() != null)
-        assert(getUser()?.email == signUpEmail)
-        assert(getUser()?.name == signUpName)
+        assert(getUser()?.email == SignUpEmail)
+        assert(getUser()?.name == SignUpName)
 
         userRepositoryTestUtil.deleteUser()
     }
@@ -289,7 +289,7 @@ class UserFlowTestWithSignOutStart {
         userRepositoryTestUtil.signIn()
         advanceUntilIdle()
         assert(getUser() != null)
-        assert(getUser()?.email == signInEmail)
+        assert(getUser()?.email == SignInEmail)
 
         userRepositoryTestUtil.signOut()
         wait()
@@ -298,8 +298,8 @@ class UserFlowTestWithSignOutStart {
         userRepositoryTestUtil.signUp()
         advanceUntilIdle()
         assert(getUser() != null)
-        assert(getUser()?.email == signUpEmail)
-        assert(getUser()?.name == signUpName)
+        assert(getUser()?.email == SignUpEmail)
+        assert(getUser()?.name == SignUpName)
 
         userRepositoryTestUtil.deleteUser()
     }

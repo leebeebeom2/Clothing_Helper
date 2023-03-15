@@ -278,7 +278,7 @@ private suspend fun TestScope.repositoryLoadingTest(testUtil: DataRepositoryTest
     wait()
 
     Log.d(dataLoadingTag, "sign in 2  start")
-    userRepositoryTestUtil.signIn(email = repositoryTestEmail, password = signInPassword)
+    userRepositoryTestUtil.signIn(email = repositoryTestEmail, password = SignInPassword)
     advanceUntilIdle()
     wait()
 
@@ -318,7 +318,7 @@ private suspend fun <T : BaseModel> TestScope.repositoryLoadTest(
     wait()
     assert(testUtil.getAllData().isEmpty())
 
-    userRepositoryTestUtil.signIn(repositoryTestEmail, signInPassword)
+    userRepositoryTestUtil.signIn(repositoryTestEmail, SignInPassword)
     advanceUntilIdle()
     wait()
 

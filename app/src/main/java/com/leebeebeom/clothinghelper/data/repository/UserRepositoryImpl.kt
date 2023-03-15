@@ -30,23 +30,23 @@ class UserRepositoryImpl @Inject constructor(
     @DispatcherIO private val dispatcher: CoroutineDispatcher,
 ) : UserRepository, LoadingStateProviderImpl() {
     private val auth = FirebaseAuth.getInstance()
-    private lateinit var authCallback: FirebaseAuth.AuthStateListener
-    private lateinit var userCallback: UserCallback
+    private var authCallback: FirebaseAuth.AuthStateListener? = null
+    private var userCallback: UserCallback? = null
 
     override val user = callbackFlow {
-        if (!::userCallback.isInitialized) userCallback = UserCallback {
+        if (userCallback == null) userCallback = UserCallback {
             trySend(element = runCatching { it.toUserModel() })
         }
 
-        if (!::authCallback.isInitialized) authCallback = FirebaseAuth.AuthStateListener {
+        if (authCallback == null) authCallback = FirebaseAuth.AuthStateListener {
             trySend(element = runCatching { it.currentUser.toUserModel() })
         }
 
-        auth.addAuthStateListener(authCallback)
+        auth.addAuthStateListener(authCallback!!)
 
         awaitClose {
             launch { loadingOff() }
-            auth.removeAuthStateListener(authCallback)
+            auth.removeAuthStateListener(authCallback!!)
         }
     }.onEach { loadingOff() }.distinctUntilChanged().shareIn(
         scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1

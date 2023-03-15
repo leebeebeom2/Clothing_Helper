@@ -47,6 +47,8 @@ class UserRepositoryImpl @Inject constructor(
         awaitClose {
             launch { loadingOff() }
             auth.removeAuthStateListener(authCallback!!)
+            userCallback = null
+            authCallback = null
         }
     }.onEach { loadingOff() }.distinctUntilChanged().shareIn(
         scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1

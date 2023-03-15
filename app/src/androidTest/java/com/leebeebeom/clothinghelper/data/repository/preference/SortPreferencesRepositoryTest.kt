@@ -9,23 +9,15 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SortPreferencesRepositoryTest {
-    private lateinit var folderPreferencesRepository: SortPreferenceRepository
-    private lateinit var subCategoryPreferencesRepository: SortPreferenceRepository
     private val dispatcher = StandardTestDispatcher()
-
-
-    @Before
-    fun init() {
-        val repositoryProvider = RepositoryProvider(dispatcher)
-        folderPreferencesRepository = repositoryProvider.createFolderPreferenceRepository()
-        subCategoryPreferencesRepository =
-            repositoryProvider.createSubCategoryPreferenceRepository()
-    }
+    private val repositoryProvider = RepositoryProvider(dispatcher)
+    private val folderPreferencesRepository = repositoryProvider.createFolderPreferenceRepository()
+    private val subCategoryPreferencesRepository =
+        repositoryProvider.createSubCategoryPreferenceRepository()
 
     @Test
     fun sotFlowTest() = runTest(dispatcher) {
@@ -40,23 +32,23 @@ class SortPreferencesRepositoryTest {
 
         assert(sortFlow.first() == SortPreferences()) // initial
 
-        suspend fun assert(sort: SortPreferences) = assert(sortFlow.first() == sort)
+        suspend fun assertSort(sort: SortPreferences) = assert(sortFlow.first() == sort)
 
-        assert(sort = SortPreferences(sort = Sort.NAME, order = Order.ASCENDING))
+        assertSort(sort = SortPreferences(sort = Sort.Name, order = Order.Ascending)) // initial
 
-        repository.changeSort(sort = Sort.EDIT)
-        assert(sort = SortPreferences(sort = Sort.EDIT, order = Order.ASCENDING))
+        repository.changeSort(sort = Sort.Edit)
+        assertSort(sort = SortPreferences(sort = Sort.Edit, order = Order.Ascending))
 
-        repository.changeSort(sort = Sort.CREATE)
-        assert(sort = SortPreferences(sort = Sort.CREATE, order = Order.ASCENDING))
+        repository.changeSort(sort = Sort.Create)
+        assertSort(sort = SortPreferences(sort = Sort.Create, order = Order.Ascending))
 
-        repository.changeSort(sort = Sort.NAME)
-        assert(sort = SortPreferences(sort = Sort.NAME, order = Order.ASCENDING))
+        repository.changeSort(sort = Sort.Name)
+        assertSort(sort = SortPreferences(sort = Sort.Name, order = Order.Ascending))
 
-        repository.changeOrder(Order.DESCENDING)
-        assert(sort = SortPreferences(sort = Sort.NAME, order = Order.DESCENDING))
+        repository.changeOrder(Order.Descending)
+        assertSort(sort = SortPreferences(sort = Sort.Name, order = Order.Descending))
 
-        repository.changeOrder(Order.ASCENDING)
-        assert(sort = SortPreferences(sort = Sort.NAME, order = Order.ASCENDING))
+        repository.changeOrder(Order.Ascending)
+        assertSort(sort = SortPreferences(sort = Sort.Name, order = Order.Ascending))
     }
 }

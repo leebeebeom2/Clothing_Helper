@@ -14,16 +14,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.leebeebeom.clothinghelper.domain.model.User
-import com.leebeebeom.clothinghelper.ui.MainActivityDestinations.MainGraphDestination
-import com.leebeebeom.clothinghelper.ui.MainActivityDestinations.SignInGraphDestination
+import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.MainGraphRoute
+import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.SignInGraphRoute
 import com.leebeebeom.clothinghelper.ui.main.MainNavHost
 import com.leebeebeom.clothinghelper.ui.signin.ui.SignInNavHost
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
+import com.leebeebeom.clothinghelper.util.buildConfigLog
 import dagger.hilt.android.AndroidEntryPoint
 
-object MainActivityDestinations {
-    const val SignInGraphDestination = "sign in graph"
-    const val MainGraphDestination = "main graph"
+object MainActivityRoutes {
+    const val SignInGraphRoute = "sign in graph"
+    const val MainGraphRoute = "main graph"
 }
 
 @AndroidEntryPoint
@@ -34,20 +35,25 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/**
+ * 크로스 페이드를 쓰면 각 ViewModel의 OnCleared가 호출되지 않는다.
+ */
 @Composable
 fun MainActivityScreen(
     viewModel: ActivityViewModel = activityViewModel(),
     navController: NavHostController = rememberNavController(),
 ) {
+    buildConfigLog("MainActivityScrren", "리컴포지션")
+
     val uiState by viewModel.activityUiState.collectAsStateWithLifecycle()
 
     ClothingHelperTheme {
         NavHost(
             navController = navController,
-            startDestination = SignInGraphDestination,
+            startDestination = if (uiState.user == null) SignInGraphRoute else MainGraphRoute, // 전체 리컴포지션 안 됨 확인 걱정 ㄴㄴ
         ) {
-            composable(SignInGraphDestination) { SignInNavHost() }
-            composable(MainGraphDestination) { MainNavHost() }
+            composable(route = SignInGraphRoute) { SignInNavHost() }
+            composable(route = MainGraphRoute) { MainNavHost() }
         }
     }
 
@@ -56,7 +62,11 @@ fun MainActivityScreen(
         navigateToMainGraph = navController::navigateToMainGraph,
         navigateToSignInGraph = navController::navigateToSignInGraph
     )
-    ToastWrapper(textList = { uiState.toastText }, toastShown = viewModel::toastShown) // 테스트 불가
+
+    ToastWrapper(
+        textList = { uiState.toastText },
+        toastShown = viewModel::removeFirstToastText
+    )
 }
 
 @Composable
@@ -68,13 +78,13 @@ private fun MainActivityNavigateWrapper(
     user()?.let { navigateToMainGraph() } ?: navigateToSignInGraph()
 }
 
-private fun NavHostController.navigateToSignInGraph() = navigate(SignInGraphDestination) {
-    popUpTo(MainGraphDestination) { inclusive = true }
+private fun NavHostController.navigateToSignInGraph() = navigate(SignInGraphRoute) {
+    popUpTo(MainGraphRoute) { inclusive = true }
     launchSingleTop = true
 }
 
-private fun NavHostController.navigateToMainGraph() = navigate(MainGraphDestination) {
-    popUpTo(SignInGraphDestination) { inclusive = true }
+private fun NavHostController.navigateToMainGraph() = navigate(MainGraphRoute) {
+    popUpTo(SignInGraphRoute) { inclusive = true }
     launchSingleTop = true
 }
 

@@ -1,12 +1,12 @@
 package com.leebeebeom.clothinghelper.data.repository.util
 
 import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 interface LoadingStateProvider {
-    val isLoading: SharedFlow<Boolean>
+    val isLoading: Flow<Boolean>
 }
 
 open class LoadingStateProviderImpl : LoadingStateProvider {
@@ -16,7 +16,7 @@ open class LoadingStateProviderImpl : LoadingStateProvider {
         extraBufferCapacity = 0,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
-    override val isLoading = _isLoading.asSharedFlow()
+    override val isLoading = _isLoading.distinctUntilChanged()
 
     protected suspend fun loadingOn() = _isLoading.emit(true)
 

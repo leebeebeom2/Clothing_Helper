@@ -54,13 +54,13 @@ class ActivityViewModelTest {
         advanceUntilIdle()
         wait()
         assert(uiState.value.user == null)
-        assert(uiState.value.toastText.isNotEmpty())
-        assert(uiState.value.toastText.first() == toastText)
+        assert(uiState.value.toastTexts.isNotEmpty())
+        assert(uiState.value.toastTexts.first() == toastText)
 
         activityViewModel.removeFirstToastText()
         advanceUntilIdle()
         wait()
         assert(uiState.value.user == null)
-        assert(uiState.value.toastText.isEmpty())
+        assert(uiState.value.toastTexts.isEmpty())
     }
 }

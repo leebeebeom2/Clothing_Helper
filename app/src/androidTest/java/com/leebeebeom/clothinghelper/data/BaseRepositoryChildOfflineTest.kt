@@ -4,8 +4,6 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelper.RepositoryProvider
 import com.leebeebeom.clothinghelper.data.repository.DatabasePath
-import com.leebeebeom.clothinghelper.data.repository.preference.Order
-import com.leebeebeom.clothinghelper.data.repository.preference.Sort
 import com.leebeebeom.clothinghelper.domain.model.BaseModel
 import com.leebeebeom.clothinghelper.domain.model.Folder
 import com.leebeebeom.clothinghelper.domain.model.SubCategory
@@ -16,7 +14,6 @@ import com.leebeebeom.clothinghelper.domain.repository.TodoRepository
 import com.leebeebeom.clothinghelper.isConnectedNetwork
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -27,27 +24,14 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class BaseRepositoryChildOfflineTest {
     private val dispatcher = StandardTestDispatcher()
-    private lateinit var userRepositoryTestUtil: UserRepositoryTestUtil
+    private val repositoryProvider = RepositoryProvider(dispatcher)
+    private val userRepositoryTestUtil = UserRepositoryTestUtil(repositoryProvider)
     private lateinit var subCategoryTestUtil: DataRepositoryTestUtil<SubCategory, SubCategoryRepository>
     private lateinit var folderTestUtil: DataRepositoryTestUtil<Folder, FolderRepository>
     private lateinit var todoTestUtil: DataRepositoryTestUtil<Todo, TodoRepository>
 
     @Before
     fun init() {
-        val repositoryProvider = RepositoryProvider(dispatcher)
-        userRepositoryTestUtil = UserRepositoryTestUtil(repositoryProvider)
-        val subCategoryPreferencesRepository =
-            repositoryProvider.createSubCategoryPreferenceRepository()
-        val folderPreferencesRepository = repositoryProvider.createFolderPreferenceRepository()
-
-        runBlocking {
-            subCategoryPreferencesRepository.changeSort(Sort.NAME)
-            subCategoryPreferencesRepository.changeOrder(Order.ASCENDING)
-
-            folderPreferencesRepository.changeSort(Sort.NAME)
-            folderPreferencesRepository.changeOrder(Order.ASCENDING)
-        }
-
         subCategoryTestUtil = DataRepositoryTestUtil(
             repositoryProvider = repositoryProvider,
             repository = repositoryProvider.createSubCategoryRepository(
@@ -75,11 +59,10 @@ class BaseRepositoryChildOfflineTest {
     @Test
     fun offlineTest1() = runTest(dispatcher) {
         // sign in  before test
-//        userRepositoryTestUtil.userCollect(backgroundScope)
-//        if (userRepositoryTestUtil.getUser() == null) {
-//            userRepositoryTestUtil.signIn(email = repositoryTestEmail, password = signInPassword)
-//            advanceUntilIdle()
-//        }
+//        userRepositoryTestUtil.signIn(email = repositoryTestEmail, password = signInPassword)
+//        advanceUntilIdle()
+//        wait()
+//        assert(userRepositoryTestUtil.getUser()?.email == repositoryTestEmail)
 
         assert(!isConnectedNetwork())
 

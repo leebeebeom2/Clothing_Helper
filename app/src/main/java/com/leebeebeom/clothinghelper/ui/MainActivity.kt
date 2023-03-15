@@ -64,7 +64,7 @@ fun MainActivityScreen(
     )
 
     ToastWrapper(
-        textList = { uiState.toastText },
+        textList = { uiState.toastTexts },
         toastShown = viewModel::removeFirstToastText
     )
 }

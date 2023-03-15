@@ -16,6 +16,7 @@ import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelper.ui.util.ShowToast
 import com.leebeebeom.clothinghelper.util.buildConfigLog
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -67,15 +68,14 @@ class SignInNavViewModel @Inject constructor(
     }
 
     private fun googleSignIn(activityResult: ActivityResult, showToast: ShowToast) {
-        runCatching {
-            viewModelScope.launch {
-                googleSignInUseCase.googleSignIn(credential = getGoogleCredential(activityResult = activityResult))
-            }
-        }.onSuccess {
-            showToast(R.string.google_sign_in_complete)
-        }.onFailure {
-            firebaseAuthErrorUseCase.firebaseAuthError(exception = it, showToast = showToast)
+        val handler = CoroutineExceptionHandler { _, throwable ->
+            firebaseAuthErrorUseCase.firebaseAuthError(exception = throwable, showToast = showToast)
             savedStateHandle[GoogleButtonEnabledKey] = true
+        }
+
+        viewModelScope.launch(handler) {
+            googleSignInUseCase.googleSignIn(credential = getGoogleCredential(activityResult = activityResult))
+            showToast(R.string.google_sign_in_complete)
         }
     }
 

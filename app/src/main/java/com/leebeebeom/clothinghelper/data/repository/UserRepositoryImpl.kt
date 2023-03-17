@@ -17,7 +17,12 @@ import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.channels.onFailure
+import kotlinx.coroutines.channels.trySendBlocking
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -28,33 +33,33 @@ import javax.inject.Singleton
 class UserRepositoryImpl @Inject constructor(
     @AppScope private val appScope: CoroutineScope,
     @DispatcherIO private val dispatcher: CoroutineDispatcher,
-) : UserRepository, LoadingStateProviderImpl() {
+) : UserRepository, LoadingStateProviderImpl(initialState = false) {
     private val auth = FirebaseAuth.getInstance()
-    private var authCallback: FirebaseAuth.AuthStateListener? = null
     private var userCallback: UserCallback? = null
 
     override val user = callbackFlow {
-        if (userCallback == null) userCallback = UserCallback {
-            trySend(element = runCatching { it.toUserModel() })
+        if (userCallback == null) userCallback = UserCallback { firebaseUser ->
+            trySendBlocking(element = firebaseUser.toUserModel())
+                .onFailure { exception ->
+                    exception?.let { throw it } ?: throw Exception("userCallback trySend fail")
+                }
         }
 
-        if (authCallback == null) authCallback = FirebaseAuth.AuthStateListener {
-            trySend(element = runCatching { it.currentUser.toUserModel() })
+        val authCallback = FirebaseAuth.AuthStateListener { firebaseAuth ->
+            trySendBlocking(element = firebaseAuth.currentUser.toUserModel())
+                .onFailure { exception ->
+                    exception?.let { throw it } ?: throw Exception("authCallback trySend fail")
+                }
         }
 
-        auth.addAuthStateListener(authCallback!!)
+        auth.addAuthStateListener(authCallback)
 
         awaitClose {
-            launch { loadingOff() }
-            auth.removeAuthStateListener(authCallback!!)
-            userCallback = null
-            authCallback = null
+            launch(dispatcher) { loadingOff() }
+            auth.removeAuthStateListener(authCallback)
         }
-    }.onEach { loadingOff() }.distinctUntilChanged().shareIn(
-        scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
-    )
-
-    override fun getUserImmediate() = auth.currentUser.toUserModel()
+    }.onEach { loadingOff() }.onEmpty { emit(auth.currentUser.toUserModel()) }
+        .distinctUntilChanged()
 
     /**
      * @throws FirebaseNetworkException 인터넷에 연결되지 않았을 경우

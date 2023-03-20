@@ -6,8 +6,6 @@ import com.leebeebeom.clothinghelper.domain.repository.preference.SortPreference
 
 abstract class SortUseCase(private val sortPreferenceRepository: SortPreferenceRepository) {
     val sortPreferences get() = sortPreferenceRepository.sort
-
     suspend fun changeSort(sort: Sort) = sortPreferenceRepository.changeSort(sort = sort)
-
     suspend fun changeOrder(order: Order) = sortPreferenceRepository.changeOrder(order = order)
 }

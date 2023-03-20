@@ -9,8 +9,6 @@ import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.onFailure
-import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.*
 
 fun DatabaseReference.getContainerRef(uid: String, path: String) =
@@ -38,33 +36,25 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     /**
      * @throws DatabaseException onCancelled 호출 시 발생
      */
-    override val allData = callbackFlow<List<T>> {
-        loadingOn()
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val allDataStream =
+        userRepository.userStream.flatMapLatest { user ->
+            loadingOn()
 
-        val dataCallback = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                lastCachedData = snapshot.children.map { it.getValue(type)!! }
+            user?.let { nonNullUser ->
+                callbackFlow {
+                    val dataCallback = object : ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            lastCachedData = snapshot.children.map { it.getValue(type)!! }
+                            trySend(element = lastCachedData)
+                        }
 
-                trySendBlocking(element = lastCachedData)
-                    .onFailure {
-                        it?.let { throw it } ?: throw Exception("dataCallback trySend fail")
+                        override fun onCancelled(error: DatabaseError) {
+                            trySend(lastCachedData)
+                            throw error.toException() // TODO 처리
+                        }
                     }
-            }
 
-            override fun onCancelled(error: DatabaseError) {
-                throw error.toException()
-            }
-        }
-
-        val collectJob = launch {
-            userRepository.user.catch {
-                send(lastCachedData)
-                throw it
-            }.collect { user ->
-                loadingOn()
-
-                user?.let { nonNullUser ->
-                    // init
                     ref.init(dataCallback = dataCallback)
 
                     ref = dbRoot.getContainerRef(uid = nonNullUser.uid, path = refPath)
@@ -72,32 +62,31 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
                             keepSynced(true)
                             addValueEventListener(dataCallback)
                         }
-                } ?: run {
-                    ref.init(dataCallback = dataCallback)
-                    ref = null
-                    send(element = emptyList())
-                }
-            }
-        }
 
-        awaitClose {
-            launch { loadingOff() }
-            collectJob.cancel()
-            ref.init(dataCallback = dataCallback)
-            ref = null
-        }
-    }.onEach { loadingOff() }.onEmpty { emptyList<List<T>>() }.flowOn(dispatcher)
+                    awaitClose {
+                        loadingOff()
+                        ref.init(dataCallback = dataCallback)
+                        ref = null
+                    }
+                }
+            } ?: flow { emit(emptyList<T>()) }
+        }.onEach { loadingOff() }
+            .flowOn(dispatcher)
+            .stateIn(
+                scope = appScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = emptyList()
+            )
 
     @Suppress("UNCHECKED_CAST")
-    override suspend fun add(data: T) {
+    override suspend fun add(data: T): Job {
         val dataWithKey = data.addKey(key = getKey()) as T
 
-        push(data = dataWithKey)
+        return push(data = dataWithKey)
     }
 
-    override suspend fun push(data: T) {
-        withContext(dispatcher) { ref!!.child(data.key).setValue(data) }
-    }
+    override suspend fun push(data: T) =
+        withContext(dispatcher) { launch { ref!!.child(data.key).setValue(data) } }
 
     protected fun getKey() = ref!!.push().key!!
 

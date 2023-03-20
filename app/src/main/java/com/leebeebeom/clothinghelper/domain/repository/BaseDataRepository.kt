@@ -1,14 +1,15 @@
 package com.leebeebeom.clothinghelper.domain.repository
 
-import com.leebeebeom.clothinghelper.data.repository.DataResult
 import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProvider
 import com.leebeebeom.clothinghelper.domain.model.BaseModel
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 interface BaseDataRepository<T : BaseModel> : LoadingStateProvider {
-    val allData: SharedFlow<DataResult<T>>
+    val allDataStream: StateFlow<List<T>>
 
-    suspend fun add(data: T)
+    suspend fun add(data: T) : Job
 
-    suspend fun push(data: T)
+    suspend fun push(data: T) : Job
 }

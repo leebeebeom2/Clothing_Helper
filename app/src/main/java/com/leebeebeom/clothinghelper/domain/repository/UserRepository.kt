@@ -7,10 +7,10 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProvider
 import com.leebeebeom.clothinghelper.domain.model.User
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 
 interface UserRepository : LoadingStateProvider {
-    val userStream: SharedFlow<User?>
+    val userStream: StateFlow<User?>
 
     suspend fun googleSignIn(credential: AuthCredential): Job
 

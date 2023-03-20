@@ -38,7 +38,7 @@ class SignInNavViewModel @Inject constructor(
 
     val uiState = combine(
         flow = savedStateHandle.getStateFlow(key = GoogleButtonEnabledKey, initialValue = true),
-        flow2 = getSignInLoadingStateUseCase.isLoading
+        flow2 = getSignInLoadingStateUseCase.signInLoadingStream
     ) { googleButtonEnabled, isLoading ->
         SignInNavUiState(googleButtonEnabled = googleButtonEnabled, isLoading = isLoading)
     }.stateIn(

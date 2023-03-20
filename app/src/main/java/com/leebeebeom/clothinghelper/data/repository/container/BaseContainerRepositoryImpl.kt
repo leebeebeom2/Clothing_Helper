@@ -1,7 +1,6 @@
 package com.leebeebeom.clothinghelper.data.repository.container
 
 import com.leebeebeom.clothinghelper.data.repository.BaseDataRepositoryImpl
-import com.leebeebeom.clothinghelper.data.repository.DataResult
 import com.leebeebeom.clothinghelper.data.repository.preference.Order.Ascending
 import com.leebeebeom.clothinghelper.data.repository.preference.Order.Descending
 import com.leebeebeom.clothinghelper.data.repository.preference.Sort.*
@@ -11,6 +10,7 @@ import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 
 
@@ -29,40 +29,34 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
     dispatcher = dispatcher,
     userRepository = userRepository
 ) {
-    override val allData =
-        super.allData.combine(flow = sortFlow, transform = ::getSortedData).shareIn(
-            scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
+    override val allDataStream =
+        super.allDataStream.combine(flow = sortFlow, transform = ::getSortedData).stateIn(
+            scope = appScope, started = SharingStarted.WhileSubscribed(5000), emptyList()
         )
 
     private fun getSortedData(
-        dataResult: DataResult<T>,
+        allData: List<T>,
         sortPreferences: SortPreferences,
-    ) = when (dataResult) {
-        is DataResult.Success -> {
-            val sort = sortPreferences.sort
-            val order = sortPreferences.order
-            val allData = dataResult.allData
+    ): List<T> {
+        val sort = sortPreferences.sort
+        val order = sortPreferences.order
 
-            DataResult.Success(
-                when {
-                    sort == Name && order == Ascending -> allData.sortedBy { it.name }
-                    sort == Name && order == Descending -> allData.sortedByDescending { it.name }
-                    sort == Create && order == Ascending -> allData.sortedBy { it.createDate }
-                    sort == Create && order == Descending -> allData.sortedByDescending { it.createDate }
-                    sort == Edit && order == Ascending -> allData.sortedBy { it.editDate }
-                    sort == Edit && order == Descending -> allData.sortedByDescending { it.editDate }
-                    else -> allData
-                }
-            )
+        return when {
+            sort == Name && order == Ascending -> allData.sortedBy { it.name }
+            sort == Name && order == Descending -> allData.sortedByDescending { it.name }
+            sort == Create && order == Ascending -> allData.sortedBy { it.createDate }
+            sort == Create && order == Descending -> allData.sortedByDescending { it.createDate }
+            sort == Edit && order == Ascending -> allData.sortedBy { it.editDate }
+            sort == Edit && order == Descending -> allData.sortedByDescending { it.editDate }
+            else -> allData
         }
-        is DataResult.Fail -> dataResult
     }
 
-    override suspend fun add(data: T) {
+    override suspend fun add(data: T): Job {
         // push override 때문에 editDate 변경 됨
         val dataWithKey = data.addKey(key = getKey()) as T
 
-        super.push(dataWithKey)
+        return super.push(dataWithKey)
     }
 
     override suspend fun push(data: T) = super.push(data = data.changeEditDate() as T)

@@ -14,18 +14,10 @@ import com.leebeebeom.clothinghelper.di.AppScope
 import com.leebeebeom.clothinghelper.di.DispatcherIO
 import com.leebeebeom.clothinghelper.domain.model.User
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.onFailure
-import kotlinx.coroutines.channels.trySendBlocking
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onEmpty
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -37,19 +29,13 @@ class UserRepositoryImpl @Inject constructor(
     private val auth = FirebaseAuth.getInstance()
     private var userCallback: UserCallback? = null
 
-    override val user = callbackFlow {
+    override val userStream = callbackFlow {
         if (userCallback == null) userCallback = UserCallback { firebaseUser ->
-            trySendBlocking(element = firebaseUser.toUserModel())
-                .onFailure { exception ->
-                    exception?.let { throw it } ?: throw Exception("userCallback trySend fail")
-                }
+            launch(dispatcher) { send(element = firebaseUser.toUserModel()) }
         }
 
         val authCallback = FirebaseAuth.AuthStateListener { firebaseAuth ->
-            trySendBlocking(element = firebaseAuth.currentUser.toUserModel())
-                .onFailure { exception ->
-                    exception?.let { throw it } ?: throw Exception("authCallback trySend fail")
-                }
+            launch(dispatcher) { send(element = firebaseAuth.currentUser.toUserModel()) }
         }
 
         auth.addAuthStateListener(authCallback)
@@ -60,6 +46,7 @@ class UserRepositoryImpl @Inject constructor(
         }
     }.onEach { loadingOff() }.onEmpty { emit(auth.currentUser.toUserModel()) }
         .distinctUntilChanged()
+        .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
     /**
      * @throws FirebaseNetworkException 인터넷에 연결되지 않았을 경우
@@ -81,8 +68,8 @@ class UserRepositoryImpl @Inject constructor(
      * @throws FirebaseAuthException InvalidEmail, EmailAlreadyInUse 등
      */
     override suspend fun signUp(email: String, password: String, name: String) =
-        withContext(appScope.coroutineContext) {
-            withContext {
+        withContextWithJob {
+            appScope.launch {
                 val user = auth.createUserWithEmailAndPassword(email, password).await().user!!
 
                 val request = userProfileChangeRequest { displayName = name }
@@ -112,6 +99,17 @@ class UserRepositoryImpl @Inject constructor(
         withContext(dispatcher) {
             try {
                 loadingOn()
+                launch { task() }
+            } catch (e: Exception) {
+                loadingOff()
+                throw e
+            }
+        }
+
+    private suspend fun withContextWithJob(task: suspend () -> Job) =
+        withContext(dispatcher) {
+            try {
+                loadingOn()
                 task()
             } catch (e: Exception) {
                 loadingOff()
@@ -127,5 +125,5 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     private suspend fun callbackFlowEmitWrapper(emit: suspend (UserCallback) -> Unit) =
-        callbackFlowEmit({ userCallback }, flow = user, emit = emit)
+        callbackFlowEmit({ userCallback }, flow = userStream, emit = emit)
 }

@@ -7,20 +7,20 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEmpty
 
 interface LoadingStateProvider {
-    val isLoading: Flow<Boolean>
+    val loadingStream: Flow<Boolean>
 }
 
-open class LoadingStateProviderImpl(initialState: Boolean) : LoadingStateProvider {
+open class LoadingStreamProviderImpl(initialState: Boolean) : LoadingStateProvider {
 
-    private val _isLoading = MutableSharedFlow<Boolean>(
+    private val _loadingStream = MutableSharedFlow<Boolean>(
         replay = 1,
         extraBufferCapacity = 0,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 
-    override val isLoading = _isLoading.onEmpty { emit(initialState) }.distinctUntilChanged()
+    override val loadingStream = _loadingStream.onEmpty { emit(initialState) }.distinctUntilChanged()
 
-    protected fun loadingOn() = _isLoading.tryEmit(true)
+    protected fun loadingOn() = _loadingStream.tryEmit(true)
 
-    protected fun loadingOff() = _isLoading.tryEmit(false)
+    protected fun loadingOff() = _loadingStream.tryEmit(false)
 }

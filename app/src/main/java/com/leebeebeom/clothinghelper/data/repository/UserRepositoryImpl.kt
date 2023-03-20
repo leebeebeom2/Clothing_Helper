@@ -8,7 +8,7 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.leebeebeom.clothinghelper.data.repository.UserRepositoryImpl.UserCallback
-import com.leebeebeom.clothinghelper.data.repository.util.LoadingStateProviderImpl
+import com.leebeebeom.clothinghelper.data.repository.util.LoadingStreamProviderImpl
 import com.leebeebeom.clothinghelper.data.repository.util.callbackFlowEmit
 import com.leebeebeom.clothinghelper.di.AppScope
 import com.leebeebeom.clothinghelper.di.DispatcherIO
@@ -25,7 +25,7 @@ import javax.inject.Singleton
 class UserRepositoryImpl @Inject constructor(
     @AppScope private val appScope: CoroutineScope,
     @DispatcherIO private val dispatcher: CoroutineDispatcher,
-) : UserRepository, LoadingStateProviderImpl(initialState = false) {
+) : UserRepository, LoadingStreamProviderImpl(initialState = false) {
     private val auth = FirebaseAuth.getInstance()
     private var userCallback: UserCallback? = null
 

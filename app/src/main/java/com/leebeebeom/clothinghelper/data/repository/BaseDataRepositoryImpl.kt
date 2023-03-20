@@ -23,7 +23,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     protected val type: Class<T>,
     private val dispatcher: CoroutineDispatcher,
     private val userRepository: UserRepository,
-) : BaseDataRepository<T>, LoadingStateProviderImpl(initialState = true) {
+) : BaseDataRepository<T>, LoadingStreamProviderImpl(initialState = true) {
     private val dbRoot = getDbRoot()
     private var ref: DatabaseReference? = null
     private var lastCachedData = emptyList<T>()

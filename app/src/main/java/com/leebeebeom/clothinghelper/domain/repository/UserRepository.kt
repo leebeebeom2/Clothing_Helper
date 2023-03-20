@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface UserRepository : LoadingStateProvider {
     val userStream: StateFlow<User?>
-
     suspend fun googleSignIn(credential: AuthCredential): Job
 
     /**
@@ -34,6 +33,5 @@ interface UserRepository : LoadingStateProvider {
      * @throws FirebaseAuthException - InvalidEmail, NotFoundUser 등
      */
     suspend fun sendResetPasswordEmail(email: String): Job
-
     fun signOut()
 }

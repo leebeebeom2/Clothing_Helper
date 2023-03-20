@@ -7,8 +7,6 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface BaseDataRepository<T : BaseModel> : LoadingStateProvider {
     val allDataStream: StateFlow<List<T>>
-
     suspend fun add(data: T): Job
-
     suspend fun push(data: T): Job
 }

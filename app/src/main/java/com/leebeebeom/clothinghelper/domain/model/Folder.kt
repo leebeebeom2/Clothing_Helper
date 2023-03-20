@@ -15,6 +15,5 @@ data class Folder(
     override val editDate: Long = System.currentTimeMillis(),
 ) : BaseFolderModel(), Parcelable {
     override fun addKey(key: String) = copy(key = key)
-
     override fun changeEditDate() = copy(editDate = System.currentTimeMillis())
 }

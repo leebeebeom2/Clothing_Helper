@@ -20,7 +20,7 @@ open class LoadingStateProviderImpl(initialState: Boolean) : LoadingStateProvide
 
     override val isLoading = _isLoading.onEmpty { emit(initialState) }.distinctUntilChanged()
 
-    protected suspend fun loadingOn() = _isLoading.emit(true)
+    protected fun loadingOn() = _isLoading.tryEmit(true)
 
-    protected suspend fun loadingOff() = _isLoading.emit(false)
+    protected fun loadingOff() = _isLoading.tryEmit(false)
 }

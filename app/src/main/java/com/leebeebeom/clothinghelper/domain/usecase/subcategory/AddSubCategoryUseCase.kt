@@ -6,9 +6,11 @@ import com.leebeebeom.clothinghelper.ui.main.drawer.MainCategoryType
 import javax.inject.Inject
 
 class AddSubCategoryUseCase @Inject constructor(private val subCategoryRepository: SubCategoryRepository) {
-    suspend fun add(name: String, mainCategoryType: MainCategoryType) {
-        val subCategory = SubCategory(name = name, mainCategoryType = mainCategoryType)
-
-        subCategoryRepository.add(data = subCategory)
-    }
+    suspend fun add(name: String, mainCategoryType: MainCategoryType) =
+        subCategoryRepository.add(
+            data = SubCategory(
+                name = name,
+                mainCategoryType = mainCategoryType
+            )
+        )
 }

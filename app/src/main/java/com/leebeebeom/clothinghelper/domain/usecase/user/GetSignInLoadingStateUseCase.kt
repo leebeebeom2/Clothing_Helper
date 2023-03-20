@@ -4,5 +4,5 @@ import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import javax.inject.Inject
 
 class GetSignInLoadingStateUseCase @Inject constructor(private val userRepository: UserRepository) {
-    val isLoading get() = userRepository.isLoading
+    val signInLoadingStream get() = userRepository.loadingStream
 }

@@ -22,17 +22,17 @@ object FirebaseAuthErrorCode {
 class FirebaseAuthErrorUseCase @Inject constructor() {
     fun firebaseAuthError(
         throwable: Throwable,
-        updateEmailError: (error: Int) -> Unit = {},
-        updatePasswordError: (error: Int) -> Unit = {},
+        setEmailError: (error: Int) -> Unit = {},
+        setPasswordError: (error: Int) -> Unit = {},
         showToast: ShowToast,
     ) {
         when (throwable) {
             is FirebaseAuthException -> {
                 when (throwable.errorCode) {
-                    ERROR_INVALID_EMAIL -> updateEmailError(R.string.error_invalid_email)
-                    ERROR_EMAIL_ALREADY_IN_USE -> updateEmailError(R.string.error_email_already_in_use)
-                    ERROR_USER_NOT_FOUND -> updateEmailError(R.string.error_user_not_found)
-                    ERROR_WRONG_PASSWORD -> updatePasswordError(R.string.error_wrong_password)
+                    ERROR_INVALID_EMAIL -> setEmailError(R.string.error_invalid_email)
+                    ERROR_EMAIL_ALREADY_IN_USE -> setEmailError(R.string.error_email_already_in_use)
+                    ERROR_USER_NOT_FOUND -> setEmailError(R.string.error_user_not_found)
+                    ERROR_WRONG_PASSWORD -> setPasswordError(R.string.error_wrong_password)
                 }
             }
             is FirebaseTooManyRequestsException -> showToast(R.string.too_many_requst_error)

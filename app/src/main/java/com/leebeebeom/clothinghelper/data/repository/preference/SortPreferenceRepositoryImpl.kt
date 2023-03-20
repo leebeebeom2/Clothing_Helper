@@ -18,7 +18,7 @@ abstract class SortPreferenceRepositoryImpl(
     appScope: CoroutineScope,
 ) : SortPreferenceRepository {
 
-    override val sort = dataStore.data.catch {
+    override val sortStream = dataStore.data.catch {
         if (it is IOException) emit(emptyPreferences()) else throw it
     }.map {
         val sort = it[SortPreferenceKeys.sort] ?: Sort.Name.name

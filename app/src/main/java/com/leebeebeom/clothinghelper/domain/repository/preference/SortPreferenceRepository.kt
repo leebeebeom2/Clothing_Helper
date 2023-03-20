@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import javax.inject.Qualifier
 
 interface SortPreferenceRepository {
-    val sort: SharedFlow<SortPreferences>
+    val sortStream: SharedFlow<SortPreferences>
     suspend fun changeSort(sort: Sort)
     suspend fun changeOrder(order: Order)
 }

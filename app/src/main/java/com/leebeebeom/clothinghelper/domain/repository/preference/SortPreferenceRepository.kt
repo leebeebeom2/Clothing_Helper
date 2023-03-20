@@ -8,7 +8,6 @@ import javax.inject.Qualifier
 
 interface SortPreferenceRepository {
     val sort: SharedFlow<SortPreferences>
-
     suspend fun changeSort(sort: Sort)
     suspend fun changeOrder(order: Order)
 }

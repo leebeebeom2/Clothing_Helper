@@ -64,7 +64,7 @@ fun MainActivityScreen(
     )
 
     ToastWrapper(
-        textList = { uiState.toastTexts },
+        toastTexts = { uiState.toastTexts },
         toastShown = viewModel::removeFirstToastText
     )
 }
@@ -89,8 +89,8 @@ private fun NavHostController.navigateToMainGraph() = navigate(MainGraphRoute) {
 }
 
 @Composable
-fun ToastWrapper(textList: () -> List<Int>, toastShown: () -> Unit) {
-    textList().firstOrNull()?.let {
+fun ToastWrapper(toastTexts: () -> List<Int>, toastShown: () -> Unit) {
+    toastTexts().firstOrNull()?.let {
         Toast.makeText(LocalContext.current, stringResource(id = it), Toast.LENGTH_SHORT).show()
         toastShown()
     }

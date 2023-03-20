@@ -25,15 +25,10 @@ class TodoRepositoryImpl @Inject constructor(
     dispatcher = dispatcher,
     userRepository = userRepository
 ), TodoRepository {
-    override val allData =
-        super.allData.mapLatest {
-            when (it) {
-                is DataResult.Fail -> it
-                is DataResult.Success -> {
-                    val allData = it.allData
-                    DataResult.Success(allData = allData.sortedBy { todoList -> todoList.order })
-                }
-            }
-
-        }.shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
+    override val allDataStream =
+        super.allDataStream.mapLatest { it.sortedBy { todos -> todos.order } }.stateIn(
+            scope = appScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 }

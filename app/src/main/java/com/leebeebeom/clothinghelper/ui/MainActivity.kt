@@ -43,7 +43,7 @@ fun MainActivityScreen(
     viewModel: ActivityViewModel = activityViewModel(),
     navController: NavHostController = rememberNavController(),
 ) {
-    buildConfigLog("MainActivityScrren", "리컴포지션")
+    buildConfigLog("MainActivityScreen", "recomposition")
 
     val uiState by viewModel.activityUiState.collectAsStateWithLifecycle()
 

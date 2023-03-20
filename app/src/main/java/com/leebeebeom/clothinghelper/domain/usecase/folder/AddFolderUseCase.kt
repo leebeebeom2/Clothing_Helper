@@ -11,14 +11,12 @@ class AddFolderUseCase @Inject constructor(private val folderRepository: FolderR
         subCategoryKey: String,
         name: String,
         mainCategoryType: MainCategoryType,
-    ) {
-        val folder = Folder(
+    ) = folderRepository.add(
+        data = Folder(
             parentKey = parentKey,
             subCategoryKey = subCategoryKey,
             name = name,
             mainCategoryType = mainCategoryType
         )
-
-        folderRepository.add(data = folder)
-    }
+    )
 }

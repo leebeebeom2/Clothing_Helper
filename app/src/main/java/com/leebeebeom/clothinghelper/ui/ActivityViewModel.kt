@@ -3,9 +3,10 @@ package com.leebeebeom.clothinghelper.ui
 import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.domain.model.User
@@ -16,34 +17,26 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
-const val ToastTextKey = "toastText"
-
 @HiltViewModel
-class ActivityViewModel @Inject constructor(
-    getUserUseCase: GetUserUseCase,
-    private val savedStateHandle: SavedStateHandle,
-) : ViewModel() {
+class ActivityViewModel @Inject constructor(getUserUseCase: GetUserUseCase) : ViewModel() {
+    private val toastTexts = mutableStateListOf<Int>()
 
     val activityUiState = combine(
-        flow = savedStateHandle.getStateFlow(key = ToastTextKey, initialValue = emptyList<Int>()),
-        flow2 = getUserUseCase.userStream,
+        flow = snapshotFlow { toastTexts }, flow2 = getUserUseCase.userStream
     ) { toastTexts, user ->
-        ActivityUiState(toastTexts = toastTexts, user = user)
+        ActivityUiState(toastTexts = toastTexts.toList(), user = user)
     }.stateIn(
-        scope = viewModelScope, started = SharingStarted.WhileSubscribed(5000),
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
         initialValue = ActivityUiState()
     )
 
     fun addToastTextAtLast(toastText: Int) {
-        val mutableToastTextList = activityUiState.value.toastTexts.toMutableList()
-        mutableToastTextList.add(toastText)
-        savedStateHandle[ToastTextKey] = mutableToastTextList
+        toastTexts.add(toastText)
     }
 
     fun removeFirstToastText() {
-        val mutableToastTextList = activityUiState.value.toastTexts.toMutableList()
-        mutableToastTextList.removeAt(0)
-        savedStateHandle[ToastTextKey] = mutableToastTextList
+        toastTexts.removeFirst()
     }
 }
 

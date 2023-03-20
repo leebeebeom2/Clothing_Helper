@@ -44,9 +44,12 @@ class UserRepositoryImpl @Inject constructor(
             loadingOff()
             auth.removeAuthStateListener(authCallback)
         }
-    }.onEach { loadingOff() }.onEmpty { emit(value = auth.currentUser.toUserModel()) }
+    }.onEach { loadingOff() }
         .distinctUntilChanged()
-        .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
+        .stateIn(
+            scope = appScope, started = SharingStarted.WhileSubscribed(5000),
+            initialValue = auth.currentUser.toUserModel()
+        )
 
     /**
      * @throws FirebaseNetworkException 인터넷에 연결되지 않았을 경우

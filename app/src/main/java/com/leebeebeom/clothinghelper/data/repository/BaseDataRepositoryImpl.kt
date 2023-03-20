@@ -22,7 +22,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     protected val appScope: CoroutineScope,
     protected val type: Class<T>,
     private val dispatcher: CoroutineDispatcher,
-    private val userRepository: UserRepository,
+    userRepository: UserRepository,
 ) : BaseDataRepository<T>, LoadingStreamProviderImpl(initialState = true) {
     private val dbRoot = getDbRoot()
     private var ref: DatabaseReference? = null

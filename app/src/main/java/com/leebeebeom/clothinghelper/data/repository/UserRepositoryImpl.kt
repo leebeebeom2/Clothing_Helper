@@ -41,10 +41,10 @@ class UserRepositoryImpl @Inject constructor(
         auth.addAuthStateListener(authCallback)
 
         awaitClose {
-            launch(dispatcher) { loadingOff() }
+            loadingOff()
             auth.removeAuthStateListener(authCallback)
         }
-    }.onEach { loadingOff() }.onEmpty { emit(auth.currentUser.toUserModel()) }
+    }.onEach { loadingOff() }.onEmpty { emit(value = auth.currentUser.toUserModel()) }
         .distinctUntilChanged()
         .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
@@ -96,17 +96,9 @@ class UserRepositoryImpl @Inject constructor(
      * 호출 시 로딩 On, 예외 발생 시 로딩 Off
      */
     private suspend fun withContext(task: suspend () -> Unit) =
-        withContext(dispatcher) {
-            try {
-                loadingOn()
-                launch { task() }
-            } catch (e: Exception) {
-                loadingOff()
-                throw e
-            }
-        }
+        withContextWithJob { launch { task() } }
 
-    private suspend fun withContextWithJob(task: suspend () -> Job) =
+    private suspend fun withContextWithJob(task: suspend CoroutineScope.() -> Job) =
         withContext(dispatcher) {
             try {
                 loadingOn()

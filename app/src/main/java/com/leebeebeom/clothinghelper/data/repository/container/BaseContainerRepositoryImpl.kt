@@ -7,6 +7,7 @@ import com.leebeebeom.clothinghelper.data.repository.preference.Sort.*
 import com.leebeebeom.clothinghelper.data.repository.preference.SortPreferences
 import com.leebeebeom.clothinghelper.domain.model.BaseContainerModel
 import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
+import com.leebeebeom.clothinghelper.domain.repository.DataResult
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -30,25 +31,31 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
     userRepository = userRepository
 ) {
     override val allDataStream =
-        super.allDataStream.combine(flow = sortFlow, transform = ::getSortedData).stateIn(
-            scope = appScope, started = SharingStarted.WhileSubscribed(5000), emptyList()
+        super.allDataStream.combine(flow = sortFlow, transform = ::getSortedData).shareIn(
+            scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
         )
 
     private fun getSortedData(
-        allData: List<T>,
+        dataResult: DataResult<T>,
         sortPreferences: SortPreferences,
-    ): List<T> {
-        val sort = sortPreferences.sort
-        val order = sortPreferences.order
+    ) = when (dataResult) {
+        is DataResult.Fail -> dataResult
+        is DataResult.Success -> {
+            val allData = dataResult.data
+            val sort = sortPreferences.sort
+            val order = sortPreferences.order
 
-        return when {
-            sort == Name && order == Ascending -> allData.sortedBy { it.name }
-            sort == Name && order == Descending -> allData.sortedByDescending { it.name }
-            sort == Create && order == Ascending -> allData.sortedBy { it.createDate }
-            sort == Create && order == Descending -> allData.sortedByDescending { it.createDate }
-            sort == Edit && order == Ascending -> allData.sortedBy { it.editDate }
-            sort == Edit && order == Descending -> allData.sortedByDescending { it.editDate }
-            else -> allData
+            DataResult.Success(
+                when {
+                    sort == Name && order == Ascending -> allData.sortedBy { it.name }
+                    sort == Name && order == Descending -> allData.sortedByDescending { it.name }
+                    sort == Create && order == Ascending -> allData.sortedBy { it.createDate }
+                    sort == Create && order == Descending -> allData.sortedByDescending { it.createDate }
+                    sort == Edit && order == Ascending -> allData.sortedBy { it.editDate }
+                    sort == Edit && order == Descending -> allData.sortedByDescending { it.editDate }
+                    else -> allData
+                }
+            )
         }
     }
 

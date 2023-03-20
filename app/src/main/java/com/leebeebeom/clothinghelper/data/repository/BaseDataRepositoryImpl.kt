@@ -6,6 +6,7 @@ import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelper.data.repository.util.*
 import com.leebeebeom.clothinghelper.domain.model.BaseModel
 import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
+import com.leebeebeom.clothinghelper.domain.repository.DataResult
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
@@ -46,12 +47,11 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
                     val dataCallback = object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
                             lastCachedData = snapshot.children.map { it.getValue(type)!! }
-                            trySend(element = lastCachedData)
+                            trySend(element = DataResult.Success(lastCachedData))
                         }
 
                         override fun onCancelled(error: DatabaseError) {
-                            trySend(lastCachedData)
-                            throw error.toException() // TODO 처리
+                            trySend(element = DataResult.Fail(lastCachedData, error.toException()))
                         }
                     }
 
@@ -69,13 +69,13 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
                         ref = null
                     }
                 }
-            } ?: flow { emit(emptyList<T>()) }
+            } ?: flow { emit(DataResult.Success(data = emptyList<T>())) }
         }.onEach { loadingOff() }
             .flowOn(dispatcher)
-            .stateIn(
+            .shareIn(
                 scope = appScope,
                 started = SharingStarted.WhileSubscribed(5000),
-                initialValue = emptyList()
+                replay = 1
             )
 
     @Suppress("UNCHECKED_CAST")

@@ -3,6 +3,7 @@ package com.leebeebeom.clothinghelper.data.repository
 import com.leebeebeom.clothinghelper.di.AppScope
 import com.leebeebeom.clothinghelper.di.DispatcherIO
 import com.leebeebeom.clothinghelper.domain.model.Todo
+import com.leebeebeom.clothinghelper.domain.repository.DataResult
 import com.leebeebeom.clothinghelper.domain.repository.TodoRepository
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -26,9 +27,14 @@ class TodoRepositoryImpl @Inject constructor(
     userRepository = userRepository
 ), TodoRepository {
     override val allDataStream =
-        super.allDataStream.mapLatest { it.sortedBy { todos -> todos.order } }.stateIn(
+        super.allDataStream.mapLatest { dataResult ->
+            when (dataResult) {
+                is DataResult.Success -> DataResult.Success(dataResult.data.sortedBy { it.order })
+                is DataResult.Fail -> dataResult
+            }
+        }.shareIn(
             scope = appScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
+            replay = 1
         )
 }

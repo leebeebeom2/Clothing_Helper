@@ -6,7 +6,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -35,7 +34,6 @@ class SignInNavViewModel @Inject constructor(
     private val googleSignInUseCase: GoogleSignInUseCase,
     getSignInLoadingStreamUseCase: GetSignInLoadingStreamUseCase,
     private val firebaseAuthErrorUseCase: FirebaseAuthErrorUseCase,
-    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private var googleButtonEnabled by mutableStateOf(true)
 
@@ -57,7 +55,7 @@ class SignInNavViewModel @Inject constructor(
             )
             Activity.RESULT_CANCELED -> {
                 showToast(R.string.canceled)
-                savedStateHandle[GoogleButtonEnabledKey] = true
+                 googleButtonEnabled = true
             }
             else -> {
                 buildConfigLog(
@@ -65,7 +63,7 @@ class SignInNavViewModel @Inject constructor(
                     msg = "resultCode = ${activityResult.resultCode}",
                 )
                 showToast(R.string.unknown_error)
-                savedStateHandle[GoogleButtonEnabledKey] = true
+                googleButtonEnabled = true
             }
         }
     }

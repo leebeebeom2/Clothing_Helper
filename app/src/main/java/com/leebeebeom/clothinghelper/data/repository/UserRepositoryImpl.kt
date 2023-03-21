@@ -44,10 +44,10 @@ class UserRepositoryImpl @Inject constructor(
             loadingOff()
             auth.removeAuthStateListener(authCallback)
         }
-    }.onEach { loadingOff() }.distinctUntilChanged().stateIn(
+    }.onEach { loadingOff() }.distinctUntilChanged().shareIn(
         scope = appScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = auth.currentUser.toUserModel()
+        replay = 1
     )
 
     /**

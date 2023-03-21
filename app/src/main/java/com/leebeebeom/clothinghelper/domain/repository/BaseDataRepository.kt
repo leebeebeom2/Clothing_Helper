@@ -11,7 +11,7 @@ interface BaseDataRepository<T : BaseModel> : LoadingStateProvider {
     suspend fun push(data: T): Job
 }
 
-sealed class DataResult<T> {
-    data class Success<T>(val data: List<T>) : DataResult<T>()
-    data class Fail<T>(val data: List<T>, val exception: Throwable) : DataResult<T>()
+sealed class DataResult<T>(val data: List<T>) {
+    class Success<T>(data: List<T>) : DataResult<T>(data)
+    class Fail<T>(data: List<T>, val exception: Throwable) : DataResult<T>(data)
 }

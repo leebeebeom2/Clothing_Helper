@@ -7,5 +7,5 @@ import kotlinx.coroutines.withContext
 /**
  * wait [time] second
  */
-suspend fun wait(time: Long = 1000L) =
+suspend fun waitTime(time: Long = 1000L) =
     withContext(Dispatchers.Default) { delay(time) }

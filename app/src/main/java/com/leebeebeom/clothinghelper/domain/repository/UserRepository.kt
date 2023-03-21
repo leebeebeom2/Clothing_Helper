@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.SharedFlow
 
 interface UserRepository : LoadingStateProvider {
     val userStream: SharedFlow<User?>
+    fun getInitialUser(): User?
     suspend fun googleSignIn(credential: AuthCredential): Job
 
     /**

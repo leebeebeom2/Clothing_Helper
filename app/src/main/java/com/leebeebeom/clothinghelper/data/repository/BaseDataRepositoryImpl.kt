@@ -71,7 +71,6 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
                 }
             } ?: flow { emit(DataResult.Success(data = emptyList<T>())) }
         }.onEach { loadingOff() }
-            .flowOn(dispatcher)
             .shareIn(
                 scope = appScope,
                 started = SharingStarted.WhileSubscribed(5000),

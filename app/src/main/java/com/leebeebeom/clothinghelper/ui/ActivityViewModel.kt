@@ -29,7 +29,7 @@ class ActivityViewModel @Inject constructor(getUserUseCase: GetUserUseCase) : Vi
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = ActivityUiState()
+        initialValue = ActivityUiState(user = getUserUseCase.getInitialUser())
     )
 
     fun addToastTextAtLast(toastText: Int) {

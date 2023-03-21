@@ -44,12 +44,11 @@ class UserRepositoryImpl @Inject constructor(
             loadingOff()
             auth.removeAuthStateListener(authCallback)
         }
-    }.onEach { loadingOff() }
-        .distinctUntilChanged()
-        .stateIn(
-            scope = appScope, started = SharingStarted.WhileSubscribed(5000),
-            initialValue = auth.currentUser.toUserModel()
-        )
+    }.onEach { loadingOff() }.distinctUntilChanged().stateIn(
+        scope = appScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = auth.currentUser.toUserModel()
+    )
 
     /**
      * @throws FirebaseNetworkException 인터넷에 연결되지 않았을 경우
@@ -71,8 +70,9 @@ class UserRepositoryImpl @Inject constructor(
      * @throws FirebaseAuthException InvalidEmail, EmailAlreadyInUse 등
      */
     override suspend fun signUp(email: String, password: String, name: String) =
-        withContextWithJob {
-            appScope.launch {
+        // 호출 스코프 취소 시 취소 안 되는 거 테스트 확인
+        withContext(appScope.coroutineContext) {
+            withContext {
                 val user = auth.createUserWithEmailAndPassword(email, password).await().user!!
 
                 val request = userProfileChangeRequest { displayName = name }

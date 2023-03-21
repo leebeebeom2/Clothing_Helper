@@ -50,6 +50,8 @@ class UserRepositoryImpl @Inject constructor(
         replay = 1
     )
 
+    override fun getInitialUser() = auth.currentUser.toUserModel()
+
     /**
      * @throws FirebaseNetworkException 인터넷에 연결되지 않았을 경우
      */

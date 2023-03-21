@@ -1,6 +1,7 @@
 package com.leebeebeom.clothinghelper.data.repository.container
 
 import com.leebeebeom.clothinghelper.data.repository.BaseDataRepositoryImpl
+import com.leebeebeom.clothinghelper.data.repository.DataBasePath
 import com.leebeebeom.clothinghelper.data.repository.preference.Order.Ascending
 import com.leebeebeom.clothinghelper.data.repository.preference.Order.Descending
 import com.leebeebeom.clothinghelper.data.repository.preference.Sort.*
@@ -18,7 +19,7 @@ import kotlinx.coroutines.flow.*
 @Suppress("UNCHECKED_CAST")
 abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
     sortFlow: Flow<SortPreferences>,
-    refPath: String,
+    refPath: DataBasePath,
     appScope: CoroutineScope,
     type: Class<T>,
     dispatcher: CoroutineDispatcher,

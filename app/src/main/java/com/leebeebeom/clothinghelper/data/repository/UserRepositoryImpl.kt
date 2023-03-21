@@ -31,11 +31,11 @@ class UserRepositoryImpl @Inject constructor(
 
     override val userStream = callbackFlow {
         if (userCallback == null) userCallback = UserCallback { firebaseUser ->
-            launch(dispatcher) { send(element = firebaseUser.toUserModel()) }
+            trySend(element = firebaseUser.toUserModel())
         }
 
         val authCallback = FirebaseAuth.AuthStateListener { firebaseAuth ->
-            launch(dispatcher) { send(element = firebaseAuth.currentUser.toUserModel()) }
+            trySend(element = firebaseAuth.currentUser.toUserModel())
         }
 
         auth.addAuthStateListener(authCallback)

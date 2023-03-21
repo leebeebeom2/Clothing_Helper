@@ -27,8 +27,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-const val GoogleButtonEnabledKey = "google button enable"
-
 /**
  * Google 로그인 로직
  */

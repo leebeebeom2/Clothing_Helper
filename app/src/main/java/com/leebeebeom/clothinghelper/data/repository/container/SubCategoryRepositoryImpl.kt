@@ -1,6 +1,6 @@
 package com.leebeebeom.clothinghelper.data.repository.container
 
-import com.leebeebeom.clothinghelper.data.repository.DatabasePath
+import com.leebeebeom.clothinghelper.data.repository.DataBasePath
 import com.leebeebeom.clothinghelper.di.AppScope
 import com.leebeebeom.clothinghelper.di.DispatcherIO
 import com.leebeebeom.clothinghelper.domain.model.SubCategory
@@ -21,7 +21,7 @@ class SubCategoryRepositoryImpl @Inject constructor(
     userRepository: UserRepository,
 ) : BaseContainerRepositoryImpl<SubCategory>(
     sortFlow = subCategoryPreferencesRepository.sortStream,
-    refPath = DatabasePath.SUB_CATEGORIES,
+    refPath = DataBasePath.SubCategory,
     appScope = appScope,
     type = SubCategory::class.java,
     dispatcher = dispatcher,

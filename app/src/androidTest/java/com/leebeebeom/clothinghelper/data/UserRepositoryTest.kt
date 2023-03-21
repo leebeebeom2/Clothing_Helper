@@ -34,9 +34,9 @@ const val SendPasswordEmail = "boole92@naver.com"
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class UserRepositoryTest {
+    private val dispatcher = StandardTestDispatcher()
     private lateinit var userRepository: UserRepository
     private lateinit var userStream: SharedFlow<User?>
-    private val dispatcher = StandardTestDispatcher()
 
     private inline fun TestScope.failRunCatching(
         errorCode: String, test: () -> Unit,

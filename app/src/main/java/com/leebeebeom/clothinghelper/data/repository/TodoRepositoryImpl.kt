@@ -20,7 +20,7 @@ class TodoRepositoryImpl @Inject constructor(
     @DispatcherIO dispatcher: CoroutineDispatcher,
     userRepository: UserRepository,
 ) : BaseDataRepositoryImpl<Todo>(
-    refPath = DatabasePath.TODOS,
+    refPath = DataBasePath.Todo,
     appScope = appScope,
     type = Todo::class.java,
     dispatcher = dispatcher,

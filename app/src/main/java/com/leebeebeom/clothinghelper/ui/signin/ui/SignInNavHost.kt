@@ -36,7 +36,7 @@ fun SignInNavHost(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     NavHost(
-        modifier = Modifier.testTag(SignInNavTag),
+        modifier = Modifier.testTag(tag = SignInNavTag),
         navController = navController,
         startDestination = SignInRoute,
         route = SignInNavRoute
@@ -52,7 +52,7 @@ fun SignInNavHost(
             SignUpScreen(signInNavViewModel = viewModel)
         }
         composable(route = ResetPasswordRoute) {
-            ResetPasswordScreen(popBackStack = { navController.popBackStack() })
+            ResetPasswordScreen(popBackStack = navController::popBackStack)
         }
     }
 

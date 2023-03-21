@@ -19,7 +19,7 @@ fun getDbRoot() = Firebase.database.reference
 
 @Suppress("UNCHECKED_CAST")
 abstract class BaseDataRepositoryImpl<T : BaseModel>(
-    private var refPath: String,
+    private var refPath: DataBasePath,
     protected val appScope: CoroutineScope,
     protected val type: Class<T>,
     private val dispatcher: CoroutineDispatcher,
@@ -57,7 +57,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
 
                     ref.init(dataCallback = dataCallback)
 
-                    ref = dbRoot.getContainerRef(uid = nonNullUser.uid, path = refPath)
+                    ref = dbRoot.getContainerRef(uid = nonNullUser.uid, path = refPath.path)
                         .apply {
                             keepSynced(true)
                             addValueEventListener(dataCallback)

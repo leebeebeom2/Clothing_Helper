@@ -20,11 +20,12 @@ import javax.inject.Inject
 @HiltViewModel
 class ActivityViewModel @Inject constructor(getUserUseCase: GetUserUseCase) : ViewModel() {
     private val toastTexts = mutableStateListOf<Int>()
+    private val toastTextsFlow = snapshotFlow { toastTexts }
 
     val activityUiState = combine(
-        flow = snapshotFlow { toastTexts }, flow2 = getUserUseCase.userStream
+        flow = toastTextsFlow, flow2 = getUserUseCase.userStream
     ) { toastTexts, user ->
-        ActivityUiState(toastTexts = toastTexts.toList(), user = user)
+        ActivityUiState(toastTexts = toastTexts, user = user)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),

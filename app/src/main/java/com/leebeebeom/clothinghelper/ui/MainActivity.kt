@@ -13,7 +13,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.leebeebeom.clothinghelper.domain.model.User
 import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.MainGraphRoute
 import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.SignInGraphRoute
 import com.leebeebeom.clothinghelper.ui.main.MainNavHost
@@ -52,30 +51,19 @@ fun MainActivityScreen(
             navController = navController,
             startDestination = if (uiState.user == null) SignInGraphRoute else MainGraphRoute, // 전체 리컴포지션 안 됨 확인 걱정 ㄴㄴ
         ) {
-            composable(route = SignInGraphRoute) { SignInNavHost() }
-            composable(route = MainGraphRoute) { MainNavHost() }
+            composable(route = SignInGraphRoute) {
+                SignInNavHost(navigateToMainGraph = navController::navigateToMainGraph)
+            }
+            composable(route = MainGraphRoute) {
+                MainNavHost(navigateToSignInGraph = navController::navigateToSignInGraph)
+            }
         }
     }
-
-    MainActivityNavigateWrapper(
-        user = { uiState.user },
-        navigateToMainGraph = navController::navigateToMainGraph,
-        navigateToSignInGraph = navController::navigateToSignInGraph
-    )
 
     ToastWrapper(
         toastTexts = { uiState.toastTexts },
         toastShown = viewModel::removeFirstToastText
     )
-}
-
-@Composable
-private fun MainActivityNavigateWrapper(
-    user: () -> User?,
-    navigateToMainGraph: () -> Unit,
-    navigateToSignInGraph: () -> Unit,
-) {
-    user()?.let { navigateToMainGraph() } ?: navigateToSignInGraph()
 }
 
 private fun NavHostController.navigateToSignInGraph() = navigate(SignInGraphRoute) {

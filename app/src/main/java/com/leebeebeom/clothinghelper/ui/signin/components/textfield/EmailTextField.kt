@@ -1,34 +1,26 @@
 package com.leebeebeom.clothinghelper.ui.signin.components.textfield
 
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.components.*
+import com.leebeebeom.clothinghelper.ui.components.StatefulMaxWidthTestFieldWithCancelIcon
 
 @Composable
 fun EmailTextField(
+    initialEmail: String,
     error: () -> Int?,
-    imeActionRoute: ImeActionRoute = ImeActionRoute.NEXT,
-    state: MutableMaxWidthTextFieldState = rememberEmailTextFieldState(imeActionRoute = imeActionRoute),
-    onInputChange: (String) -> Unit,
+    imeAction: ImeAction = ImeAction.Next,
+    onEmailChange: (String) -> Unit,
 ) {
-    MaxWidthTextFieldWithError(
-        state = state,
-        onValueChange = state::onValueChange,
-        onFocusChanged = state::onFocusChanged,
-        onInputChange = onInputChange
+    StatefulMaxWidthTestFieldWithCancelIcon(
+        initialText = initialEmail,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = imeAction),
+        onInputChange = onEmailChange,
+        label = R.string.email,
+        placeholder = R.string.email_place_holder,
+        blockBlank = true,
+        error = error
     )
-
-    SetTextFieldError(error = error, collect = { state.error = it })
 }
-
-@Composable
-fun rememberEmailTextFieldState(
-    imeActionRoute: ImeActionRoute,
-) = rememberMaxWidthTextFieldState(
-    label = R.string.email,
-    placeholder = R.string.email_place_holder,
-    showKeyboard = true,
-    keyboardRoute = KeyboardRoute.EMAIL,
-    imeActionRoute = imeActionRoute,
-    blockBlank = true
-)

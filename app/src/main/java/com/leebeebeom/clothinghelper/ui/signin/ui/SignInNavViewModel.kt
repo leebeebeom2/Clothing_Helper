@@ -14,7 +14,6 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorUseCase
-import com.leebeebeom.clothinghelper.domain.usecase.user.GetSignInLoadingStreamUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelper.ui.util.ShowToast
 import com.leebeebeom.clothinghelper.util.buildConfigLog
@@ -32,14 +31,16 @@ import javax.inject.Inject
 @HiltViewModel
 class SignInNavViewModel @Inject constructor(
     private val googleSignInUseCase: GoogleSignInUseCase,
-    getSignInLoadingStreamUseCase: GetSignInLoadingStreamUseCase,
     private val firebaseAuthErrorUseCase: FirebaseAuthErrorUseCase,
 ) : ViewModel() {
     private var googleButtonEnabled by mutableStateOf(true)
+    private var googleButtonEnabledStream = snapshotFlow { googleButtonEnabled }
+    private var isSignInLoading by mutableStateOf(false)
+    private var isSignInLoadingStream = snapshotFlow { isSignInLoading }
 
     val uiState = combine(
-        flow = snapshotFlow { googleButtonEnabled },
-        flow2 = getSignInLoadingStreamUseCase.signInLoadingStream
+        flow = googleButtonEnabledStream,
+        flow2 = isSignInLoadingStream
     ) { googleButtonEnabled, isLoading ->
         SignInNavUiState(googleButtonEnabled = googleButtonEnabled, isLoading = isLoading)
     }.stateIn(
@@ -48,14 +49,14 @@ class SignInNavViewModel @Inject constructor(
         initialValue = SignInNavUiState()
     )
 
-    fun signInWithGoogleEmail(activityResult: ActivityResult, showToast: ShowToast) {
+    fun signInWithGoogleEmail(activityResult: ActivityResult, showToast: ShowToast, navigateToMainGraph: () -> Unit) {
         when (activityResult.resultCode) {
             Activity.RESULT_OK -> googleSignIn(
-                activityResult = activityResult, showToast = showToast
+                activityResult = activityResult, showToast = showToast, navigateToMainGraph = navigateToMainGraph
             )
             Activity.RESULT_CANCELED -> {
                 showToast(R.string.canceled)
-                 googleButtonEnabled = true
+                googleButtonEnabled = true
             }
             else -> {
                 buildConfigLog(
@@ -68,15 +69,22 @@ class SignInNavViewModel @Inject constructor(
         }
     }
 
-    private fun googleSignIn(activityResult: ActivityResult, showToast: ShowToast) {
+    private fun googleSignIn(
+        activityResult: ActivityResult,
+        showToast: ShowToast,
+        navigateToMainGraph: () -> Unit
+    ) {
         val handler = CoroutineExceptionHandler { _, throwable ->
             firebaseAuthErrorUseCase.firebaseAuthError(throwable = throwable, showToast = showToast)
             googleButtonEnabled = true
         }
 
         viewModelScope.launch(handler) {
+            isSignInLoading = true
             googleSignInUseCase.googleSignIn(credential = getGoogleCredential(activityResult = activityResult))
+                .join()
             showToast(R.string.google_sign_in_complete)
+            navigateToMainGraph()
         }
     }
 

@@ -35,7 +35,8 @@ class UserRepositoryImpl @Inject constructor(
         }
 
         val authCallback = FirebaseAuth.AuthStateListener { firebaseAuth ->
-            trySend(element = firebaseAuth.currentUser.toUserModel())
+            if (firebaseAuth.currentUser == null)
+                trySend(element = firebaseAuth.currentUser.toUserModel())
         }
 
         auth.addAuthStateListener(authCallback)
@@ -56,7 +57,10 @@ class UserRepositoryImpl @Inject constructor(
      * @throws FirebaseNetworkException 인터넷에 연결되지 않았을 경우
      */
     override suspend fun googleSignIn(credential: AuthCredential) =
-        withContext { auth.signInWithCredential(credential).await() }
+        withContext {
+            val user = auth.signInWithCredential(credential).await().user
+            callbackFlowEmitWrapper { it(user) }
+        }
 
     /**
      * @throws FirebaseNetworkException 인터넷에 연결되지 않았을 경우
@@ -64,7 +68,10 @@ class UserRepositoryImpl @Inject constructor(
      * @throws FirebaseAuthException InvalidEmail, NotFoundUser, WrongPassword 등
      */
     override suspend fun signIn(email: String, password: String) =
-        withContext { auth.signInWithEmailAndPassword(email, password).await() }
+        withContext {
+            val user = auth.signInWithEmailAndPassword(email, password).await().user
+            callbackFlowEmitWrapper { it(user) }
+        }
 
     /**
      * @throws FirebaseNetworkException 인터넷에 연결되지 않았을 경우

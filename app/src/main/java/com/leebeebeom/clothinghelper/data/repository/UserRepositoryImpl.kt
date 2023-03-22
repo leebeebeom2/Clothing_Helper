@@ -8,7 +8,6 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.leebeebeom.clothinghelper.data.repository.UserRepositoryImpl.UserCallback
-import com.leebeebeom.clothinghelper.data.repository.util.LoadingStreamProviderImpl
 import com.leebeebeom.clothinghelper.data.repository.util.callbackFlowEmit
 import com.leebeebeom.clothinghelper.di.AppScope
 import com.leebeebeom.clothinghelper.di.DispatcherIO
@@ -17,7 +16,11 @@ import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -27,7 +30,7 @@ import javax.inject.Singleton
 class UserRepositoryImpl @Inject constructor(
     @AppScope private val appScope: CoroutineScope,
     @DispatcherIO private val dispatcher: CoroutineDispatcher,
-) : UserRepository, LoadingStreamProviderImpl(initialState = false) {
+) : UserRepository {
     private val auth = FirebaseAuth.getInstance()
     private var userCallback: UserCallback? = null
 
@@ -37,20 +40,14 @@ class UserRepositoryImpl @Inject constructor(
         }
 
         val authCallback = FirebaseAuth.AuthStateListener { firebaseAuth ->
-            if (firebaseAuth.currentUser == null)
-                trySend(element = firebaseAuth.currentUser.toUserModel())
+            trySend(element = firebaseAuth.currentUser.toUserModel())
         }
 
         auth.addAuthStateListener(authCallback)
 
-        awaitClose {
-            loadingOff()
-            auth.removeAuthStateListener(authCallback)
-        }
-    }.onEach { loadingOff() }.distinctUntilChanged().shareIn(
-        scope = appScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        replay = 1
+        awaitClose { auth.removeAuthStateListener(authCallback) }
+    }.distinctUntilChanged().shareIn(
+        scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
     )
 
     override fun getInitialUser() = auth.currentUser.toUserModel()
@@ -59,10 +56,7 @@ class UserRepositoryImpl @Inject constructor(
      * @throws FirebaseNetworkException 인터넷에 연결되지 않았을 경우
      */
     override suspend fun googleSignIn(credential: AuthCredential) =
-        withContext {
-            val user = auth.signInWithCredential(credential).await().user
-            callbackFlowEmitWrapper { it(user) }
-        }
+        withContext { auth.signInWithCredential(credential).await() }
 
     /**
      * @throws FirebaseNetworkException 인터넷에 연결되지 않았을 경우
@@ -70,10 +64,7 @@ class UserRepositoryImpl @Inject constructor(
      * @throws FirebaseAuthException InvalidEmail, NotFoundUser, WrongPassword 등
      */
     override suspend fun signIn(email: String, password: String) =
-        withContext {
-            val user = auth.signInWithEmailAndPassword(email, password).await().user
-            callbackFlowEmitWrapper { it(user) }
-        }
+        withContext { auth.signInWithEmailAndPassword(email, password).await() }
 
     /**
      * @throws FirebaseNetworkException 인터넷에 연결되지 않았을 경우
@@ -101,7 +92,6 @@ class UserRepositoryImpl @Inject constructor(
      */
     override suspend fun sendResetPasswordEmail(email: String) = withContext {
         auth.sendPasswordResetEmail(email).await()
-        loadingOff()
     }
 
     override fun signOut() = auth.signOut()
@@ -110,15 +100,7 @@ class UserRepositoryImpl @Inject constructor(
      * 호출 시 로딩 On, 예외 발생 시 로딩 Off
      */
     private suspend fun withContext(task: suspend () -> Unit) =
-        withContext(dispatcher) {
-            try {
-                loadingOn()
-                task()
-            } catch (e: Exception) {
-                loadingOff()
-                throw e
-            }
-        }
+        withContext(dispatcher) { launch { task() } }
 
     private fun FirebaseUser?.toUserModel() =
         this?.let { User(email = "$email", name = "$displayName", uid = uid) }

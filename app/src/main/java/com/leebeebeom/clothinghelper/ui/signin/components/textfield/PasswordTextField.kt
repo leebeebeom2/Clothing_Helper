@@ -1,52 +1,54 @@
 package com.leebeebeom.clothinghelper.ui.signin.components.textfield
 
-import androidx.annotation.StringRes
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.LocalContentColor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.components.*
+import com.leebeebeom.clothinghelper.ui.components.CustomIconButton
+import com.leebeebeom.clothinghelper.ui.components.StatefulMaxWidthTestField
 
 @Composable
 fun PasswordTextField(
+    initialPassword: String,
     error: () -> Int?,
-    imeActionRoute: ImeActionRoute = ImeActionRoute.DONE,
-    @StringRes label: Int = R.string.password,
-    state: MutableMaxWidthTextFieldState = rememberPasswordTextFieldState(
-        imeActionRoute = imeActionRoute,
-        label = label
-    ),
+    imeAction: ImeAction,
     onInputChange: (String) -> Unit,
-    visibleIconDescription: String = VISIBLE_ICON,
-    invisibleIconDescription: String = INVISIBLE_ICON,
 ) {
-    MaxWidthTextFieldWithError(
-        state = state,
-        onValueChange = state::onValueChange,
-        onFocusChanged = state::onFocusChanged,
-        onInputChange = onInputChange,
-        trailingIcon = {
-            VisibleIcon(
-                isVisible = { state.isVisible },
-                onClick = state::visibilityToggle,
-                visibleIconDescription = visibleIconDescription,
-                invisibleIconDescription = invisibleIconDescription
-            )
-        }
-    )
+    var isVisible by rememberSaveable { mutableStateOf(false) }
 
-    SetTextFieldError(error = error, collect = { state.error = it })
+    StatefulMaxWidthTestField(initialText = initialPassword,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Password, imeAction = imeAction
+        ),
+        onInputChange = onInputChange,
+        blockBlank = true,
+        error = error,
+        label = R.string.password,
+        isVisible = { isVisible },
+        trailingIcon = { focusRequester ->
+            VisibleIcon(isVisible = { isVisible }, onClick = {
+                focusRequester.requestFocus()
+                isVisible = !isVisible
+            })
+        })
 }
 
-const val VISIBLE_ICON = "visible icon"
-const val INVISIBLE_ICON = "invisible icon"
+const val visibleIconDescription = "visible icon"
+const val InvisibleIconDescription = "invisible icon"
 
 @Composable
 fun VisibleIcon(
     isVisible: () -> Boolean,
     onClick: () -> Unit,
-    visibleIconDescription: String = VISIBLE_ICON,
-    invisibleIconDescription: String = INVISIBLE_ICON,
+    visibleIconDescription: String = com.leebeebeom.clothinghelper.ui.signin.components.textfield.visibleIconDescription,
+    invisibleIconDescription: String = InvisibleIconDescription,
 ) {
     CustomIconButton(
         drawable = if (isVisible()) R.drawable.ic_visibility_off else R.drawable.ic_visibility,
@@ -56,16 +58,3 @@ fun VisibleIcon(
         contentDescription = if (isVisible()) invisibleIconDescription else visibleIconDescription
     )
 }
-
-@Composable
-fun rememberPasswordTextFieldState(
-    imeActionRoute: ImeActionRoute,
-    label: Int = R.string.password,
-) = rememberMaxWidthTextFieldState(
-    initialVisibility = false,
-    keyboardRoute = KeyboardRoute.PASSWORD,
-    imeActionRoute = imeActionRoute,
-    label = label,
-    cancelIconEnabled = false,
-    blockBlank = true
-)

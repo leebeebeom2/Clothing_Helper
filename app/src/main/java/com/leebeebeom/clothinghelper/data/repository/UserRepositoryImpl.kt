@@ -14,10 +14,12 @@ import com.leebeebeom.clothinghelper.di.AppScope
 import com.leebeebeom.clothinghelper.di.DispatcherIO
 import com.leebeebeom.clothinghelper.domain.model.User
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -108,9 +110,6 @@ class UserRepositoryImpl @Inject constructor(
      * 호출 시 로딩 On, 예외 발생 시 로딩 Off
      */
     private suspend fun withContext(task: suspend () -> Unit) =
-        withContextWithJob { launch { task() } }
-
-    private suspend fun withContextWithJob(task: suspend CoroutineScope.() -> Job) =
         withContext(dispatcher) {
             try {
                 loadingOn()

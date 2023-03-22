@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.data
 
-import android.util.Log
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.ktx.auth
@@ -77,17 +76,17 @@ class UserRepositoryTest {
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { userStream.collect() }
 
         failRunCatching(errorCode = ERROR_INVALID_EMAIL) { // invalidEmail
-            userRepository.signIn(email = InvalidEmail, password = SignInPassword)
+            userRepository.signIn(email = InvalidEmail, password = SignInPassword).join()
         }
         failRunCatching(errorCode = ERROR_USER_NOT_FOUND) { // notFoundEmail
-            userRepository.signIn(email = NotFoundEmail, password = SignInPassword)
+            userRepository.signIn(email = NotFoundEmail, password = SignInPassword).join()
         }
         failRunCatching(errorCode = ERROR_WRONG_PASSWORD) { // wrongPassword
-            userRepository.signIn(email = SignInEmail, password = WrongPassword)
+            userRepository.signIn(email = SignInEmail, password = WrongPassword).join()
         }
 
         successRunCatching {
-            userRepository.signIn(email = SignInEmail, password = SignInPassword)
+            userRepository.signIn(email = SignInEmail, password = SignInPassword).join()
         }
         val signedUser = userStream.first()
         assert(signedUser != null)
@@ -101,19 +100,19 @@ class UserRepositoryTest {
         failRunCatching(errorCode = ERROR_INVALID_EMAIL) { // invalidEmail
             userRepository.signUp(
                 email = InvalidEmail, password = SignInPassword, name = SignUpName
-            )
+            ).join()
         }
 
         failRunCatching(errorCode = ERROR_EMAIL_ALREADY_IN_USE) { // emailAlreadyInUse
             userRepository.signUp(
                 email = SignInEmail, password = SignInPassword, name = SignUpName
-            )
+            ).join()
         }
 
         successRunCatching {
             userRepository.signUp(
                 email = SignUpEmail, password = SignInPassword, name = SignUpName
-            )
+            ).join()
         }
         val signedUser = userStream.first()
         assert(signedUser?.email == SignUpEmail)
@@ -127,12 +126,12 @@ class UserRepositoryTest {
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { userStream.collect() }
 
         failRunCatching(errorCode = ERROR_INVALID_EMAIL) { // invalidEmail
-            userRepository.sendResetPasswordEmail(email = InvalidEmail)
+            userRepository.sendResetPasswordEmail(email = InvalidEmail).join()
         }
         failRunCatching(errorCode = ERROR_USER_NOT_FOUND) { // userNotFound
-            userRepository.sendResetPasswordEmail(email = NotFoundEmail)
+            userRepository.sendResetPasswordEmail(email = NotFoundEmail).join()
         }
-        successRunCatching { userRepository.sendResetPasswordEmail(email = SendPasswordEmail) }
+        successRunCatching { userRepository.sendResetPasswordEmail(email = SendPasswordEmail).join() }
     }
 
     @Test
@@ -146,40 +145,16 @@ class UserRepositoryTest {
         }
 
         networkExceptionRunCatching {
-            userRepository.signIn(email = SignInEmail, password = SignInPassword)
+            userRepository.signIn(email = SignInEmail, password = SignInPassword).join()
         }
 
         networkExceptionRunCatching {
-            userRepository.signUp(email = SignUpEmail, password = SignInPassword, name = SignUpName)
+            userRepository.signUp(email = SignUpEmail, password = SignInPassword, name = SignUpName).join()
         }
 
         networkExceptionRunCatching {
-            userRepository.sendResetPasswordEmail(email = SendPasswordEmail)
+            userRepository.sendResetPasswordEmail(email = SendPasswordEmail).join()
         }
-    }
-
-    @Test
-    fun userRepositoryLoadingTest() = runTest(dispatcher) {
-        val userLoadingTag = "loading"
-        // check the logcat
-        Log.d(userLoadingTag, "loadingCollect start")
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            userRepository.loadingStream.collect {
-                Log.d(userLoadingTag, "userRepository loading collect 호출: $it")
-            }
-        }
-        Log.d(userLoadingTag, "userCollect start")
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { userStream.collect() }
-
-        Log.d(userLoadingTag, "sign in start")
-        userRepository.signIn(email = SignInEmail, password = SignInPassword)
-
-        Log.d(userLoadingTag, "sign up start")
-        userRepository.signUp(email = SignUpEmail, password = SignInPassword, name = SignUpName)
-        Firebase.auth.currentUser?.delete()
-
-        Log.d(userLoadingTag, "send reset password start")
-        userRepository.sendResetPasswordEmail(email = SendPasswordEmail)
     }
 }
 

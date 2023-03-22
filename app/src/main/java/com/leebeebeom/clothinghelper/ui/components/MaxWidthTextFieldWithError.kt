@@ -167,7 +167,7 @@ private fun MaxWidthTextField(
 
 @Composable
 private fun ErrorText(error: () -> Int?) {
-    val show by rememberSaveable { derivedStateOf { error() != null } }
+    val show by remember { derivedStateOf { error() != null } }
 
     AnimatedVisibility(
         visible = show, enter = errorIn, exit = errorOut

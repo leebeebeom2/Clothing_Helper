@@ -32,6 +32,7 @@ object SignInDestinations {
 fun SignInNavHost(
     navController: NavHostController = rememberNavController(),
     viewModel: SignInNavViewModel = hiltViewModel(),
+    navigateToMainGraph: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -45,14 +46,21 @@ fun SignInNavHost(
             SignInScreen(
                 navigateToResetPassword = navController::navigateToResetPassword,
                 navigateToSignUp = navController::navigateToSignUp,
-                signInNavViewModel = viewModel
+                signInNavViewModel = viewModel,
+                navigateToMainGraph = navigateToMainGraph
             )
         }
         composable(route = SignUpRoute) {
-            SignUpScreen(signInNavViewModel = viewModel)
+            SignUpScreen(
+                signInNavViewModel = viewModel,
+                navigateToMainGraph = navigateToMainGraph
+            )
         }
         composable(route = ResetPasswordRoute) {
-            ResetPasswordScreen(popBackStack = navController::popBackStack)
+            ResetPasswordScreen(
+                popBackStack = navController::popBackStack,
+                navigateToMainGraph = navigateToMainGraph
+            )
         }
     }
 

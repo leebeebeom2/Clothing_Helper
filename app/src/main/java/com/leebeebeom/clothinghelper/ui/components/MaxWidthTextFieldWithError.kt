@@ -212,9 +212,7 @@ fun TextFieldCancelIcon(
     onValueChange: (TextFieldValue) -> Unit,
     textFieldValue: () -> TextFieldValue,
 ) {
-    val show by rememberSaveable(hasFocus, textFieldValue) {
-        derivedStateOf { hasFocus() && textFieldValue().text.isNotBlank() }
-    }
+    val show by remember { derivedStateOf { hasFocus() && textFieldValue().text.isNotBlank() } }
 
     if (show)
         CustomIconButton(

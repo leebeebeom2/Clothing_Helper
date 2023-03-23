@@ -21,11 +21,11 @@ import javax.inject.Inject
 class ActivityViewModel @Inject constructor(getUserUseCase: GetUserUseCase) :
     ViewModel() {
     private val toastTexts = mutableStateListOf<Int>()
-    private val toastTextsFlow = snapshotFlow { toastTexts }
+    private val toastTextsStream = snapshotFlow { toastTexts }
 
     val activityUiState =
         combine(
-            flow = toastTextsFlow,
+            flow = toastTextsStream,
             flow2 = getUserUseCase.userStream
         ) { toastTexts, user ->
             ActivityUiState(toastTexts = toastTexts, user = user)

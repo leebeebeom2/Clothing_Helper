@@ -22,11 +22,11 @@ import javax.inject.Inject
 class ActivityViewModel @Inject constructor(getUserUseCase: GetUserUseCase) : ViewModel() {
     private val toastTexts = mutableStateListOf<Int>()
     private val toastTextsFlow = snapshotFlow { toastTexts }
-    private val initialUserState = getUserUseCase.getInitialUser()
+    private val initialUser = getUserUseCase.getInitialUser()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val activityUiState =
-        toastTextsFlow.mapLatest { ActivityUiState(toastTexts = it, user = initialUserState) }
+        toastTextsFlow.mapLatest { ActivityUiState(toastTexts = it, user = initialUser) }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),

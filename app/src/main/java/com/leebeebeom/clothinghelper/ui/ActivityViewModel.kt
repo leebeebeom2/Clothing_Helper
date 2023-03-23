@@ -19,7 +19,9 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class ActivityViewModel @Inject constructor(getUserUseCase: GetUserUseCase) : ViewModel() {
+class ActivityViewModel @Inject constructor(private val getUserUseCase: GetUserUseCase) :
+    ViewModel() {
+    val userStream get() = getUserUseCase.userStream
     private val toastTexts = mutableStateListOf<Int>()
     private val toastTextsFlow = snapshotFlow { toastTexts }
     private val initialUser = getUserUseCase.getInitialUser()

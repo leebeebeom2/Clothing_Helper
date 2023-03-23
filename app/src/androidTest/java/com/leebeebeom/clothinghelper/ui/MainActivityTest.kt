@@ -1,23 +1,56 @@
 package com.leebeebeom.clothinghelper.ui
 
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.google.firebase.auth.FirebaseAuth
-import com.leebeebeom.clothinghelper.CustomTestRule
-import com.leebeebeom.clothinghelper.activityRule
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelper.data.SignInEmail
 import com.leebeebeom.clothinghelper.data.SignInPassword
 import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.MainGraphRoute
 import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.SignInGraphRoute
 import com.leebeebeom.clothinghelper.ui.main.MainNavTag
 import com.leebeebeom.clothinghelper.ui.signin.ui.SignInNavTag
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+
+class MainActivityTest {
+    @get:Rule
+    val rule = createAndroidComposeRule<HiltTestActivity>()
+    private val restorationTester = StateRestorationTester(rule)
+
+    @Before
+    fun init() {
+        runBlocking {
+            Firebase.auth.signOut()
+            delay(1000)
+        }
+
+        restorationTester.setContent {
+            MainActivityScreen()
+        }
+    }
+
+    @Test
+    fun restoreTest() {
+        restorationTester.emulateSavedInstanceStateRestore()
+        rule.onNodeWithTag(SignInNavTag).assertExists()
+        rule.signIn()
+        rule.waitTagExit(MainNavTag)
+        restorationTester.emulateSavedInstanceStateRestore()
+        rule.onNodeWithTag(MainNavTag).assertExists()
+        rule.signOut()
+        rule.waitTagExit(SignInNavTag)
+        restorationTester.emulateSavedInstanceStateRestore()
+        rule.onNodeWithTag(SignInNavTag).assertExists()
+    }
+}
 
 class MainActivitySignInStartTest {
     @get:Rule
@@ -26,8 +59,8 @@ class MainActivitySignInStartTest {
     @Before
     fun init() {
         runBlocking {
-            FirebaseAuth.getInstance().signInWithEmailAndPassword(SignInEmail, SignInPassword)
-                .await()
+            Firebase.auth.signInWithEmailAndPassword(SignInEmail, SignInPassword).await()
+            delay(1000)
         }
         rule.setContent { MainActivityScreen() }
     }
@@ -47,7 +80,10 @@ class MainActivitySignOutStartTest {
 
     @Before
     fun init() {
-        FirebaseAuth.getInstance().signOut()
+        runBlocking {
+            Firebase.auth.signOut()
+            delay(1000)
+        }
         rule.setContent {
             navController = rememberNavController()
             MainActivityScreen(navController = navController)

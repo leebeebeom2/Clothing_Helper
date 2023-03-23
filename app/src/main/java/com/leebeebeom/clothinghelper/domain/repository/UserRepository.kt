@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.SharedFlow
 
 interface UserRepository {
     val userStream: SharedFlow<User?>
-    fun getInitialUser(): User?
+    fun getUser(): User?
     suspend fun googleSignIn(credential: AuthCredential): Job
 
     /**

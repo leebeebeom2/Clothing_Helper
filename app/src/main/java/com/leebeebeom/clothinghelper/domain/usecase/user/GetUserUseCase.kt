@@ -8,5 +8,5 @@ import javax.inject.Singleton
 class GetUserUseCase @Inject constructor(private val userRepository: UserRepository) {
     val userStream get() = userRepository.userStream
 
-    fun getInitialUser() = userRepository.getInitialUser()
+    fun getUser() = userRepository.getUser()
 }

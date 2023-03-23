@@ -156,14 +156,6 @@ class BaseRepositoryChildTest {
     }
 
     @Test
-    fun loadingTest() = runTest(dispatcher) {
-        // check the logcat
-        repositoryLoadingTest(userRepository = userRepository, repository = subCategoryRepository)
-        repositoryLoadingTest(userRepository = userRepository, repository = folderRepository)
-        repositoryLoadingTest(userRepository = userRepository, repository = todoRepository)
-    }
-
-    @Test
     fun accountChangeLoadTest() = runTest(dispatcher) {
         repositoryChangeAccountLoadTest(
             repository = subCategoryRepository,

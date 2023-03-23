@@ -31,8 +31,7 @@ object SignInDestinations {
 @Composable
 fun SignInNavHost(
     navController: NavHostController = rememberNavController(),
-    viewModel: SignInNavViewModel = hiltViewModel(),
-    navigateToMainGraph: () -> Unit,
+    viewModel: SignInNavViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -46,22 +45,11 @@ fun SignInNavHost(
             SignInScreen(
                 navigateToResetPassword = navController::navigateToResetPassword,
                 navigateToSignUp = navController::navigateToSignUp,
-                signInNavViewModel = viewModel,
-                navigateToMainGraph = navigateToMainGraph
+                signInNavViewModel = viewModel
             )
         }
-        composable(route = SignUpRoute) {
-            SignUpScreen(
-                signInNavViewModel = viewModel,
-                navigateToMainGraph = navigateToMainGraph
-            )
-        }
-        composable(route = ResetPasswordRoute) {
-            ResetPasswordScreen(
-                popBackStack = navController::popBackStack,
-                navigateToMainGraph = navigateToMainGraph
-            )
-        }
+        composable(route = SignUpRoute) { SignUpScreen(signInNavViewModel = viewModel) }
+        composable(route = ResetPasswordRoute) { ResetPasswordScreen(popBackStack = navController::popBackStack) }
     }
 
     CenterDotProgressIndicator(show = { uiState.isLoading })

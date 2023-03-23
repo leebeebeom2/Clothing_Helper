@@ -12,28 +12,28 @@ import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.domain.model.User
 import com.leebeebeom.clothinghelper.domain.usecase.user.GetUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class ActivityViewModel @Inject constructor(private val getUserUseCase: GetUserUseCase) :
+class ActivityViewModel @Inject constructor(getUserUseCase: GetUserUseCase) :
     ViewModel() {
-    val userStream get() = getUserUseCase.userStream
     private val toastTexts = mutableStateListOf<Int>()
     private val toastTextsFlow = snapshotFlow { toastTexts }
-    private val initialUser = getUserUseCase.getInitialUser()
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     val activityUiState =
-        toastTextsFlow.mapLatest { ActivityUiState(toastTexts = it, user = initialUser) }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = ActivityUiState(user = getUserUseCase.getInitialUser())
-            )
+        combine(
+            flow = toastTextsFlow,
+            flow2 = getUserUseCase.userStream
+        ) { toastTexts, user ->
+            ActivityUiState(toastTexts = toastTexts, user = user)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = ActivityUiState(user = getUserUseCase.getUser())
+        )
 
     fun addToastTextAtLast(toastText: Int) {
         toastTexts.add(toastText)

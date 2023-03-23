@@ -24,7 +24,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     protected val type: Class<T>,
     private val dispatcher: CoroutineDispatcher,
     userRepository: UserRepository,
-) : BaseDataRepository<T>, LoadingStreamProviderImpl(initialState = true) {
+) : BaseDataRepository<T> {
     private val dbRoot = getDbRoot()
     private var ref: DatabaseReference? = null
     private var lastCachedData = emptyList<T>()
@@ -38,44 +38,39 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
      * @throws DatabaseException onCancelled 호출 시 발생
      */
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val allDataStream =
-        userRepository.userStream.flatMapLatest { user ->
-            loadingOn()
-
-            user?.let { nonNullUser ->
-                callbackFlow {
-                    val dataCallback = object : ValueEventListener {
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            lastCachedData = snapshot.children.map { it.getValue(type)!! }
-                            trySend(element = DataResult.Success(lastCachedData))
-                        }
-
-                        override fun onCancelled(error: DatabaseError) {
-                            trySend(element = DataResult.Fail(lastCachedData, error.toException()))
-                        }
+    override val allDataStream = userRepository.userStream.flatMapLatest { user ->
+        user?.let { nonNullUser ->
+            callbackFlow {
+                val dataCallback = object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        lastCachedData = snapshot.children.map { it.getValue(type)!! }
+                        trySend(element = DataResult.Success(lastCachedData))
                     }
 
-                    ref.init(dataCallback = dataCallback)
-
-                    ref = dbRoot.getContainerRef(uid = nonNullUser.uid, path = refPath.path)
-                        .apply {
-                            keepSynced(true)
-                            addValueEventListener(dataCallback)
-                        }
-
-                    awaitClose {
-                        loadingOff()
-                        ref.init(dataCallback = dataCallback)
-                        ref = null
+                    override fun onCancelled(error: DatabaseError) {
+                        trySend(element = DataResult.Fail(lastCachedData, error.toException()))
                     }
                 }
-            } ?: flow { emit(DataResult.Success(data = emptyList<T>())) }
-        }.onEach { loadingOff() }
-            .shareIn(
-                scope = appScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                replay = 1
-            )
+
+                ref.init(dataCallback = dataCallback)
+
+                ref = dbRoot.getContainerRef(uid = nonNullUser.uid, path = refPath.path)
+                    .apply {
+                        keepSynced(true)
+                        addValueEventListener(dataCallback)
+                    }
+
+                awaitClose {
+                    ref.init(dataCallback = dataCallback)
+                    ref = null
+                }
+            }
+        } ?: flow { emit(DataResult.Success(data = emptyList<T>())) }
+    }.shareIn(
+        scope = appScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        replay = 1
+    )
 
     @Suppress("UNCHECKED_CAST")
     override suspend fun add(data: T): Job {

@@ -19,6 +19,7 @@ import com.leebeebeom.clothinghelper.ui.util.ShowToast
 import com.leebeebeom.clothinghelper.util.buildConfigLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -34,6 +35,7 @@ class SignInNavViewModel @Inject constructor(
     private val firebaseAuthErrorUseCase: FirebaseAuthErrorUseCase,
 ) : ViewModel() {
     val state = SignInNavState()
+
     val uiState = combine(
         flow = state.googleButtonEnabledStream,
         flow2 = state.isSignInLoadingStream
@@ -45,20 +47,16 @@ class SignInNavViewModel @Inject constructor(
         initialValue = SignInNavUiState()
     )
 
-    fun signInWithGoogleEmail(
-        activityResult: ActivityResult,
-        showToast: ShowToast,
-        navigateToMainGraph: () -> Unit
-    ) {
+    fun signInWithGoogleEmail(activityResult: ActivityResult, showToast: ShowToast) =
         when (activityResult.resultCode) {
             Activity.RESULT_OK -> googleSignIn(
                 activityResult = activityResult,
-                showToast = showToast,
-                navigateToMainGraph = navigateToMainGraph
+                showToast = showToast
             )
             Activity.RESULT_CANCELED -> {
                 showToast(R.string.canceled)
                 state.googleButtonEnabled = true
+                null
             }
             else -> {
                 buildConfigLog(
@@ -67,26 +65,19 @@ class SignInNavViewModel @Inject constructor(
                 )
                 showToast(R.string.unknown_error)
                 state.googleButtonEnabled = true
+                null
             }
         }
-    }
 
-    private fun googleSignIn(
-        activityResult: ActivityResult,
-        showToast: ShowToast,
-        navigateToMainGraph: () -> Unit
-    ) {
+    private fun googleSignIn(activityResult: ActivityResult, showToast: ShowToast): Job {
         val handler = CoroutineExceptionHandler { _, throwable ->
             firebaseAuthErrorUseCase.firebaseAuthError(throwable = throwable, showToast = showToast)
             state.googleButtonEnabled = true
         }
 
-        viewModelScope.launch(handler) {
+        return viewModelScope.launch(handler) {
             state.isSignInLoading = true
             googleSignInUseCase.googleSignIn(credential = getGoogleCredential(activityResult = activityResult))
-                .join()
-            showToast(R.string.google_sign_in_complete)
-            navigateToMainGraph()
         }
     }
 
@@ -96,8 +87,8 @@ class SignInNavViewModel @Inject constructor(
         return GoogleAuthProvider.getCredential(account.idToken, null)
     }
 
-    fun setGoogleButtonEnable(enable: Boolean) {
-        state.googleButtonEnabled = enable
+    fun googleButtonDisable() {
+        state.googleButtonEnabled = false
     }
 }
 

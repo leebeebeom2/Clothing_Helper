@@ -14,6 +14,7 @@ import com.leebeebeom.clothinghelper.domain.usecase.user.GetUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
@@ -29,7 +30,7 @@ class ActivityViewModel @Inject constructor(getUserUseCase: GetUserUseCase) :
             flow2 = getUserUseCase.userStream
         ) { toastTexts, user ->
             ActivityUiState(toastTexts = toastTexts, user = user)
-        }.stateIn(
+        }.distinctUntilChanged().stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = ActivityUiState(user = getUserUseCase.getUser())

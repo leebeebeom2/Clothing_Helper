@@ -22,6 +22,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -41,7 +42,7 @@ class SignInNavViewModel @Inject constructor(
         flow2 = state.isSignInLoadingStream
     ) { googleButtonEnabled, isLoading ->
         SignInNavUiState(googleButtonEnabled = googleButtonEnabled, isLoading = isLoading)
-    }.stateIn(
+    }.distinctUntilChanged().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = SignInNavUiState()

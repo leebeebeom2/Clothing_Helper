@@ -100,6 +100,10 @@ class SignInNavState {
         googleButtonEnabled = enabled
     }
 
+    fun googleButtonDisable() {
+        googleButtonEnabled = false
+    }
+
     fun signInLoadingOn() {
         isSignInLoading = true
     }

@@ -52,7 +52,7 @@ fun MainActivityScreen(
             navController = navController,
             startDestination = if (uiState.user == null) SignInGraphRoute else MainGraphRoute // no recomposition, called ViewModel onCleared
         ) {
-            composable(route = SignInGraphRoute) { SignInNavHost() }
+            composable(route = SignInGraphRoute) { SignInNavHost(showToast = viewModel::addToastTextAtLast) }
             composable(route = MainGraphRoute) { MainNavHost() }
         }
     }

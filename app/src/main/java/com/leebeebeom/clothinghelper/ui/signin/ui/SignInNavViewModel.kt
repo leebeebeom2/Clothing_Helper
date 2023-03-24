@@ -91,25 +91,25 @@ data class SignInNavUiState(
 )
 
 class SignInNavState {
-    var googleButtonEnabled by mutableStateOf(true)
+    private var googleButtonEnabledState by mutableStateOf(true)
         private set
-    var isSignInLoading by mutableStateOf(false)
+    private var isSignInLoadingState by mutableStateOf(false)
         private set
 
     fun googleButtonEnabled() {
-        googleButtonEnabled = true
+        googleButtonEnabledState = true
     }
 
     fun googleButtonDisable() {
-        googleButtonEnabled = false
+        googleButtonEnabledState = false
     }
 
     fun setLoading(loading: Boolean) {
-        isSignInLoading = loading
+        isSignInLoadingState = loading
     }
 
-    private val googleButtonEnabledStream = snapshotFlow { googleButtonEnabled }
-    private val isSignInLoadingStream = snapshotFlow { isSignInLoading }
+    private val googleButtonEnabledStream = snapshotFlow { googleButtonEnabledState }
+    private val isSignInLoadingStream = snapshotFlow { isSignInLoadingState }
 
     val uiStateStream = combine(
         googleButtonEnabledStream,

@@ -43,7 +43,7 @@ class SignInNavHostTest {
         restorationTester.setContent {
             ClothingHelperTheme {
                 viewModel = hiltViewModel()
-                SignInNavHost(viewModel = viewModel)
+                SignInNavHost(viewModel = viewModel, showToast = {})
             }
         }
     }

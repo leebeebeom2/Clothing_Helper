@@ -42,11 +42,11 @@ class MainActivityTest {
         restorationTester.emulateSavedInstanceStateRestore()
         rule.onNodeWithTag(SignInNavTag).assertExists()
         rule.signIn()
-        rule.waitTagExit(MainNavTag)
+        rule.waitTagExist(MainNavTag)
         restorationTester.emulateSavedInstanceStateRestore()
         rule.onNodeWithTag(MainNavTag).assertExists()
         rule.signOut()
-        rule.waitTagExit(SignInNavTag)
+        rule.waitTagExist(SignInNavTag)
         restorationTester.emulateSavedInstanceStateRestore()
         rule.onNodeWithTag(SignInNavTag).assertExists()
     }
@@ -109,18 +109,18 @@ class MainActivitySignOutStartTest {
         assert(!isBackStackExist(MainGraphRoute))
 
         rule.signIn()
-        rule.waitTagExit(MainNavTag)
+        rule.waitTagExist(MainNavTag)
         assert(!isBackStackExist(SignInGraphRoute))
 
         rule.signOut()
-        rule.waitTagExit(SignInNavTag)
+        rule.waitTagExist(SignInNavTag)
         assert(!isBackStackExist(MainGraphRoute))
 
         repeat(2) {
             rule.signIn()
-            rule.waitTagExit(MainNavTag)
+            rule.waitTagExist(MainNavTag)
             rule.signOut()
-            rule.waitTagExit(SignInNavTag)
+            rule.waitTagExist(SignInNavTag)
         }
         assert(!isBackStackExist(MainGraphRoute))
     }

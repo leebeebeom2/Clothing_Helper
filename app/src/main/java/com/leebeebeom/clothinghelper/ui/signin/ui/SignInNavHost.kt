@@ -49,7 +49,12 @@ fun SignInNavHost(
             )
         }
         composable(route = SignUpRoute) { SignUpScreen(signInNavViewModel = viewModel) }
-        composable(route = ResetPasswordRoute) { ResetPasswordScreen(popBackStack = navController::popBackStack) }
+        composable(route = ResetPasswordRoute) {
+            ResetPasswordScreen(
+                popBackStack = navController::popBackStack,
+                signInNavViewModel = viewModel
+            )
+        }
     }
 
     CenterDotProgressIndicator(show = { uiState.isLoading })

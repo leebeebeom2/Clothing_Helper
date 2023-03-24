@@ -35,14 +35,9 @@ class SignInNavViewModel @Inject constructor(
     private val googleSignInUseCase: GoogleSignInUseCase,
     private val firebaseAuthErrorUseCase: FirebaseAuthErrorUseCase,
 ) : ViewModel() {
-    val state = SignInNavState()
+    val signInNavState = SignInNavState()
 
-    val uiState = combine(
-        flow = state.googleButtonEnabledStream,
-        flow2 = state.isSignInLoadingStream
-    ) { googleButtonEnabled, isLoading ->
-        SignInNavUiState(googleButtonEnabled = googleButtonEnabled, isLoading = isLoading)
-    }.distinctUntilChanged().stateIn(
+    val uiState = signInNavState.uiStateStream.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = SignInNavUiState()
@@ -56,7 +51,7 @@ class SignInNavViewModel @Inject constructor(
             )
             Activity.RESULT_CANCELED -> {
                 showToast(R.string.canceled)
-                state.googleButtonEnabled = true
+                signInNavState.setGoogleButtonEnabled(true)
                 null
             }
             else -> {
@@ -65,7 +60,7 @@ class SignInNavViewModel @Inject constructor(
                     msg = "resultCode = ${activityResult.resultCode}",
                 )
                 showToast(R.string.unknown_error)
-                state.googleButtonEnabled = true
+                signInNavState.setGoogleButtonEnabled(true)
                 null
             }
         }
@@ -73,11 +68,12 @@ class SignInNavViewModel @Inject constructor(
     private fun googleSignIn(activityResult: ActivityResult, showToast: ShowToast): Job {
         val handler = CoroutineExceptionHandler { _, throwable ->
             firebaseAuthErrorUseCase.firebaseAuthError(throwable = throwable, showToast = showToast)
-            state.googleButtonEnabled = true
+            signInNavState.signInLoadingOff()
+            signInNavState.setGoogleButtonEnabled(true)
         }
 
         return viewModelScope.launch(handler) {
-            state.isSignInLoading = true
+            signInNavState.signInLoadingOn()
             googleSignInUseCase.googleSignIn(credential = getGoogleCredential(activityResult = activityResult))
         }
     }
@@ -86,10 +82,6 @@ class SignInNavViewModel @Inject constructor(
         val account = GoogleSignIn.getSignedInAccountFromIntent(activityResult.data)
             .getResult(ApiException::class.java)
         return GoogleAuthProvider.getCredential(account.idToken, null)
-    }
-
-    fun googleButtonDisable() {
-        state.googleButtonEnabled = false
     }
 }
 
@@ -100,7 +92,31 @@ data class SignInNavUiState(
 
 class SignInNavState {
     var googleButtonEnabled by mutableStateOf(true)
-    val googleButtonEnabledStream = snapshotFlow { googleButtonEnabled }
+        private set
     var isSignInLoading by mutableStateOf(false)
-    val isSignInLoadingStream = snapshotFlow { isSignInLoading }
+        private set
+
+    fun setGoogleButtonEnabled(enabled: Boolean) {
+        googleButtonEnabled = enabled
+    }
+
+    fun signInLoadingOn() {
+        isSignInLoading = true
+    }
+
+    fun signInLoadingOff() {
+        isSignInLoading = false
+    }
+
+    private val googleButtonEnabledStream = snapshotFlow { googleButtonEnabled }
+    private val isSignInLoadingStream = snapshotFlow { isSignInLoading }
+
+    val uiStateStream = combine(
+        googleButtonEnabledStream,
+        isSignInLoadingStream
+    ) { googleButtonEnabled, isSignInLoading ->
+        SignInNavUiState(
+            googleButtonEnabled = googleButtonEnabled, isLoading = isSignInLoading
+        )
+    }.distinctUntilChanged()
 }

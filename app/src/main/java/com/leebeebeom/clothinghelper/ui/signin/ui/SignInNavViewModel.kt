@@ -68,12 +68,12 @@ class SignInNavViewModel @Inject constructor(
     private fun googleSignIn(activityResult: ActivityResult, showToast: ShowToast): Job {
         val handler = CoroutineExceptionHandler { _, throwable ->
             firebaseAuthErrorUseCase.firebaseAuthError(throwable = throwable, showToast = showToast)
-            signInNavState.signInLoadingOff()
+            signInNavState.setLoading(false)
             signInNavState.setGoogleButtonEnabled(true)
         }
 
         return viewModelScope.launch(handler) {
-            signInNavState.signInLoadingOn()
+            signInNavState.setLoading(true)
             googleSignInUseCase.googleSignIn(credential = getGoogleCredential(activityResult = activityResult))
         }
     }
@@ -104,12 +104,8 @@ class SignInNavState {
         googleButtonEnabled = false
     }
 
-    fun signInLoadingOn() {
-        isSignInLoading = true
-    }
-
-    fun signInLoadingOff() {
-        isSignInLoading = false
+    fun setLoading(loading: Boolean) {
+        isSignInLoading = loading
     }
 
     private val googleButtonEnabledStream = snapshotFlow { googleButtonEnabled }

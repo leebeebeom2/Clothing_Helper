@@ -51,7 +51,7 @@ class SignInNavViewModel @Inject constructor(
             )
             Activity.RESULT_CANCELED -> {
                 showToast(R.string.canceled)
-                signInNavState.setGoogleButtonEnabled(true)
+                signInNavState.googleButtonEnabled()
                 null
             }
             else -> {
@@ -60,7 +60,7 @@ class SignInNavViewModel @Inject constructor(
                     msg = "resultCode = ${activityResult.resultCode}",
                 )
                 showToast(R.string.unknown_error)
-                signInNavState.setGoogleButtonEnabled(true)
+                signInNavState.googleButtonEnabled()
                 null
             }
         }
@@ -69,7 +69,7 @@ class SignInNavViewModel @Inject constructor(
         val handler = CoroutineExceptionHandler { _, throwable ->
             firebaseAuthErrorUseCase.firebaseAuthError(throwable = throwable, showToast = showToast)
             signInNavState.setLoading(false)
-            signInNavState.setGoogleButtonEnabled(true)
+            signInNavState.googleButtonEnabled()
         }
 
         return viewModelScope.launch(handler) {
@@ -96,8 +96,8 @@ class SignInNavState {
     var isSignInLoading by mutableStateOf(false)
         private set
 
-    fun setGoogleButtonEnabled(enabled: Boolean) {
-        googleButtonEnabled = enabled
+    fun googleButtonEnabled() {
+        googleButtonEnabled = true
     }
 
     fun googleButtonDisable() {

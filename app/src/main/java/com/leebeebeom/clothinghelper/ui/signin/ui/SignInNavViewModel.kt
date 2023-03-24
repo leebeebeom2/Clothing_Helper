@@ -92,9 +92,7 @@ data class SignInNavUiState(
 
 class SignInNavState {
     private var googleButtonEnabledState by mutableStateOf(true)
-        private set
     private var isSignInLoadingState by mutableStateOf(false)
-        private set
 
     fun googleButtonEnabled() {
         googleButtonEnabledState = true

@@ -1,7 +1,9 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui
 
+import androidx.activity.result.ActivityResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -18,6 +20,7 @@ import com.leebeebeom.clothinghelper.ui.signin.ui.SignInDestinations.SignUpRoute
 import com.leebeebeom.clothinghelper.ui.signin.ui.resetpassword.ResetPasswordScreen
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInScreen
 import com.leebeebeom.clothinghelper.ui.signin.ui.signup.SignUpScreen
+import com.leebeebeom.clothinghelper.ui.util.ShowToast
 
 const val SignInNavTag = "sign in nav"
 
@@ -31,10 +34,16 @@ object SignInDestinations {
 @Composable
 fun SignInNavHost(
     navController: NavHostController = rememberNavController(),
-    viewModel: SignInNavViewModel = hiltViewModel()
+    viewModel: SignInNavViewModel = hiltViewModel(),
+    showToast: ShowToast
 ) {
+    val state = viewModel.signInNavState
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
+    val signInWithGoogleEmail = remember<(ActivityResult) -> Unit> {
+        {
+            viewModel.signInWithGoogleEmail(activityResult = it, showToast = showToast)
+        }
+    }
     NavHost(
         modifier = Modifier.testTag(tag = SignInNavTag),
         navController = navController,
@@ -45,14 +54,27 @@ fun SignInNavHost(
             SignInScreen(
                 navigateToResetPassword = navController::navigateToResetPassword,
                 navigateToSignUp = navController::navigateToSignUp,
-                signInNavViewModel = viewModel
+                showToast = showToast,
+                setLoading = state::setLoading,
+                googleButtonEnabled = { uiState.googleButtonEnabled },
+                googleButtonDisable = state::googleButtonDisable,
+                signInWithGoogleEmail = signInWithGoogleEmail
             )
         }
-        composable(route = SignUpRoute) { SignUpScreen(signInNavViewModel = viewModel) }
+        composable(route = SignUpRoute) {
+            SignUpScreen(
+                showToast = showToast,
+                setLoading = state::setLoading,
+                googleButtonEnabled = { uiState.googleButtonEnabled },
+                googleButtonDisable = state::googleButtonDisable,
+                signInWithGoogleEmail = signInWithGoogleEmail
+            )
+        }
         composable(route = ResetPasswordRoute) {
             ResetPasswordScreen(
                 popBackStack = navController::popBackStack,
-                signInNavViewModel = viewModel
+                showToast = showToast,
+                setLoading = state::setLoading
             )
         }
     }

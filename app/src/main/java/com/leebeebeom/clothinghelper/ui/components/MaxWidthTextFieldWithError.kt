@@ -16,6 +16,7 @@ import androidx.compose.ui.focus.*
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
@@ -24,19 +25,23 @@ import com.leebeebeom.clothinghelper.ui.theme.DarkGrayishBlue
 import com.leebeebeom.clothinghelper.ui.theme.Gainsboro
 import com.leebeebeom.clothinghelper.ui.theme.LightGrayishBlue
 import com.leebeebeom.clothinghelper.ui.theme.VeryDarkGray
+import com.leebeebeom.clothinghelper.ui.util.Anime
 import com.leebeebeom.clothinghelper.ui.util.Anime.Error.errorIn
 import com.leebeebeom.clothinghelper.ui.util.Anime.Error.errorOut
 import kotlinx.coroutines.delay
 
 @Composable
 fun StatefulMaxWidthTestFieldWithCancelIcon(
-    initialText: String,
+    initialText: String = "",
     blockBlank: Boolean = false,
     @StringRes label: Int? = null,
     @StringRes placeholder: Int? = null,
     error: () -> Int? = { null },
     isVisible: () -> Boolean = { true },
-    keyboardOptions: KeyboardOptions,
+    keyboardOptions: KeyboardOptions = KeyboardOptions(
+        keyboardType = KeyboardType.Text,
+        imeAction = ImeAction.Done
+    ),
     onInputChange: (String) -> Unit,
     focusRequester: FocusRequester = remember { FocusRequester() },
     getFocus: Boolean = false
@@ -67,14 +72,17 @@ fun StatefulMaxWidthTestFieldWithCancelIcon(
 
 @Composable
 fun StatefulMaxWidthTestField(
-    initialText: String,
+    initialText: String = "",
     blockBlank: Boolean = false,
     @StringRes label: Int? = null,
     @StringRes placeholder: Int? = null,
     error: () -> Int? = { null },
     isVisible: () -> Boolean = { true },
-    keyboardOptions: KeyboardOptions,
-    onInputChange: (String) -> Unit,
+    keyboardOptions: KeyboardOptions = KeyboardOptions(
+        keyboardType = KeyboardType.Text,
+        imeAction = ImeAction.Done
+    ),
+    onInputChange: (String) -> Unit = {},
     focusRequester: FocusRequester = remember { FocusRequester() },
     trailingIcon: @Composable ((FocusRequester) -> Unit)? = null,
     getFocus: Boolean = false
@@ -105,7 +113,7 @@ fun MaxWidthTextFieldWithError(
     keyboardOptions: KeyboardOptions,
     trailingIcon: ((onValueChange: (TextFieldValue) -> Unit, textFieldValue: TextFieldValue) -> @Composable () -> Unit)? = null,
     onInputChange: (String) -> Unit,
-    focusRequester: FocusRequester,
+    focusRequester: FocusRequester = remember { FocusRequester() },
     getFocus: Boolean
 ) {
     Column {
@@ -155,10 +163,7 @@ private fun MaxWidthTextField(
         keyboardOptions = keyboardOptions,
         keyboardActions = if (keyboardOptions.imeAction == ImeAction.Done) KeyboardActions(onDone = { focusManager.clearFocus() }) else KeyboardActions.Default,
         trailingIcon = {
-            if (trailingIcon != null) trailingIcon(
-                onValueChange,
-                textFieldValue()
-            )()
+            if (trailingIcon != null) trailingIcon(onValueChange, textFieldValue())()
         },
         singleLine = true,
         colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -212,7 +217,7 @@ private fun TextFieldEmit(textFieldValue: () -> TextFieldValue, onInputChange: (
     }
 }
 
-const val CancelIconDescription = "cancel Icon"
+const val CancelIconTag = "cancel Icon"
 
 @Composable
 fun TextFieldCancelIcon(
@@ -220,22 +225,25 @@ fun TextFieldCancelIcon(
     onValueChange: (TextFieldValue) -> Unit,
     textFieldValue: () -> TextFieldValue,
 ) {
-    val show by remember { derivedStateOf { hasFocus() && textFieldValue().text.isNotBlank() } }
-
-    if (show)
+    AnimatedVisibility(
+        visible = hasFocus() && textFieldValue().text.isNotBlank(),
+        enter = Anime.CancelIcon.fadeIn,
+        exit = Anime.CancelIcon.fadeOut,
+    ) {
         CustomIconButton(
+            modifier = Modifier.testTag(CancelIconTag),
             onClick = { onValueChange(TextFieldValue()) },
             drawable = R.drawable.ic_cancel,
             tint = VeryDarkGray,
-            size = 20.dp,
-            contentDescription = CancelIconDescription
+            size = 20.dp
         )
+    }
 }
 
 @Composable
 fun rememberMaxWidthTestFieldState(
-    initialText: String,
-    blockBlank: Boolean
+    initialText: String = "",
+    blockBlank: Boolean = false
 ) = remember { MaxWidthTextFieldState(initialText = initialText, blockBlank = blockBlank) }
 
 open class MaxWidthTextFieldState(
@@ -245,14 +253,15 @@ open class MaxWidthTextFieldState(
     var textFieldValue by mutableStateOf(TextFieldValue(initialText))
         private set
     var hasFocus by mutableStateOf(false)
+        private set
 
     fun onValueChange(value: TextFieldValue) {
         textFieldValue = value.copy(text = if (blockBlank) value.text.trim() else value.text)
     }
 
     fun onFocusChanged(focusState: FocusState) {
+        hasFocus = focusState.hasFocus
         if (focusState.hasFocus) {
-            hasFocus = focusState.hasFocus
             textFieldValue =
                 textFieldValue.copy(
                     text = textFieldValue.text,

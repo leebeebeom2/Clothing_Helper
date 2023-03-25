@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.components
+package com.leebeebeom.clothinghelper.ui.components.textfield
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +26,9 @@ import androidx.test.uiautomator.UiDevice
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.isKeyboardShowing
 import com.leebeebeom.clothinghelper.ui.HiltTestActivity
+import com.leebeebeom.clothinghelper.ui.components.MaxWidthTextFieldState
+import com.leebeebeom.clothinghelper.ui.components.MaxWidthTextFieldWithError
+import com.leebeebeom.clothinghelper.ui.components.rememberMaxWidthTestFieldState
 import com.leebeebeom.clothinghelper.ui.onNodeWithStringRes
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelper.ui.waitStringResExist

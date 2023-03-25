@@ -38,7 +38,8 @@ fun StatefulMaxWidthTestFieldWithCancelIcon(
     isVisible: () -> Boolean = { true },
     keyboardOptions: KeyboardOptions,
     onInputChange: (String) -> Unit,
-    focusRequester: FocusRequester = remember { FocusRequester() }
+    focusRequester: FocusRequester = remember { FocusRequester() },
+    getFocus: Boolean = false
 ) {
     val state = rememberMaxWidthTestFieldState(initialText = initialText, blockBlank = blockBlank)
 
@@ -59,7 +60,8 @@ fun StatefulMaxWidthTestFieldWithCancelIcon(
         label = label,
         placeholder = placeholder,
         error = error,
-        isVisible = isVisible
+        isVisible = isVisible,
+        getFocus = getFocus
     )
 }
 
@@ -74,7 +76,8 @@ fun StatefulMaxWidthTestField(
     keyboardOptions: KeyboardOptions,
     onInputChange: (String) -> Unit,
     focusRequester: FocusRequester = remember { FocusRequester() },
-    trailingIcon: @Composable ((FocusRequester) -> Unit)? = null
+    trailingIcon: @Composable ((FocusRequester) -> Unit)? = null,
+    getFocus: Boolean = false
 ) {
     val state = rememberMaxWidthTestFieldState(initialText = initialText, blockBlank = blockBlank)
 
@@ -87,7 +90,8 @@ fun StatefulMaxWidthTestField(
         label = label,
         placeholder = placeholder,
         error = error,
-        isVisible = isVisible
+        isVisible = isVisible,
+        getFocus = getFocus
     )
 }
 
@@ -102,6 +106,7 @@ fun MaxWidthTextFieldWithError(
     trailingIcon: ((onValueChange: (TextFieldValue) -> Unit, textFieldValue: TextFieldValue) -> @Composable () -> Unit)? = null,
     onInputChange: (String) -> Unit,
     focusRequester: FocusRequester,
+    getFocus: Boolean
 ) {
     Column {
         MaxWidthTextField(
@@ -118,7 +123,7 @@ fun MaxWidthTextFieldWithError(
         )
         ErrorText(error = error)
     }
-    ShowKeyboard(focusRequester = focusRequester)
+    ShowKeyboard(focusRequester = focusRequester, getFocus = getFocus)
     TextFieldEmit(textFieldValue = { state.textFieldValue }, onInputChange = onInputChange)
 }
 
@@ -182,17 +187,20 @@ private fun ErrorText(error: () -> Int?) {
 
 @Composable
 private fun ShowKeyboard(
+    getFocus: Boolean,
     keyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current,
     focusRequester: FocusRequester
 ) {
     var showedKeyboard by rememberSaveable { mutableStateOf(false) }
-
-    if (!showedKeyboard) LaunchedEffect(key1 = Unit) {
-        focusRequester.requestFocus()
-        delay(100)
-        keyboardController?.show()
-        showedKeyboard = true
+    if (getFocus && !showedKeyboard) {
+        LaunchedEffect(key1 = Unit) {
+            focusRequester.requestFocus()
+            delay(100)
+            keyboardController?.show()
+            showedKeyboard = true
+        }
     }
+
 }
 
 @Composable

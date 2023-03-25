@@ -21,6 +21,7 @@ fun EmailTextField(
         label = R.string.email,
         placeholder = R.string.email_place_holder,
         blockBlank = true,
-        error = error
+        error = error,
+        getFocus = true
     )
 }

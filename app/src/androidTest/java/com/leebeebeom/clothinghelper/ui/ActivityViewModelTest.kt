@@ -32,7 +32,7 @@ class ActivityViewModelTest {
         val uiState = activityViewModel.activityUiState
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { uiState.collect() }
 
-        userRepository.signIn(email = SignInEmail, password = SignInPassword).join()
+        userRepository.signIn(email = SignInEmail, password = SignInPassword)
         waitTime()
         assert(uiState.value.user != null)
         assert(uiState.value.user!!.email == SignInEmail)

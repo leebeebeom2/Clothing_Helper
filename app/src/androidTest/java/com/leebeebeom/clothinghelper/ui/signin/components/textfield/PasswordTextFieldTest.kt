@@ -1,15 +1,20 @@
 package com.leebeebeom.clothinghelper.ui.signin.components.textfield
 
-import androidx.compose.foundation.layout.Column
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.leebeebeom.clothinghelper.CustomTestRule
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.text.input.ImeAction
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.R.string.dummy
-import com.leebeebeom.clothinghelper.activityRule
-import com.leebeebeom.clothinghelper.passwordTextField
-import com.leebeebeom.clothinghelper.ui.components.*
-import com.leebeebeom.clothinghelper.ui.signin.state.MutableEmailAndPasswordUiState
-import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInViewModel
+import com.leebeebeom.clothinghelper.ui.HiltTestActivity
+import com.leebeebeom.clothinghelper.ui.components.textfield.TestText
+import com.leebeebeom.clothinghelper.ui.getInvisibleText
+import com.leebeebeom.clothinghelper.ui.onNodeWithStringRes
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import org.junit.Before
 import org.junit.Rule
@@ -17,87 +22,43 @@ import org.junit.Test
 
 class PasswordTextFieldTest {
     @get:Rule
-    val rule = activityRule
-    private val customTestRule = CustomTestRule(rule = rule)
-    private lateinit var viewModel: SignInViewModel
-    private lateinit var uiState: MutableEmailAndPasswordUiState
-
-    private val passwordTextField get() = passwordTextField(customTestRule)
-    private val dummyButton get() = customTestRule.getNodeWithStringRes(dummy)
+    val rule = createAndroidComposeRule<HiltTestActivity>()
+    private val passwordTextField by lazy { rule.onNodeWithStringRes(R.string.password) }
+    private val visibleIcon by lazy { rule.onNodeWithTag(VisibleIconTag) }
+    private val invisibleIcon by lazy { rule.onNodeWithTag(InvisibleIconTag) }
 
     @Before
     fun init() {
-        customTestRule.setContent {
+        rule.setContent {
             ClothingHelperTheme {
-                viewModel = hiltViewModel()
-                uiState = viewModel.uiState as MutableEmailAndPasswordUiState
-                Column {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     PasswordTextField(
-                        error = { uiState.passwordError },
-                        onInputChange = viewModel::onPasswordChange,
-                        state = rememberPasswordTextFieldState(imeActionRoute = ImeActionRoute.DONE)
+                        initialPassword = "",
+                        error = { null },
+                        imeAction = ImeAction.Done,
+                        onInputChange = {}
                     )
-                    MaxWidthButton(text = dummy) {}
                 }
-
             }
         }
     }
 
     @Test
-    fun showKeyboardTest() = showKeyboardTest(
-        textField = passwordTextField,
-        showKeyboard = false
-    )
+    fun visibleTest() {
+        visibleIcon.assertExists()
 
-    @Test
-    fun inputChangeTest() =
-        invisibleTest(customTestRule) {
-            inputChangeTest(
-                rule = customTestRule,
-                textField = { passwordTextField },
-                input = { uiState.password },
-                invisible = it
-            )
-        }
+        passwordTextField.performTextInput(TestText)
+        rule.onNodeWithText(getInvisibleText(TestText.length)).assertExists()
 
-    @Test
-    fun textFieldVisibleTest() = textFieldVisibleTest(
-        rule = customTestRule,
-        textField = { passwordTextField },
-        input = { uiState.password }
-    )
+        visibleIcon.performClick()
 
-    @Test
-    fun errorTest() =
-        invisibleTest(customTestRule) {
-            errorTest(
-                rule = customTestRule,
-                errorTextField = { passwordTextField },
-                errorTextRes = R.string.error_test,
-                setError = { uiState.passwordError = R.string.error_test },
-                blockBlank = true,
-                invisible = it
-            )
-        }
+        visibleIcon.assertDoesNotExist()
+        invisibleIcon.assertExists()
+        rule.onNodeWithText(TestText).assertExists()
 
-    @Test
-    fun cursorTest() =
-        invisibleTest(customTestRule) {
-            cursorTest(
-                rule = customTestRule,
-                textField = { passwordTextField },
-                looseFocus = { dummyButton.click() },
-                invisible = it
-            )
-        }
-
-    @Test
-    fun blockBlankTest() = invisibleTest(customTestRule) {
-        blockBlankTest(
-            rule = customTestRule,
-            textField = { passwordTextField },
-            invisible = it
-        )
+        invisibleIcon.performClick()
+        visibleIcon.assertExists()
+        invisibleIcon.assertDoesNotExist()
+        rule.onNodeWithText(getInvisibleText(TestText.length)).assertExists()
     }
 }

@@ -37,7 +37,7 @@ class MainActivityTest {
         }
 
         restorationTester.setContent {
-            MainActivityScreen()
+            MainNavHost()
         }
     }
 
@@ -83,7 +83,7 @@ class MainActivitySignInStartTest {
             Firebase.auth.signInWithEmailAndPassword(SignInEmail, SignInPassword).await()
             delay(1000)
         }
-        rule.setContent { MainActivityScreen() }
+        rule.setContent { MainNavHost() }
     }
 
     // 로그인 상태로 앱 실행 시 로그인 화면 안 보이는 지
@@ -107,7 +107,7 @@ class MainActivitySignOutStartTest {
         }
         rule.setContent {
             navController = rememberNavController()
-            MainActivityScreen(navController = navController)
+            MainNavHost(navController = navController)
         }
     }
 

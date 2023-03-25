@@ -39,12 +39,12 @@ object MainActivityRoutes {
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent { MainActivityScreen() }
+        setContent { MainNavHost() }
     }
 }
 
 @Composable
-fun MainActivityScreen(
+fun MainNavHost(
     viewModel: ActivityViewModel = activityViewModel(),
     navController: NavHostController = rememberNavController(),
 ) {

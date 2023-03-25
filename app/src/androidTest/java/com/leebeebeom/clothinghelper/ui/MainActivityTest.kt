@@ -1,8 +1,11 @@
 package com.leebeebeom.clothinghelper.ui
 
-import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeRight
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.ktx.auth
@@ -12,7 +15,6 @@ import com.leebeebeom.clothinghelper.data.SignInPassword
 import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.MainGraphRoute
 import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.SignInGraphRoute
 import com.leebeebeom.clothinghelper.ui.main.drawer.DrawerTag
-import com.leebeebeom.clothinghelper.ui.main.drawer.SettingIcon
 import com.leebeebeom.clothinghelper.ui.main.mainScreen.MainScreenTag
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInScreenTag
 import kotlinx.coroutines.delay
@@ -55,15 +57,17 @@ class MainActivityTest {
             rule.waitTagExist(MainScreenTag)
             rule.onRoot().performTouchInput { swipeRight() }
             rule.onNodeWithTag(DrawerTag).assertExists()
+
             restorationTester.emulateSavedInstanceStateRestore()
         }
 
         rule.signOut()
 
-        repeat(2){
+        repeat(2) {
             rule.waitTagExist(SignInScreenTag)
             rule.onRoot().performTouchInput { swipeRight() }
-            rule.onNodeWithTag(SettingIcon).assertDoesNotExist()
+            rule.onNodeWithTag(DrawerTag).assertDoesNotExist()
+
             restorationTester.emulateSavedInstanceStateRestore()
         }
     }

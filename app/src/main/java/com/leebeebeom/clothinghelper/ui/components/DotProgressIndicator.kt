@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.ui.theme.Disabled
 
-const val CENTER_DOT_PROGRESS_INDICATOR_TAG = "center dot progress indicator"
+const val CenterDotProgressIndicatorTag = "center dot progress indicator"
 
 @Composable
 fun CenterDotProgressIndicator(
@@ -31,13 +31,14 @@ fun CenterDotProgressIndicator(
             .fillMaxSize()
             // background click block
             .clickable(enabled = false) { }
-            .testTag(CENTER_DOT_PROGRESS_INDICATOR_TAG)) {
+            .testTag(CenterDotProgressIndicatorTag)) {
             DotProgressIndicator(
                 modifier = Modifier.align(Alignment.Center),
                 size = 8.dp,
                 color = LocalContentColor.current.copy(ContentAlpha.medium)
             )
         }
+        BackHandlerWrapper(enabled = { true }) {}
     }
 }
 

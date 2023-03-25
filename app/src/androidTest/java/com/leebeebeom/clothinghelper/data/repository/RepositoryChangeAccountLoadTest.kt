@@ -26,12 +26,12 @@ suspend inline fun <T : BaseModel> TestScope.repositoryChangeAccountLoadTest(
     backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.allDataStream.collect() }
     userRepository.signOut()
 
-    userRepository.signIn(email = SignInEmail, password = SignInPassword).join()
+    userRepository.signIn(email = SignInEmail, password = SignInPassword) 
     waitTime()
     assert(repository.allDataStream.first().data.isEmpty())
 
-    repository.add(addDataPair.first).join()
-    repository.add(addDataPair.second).join()
+    repository.add(addDataPair.first) 
+    repository.add(addDataPair.second) 
     waitTime()
     assert(repository.allDataStream.first().data.size == 2)
 
@@ -39,7 +39,7 @@ suspend inline fun <T : BaseModel> TestScope.repositoryChangeAccountLoadTest(
     waitTime()
     assert(repository.allDataStream.first().data.isEmpty())
 
-    userRepository.signIn(email = RepositoryTestEmail, password = SignInPassword).join()
+    userRepository.signIn(email = RepositoryTestEmail, password = SignInPassword) 
     waitTime()
     assert(repository.allDataStream.first().data.size == repositoryTestAccountSize)
 
@@ -47,7 +47,7 @@ suspend inline fun <T : BaseModel> TestScope.repositoryChangeAccountLoadTest(
     waitTime()
     assert(repository.allDataStream.first().data.isEmpty())
 
-    userRepository.signIn(email = SignInEmail, password = SignInPassword).join()
+    userRepository.signIn(email = SignInEmail, password = SignInPassword) 
     waitTime()
     assert(repository.allDataStream.first().data.size == 2)
 

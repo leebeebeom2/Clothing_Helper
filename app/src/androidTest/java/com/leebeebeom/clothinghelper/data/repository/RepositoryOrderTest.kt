@@ -25,7 +25,7 @@ suspend inline fun <T : BaseModel> TestScope.repositoryOrderTest(
     assertOrder: (origin: List<T>, new: List<T>) -> Unit,
     refPath: DataBasePath
 ) {
-    userRepository.signIn(email = SignInEmail, password = SignInPassword).join()
+    userRepository.signIn(email = SignInEmail, password = SignInPassword)
     backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.allDataStream.collect() }
     waitTime()
 

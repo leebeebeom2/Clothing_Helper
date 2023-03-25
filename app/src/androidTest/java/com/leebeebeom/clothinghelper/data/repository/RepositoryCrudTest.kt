@@ -27,14 +27,14 @@ suspend inline fun <T : BaseModel> TestScope.repositoryCrudTest(
     editData: (oldData: T) -> T,
     editAssert: (old: T, new: T) -> Unit,
 ) {
-    userRepository.signIn(email = RepositoryTestEmail, password = SignInPassword).join()
+    userRepository.signIn(email = RepositoryTestEmail, password = SignInPassword)
     backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.allDataStream.collect() }
 
     val loadTestData = repository.allDataStream.first()
     assert(loadTestData is DataResult.Success)
     assert(loadTestData.data.size == initialSize)
 
-    repository.add(data).join()
+    repository.add(data)
     waitTime()
     val addTestData = repository.allDataStream.first()
     assert(addTestData is DataResult.Success)
@@ -43,7 +43,7 @@ suspend inline fun <T : BaseModel> TestScope.repositoryCrudTest(
     val addedData = addTestData.data.last()
     addAssert(addedData)
 
-    repository.push(data = editData(addedData)).join()
+    repository.push(data = editData(addedData))
     waitTime()
     val editedData = repository.allDataStream.first().data.last()
     editAssert(addedData, editedData)
@@ -52,7 +52,7 @@ suspend inline fun <T : BaseModel> TestScope.repositoryCrudTest(
     waitTime()
     assert(repository.allDataStream.first().data.isEmpty())
 
-    userRepository.signIn(email = RepositoryTestEmail, password = SignInPassword).join()
+    userRepository.signIn(email = RepositoryTestEmail, password = SignInPassword)
     waitTime()
     assert(repository.allDataStream.first().data.size == initialSize + 1)
     assert(editedData == repository.allDataStream.first().data.last())

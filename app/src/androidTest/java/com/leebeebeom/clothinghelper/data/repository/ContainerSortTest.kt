@@ -33,7 +33,7 @@ suspend fun <T : BaseContainerModel> TestScope.containerSortTest(
 
     sortInit()
 
-    userRepository.signIn(email = SignInEmail, password = SignInPassword).join()
+    userRepository.signIn(email = SignInEmail, password = SignInPassword)
     backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.allDataStream.collect() }
     waitTime()
     assert(repository.allDataStream.first().data.isEmpty())

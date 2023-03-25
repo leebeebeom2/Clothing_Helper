@@ -76,17 +76,17 @@ class UserRepositoryTest {
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { userStream.collect() }
 
         failRunCatching(errorCode = ERROR_INVALID_EMAIL) { // invalidEmail
-            userRepository.signIn(email = InvalidEmail, password = SignInPassword).join()
+            userRepository.signIn(email = InvalidEmail, password = SignInPassword)
         }
         failRunCatching(errorCode = ERROR_USER_NOT_FOUND) { // notFoundEmail
-            userRepository.signIn(email = NotFoundEmail, password = SignInPassword).join()
+            userRepository.signIn(email = NotFoundEmail, password = SignInPassword)
         }
         failRunCatching(errorCode = ERROR_WRONG_PASSWORD) { // wrongPassword
-            userRepository.signIn(email = SignInEmail, password = WrongPassword).join()
+            userRepository.signIn(email = SignInEmail, password = WrongPassword)
         }
 
         successRunCatching {
-            userRepository.signIn(email = SignInEmail, password = SignInPassword).join()
+            userRepository.signIn(email = SignInEmail, password = SignInPassword)
         }
         val signedUser = userStream.first()
         assert(signedUser != null)
@@ -100,19 +100,19 @@ class UserRepositoryTest {
         failRunCatching(errorCode = ERROR_INVALID_EMAIL) { // invalidEmail
             userRepository.signUp(
                 email = InvalidEmail, password = SignInPassword, name = SignUpName
-            ).join()
+            )
         }
 
         failRunCatching(errorCode = ERROR_EMAIL_ALREADY_IN_USE) { // emailAlreadyInUse
             userRepository.signUp(
                 email = SignInEmail, password = SignInPassword, name = SignUpName
-            ).join()
+            )
         }
 
         successRunCatching {
             userRepository.signUp(
                 email = SignUpEmail, password = SignInPassword, name = SignUpName
-            ).join()
+            )
         }
         val signedUser = userStream.first()
         assert(signedUser?.email == SignUpEmail)
@@ -126,12 +126,12 @@ class UserRepositoryTest {
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { userStream.collect() }
 
         failRunCatching(errorCode = ERROR_INVALID_EMAIL) { // invalidEmail
-            userRepository.sendResetPasswordEmail(email = InvalidEmail).join()
+            userRepository.sendResetPasswordEmail(email = InvalidEmail)
         }
         failRunCatching(errorCode = ERROR_USER_NOT_FOUND) { // userNotFound
-            userRepository.sendResetPasswordEmail(email = NotFoundEmail).join()
+            userRepository.sendResetPasswordEmail(email = NotFoundEmail)
         }
-        successRunCatching { userRepository.sendResetPasswordEmail(email = SendPasswordEmail).join() }
+        successRunCatching { userRepository.sendResetPasswordEmail(email = SendPasswordEmail) }
     }
 
     @Test
@@ -145,21 +145,21 @@ class UserRepositoryTest {
         }
 
         networkExceptionRunCatching {
-            userRepository.signIn(email = SignInEmail, password = SignInPassword).join()
+            userRepository.signIn(email = SignInEmail, password = SignInPassword)
         }
 
         networkExceptionRunCatching {
-            userRepository.signUp(email = SignUpEmail, password = SignInPassword, name = SignUpName).join()
+            userRepository.signUp(email = SignUpEmail, password = SignInPassword, name = SignUpName)
         }
 
         networkExceptionRunCatching {
-            userRepository.sendResetPasswordEmail(email = SendPasswordEmail).join()
+            userRepository.sendResetPasswordEmail(email = SendPasswordEmail)
         }
     }
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class UserFlowTestWithSignInStart {
+class RunWithSignInStartTest {
     private val dispatcher = StandardTestDispatcher()
     private lateinit var userRepository: UserRepository
     private lateinit var userStream: SharedFlow<User?>
@@ -191,14 +191,14 @@ class UserFlowTestWithSignInStart {
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class UserFlowTestWithSignOutStart {
+class RunWithSignOutStart {
     private val dispatcher = StandardTestDispatcher()
     private lateinit var userRepository: UserRepository
     private lateinit var userStream: SharedFlow<User?>
 
     @Before
     fun init() {
-        runBlocking { launch { Firebase.auth.signOut() }.join() }
+        runBlocking { launch { Firebase.auth.signOut() } }
         userRepository = UserRepositoryImpl(
             appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
             dispatcher = dispatcher

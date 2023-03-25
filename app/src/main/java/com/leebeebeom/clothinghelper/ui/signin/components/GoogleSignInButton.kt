@@ -1,5 +1,8 @@
 package com.leebeebeom.clothinghelper.ui.signin.components
 
+import android.content.Context
+import android.content.Intent
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,21 +22,24 @@ import com.leebeebeom.clothinghelper.ui.components.MaxWidthButton
 
 @Composable
 fun GoogleSignInButton(
-    enabled: () -> Boolean, onActivityResult: (ActivityResult) -> Unit, disable: () -> Unit,
+    enabled: () -> Boolean,
+    onActivityResult: (ActivityResult) -> Unit,
+    disable: () -> Unit,
+    context: Context = LocalContext.current,
+    launcher: ManagedActivityResultLauncher<Intent, ActivityResult>? = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+        onResult = onActivityResult
+    ),
+    gso: GoogleSignInOptions = gso(),
+    intent: Intent = remember { GoogleSignIn.getClient(context, gso).signInIntent }
 ) {
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult(), onResult = onActivityResult
-    )
-
-    val intent = GoogleSignIn.getClient(LocalContext.current, gso()).signInIntent
-
     MaxWidthButton(text = R.string.starts_with_google_email,
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
         icon = { GoogleIcon() },
         onClick = {
             disable()
-            launcher.launch(intent)
+            launcher?.launch(intent)
         })
 }
 

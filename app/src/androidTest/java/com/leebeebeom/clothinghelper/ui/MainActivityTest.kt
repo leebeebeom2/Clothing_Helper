@@ -1,8 +1,8 @@
 package com.leebeebeom.clothinghelper.ui
 
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithTag
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.ktx.auth
@@ -11,8 +11,10 @@ import com.leebeebeom.clothinghelper.data.SignInEmail
 import com.leebeebeom.clothinghelper.data.SignInPassword
 import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.MainGraphRoute
 import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.SignInGraphRoute
-import com.leebeebeom.clothinghelper.ui.main.MainNavTag
-import com.leebeebeom.clothinghelper.ui.signin.ui.SignInNavTag
+import com.leebeebeom.clothinghelper.ui.main.drawer.DrawerTag
+import com.leebeebeom.clothinghelper.ui.main.drawer.SettingIcon
+import com.leebeebeom.clothinghelper.ui.main.mainScreen.MainScreenTag
+import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInScreenTag
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
@@ -39,16 +41,31 @@ class MainActivityTest {
 
     @Test
     fun restoreTest() {
-        restorationTester.emulateSavedInstanceStateRestore()
-        rule.onNodeWithTag(SignInNavTag).assertExists()
+        repeat(2) {
+            rule.onNodeWithTag(SignInScreenTag).assertExists()
+            rule.onRoot().performTouchInput { swipeRight() }
+            rule.onNodeWithTag(DrawerTag).assertDoesNotExist()
+
+            restorationTester.emulateSavedInstanceStateRestore()
+        }
+
         rule.signIn()
-        rule.waitTagExist(MainNavTag)
-        restorationTester.emulateSavedInstanceStateRestore()
-        rule.onNodeWithTag(MainNavTag).assertExists()
+
+        repeat(2) {
+            rule.waitTagExist(MainScreenTag)
+            rule.onRoot().performTouchInput { swipeRight() }
+            rule.onNodeWithTag(DrawerTag).assertExists()
+            restorationTester.emulateSavedInstanceStateRestore()
+        }
+
         rule.signOut()
-        rule.waitTagExist(SignInNavTag)
-        restorationTester.emulateSavedInstanceStateRestore()
-        rule.onNodeWithTag(SignInNavTag).assertExists()
+
+        repeat(2){
+            rule.waitTagExist(SignInScreenTag)
+            rule.onRoot().performTouchInput { swipeRight() }
+            rule.onNodeWithTag(SettingIcon).assertDoesNotExist()
+            restorationTester.emulateSavedInstanceStateRestore()
+        }
     }
 }
 
@@ -69,7 +86,7 @@ class MainActivitySignInStartTest {
     // TODO 구글은 따로 테스트 필요
     @Test
     fun mainScreenTest() {
-        rule.onNodeWithTag(SignInNavTag).assertDoesNotExist()
+        rule.onNodeWithTag(MainScreenTag).assertExists()
     }
 }
 
@@ -92,7 +109,7 @@ class MainActivitySignOutStartTest {
 
     @Test
     fun signInScreenTest() {
-        rule.onNodeWithTag(SignInNavTag).assertExists()
+        rule.onNodeWithTag(SignInScreenTag).assertExists()
     }
 
     @Test
@@ -109,18 +126,18 @@ class MainActivitySignOutStartTest {
         assert(!isBackStackExist(MainGraphRoute))
 
         rule.signIn()
-        rule.waitTagExist(MainNavTag)
+        rule.waitTagExist(MainScreenTag)
         assert(!isBackStackExist(SignInGraphRoute))
 
         rule.signOut()
-        rule.waitTagExist(SignInNavTag)
+        rule.waitTagExist(SignInScreenTag)
         assert(!isBackStackExist(MainGraphRoute))
 
         repeat(2) {
             rule.signIn()
-            rule.waitTagExist(MainNavTag)
+            rule.waitTagExist(MainScreenTag)
             rule.signOut()
-            rule.waitTagExist(SignInNavTag)
+            rule.waitTagExist(SignInScreenTag)
         }
         assert(!isBackStackExist(MainGraphRoute))
     }

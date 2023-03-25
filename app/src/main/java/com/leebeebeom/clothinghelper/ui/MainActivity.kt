@@ -64,7 +64,7 @@ fun MainActivityScreen(
             NavHost(
                 modifier = Modifier.padding(paddingValues),
                 navController = navController,
-                startDestination = if (uiState.user == null) SignInGraphRoute else MainGraphRoute // no recomposition, called ViewModel onCleared
+                startDestination = if (uiState.user == null) SignInGraphRoute else MainGraphRoute // no recomposition
             ) {
                 signInGraph(
                     navController = navController,

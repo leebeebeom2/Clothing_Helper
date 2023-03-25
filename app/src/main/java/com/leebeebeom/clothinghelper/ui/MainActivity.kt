@@ -4,20 +4,28 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.MainGraphRoute
 import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.SignInGraphRoute
-import com.leebeebeom.clothinghelper.ui.main.MainNavHost
-import com.leebeebeom.clothinghelper.ui.signin.ui.SignInNavHost
+import com.leebeebeom.clothinghelper.ui.main.MainGraphDestinations
+import com.leebeebeom.clothinghelper.ui.main.drawer.Drawer
+import com.leebeebeom.clothinghelper.ui.main.drawer.EssentialMenuType
+import com.leebeebeom.clothinghelper.ui.main.main
+import com.leebeebeom.clothinghelper.ui.main.navigateToSizeChartList
+import com.leebeebeom.clothinghelper.ui.main.navigateToSubCategory
+import com.leebeebeom.clothinghelper.ui.signin.ui.signInGraph
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
+import com.leebeebeom.clothinghelper.ui.util.getCurrentRoute
+import com.leebeebeom.clothinghelper.ui.util.navigateSingleTop
 import com.leebeebeom.clothinghelper.util.buildConfigLog
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -35,9 +43,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-/**
- * 크로스 페이드 or if-else를 쓰면 NavViewModel의 OnCleared가 호출되지 않는다.
- */
 @Composable
 fun MainActivityScreen(
     viewModel: ActivityViewModel = activityViewModel(),
@@ -48,12 +53,25 @@ fun MainActivityScreen(
     val uiState by viewModel.activityUiState.collectAsStateWithLifecycle()
 
     ClothingHelperTheme {
-        NavHost(
-            navController = navController,
-            startDestination = if (uiState.user == null) SignInGraphRoute else MainGraphRoute // no recomposition, called ViewModel onCleared
-        ) {
-            composable(route = SignInGraphRoute) { SignInNavHost(showToast = viewModel::addToastTextAtLast) }
-            composable(route = MainGraphRoute) { MainNavHost() }
+        Drawer(
+            user = { uiState.user },
+            navigateToSetting = navController::navigateToSetting,
+            onEssentialMenuClick = { onEssentialMenuClick(navController, it) },
+            navigateToMain = navController::navigateToSubCategory,
+            navigateToSubCategory = navController::navigateToSizeChartList,
+            navigateToFolder = navController::navigateToSizeChartList
+        ) { paddingValues ->
+            NavHost(
+                modifier = Modifier.padding(paddingValues),
+                navController = navController,
+                startDestination = if (uiState.user == null) SignInGraphRoute else MainGraphRoute // no recomposition, called ViewModel onCleared
+            ) {
+                signInGraph(
+                    navController = navController,
+                    showToast = viewModel::addToastTextAtLast
+                )
+                main(navController = navController)
+            }
         }
     }
 
@@ -64,9 +82,27 @@ fun MainActivityScreen(
 }
 
 @Composable
-fun ToastWrapper(toastTexts: () -> List<Int>, toastShown: () -> Unit) {
+private fun ToastWrapper(toastTexts: () -> List<Int>, toastShown: () -> Unit) {
     toastTexts().firstOrNull()?.let {
         Toast.makeText(LocalContext.current, stringResource(id = it), Toast.LENGTH_SHORT).show()
         toastShown()
     }
+}
+
+private fun onEssentialMenuClick(navController: NavHostController, type: EssentialMenuType) =
+    when (type) {
+        EssentialMenuType.MainScreen -> navController.navigateToMain()
+        EssentialMenuType.Favorite -> {} // TODO
+        EssentialMenuType.SeeAll -> {} // TODO
+        EssentialMenuType.Trash -> {} // TODO
+    }
+
+private fun NavHostController.navigateToMain() {
+    val currentRoute = currentBackStackEntry.getCurrentRoute()
+    if (currentRoute != MainGraphDestinations.MainGraphRoute) navigateSingleTop(route = MainGraphDestinations.MainGraphRoute)
+}
+
+private fun NavHostController.navigateToSetting() {
+    val currentRoute = currentBackStackEntry.getCurrentRoute()
+    if (currentRoute != MainGraphDestinations.SettingGraphRoute) navigateSingleTop(route = MainGraphDestinations.SettingGraphRoute)
 }

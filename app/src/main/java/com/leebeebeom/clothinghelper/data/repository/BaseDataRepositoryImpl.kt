@@ -73,14 +73,15 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     )
 
     @Suppress("UNCHECKED_CAST")
-    override suspend fun add(data: T): Job {
+    override suspend fun add(data: T) {
         val dataWithKey = data.addKey(key = getKey()) as T
 
-        return push(data = dataWithKey)
+        push(data = dataWithKey)
     }
 
-    override suspend fun push(data: T) =
-        withContext(dispatcher) { launch { ref!!.child(data.key).setValue(data) } }
+    override suspend fun push(data: T) {
+        withContext(dispatcher) { ref!!.child(data.key).setValue(data) }
+    }
 
     protected fun getKey() = ref!!.push().key!!
 

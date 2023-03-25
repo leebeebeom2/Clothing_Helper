@@ -23,10 +23,9 @@ fun SignInBaseColumn(
             .fillMaxSize()
             .background(color = MaterialTheme.colors.background)
             .verticalScroll(rememberScrollState())
-            .noRippleClickable(onClick = focusManager::clearFocus)
+            .noRippleClickable(onClick = focusManager::clearFocus) // 테스트 불가
             .padding(horizontal = 40.dp)
-            .padding(bottom = 40.dp),
-        verticalArrangement = Arrangement.Center
+            .padding(bottom = 40.dp), verticalArrangement = Arrangement.Center
     ) {
         content()
     }

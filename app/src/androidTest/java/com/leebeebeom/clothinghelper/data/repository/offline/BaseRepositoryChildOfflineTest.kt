@@ -56,7 +56,7 @@ class BaseRepositoryChildOfflineTest {
 
     @Test
     fun offlineTest1() = runTest(dispatcher) {
-//        userRepository.signIn(email = RepositoryTestEmail, password = SignInPassword).join()
+//        userRepository.signIn(email = RepositoryTestEmail, password = SignInPassword)
 //        waitTime()
 
         assert(!isConnectedNetwork())

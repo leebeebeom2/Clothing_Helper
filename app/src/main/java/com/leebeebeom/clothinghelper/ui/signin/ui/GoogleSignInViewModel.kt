@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -17,17 +18,14 @@ import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorUseCas
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelper.ui.util.ShowToast
 import com.leebeebeom.clothinghelper.util.buildConfigLog
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /**
  * Google 로그인 로직
  */
-@HiltViewModel
-abstract class BaseSignInGraphViewModel @Inject constructor(
+abstract class GoogleSignInViewModel(
     private val googleSignInUseCase: GoogleSignInUseCase,
     private val firebaseAuthErrorUseCase: FirebaseAuthErrorUseCase,
 ) : ViewModel() {
@@ -80,7 +78,19 @@ abstract class GoogleSignInUiState {
     abstract val isLoading: Boolean
 }
 
-abstract class GoogleSignInState {
+abstract class GoogleSignInState(
+    savedStateHandle: SavedStateHandle,
+    savedEmailKey: String,
+    emailErrorKey: String,
+    savedPasswordKey: String,
+    passwordErrorKey: String
+) : BaseSignInStateWithEmailAndPassword(
+    savedStateHandle = savedStateHandle,
+    savedEmailKey = savedEmailKey,
+    emailErrorKey = emailErrorKey,
+    savedPasswordKey = savedPasswordKey,
+    passwordErrorKey = passwordErrorKey
+) {
     private var googleButtonEnabledState by mutableStateOf(true)
     private var isSignInLoadingState by mutableStateOf(false)
 
@@ -96,6 +106,6 @@ abstract class GoogleSignInState {
         isSignInLoadingState = loading
     }
 
-    private val googleButtonEnabledStream = snapshotFlow { googleButtonEnabledState }
-    private val isSignInLoadingStream = snapshotFlow { isSignInLoadingState }
+    protected val googleButtonEnabledStream = snapshotFlow { googleButtonEnabledState }
+    protected val isSignInLoadingStream = snapshotFlow { isSignInLoadingState }
 }

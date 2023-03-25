@@ -1,98 +1,62 @@
 package com.leebeebeom.clothinghelper.ui.components
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.runtime.MutableState
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import com.leebeebeom.clothinghelper.CustomTestRule
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.test.*
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.R.string.dummy
-import com.leebeebeom.clothinghelper.activityRule
-import com.leebeebeom.clothinghelper.dummyNode
-import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
+import com.leebeebeom.clothinghelper.ui.HiltTestActivity
+import com.leebeebeom.clothinghelper.ui.onNodeWithStringRes
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
 class MaxWidthButtonTest {
     @get:Rule
-    val rule = activityRule
-    private val customTestRule = CustomTestRule(rule = rule)
-    private val testText = "onClick"
-    private lateinit var onClickTestText: String
-    private lateinit var enable: MutableState<Boolean>
-
-    private val button get() = customTestRule.getNodeWithStringRes(R.string.button)
-    private val dummyNode get() = dummyNode(customTestRule)
+    val rule = createAndroidComposeRule<HiltTestActivity>()
+    private var onClick = ""
+    private var enabled by mutableStateOf(true)
+    private val testTextField by lazy { rule.onNodeWithStringRes(R.string.test_text_field) }
+    private val button by lazy { rule.onNodeWithStringRes(R.string.test_button) }
 
     @Before
     fun init() {
-        enable = mutableStateOf(true)
-        onClickTestText = ""
-
-        customTestRule.setContent {
-            ClothingHelperTheme {
-                Column {
-                    MaxWidthTextFieldWithError(
-                        state = rememberMaxWidthTextFieldState(label = dummy),
-                        onValueChange = {},
-                        onFocusChanged = {},
-                        onInputChange = {}
-                    )
-                    MaxWidthButton(text = R.string.button,
-                        enabled = { enable.value },
-                        onClick = { onClickTestText = testText })
+        onClick = ""
+        rule.setContent {
+            Column(modifier = Modifier.fillMaxSize()) {
+                StatefulMaxWidthTestField(label = R.string.test_text_field)
+                MaxWidthButton(text = R.string.test_button, enabled = { enabled }) {
+                    onClick = "onClick"
                 }
             }
         }
     }
 
     @Test
-    fun buttonFocusTest() =
-        buttonFocusTest(focusNode = { dummyNode }, button = { button })
+    fun buttonFocusTest() {
+        testTextField.performClick()
+        testTextField.assertIsFocused()
 
-    @Test
-    fun buttonEnabledTest() = buttonEnableTest(button = { button },
-        initialEnabled = enable.value,
-        setEnable = { enable.value = it })
-
-    @Test
-    fun onClickTest() = customTestRule.restore {
-        button.click()
-        assert(onClickTestText == testText)
-
-        onClickTestText = ""
+        button.performClick()
+        testTextField.assertIsNotFocused()
     }
-}
 
-fun buttonFocusTest(
-    focusNode: () -> CustomTestRule.CustomSemanticsNodeInteraction,
-    button: () -> CustomTestRule.CustomSemanticsNodeInteraction,
-) {
-    focusNode().click()
-    focusNode().focused()
-    button().click()
-    focusNode().notFocused()
-}
+    @Test
+    fun onClickTest() {
+        assert(onClick == "")
+        button.performClick()
+        assert(onClick == "onClick")
+    }
 
-fun buttonEnableTest(
-    button: () -> CustomTestRule.CustomSemanticsNodeInteraction,
-    initialEnabled: Boolean,
-    setEnable: (Boolean) -> Unit,
-) {
-    fun enableCheck(initialEnabled: Boolean) =
-        if (initialEnabled) button().enabled() else button().notEnabled()
-
-    enableCheck(initialEnabled)
-
-    setEnable(!initialEnabled)
-
-    enableCheck(!initialEnabled)
-
-    setEnable(initialEnabled)
-
-    enableCheck(initialEnabled)
-
-    setEnable(!initialEnabled)
-
-    enableCheck(!initialEnabled)
+    @Test
+    fun enabledTest() {
+        enabled = false
+        button.assertIsNotEnabled()
+        enabled = true
+        button.assertIsEnabled()
+    }
 }

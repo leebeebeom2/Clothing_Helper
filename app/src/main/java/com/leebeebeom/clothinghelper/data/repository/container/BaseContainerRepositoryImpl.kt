@@ -60,11 +60,11 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
         }
     }
 
-    override suspend fun add(data: T): Job {
+    override suspend fun add(data: T) {
         // push override 때문에 editDate 변경 됨
         val dataWithKey = data.addKey(key = getKey()) as T
 
-        return super.push(dataWithKey)
+        super.push(dataWithKey)
     }
 
     override suspend fun push(data: T) = super.push(data = data.changeEditDate() as T)

@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.shareIn
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -99,8 +98,7 @@ class UserRepositoryImpl @Inject constructor(
     /**
      * 호출 시 로딩 On, 예외 발생 시 로딩 Off
      */
-    private suspend fun withContext(task: suspend () -> Unit) =
-        withContext(dispatcher) { launch { task() } }
+    private suspend fun withContext(task: suspend () -> Unit) = withContext(dispatcher) { task() }
 
     private fun FirebaseUser?.toUserModel() =
         this?.let { User(email = "$email", name = "$displayName", uid = uid) }

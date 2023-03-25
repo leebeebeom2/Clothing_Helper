@@ -110,4 +110,29 @@ class SignInScreenTest {
 
         rule.waitTagExist(MainScreenTag)
     }
+
+    @Test
+    fun buttonEnabledTest() {
+        signInButton.assertIsNotEnabled()
+
+        emailTextField.performTextInput(InvalidEmail)
+        signInButton.assertIsNotEnabled()
+
+        passwordTestField.performTextInput(SignInPassword)
+        signInButton.assertIsEnabled()
+
+        emailTextField.performTextClearance()
+        signInButton.assertIsNotEnabled()
+
+        emailTextField.performTextInput(InvalidEmail)
+        signInButton.assertIsEnabled()
+
+        signInButton.performClick()
+
+        rule.waitStringResExist(R.string.error_invalid_email)
+        signInButton.assertIsNotEnabled()
+
+        emailTextField.performTextInput("0")
+        signInButton.assertIsEnabled()
+    }
 }

@@ -215,7 +215,7 @@ class BaseRepositoryChildTest {
         )
 
         val todos = List(9) { Todo(text = "$it", order = it) }.shuffled()
-        userRepository.signIn(email = SignInEmail, password = SignInPassword).join()
+        userRepository.signIn(email = SignInEmail, password = SignInPassword)
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { todoRepository.allDataStream.collect() }
         waitTime()
         todos.forEach { todoRepository.add(it) }

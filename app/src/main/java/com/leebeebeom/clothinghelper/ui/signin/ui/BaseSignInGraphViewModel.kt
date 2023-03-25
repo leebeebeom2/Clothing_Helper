@@ -20,10 +20,6 @@ import com.leebeebeom.clothinghelper.util.buildConfigLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,17 +27,11 @@ import javax.inject.Inject
  * Google 로그인 로직
  */
 @HiltViewModel
-class SignInNavViewModel @Inject constructor(
+abstract class BaseSignInGraphViewModel @Inject constructor(
     private val googleSignInUseCase: GoogleSignInUseCase,
     private val firebaseAuthErrorUseCase: FirebaseAuthErrorUseCase,
 ) : ViewModel() {
-    val signInNavState = SignInNavState()
-
-    val uiState = signInNavState.uiStateStream.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = SignInNavUiState()
-    )
+    abstract val googleSignInState: GoogleSignInState
 
     fun signInWithGoogleEmail(activityResult: ActivityResult, showToast: ShowToast) =
         when (activityResult.resultCode) {
@@ -51,7 +41,7 @@ class SignInNavViewModel @Inject constructor(
             )
             Activity.RESULT_CANCELED -> {
                 showToast(R.string.canceled)
-                signInNavState.googleButtonEnabled()
+                googleSignInState.googleButtonEnabled()
                 null
             }
             else -> {
@@ -60,7 +50,7 @@ class SignInNavViewModel @Inject constructor(
                     msg = "resultCode = ${activityResult.resultCode}",
                 )
                 showToast(R.string.unknown_error)
-                signInNavState.googleButtonEnabled()
+                googleSignInState.googleButtonEnabled()
                 null
             }
         }
@@ -68,12 +58,12 @@ class SignInNavViewModel @Inject constructor(
     private fun googleSignIn(activityResult: ActivityResult, showToast: ShowToast): Job {
         val handler = CoroutineExceptionHandler { _, throwable ->
             firebaseAuthErrorUseCase.firebaseAuthError(throwable = throwable, showToast = showToast)
-            signInNavState.setLoading(false)
-            signInNavState.googleButtonEnabled()
+            googleSignInState.setLoading(false)
+            googleSignInState.googleButtonEnabled()
         }
 
         return viewModelScope.launch(handler) {
-            signInNavState.setLoading(true)
+            googleSignInState.setLoading(true)
             googleSignInUseCase.googleSignIn(credential = getGoogleCredential(activityResult = activityResult))
         }
     }
@@ -85,12 +75,12 @@ class SignInNavViewModel @Inject constructor(
     }
 }
 
-data class SignInNavUiState(
-    val googleButtonEnabled: Boolean = true,
-    val isLoading: Boolean = false,
-)
+abstract class GoogleSignInUiState {
+    abstract val googleButtonEnabled: Boolean
+    abstract val isLoading: Boolean
+}
 
-class SignInNavState {
+abstract class GoogleSignInState {
     private var googleButtonEnabledState by mutableStateOf(true)
     private var isSignInLoadingState by mutableStateOf(false)
 
@@ -108,13 +98,4 @@ class SignInNavState {
 
     private val googleButtonEnabledStream = snapshotFlow { googleButtonEnabledState }
     private val isSignInLoadingStream = snapshotFlow { isSignInLoadingState }
-
-    val uiStateStream = combine(
-        googleButtonEnabledStream,
-        isSignInLoadingStream
-    ) { googleButtonEnabled, isSignInLoading ->
-        SignInNavUiState(
-            googleButtonEnabled = googleButtonEnabled, isLoading = isSignInLoading
-        )
-    }.distinctUntilChanged()
 }

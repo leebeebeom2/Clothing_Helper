@@ -72,7 +72,7 @@ class MaxWidthTextFieldWithErrorTest2 {
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
-                            state = rememberMaxWidthTestFieldState(initialText = input)
+                            state = rememberMaxWidthTestFieldState(initialText = input, blockBlank = true)
                             // blockBlank = true
                             // getFocus = true
                             MaxWidthTextFieldWithError(
@@ -168,5 +168,13 @@ class MaxWidthTextFieldWithErrorTest2 {
         assert(input == TestText)
         testTextField2.performTextInput(TestText2)
         assert(input2 == TestText2)
+    }
+
+    @Test
+    fun blockBlankTest() {
+        testTextField1.performTextInput(TestText)
+        repeat(3) { testTextField1.performTextInput(" ") }
+        rule.onNodeWithText(TestText).assertExists()
+        assert(input == TestText)
     }
 }

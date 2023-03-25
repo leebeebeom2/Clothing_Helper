@@ -1,43 +1,93 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui.signin
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.domain.model.FirebaseResult
 import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorUseCase
+import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.SignInUseCase
-import com.leebeebeom.clothinghelper.ui.signin.base.EmailAndPasswordViewModel
-import com.leebeebeom.clothinghelper.ui.signin.state.EmailAndPasswordState
-import com.leebeebeom.clothinghelper.ui.signin.state.MutableEmailAndPasswordUiState
+import com.leebeebeom.clothinghelper.ui.signin.ui.GoogleSignInState
+import com.leebeebeom.clothinghelper.ui.signin.ui.GoogleSignInUiState
+import com.leebeebeom.clothinghelper.ui.signin.ui.GoogleSignInViewModel
 import com.leebeebeom.clothinghelper.ui.util.ShowToast
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
+    googleSignInUseCase: GoogleSignInUseCase,
     private val signInUseCase: SignInUseCase,
     private val firebaseAuthErrorUseCase: FirebaseAuthErrorUseCase,
-) :
-    EmailAndPasswordViewModel() {
+    savedStateHandle: SavedStateHandle
+) : GoogleSignInViewModel(
+    googleSignInUseCase = googleSignInUseCase, firebaseAuthErrorUseCase = firebaseAuthErrorUseCase
+) {
+    val signInState = SignInState(savedStateHandle)
+    val uiState = signInState.uiStateStream.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = SignInUiState()
+    )
+    override val googleSignInState = signInState
 
-    override val mutableUiState: MutableEmailAndPasswordUiState = MutableEmailAndPasswordUiState()
-    val uiState: EmailAndPasswordState = mutableUiState
-
-    fun signInWithEmailAndPassword(showToast: ShowToast) =
-        viewModelScope.launch {
+    fun signInWithEmailAndPassword(showToast: ShowToast) {
+        val handler = CoroutineExceptionHandler { _, throwable ->
+            firebaseAuthErrorUseCase.firebaseAuthError(
+                throwable = throwable,
+                setEmailError = signInState::setEmailError,
+                setPasswordError = signInState::setPasswordError,
+                showToast = showToast
+            )
+            signInState.setLoading(false)
+        }
+        viewModelScope.launch(handler) {
+            signInState.setLoading(true)
             signInUseCase.signIn(
-                email = mutableUiState.email,
-                password = mutableUiState.password,
-                firebaseResult = object : FirebaseResult {
-                    override fun success() = showToast(R.string.sign_in_complete)
-                    override fun fail(exception: Exception) =
-                        firebaseAuthErrorUseCase.firebaseAuthError(
-                            exception = exception,
-                            updateEmailError = { mutableUiState.emailError = it },
-                            updatePasswordError = { mutableUiState.passwordError = it },
-                            showToast = showToast
-                        )
-                }
+                email = signInState.savedEmail,
+                password = signInState.savedPassword
             )
         }
+    }
+}
+
+data class SignInUiState(
+    val emailError: Int? = null,
+    val passwordError: Int? = null,
+    val buttonEnable: Boolean = false,
+    override val googleButtonEnabled: Boolean = true,
+    override val isLoading: Boolean = false
+) : GoogleSignInUiState()
+
+private const val SignInEmailKey = "sign in email"
+private const val SignInEmailErrorKey = "sign in email error"
+private const val SignInPasswordKey = "sign in password"
+private const val SignInPasswordErrorKey = "sign in password error"
+
+class SignInState(savedStateHandle: SavedStateHandle) : GoogleSignInState(
+    savedStateHandle = savedStateHandle,
+    savedEmailKey = SignInEmailKey,
+    emailErrorKey = SignInEmailErrorKey,
+    savedPasswordKey = SignInPasswordKey,
+    passwordErrorKey = SignInPasswordErrorKey
+) {
+    val uiStateStream = combine(
+        flow = emailErrorStream,
+        flow2 = passwordErrorStream,
+        flow3 = buttonEnabledStream,
+        flow4 = googleButtonEnabledStream,
+        flow5 = isSignInLoadingStream
+    ) { emailError, passwordError, buttonEnabled, googleButtonEnabled, isLoading ->
+        SignInUiState(
+            emailError = emailError,
+            passwordError = passwordError,
+            buttonEnable = buttonEnabled,
+            googleButtonEnabled = googleButtonEnabled,
+            isLoading = isLoading
+        )
+    }.distinctUntilChanged()
 }

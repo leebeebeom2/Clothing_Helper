@@ -86,9 +86,9 @@ abstract class GoogleSignInState(
     passwordErrorKey: String
 ) : BaseSignInStateWithEmailAndPassword(
     savedStateHandle = savedStateHandle,
-    savedEmailKey = savedEmailKey,
+    emailKey = savedEmailKey,
     emailErrorKey = emailErrorKey,
-    savedPasswordKey = savedPasswordKey,
+    passwordKey = savedPasswordKey,
     passwordErrorKey = passwordErrorKey
 ) {
     private var googleButtonEnabledState by mutableStateOf(true)
@@ -106,6 +106,6 @@ abstract class GoogleSignInState(
         isSignInLoadingState = loading
     }
 
-    protected val googleButtonEnabledStream = snapshotFlow { googleButtonEnabledState }
-    protected val isSignInLoadingStream = snapshotFlow { isSignInLoadingState }
+    protected val googleButtonEnabledFlow = snapshotFlow { googleButtonEnabledState }
+    protected val isSignInLoadingFlow = snapshotFlow { isSignInLoadingState }
 }

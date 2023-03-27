@@ -11,7 +11,6 @@ import com.leebeebeom.clothinghelper.ui.signin.ui.SignInDestinations.SignUpRoute
 import com.leebeebeom.clothinghelper.ui.signin.ui.resetpassword.ResetPasswordScreen
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInScreen
 import com.leebeebeom.clothinghelper.ui.signin.ui.signup.SignUpScreen
-import com.leebeebeom.clothinghelper.ui.util.ShowToast
 
 object SignInDestinations {
     const val SignInRoute = "signIn"
@@ -19,10 +18,7 @@ object SignInDestinations {
     const val ResetPasswordRoute = "resetPassword"
 }
 
-fun NavGraphBuilder.signInGraph(
-    navController: NavHostController,
-    showToast: ShowToast
-) {
+fun NavGraphBuilder.signInGraph(navController: NavHostController) {
     navigation(
         startDestination = SignInRoute,
         route = MainActivityRoutes.SignInGraphRoute,
@@ -30,20 +26,14 @@ fun NavGraphBuilder.signInGraph(
         composable(route = SignInRoute) {
             SignInScreen(
                 navigateToResetPassword = navController::navigateToResetPassword,
-                navigateToSignUp = navController::navigateToSignUp,
-                showToast = showToast
+                navigateToSignUp = navController::navigateToSignUp
             )
         }
         composable(route = SignUpRoute) {
-            SignUpScreen(
-                showToast = showToast,
-            )
+            SignUpScreen()
         }
         composable(route = ResetPasswordRoute) {
-            ResetPasswordScreen(
-                popBackStack = navController::popBackStack,
-                showToast = showToast
-            )
+            ResetPasswordScreen(popBackStack = navController::popBackStack)
         }
     }
 }

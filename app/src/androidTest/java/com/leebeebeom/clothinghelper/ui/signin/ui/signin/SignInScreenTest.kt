@@ -53,7 +53,7 @@ class SignInScreenTest {
     }
 
     @Test
-    fun signInRestoreTest() { // with error, loading
+    fun signInRestoreTest() { // with error, loading, button enabled
         fun localSignInRestoreTest(
             email: String, password: String, @StringRes error: Int
         ) {
@@ -74,6 +74,8 @@ class SignInScreenTest {
             emailTextField.performTextClearance()
             passwordTextField.performTextClearance()
         }
+
+        signInButton.assertIsNotEnabled()
 
         localSignInRestoreTest(
             email = InvalidEmail, password = SignInPassword, error = R.string.error_invalid_email

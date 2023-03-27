@@ -79,6 +79,8 @@ class SignUpScreenTest {
             passwordConfirmTextField.performTextClearance()
         }
 
+        signUpButton.assertIsNotEnabled()
+
         localSignUpRestoreTest(
             email = InvalidEmail,
             password = SignInPassword,

@@ -1,19 +1,23 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui.resetpassword
 
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.domain.model.FirebaseResult
 import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.ResetPasswordUseCase
-import com.leebeebeom.clothinghelper.ui.signin.base.EmailViewModel
-import com.leebeebeom.clothinghelper.ui.signin.state.EmailUiState
-import com.leebeebeom.clothinghelper.ui.signin.state.MutableEmailUiState
+import com.leebeebeom.clothinghelper.ui.signin.ui.EmailState
 import com.leebeebeom.clothinghelper.ui.util.ShowToast
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,44 +25,72 @@ import javax.inject.Inject
 class ResetPasswordViewModel @Inject constructor(
     private val resetPasswordUseCase: ResetPasswordUseCase,
     private val firebaseAuthErrorUseCase: FirebaseAuthErrorUseCase,
-) :
-    EmailViewModel() {
+    savedStateHandle: SavedStateHandle
+) : ViewModel() {
 
-    override val mutableUiState: MutableResetPasswordUiState = MutableResetPasswordUiState()
-    val uiState: ResetPasswordUiState = mutableUiState
+    val resetPasswordState = ResetPasswordState(savedStateHandle = savedStateHandle)
+    val uiState = resetPasswordState.uiStateFlow.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(50000),
+        initialValue = ResetPasswordUiState()
+    )
 
-    fun consumeTaskSuccess() {
-        mutableUiState.isTaskSuccess = false
-    }
-
-    fun sendResetPasswordEmail(showToast: ShowToast) {
-        viewModelScope.launch {
-            resetPasswordUseCase.sendResetPasswordEmail(
-                email = mutableUiState.email,
-                firebaseResult = object : FirebaseResult {
-                    override fun success() {
-                        showToast(R.string.email_send_complete)
-                        mutableUiState.isTaskSuccess = true
-                    }
-
-                    override fun fail(exception: Exception) =
-                        firebaseAuthErrorUseCase.firebaseAuthError(
-                            exception = exception,
-                            updateEmailError = { mutableUiState.emailError = it },
-                            showToast = showToast
-                        )
-
-                }
+    fun sendResetPasswordEmail(showToast: ShowToast, setLoading: (Boolean) -> Unit) {
+        val handler = CoroutineExceptionHandler { _, throwable ->
+            firebaseAuthErrorUseCase.firebaseAuthError(
+                throwable = throwable,
+                setEmailError = resetPasswordState.emailError::set,
+                showToast = showToast
             )
+            setLoading(false)
+        }
+        viewModelScope.launch(handler) {
+            setLoading(true)
+            resetPasswordUseCase.sendResetPasswordEmail(email = resetPasswordState.email.state)
+            showToast(R.string.email_send_complete)
+            resetPasswordState.taskSuccess()
+            setLoading(false)
         }
     }
 }
 
-@Stable
-interface ResetPasswordUiState : EmailUiState {
-    val isTaskSuccess: Boolean
-}
+data class ResetPasswordUiState(
+    val emailError: Int? = null,
+    val buttonEnabled: Boolean = false,
+    val isTaskSuccess: Boolean = false,
+    val isLoading: Boolean = false
+)
 
-class MutableResetPasswordUiState : MutableEmailUiState(), ResetPasswordUiState {
-    override var isTaskSuccess by mutableStateOf(false)
+private const val ResetPasswordEmailKey = "reset password email"
+private const val ResetPasswordEmailErrorKey = "reset password email error"
+
+class ResetPasswordState(savedStateHandle: SavedStateHandle) : EmailState(
+    savedStateHandle = savedStateHandle,
+    emailKey = ResetPasswordEmailKey,
+    emailErrorKey = ResetPasswordEmailErrorKey
+) {
+    private var isTaskSuccessState by mutableStateOf(false)
+    private val isTaskSuccessFlow = snapshotFlow { isTaskSuccessState }
+
+    fun taskSuccess() {
+        isTaskSuccessState = true
+    }
+
+    fun consumeTaskSuccess() {
+        isTaskSuccessState = false
+    }
+
+    val uiStateFlow = combine(
+        flow = emailError.flow,
+        flow2 = buttonEnabledFlow,
+        flow3 = isTaskSuccessFlow,
+        flow4 = isLoadingFlow
+    ) { emailError, buttonEnabled, isTaskSuccess, isLoading ->
+        ResetPasswordUiState(
+            emailError = emailError,
+            buttonEnabled = buttonEnabled,
+            isTaskSuccess = isTaskSuccess,
+            isLoading = isLoading
+        )
+    }.distinctUntilChanged()
 }

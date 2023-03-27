@@ -28,7 +28,7 @@ class SignInViewModel @Inject constructor(
     googleSignInUseCase = googleSignInUseCase, firebaseAuthErrorUseCase = firebaseAuthErrorUseCase
 ) {
     val signInState = SignInState(savedStateHandle)
-    val uiState = signInState.uiStateStream.stateIn(
+    val uiState = signInState.uiStateFlow.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = SignInUiState()
@@ -39,8 +39,8 @@ class SignInViewModel @Inject constructor(
         val handler = CoroutineExceptionHandler { _, throwable ->
             firebaseAuthErrorUseCase.firebaseAuthError(
                 throwable = throwable,
-                setEmailError = signInState::setEmailError,
-                setPasswordError = signInState::setPasswordError,
+                setEmailError = signInState.emailError::set,
+                setPasswordError = signInState.passwordError::set,
                 showToast = showToast
             )
             signInState.setLoading(false)
@@ -48,8 +48,8 @@ class SignInViewModel @Inject constructor(
         viewModelScope.launch(handler) {
             signInState.setLoading(true)
             signInUseCase.signIn(
-                email = signInState.savedEmail,
-                password = signInState.savedPassword
+                email = signInState.email.state,
+                password = signInState.password.state
             )
         }
     }
@@ -75,12 +75,12 @@ class SignInState(savedStateHandle: SavedStateHandle) : GoogleSignInState(
     savedPasswordKey = SignInPasswordKey,
     passwordErrorKey = SignInPasswordErrorKey
 ) {
-    val uiStateStream = combine(
-        flow = emailErrorStream,
-        flow2 = passwordErrorStream,
-        flow3 = buttonEnabledStream,
-        flow4 = googleButtonEnabledStream,
-        flow5 = isSignInLoadingStream
+    val uiStateFlow = combine(
+        flow = emailError.flow,
+        flow2 = passwordError.flow,
+        flow3 = buttonEnabledFlow,
+        flow4 = googleButtonEnabledFlow,
+        flow5 = isSignInLoadingFlow
     ) { emailError, passwordError, buttonEnabled, googleButtonEnabled, isLoading ->
         SignInUiState(
             emailError = emailError,

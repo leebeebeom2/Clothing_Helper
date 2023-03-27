@@ -66,7 +66,7 @@ data class SignUpUiState(
     val emailError: Int? = null,
     val passwordError: Int? = null,
     val passwordConfirmError: Int? = null,
-    val buttonEnabled: Boolean = true,
+    val buttonEnabled: Boolean = false,
     override val googleButtonEnabled: Boolean = true,
     override val isLoading: Boolean = false
 ) : GoogleSignInUiState()

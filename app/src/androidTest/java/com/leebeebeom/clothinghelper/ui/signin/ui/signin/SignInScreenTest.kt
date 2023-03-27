@@ -51,9 +51,7 @@ class SignInScreenTest {
     @Test
     fun signInRestoreTest() { // with error, loading
         fun localSignInRestoreTest(
-            email: String,
-            password: String,
-            @StringRes error: Int
+            email: String, password: String, @StringRes error: Int
         ) {
             emailTextField.performTextInput(email)
             passwordTestField.performTextInput(password)
@@ -64,6 +62,7 @@ class SignInScreenTest {
                 rule.waitStringResExist(error)
                 rule.onNodeWithText(email).assertExists()
                 rule.onNodeWithText(getInvisibleText(password.length)).assertExists()
+                signInButton.assertIsNotEnabled()
 
                 restorationTester.emulateSavedInstanceStateRestore()
             }
@@ -73,22 +72,27 @@ class SignInScreenTest {
         }
 
         localSignInRestoreTest(
-            email = InvalidEmail,
-            password = SignInPassword,
-            error = R.string.error_invalid_email
+            email = InvalidEmail, password = SignInPassword, error = R.string.error_invalid_email
         )
 
         localSignInRestoreTest(
-            email = NotFoundEmail,
-            password = SignInPassword,
-            error = R.string.error_user_not_found
+            email = NotFoundEmail, password = SignInPassword, error = R.string.error_user_not_found
         )
 
         localSignInRestoreTest(
-            email = SignInEmail,
-            password = "123456",
-            error = R.string.error_wrong_password
+            email = SignInEmail, password = "123456", error = R.string.error_wrong_password
         )
+
+        emailTextField.performTextInput(SignInEmail)
+        passwordTestField.performTextInput(SignInPassword)
+
+        repeat(2) {
+            rule.onNodeWithText(SignInEmail)
+            rule.onNodeWithText(SignInPassword)
+            signInButton.assertIsEnabled()
+
+            restorationTester.emulateSavedInstanceStateRestore()
+        }
     }
 
     @Test

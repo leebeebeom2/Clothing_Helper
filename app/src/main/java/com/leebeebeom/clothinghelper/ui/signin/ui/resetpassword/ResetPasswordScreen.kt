@@ -17,17 +17,16 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.components.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelper.ui.components.HeightSpacer
 import com.leebeebeom.clothinghelper.ui.components.MaxWidthButton
+import com.leebeebeom.clothinghelper.ui.main.composables.ToastWrapper
 import com.leebeebeom.clothinghelper.ui.signin.components.SignInBaseColumn
 import com.leebeebeom.clothinghelper.ui.signin.components.textfield.EmailTextField
-import com.leebeebeom.clothinghelper.ui.util.ShowToast
 
 const val ResetPasswordScreenTag = "reset password screen"
 
 @Composable
 fun ResetPasswordScreen(
     popBackStack: () -> Unit,
-    viewModel: ResetPasswordViewModel = hiltViewModel(),
-    showToast: ShowToast
+    viewModel: ResetPasswordViewModel = hiltViewModel()
 ) {
     val state = viewModel.resetPasswordState
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -48,7 +47,7 @@ fun ResetPasswordScreen(
 
         val onResetPasswordButtonClick: () -> Unit = remember {
             {
-                viewModel.sendResetPasswordEmail(showToast = showToast, popBackStack = popBackStack)
+                viewModel.sendResetPasswordEmail(popBackStack = popBackStack)
             }
         }
         HeightSpacer(dp = 12)
@@ -59,4 +58,5 @@ fun ResetPasswordScreen(
         )
     }
     CenterDotProgressIndicator(show = { uiState.isLoading })
+    ToastWrapper(toastTexts = { uiState.toastTexts }, toastShown = viewModel::removeFirstToastText)
 }

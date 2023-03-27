@@ -2,6 +2,7 @@ package com.leebeebeom.clothinghelper.ui.signin.ui.signup
 
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
@@ -12,10 +13,10 @@ import com.leebeebeom.clothinghelper.ui.signin.ui.GoogleSignInState
 import com.leebeebeom.clothinghelper.ui.signin.ui.GoogleSignInUiState
 import com.leebeebeom.clothinghelper.ui.signin.ui.GoogleSignInViewModel
 import com.leebeebeom.clothinghelper.ui.signin.ui.SavedStateProvider
-import com.leebeebeom.clothinghelper.ui.util.ShowToast
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -34,24 +35,44 @@ class SignUpViewModel @Inject constructor(
 ) {
 
     val signUpState = SignUpState(savedStateHandle)
-    val uiState = signUpState.uiStateFlow.stateIn(
+
+    @Suppress("UNCHECKED_CAST")
+    val uiState = combine(
+        signUpState.emailError.flow,
+        signUpState.passwordError.flow,
+        signUpState.passwordConfirmError.flow,
+        signUpState.buttonEnabledFlow,
+        signUpState.googleButtonEnabledFlow,
+        signUpState.isLoadingFlow,
+        toastTextsFlow
+    ) { flows ->
+        SignUpUiState(
+            emailError = flows[0] as Int?,
+            passwordError = flows[1] as Int?,
+            passwordConfirmError = flows[2] as Int?,
+            buttonEnabled = flows[3] as Boolean,
+            googleButtonEnabled = flows[4] as Boolean,
+            isLoading = flows[5] as Boolean,
+            toastTexts = (flows[6] as SnapshotStateList<Int>).toImmutableList()
+        )
+    }.distinctUntilChanged().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = SignUpUiState()
     )
     override val googleSignInState = signUpState
 
-    fun signUpWithEmailAndPassword(showToast: ShowToast): Job {
+    fun signUpWithEmailAndPassword() {
         val handler = CoroutineExceptionHandler { _, throwable ->
             firebaseAuthErrorUseCase.firebaseAuthError(
                 throwable = throwable,
                 setEmailError = signUpState.emailError::set,
-                showToast = showToast
+                showToast = ::addToastTextAtLast
             )
             signUpState.setLoading(false)
         }
 
-        return viewModelScope.launch(handler) {
+        viewModelScope.launch(handler) {
             signUpState.setLoading(true)
             signUpUseCase.signUp(
                 email = signUpState.email.state,
@@ -68,7 +89,8 @@ data class SignUpUiState(
     val passwordConfirmError: Int? = null,
     val buttonEnabled: Boolean = false,
     override val googleButtonEnabled: Boolean = true,
-    override val isLoading: Boolean = false
+    override val isLoading: Boolean = false,
+    val toastTexts: ImmutableList<Int> = emptyList<Int>().toImmutableList()
 ) : GoogleSignInUiState()
 
 private const val SignUpEmailKey = "sign up email"
@@ -92,7 +114,7 @@ class SignUpState(savedStateHandle: SavedStateHandle) : GoogleSignInState(
     val passwordConfirm = SavedStateProvider(
         savedStateHandle = savedStateHandle, key = SignUpPasswordConfirmKey, initialValue = ""
     )
-    private val passwordConfirmError = SavedStateProvider<Int?>(
+    val passwordConfirmError = SavedStateProvider<Int?>(
         savedStateHandle = savedStateHandle,
         key = SignUpPasswordConfirmErrorKey,
         initialValue = null
@@ -129,22 +151,4 @@ class SignUpState(savedStateHandle: SavedStateHandle) : GoogleSignInState(
         if (password.state != passwordConfirm.state) passwordConfirmError.set(R.string.error_password_confirm_not_same)
         else passwordConfirmError.set(null)
     }
-
-    val uiStateFlow = combine(
-        emailError.flow,
-        passwordError.flow,
-        passwordConfirmError.flow,
-        buttonEnabledFlow,
-        googleButtonEnabledFlow,
-        isLoadingFlow
-    ) { flows ->
-        SignUpUiState(
-            emailError = flows[0] as Int?,
-            passwordError = flows[1] as Int?,
-            passwordConfirmError = flows[2] as Int?,
-            buttonEnabled = flows[3] as Boolean,
-            googleButtonEnabled = flows[4] as Boolean,
-            isLoading = flows[5] as Boolean
-        )
-    }.distinctUntilChanged()
 }

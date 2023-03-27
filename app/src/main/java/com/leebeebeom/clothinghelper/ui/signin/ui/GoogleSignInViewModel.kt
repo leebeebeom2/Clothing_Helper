@@ -31,14 +31,14 @@ abstract class GoogleSignInViewModel(
 ) : ToastViewModel() {
     abstract val googleSignInState: GoogleSignInState
 
-    fun signInWithGoogleEmail(activityResult: ActivityResult, showToast: ShowToast) =
+    fun signInWithGoogleEmail(activityResult: ActivityResult) =
         when (activityResult.resultCode) {
             Activity.RESULT_OK -> googleSignIn(
                 activityResult = activityResult,
-                showToast = showToast
+                showToast = ::addToastTextAtLast
             )
             Activity.RESULT_CANCELED -> {
-                showToast(R.string.canceled)
+                addToastTextAtLast(R.string.canceled)
                 googleSignInState.googleButtonEnabled()
                 null
             }
@@ -47,7 +47,7 @@ abstract class GoogleSignInViewModel(
                     site = "signInWithGoogleEmail",
                     msg = "resultCode = ${activityResult.resultCode}",
                 )
-                showToast(R.string.unknown_error)
+                addToastTextAtLast(R.string.unknown_error)
                 googleSignInState.googleButtonEnabled()
                 null
             }
@@ -92,7 +92,7 @@ abstract class GoogleSignInState(
     passwordErrorKey = passwordErrorKey
 ) {
     private var googleButtonEnabledState by mutableStateOf(true)
-    protected val googleButtonEnabledFlow = snapshotFlow { googleButtonEnabledState }
+    val googleButtonEnabledFlow = snapshotFlow { googleButtonEnabledState }
 
     fun googleButtonEnabled() {
         googleButtonEnabledState = true

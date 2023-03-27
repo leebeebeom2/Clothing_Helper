@@ -31,5 +31,5 @@ abstract class EmailState(
         emailError.set(null)
     }
 
-    protected val buttonEnabledFlow = snapshotFlow { buttonEnabledState }
+    val buttonEnabledFlow = snapshotFlow { buttonEnabledState }
 }

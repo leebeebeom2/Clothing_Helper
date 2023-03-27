@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui.signup
 
-import androidx.activity.result.ActivityResult
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,20 +15,18 @@ import com.leebeebeom.clothinghelper.ui.components.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelper.ui.components.HeightSpacer
 import com.leebeebeom.clothinghelper.ui.components.MaxWidthButton
 import com.leebeebeom.clothinghelper.ui.components.StatefulMaxWidthTestFieldWithCancelIcon
+import com.leebeebeom.clothinghelper.ui.main.composables.ToastWrapper
 import com.leebeebeom.clothinghelper.ui.signin.components.GoogleSignInButton
 import com.leebeebeom.clothinghelper.ui.signin.components.Logo
 import com.leebeebeom.clothinghelper.ui.signin.components.OrDivider
 import com.leebeebeom.clothinghelper.ui.signin.components.SignInBaseColumn
 import com.leebeebeom.clothinghelper.ui.signin.components.textfield.EmailTextField
 import com.leebeebeom.clothinghelper.ui.signin.components.textfield.PasswordTextField
-import com.leebeebeom.clothinghelper.ui.util.ShowToast
 
 const val SignUpScreenTag = "sign up screen"
 
 @Composable
-fun SignUpScreen(
-    viewModel: SignUpViewModel = hiltViewModel(), showToast: ShowToast
-) {
+fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
     val state = viewModel.signUpState
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -64,9 +61,7 @@ fun SignUpScreen(
 
         val onSignUpButtonClick: () -> Unit = remember {
             {
-                viewModel.signUpWithEmailAndPassword(
-                    showToast = showToast
-                )
+                viewModel.signUpWithEmailAndPassword()
             }
         }
         HeightSpacer(dp = 12)
@@ -76,15 +71,12 @@ fun SignUpScreen(
             onClick = onSignUpButtonClick,
         )
         OrDivider()
-
-        val onActivityResult: (ActivityResult) -> Unit = remember {
-            { viewModel.signInWithGoogleEmail(activityResult = it, showToast = showToast) }
-        }
         GoogleSignInButton(
             enabled = { uiState.googleButtonEnabled },
-            onActivityResult = onActivityResult,
+            onActivityResult = viewModel::signInWithGoogleEmail,
             disable = state::googleButtonDisable
         )
     }
     CenterDotProgressIndicator(show = { uiState.isLoading })
+    ToastWrapper(toastTexts = { uiState.toastTexts }, toastShown = viewModel::removeFirstToastText)
 }

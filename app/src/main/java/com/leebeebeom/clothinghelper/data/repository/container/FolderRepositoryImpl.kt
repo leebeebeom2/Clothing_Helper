@@ -20,7 +20,7 @@ class FolderRepositoryImpl @Inject constructor(
     @DispatcherIO dispatcher: CoroutineDispatcher,
     userRepository: UserRepository,
 ) : BaseContainerRepositoryImpl<Folder>(
-    sortFlow = folderPreferencesRepository.sortStream,
+    sortFlow = folderPreferencesRepository.sortFlow,
     refPath = DataBasePath.Folder,
     appScope = appScope,
     type = Folder::class.java,

@@ -26,8 +26,8 @@ class TodoRepositoryImpl @Inject constructor(
     dispatcher = dispatcher,
     userRepository = userRepository
 ), TodoRepository {
-    override val allDataStream =
-        super.allDataStream.mapLatest { dataResult ->
+    override val allDataFlow =
+        super.allDataFlow.mapLatest { dataResult ->
             when (dataResult) {
                 is DataResult.Success -> DataResult.Success(dataResult.data.sortedBy { it.order })
                 is DataResult.Fail -> dataResult

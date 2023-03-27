@@ -30,8 +30,8 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
     dispatcher = dispatcher,
     userRepository = userRepository
 ) {
-    override val allDataStream =
-        super.allDataStream.combine(flow = sortFlow, transform = ::getSortedData).shareIn(
+    override val allDataFlow =
+        super.allDataFlow.combine(flow = sortFlow, transform = ::getSortedData).shareIn(
             scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
         )
 

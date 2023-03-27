@@ -33,7 +33,7 @@ class UserRepositoryImpl @Inject constructor(
     private val auth = FirebaseAuth.getInstance()
     private var userCallback: UserCallback? = null
 
-    override val userStream = callbackFlow {
+    override val userFlow = callbackFlow {
         if (userCallback == null) userCallback = UserCallback { firebaseUser ->
             trySend(element = firebaseUser.toUserModel())
         }
@@ -108,5 +108,5 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     private suspend fun callbackFlowEmitWrapper(emit: suspend (UserCallback) -> Unit) =
-        callbackFlowEmit({ userCallback }, flow = userStream, emit = emit)
+        callbackFlowEmit({ userCallback }, flow = userFlow, emit = emit)
 }

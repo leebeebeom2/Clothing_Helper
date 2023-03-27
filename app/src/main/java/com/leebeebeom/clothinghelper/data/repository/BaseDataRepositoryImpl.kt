@@ -38,7 +38,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
      * @throws DatabaseException onCancelled 호출 시 발생
      */
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val allDataStream = userRepository.userStream.flatMapLatest { user ->
+    override val allDataFlow = userRepository.userFlow.flatMapLatest { user ->
         user?.let { nonNullUser ->
             callbackFlow {
                 val dataCallback = object : ValueEventListener {

@@ -4,7 +4,7 @@ import com.leebeebeom.clothinghelper.domain.model.BaseModel
 import kotlinx.coroutines.flow.SharedFlow
 
 interface BaseDataRepository<T : BaseModel> {
-    val allDataStream: SharedFlow<DataResult<T>>
+    val allDataFlow: SharedFlow<DataResult<T>>
     suspend fun add(data: T)
     suspend fun push(data: T)
 }

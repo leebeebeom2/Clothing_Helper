@@ -20,7 +20,7 @@ class SubCategoryRepositoryImpl @Inject constructor(
     @DispatcherIO dispatcher: CoroutineDispatcher,
     userRepository: UserRepository,
 ) : BaseContainerRepositoryImpl<SubCategory>(
-    sortFlow = subCategoryPreferencesRepository.sortStream,
+    sortFlow = subCategoryPreferencesRepository.sortFlow,
     refPath = DataBasePath.SubCategory,
     appScope = appScope,
     type = SubCategory::class.java,

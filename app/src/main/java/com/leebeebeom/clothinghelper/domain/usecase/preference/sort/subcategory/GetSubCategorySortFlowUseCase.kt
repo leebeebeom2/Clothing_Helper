@@ -4,6 +4,6 @@ import com.leebeebeom.clothinghelper.domain.repository.preference.SortPreference
 import com.leebeebeom.clothinghelper.domain.repository.preference.SubCategoryPreferencesRepository
 import javax.inject.Inject
 
-class GetSubCategorySortStreamUseCase @Inject constructor(@SubCategoryPreferencesRepository private val sortPreferenceRepository: SortPreferenceRepository) {
-    val subCategorySortStream get() = sortPreferenceRepository.sortStream
+class GetSubCategorySortFlowUseCase @Inject constructor(@SubCategoryPreferencesRepository private val sortPreferenceRepository: SortPreferenceRepository) {
+    val subCategorySortFlow get() = sortPreferenceRepository.sortFlow
 }

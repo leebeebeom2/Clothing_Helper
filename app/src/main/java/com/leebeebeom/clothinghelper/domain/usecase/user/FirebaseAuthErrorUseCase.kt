@@ -35,7 +35,7 @@ class FirebaseAuthErrorUseCase @Inject constructor() {
                     ERROR_WRONG_PASSWORD -> setPasswordError(R.string.error_wrong_password)
                 }
             }
-            is FirebaseTooManyRequestsException -> showToast(R.string.too_many_requst_error)
+            is FirebaseTooManyRequestsException -> showToast(R.string.error_too_many_requst)
             is FirebaseNetworkException -> showToast(R.string.network_error)
             else -> {
                 showToast(R.string.unknown_error)

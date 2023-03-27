@@ -8,7 +8,7 @@ import com.leebeebeom.clothinghelper.domain.model.User
 import kotlinx.coroutines.flow.SharedFlow
 
 interface UserRepository {
-    val userStream: SharedFlow<User?>
+    val userFlow: SharedFlow<User?>
     fun getUser(): User?
     suspend fun googleSignIn(credential: AuthCredential)
 

@@ -30,14 +30,18 @@ class SignInScreenTest {
     val rule = createAndroidComposeRule<HiltTestActivity>()
     private val restorationTester = StateRestorationTester(rule)
     private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-    private val emailTextField by lazy { rule.onNodeWithStringRes(R.string.email) }
-    private val passwordTextField by lazy { rule.onNodeWithStringRes(R.string.password) }
-    private val signInButton by lazy { rule.onNodeWithStringRes(R.string.sign_in) }
+    private lateinit var emailTextField: SemanticsNodeInteraction
+    private lateinit var passwordTextField: SemanticsNodeInteraction
+    private lateinit var signInButton: SemanticsNodeInteraction
 
     @Before
     fun init() {
         signOut()
         restorationTester.setContent { MainNavHost() }
+
+        emailTextField = rule.onNodeWithStringRes(R.string.email)
+        passwordTextField = rule.onNodeWithStringRes(R.string.password)
+        signInButton = rule.onNodeWithStringRes(R.string.sign_in)
     }
 
     @After

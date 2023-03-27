@@ -1,91 +1,88 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui.resetpassword
 
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.leebeebeom.clothinghelper.*
-import com.leebeebeom.clothinghelper.ui.components.*
-import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
+import androidx.annotation.StringRes
+import androidx.compose.ui.test.*
+import androidx.compose.ui.test.junit4.StateRestorationTester
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.data.InvalidEmail
+import com.leebeebeom.clothinghelper.data.NotFoundEmail
+import com.leebeebeom.clothinghelper.data.SendPasswordEmail
+import com.leebeebeom.clothinghelper.data.SignInEmail
+import com.leebeebeom.clothinghelper.ui.*
+import com.leebeebeom.clothinghelper.ui.components.CenterDotProgressIndicatorTag
+import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInScreenTag
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
 class ResetPasswordScreenTest {
     @get:Rule
-    val rule = activityRule
-    private val customTestRule = CustomTestRule(rule)
-    private lateinit var viewModel: ResetPasswordViewModel
-    private lateinit var uiState: MutableResetPasswordUiState
-
-    private val emailTextField get() = emailTextField(customTestRule)
-    private val sendButton get() = sendButton(customTestRule)
+    val rule = createAndroidComposeRule<HiltTestActivity>()
+    private val restorationTester = StateRestorationTester(rule)
+    private lateinit var emailTextField: SemanticsNodeInteraction
+    private lateinit var sendButton: SemanticsNodeInteraction
 
     @Before
     fun init() {
-        customTestRule.setContent {
-            ClothingHelperTheme {
-                viewModel = hiltViewModel()
-                uiState = viewModel.uiState as MutableResetPasswordUiState
-                ResetPasswordScreen(
-                    popBackStack = { },
-                    viewModel = viewModel,
-                    uiState = uiState
-                )
+        runBlocking {
+            Firebase.auth.signOut()
+            delay(1000)
+        }
+        restorationTester.setContent { MainNavHost() }
+
+        rule.onNodeWithStringRes(R.string.forgot_password).performClick()
+        rule.waitTagExist(ResetPasswordScreenTag)
+
+        emailTextField = rule.onNodeWithStringRes(R.string.email)
+        sendButton = rule.onNodeWithStringRes(R.string.send)
+    }
+
+    @Test
+    fun resetPasswordRestoreTest() { // with error, loading, button enabled
+        sendButton.assertIsNotEnabled()
+
+        fun localRestoreTest(
+            email: String,
+            @StringRes error: Int
+        ) {
+            emailTextField.performTextInput(email)
+            sendButton.performClick()
+            rule.waitTagExist(CenterDotProgressIndicatorTag)
+
+            repeat(2) {
+                rule.waitStringResExist(error)
+                rule.onNodeWithText(email).assertExists()
+                sendButton.assertIsNotEnabled()
+
+                restorationTester.emulateSavedInstanceStateRestore()
             }
+
+            emailTextField.performTextClearance()
+        }
+
+        localRestoreTest(email = InvalidEmail, error = R.string.error_invalid_email)
+        localRestoreTest(email = NotFoundEmail, error = R.string.error_user_not_found)
+    }
+
+    @Test
+    fun resetPasswordBlockBlankTest() {
+        emailTextField.performTextInput(SignInEmail)
+
+        repeat(10) {
+            emailTextField.performTextInput(" ")
+            rule.onNodeWithText(SignInEmail).assertExists()
         }
     }
 
     @Test
-    fun showKeyboardTest() = showKeyboardTest(textField = emailTextField)
-
-    @Test
-    fun errorTest() {
-        errorTest(
-            rule = customTestRule,
-            errorTextField = { emailTextField },
-            errorTextRes = R.string.error_invalid_email,
-            setError = {
-                emailTextField.input(INVALID_EMAIL)
-                sendButton.click()
-            },
-            beforeText = INVALID_EMAIL
-        )
-
-        errorTest(
-            rule = customTestRule,
-            errorTextField = { emailTextField },
-            errorTextRes = R.string.error_user_not_found,
-            setError = {
-                emailTextField.input(NOT_EXIST_EMAIL)
-                sendButton.click()
-            },
-            beforeText = NOT_EXIST_EMAIL
-        )
+    fun resetPasswordSendTest() {
+        emailTextField.performTextInput(SendPasswordEmail)
+        sendButton.performClick()
+        rule.waitTagExist(SignInScreenTag)
     }
-
-    @Test
-    fun inputChangeTest() = inputChangeTest(
-        rule = customTestRule,
-        textField = { emailTextField },
-        input = { uiState.email }
-    )
-
-    @Test
-    fun cancelIconTest() = cancelIconTest(
-        rule = customTestRule,
-        cancelIconTextField = { emailTextField },
-        looseFocus = { customTestRule.getNodeWithTag(RESET_PASSWORD_SCREEN_TAG) }
-    )
-
-    @Test
-    fun blockBlankTest() = blockBlankTest(
-        rule = customTestRule,
-        textField = { emailTextField }
-    )
-
-
-//    @Test TODO 테스트 불가, 커서 테스트 불가
-//    fun looseFocusTest() =
-//        looseFocusTest(
-//            textField = { emailTextField },
-//            root = { customTestRule.getNodeWithTag(RESET_PASSWORD_SCREEN_TAG) }
-//        )
 }

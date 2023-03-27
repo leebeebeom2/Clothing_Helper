@@ -4,36 +4,35 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.ActivityViewModel
-import com.leebeebeom.clothinghelper.ui.activityViewModel
+import com.leebeebeom.clothinghelper.ui.components.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelper.ui.components.HeightSpacer
-import com.leebeebeom.clothinghelper.ui.components.ImeActionRoute
 import com.leebeebeom.clothinghelper.ui.components.MaxWidthButton
 import com.leebeebeom.clothinghelper.ui.signin.components.SignInBaseColumn
 import com.leebeebeom.clothinghelper.ui.signin.components.textfield.EmailTextField
+import com.leebeebeom.clothinghelper.ui.util.ShowToast
 
-const val RESET_PASSWORD_SCREEN_TAG = "reset password screen"
+const val ResetPasswordScreenTag = "reset password screen"
 
 @Composable
 fun ResetPasswordScreen(
     popBackStack: () -> Unit,
     viewModel: ResetPasswordViewModel = hiltViewModel(),
-    uiState: ResetPasswordUiState = viewModel.uiState,
-    activityViewModel: ActivityViewModel = activityViewModel(),
+    showToast: ShowToast
 ) {
-    PopBackStack(
-        taskSuccess = { uiState.isTaskSuccess },
-        popBackStack = popBackStack,
-        consumeTaskSuccess = viewModel::consumeTaskSuccess
-    )
+    val state = viewModel.resetPasswordState
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    SignInBaseColumn(modifier = Modifier.testTag(RESET_PASSWORD_SCREEN_TAG)) {
+    SignInBaseColumn(modifier = Modifier.testTag(ResetPasswordScreenTag)) {
         Text(
             text = stringResource(id = R.string.reset_password_text),
             style = MaterialTheme.typography.body2,
@@ -41,26 +40,23 @@ fun ResetPasswordScreen(
         )
 
         EmailTextField(
+            initialEmail = state.email.savedValue,
             error = { uiState.emailError },
-            imeActionRoute = ImeActionRoute.DONE,
-            onInputChange = viewModel::onEmailChange
+            imeAction = ImeAction.Done,
+            onEmailChange = state::setEmail
         )
 
+        val onResetPasswordButtonClick: () -> Unit = remember {
+            {
+                viewModel.sendResetPasswordEmail(showToast = showToast, popBackStack = popBackStack)
+            }
+        }
         HeightSpacer(dp = 12)
-        MaxWidthButton(text = R.string.send,
+        MaxWidthButton(
+            text = R.string.send,
             enabled = { uiState.buttonEnabled },
-            onClick = { viewModel.sendResetPasswordEmail(showToast = activityViewModel::showToast) })
+            onClick = onResetPasswordButtonClick
+        )
     }
-}
-
-@Composable
-private fun PopBackStack(
-    taskSuccess: () -> Boolean,
-    popBackStack: () -> Unit,
-    consumeTaskSuccess: () -> Unit,
-) {
-    if (taskSuccess()) {
-        popBackStack()
-        consumeTaskSuccess()
-    }
+    CenterDotProgressIndicator(show = { uiState.isLoading })
 }

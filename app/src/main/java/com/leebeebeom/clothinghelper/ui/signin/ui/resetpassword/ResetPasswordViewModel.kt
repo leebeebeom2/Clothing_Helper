@@ -1,9 +1,5 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui.resetpassword
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -35,7 +31,7 @@ class ResetPasswordViewModel @Inject constructor(
         initialValue = ResetPasswordUiState()
     )
 
-    fun sendResetPasswordEmail(showToast: ShowToast) {
+    fun sendResetPasswordEmail(showToast: ShowToast, popBackStack: () -> Unit) {
         val handler = CoroutineExceptionHandler { _, throwable ->
             firebaseAuthErrorUseCase.firebaseAuthError(
                 throwable = throwable,
@@ -48,8 +44,7 @@ class ResetPasswordViewModel @Inject constructor(
             resetPasswordState.setLoading(true)
             resetPasswordUseCase.sendResetPasswordEmail(email = resetPasswordState.email.state)
             showToast(R.string.email_send_complete)
-            resetPasswordState.taskSuccess()
-            resetPasswordState.setLoading(false)
+            popBackStack()
         }
     }
 }
@@ -57,7 +52,6 @@ class ResetPasswordViewModel @Inject constructor(
 data class ResetPasswordUiState(
     val emailError: Int? = null,
     val buttonEnabled: Boolean = false,
-    val isTaskSuccess: Boolean = false,
     val isLoading: Boolean = false
 )
 
@@ -69,27 +63,14 @@ class ResetPasswordState(savedStateHandle: SavedStateHandle) : EmailState(
     emailKey = ResetPasswordEmailKey,
     emailErrorKey = ResetPasswordEmailErrorKey
 ) {
-    private var isTaskSuccessState by mutableStateOf(false)
-    private val isTaskSuccessFlow = snapshotFlow { isTaskSuccessState }
-
-    fun taskSuccess() {
-        isTaskSuccessState = true
-    }
-
-    fun consumeTaskSuccess() {
-        isTaskSuccessState = false
-    }
-
     val uiStateFlow = combine(
         flow = emailError.flow,
         flow2 = buttonEnabledFlow,
-        flow3 = isTaskSuccessFlow,
-        flow4 = isLoadingFlow
-    ) { emailError, buttonEnabled, isTaskSuccess, isLoading ->
+        flow3 = isLoadingFlow
+    ) { emailError, buttonEnabled, isLoading ->
         ResetPasswordUiState(
             emailError = emailError,
             buttonEnabled = buttonEnabled,
-            isTaskSuccess = isTaskSuccess,
             isLoading = isLoading
         )
     }.distinctUntilChanged()

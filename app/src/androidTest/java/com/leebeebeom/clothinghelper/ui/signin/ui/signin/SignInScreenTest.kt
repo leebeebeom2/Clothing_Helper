@@ -31,7 +31,7 @@ class SignInScreenTest {
     private val restorationTester = StateRestorationTester(rule)
     private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     private val emailTextField by lazy { rule.onNodeWithStringRes(R.string.email) }
-    private val passwordTestField by lazy { rule.onNodeWithStringRes(R.string.password) }
+    private val passwordTextField by lazy { rule.onNodeWithStringRes(R.string.password) }
     private val signInButton by lazy { rule.onNodeWithStringRes(R.string.sign_in) }
 
     @Before
@@ -54,7 +54,7 @@ class SignInScreenTest {
             email: String, password: String, @StringRes error: Int
         ) {
             emailTextField.performTextInput(email)
-            passwordTestField.performTextInput(password)
+            passwordTextField.performTextInput(password)
             signInButton.performClick()
             rule.waitTagExist(CenterDotProgressIndicatorTag)
 
@@ -68,7 +68,7 @@ class SignInScreenTest {
             }
 
             emailTextField.performTextClearance()
-            passwordTestField.performTextClearance()
+            passwordTextField.performTextClearance()
         }
 
         localSignInRestoreTest(
@@ -84,7 +84,7 @@ class SignInScreenTest {
         )
 
         emailTextField.performTextInput(SignInEmail)
-        passwordTestField.performTextInput(SignInPassword)
+        passwordTextField.performTextInput(SignInPassword)
 
         repeat(2) {
             rule.onNodeWithText(SignInEmail)
@@ -109,7 +109,7 @@ class SignInScreenTest {
     @Test
     fun signInTest() {
         emailTextField.performTextInput(SignInEmail)
-        passwordTestField.performTextInput(SignInPassword)
+        passwordTextField.performTextInput(SignInPassword)
         signInButton.performClick()
 
         rule.waitTagExist(MainScreenTag)
@@ -122,7 +122,7 @@ class SignInScreenTest {
         emailTextField.performTextInput(InvalidEmail)
         signInButton.assertIsNotEnabled()
 
-        passwordTestField.performTextInput(SignInPassword)
+        passwordTextField.performTextInput(SignInPassword)
         signInButton.assertIsEnabled()
 
         emailTextField.performTextClearance()
@@ -143,7 +143,7 @@ class SignInScreenTest {
     @Test
     fun signInBlockBlankTest() {
         emailTextField.performTextInput(SignInEmail)
-        passwordTestField.performTextInput(SignInPassword)
+        passwordTextField.performTextInput(SignInPassword)
 
         repeat(10) {
             emailTextField.performTextInput(" ")
@@ -151,7 +151,7 @@ class SignInScreenTest {
         }
 
         repeat(10) {
-            passwordTestField.performTextInput(" ")
+            passwordTextField.performTextInput(" ")
             rule.onNodeWithText(getInvisibleText(SignInPassword.length))
         }
     }

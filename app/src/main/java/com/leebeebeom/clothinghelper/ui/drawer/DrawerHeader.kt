@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.main.drawer
+package com.leebeebeom.clothinghelper.ui.drawer
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -8,12 +8,13 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.components.CustomIconButton
 import com.leebeebeom.clothinghelper.ui.components.SingleLineText
 
-const val SETTING_ICON = "setting icon"
+const val SettingIconTag = "setting icon"
 
 @Composable
 fun DrawerHeader(
@@ -27,17 +28,17 @@ fun DrawerHeader(
             .padding(start = 12.dp, end = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        HeaderText(userName = userName, userEmail = userEmail)
+        HeaderUserInfo(userName = userName, userEmail = userEmail)
         CustomIconButton(
+            modifier = Modifier.testTag(SettingIconTag),
             drawable = R.drawable.ic_settings,
-            onClick = navigateToSetting,
-            contentDescription = SETTING_ICON
+            onClick = navigateToSetting
         )
     }
 }
 
 @Composable
-private fun RowScope.HeaderText(userName: () -> String?, userEmail: () -> String?) {
+private fun RowScope.HeaderUserInfo(userName: () -> String?, userEmail: () -> String?) {
     SingleLineText(
         modifier = Modifier.weight(1f),
         style = MaterialTheme.typography.subtitle1,

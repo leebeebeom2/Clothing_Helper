@@ -14,7 +14,7 @@ import com.leebeebeom.clothinghelper.data.SignInEmail
 import com.leebeebeom.clothinghelper.data.SignInPassword
 import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.MainGraphRoute
 import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.SignInGraphRoute
-import com.leebeebeom.clothinghelper.ui.main.drawer.DrawerTag
+import com.leebeebeom.clothinghelper.ui.drawer.SettingIconTag
 import com.leebeebeom.clothinghelper.ui.main.mainScreen.MainScreenTag
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInScreenTag
 import kotlinx.coroutines.delay
@@ -46,7 +46,7 @@ class MainActivityTest {
         repeat(2) {
             rule.onNodeWithTag(SignInScreenTag).assertExists()
             rule.onRoot().performTouchInput { swipeRight() }
-            rule.onNodeWithTag(DrawerTag).assertDoesNotExist()
+            rule.onNodeWithTag(SettingIconTag).assertDoesNotExist()
 
             restorationTester.emulateSavedInstanceStateRestore()
         }
@@ -56,7 +56,7 @@ class MainActivityTest {
         repeat(2) {
             rule.waitTagExist(MainScreenTag)
             rule.onRoot().performTouchInput { swipeRight() }
-            rule.onNodeWithTag(DrawerTag).assertExists()
+            rule.onNodeWithTag(SettingIconTag).assertExists()
 
             restorationTester.emulateSavedInstanceStateRestore()
         }
@@ -66,7 +66,7 @@ class MainActivityTest {
         repeat(2) {
             rule.waitTagExist(SignInScreenTag)
             rule.onRoot().performTouchInput { swipeRight() }
-            rule.onNodeWithTag(DrawerTag).assertDoesNotExist()
+            rule.onNodeWithTag(SettingIconTag).assertDoesNotExist()
 
             restorationTester.emulateSavedInstanceStateRestore()
         }

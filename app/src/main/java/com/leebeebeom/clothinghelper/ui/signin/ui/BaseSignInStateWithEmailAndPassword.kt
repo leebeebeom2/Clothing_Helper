@@ -9,7 +9,7 @@ abstract class BaseSignInStateWithEmailAndPassword(
     savedEmailKey: String,
     emailErrorKey: String,
     savedPasswordKey: String,
-    private val passwordErrorKey: String
+    passwordErrorKey: String
 ) : BaseSignInStateWithEmail(
     savedStateHandle = savedStateHandle,
     savedEmailKey = savedEmailKey,
@@ -23,7 +23,7 @@ abstract class BaseSignInStateWithEmailAndPassword(
 
     val passwordError = SavedStateProvider<Int?>(
         savedStateHandle = savedStateHandle,
-        key = savedPasswordKey,
+        key = passwordErrorKey,
         initialValue = null
     )
 

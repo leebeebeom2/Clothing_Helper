@@ -5,7 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
 
-abstract class BaseSignInStateWithEmail(
+abstract class EmailState(
     savedStateHandle: SavedStateHandle,
     emailKey: String,
     emailErrorKey: String

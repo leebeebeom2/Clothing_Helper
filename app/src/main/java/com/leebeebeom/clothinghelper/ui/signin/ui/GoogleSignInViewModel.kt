@@ -84,7 +84,7 @@ abstract class GoogleSignInState(
     emailErrorKey: String,
     savedPasswordKey: String,
     passwordErrorKey: String
-) : BaseSignInStateWithEmailAndPassword(
+) : PasswordState(
     savedStateHandle = savedStateHandle,
     emailKey = savedEmailKey,
     emailErrorKey = emailErrorKey,

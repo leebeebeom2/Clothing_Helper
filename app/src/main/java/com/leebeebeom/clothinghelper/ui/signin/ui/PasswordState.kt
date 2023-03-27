@@ -4,13 +4,13 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.SavedStateHandle
 
-abstract class BaseSignInStateWithEmailAndPassword(
+abstract class PasswordState(
     savedStateHandle: SavedStateHandle,
     emailKey: String,
     emailErrorKey: String,
     passwordKey: String,
     passwordErrorKey: String
-) : BaseSignInStateWithEmail(
+) : EmailState(
     savedStateHandle = savedStateHandle,
     emailKey = emailKey,
     emailErrorKey = emailErrorKey

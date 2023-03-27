@@ -1,38 +1,34 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui
 
-import androidx.annotation.StringRes
-import androidx.compose.runtime.*
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
 
 abstract class BaseSignInStateWithEmail(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     savedEmailKey: String,
-    private val emailErrorKey: String
+    emailErrorKey: String
 ) {
-    var savedEmail by SavedStateHandleDelegator(
+    val email = SavedStateProvider(
         savedStateHandle = savedStateHandle,
         key = savedEmailKey,
-        initial = ""
+        initialValue = ""
     )
-        private set
-    private var emailState by mutableStateOf(savedEmail)
-    private var emailErrorState by mutableStateOf(savedStateHandle.get<Int>(emailErrorKey))
 
-    protected open val buttonEnabledState by derivedStateOf { emailState.isNotBlank() && emailErrorState == null }
+    val emailError = SavedStateProvider<Int?>(
+        savedStateHandle = savedStateHandle,
+        key = emailErrorKey,
+        initialValue = null
+    )
+
+    protected open val buttonEnabledState by derivedStateOf { email.state.isNotBlank() && emailError.state == null }
 
     fun setEmail(email: String) {
-        if (emailState == email) return
-        savedEmail = email
-        emailState = email
-        setEmailError(null)
+        if (this.email.state == email) return
+        this.email.set(email)
+        emailError.set(null)
     }
 
-    fun setEmailError(@StringRes emailError: Int?) {
-        if (emailErrorState == emailError) return
-        savedStateHandle[emailErrorKey] = emailError
-        emailErrorState = emailError
-    }
-
-    protected val emailErrorStream = snapshotFlow { emailErrorState }
-    protected val buttonEnabledStream = snapshotFlow { buttonEnabledState }
+    protected val buttonEnabledFlow = snapshotFlow { buttonEnabledState }
 }

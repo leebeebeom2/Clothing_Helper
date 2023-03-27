@@ -7,11 +7,11 @@ import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelper.data.repository.UserRepositoryImpl
 import com.leebeebeom.clothinghelper.domain.model.User
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
-import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.ERROR_EMAIL_ALREADY_IN_USE
-import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.ERROR_INVALID_EMAIL
-import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.ERROR_USER_NOT_FOUND
-import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorCode.ERROR_WRONG_PASSWORD
 import com.leebeebeom.clothinghelper.isConnectedNetwork
+import com.leebeebeom.clothinghelper.ui.util.FirebaseAuthErrorCode.ERROR_EMAIL_ALREADY_IN_USE
+import com.leebeebeom.clothinghelper.ui.util.FirebaseAuthErrorCode.ERROR_INVALID_EMAIL
+import com.leebeebeom.clothinghelper.ui.util.FirebaseAuthErrorCode.ERROR_USER_NOT_FOUND
+import com.leebeebeom.clothinghelper.ui.util.FirebaseAuthErrorCode.ERROR_WRONG_PASSWORD
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect

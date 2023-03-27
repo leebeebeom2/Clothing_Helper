@@ -7,7 +7,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -52,15 +51,10 @@ fun SignInScreen(
 
         ForgotPasswordText(navigateToResetPassword = navigateToResetPassword)
 
-        val onSignInButtonClick: () -> Unit = remember {
-            {
-                viewModel.signInWithEmailAndPassword()
-            }
-        }
         MaxWidthButton(
             text = R.string.sign_in,
             enabled = { uiState.buttonEnable },
-            onClick = onSignInButtonClick,
+            onClick = viewModel::signInWithEmailAndPassword,
         )
         OrDivider()
         MaxWidthButton(text = R.string.sign_up_with_email,

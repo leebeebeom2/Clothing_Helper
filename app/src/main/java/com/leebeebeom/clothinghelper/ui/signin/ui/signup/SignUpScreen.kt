@@ -3,7 +3,6 @@ package com.leebeebeom.clothinghelper.ui.signin.ui.signup
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
@@ -59,16 +58,11 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
             onInputChange = state::setPasswordConfirm
         )
 
-        val onSignUpButtonClick: () -> Unit = remember {
-            {
-                viewModel.signUpWithEmailAndPassword()
-            }
-        }
         HeightSpacer(dp = 12)
         MaxWidthButton(
             text = R.string.sign_up,
             enabled = { uiState.buttonEnabled },
-            onClick = onSignUpButtonClick,
+            onClick = viewModel::signUpWithEmailAndPassword,
         )
         OrDivider()
         GoogleSignInButton(

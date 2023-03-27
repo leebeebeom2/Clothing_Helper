@@ -47,11 +47,11 @@ fun MainNavHost(
     viewModel: ActivityViewModel = activityViewModel(),
     navController: NavHostController = rememberNavController(),
 ) {
-    val uiState by viewModel.activityUiState.collectAsStateWithLifecycle()
+    val user by viewModel.user.collectAsStateWithLifecycle()
 
     ClothingHelperTheme {
         Drawer(
-            user = { uiState.user },
+            user = { user },
             navigateToSetting = navController::navigateToSetting,
             onEssentialMenuClick = { onEssentialMenuClick(navController, it) },
             navigateToMain = navController::navigateToSubCategory,
@@ -61,26 +61,12 @@ fun MainNavHost(
             NavHost(
                 modifier = Modifier.padding(paddingValues),
                 navController = navController,
-                startDestination = if (uiState.user == null) SignInGraphRoute else MainGraphRoute // no recomposition
+                startDestination = if (user == null) SignInGraphRoute else MainGraphRoute // no recomposition
             ) {
-                signInGraph(
-                    navController = navController, showToast = viewModel::addToastTextAtLast
-                )
+                signInGraph(navController = navController)
                 main(navController = navController)
             }
         }
-    }
-
-    ToastWrapper(
-        toastTexts = { uiState.toastTexts }, toastShown = viewModel::removeFirstToastText
-    )
-}
-
-@Composable
-private fun ToastWrapper(toastTexts: () -> List<Int>, toastShown: () -> Unit) {
-    toastTexts().firstOrNull()?.let {
-        Toast.makeText(LocalContext.current, stringResource(id = it), Toast.LENGTH_SHORT).show()
-        toastShown()
     }
 }
 

@@ -64,8 +64,8 @@ class SignUpScreenTest {
 
             repeat(2) {
                 rule.waitStringResExist(error)
-                rule.onNodeWithText(email)
-                rule.onNodeWithText(SignUpName)
+                rule.onNodeWithText(email).assertExists()
+                rule.onNodeWithText(SignUpName).assertExists()
                 signUpButton.assertIsNotEnabled()
                 assert(
                     rule.onAllNodesWithText(getInvisibleText(password.length))
@@ -170,20 +170,21 @@ class SignUpScreenTest {
     fun signUpBlockBlankTest() {
         emailTextField.performTextInput(SignInEmail)
         passwordTextField.performTextInput(SignInPassword)
+        passwordConfirmTextField.performTextInput(SignInPassword)
 
         repeat(10) {
             emailTextField.performTextInput(" ")
-            rule.onNodeWithText(SignInEmail)
+            rule.onNodeWithText(SignInEmail).assertExists()
         }
 
         repeat(10) {
             passwordTextField.performTextInput(" ")
-            rule.onNodeWithText(getInvisibleText(SignInPassword.length))
+            assert(rule.onAllNodesWithText(getInvisibleText(SignInPassword.length)).fetchSemanticsNodes().size == 2)
         }
 
         repeat(10) {
             passwordConfirmTextField.performTextInput(" ")
-            rule.onNodeWithText(getInvisibleText(SignInPassword.length))
+            assert(rule.onAllNodesWithText(getInvisibleText(SignInPassword.length)).fetchSemanticsNodes().size == 2)
         }
     }
 

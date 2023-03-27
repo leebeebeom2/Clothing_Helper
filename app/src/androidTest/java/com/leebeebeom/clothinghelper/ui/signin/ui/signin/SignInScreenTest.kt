@@ -93,8 +93,8 @@ class SignInScreenTest {
         passwordTextField.performTextInput(SignInPassword)
 
         repeat(2) {
-            rule.onNodeWithText(SignInEmail)
-            rule.onNodeWithText(SignInPassword)
+            rule.onNodeWithText(SignInEmail).assertExists()
+            rule.onNodeWithText(getInvisibleText(SignInPassword.length)).assertExists()
             signInButton.assertIsEnabled()
 
             restorationTester.emulateSavedInstanceStateRestore()
@@ -153,12 +153,12 @@ class SignInScreenTest {
 
         repeat(10) {
             emailTextField.performTextInput(" ")
-            rule.onNodeWithText(SignInEmail)
+            rule.onNodeWithText(SignInEmail).assertExists()
         }
 
         repeat(10) {
             passwordTextField.performTextInput(" ")
-            rule.onNodeWithText(getInvisibleText(SignInPassword.length))
+            rule.onNodeWithText(getInvisibleText(SignInPassword.length)).assertExists()
         }
     }
 }

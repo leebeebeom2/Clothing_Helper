@@ -16,9 +16,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.MainGraphRoute
 import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.SignInGraphRoute
+import com.leebeebeom.clothinghelper.ui.drawer.Drawer
+import com.leebeebeom.clothinghelper.ui.drawer.EssentialMenuType
 import com.leebeebeom.clothinghelper.ui.main.MainGraphDestinations
-import com.leebeebeom.clothinghelper.ui.main.drawer.Drawer
-import com.leebeebeom.clothinghelper.ui.main.drawer.EssentialMenuType
 import com.leebeebeom.clothinghelper.ui.main.main
 import com.leebeebeom.clothinghelper.ui.main.navigateToSizeChartList
 import com.leebeebeom.clothinghelper.ui.main.navigateToSubCategory
@@ -64,8 +64,7 @@ fun MainNavHost(
                 startDestination = if (uiState.user == null) SignInGraphRoute else MainGraphRoute // no recomposition
             ) {
                 signInGraph(
-                    navController = navController,
-                    showToast = viewModel::addToastTextAtLast
+                    navController = navController, showToast = viewModel::addToastTextAtLast
                 )
                 main(navController = navController)
             }
@@ -73,8 +72,7 @@ fun MainNavHost(
     }
 
     ToastWrapper(
-        toastTexts = { uiState.toastTexts },
-        toastShown = viewModel::removeFirstToastText
+        toastTexts = { uiState.toastTexts }, toastShown = viewModel::removeFirstToastText
     )
 }
 

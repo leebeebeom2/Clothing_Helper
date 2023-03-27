@@ -26,7 +26,6 @@ import com.leebeebeom.clothinghelper.ui.signin.ui.signInGraph
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelper.ui.util.getCurrentRoute
 import com.leebeebeom.clothinghelper.ui.util.navigateSingleTop
-import com.leebeebeom.clothinghelper.util.buildConfigLog
 import dagger.hilt.android.AndroidEntryPoint
 
 

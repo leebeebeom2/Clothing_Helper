@@ -139,4 +139,20 @@ class SignInScreenTest {
         emailTextField.performTextInput("0")
         signInButton.assertIsEnabled()
     }
+
+    @Test
+    fun signInBlockBlankTest() {
+        emailTextField.performTextInput(SignInEmail)
+        passwordTestField.performTextInput(SignInPassword)
+
+        repeat(10) {
+            emailTextField.performTextInput(" ")
+            rule.onNodeWithText(SignInEmail)
+        }
+
+        repeat(10) {
+            passwordTestField.performTextInput(" ")
+            rule.onNodeWithText(getInvisibleText(SignInPassword.length))
+        }
+    }
 }

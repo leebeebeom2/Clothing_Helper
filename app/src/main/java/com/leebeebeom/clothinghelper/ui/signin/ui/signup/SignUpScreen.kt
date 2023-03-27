@@ -65,7 +65,7 @@ fun SignUpScreen(
         val onSignUpButtonClick: () -> Unit = remember {
             {
                 viewModel.signUpWithEmailAndPassword(
-                    showToast = showToast, setLoading = state::setLoading
+                    showToast = showToast
                 )
             }
         }

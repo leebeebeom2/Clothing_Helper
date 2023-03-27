@@ -41,18 +41,18 @@ class SignUpViewModel @Inject constructor(
     )
     override val googleSignInState = signUpState
 
-    fun signUpWithEmailAndPassword(showToast: ShowToast, setLoading: (Boolean) -> Unit): Job {
+    fun signUpWithEmailAndPassword(showToast: ShowToast): Job {
         val handler = CoroutineExceptionHandler { _, throwable ->
             firebaseAuthErrorUseCase.firebaseAuthError(
                 throwable = throwable,
                 setEmailError = signUpState.emailError::set,
                 showToast = showToast
             )
-            setLoading(false)
+            signUpState.setLoading(false)
         }
 
         return viewModelScope.launch(handler) {
-            setLoading(true)
+            signUpState.setLoading(true)
             signUpUseCase.signUp(
                 email = signUpState.email.state,
                 password = signUpState.password.state,

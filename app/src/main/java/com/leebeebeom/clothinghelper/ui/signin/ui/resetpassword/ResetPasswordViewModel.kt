@@ -35,21 +35,21 @@ class ResetPasswordViewModel @Inject constructor(
         initialValue = ResetPasswordUiState()
     )
 
-    fun sendResetPasswordEmail(showToast: ShowToast, setLoading: (Boolean) -> Unit) {
+    fun sendResetPasswordEmail(showToast: ShowToast) {
         val handler = CoroutineExceptionHandler { _, throwable ->
             firebaseAuthErrorUseCase.firebaseAuthError(
                 throwable = throwable,
                 setEmailError = resetPasswordState.emailError::set,
                 showToast = showToast
             )
-            setLoading(false)
+            resetPasswordState.setLoading(false)
         }
         viewModelScope.launch(handler) {
-            setLoading(true)
+            resetPasswordState.setLoading(true)
             resetPasswordUseCase.sendResetPasswordEmail(email = resetPasswordState.email.state)
             showToast(R.string.email_send_complete)
             resetPasswordState.taskSuccess()
-            setLoading(false)
+            resetPasswordState.setLoading(false)
         }
     }
 }

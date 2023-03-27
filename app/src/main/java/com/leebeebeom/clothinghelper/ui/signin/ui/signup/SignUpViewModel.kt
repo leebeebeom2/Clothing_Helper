@@ -1,7 +1,7 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui.signup
 
-import androidx.annotation.StringRes
-import androidx.compose.runtime.*
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
@@ -11,7 +11,7 @@ import com.leebeebeom.clothinghelper.domain.usecase.user.SignUpUseCase
 import com.leebeebeom.clothinghelper.ui.signin.ui.GoogleSignInState
 import com.leebeebeom.clothinghelper.ui.signin.ui.GoogleSignInUiState
 import com.leebeebeom.clothinghelper.ui.signin.ui.GoogleSignInViewModel
-import com.leebeebeom.clothinghelper.ui.signin.ui.SavedStateHandleDelegator
+import com.leebeebeom.clothinghelper.ui.signin.ui.SavedStateProvider
 import com.leebeebeom.clothinghelper.ui.util.ShowToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -34,7 +34,7 @@ class SignUpViewModel @Inject constructor(
 ) {
 
     val signUpState = SignUpState(savedStateHandle)
-    val uiState = signUpState.uiStateStream.stateIn(
+    val uiState = signUpState.uiStateFlow.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = SignUpUiState()
@@ -45,7 +45,7 @@ class SignUpViewModel @Inject constructor(
         val handler = CoroutineExceptionHandler { _, throwable ->
             firebaseAuthErrorUseCase.firebaseAuthError(
                 throwable = throwable,
-                setEmailError = signUpState::setEmailError,
+                setEmailError = signUpState.emailError::set,
                 showToast = showToast
             )
             setLoading(false)
@@ -54,9 +54,9 @@ class SignUpViewModel @Inject constructor(
         return viewModelScope.launch(handler) {
             setLoading(true)
             signUpUseCase.signUp(
-                email = signUpState.savedEmail,
-                password = signUpState.savedPassword,
-                name = signUpState.nameState
+                email = signUpState.email.state,
+                password = signUpState.password.state,
+                name = signUpState.name.state.trim()
             )
         }
     }
@@ -79,77 +79,64 @@ private const val SignUpPasswordErrorKey = "sign up password error"
 private const val SignUpPasswordConfirmKey = "sign up password confirm"
 private const val SignUpPasswordConfirmErrorKey = "sign up password confirm error"
 
-class SignUpState(private val savedStateHandle: SavedStateHandle) : GoogleSignInState(
+class SignUpState(savedStateHandle: SavedStateHandle) : GoogleSignInState(
     savedStateHandle = savedStateHandle,
     savedEmailKey = SignUpEmailKey,
     emailErrorKey = SignUpEmailErrorKey,
     savedPasswordKey = SignUpPasswordKey,
     passwordErrorKey = SignUpPasswordErrorKey
 ) {
-
-    var savedName by SavedStateHandleDelegator(
-        savedStateHandle = savedStateHandle, key = SignUpNameKey, initial = ""
+    val name = SavedStateProvider(
+        savedStateHandle = savedStateHandle, key = SignUpNameKey, initialValue = ""
     )
-        private set
-    var savedPasswordConfirm by SavedStateHandleDelegator(
-        savedStateHandle = savedStateHandle, key = SignUpPasswordConfirmKey, initial = ""
+    val passwordConfirm = SavedStateProvider(
+        savedStateHandle = savedStateHandle, key = SignUpPasswordConfirmKey, initialValue = ""
     )
-        private set
-
-    var nameState by mutableStateOf(savedName)
-        private set
-    private var passwordConfirmState by mutableStateOf(savedPasswordConfirm)
-
-    private var passwordConfirmErrorState by mutableStateOf(
-        savedStateHandle.get<Int?>(SignUpPasswordConfirmErrorKey)
+    private val passwordConfirmError = SavedStateProvider<Int?>(
+        savedStateHandle = savedStateHandle,
+        key = SignUpPasswordConfirmErrorKey,
+        initialValue = null
     )
     override val buttonEnabledState by derivedStateOf {
-        super.buttonEnabledState && nameState.isNotBlank() && passwordConfirmState.isNotBlank() && passwordConfirmErrorState == null
+        super.buttonEnabledState && name.state.isNotBlank() && passwordConfirm.state.isNotBlank() && passwordConfirmError.state == null
     }
 
-    fun setName(name: String) {
-        if (name == nameState) return
-        savedName = name
-        nameState = name
-    }
+    fun setName(name: String) = this.name.set(name)
 
     override fun setPassword(password: String) {
         super.setPassword(password)
 
-        if (password.isBlank()) return
-        if (password.length < 6) setPasswordError(R.string.error_weak_password)
+        if (password.isBlank()) {
+            setPasswordNotSameError()
+            return
+        }
+        if (password.length < 6) passwordError.set(R.string.error_weak_password)
 
         setPasswordNotSameError()
     }
 
     fun setPasswordConfirm(passwordConfirm: String) {
-        if (passwordConfirm == passwordConfirmState) return
-        savedPasswordConfirm = passwordConfirm
-        passwordConfirmState = passwordConfirm
-
+        if (this.passwordConfirm.state == passwordConfirm) return
+        this.passwordConfirm.set(passwordConfirm)
         setPasswordNotSameError()
     }
 
     private fun setPasswordNotSameError() {
-        if (passwordConfirmState.isBlank()) return
-        if (passwordState != passwordConfirmState) setPasswordConfirmError(R.string.error_password_confirm_not_same)
-        else setPasswordConfirmError(null)
+        if (passwordConfirm.state.isBlank()) {
+            passwordConfirmError.set(null)
+            return
+        }
+        if (password.state != passwordConfirm.state) passwordConfirmError.set(R.string.error_password_confirm_not_same)
+        else passwordConfirmError.set(null)
     }
 
-    private fun setPasswordConfirmError(@StringRes passwordConfirmError: Int?) {
-        if (passwordConfirmErrorState == passwordConfirmError) return
-        savedStateHandle[SignUpPasswordConfirmErrorKey] = passwordConfirmError
-        passwordConfirmErrorState = passwordConfirmError
-    }
-
-    private val passwordConfirmErrorStream = snapshotFlow { passwordConfirmErrorState }
-    val uiStateStream = combine(
-        emailErrorStream,
-        passwordErrorStream,
-        passwordConfirmErrorStream,
-        buttonEnabledStream,
-        googleButtonEnabledStream,
-        isSignInLoadingStream
+    val uiStateFlow = combine(
+        emailError.flow,
+        passwordError.flow,
+        passwordConfirmError.flow,
+        buttonEnabledFlow,
+        googleButtonEnabledFlow,
+        isSignInLoadingFlow
     ) { flows ->
         SignUpUiState(
             emailError = flows[0] as Int?,

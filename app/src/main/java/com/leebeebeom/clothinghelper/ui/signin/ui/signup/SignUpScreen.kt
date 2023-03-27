@@ -1,84 +1,90 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui.signup
 
+import androidx.activity.result.ActivityResult
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.ActivityViewModel
-import com.leebeebeom.clothinghelper.ui.activityViewModel
-import com.leebeebeom.clothinghelper.ui.components.*
+import com.leebeebeom.clothinghelper.ui.components.CenterDotProgressIndicator
+import com.leebeebeom.clothinghelper.ui.components.HeightSpacer
+import com.leebeebeom.clothinghelper.ui.components.MaxWidthButton
+import com.leebeebeom.clothinghelper.ui.components.StatefulMaxWidthTestFieldWithCancelIcon
 import com.leebeebeom.clothinghelper.ui.signin.components.GoogleSignInButton
 import com.leebeebeom.clothinghelper.ui.signin.components.Logo
 import com.leebeebeom.clothinghelper.ui.signin.components.OrDivider
 import com.leebeebeom.clothinghelper.ui.signin.components.SignInBaseColumn
 import com.leebeebeom.clothinghelper.ui.signin.components.textfield.EmailTextField
-import com.leebeebeom.clothinghelper.ui.signin.components.textfield.INVISIBLE_ICON
 import com.leebeebeom.clothinghelper.ui.signin.components.textfield.PasswordTextField
-import com.leebeebeom.clothinghelper.ui.signin.components.textfield.VISIBLE_ICON
-import com.leebeebeom.clothinghelper.ui.signin.ui.SignInNavUiState
-import com.leebeebeom.clothinghelper.ui.signin.ui.SignInNavViewModel
+import com.leebeebeom.clothinghelper.ui.util.ShowToast
 
-const val SIGN_UP_SCREEN_TAG = "sign up screen"
-const val PASSWORD_VISIBLE_ICON = "password $VISIBLE_ICON"
-const val PASSWORD_CONFIRM_VISIBLE_ICON = "password confirm $VISIBLE_ICON"
-const val PASSWORD_INVISIBLE_ICON = "password $INVISIBLE_ICON"
-const val PASSWORD_CONFIRM_INVISIBLE_ICON = "password confirm $INVISIBLE_ICON"
+const val SignUpScreenTag = "sign up screen"
 
 @Composable
 fun SignUpScreen(
-    signInNavViewModel: SignInNavViewModel,
-    signInNavUiState: SignInNavUiState = signInNavViewModel.uiState,
-    viewModel: SignUpViewModel = hiltViewModel(),
-    uiState: SignUpUiState = viewModel.uiState,
-    activityViewModel: ActivityViewModel = activityViewModel(),
+    viewModel: SignUpViewModel = hiltViewModel(), showToast: ShowToast
 ) {
-    SignInBaseColumn(modifier = Modifier.testTag(SIGN_UP_SCREEN_TAG)) {
-        Logo()
-        EmailTextField(error = { uiState.emailError }, onInputChange = viewModel::onEmailChange)
+    val state = viewModel.signUpState
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-        val nickNameTextFieldState = rememberMaxWidthTextFieldState(
-            label = R.string.nickname,
-            imeActionRoute = ImeActionRoute.NEXT
+    SignInBaseColumn(modifier = Modifier.testTag(SignUpScreenTag)) {
+        Logo()
+        EmailTextField(
+            initialEmail = state.email.savedValue,
+            error = { uiState.emailError },
+            onEmailChange = state::setEmail
         )
 
-        MaxWidthTextFieldWithError(
-            state = nickNameTextFieldState,
-            onValueChange = nickNameTextFieldState::onValueChange,
-            onFocusChanged = nickNameTextFieldState::onFocusChanged,
-            onInputChange = viewModel::onNickNameChange
+        StatefulMaxWidthTestFieldWithCancelIcon(
+            initialText = state.name.savedValue, keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text, imeAction = ImeAction.Next
+            ), onInputChange = state::setName, blockBlank = false, label = R.string.nickname
         )
 
         PasswordTextField(
+            initialPassword = state.password.savedValue,
             error = { uiState.passwordError },
-            onInputChange = viewModel::onPasswordChange,
-            imeActionRoute = ImeActionRoute.NEXT,
-            visibleIconDescription = PASSWORD_VISIBLE_ICON,
-            invisibleIconDescription = PASSWORD_INVISIBLE_ICON
+            imeAction = ImeAction.Next,
+            onInputChange = state::setPassword
         )
 
         PasswordTextField(
             label = R.string.password_confirm,
+            initialPassword = state.passwordConfirm.savedValue,
             error = { uiState.passwordConfirmError },
-            onInputChange = viewModel::onPasswordConfirmChange,
-            visibleIconDescription = PASSWORD_CONFIRM_VISIBLE_ICON,
-            invisibleIconDescription = PASSWORD_CONFIRM_INVISIBLE_ICON,
+            imeAction = ImeAction.Done,
+            onInputChange = state::setPasswordConfirm
         )
 
+        val onSignUpButtonClick: () -> Unit = remember {
+            {
+                viewModel.signUpWithEmailAndPassword(
+                    showToast = showToast, setLoading = state::setLoading
+                )
+            }
+        }
         HeightSpacer(dp = 12)
         MaxWidthButton(
             text = R.string.sign_up,
             enabled = { uiState.buttonEnabled },
-            onClick = { viewModel.signUpWithEmailAndPassword(activityViewModel::showToast) },
+            onClick = onSignUpButtonClick,
         )
         OrDivider()
-        GoogleSignInButton(enabled = { signInNavUiState.googleButtonEnabled },
-            onActivityResult = {
-                signInNavViewModel.signInWithGoogleEmail(
-                    showToast = activityViewModel::showToast,
-                    activityResult = it
-                )
-            },
-            disable = { signInNavViewModel.setGoogleButtonEnable(false) })
+
+        val onActivityResult: (ActivityResult) -> Unit = remember {
+            { viewModel.signInWithGoogleEmail(activityResult = it, showToast = showToast) }
+        }
+        GoogleSignInButton(
+            enabled = { uiState.googleButtonEnabled },
+            onActivityResult = onActivityResult,
+            disable = state::googleButtonDisable
+        )
     }
+    CenterDotProgressIndicator(show = { uiState.isLoading })
 }

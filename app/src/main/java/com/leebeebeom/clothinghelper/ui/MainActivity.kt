@@ -48,8 +48,6 @@ fun MainNavHost(
     viewModel: ActivityViewModel = activityViewModel(),
     navController: NavHostController = rememberNavController(),
 ) {
-    buildConfigLog("MainActivityScreen", "recomposition")
-
     val uiState by viewModel.activityUiState.collectAsStateWithLifecycle()
 
     ClothingHelperTheme {

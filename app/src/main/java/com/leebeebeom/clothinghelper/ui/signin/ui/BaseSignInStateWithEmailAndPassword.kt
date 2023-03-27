@@ -6,18 +6,18 @@ import androidx.lifecycle.SavedStateHandle
 
 abstract class BaseSignInStateWithEmailAndPassword(
     savedStateHandle: SavedStateHandle,
-    savedEmailKey: String,
+    emailKey: String,
     emailErrorKey: String,
-    savedPasswordKey: String,
+    passwordKey: String,
     passwordErrorKey: String
 ) : BaseSignInStateWithEmail(
     savedStateHandle = savedStateHandle,
-    savedEmailKey = savedEmailKey,
+    emailKey = emailKey,
     emailErrorKey = emailErrorKey
 ) {
     val password = SavedStateProvider(
         savedStateHandle = savedStateHandle,
-        key = savedPasswordKey,
+        key = passwordKey,
         initialValue = ""
     )
 

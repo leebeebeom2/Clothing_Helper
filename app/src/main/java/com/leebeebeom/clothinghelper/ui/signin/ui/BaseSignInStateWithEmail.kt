@@ -7,12 +7,12 @@ import androidx.lifecycle.SavedStateHandle
 
 abstract class BaseSignInStateWithEmail(
     savedStateHandle: SavedStateHandle,
-    savedEmailKey: String,
+    emailKey: String,
     emailErrorKey: String
 ) {
     val email = SavedStateProvider(
         savedStateHandle = savedStateHandle,
-        key = savedEmailKey,
+        key = emailKey,
         initialValue = ""
     )
 

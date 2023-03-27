@@ -80,7 +80,7 @@ class SignInState(savedStateHandle: SavedStateHandle) : GoogleSignInState(
         flow2 = passwordError.flow,
         flow3 = buttonEnabledFlow,
         flow4 = googleButtonEnabledFlow,
-        flow5 = isSignInLoadingFlow
+        flow5 = isLoadingFlow
     ) { emailError, passwordError, buttonEnabled, googleButtonEnabled, isLoading ->
         SignInUiState(
             emailError = emailError,

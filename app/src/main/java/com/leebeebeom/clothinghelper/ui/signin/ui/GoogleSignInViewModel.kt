@@ -92,7 +92,7 @@ abstract class GoogleSignInState(
     passwordErrorKey = passwordErrorKey
 ) {
     private var googleButtonEnabledState by mutableStateOf(true)
-    private var isSignInLoadingState by mutableStateOf(false)
+    protected val googleButtonEnabledFlow = snapshotFlow { googleButtonEnabledState }
 
     fun googleButtonEnabled() {
         googleButtonEnabledState = true
@@ -101,11 +101,4 @@ abstract class GoogleSignInState(
     fun googleButtonDisable() {
         googleButtonEnabledState = false
     }
-
-    fun setLoading(loading: Boolean) {
-        isSignInLoadingState = loading
-    }
-
-    protected val googleButtonEnabledFlow = snapshotFlow { googleButtonEnabledState }
-    protected val isSignInLoadingFlow = snapshotFlow { isSignInLoadingState }
 }

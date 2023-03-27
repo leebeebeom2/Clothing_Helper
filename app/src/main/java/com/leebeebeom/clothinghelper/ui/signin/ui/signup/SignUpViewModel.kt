@@ -136,7 +136,7 @@ class SignUpState(savedStateHandle: SavedStateHandle) : GoogleSignInState(
         passwordConfirmError.flow,
         buttonEnabledFlow,
         googleButtonEnabledFlow,
-        isSignInLoadingFlow
+        isLoadingFlow
     ) { flows ->
         SignUpUiState(
             emailError = flows[0] as Int?,

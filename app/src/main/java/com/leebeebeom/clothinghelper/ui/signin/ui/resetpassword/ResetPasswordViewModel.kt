@@ -3,14 +3,13 @@ package com.leebeebeom.clothinghelper.ui.signin.ui.resetpassword
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.ResetPasswordUseCase
 import com.leebeebeom.clothinghelper.ui.ToastViewModel
 import com.leebeebeom.clothinghelper.ui.signin.ui.EmailState
+import com.leebeebeom.clothinghelper.ui.util.firebaseAuthErrorHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -21,7 +20,6 @@ import javax.inject.Inject
 @HiltViewModel
 class ResetPasswordViewModel @Inject constructor(
     private val resetPasswordUseCase: ResetPasswordUseCase,
-    private val firebaseAuthErrorUseCase: FirebaseAuthErrorUseCase,
     savedStateHandle: SavedStateHandle
 ) : ToastViewModel() {
 
@@ -45,15 +43,13 @@ class ResetPasswordViewModel @Inject constructor(
     )
 
     fun sendResetPasswordEmail(popBackStack: () -> Unit) {
-        val handler = CoroutineExceptionHandler { _, throwable ->
-            firebaseAuthErrorUseCase.firebaseAuthError(
-                throwable = throwable,
+        viewModelScope.launch(
+            firebaseAuthErrorHandler(
                 setEmailError = resetPasswordState.emailError::set,
-                showToast = ::addToastTextAtLast
+                showToast = ::addToastTextAtLast,
+                setLoading = resetPasswordState::setLoading
             )
-            resetPasswordState.setLoading(false)
-        }
-        viewModelScope.launch(handler) {
+        ) {
             resetPasswordState.setLoading(true)
             resetPasswordUseCase.sendResetPasswordEmail(email = resetPasswordState.email.state)
             addToastTextAtLast(R.string.email_send_complete)

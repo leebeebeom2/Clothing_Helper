@@ -6,17 +6,16 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.SignUpUseCase
 import com.leebeebeom.clothinghelper.ui.signin.ui.GoogleSignInState
 import com.leebeebeom.clothinghelper.ui.signin.ui.GoogleSignInUiState
 import com.leebeebeom.clothinghelper.ui.signin.ui.GoogleSignInViewModel
 import com.leebeebeom.clothinghelper.ui.signin.ui.SavedStateProvider
+import com.leebeebeom.clothinghelper.ui.util.firebaseAuthErrorHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -28,11 +27,8 @@ import javax.inject.Inject
 class SignUpViewModel @Inject constructor(
     googleSignInUseCase: GoogleSignInUseCase,
     private val signUpUseCase: SignUpUseCase,
-    private val firebaseAuthErrorUseCase: FirebaseAuthErrorUseCase,
     savedStateHandle: SavedStateHandle
-) : GoogleSignInViewModel(
-    googleSignInUseCase = googleSignInUseCase, firebaseAuthErrorUseCase = firebaseAuthErrorUseCase
-) {
+) : GoogleSignInViewModel(googleSignInUseCase = googleSignInUseCase) {
 
     val signUpState = SignUpState(savedStateHandle)
 
@@ -63,16 +59,13 @@ class SignUpViewModel @Inject constructor(
     override val googleSignInState = signUpState
 
     fun signUpWithEmailAndPassword() {
-        val handler = CoroutineExceptionHandler { _, throwable ->
-            firebaseAuthErrorUseCase.firebaseAuthError(
-                throwable = throwable,
+        viewModelScope.launch(
+            firebaseAuthErrorHandler(
                 setEmailError = signUpState.emailError::set,
-                showToast = ::addToastTextAtLast
+                showToast = ::addToastTextAtLast,
+                setLoading = signUpState::setLoading
             )
-            signUpState.setLoading(false)
-        }
-
-        viewModelScope.launch(handler) {
+        ) {
             signUpState.setLoading(true)
             signUpUseCase.signUp(
                 email = signUpState.email.state,

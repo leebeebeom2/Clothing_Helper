@@ -3,16 +3,15 @@ package com.leebeebeom.clothinghelper.ui.signin.ui.signin
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.SignInUseCase
 import com.leebeebeom.clothinghelper.ui.signin.ui.GoogleSignInState
 import com.leebeebeom.clothinghelper.ui.signin.ui.GoogleSignInUiState
 import com.leebeebeom.clothinghelper.ui.signin.ui.GoogleSignInViewModel
+import com.leebeebeom.clothinghelper.ui.util.firebaseAuthErrorHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -24,12 +23,10 @@ import javax.inject.Inject
 class SignInViewModel @Inject constructor(
     googleSignInUseCase: GoogleSignInUseCase,
     private val signInUseCase: SignInUseCase,
-    private val firebaseAuthErrorUseCase: FirebaseAuthErrorUseCase,
     savedStateHandle: SavedStateHandle
-) : GoogleSignInViewModel(
-    googleSignInUseCase = googleSignInUseCase, firebaseAuthErrorUseCase = firebaseAuthErrorUseCase
-) {
+) : GoogleSignInViewModel(googleSignInUseCase = googleSignInUseCase) {
     val signInState = SignInState(savedStateHandle)
+
     @Suppress("UNCHECKED_CAST")
     val uiState = combine(
         signInState.emailError.flow,
@@ -55,16 +52,14 @@ class SignInViewModel @Inject constructor(
     override val googleSignInState = signInState
 
     fun signInWithEmailAndPassword() {
-        val handler = CoroutineExceptionHandler { _, throwable ->
-            firebaseAuthErrorUseCase.firebaseAuthError(
-                throwable = throwable,
+        viewModelScope.launch(
+            firebaseAuthErrorHandler(
                 setEmailError = signInState.emailError::set,
                 setPasswordError = signInState.passwordError::set,
-                showToast = ::addToastTextAtLast
+                showToast = ::addToastTextAtLast,
+                setLoading = signInState::setLoading
             )
-            signInState.setLoading(false)
-        }
-        viewModelScope.launch(handler) {
+        ) {
             signInState.setLoading(true)
             signInUseCase.signIn(
                 email = signInState.email.state,

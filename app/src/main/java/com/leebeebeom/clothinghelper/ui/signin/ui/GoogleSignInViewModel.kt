@@ -13,10 +13,8 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelper.ui.ToastViewModel
-import com.leebeebeom.clothinghelper.ui.util.ShowToast
 import com.leebeebeom.clothinghelper.util.buildConfigLog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
@@ -25,18 +23,13 @@ import kotlinx.coroutines.launch
 /**
  * Google 로그인 로직
  */
-abstract class GoogleSignInViewModel(
-    private val googleSignInUseCase: GoogleSignInUseCase,
-    private val firebaseAuthErrorUseCase: FirebaseAuthErrorUseCase,
-) : ToastViewModel() {
+abstract class GoogleSignInViewModel(private val googleSignInUseCase: GoogleSignInUseCase) :
+    ToastViewModel() {
     abstract val googleSignInState: GoogleSignInState
 
     fun signInWithGoogleEmail(activityResult: ActivityResult) =
         when (activityResult.resultCode) {
-            Activity.RESULT_OK -> googleSignIn(
-                activityResult = activityResult,
-                showToast = ::addToastTextAtLast
-            )
+            Activity.RESULT_OK -> googleSignIn(activityResult = activityResult)
             Activity.RESULT_CANCELED -> {
                 addToastTextAtLast(R.string.canceled)
                 googleSignInState.googleButtonEnabled()
@@ -53,9 +46,10 @@ abstract class GoogleSignInViewModel(
             }
         }
 
-    private fun googleSignIn(activityResult: ActivityResult, showToast: ShowToast): Job {
+    private fun googleSignIn(activityResult: ActivityResult): Job {
         val handler = CoroutineExceptionHandler { _, throwable ->
-            firebaseAuthErrorUseCase.firebaseAuthError(throwable = throwable, showToast = showToast)
+            buildConfigLog("GoogleSignInViewModel", "$throwable")
+            addToastTextAtLast(R.string.unknown_error)
             googleSignInState.setLoading(false)
             googleSignInState.googleButtonEnabled()
         }

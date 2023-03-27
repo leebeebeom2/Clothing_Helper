@@ -28,15 +28,15 @@ suspend inline fun <T : BaseModel> TestScope.repositoryCrudTest(
     editAssert: (old: T, new: T) -> Unit,
 ) {
     userRepository.signIn(email = RepositoryTestEmail, password = SignInPassword)
-    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.allDataStream.collect() }
+    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.allDataFlow.collect() }
 
-    val loadTestData = repository.allDataStream.first()
+    val loadTestData = repository.allDataFlow.first()
     assert(loadTestData is DataResult.Success)
     assert(loadTestData.data.size == initialSize)
 
     repository.add(data)
     waitTime()
-    val addTestData = repository.allDataStream.first()
+    val addTestData = repository.allDataFlow.first()
     assert(addTestData is DataResult.Success)
     assert(addTestData.data.size == initialSize + 1)
 
@@ -45,19 +45,19 @@ suspend inline fun <T : BaseModel> TestScope.repositoryCrudTest(
 
     repository.push(data = editData(addedData))
     waitTime()
-    val editedData = repository.allDataStream.first().data.last()
+    val editedData = repository.allDataFlow.first().data.last()
     editAssert(addedData, editedData)
 
     userRepository.signOut()
     waitTime()
-    assert(repository.allDataStream.first().data.isEmpty())
+    assert(repository.allDataFlow.first().data.isEmpty())
 
     userRepository.signIn(email = RepositoryTestEmail, password = SignInPassword)
     waitTime()
-    assert(repository.allDataStream.first().data.size == initialSize + 1)
-    assert(editedData == repository.allDataStream.first().data.last())
+    assert(repository.allDataFlow.first().data.size == initialSize + 1)
+    assert(editedData == repository.allDataFlow.first().data.last())
 
-    Firebase.database.reference.child(userRepository.userStream.first()!!.uid)
+    Firebase.database.reference.child(userRepository.userFlow.first()!!.uid)
         .child(refPath.path)
         .child(editedData.key).removeValue().await()
 

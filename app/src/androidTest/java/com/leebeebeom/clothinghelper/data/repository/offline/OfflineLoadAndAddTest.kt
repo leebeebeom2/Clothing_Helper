@@ -16,17 +16,17 @@ suspend inline fun <T : BaseModel> TestScope.offlineLoadAndAddTest(
     addDataList: Pair<T, T>,
     initialSize: Int,
 ) {
-    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.allDataStream.collect() }
+    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.allDataFlow.collect() }
     waitTime()
-    assert(repository.allDataStream.first().data.size == initialSize)
+    assert(repository.allDataFlow.first().data.size == initialSize)
 
     repository.add(addDataList.first)
     waitTime()
 
-    assert(repository.allDataStream.first().data.size == initialSize + 1)
+    assert(repository.allDataFlow.first().data.size == initialSize + 1)
 
     repository.add(addDataList.second)
     waitTime()
 
-    assert(repository.allDataStream.first().data.size == initialSize + 2)
+    assert(repository.allDataFlow.first().data.size == initialSize + 2)
 }

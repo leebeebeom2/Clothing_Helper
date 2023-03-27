@@ -114,9 +114,9 @@ class BaseRepositoryChildOfflineTest {
     @Test
     fun offlineTest3() = runTest(dispatcher) {
         // connect network and check the server
-        launch { subCategoryRepository.allDataStream.collect() }
-        launch { folderRepository.allDataStream.collect() }
-        launch { todoRepository.allDataStream.collect() }
+        launch { subCategoryRepository.allDataFlow.collect() }
+        launch { folderRepository.allDataFlow.collect() }
+        launch { todoRepository.allDataFlow.collect() }
     }
 
     @Test

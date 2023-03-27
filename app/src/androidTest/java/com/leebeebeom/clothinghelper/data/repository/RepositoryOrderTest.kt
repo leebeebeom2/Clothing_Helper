@@ -26,14 +26,14 @@ suspend inline fun <T : BaseModel> TestScope.repositoryOrderTest(
     refPath: DataBasePath
 ) {
     userRepository.signIn(email = SignInEmail, password = SignInPassword)
-    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.allDataStream.collect() }
+    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.allDataFlow.collect() }
     waitTime()
 
     initDataList.shuffled().forEach { repository.add(it) }
     advanceUntilIdle()
     waitTime()
-    assertOrder(initDataList, repository.allDataStream.first().data)
+    assertOrder(initDataList, repository.allDataFlow.first().data)
 
-    Firebase.database.reference.child(userRepository.userStream.first()!!.uid).child(refPath.path)
+    Firebase.database.reference.child(userRepository.userFlow.first()!!.uid).child(refPath.path)
         .removeValue().await()
 }

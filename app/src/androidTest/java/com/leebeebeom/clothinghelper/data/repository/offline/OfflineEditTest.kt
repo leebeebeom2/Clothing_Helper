@@ -17,16 +17,16 @@ suspend fun <T : BaseModel> TestScope.offlineEditTest(
     getEditData: (T) -> T,
     editAssert: (edit: T, edited: T) -> Unit,
 ) {
-    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.allDataStream.collect() }
+    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.allDataFlow.collect() }
     waitTime()
-    assert(repository.allDataStream.first().data.size == initialSize + 2)
+    assert(repository.allDataFlow.first().data.size == initialSize + 2)
 
-    val lastData = repository.allDataStream.first().data.last()
+    val lastData = repository.allDataFlow.first().data.last()
 
     val editData = getEditData(lastData)
     repository.push(editData)
     waitTime()
 
-    val editedData = repository.allDataStream.first().data.last()
+    val editedData = repository.allDataFlow.first().data.last()
     editAssert(editData, editedData)
 }

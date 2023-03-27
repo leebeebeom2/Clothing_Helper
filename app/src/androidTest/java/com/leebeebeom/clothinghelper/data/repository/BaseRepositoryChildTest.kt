@@ -216,17 +216,17 @@ class BaseRepositoryChildTest {
 
         val todos = List(9) { Todo(text = "$it", order = it) }.shuffled()
         userRepository.signIn(email = SignInEmail, password = SignInPassword)
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { todoRepository.allDataStream.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { todoRepository.allDataFlow.collect() }
         waitTime()
         todos.forEach { todoRepository.add(it) }
         advanceUntilIdle()
         waitTime(2000)
-        println("${todoRepository.allDataStream.first().data.map { it.text }}")
+        println("${todoRepository.allDataFlow.first().data.map { it.text }}")
         println("${todos.sortedBy { it.order }.map { it.text }}")
         assert(
-            todoRepository.allDataStream.first().data.map { it.text } ==
+            todoRepository.allDataFlow.first().data.map { it.text } ==
                     todos.sortedBy { it.order }.map { it.text })
-        Firebase.database.reference.child(userRepository.userStream.first()!!.uid).removeValue()
+        Firebase.database.reference.child(userRepository.userFlow.first()!!.uid).removeValue()
             .await()
     }
 }

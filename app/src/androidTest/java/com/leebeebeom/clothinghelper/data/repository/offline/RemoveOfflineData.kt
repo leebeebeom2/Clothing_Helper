@@ -19,12 +19,12 @@ suspend fun TestScope.removeOfflineData(
     initialSize: Int,
     databasePath: DataBasePath,
 ) {
-    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.allDataStream.collect() }
+    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.allDataFlow.collect() }
 
-    val lastDataList = repository.allDataStream.first().data.drop(initialSize)
+    val lastDataList = repository.allDataFlow.first().data.drop(initialSize)
     assert(lastDataList.size == 2)
 
-    val ref = Firebase.database.reference.child(userRepository.userStream.first()!!.uid)
+    val ref = Firebase.database.reference.child(userRepository.userFlow.first()!!.uid)
         .child(databasePath.path)
     ref.child(lastDataList.first().key).removeValue()
     ref.child(lastDataList.last().key).removeValue()

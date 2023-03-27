@@ -41,7 +41,7 @@ class SortPreferencesRepositoryTest {
     }
 
     private suspend fun TestScope.preferenceSortFlowTest(repository: SortPreferenceRepository) {
-        val sortFlow = repository.sortStream
+        val sortFlow = repository.sortFlow
 
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { sortFlow.collect() }
 

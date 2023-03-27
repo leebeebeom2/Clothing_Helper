@@ -35,7 +35,7 @@ const val SendPasswordEmail = "boole92@naver.com"
 class UserRepositoryTest {
     private val dispatcher = StandardTestDispatcher()
     private lateinit var userRepository: UserRepository
-    private lateinit var userStream: SharedFlow<User?>
+    private lateinit var userFlow: SharedFlow<User?>
 
     private inline fun TestScope.failRunCatching(
         errorCode: String, test: () -> Unit,
@@ -63,7 +63,7 @@ class UserRepositoryTest {
             appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
             dispatcher = dispatcher
         )
-        userStream = userRepository.userStream
+        userFlow = userRepository.userFlow
     }
 
     @After
@@ -73,7 +73,7 @@ class UserRepositoryTest {
 
     @Test
     fun signInTest() = runTest(dispatcher) {
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { userStream.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { userFlow.collect() }
 
         failRunCatching(errorCode = ERROR_INVALID_EMAIL) { // invalidEmail
             userRepository.signIn(email = InvalidEmail, password = SignInPassword)
@@ -88,14 +88,14 @@ class UserRepositoryTest {
         successRunCatching {
             userRepository.signIn(email = SignInEmail, password = SignInPassword)
         }
-        val signedUser = userStream.first()
+        val signedUser = userFlow.first()
         assert(signedUser != null)
         assert(signedUser?.email == SignInEmail)
     }
 
     @Test
     fun signUpTest() = runTest(dispatcher) {
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { userStream.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { userFlow.collect() }
 
         failRunCatching(errorCode = ERROR_INVALID_EMAIL) { // invalidEmail
             userRepository.signUp(
@@ -114,7 +114,7 @@ class UserRepositoryTest {
                 email = SignUpEmail, password = SignInPassword, name = SignUpName
             )
         }
-        val signedUser = userStream.first()
+        val signedUser = userFlow.first()
         assert(signedUser?.email == SignUpEmail)
         assert(signedUser?.name == SignUpName)
 
@@ -123,7 +123,7 @@ class UserRepositoryTest {
 
     @Test
     fun resetPasswordTest() = runTest(dispatcher) {
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { userStream.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { userFlow.collect() }
 
         failRunCatching(errorCode = ERROR_INVALID_EMAIL) { // invalidEmail
             userRepository.sendResetPasswordEmail(email = InvalidEmail)
@@ -162,7 +162,7 @@ class UserRepositoryTest {
 class RunWithSignInStartTest {
     private val dispatcher = StandardTestDispatcher()
     private lateinit var userRepository: UserRepository
-    private lateinit var userStream: SharedFlow<User?>
+    private lateinit var userFlow: SharedFlow<User?>
 
     @Before
     fun init() {
@@ -174,7 +174,7 @@ class RunWithSignInStartTest {
             appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
             dispatcher = dispatcher
         )
-        userStream = userRepository.userStream
+        userFlow = userRepository.userFlow
     }
 
     @After
@@ -184,9 +184,9 @@ class RunWithSignInStartTest {
 
     @Test
     fun runWithSignIn() = runTest(dispatcher) {
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { userStream.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { userFlow.collect() }
 
-        assert(userStream.first()?.email == SignInEmail)
+        assert(userFlow.first()?.email == SignInEmail)
     }
 }
 
@@ -194,7 +194,7 @@ class RunWithSignInStartTest {
 class RunWithSignOutStart {
     private val dispatcher = StandardTestDispatcher()
     private lateinit var userRepository: UserRepository
-    private lateinit var userStream: SharedFlow<User?>
+    private lateinit var userFlow: SharedFlow<User?>
 
     @Before
     fun init() {
@@ -203,7 +203,7 @@ class RunWithSignOutStart {
             appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
             dispatcher = dispatcher
         )
-        userStream = userRepository.userStream
+        userFlow = userRepository.userFlow
     }
 
     @After
@@ -213,8 +213,8 @@ class RunWithSignOutStart {
 
     @Test
     fun runWithSignOut() = runTest(dispatcher) {
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { userStream.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { userFlow.collect() }
 
-        assert(userStream.first() == null)
+        assert(userFlow.first() == null)
     }
 }

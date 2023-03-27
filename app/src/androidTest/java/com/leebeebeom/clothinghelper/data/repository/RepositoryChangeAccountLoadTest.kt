@@ -23,34 +23,34 @@ suspend inline fun <T : BaseModel> TestScope.repositoryChangeAccountLoadTest(
     repositoryTestAccountSize: Int,
     refPath: DataBasePath
 ) {
-    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.allDataStream.collect() }
+    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.allDataFlow.collect() }
     userRepository.signOut()
 
     userRepository.signIn(email = SignInEmail, password = SignInPassword) 
     waitTime()
-    assert(repository.allDataStream.first().data.isEmpty())
+    assert(repository.allDataFlow.first().data.isEmpty())
 
     repository.add(addDataPair.first) 
     repository.add(addDataPair.second) 
     waitTime()
-    assert(repository.allDataStream.first().data.size == 2)
+    assert(repository.allDataFlow.first().data.size == 2)
 
     userRepository.signOut()
     waitTime()
-    assert(repository.allDataStream.first().data.isEmpty())
+    assert(repository.allDataFlow.first().data.isEmpty())
 
     userRepository.signIn(email = RepositoryTestEmail, password = SignInPassword) 
     waitTime()
-    assert(repository.allDataStream.first().data.size == repositoryTestAccountSize)
+    assert(repository.allDataFlow.first().data.size == repositoryTestAccountSize)
 
     userRepository.signOut()
     waitTime()
-    assert(repository.allDataStream.first().data.isEmpty())
+    assert(repository.allDataFlow.first().data.isEmpty())
 
     userRepository.signIn(email = SignInEmail, password = SignInPassword) 
     waitTime()
-    assert(repository.allDataStream.first().data.size == 2)
+    assert(repository.allDataFlow.first().data.size == 2)
 
-    Firebase.database.reference.child(userRepository.userStream.first()!!.uid)
+    Firebase.database.reference.child(userRepository.userFlow.first()!!.uid)
         .child(refPath.path).removeValue()
 }

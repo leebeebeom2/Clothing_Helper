@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
@@ -16,6 +15,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
+import com.leebeebeom.clothinghelper.ui.ToastViewModel
 import com.leebeebeom.clothinghelper.ui.util.ShowToast
 import com.leebeebeom.clothinghelper.util.buildConfigLog
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 abstract class GoogleSignInViewModel(
     private val googleSignInUseCase: GoogleSignInUseCase,
     private val firebaseAuthErrorUseCase: FirebaseAuthErrorUseCase,
-) : ViewModel() {
+) : ToastViewModel() {
     abstract val googleSignInState: GoogleSignInState
 
     fun signInWithGoogleEmail(activityResult: ActivityResult, showToast: ShowToast) =

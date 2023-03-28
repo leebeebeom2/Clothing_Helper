@@ -12,7 +12,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.ui.util.noRippleClickable
 
-@Composable
+@Composable // skippable
 fun SignInBaseColumn(
     modifier: Modifier = Modifier,
     focusManager: FocusManager = LocalFocusManager.current,

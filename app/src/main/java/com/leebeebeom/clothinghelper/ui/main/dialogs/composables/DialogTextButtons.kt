@@ -6,12 +6,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NoLiveLiterals
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.components.SingleLineText
 
-@Composable
+@Composable // skippable
 fun DialogTextButtons(
     positiveButtonEnabled: () -> Boolean,
     onPositiveButtonClick: () -> Unit,
@@ -37,7 +38,8 @@ fun DialogTextButtons(
     }
 }
 
-@Composable
+@NoLiveLiterals
+@Composable // skippable
 fun DialogTextButton(
     modifier: Modifier = Modifier,
     @StringRes text: Int,

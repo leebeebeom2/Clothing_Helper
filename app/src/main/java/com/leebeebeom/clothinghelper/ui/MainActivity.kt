@@ -1,15 +1,12 @@
 package com.leebeebeom.clothinghelper.ui
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -17,11 +14,9 @@ import androidx.navigation.compose.rememberNavController
 import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.MainGraphRoute
 import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.SignInGraphRoute
 import com.leebeebeom.clothinghelper.ui.drawer.Drawer
-import com.leebeebeom.clothinghelper.ui.drawer.EssentialMenuType
-import com.leebeebeom.clothinghelper.ui.main.MainGraphDestinations
-import com.leebeebeom.clothinghelper.ui.main.main
-import com.leebeebeom.clothinghelper.ui.main.navigateToSizeChartList
-import com.leebeebeom.clothinghelper.ui.main.navigateToSubCategory
+import com.leebeebeom.clothinghelper.ui.drawer.components.EssentialMenuType
+import com.leebeebeom.clothinghelper.ui.main.*
+import com.leebeebeom.clothinghelper.ui.setting.SettingDestination
 import com.leebeebeom.clothinghelper.ui.signin.ui.signInGraph
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelper.ui.util.getCurrentRoute
@@ -64,7 +59,7 @@ fun MainNavHost(
                 startDestination = if (user == null) SignInGraphRoute else MainGraphRoute // no recomposition
             ) {
                 signInGraph(navController = navController)
-                main(navController = navController)
+                mainGraph(navController = navController)
             }
         }
     }
@@ -79,11 +74,11 @@ private fun onEssentialMenuClick(navController: NavHostController, type: Essenti
     }
 
 private fun NavHostController.navigateToMain() {
-    val currentRoute = currentBackStackEntry.getCurrentRoute()
-    if (currentRoute != MainGraphDestinations.MainGraphRoute) navigateSingleTop(route = MainGraphDestinations.MainGraphRoute)
+    if (currentBackStackEntry.getCurrentRoute() != DetailDestination.CategoryRoute.route)
+        navigateSingleTop(route = MainGraphDestinations.DetailGraphRoute)
 }
 
 private fun NavHostController.navigateToSetting() {
-    val currentRoute = currentBackStackEntry.getCurrentRoute()
-    if (currentRoute != MainGraphDestinations.SettingGraphRoute) navigateSingleTop(route = MainGraphDestinations.SettingGraphRoute)
+    if (currentBackStackEntry.getCurrentRoute() != SettingDestination.Setting.route)
+        navigateSingleTop(route = MainGraphDestinations.SettingGraphRoute)
 }

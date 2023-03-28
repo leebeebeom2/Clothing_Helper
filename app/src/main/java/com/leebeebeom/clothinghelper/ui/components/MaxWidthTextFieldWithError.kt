@@ -264,7 +264,7 @@ open class MaxWidthTextFieldState(
         textFieldValue = value.copy(text = if (blockBlank) value.text.trim() else value.text)
     }
 
-    fun onFocusChanged(focusState: FocusState) {
+    open fun onFocusChanged(focusState: FocusState) {
         hasFocus = focusState.hasFocus
         if (focusState.hasFocus) {
             textFieldValue =

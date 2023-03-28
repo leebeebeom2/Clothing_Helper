@@ -17,7 +17,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.components.CustomIconButton
 import com.leebeebeom.clothinghelper.ui.components.StatefulMaxWidthTestField
 
-@Composable
+@Composable // skippable
 fun PasswordTextField(
     @StringRes label: Int = R.string.password,
     initialPassword: String,

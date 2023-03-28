@@ -10,13 +10,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.leebeebeom.clothinghelper.ui.components.HeightSpacer
 
-@Composable
+@Composable // skippable
 fun DialogRoot(onDismiss: () -> Unit, content: @Composable () -> Unit) {
     Dialog(onDismissRequest = onDismiss) {
         Surface(
             color = MaterialTheme.colors.surface,
-            shape = MaterialTheme.shapes.medium,
-            modifier = Modifier.padding(start = 20.dp, end = 20.dp)
+            shape = MaterialTheme.shapes.medium
         ) {
             Column(
                 modifier = Modifier

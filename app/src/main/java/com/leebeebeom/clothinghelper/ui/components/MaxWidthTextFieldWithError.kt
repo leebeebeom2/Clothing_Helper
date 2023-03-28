@@ -256,9 +256,9 @@ open class MaxWidthTextFieldState(
     private val blockBlank: Boolean
 ) {
     var textFieldValue by mutableStateOf(TextFieldValue(initialText))
-        private set
+        protected set
     var hasFocus by mutableStateOf(false)
-        private set
+        protected set
 
     fun onValueChange(value: TextFieldValue) {
         textFieldValue = value.copy(text = if (blockBlank) value.text.trim() else value.text)

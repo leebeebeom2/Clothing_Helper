@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.main.drawer.components
+package com.leebeebeom.clothinghelper.ui.drawer.drawer.components
 
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -33,7 +33,7 @@ fun DrawerRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 4.dp)
+            .padding(horizontal = 8.dp)
             .clip(MaterialTheme.shapes.small)
             .indication(interactionSource = interactionSource, LocalIndication.current)
             .pointerInput(Unit) {

@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.main.root.contents.dropdownmenus
+package com.leebeebeom.clothinghelper.ui.drawer.contents.dropdownmenus
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
@@ -11,9 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.leebeebeom.clothinghelper.composable.SingleLineText
+import com.leebeebeom.clothinghelper.ui.components.SingleLineText
 
-@Composable
+@Composable // skippable
 fun DrawerDropdownMenuItem(
     @StringRes text: Int,
     onClick: () -> Unit,

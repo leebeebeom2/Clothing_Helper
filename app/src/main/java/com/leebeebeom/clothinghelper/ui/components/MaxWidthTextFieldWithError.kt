@@ -30,7 +30,8 @@ import com.leebeebeom.clothinghelper.ui.util.Anime.Error.errorIn
 import com.leebeebeom.clothinghelper.ui.util.Anime.Error.errorOut
 import kotlinx.coroutines.delay
 
-@Composable
+@NoLiveLiterals
+@Composable // skippable
 fun StatefulMaxWidthTestFieldWithCancelIcon(
     initialText: String = "",
     blockBlank: Boolean = false,
@@ -70,7 +71,8 @@ fun StatefulMaxWidthTestFieldWithCancelIcon(
     )
 }
 
-@Composable
+@NoLiveLiterals
+@Composable // skippable
 fun StatefulMaxWidthTestField(
     initialText: String = "",
     blockBlank: Boolean = false,
@@ -103,7 +105,7 @@ fun StatefulMaxWidthTestField(
     )
 }
 
-@Composable
+@Composable // skippable
 fun MaxWidthTextFieldWithError(
     state: MaxWidthTextFieldState,
     @StringRes label: Int?,
@@ -135,7 +137,7 @@ fun MaxWidthTextFieldWithError(
     TextFieldEmit(textFieldValue = { state.textFieldValue }, onInputChange = onInputChange)
 }
 
-@Composable
+@Composable // skippable
 private fun MaxWidthTextField(
     @StringRes label: Int?,
     @StringRes placeholder: Int?,
@@ -175,7 +177,7 @@ private fun MaxWidthTextField(
     )
 }
 
-@Composable
+@Composable // skippable
 private fun ErrorText(error: () -> Int?) {
     val show by remember { derivedStateOf { error() != null } }
 
@@ -190,7 +192,7 @@ private fun ErrorText(error: () -> Int?) {
     }
 }
 
-@Composable
+@Composable // skippable
 private fun ShowKeyboard(
     getFocus: Boolean,
     keyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current,
@@ -208,7 +210,7 @@ private fun ShowKeyboard(
 
 }
 
-@Composable
+@Composable // skippable
 private fun TextFieldEmit(textFieldValue: () -> TextFieldValue, onInputChange: (String) -> Unit) {
     val currentOnInputChange by rememberUpdatedState(newValue = onInputChange)
 
@@ -219,7 +221,7 @@ private fun TextFieldEmit(textFieldValue: () -> TextFieldValue, onInputChange: (
 
 const val CancelIconTag = "cancel Icon"
 
-@Composable
+@Composable // skippable
 fun TextFieldCancelIcon(
     hasFocus: () -> Boolean,
     onValueChange: (TextFieldValue) -> Unit,
@@ -246,6 +248,7 @@ fun rememberMaxWidthTestFieldState(
     blockBlank: Boolean = false
 ) = remember { MaxWidthTextFieldState(initialText = initialText, blockBlank = blockBlank) }
 
+// stable
 open class MaxWidthTextFieldState(
     initialText: String,
     private val blockBlank: Boolean

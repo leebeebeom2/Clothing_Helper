@@ -9,6 +9,7 @@ import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NoLiveLiterals
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
@@ -19,7 +20,8 @@ import androidx.compose.ui.unit.dp
 
 const val BUTTON_HEIGHT = 52
 
-@Composable
+@NoLiveLiterals
+@Composable // skippable
 fun MaxWidthButton(
     @StringRes text: Int,
     enabled: () -> Boolean = { true },

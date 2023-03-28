@@ -1,13 +1,9 @@
 package com.leebeebeom.clothinghelper.ui.main.dialogs
 
 import androidx.annotation.StringRes
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import com.leebeebeom.clothinghelper.ui.main.dialogs.composables.TextFieldDialog
-import com.leebeebeom.clothinghelper.ui.main.dialogs.composables.rememberTextFieldDialog
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable // skippable
@@ -21,23 +17,27 @@ fun EditDialog(
     onDismiss: () -> Unit,
     initialName: String
 ) {
+    var input by rememberSaveable { mutableStateOf(initialName) }
     var error: Int? by rememberSaveable { mutableStateOf(null) }
-
-    val state = rememberTextFieldDialog(
-        initialError = { error },
-        initialInput = initialName,
-        label = label,
-        placeHolder = placeHolder,
-        title = title
-    )
+    val positiveButtonEnabled by remember { derivedStateOf { input.isNotBlank() && error == null } }
+    val localNames = names()
+    val onInputChange = remember<(String) -> Unit> {
+        { newName ->
+            input = newName
+            error = null
+            if (localNames.contains(newName)) error = existNameError
+        }
+    }
 
     TextFieldDialog(
-        state = state,
-        positiveButtonEnabled = { state.positiveButtonEnabled },
-        onPositiveButtonClick = { onPositiveButtonClick(state.input) },
+        label = label,
+        placeHolder = placeHolder,
+        title = title,
+        initialText = initialName,
+        positiveButtonEnabled = { positiveButtonEnabled },
+        onPositiveButtonClick = { onPositiveButtonClick(input) },
         onDismiss = onDismiss,
-        onInputChange = {
-            if (names().contains(it)) error = existNameError
-            else state.onInputChange(it)
-        })
+        onInputChange = onInputChange,
+        error = { error }
+    )
 }

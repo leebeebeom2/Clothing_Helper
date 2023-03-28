@@ -7,7 +7,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.components.StatefulMaxWidthTestFieldWithCancelIcon
 
-@Composable
+@Composable // skippable
 fun EmailTextField(
     initialEmail: String,
     error: () -> Int?,

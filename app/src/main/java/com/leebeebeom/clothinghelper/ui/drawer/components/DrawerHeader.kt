@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.drawer
+package com.leebeebeom.clothinghelper.ui.drawer.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope

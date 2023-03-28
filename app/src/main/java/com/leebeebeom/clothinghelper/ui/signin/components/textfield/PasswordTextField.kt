@@ -47,7 +47,7 @@ fun PasswordTextField(
 const val VisibleIconTag = "visible icon"
 const val InvisibleIconTag = "invisible icon"
 
-@Composable
+@Composable // skippable
 fun VisibleIcon(
     isVisible: () -> Boolean,
     onClick: () -> Unit

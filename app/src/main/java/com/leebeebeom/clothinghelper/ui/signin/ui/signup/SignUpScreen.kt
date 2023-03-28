@@ -24,7 +24,7 @@ import com.leebeebeom.clothinghelper.ui.signin.components.textfield.PasswordText
 
 const val SignUpScreenTag = "sign up screen"
 
-@Composable
+@Composable // skippable
 fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
     val state = viewModel.signUpState
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

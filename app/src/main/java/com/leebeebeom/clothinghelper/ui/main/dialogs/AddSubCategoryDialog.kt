@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import com.leebeebeom.clothinghelper.R
 import kotlinx.collections.immutable.ImmutableList
 
-@Composable
+@Composable // skippable
 fun AddSubCategoryDialog(
     subCategoryNames: () -> ImmutableList<String>,
     onPositiveButtonClick: (String) -> Unit,

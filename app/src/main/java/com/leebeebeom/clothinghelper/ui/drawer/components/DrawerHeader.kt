@@ -16,7 +16,7 @@ import com.leebeebeom.clothinghelper.ui.components.SingleLineText
 
 const val SettingIconTag = "setting icon"
 
-@Composable
+@Composable // skippable
 fun DrawerHeader(
     userName: () -> String?,
     userEmail: () -> String?,
@@ -37,7 +37,7 @@ fun DrawerHeader(
     }
 }
 
-@Composable
+@Composable // skippable
 private fun RowScope.HeaderUserInfo(userName: () -> String?, userEmail: () -> String?) {
     SingleLineText(
         modifier = Modifier.weight(1f),

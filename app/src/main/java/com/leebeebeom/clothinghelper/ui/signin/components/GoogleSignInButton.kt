@@ -20,7 +20,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.components.MaxWidthButton
 
-@Composable
+@Composable // skippable
 fun GoogleSignInButton(
     enabled: () -> Boolean,
     onActivityResult: (ActivityResult) -> Unit,
@@ -30,7 +30,7 @@ fun GoogleSignInButton(
         contract = ActivityResultContracts.StartActivityForResult(),
         onResult = onActivityResult
     ),
-    gso: GoogleSignInOptions = gso(),
+    gso: GoogleSignInOptions = rememberedGso(),
     intent: Intent = remember { GoogleSignIn.getClient(context, gso).signInIntent }
 ) {
     MaxWidthButton(text = R.string.starts_with_google_email,
@@ -44,7 +44,7 @@ fun GoogleSignInButton(
 }
 
 @Composable
-private fun gso(): GoogleSignInOptions {
+private fun rememberedGso(): GoogleSignInOptions {
     val clientId = stringResource(id = R.string.default_web_client_id)
 
     return remember {

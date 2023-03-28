@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.main.drawer.contents.dropdownmenus
+package com.leebeebeom.clothinghelper.ui.drawer.contents.dropdownmenus
 
 import androidx.compose.material.DropdownMenu
 import androidx.compose.runtime.Composable
@@ -10,7 +10,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.main.dialogs.AddSubCategoryDialog
 import kotlinx.collections.immutable.ImmutableList
 
-@Composable
+@Composable // skippable
 fun DrawerMainCategoryDropDownMenu(
     show: () -> Boolean,
     onDismiss: () -> Unit,

@@ -10,7 +10,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 
-@Composable
+@Composable // skippable
 fun SingleLineText(
     text: () -> String?,
     style: TextStyle = LocalTextStyle.current
@@ -18,7 +18,7 @@ fun SingleLineText(
     SingleLineText(text = text(), style = style)
 }
 
-@Composable
+@Composable // skippable
 fun SingleLineText(
     modifier: Modifier = Modifier,
     @StringRes text: Int?,
@@ -35,7 +35,7 @@ fun SingleLineText(
     }
 }
 
-@Composable
+@Composable // skippable
 fun SingleLineText(
     modifier: Modifier = Modifier,
     text: String?,

@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
-@Composable
+@Composable // skippable
 fun IconWrapper(
     modifier: Modifier = Modifier,
     @DrawableRes drawable: Int,
@@ -27,12 +27,12 @@ fun IconWrapper(
     )
 }
 
-@Composable
+@Composable // skippable
 fun HeightSpacer(dp: Int) {
     Spacer(modifier = Modifier.height(dp.dp))
 }
 
-@Composable
+@Composable // skippable
 fun WidthSpacer(dp: Int) {
     Spacer(modifier = Modifier.width(dp.dp))
 }

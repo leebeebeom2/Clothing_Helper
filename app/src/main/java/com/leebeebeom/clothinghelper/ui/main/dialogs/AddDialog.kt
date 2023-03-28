@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import kotlinx.collections.immutable.ImmutableList
 
-@Composable
+@Composable // skippable
 fun AddDialog(
     @StringRes label: Int,
     @StringRes placeHolder: Int,

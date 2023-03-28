@@ -8,7 +8,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import com.leebeebeom.clothinghelper.data.repository.UserRepositoryImpl
-import com.leebeebeom.clothinghelper.domain.usecase.user.FirebaseAuthErrorUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.SignInUseCase
 import com.leebeebeom.clothinghelper.ui.HiltTestActivity
@@ -42,7 +41,6 @@ class CenterDotProgressIndicatorTest {
     private val viewModel = SignInViewModel(
         googleSignInUseCase = GoogleSignInUseCase(userRepository),
         signInUseCase = SignInUseCase(userRepository),
-        firebaseAuthErrorUseCase = FirebaseAuthErrorUseCase(),
         savedStateHandle = SavedStateHandle()
     )
 
@@ -53,13 +51,12 @@ class CenterDotProgressIndicatorTest {
                 val navController = rememberNavController()
                 NavHost(navController = navController, startDestination = "resetPassword") {
                     composable("resetPassword") {
-                        ResetPasswordScreen(popBackStack = { }, showToast = {})
+                        ResetPasswordScreen(popBackStack = { })
                     }
                     composable("signIn") {
                         SignInScreen(
                             navigateToResetPassword = { },
                             navigateToSignUp = { },
-                            showToast = {},
                             viewModel = viewModel
                         )
                     }

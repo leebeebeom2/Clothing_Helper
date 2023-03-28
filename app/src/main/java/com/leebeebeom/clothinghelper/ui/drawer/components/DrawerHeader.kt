@@ -41,7 +41,7 @@ fun DrawerHeader(
 private fun RowScope.HeaderUserInfo(userName: () -> String?, userEmail: () -> String?) {
     SingleLineText(
         modifier = Modifier.weight(1f),
-        style = MaterialTheme.typography.subtitle1,
+        style = MaterialTheme.typography.body1,
         text = "${userName()}(${userEmail()})"
     )
 }

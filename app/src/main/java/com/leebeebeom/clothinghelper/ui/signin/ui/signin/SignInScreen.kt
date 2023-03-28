@@ -26,7 +26,7 @@ import com.leebeebeom.clothinghelper.ui.signin.components.textfield.PasswordText
 
 const val SignInScreenTag = "sign in screen"
 
-@Composable
+@Composable // skippable
 fun SignInScreen(
     navigateToResetPassword: () -> Unit,
     navigateToSignUp: () -> Unit,
@@ -72,7 +72,7 @@ fun SignInScreen(
     ToastWrapper(toastTexts = { uiState.toastTexts }, toastShown = viewModel::removeFirstToastText)
 }
 
-@Composable
+@Composable // skippable
 private fun ForgotPasswordText(navigateToResetPassword: () -> Unit) {
     Box(modifier = Modifier.fillMaxWidth()) {
         TextButton(

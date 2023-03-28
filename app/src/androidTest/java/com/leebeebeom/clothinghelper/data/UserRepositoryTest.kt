@@ -28,7 +28,7 @@ const val InvalidEmail = "invalidemail"
 const val NotFoundEmail = "notfoundemail@a.com"
 const val SignInPassword = "111111"
 const val WrongPassword = "123456"
-const val SignUpName = "test"
+const val SignUpName = "테스트 유저 2"
 const val SendPasswordEmail = "boole92@naver.com"
 
 @OptIn(ExperimentalCoroutinesApi::class)

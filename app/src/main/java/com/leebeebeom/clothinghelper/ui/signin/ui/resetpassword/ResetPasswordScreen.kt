@@ -23,7 +23,7 @@ import com.leebeebeom.clothinghelper.ui.signin.components.textfield.EmailTextFie
 
 const val ResetPasswordScreenTag = "reset password screen"
 
-@Composable
+@Composable // skippable
 fun ResetPasswordScreen(
     popBackStack: () -> Unit,
     viewModel: ResetPasswordViewModel = hiltViewModel()

@@ -45,10 +45,12 @@ fun StatefulMaxWidthTestFieldWithCancelIcon(
     ),
     onInputChange: (String) -> Unit,
     focusRequester: FocusRequester = remember { FocusRequester() },
-    getFocus: Boolean = false
+    getFocus: Boolean = false,
+    state: MaxWidthTextFieldState = rememberMaxWidthTestFieldState(
+        initialText = initialText,
+        blockBlank = blockBlank
+    )
 ) {
-    val state = rememberMaxWidthTestFieldState(initialText = initialText, blockBlank = blockBlank)
-
     MaxWidthTextFieldWithError(
         state = state,
         keyboardOptions = keyboardOptions,

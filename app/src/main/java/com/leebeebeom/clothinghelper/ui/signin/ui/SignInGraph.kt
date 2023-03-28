@@ -29,12 +29,8 @@ fun NavGraphBuilder.signInGraph(navController: NavHostController) {
                 navigateToSignUp = navController::navigateToSignUp
             )
         }
-        composable(route = SignUpRoute) {
-            SignUpScreen()
-        }
-        composable(route = ResetPasswordRoute) {
-            ResetPasswordScreen(popBackStack = navController::popBackStack)
-        }
+        composable(route = SignUpRoute) { SignUpScreen() }
+        composable(route = ResetPasswordRoute) { ResetPasswordScreen(popBackStack = navController::popBackStack) }
     }
 }
 

@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 
-@Composable
+@Composable // skippable
 fun CustomIconButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
@@ -34,7 +34,7 @@ fun CustomIconButton(
     )
 }
 
-@Composable
+@Composable // skippable
 fun CustomIconButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,

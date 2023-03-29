@@ -46,12 +46,12 @@ abstract class GoogleSignInViewModel(private val googleSignInUseCase: GoogleSign
         val handler = CoroutineExceptionHandler { _, throwable ->
             buildConfigLog("GoogleSignInViewModel", "$throwable")
             addToastTextAtLast(R.string.unknown_error)
-            isLoadingState = false
+            setLoading(false)
             googleSignInButtonEnable()
         }
 
         viewModelScope.launch(handler) {
-            isLoadingState = true
+            setLoading(true)
             googleSignInUseCase.googleSignIn(credential = getGoogleCredential(activityResult = activityResult))
         }
     }

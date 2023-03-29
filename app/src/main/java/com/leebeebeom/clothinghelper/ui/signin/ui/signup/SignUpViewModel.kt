@@ -13,7 +13,7 @@ import com.leebeebeom.clothinghelper.ui.signin.ui.SavedStateProvider
 import com.leebeebeom.clothinghelper.ui.util.firebaseAuthErrorHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -81,7 +81,7 @@ data class SignUpUiState(
     val passwordConfirmError: Int? = null,
     val buttonEnabled: Boolean = false,
     val isLoading: Boolean = false,
-    val toastTexts: ImmutableList<Int> = emptyList<Int>().toImmutableList()
+    val toastTexts: ImmutableList<Int> = persistentListOf()
 )
 
 private const val SignUpEmailKey = "sign up email"

@@ -9,13 +9,11 @@ import com.leebeebeom.clothinghelper.ui.components.StatefulMaxWidthTestFieldWith
 
 @Composable // skippable
 fun EmailTextField(
-    initialEmail: String,
     error: () -> Int?,
     imeAction: ImeAction = ImeAction.Next,
     onEmailChange: (String) -> Unit,
 ) {
     StatefulMaxWidthTestFieldWithCancelIcon(
-        initialText = initialEmail,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = imeAction),
         onInputChange = onEmailChange,
         label = R.string.email,

@@ -28,7 +28,7 @@ class MaxWidthButtonTest {
         onClick = ""
         rule.setContent {
             Column(modifier = Modifier.fillMaxSize()) {
-                StatefulMaxWidthTestField(label = R.string.test_text_field)
+                StatefulMaxWidthTextField(label = R.string.test_text_field)
                 MaxWidthButton(text = R.string.test_button, enabled = { enabled }) {
                     onClick = "onClick"
                 }

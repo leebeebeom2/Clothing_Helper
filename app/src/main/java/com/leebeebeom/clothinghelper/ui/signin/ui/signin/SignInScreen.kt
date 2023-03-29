@@ -26,7 +26,7 @@ import com.leebeebeom.clothinghelper.ui.signin.component.OrDivider
 import com.leebeebeom.clothinghelper.ui.signin.component.SignInBaseColumn
 import com.leebeebeom.clothinghelper.ui.signin.component.textfield.EmailTextField
 import com.leebeebeom.clothinghelper.ui.signin.component.textfield.PasswordTextField
-import com.leebeebeom.clothinghelper.ui.signin.state.MutablePasswordState
+import com.leebeebeom.clothinghelper.ui.signin.state.PasswordState2
 
 const val SignInScreenTag = "sign in screen"
 
@@ -93,22 +93,22 @@ private fun ForgotPasswordText(navigateToResetPassword: () -> Unit) {
     }
 }
 
-class MutableSignInScreenState(
+class SignInScreenState(
     initialEmail: String = "",
     initialEmailError: Int? = null,
     initialPassword: String = "",
     initialPasswordError: Int? = null,
-) : MutablePasswordState(
+) : PasswordState2(
     initialEmail = initialEmail,
     initialEmailError = initialEmailError,
     initialPassword = initialPassword,
     initialPasswordError = initialPasswordError
 ) {
     companion object {
-        val Saver = listSaver<MutableSignInScreenState, Any?>(save = {
+        val Saver = listSaver<SignInScreenState, Any?>(save = {
             arrayListOf(it.email, it.emailError, it.password, it.passwordError)
         }, restore = {
-            MutableSignInScreenState(
+            SignInScreenState(
                 it[0] as String,
                 it[1] as Int?,
                 it[2] as String,
@@ -120,4 +120,4 @@ class MutableSignInScreenState(
 
 @Composable
 fun rememberSignInScreenState() =
-    rememberSaveable(saver = MutableSignInScreenState.Saver) { MutableSignInScreenState() }
+    rememberSaveable(saver = SignInScreenState.Saver) { SignInScreenState() }

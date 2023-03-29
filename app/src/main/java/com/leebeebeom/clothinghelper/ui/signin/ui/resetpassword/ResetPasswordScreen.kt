@@ -22,7 +22,7 @@ import com.leebeebeom.clothinghelper.ui.component.MaxWidthButton
 import com.leebeebeom.clothinghelper.ui.main.component.ToastWrapper
 import com.leebeebeom.clothinghelper.ui.signin.component.SignInBaseColumn
 import com.leebeebeom.clothinghelper.ui.signin.component.textfield.EmailTextField
-import com.leebeebeom.clothinghelper.ui.signin.state.EmailState2
+import com.leebeebeom.clothinghelper.ui.signin.state.EmailState
 
 const val ResetPasswordScreenTag = "reset password screen"
 
@@ -70,7 +70,7 @@ fun ResetPasswordScreen(
 class ResetPasswordScreenState(
     initialEmail: String = "",
     initialEmailError: Int? = null
-) : EmailState2(initialEmail = initialEmail, initialEmailError = initialEmailError) {
+) : EmailState(initialEmail = initialEmail, initialEmailError = initialEmailError) {
     companion object {
         val Saver = listSaver<ResetPasswordScreenState, Any?>(
             save = { listOf(it.email, it.emailError) },

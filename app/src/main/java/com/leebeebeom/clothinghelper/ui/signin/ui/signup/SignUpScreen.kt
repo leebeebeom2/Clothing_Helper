@@ -22,7 +22,7 @@ import com.leebeebeom.clothinghelper.ui.signin.component.OrDivider
 import com.leebeebeom.clothinghelper.ui.signin.component.SignInBaseColumn
 import com.leebeebeom.clothinghelper.ui.signin.component.textfield.EmailTextField
 import com.leebeebeom.clothinghelper.ui.signin.component.textfield.PasswordTextField
-import com.leebeebeom.clothinghelper.ui.signin.state.PasswordState2
+import com.leebeebeom.clothinghelper.ui.signin.state.PasswordState
 
 const val SignUpScreenTag = "sign up screen"
 
@@ -87,7 +87,7 @@ class SignUpScreenState(
     initialPasswordError: Int? = null,
     initialPasswordConfirm: String = "",
     initialPasswordConfirmError: Int? = null,
-) : PasswordState2(
+) : PasswordState(
     initialEmail = initialEmail,
     initialEmailError = initialEmailError,
     initialPassword = initialPassword,

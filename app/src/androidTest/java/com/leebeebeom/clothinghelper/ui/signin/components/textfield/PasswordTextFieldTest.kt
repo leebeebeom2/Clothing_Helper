@@ -12,9 +12,12 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.text.input.ImeAction
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.HiltTestActivity
-import com.leebeebeom.clothinghelper.ui.components.textfield.TestText
+import com.leebeebeom.clothinghelper.ui.component.textfield.TestText
 import com.leebeebeom.clothinghelper.ui.getInvisibleText
 import com.leebeebeom.clothinghelper.ui.onNodeWithStringRes
+import com.leebeebeom.clothinghelper.ui.signin.component.textfield.InvisibleIconTag
+import com.leebeebeom.clothinghelper.ui.signin.component.textfield.PasswordTextField
+import com.leebeebeom.clothinghelper.ui.signin.component.textfield.VisibleIconTag
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import org.junit.Before
 import org.junit.Rule

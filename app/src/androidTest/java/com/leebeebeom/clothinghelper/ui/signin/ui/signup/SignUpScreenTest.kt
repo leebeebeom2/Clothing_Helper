@@ -75,6 +75,8 @@ class SignUpScreenTest {
                 restorationTester.emulateSavedInstanceStateRestore()
             }
 
+            emailTextField.performTextClearance()
+            nameTextField.performTextClearance()
             passwordTextField.performTextClearance()
             passwordConfirmTextField.performTextClearance()
         }

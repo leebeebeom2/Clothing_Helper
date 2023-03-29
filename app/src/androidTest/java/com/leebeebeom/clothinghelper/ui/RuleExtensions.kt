@@ -6,7 +6,7 @@ import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.data.SignInEmail
 import com.leebeebeom.clothinghelper.data.SignInPassword
-import com.leebeebeom.clothinghelper.ui.main.drawer.SettingIcon
+import com.leebeebeom.clothinghelper.ui.drawer.component.SettingIconTag
 
 fun AndroidComposeTestRule<*, *>.onNodeWithStringRes(@StringRes res: Int) =
     onNodeWithText(activity.getString(res))
@@ -19,7 +19,7 @@ fun AndroidComposeTestRule<*, *>.signIn() {
 
 fun AndroidComposeTestRule<*, *>.signOut() {
     onRoot().performTouchInput { swipeRight() }
-    onNodeWithContentDescription(SettingIcon).performClick()
+    onNodeWithTag(SettingIconTag).performClick()
     onNodeWithStringRes(R.string.sign_out).performClick()
 }
 
@@ -40,7 +40,9 @@ fun AndroidComposeTestRule<*, *>.waitTextNotExist(text: String, time: Long = 500
 }
 
 fun AndroidComposeTestRule<*, *>.waitStringResExist(@StringRes res: Int, time: Long = 5000) {
-    waitUntil(time) { onAllNodesWithText(activity.getString(res)).fetchSemanticsNodes().isNotEmpty() }
+    waitUntil(time) {
+        onAllNodesWithText(activity.getString(res)).fetchSemanticsNodes().isNotEmpty()
+    }
 }
 
 fun AndroidComposeTestRule<*, *>.waitStringResNotExist(@StringRes res: Int, time: Long = 5000) {

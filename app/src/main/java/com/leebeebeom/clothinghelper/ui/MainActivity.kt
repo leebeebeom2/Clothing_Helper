@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -21,7 +20,6 @@ import com.leebeebeom.clothinghelper.ui.setting.SettingDestination
 import com.leebeebeom.clothinghelper.ui.signin.ui.signInGraph
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelper.ui.util.getCurrentRoute
-import com.leebeebeom.clothinghelper.ui.util.navigateSingleTop
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -76,10 +74,10 @@ private fun onEssentialMenuClick(navController: NavHostController, type: Essenti
 
 private fun NavHostController.navigateToMain() {
     if (currentBackStackEntry.getCurrentRoute() != DetailDestination.CategoryRoute.route)
-        navigateSingleTop(route = MainGraphDestinations.DetailGraphRoute)
+        navigate(route = MainGraphDestinations.DetailGraphRoute)
 }
 
 private fun NavHostController.navigateToSetting() {
     if (currentBackStackEntry.getCurrentRoute() != SettingDestination.Setting.route)
-        navigateSingleTop(route = MainGraphDestinations.SettingGraphRoute)
+        navigate(route = MainGraphDestinations.SettingGraphRoute)
 }

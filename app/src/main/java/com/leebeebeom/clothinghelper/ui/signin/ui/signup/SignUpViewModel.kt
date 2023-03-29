@@ -2,7 +2,6 @@ package com.leebeebeom.clothinghelper.ui.signin.ui.signup
 
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
@@ -46,7 +45,7 @@ class SignUpViewModel @Inject constructor(
             passwordConfirmError = flows[2] as Int?,
             buttonEnabled = flows[3] as Boolean,
             isLoading = flows[4] as Boolean,
-            toastTexts = (flows[5] as SnapshotStateList<Int>).toImmutableList()
+            toastTexts = (flows[5] as ImmutableList<Int>)
         )
     }.distinctUntilChanged().stateIn(
         scope = viewModelScope,

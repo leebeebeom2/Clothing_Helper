@@ -38,12 +38,10 @@ fun SignInScreen(
     SignInBaseColumn(modifier = Modifier.testTag(SignInScreenTag)) {
         Logo()
         EmailTextField(
-            initialEmail = state.email.savedValue,
             error = { uiState.emailError },
             onEmailChange = state::setEmail
         )
         PasswordTextField(
-            initialPassword = state.password.savedValue,
             error = { uiState.passwordError },
             onInputChange = state::setPassword,
             imeAction = ImeAction.Done

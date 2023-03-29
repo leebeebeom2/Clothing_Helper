@@ -23,21 +23,23 @@ abstract class GoogleSignInViewModel(private val googleSignInUseCase: GoogleSign
 
     fun signInWithGoogleEmail(
         activityResult: ActivityResult, googleSignInButtonEnable: () -> Unit
-    ) = when (activityResult.resultCode) {
-        Activity.RESULT_OK -> googleSignIn(
-            activityResult = activityResult, googleSignInButtonEnable = googleSignInButtonEnable
-        )
-        Activity.RESULT_CANCELED -> {
-            addToastTextAtLast(R.string.canceled)
-            googleSignInButtonEnable()
-        }
-        else -> {
-            buildConfigLog(
-                site = "signInWithGoogleEmail",
-                msg = "resultCode = ${activityResult.resultCode}",
+    ) {
+        when (activityResult.resultCode) {
+            Activity.RESULT_OK -> googleSignIn(
+                activityResult = activityResult, googleSignInButtonEnable = googleSignInButtonEnable
             )
-            addToastTextAtLast(R.string.unknown_error)
-            googleSignInButtonEnable()
+            Activity.RESULT_CANCELED -> {
+                addToastTextAtLast(R.string.canceled)
+                googleSignInButtonEnable()
+            }
+            else -> {
+                buildConfigLog(
+                    site = "signInWithGoogleEmail",
+                    msg = "resultCode = ${activityResult.resultCode}",
+                )
+                addToastTextAtLast(R.string.unknown_error)
+                googleSignInButtonEnable()
+            }
         }
     }
 

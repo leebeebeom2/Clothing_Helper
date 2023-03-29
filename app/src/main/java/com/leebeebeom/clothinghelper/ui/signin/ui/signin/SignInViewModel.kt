@@ -37,7 +37,7 @@ class SignInViewModel @Inject constructor(
             passwordError = passwordError,
             buttonEnable = buttonEnabled,
             isLoading = isLoading,
-            toastTexts = toastTexts.toImmutableList()
+            toastTexts = toastTexts
         )
     }.distinctUntilChanged().stateIn(
         scope = viewModelScope,

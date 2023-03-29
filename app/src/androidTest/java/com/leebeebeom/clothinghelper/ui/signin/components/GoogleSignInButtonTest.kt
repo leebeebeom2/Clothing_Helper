@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.HiltTestActivity
 import com.leebeebeom.clothinghelper.ui.onNodeWithStringRes
+import com.leebeebeom.clothinghelper.ui.signin.component.GoogleSignInButton
 import com.leebeebeom.clothinghelper.ui.waitStringResExist
 import org.junit.Before
 import org.junit.Rule

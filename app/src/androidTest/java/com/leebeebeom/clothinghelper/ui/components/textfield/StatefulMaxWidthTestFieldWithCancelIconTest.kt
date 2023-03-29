@@ -12,7 +12,7 @@ import androidx.compose.ui.test.performTextInput
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.HiltTestActivity
 import com.leebeebeom.clothinghelper.ui.components.CancelIconTag
-import com.leebeebeom.clothinghelper.ui.components.StatefulMaxWidthTestField
+import com.leebeebeom.clothinghelper.ui.components.StatefulMaxWidthTextField
 import com.leebeebeom.clothinghelper.ui.components.StatefulMaxWidthTestFieldWithCancelIcon
 import com.leebeebeom.clothinghelper.ui.onNodeWithStringRes
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
@@ -36,7 +36,7 @@ class StatefulMaxWidthTestFieldWithCancelIconTest {
                     StatefulMaxWidthTestFieldWithCancelIcon(
                         label = R.string.test_text_field,
                         onInputChange = { input = it })
-                    StatefulMaxWidthTestField(label = R.string.test_text_field2)
+                    StatefulMaxWidthTextField(label = R.string.test_text_field2)
                 }
             }
         }

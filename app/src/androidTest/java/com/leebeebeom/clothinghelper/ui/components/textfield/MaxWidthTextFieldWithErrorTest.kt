@@ -72,11 +72,16 @@ class MaxWidthTextFieldWithErrorTest2 {
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
-                            state = rememberMaxWidthTestFieldState(initialText = input, blockBlank = true)
+                            state = rememberMaxWidthTestFieldState(
+                                initialText = input,
+                                blockBlank = true
+                            )
                             // blockBlank = true
                             // getFocus = true
                             MaxWidthTextFieldWithError(
-                                state = state,
+                                textFieldValue = { state.textFieldValue },
+                                onValueChange = state::onValueChange,
+                                onFocusChanged = state::onFocusChanged,
                                 error = { error },
                                 label = R.string.test_text_field,
                                 keyboardOptions = KeyboardOptions(
@@ -88,7 +93,9 @@ class MaxWidthTextFieldWithErrorTest2 {
 
                             state2 = rememberMaxWidthTestFieldState(initialText = input2)
                             MaxWidthTextFieldWithError(
-                                state = state2,
+                                textFieldValue = { state2.textFieldValue },
+                                onValueChange = state2::onValueChange,
+                                onFocusChanged = state2::onFocusChanged,
                                 error = { error2 },
                                 label = R.string.test_text_field2,
                                 keyboardOptions = KeyboardOptions(

@@ -57,8 +57,8 @@ fun SignInScreen(
                 viewModel.signInWithEmailAndPassword(
                     email = state.email,
                     password = state.password,
-                    setEmailError = { state.emailError = it },
-                    setPasswordError = { state.passwordError = it }
+                    setEmailError = state::setEmailError,
+                    setPasswordError = state::setPasswordError
                 )
             }
         }

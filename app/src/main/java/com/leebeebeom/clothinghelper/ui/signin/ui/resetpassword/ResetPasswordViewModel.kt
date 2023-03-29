@@ -1,12 +1,10 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui.resetpassword
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.usecase.user.ResetPasswordUseCase
-import com.leebeebeom.clothinghelper.ui.ToastViewModel
-import com.leebeebeom.clothinghelper.ui.signin.ui.EmailState
 import com.leebeebeom.clothinghelper.ui.util.firebaseAuthErrorHandler
+import com.leebeebeom.clothinghelper.ui.viewmodel.LoadingViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -18,21 +16,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ResetPasswordViewModel @Inject constructor(
-    private val resetPasswordUseCase: ResetPasswordUseCase,
-    savedStateHandle: SavedStateHandle
-) : ToastViewModel() {
+class ResetPasswordViewModel @Inject constructor(private val resetPasswordUseCase: ResetPasswordUseCase) :
+    LoadingViewModel(false) {
 
-    val resetPasswordState = ResetPasswordState(savedStateHandle = savedStateHandle)
     val uiState = combine(
-        flow = resetPasswordState.emailError.flow,
-        flow2 = resetPasswordState.buttonEnabledFlow,
-        flow3 = resetPasswordState.isLoadingFlow,
-        flow4 = toastTextsFlow
-    ) { emailError, buttonEnabled, isLoading, toastTexts ->
+        flow = isLoadingFlow,
+        flow2 = toastTextsFlow
+    ) { isLoading, toastTexts ->
         ResetPasswordUiState(
-            emailError = emailError,
-            buttonEnabled = buttonEnabled,
             isLoading = isLoading,
             toastTexts = toastTexts
         )
@@ -42,16 +33,20 @@ class ResetPasswordViewModel @Inject constructor(
         initialValue = ResetPasswordUiState()
     )
 
-    fun sendResetPasswordEmail(popBackStack: () -> Unit) {
+    fun sendResetPasswordEmail(
+        email: String,
+        setEmailError: (Int) -> Unit,
+        popBackStack: () -> Unit
+    ) {
         viewModelScope.launch(
             firebaseAuthErrorHandler(
-                setEmailError = resetPasswordState.emailError::set,
+                setEmailError = setEmailError,
                 showToast = ::addToastTextAtLast,
-                setLoading = resetPasswordState::setLoading
+                loadingOff = { setLoading(false) }
             )
         ) {
-            resetPasswordState.setLoading(true)
-            resetPasswordUseCase.sendResetPasswordEmail(email = resetPasswordState.email.state)
+            setLoading(true)
+            resetPasswordUseCase.sendResetPasswordEmail(email = email)
             addToastTextAtLast(R.string.email_send_complete)
             popBackStack()
         }
@@ -59,17 +54,6 @@ class ResetPasswordViewModel @Inject constructor(
 }
 
 data class ResetPasswordUiState(
-    val emailError: Int? = null,
-    val buttonEnabled: Boolean = false,
     val isLoading: Boolean = false,
     val toastTexts: ImmutableList<Int> = persistentListOf()
-)
-
-private const val ResetPasswordEmailKey = "reset password email"
-private const val ResetPasswordEmailErrorKey = "reset password email error"
-
-class ResetPasswordState(savedStateHandle: SavedStateHandle) : EmailState(
-    savedStateHandle = savedStateHandle,
-    emailKey = ResetPasswordEmailKey,
-    emailErrorKey = ResetPasswordEmailErrorKey
 )

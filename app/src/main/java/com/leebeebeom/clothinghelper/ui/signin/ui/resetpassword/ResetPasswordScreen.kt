@@ -6,6 +6,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -14,12 +16,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.components.CenterDotProgressIndicator
-import com.leebeebeom.clothinghelper.ui.components.HeightSpacer
-import com.leebeebeom.clothinghelper.ui.components.MaxWidthButton
-import com.leebeebeom.clothinghelper.ui.main.composables.ToastWrapper
-import com.leebeebeom.clothinghelper.ui.signin.components.SignInBaseColumn
-import com.leebeebeom.clothinghelper.ui.signin.components.textfield.EmailTextField
+import com.leebeebeom.clothinghelper.ui.component.CenterDotProgressIndicator
+import com.leebeebeom.clothinghelper.ui.component.HeightSpacer
+import com.leebeebeom.clothinghelper.ui.component.MaxWidthButton
+import com.leebeebeom.clothinghelper.ui.main.component.ToastWrapper
+import com.leebeebeom.clothinghelper.ui.signin.component.SignInBaseColumn
+import com.leebeebeom.clothinghelper.ui.signin.component.textfield.EmailTextField
+import com.leebeebeom.clothinghelper.ui.signin.state.EmailState2
 
 const val ResetPasswordScreenTag = "reset password screen"
 
@@ -28,7 +31,7 @@ fun ResetPasswordScreen(
     popBackStack: () -> Unit,
     viewModel: ResetPasswordViewModel = hiltViewModel()
 ) {
-    val state = viewModel.resetPasswordState
+    val state = rememberResetPasswordScreenState()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     SignInBaseColumn(modifier = Modifier.testTag(ResetPasswordScreenTag)) {
@@ -39,23 +42,43 @@ fun ResetPasswordScreen(
         )
 
         EmailTextField(
-            error = { uiState.emailError },
+            error = { state.emailError },
             imeAction = ImeAction.Done,
-            onEmailChange = state::setEmail
+            onEmailChange = state::onEmailChange
         )
 
         val onResetPasswordButtonClick: () -> Unit = remember {
             {
-                viewModel.sendResetPasswordEmail(popBackStack = popBackStack)
+                viewModel.sendResetPasswordEmail(
+                    email = state.email,
+                    setEmailError = state::setEmailError,
+                    popBackStack = popBackStack
+                )
             }
         }
         HeightSpacer(dp = 12)
         MaxWidthButton(
             text = R.string.send,
-            enabled = { uiState.buttonEnabled },
+            enabled = { state.buttonEnabled },
             onClick = onResetPasswordButtonClick
         )
     }
     CenterDotProgressIndicator(show = { uiState.isLoading })
     ToastWrapper(toastTexts = { uiState.toastTexts }, toastShown = viewModel::removeFirstToastText)
 }
+
+class ResetPasswordScreenState(
+    initialEmail: String = "",
+    initialEmailError: Int? = null
+) : EmailState2(initialEmail = initialEmail, initialEmailError = initialEmailError) {
+    companion object {
+        val Saver = listSaver<ResetPasswordScreenState, Any?>(
+            save = { listOf(it.email, it.emailError) },
+            restore = { ResetPasswordScreenState(it[0] as String, it[1] as Int?) }
+        )
+    }
+}
+
+@Composable
+fun rememberResetPasswordScreenState() =
+    rememberSaveable(saver = ResetPasswordScreenState.Saver) { ResetPasswordScreenState() }

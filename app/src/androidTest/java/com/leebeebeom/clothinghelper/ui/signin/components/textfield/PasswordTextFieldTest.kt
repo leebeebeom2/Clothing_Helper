@@ -33,7 +33,6 @@ class PasswordTextFieldTest {
             ClothingHelperTheme {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     PasswordTextField(
-                        initialPassword = "",
                         error = { null },
                         imeAction = ImeAction.Done,
                         onInputChange = {}

@@ -32,19 +32,16 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
     SignInBaseColumn(modifier = Modifier.testTag(SignUpScreenTag)) {
         Logo()
         EmailTextField(
-            initialEmail = state.email.savedValue,
-            error = { uiState.emailError },
-            onEmailChange = state::setEmail
+            error = { uiState.emailError }, onEmailChange = state::setEmail
         )
 
         StatefulMaxWidthTestFieldWithCancelIcon(
-            initialText = state.name.savedValue, keyboardOptions = KeyboardOptions(
+            keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text, imeAction = ImeAction.Next
             ), onInputChange = state::setName, blockBlank = false, label = R.string.nickname
         )
 
         PasswordTextField(
-            initialPassword = state.password.savedValue,
             error = { uiState.passwordError },
             imeAction = ImeAction.Next,
             onInputChange = state::setPassword
@@ -52,7 +49,6 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
 
         PasswordTextField(
             label = R.string.password_confirm,
-            initialPassword = state.passwordConfirm.savedValue,
             error = { uiState.passwordConfirmError },
             imeAction = ImeAction.Done,
             onInputChange = state::setPasswordConfirm
@@ -65,11 +61,7 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
             onClick = viewModel::signUpWithEmailAndPassword,
         )
         OrDivider()
-        GoogleSignInButton(
-            enabled = { uiState.googleButtonEnabled },
-            onActivityResult = viewModel::signInWithGoogleEmail,
-            disable = state::googleButtonDisable
-        )
+        GoogleSignInButton(onResult = viewModel::signInWithGoogleEmail)
     }
     CenterDotProgressIndicator(show = { uiState.isLoading })
     ToastWrapper(toastTexts = { uiState.toastTexts }, toastShown = viewModel::removeFirstToastText)

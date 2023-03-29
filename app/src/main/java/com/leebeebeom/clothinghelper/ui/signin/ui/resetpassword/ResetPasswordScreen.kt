@@ -67,6 +67,7 @@ fun ResetPasswordScreen(
     ToastWrapper(toastTexts = { uiState.toastTexts }, toastShown = viewModel::removeFirstToastText)
 }
 
+// stable
 class ResetPasswordScreenState(
     initialEmail: String = "",
     initialEmailError: Int? = null

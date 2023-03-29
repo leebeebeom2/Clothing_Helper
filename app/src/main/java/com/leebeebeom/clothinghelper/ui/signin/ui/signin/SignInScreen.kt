@@ -93,6 +93,7 @@ private fun ForgotPasswordText(navigateToResetPassword: () -> Unit) {
     }
 }
 
+// stable
 class SignInScreenState(
     initialEmail: String = "",
     initialEmailError: Int? = null,

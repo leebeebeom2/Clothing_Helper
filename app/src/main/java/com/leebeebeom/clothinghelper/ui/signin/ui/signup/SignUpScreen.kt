@@ -79,6 +79,7 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
     ToastWrapper(toastTexts = { uiState.toastTexts }, toastShown = viewModel::removeFirstToastText)
 }
 
+// stable
 class SignUpScreenState(
     initialEmail: String = "",
     initialEmailError: Int? = null,

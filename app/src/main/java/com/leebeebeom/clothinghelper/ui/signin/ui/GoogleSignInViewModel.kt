@@ -9,7 +9,7 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
-import com.leebeebeom.clothinghelper.ui.ToastViewModel
+import com.leebeebeom.clothinghelper.ui.viewmodel.LoadingViewModel
 import com.leebeebeom.clothinghelper.util.buildConfigLog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
  * Google 로그인 로직
  */
 abstract class GoogleSignInViewModel(private val googleSignInUseCase: GoogleSignInUseCase) :
-    ToastViewModel() {
+    LoadingViewModel(initialLoading = false) {
     abstract fun setLoading(loading: Boolean)
 
     fun signInWithGoogleEmail(

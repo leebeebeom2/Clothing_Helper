@@ -1,13 +1,11 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui.signin
 
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.SignInUseCase
-import com.leebeebeom.clothinghelper.ui.signin.ui.GoogleSignInState
-import com.leebeebeom.clothinghelper.ui.signin.ui.GoogleSignInUiState
 import com.leebeebeom.clothinghelper.ui.signin.ui.GoogleSignInViewModel
+import com.leebeebeom.clothinghelper.ui.signin.ui.PasswordState
 import com.leebeebeom.clothinghelper.ui.util.firebaseAuthErrorHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
@@ -25,31 +23,27 @@ class SignInViewModel @Inject constructor(
     private val signInUseCase: SignInUseCase,
     savedStateHandle: SavedStateHandle
 ) : GoogleSignInViewModel(googleSignInUseCase = googleSignInUseCase) {
-    val signInState = SignInState(savedStateHandle)
 
-    @Suppress("UNCHECKED_CAST")
+    val signInState = SignInState(savedStateHandle)
     val uiState = combine(
-        signInState.emailError.flow,
-        signInState.passwordError.flow,
-        signInState.buttonEnabledFlow,
-        signInState.googleButtonEnabledFlow,
-        signInState.isLoadingFlow,
-        toastTextsFlow
-    ) { flows ->
+        flow = signInState.emailError.flow,
+        flow2 = signInState.passwordError.flow,
+        flow3 = signInState.buttonEnabledFlow,
+        flow4 = signInState.isLoadingFlow,
+        flow5 = toastTextsFlow
+    ) { emailError, passwordError, buttonEnabled, isLoading, toastTexts ->
         SignInUiState(
-            emailError = flows[0] as Int?,
-            passwordError = flows[1] as Int?,
-            buttonEnable = flows[2] as Boolean,
-            googleButtonEnabled = flows[3] as Boolean,
-            isLoading = flows[4] as Boolean,
-            toastTexts = (flows[5] as SnapshotStateList<Int>).toImmutableList()
+            emailError = emailError,
+            passwordError = passwordError,
+            buttonEnable = buttonEnabled,
+            isLoading = isLoading,
+            toastTexts = toastTexts.toImmutableList()
         )
     }.distinctUntilChanged().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = SignInUiState()
     )
-    override val googleSignInState = signInState
 
     fun signInWithEmailAndPassword() {
         viewModelScope.launch(
@@ -67,26 +61,29 @@ class SignInViewModel @Inject constructor(
             )
         }
     }
+
+    override fun setLoading(loading: Boolean) {
+        signInState.setLoading(loading)
+    }
 }
 
 data class SignInUiState(
     val emailError: Int? = null,
     val passwordError: Int? = null,
     val buttonEnable: Boolean = false,
-    override val googleButtonEnabled: Boolean = true,
-    override val isLoading: Boolean = false,
+    val isLoading: Boolean = false,
     val toastTexts: ImmutableList<Int> = emptyList<Int>().toImmutableList()
-) : GoogleSignInUiState()
+)
 
 private const val SignInEmailKey = "sign in email"
 private const val SignInEmailErrorKey = "sign in email error"
 private const val SignInPasswordKey = "sign in password"
 private const val SignInPasswordErrorKey = "sign in password error"
 
-class SignInState(savedStateHandle: SavedStateHandle) : GoogleSignInState(
+class SignInState(savedStateHandle: SavedStateHandle) : PasswordState(
     savedStateHandle = savedStateHandle,
-    savedEmailKey = SignInEmailKey,
+    emailKey = SignInEmailKey,
     emailErrorKey = SignInEmailErrorKey,
-    savedPasswordKey = SignInPasswordKey,
+    passwordKey = SignInPasswordKey,
     passwordErrorKey = SignInPasswordErrorKey
 )

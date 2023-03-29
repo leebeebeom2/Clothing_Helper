@@ -1,15 +1,15 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui.signin
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.SignInUseCase
 import com.leebeebeom.clothinghelper.ui.signin.ui.GoogleSignInViewModel
-import com.leebeebeom.clothinghelper.ui.signin.ui.PasswordState
+import com.leebeebeom.clothinghelper.ui.state.LoadingState2
+import com.leebeebeom.clothinghelper.ui.state.ToastState
 import com.leebeebeom.clothinghelper.ui.util.firebaseAuthErrorHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -20,22 +20,14 @@ import javax.inject.Inject
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     googleSignInUseCase: GoogleSignInUseCase,
-    private val signInUseCase: SignInUseCase,
-    savedStateHandle: SavedStateHandle
+    private val signInUseCase: SignInUseCase
 ) : GoogleSignInViewModel(googleSignInUseCase = googleSignInUseCase) {
 
-    val signInState = SignInState(savedStateHandle)
     val uiState = combine(
-        flow = signInState.emailError.flow,
-        flow2 = signInState.passwordError.flow,
-        flow3 = signInState.buttonEnabledFlow,
-        flow4 = signInState.isLoadingFlow,
-        flow5 = toastTextsFlow
-    ) { emailError, passwordError, buttonEnabled, isLoading, toastTexts ->
+        flow = isLoadingFlow,
+        flow2 = toastTextsFlow
+    ) { isLoading, toastTexts ->
         SignInUiState(
-            emailError = emailError,
-            passwordError = passwordError,
-            buttonEnable = buttonEnabled,
             isLoading = isLoading,
             toastTexts = toastTexts
         )
@@ -45,45 +37,27 @@ class SignInViewModel @Inject constructor(
         initialValue = SignInUiState()
     )
 
-    fun signInWithEmailAndPassword() {
+    fun signInWithEmailAndPassword(
+        email: String,
+        password: String,
+        setEmailError: (Int?) -> Unit,
+        setPasswordError: (Int?) -> Unit,
+    ) {
         viewModelScope.launch(
             firebaseAuthErrorHandler(
-                setEmailError = signInState.emailError::set,
-                setPasswordError = signInState.passwordError::set,
+                setEmailError = setEmailError,
+                setPasswordError = setPasswordError,
                 showToast = ::addToastTextAtLast,
-                setLoading = signInState::setLoading
+                loadingOff = { setLoading(false) }
             )
         ) {
-            signInState.setLoading(true)
-            signInUseCase.signIn(
-                email = signInState.email.state,
-                password = signInState.password.state
-            )
+            setLoading(true)
+            signInUseCase.signIn(email = email, password = password)
         }
-    }
-
-    override fun setLoading(loading: Boolean) {
-        signInState.setLoading(loading)
     }
 }
 
 data class SignInUiState(
-    val emailError: Int? = null,
-    val passwordError: Int? = null,
-    val buttonEnable: Boolean = false,
-    val isLoading: Boolean = false,
-    val toastTexts: ImmutableList<Int> = emptyList<Int>().toImmutableList()
-)
-
-private const val SignInEmailKey = "sign in email"
-private const val SignInEmailErrorKey = "sign in email error"
-private const val SignInPasswordKey = "sign in password"
-private const val SignInPasswordErrorKey = "sign in password error"
-
-class SignInState(savedStateHandle: SavedStateHandle) : PasswordState(
-    savedStateHandle = savedStateHandle,
-    emailKey = SignInEmailKey,
-    emailErrorKey = SignInEmailErrorKey,
-    passwordKey = SignInPasswordKey,
-    passwordErrorKey = SignInPasswordErrorKey
-)
+    override val isLoading: Boolean = false,
+    override val toastTexts: ImmutableList<Int> = persistentListOf(),
+) : ToastState, LoadingState2

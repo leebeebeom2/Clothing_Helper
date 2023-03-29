@@ -9,8 +9,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -22,24 +22,27 @@ import com.leebeebeom.clothinghelper.ui.components.MaxWidthButton
 
 @Composable // skippable
 fun GoogleSignInButton(
-    enabled: () -> Boolean,
-    onActivityResult: (ActivityResult) -> Unit,
-    disable: () -> Unit,
+    onResult: (ActivityResult, googleSignInButtonEnable: () -> Unit) -> Unit,
     context: Context = LocalContext.current,
-    launcher: ManagedActivityResultLauncher<Intent, ActivityResult>? = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult(),
-        onResult = onActivityResult
-    ),
-    gso: GoogleSignInOptions = rememberedGso(),
-    intent: Intent = remember { GoogleSignIn.getClient(context, gso).signInIntent }
 ) {
+    var enabled by rememberSaveable { mutableStateOf(false) }
+    val launcher: ManagedActivityResultLauncher<Intent, ActivityResult> =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartActivityForResult(),
+            onResult = {
+                onResult(it) { enabled = true }
+            }
+        )
+    val gso = rememberedGso()
+    val intent = remember { GoogleSignIn.getClient(context, gso).signInIntent }
+
     MaxWidthButton(text = R.string.starts_with_google_email,
-        enabled = enabled,
+        enabled = { enabled },
         colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
         icon = { GoogleIcon() },
         onClick = {
-            disable()
-            launcher?.launch(intent)
+            enabled = false
+            launcher.launch(intent)
         })
 }
 

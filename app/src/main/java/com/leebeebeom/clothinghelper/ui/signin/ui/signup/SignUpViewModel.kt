@@ -8,9 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.SignUpUseCase
-import com.leebeebeom.clothinghelper.ui.signin.ui.GoogleSignInState
-import com.leebeebeom.clothinghelper.ui.signin.ui.GoogleSignInUiState
 import com.leebeebeom.clothinghelper.ui.signin.ui.GoogleSignInViewModel
+import com.leebeebeom.clothinghelper.ui.signin.ui.PasswordState
 import com.leebeebeom.clothinghelper.ui.signin.ui.SavedStateProvider
 import com.leebeebeom.clothinghelper.ui.util.firebaseAuthErrorHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,7 +37,6 @@ class SignUpViewModel @Inject constructor(
         signUpState.passwordError.flow,
         signUpState.passwordConfirmError.flow,
         signUpState.buttonEnabledFlow,
-        signUpState.googleButtonEnabledFlow,
         signUpState.isLoadingFlow,
         toastTextsFlow
     ) { flows ->
@@ -47,16 +45,14 @@ class SignUpViewModel @Inject constructor(
             passwordError = flows[1] as Int?,
             passwordConfirmError = flows[2] as Int?,
             buttonEnabled = flows[3] as Boolean,
-            googleButtonEnabled = flows[4] as Boolean,
-            isLoading = flows[5] as Boolean,
-            toastTexts = (flows[6] as SnapshotStateList<Int>).toImmutableList()
+            isLoading = flows[4] as Boolean,
+            toastTexts = (flows[5] as SnapshotStateList<Int>).toImmutableList()
         )
     }.distinctUntilChanged().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = SignUpUiState()
     )
-    override val googleSignInState = signUpState
 
     fun signUpWithEmailAndPassword() {
         viewModelScope.launch(
@@ -74,6 +70,10 @@ class SignUpViewModel @Inject constructor(
             )
         }
     }
+
+    override fun setLoading(loading: Boolean) {
+        signUpState.setLoading(loading)
+    }
 }
 
 data class SignUpUiState(
@@ -81,10 +81,9 @@ data class SignUpUiState(
     val passwordError: Int? = null,
     val passwordConfirmError: Int? = null,
     val buttonEnabled: Boolean = false,
-    override val googleButtonEnabled: Boolean = true,
-    override val isLoading: Boolean = false,
+    val isLoading: Boolean = false,
     val toastTexts: ImmutableList<Int> = emptyList<Int>().toImmutableList()
-) : GoogleSignInUiState()
+)
 
 private const val SignUpEmailKey = "sign up email"
 private const val SignUpEmailErrorKey = "sign up email error"
@@ -94,17 +93,17 @@ private const val SignUpPasswordErrorKey = "sign up password error"
 private const val SignUpPasswordConfirmKey = "sign up password confirm"
 private const val SignUpPasswordConfirmErrorKey = "sign up password confirm error"
 
-class SignUpState(savedStateHandle: SavedStateHandle) : GoogleSignInState(
+class SignUpState(savedStateHandle: SavedStateHandle) : PasswordState(
     savedStateHandle = savedStateHandle,
-    savedEmailKey = SignUpEmailKey,
+    emailKey = SignUpEmailKey,
     emailErrorKey = SignUpEmailErrorKey,
-    savedPasswordKey = SignUpPasswordKey,
+    passwordKey = SignUpPasswordKey,
     passwordErrorKey = SignUpPasswordErrorKey
 ) {
     val name = SavedStateProvider(
         savedStateHandle = savedStateHandle, key = SignUpNameKey, initialValue = ""
     )
-    val passwordConfirm = SavedStateProvider(
+    private val passwordConfirm = SavedStateProvider(
         savedStateHandle = savedStateHandle, key = SignUpPasswordConfirmKey, initialValue = ""
     )
     val passwordConfirmError = SavedStateProvider<Int?>(

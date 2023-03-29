@@ -2,9 +2,6 @@ package com.leebeebeom.clothinghelper.ui.signin.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
@@ -14,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.HiltTestActivity
 import com.leebeebeom.clothinghelper.ui.onNodeWithStringRes
+import com.leebeebeom.clothinghelper.ui.waitStringResExist
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -22,8 +20,6 @@ class GoogleSignInButtonTest {
     @get:Rule
     val rule = createAndroidComposeRule<HiltTestActivity>()
     private val googleSignInButton by lazy { rule.onNodeWithStringRes(R.string.starts_with_google_email) }
-    private var enabled by mutableStateOf(true)
-
 
     @Before
     fun init() {
@@ -31,10 +27,7 @@ class GoogleSignInButtonTest {
         rule.setContent {
             Box(modifier = Modifier.fillMaxSize()) {
                 GoogleSignInButton(
-                    enabled = { enabled },
-                    onActivityResult = {},
-                    disable = { enabled = false },
-                    launcher = null
+                    onResult = { _, _ -> },
                 )
             }
         }
@@ -45,6 +38,7 @@ class GoogleSignInButtonTest {
     fun enabledTest() {
         googleSignInButton.assertIsEnabled()
         googleSignInButton.performClick()
+        rule.waitStringResExist(R.string.starts_with_google_email)
         googleSignInButton.assertIsNotEnabled()
     }
 }

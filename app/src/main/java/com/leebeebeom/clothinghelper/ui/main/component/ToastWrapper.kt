@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.main.composables
+package com.leebeebeom.clothinghelper.ui.main.component
 
 import android.widget.Toast
 import androidx.compose.runtime.Composable

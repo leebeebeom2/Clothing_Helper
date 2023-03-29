@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.signin.components
+package com.leebeebeom.clothinghelper.ui.signin.component
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -12,8 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.components.HeightSpacer
-import com.leebeebeom.clothinghelper.ui.components.SingleLineText
+import com.leebeebeom.clothinghelper.ui.component.HeightSpacer
+import com.leebeebeom.clothinghelper.ui.component.SingleLineText
 
 @Composable // skippable
 fun OrDivider() {

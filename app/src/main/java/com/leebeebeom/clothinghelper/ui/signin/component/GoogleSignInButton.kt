@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.signin.components
+package com.leebeebeom.clothinghelper.ui.signin.component
 
 import android.content.Context
 import android.content.Intent
@@ -18,7 +18,7 @@ import androidx.compose.ui.res.vectorResource
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.components.MaxWidthButton
+import com.leebeebeom.clothinghelper.ui.component.MaxWidthButton
 
 @Composable // skippable
 fun GoogleSignInButton(

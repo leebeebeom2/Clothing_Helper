@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.signin.components.textfield
+package com.leebeebeom.clothinghelper.ui.signin.component.textfield
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.text.KeyboardOptions
@@ -12,8 +12,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.components.CustomIconButton
-import com.leebeebeom.clothinghelper.ui.components.StatefulMaxWidthTextField
+import com.leebeebeom.clothinghelper.ui.component.CustomIconButton
+import com.leebeebeom.clothinghelper.ui.component.StatefulMaxWidthTextField
 
 @Composable // skippable
 fun PasswordTextField(

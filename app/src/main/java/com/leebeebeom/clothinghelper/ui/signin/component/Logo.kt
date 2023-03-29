@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.signin.components
+package com.leebeebeom.clothinghelper.ui.signin.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.components.HeightSpacer
+import com.leebeebeom.clothinghelper.ui.component.HeightSpacer
 
 @Composable // skippable
 fun Logo() {

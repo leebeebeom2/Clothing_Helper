@@ -38,8 +38,7 @@ fun SignInScreen(
     SignInBaseColumn(modifier = Modifier.testTag(SignInScreenTag)) {
         Logo()
         EmailTextField(
-            error = { uiState.emailError },
-            onEmailChange = state::setEmail
+            error = { uiState.emailError }, onEmailChange = state::setEmail
         )
         PasswordTextField(
             error = { uiState.passwordError },
@@ -60,11 +59,7 @@ fun SignInScreen(
             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
             icon = { IconWrapper(drawable = R.drawable.ic_email) })
         HeightSpacer(dp = 12)
-        GoogleSignInButton(
-            enabled = { uiState.googleButtonEnabled },
-            onActivityResult = viewModel::signInWithGoogleEmail,
-            disable = state::googleButtonDisable
-        )
+        GoogleSignInButton(onResult = viewModel::signInWithGoogleEmail)
     }
     CenterDotProgressIndicator(show = { uiState.isLoading })
     ToastWrapper(toastTexts = { uiState.toastTexts }, toastShown = viewModel::removeFirstToastText)

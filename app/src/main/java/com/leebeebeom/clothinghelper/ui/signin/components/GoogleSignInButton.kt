@@ -25,7 +25,7 @@ fun GoogleSignInButton(
     onResult: (ActivityResult, googleSignInButtonEnable: () -> Unit) -> Unit,
     context: Context = LocalContext.current,
 ) {
-    var enabled by rememberSaveable { mutableStateOf(false) }
+    var enabled by rememberSaveable { mutableStateOf(true) }
     val launcher: ManagedActivityResultLauncher<Intent, ActivityResult> =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartActivityForResult(),

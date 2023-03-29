@@ -19,7 +19,6 @@ import kotlinx.coroutines.launch
  */
 abstract class GoogleSignInViewModel(private val googleSignInUseCase: GoogleSignInUseCase) :
     LoadingViewModel(initialLoading = false) {
-    abstract fun setLoading(loading: Boolean)
 
     fun signInWithGoogleEmail(
         activityResult: ActivityResult, googleSignInButtonEnable: () -> Unit
@@ -47,12 +46,12 @@ abstract class GoogleSignInViewModel(private val googleSignInUseCase: GoogleSign
         val handler = CoroutineExceptionHandler { _, throwable ->
             buildConfigLog("GoogleSignInViewModel", "$throwable")
             addToastTextAtLast(R.string.unknown_error)
-            setLoading(false)
+            isLoadingState = false
             googleSignInButtonEnable()
         }
 
         viewModelScope.launch(handler) {
-            setLoading(true)
+            isLoadingState = true
             googleSignInUseCase.googleSignIn(credential = getGoogleCredential(activityResult = activityResult))
         }
     }

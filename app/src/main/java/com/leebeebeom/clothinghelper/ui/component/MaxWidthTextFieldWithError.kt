@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalComposeUiApi::class)
 
-package com.leebeebeom.clothinghelper.ui.components
+package com.leebeebeom.clothinghelper.ui.component
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility

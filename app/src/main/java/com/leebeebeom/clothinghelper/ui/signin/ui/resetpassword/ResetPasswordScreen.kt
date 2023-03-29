@@ -39,7 +39,6 @@ fun ResetPasswordScreen(
         )
 
         EmailTextField(
-            initialEmail = state.email.savedValue,
             error = { uiState.emailError },
             imeAction = ImeAction.Done,
             onEmailChange = state::setEmail

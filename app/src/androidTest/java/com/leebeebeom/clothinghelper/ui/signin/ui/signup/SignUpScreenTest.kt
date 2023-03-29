@@ -11,7 +11,7 @@ import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.data.*
 import com.leebeebeom.clothinghelper.ui.*
-import com.leebeebeom.clothinghelper.ui.components.CenterDotProgressIndicatorTag
+import com.leebeebeom.clothinghelper.ui.component.CenterDotProgressIndicatorTag
 import com.leebeebeom.clothinghelper.ui.main.mainScreen.MainScreenTag
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -181,20 +181,26 @@ class SignUpScreenTest {
 
         repeat(10) {
             passwordTextField.performTextInput(" ")
-            assert(rule.onAllNodesWithText(getInvisibleText(SignInPassword.length)).fetchSemanticsNodes().size == 2)
+            assert(
+                rule.onAllNodesWithText(getInvisibleText(SignInPassword.length))
+                    .fetchSemanticsNodes().size == 2
+            )
         }
 
         repeat(10) {
             passwordConfirmTextField.performTextInput(" ")
-            assert(rule.onAllNodesWithText(getInvisibleText(SignInPassword.length)).fetchSemanticsNodes().size == 2)
+            assert(
+                rule.onAllNodesWithText(getInvisibleText(SignInPassword.length))
+                    .fetchSemanticsNodes().size == 2
+            )
         }
     }
 
     @Test
     fun signUpNameBlankTest() { // with SignUp
         emailTextField.performTextInput(SignUpEmail)
-        passwordTextField.performTextInput(SignUpEmail)
-        passwordConfirmTextField.performTextInput(SignUpEmail)
+        passwordTextField.performTextInput(SignInPassword)
+        passwordConfirmTextField.performTextInput(SignInPassword)
 
         nameTextField.performTextInput("  $SignUpName  ")
 

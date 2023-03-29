@@ -41,7 +41,7 @@ fun MainNavHost(
     viewModel: ActivityViewModel = activityViewModel(),
     navController: NavHostController = rememberNavController(),
 ) {
-    val user by viewModel.user.collectAsStateWithLifecycle()
+    val user by viewModel.userFlow.collectAsStateWithLifecycle()
 
     ClothingHelperTheme {
         Drawer(

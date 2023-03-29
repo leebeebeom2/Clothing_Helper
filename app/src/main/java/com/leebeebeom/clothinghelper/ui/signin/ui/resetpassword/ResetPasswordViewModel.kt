@@ -34,7 +34,7 @@ class ResetPasswordViewModel @Inject constructor(
             emailError = emailError,
             buttonEnabled = buttonEnabled,
             isLoading = isLoading,
-            toastTexts = toastTexts.toImmutableList()
+            toastTexts = toastTexts
         )
     }.distinctUntilChanged().stateIn(
         scope = viewModelScope,

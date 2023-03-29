@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ActivityViewModel @Inject constructor(getUserUseCase: GetUserUseCase) :
     ViewModel() {
-    val user =
+    val userFlow =
         getUserUseCase.userFlow.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -25,5 +25,5 @@ class ActivityViewModel @Inject constructor(getUserUseCase: GetUserUseCase) :
 }
 
 @Composable
-fun activityViewModel(context: Context = LocalContext.current): ActivityViewModel =
+fun activityViewModel(context: Context = LocalContext.current): ActivityViewModel = // TODO 삭제
     hiltViewModel(viewModelStoreOwner = (context as ComponentActivity))

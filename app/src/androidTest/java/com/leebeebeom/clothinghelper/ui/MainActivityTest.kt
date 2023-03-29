@@ -14,7 +14,7 @@ import com.leebeebeom.clothinghelper.data.SignInEmail
 import com.leebeebeom.clothinghelper.data.SignInPassword
 import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.MainGraphRoute
 import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.SignInGraphRoute
-import com.leebeebeom.clothinghelper.ui.drawer.SettingIconTag
+import com.leebeebeom.clothinghelper.ui.drawer.components.SettingIconTag
 import com.leebeebeom.clothinghelper.ui.main.mainScreen.MainScreenTag
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInScreenTag
 import kotlinx.coroutines.delay

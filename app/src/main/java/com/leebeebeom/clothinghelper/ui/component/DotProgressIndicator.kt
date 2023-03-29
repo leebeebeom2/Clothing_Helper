@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.components
+package com.leebeebeom.clothinghelper.ui.component
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background

@@ -12,7 +12,7 @@ import com.leebeebeom.clothinghelper.data.NotFoundEmail
 import com.leebeebeom.clothinghelper.data.SendPasswordEmail
 import com.leebeebeom.clothinghelper.data.SignInEmail
 import com.leebeebeom.clothinghelper.ui.*
-import com.leebeebeom.clothinghelper.ui.components.CenterDotProgressIndicatorTag
+import com.leebeebeom.clothinghelper.ui.component.CenterDotProgressIndicatorTag
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInScreenTag
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking

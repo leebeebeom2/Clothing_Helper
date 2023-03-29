@@ -14,7 +14,7 @@ import com.leebeebeom.clothinghelper.data.NotFoundEmail
 import com.leebeebeom.clothinghelper.data.SignInEmail
 import com.leebeebeom.clothinghelper.data.SignInPassword
 import com.leebeebeom.clothinghelper.ui.*
-import com.leebeebeom.clothinghelper.ui.components.CenterDotProgressIndicatorTag
+import com.leebeebeom.clothinghelper.ui.component.CenterDotProgressIndicatorTag
 import com.leebeebeom.clothinghelper.ui.main.mainScreen.MainScreenTag
 import com.leebeebeom.clothinghelper.ui.signin.ui.resetpassword.ResetPasswordScreenTag
 import com.leebeebeom.clothinghelper.ui.signin.ui.signup.SignUpScreenTag

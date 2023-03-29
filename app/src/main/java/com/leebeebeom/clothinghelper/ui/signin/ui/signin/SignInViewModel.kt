@@ -40,8 +40,8 @@ class SignInViewModel @Inject constructor(
     fun signInWithEmailAndPassword(
         email: String,
         password: String,
-        setEmailError: (Int?) -> Unit,
-        setPasswordError: (Int?) -> Unit,
+        setEmailError: (Int) -> Unit,
+        setPasswordError: (Int) -> Unit,
     ) {
         viewModelScope.launch(
             firebaseAuthErrorHandler(

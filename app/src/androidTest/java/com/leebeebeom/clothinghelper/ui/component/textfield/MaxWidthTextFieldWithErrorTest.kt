@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.components.textfield
+package com.leebeebeom.clothinghelper.ui.component.textfield
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,9 +26,9 @@ import androidx.test.uiautomator.UiDevice
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.isKeyboardShowing
 import com.leebeebeom.clothinghelper.ui.HiltTestActivity
-import com.leebeebeom.clothinghelper.ui.components.MaxWidthTextFieldState
-import com.leebeebeom.clothinghelper.ui.components.MaxWidthTextFieldWithError
-import com.leebeebeom.clothinghelper.ui.components.rememberMaxWidthTestFieldState
+import com.leebeebeom.clothinghelper.ui.component.MaxWidthTextFieldState
+import com.leebeebeom.clothinghelper.ui.component.MaxWidthTextFieldWithError
+import com.leebeebeom.clothinghelper.ui.component.rememberMaxWidthTestFieldState
 import com.leebeebeom.clothinghelper.ui.onNodeWithStringRes
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelper.ui.waitStringResExist
@@ -40,7 +40,7 @@ import org.junit.Test
 const val TestText = "테스트 텍스트"
 const val TestText2 = "테스트 텍스트2"
 
-class MaxWidthTextFieldWithErrorTest2 {
+class MaxWidthTextFieldWithErrorTest {
     @get:Rule
     val rule = createAndroidComposeRule<HiltTestActivity>()
     private val restorationTester = StateRestorationTester(rule)

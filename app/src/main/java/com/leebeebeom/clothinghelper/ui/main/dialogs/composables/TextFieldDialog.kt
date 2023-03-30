@@ -4,7 +4,8 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.text.TextRange
@@ -56,20 +57,26 @@ fun TextFieldDialog(
 
 @Composable
 fun rememberDialogMaxWidthTextFieldState(initialText: String) =
-    remember { DialogMaxWidthTextFieldState(initialText = initialText) }
+    rememberSaveable(saver = DialogMaxWidthTextFieldState.Saver) {
+        DialogMaxWidthTextFieldState(
+            initialText = initialText
+        )
+    }
 
 class DialogMaxWidthTextFieldState(initialText: String) : MaxWidthTextFieldState( // stable
-    initialTextFieldValue = TextFieldValue(initialText),
-    blockBlank = false
+    initialTextFieldValue = TextFieldValue(initialText), blockBlank = false
 ) {
     override fun onFocusChanged(focusState: FocusState) {
         hasFocus = focusState.hasFocus
         if (focusState.hasFocus) {
-            textFieldValue =
-                textFieldValue.copy(
-                    text = textFieldValue.text,
-                    selection = TextRange(0, textFieldValue.text.length)
-                )
+            textFieldValue = textFieldValue.copy(
+                text = textFieldValue.text, selection = TextRange(0, textFieldValue.text.length)
+            )
         }
+    }
+
+    companion object {
+        val Saver = listSaver(save = { listOf(it.textFieldValue.text) },
+            restore = { DialogMaxWidthTextFieldState(it[0]) })
     }
 }

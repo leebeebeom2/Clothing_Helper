@@ -7,11 +7,13 @@ import com.leebeebeom.clothinghelper.data.repository.preference.Order.Descending
 import com.leebeebeom.clothinghelper.data.repository.preference.Sort.*
 import com.leebeebeom.clothinghelper.data.repository.preference.SortPreferences
 import com.leebeebeom.clothinghelper.domain.model.BaseContainerModel
-import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
+import com.leebeebeom.clothinghelper.domain.repository.BaseContainerRepository
 import com.leebeebeom.clothinghelper.domain.repository.DataResult
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 
 
@@ -23,17 +25,27 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
     type: Class<T>,
     dispatcher: CoroutineDispatcher,
     userRepository: UserRepository,
-) : BaseDataRepository<T>, BaseDataRepositoryImpl<T>(
+) : BaseContainerRepository<T>, BaseDataRepositoryImpl<T>(
     refPath = refPath,
     appScope = appScope,
     type = type,
     dispatcher = dispatcher,
     userRepository = userRepository
 ) {
-    override val allDataFlow =
+    final override val allDataFlow =
         super.allDataFlow.combine(flow = sortFlow, transform = ::getSortedData).shareIn(
             scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
         )
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val allDataSizeFlow = allDataFlow.mapLatest { it.data.size }.distinctUntilChanged()
+        .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val allDataNames =
+        allDataFlow.mapLatest { list -> list.data.map { element -> element.name } }
+            .distinctUntilChanged()
+            .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
     private fun getSortedData(
         dataResult: DataResult<T>,
@@ -45,17 +57,17 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
             val sort = sortPreferences.sort
             val order = sortPreferences.order
 
-            DataResult.Success(
-                when {
-                    sort == Name && order == Ascending -> allData.sortedBy { it.name }
-                    sort == Name && order == Descending -> allData.sortedByDescending { it.name }
-                    sort == Create && order == Ascending -> allData.sortedBy { it.createDate }
-                    sort == Create && order == Descending -> allData.sortedByDescending { it.createDate }
-                    sort == Edit && order == Ascending -> allData.sortedBy { it.editDate }
-                    sort == Edit && order == Descending -> allData.sortedByDescending { it.editDate }
-                    else -> allData
-                }
-            )
+            val sortedList = when {
+                sort == Name && order == Ascending -> allData.sortedBy { it.name }
+                sort == Name && order == Descending -> allData.sortedByDescending { it.name }
+                sort == Create && order == Ascending -> allData.sortedBy { it.createDate }
+                sort == Create && order == Descending -> allData.sortedByDescending { it.createDate }
+                sort == Edit && order == Ascending -> allData.sortedBy { it.editDate }
+                sort == Edit && order == Descending -> allData.sortedByDescending { it.editDate }
+                else -> allData
+            }
+
+            DataResult.Success(sortedList.toImmutableList())
         }
     }
 

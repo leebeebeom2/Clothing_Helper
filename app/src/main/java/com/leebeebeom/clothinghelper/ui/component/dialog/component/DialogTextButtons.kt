@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.main.dialogs.composables
+package com.leebeebeom.clothinghelper.ui.component.dialog.component
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Row
@@ -10,7 +10,7 @@ import androidx.compose.runtime.NoLiveLiterals
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.components.SingleLineText
+import com.leebeebeom.clothinghelper.ui.component.SingleLineText
 
 @Composable // skippable
 fun DialogTextButtons(

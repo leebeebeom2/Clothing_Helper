@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.main.dialogs.composables
+package com.leebeebeom.clothinghelper.ui.component.dialog.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding

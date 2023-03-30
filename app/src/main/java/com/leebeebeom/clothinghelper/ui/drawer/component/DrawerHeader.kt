@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.drawer.components
+package com.leebeebeom.clothinghelper.ui.drawer.component
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -11,8 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.components.CustomIconButton
-import com.leebeebeom.clothinghelper.ui.components.SingleLineText
+import com.leebeebeom.clothinghelper.ui.component.CustomIconButton
+import com.leebeebeom.clothinghelper.ui.component.SingleLineText
 
 const val SettingIconTag = "setting icon"
 

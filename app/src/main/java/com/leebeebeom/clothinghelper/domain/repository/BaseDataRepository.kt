@@ -1,7 +1,7 @@
 package com.leebeebeom.clothinghelper.domain.repository
 
-import com.google.common.collect.ImmutableList
 import com.leebeebeom.clothinghelper.domain.model.BaseModel
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.SharedFlow
 
 interface BaseDataRepository<T : BaseModel> {

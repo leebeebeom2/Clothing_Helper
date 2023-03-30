@@ -1,6 +1,6 @@
 package com.leebeebeom.clothinghelper.domain.model
 
-import com.leebeebeom.clothinghelper.ui.main.drawer.MainCategoryType
+import com.leebeebeom.clothinghelper.ui.drawer.contents.MainCategoryType
 
 abstract class BaseModel {
     abstract val key: String
@@ -11,11 +11,11 @@ abstract class BaseContainerModel : BaseModel() {
     abstract val name: String
     abstract val createDate: Long
     abstract val editDate: Long
+    abstract val mainCategoryType: MainCategoryType
     abstract fun changeEditDate(): BaseContainerModel
 }
 
 abstract class BaseFolderModel : BaseContainerModel() {
     abstract val parentKey: String
     abstract val subCategoryKey: String
-    abstract val mainCategoryType: MainCategoryType
 }

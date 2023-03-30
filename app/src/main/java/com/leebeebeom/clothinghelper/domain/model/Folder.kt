@@ -1,7 +1,7 @@
 package com.leebeebeom.clothinghelper.domain.model
 
 import android.os.Parcelable
-import com.leebeebeom.clothinghelper.ui.main.drawer.MainCategoryType
+import com.leebeebeom.clothinghelper.ui.drawer.contents.MainCategoryType
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

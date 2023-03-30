@@ -1,7 +1,6 @@
-package com.leebeebeom.clothinghelper.ui.components
+package com.leebeebeom.clothinghelper.ui.component
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -40,8 +39,7 @@ class CenterDotProgressIndicatorTest {
     )
     private val viewModel = SignInViewModel(
         googleSignInUseCase = GoogleSignInUseCase(userRepository),
-        signInUseCase = SignInUseCase(userRepository),
-        savedStateHandle = SavedStateHandle()
+        signInUseCase = SignInUseCase(userRepository)
     )
 
     @Before
@@ -70,13 +68,12 @@ class CenterDotProgressIndicatorTest {
     fun blockBackPressTest() {
         rule.waitTagExist(SignInScreenTag)
 
-        val state = viewModel.signInState
-        state.setLoading(true)
+        viewModel.setLoading(true)
 
         rule.waitTagExist(CenterDotProgressIndicatorTag)
         repeat(5) { device.pressBack() }
 
-        state.setLoading(false)
+        viewModel.setLoading(false)
         rule.waitTagNotExist(CenterDotProgressIndicatorTag)
         device.pressBack()
         rule.waitTagExist(ResetPasswordScreenTag)

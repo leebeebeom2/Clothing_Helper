@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.components
+package com.leebeebeom.clothinghelper.ui.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

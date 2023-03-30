@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.components.textfield
+package com.leebeebeom.clothinghelper.ui.component.textfield
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,9 +11,9 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.HiltTestActivity
-import com.leebeebeom.clothinghelper.ui.components.CancelIconTag
-import com.leebeebeom.clothinghelper.ui.components.StatefulMaxWidthTextField
-import com.leebeebeom.clothinghelper.ui.components.StatefulMaxWidthTestFieldWithCancelIcon
+import com.leebeebeom.clothinghelper.ui.component.CancelIconTag
+import com.leebeebeom.clothinghelper.ui.component.StatefulMaxWidthTextField
+import com.leebeebeom.clothinghelper.ui.component.StatefulMaxWidthTestFieldWithCancelIcon
 import com.leebeebeom.clothinghelper.ui.onNodeWithStringRes
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import org.junit.Before

@@ -50,8 +50,7 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
             it.data.groupBy { element -> element.mainCategoryType }
                 .mapValues { mapElement -> mapElement.value.map { element -> element.name }.toImmutableList() }
                 .toImmutableMap()
-        }
-            .distinctUntilChanged()
+        }.distinctUntilChanged()
             .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
     private fun getSortedData(

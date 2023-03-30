@@ -14,7 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.MainGraphRoute
 import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.SignInGraphRoute
 import com.leebeebeom.clothinghelper.ui.drawer.Drawer
-import com.leebeebeom.clothinghelper.ui.drawer.component.EssentialMenuType
+import com.leebeebeom.clothinghelper.ui.drawer.contents.EssentialMenuType
 import com.leebeebeom.clothinghelper.ui.main.*
 import com.leebeebeom.clothinghelper.ui.setting.SettingDestination
 import com.leebeebeom.clothinghelper.ui.signin.ui.signInGraph

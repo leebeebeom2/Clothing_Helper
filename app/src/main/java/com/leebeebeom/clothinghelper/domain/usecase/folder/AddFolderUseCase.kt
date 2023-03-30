@@ -2,7 +2,7 @@ package com.leebeebeom.clothinghelper.domain.usecase.folder
 
 import com.leebeebeom.clothinghelper.domain.model.Folder
 import com.leebeebeom.clothinghelper.domain.repository.FolderRepository
-import com.leebeebeom.clothinghelper.ui.main.drawer.MainCategoryType
+import com.leebeebeom.clothinghelper.ui.drawer.contents.MainCategoryType
 import javax.inject.Inject
 
 class AddFolderUseCase @Inject constructor(private val folderRepository: FolderRepository) {

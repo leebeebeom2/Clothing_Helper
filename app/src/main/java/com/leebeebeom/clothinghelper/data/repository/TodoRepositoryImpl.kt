@@ -30,7 +30,8 @@ class TodoRepositoryImpl @Inject constructor(
     override val allDataFlow =
         super.allDataFlow.mapLatest { dataResult ->
             when (dataResult) {
-                is DataResult.Success -> DataResult.Success(dataResult.data.sortedBy { it.order }.toImmutableList())
+                is DataResult.Success -> DataResult.Success(dataResult.data.sortedBy { it.order }
+                    .toImmutableList())
                 is DataResult.Fail -> dataResult
             }
         }.shareIn(
@@ -38,8 +39,4 @@ class TodoRepositoryImpl @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             replay = 1
         )
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override val allDataSizeFlow = allDataFlow.mapLatest { it.data.size }.distinctUntilChanged()
-        .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 }

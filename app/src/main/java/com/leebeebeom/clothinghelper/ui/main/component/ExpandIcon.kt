@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.main.composables
+package com.leebeebeom.clothinghelper.ui.main.component
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.material.LocalContentColor
@@ -7,10 +7,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.components.CustomIconButton
+import com.leebeebeom.clothinghelper.ui.component.CustomIconButton
 import com.leebeebeom.clothinghelper.ui.util.Anime.ExpandIcon.rotateSpec
 
-@Composable
+@Composable // skippable
 fun ExpandIcon(
     modifier: Modifier = Modifier,
     isExpanded: () -> Boolean,

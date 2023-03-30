@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.drawer.contents
+package com.leebeebeom.clothinghelper.ui.drawer.content
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.ui.theme.DarkGray
 
 @Composable // skippable
-fun DrawerContents(
+fun DrawerContent(
     content: (LazyListScope).() -> Unit
 ) {
     LazyColumn(

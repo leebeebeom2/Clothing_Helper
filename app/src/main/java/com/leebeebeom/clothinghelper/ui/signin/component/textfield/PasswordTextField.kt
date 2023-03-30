@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.component.CustomIconButton
 import com.leebeebeom.clothinghelper.ui.component.StatefulMaxWidthTextField
+import com.leebeebeom.clothinghelper.ui.component.rememberMaxWidthTestFieldState
 
 @Composable // skippable
 fun PasswordTextField(
@@ -26,7 +27,7 @@ fun PasswordTextField(
     val focusRequester = remember { FocusRequester() }
 
     StatefulMaxWidthTextField(
-        blockBlank = true,
+        state = rememberMaxWidthTestFieldState(blockBlank = true),
         label = label,
         error = error,
         isVisible = { isVisible },
@@ -34,13 +35,13 @@ fun PasswordTextField(
             keyboardType = KeyboardType.Password, imeAction = imeAction
         ),
         onInputChange = onInputChange,
+        focusRequester = focusRequester,
         trailingIcon = {
             VisibleIcon(isVisible = { isVisible }) {
                 focusRequester.requestFocus()
                 isVisible = !isVisible
             }
-        },
-        focusRequester = focusRequester
+        }
     )
 }
 

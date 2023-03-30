@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
@@ -25,7 +26,7 @@ import androidx.compose.ui.unit.dp
 fun DrawerRow(
     modifier: Modifier,
     onClick: () -> Unit,
-    onLongClick: () -> Unit = {},
+    onLongClick: (Offset) -> Unit = {},
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     haptic: HapticFeedback = LocalHapticFeedback.current,
     content: @Composable RowScope.() -> Unit
@@ -46,7 +47,7 @@ fun DrawerRow(
                     },
                     onTap = { onClick() },
                     onLongPress = {
-                        onLongClick()
+                        onLongClick(it)
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                     },
                 )

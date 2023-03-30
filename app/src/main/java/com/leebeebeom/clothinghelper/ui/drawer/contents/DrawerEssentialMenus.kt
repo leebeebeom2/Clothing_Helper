@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.drawer.components
+package com.leebeebeom.clothinghelper.ui.drawer.contents
 
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -13,15 +13,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.components.IconWrapper
-import com.leebeebeom.clothinghelper.ui.components.SingleLineText
-import com.leebeebeom.clothinghelper.ui.components.WidthSpacer
+import com.leebeebeom.clothinghelper.ui.component.IconWrapper
+import com.leebeebeom.clothinghelper.ui.component.SingleLineText
+import com.leebeebeom.clothinghelper.ui.component.WidthSpacer
+import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerRow
 import com.leebeebeom.clothinghelper.ui.theme.Disabled
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
-
-const val DrawerEssentialMenuHeight = 40
-const val DrawerEssentialMenuIconSize = 22
+import kotlinx.collections.immutable.persistentListOf
 
 fun LazyListScope.drawerEssentialMenus(
     onEssentialMenuClick: (EssentialMenuType) -> Unit, essentialMenus: ImmutableList<EssentialMenu>
@@ -39,10 +37,10 @@ fun LazyListScope.drawerEssentialMenus(
 private fun EssentialMenu(
     essentialMenu: EssentialMenu, onClick: (EssentialMenuType) -> Unit
 ) {
-    DrawerRow(modifier = Modifier.heightIn(DrawerEssentialMenuHeight.dp),
+    DrawerRow(modifier = Modifier.heightIn(40.dp),
         onClick = { onClick(essentialMenu.type) }) {
         IconWrapper(
-            modifier = Modifier.size(DrawerEssentialMenuIconSize.dp),
+            modifier = Modifier.size(22.dp),
             drawable = essentialMenu.drawable
         )
         WidthSpacer(dp = 8)
@@ -61,9 +59,9 @@ enum class EssentialMenuType {
     MainScreen, Favorite, SeeAll, Trash
 }
 
-fun getEssentialMenus() = listOf(
+fun getEssentialMenus() = persistentListOf(
     EssentialMenu(R.string.main_screen, R.drawable.ic_home, EssentialMenuType.MainScreen),
     EssentialMenu(R.string.favorite, R.drawable.ic_star, EssentialMenuType.Favorite),
     EssentialMenu(R.string.see_all, R.drawable.ic_list, EssentialMenuType.SeeAll),
     EssentialMenu(R.string.trash, R.drawable.ic_delete, EssentialMenuType.Trash)
-).toImmutableList()
+)

@@ -34,8 +34,6 @@ import kotlinx.coroutines.delay
 @NoLiveLiterals
 @Composable // skippable
 fun StatefulMaxWidthTestFieldWithCancelIcon(
-    initialText: String = "",
-    blockBlank: Boolean = false,
     @StringRes label: Int? = null,
     @StringRes placeholder: Int? = null,
     error: () -> Int? = { null },
@@ -46,9 +44,7 @@ fun StatefulMaxWidthTestFieldWithCancelIcon(
     onInputChange: (String) -> Unit,
     focusRequester: FocusRequester = remember { FocusRequester() },
     getFocus: Boolean = false,
-    state: MaxWidthTextFieldState = rememberMaxWidthTestFieldState(
-        initialText = initialText, blockBlank = blockBlank
-    )
+    state: MaxWidthTextFieldState = rememberMaxWidthTestFieldState()
 ) {
     MaxWidthTextFieldWithError(
         textFieldValue = { state.textFieldValue },
@@ -73,8 +69,6 @@ fun StatefulMaxWidthTestFieldWithCancelIcon(
 @NoLiveLiterals
 @Composable // skippable
 fun StatefulMaxWidthTextField(
-    initialText: String = "",
-    blockBlank: Boolean = false,
     @StringRes label: Int? = null,
     @StringRes placeholder: Int? = null,
     error: () -> Int? = { null },
@@ -86,9 +80,7 @@ fun StatefulMaxWidthTextField(
     focusRequester: FocusRequester = remember { FocusRequester() },
     trailingIcon: @Composable (() -> Unit)? = null,
     getFocus: Boolean = false,
-    state: MaxWidthTextFieldState = rememberMaxWidthTestFieldState(
-        initialText = initialText, blockBlank = blockBlank
-    )
+    state: MaxWidthTextFieldState = rememberMaxWidthTestFieldState()
 ) {
     MaxWidthTextFieldWithError(
         textFieldValue = { state.textFieldValue },

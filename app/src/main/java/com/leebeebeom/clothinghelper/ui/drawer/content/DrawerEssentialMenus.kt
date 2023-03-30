@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.drawer.contents
+package com.leebeebeom.clothinghelper.ui.drawer.content
 
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding

@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.signin.components.textfield
+package com.leebeebeom.clothinghelper.ui.signin.component.textfield
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,9 +15,6 @@ import com.leebeebeom.clothinghelper.ui.HiltTestActivity
 import com.leebeebeom.clothinghelper.ui.component.textfield.TestText
 import com.leebeebeom.clothinghelper.ui.getInvisibleText
 import com.leebeebeom.clothinghelper.ui.onNodeWithStringRes
-import com.leebeebeom.clothinghelper.ui.signin.component.textfield.InvisibleIconTag
-import com.leebeebeom.clothinghelper.ui.signin.component.textfield.PasswordTextField
-import com.leebeebeom.clothinghelper.ui.signin.component.textfield.VisibleIconTag
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import org.junit.Before
 import org.junit.Rule

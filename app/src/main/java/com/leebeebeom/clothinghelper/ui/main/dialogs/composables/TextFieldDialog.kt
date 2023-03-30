@@ -8,11 +8,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.leebeebeom.clothinghelper.ui.components.HeightSpacer
-import com.leebeebeom.clothinghelper.ui.components.MaxWidthTextFieldState
-import com.leebeebeom.clothinghelper.ui.components.SingleLineText
-import com.leebeebeom.clothinghelper.ui.components.StatefulMaxWidthTestFieldWithCancelIcon
+import com.leebeebeom.clothinghelper.ui.component.HeightSpacer
+import com.leebeebeom.clothinghelper.ui.component.MaxWidthTextFieldState
+import com.leebeebeom.clothinghelper.ui.component.SingleLineText
+import com.leebeebeom.clothinghelper.ui.component.StatefulMaxWidthTestFieldWithCancelIcon
 
 @Composable
 fun TextFieldDialog(
@@ -34,7 +35,7 @@ fun TextFieldDialog(
         )
 
         StatefulMaxWidthTestFieldWithCancelIcon(
-            state = rememberDialogMaxWidthTestFieldState(initialText = initialText),
+            state = rememberDialogMaxWidthTextFieldState(initialText = initialText),
             initialText = initialText,
             label = label,
             placeholder = placeHolder,
@@ -54,11 +55,11 @@ fun TextFieldDialog(
 }
 
 @Composable
-fun rememberDialogMaxWidthTestFieldState(initialText: String) =
+fun rememberDialogMaxWidthTextFieldState(initialText: String) =
     remember { DialogMaxWidthTextFieldState(initialText = initialText) }
 
 class DialogMaxWidthTextFieldState(initialText: String) : MaxWidthTextFieldState( // stable
-    initialText = initialText,
+    initialTextFieldValue = TextFieldValue(initialText),
     blockBlank = false
 ) {
     override fun onFocusChanged(focusState: FocusState) {

@@ -8,6 +8,9 @@ import com.leebeebeom.clothinghelper.domain.model.BaseModel
 import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
 import com.leebeebeom.clothinghelper.domain.repository.DataResult
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
@@ -27,7 +30,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
 ) : BaseDataRepository<T> {
     private val dbRoot = getDbRoot()
     private var ref: DatabaseReference? = null
-    private var lastCachedData = emptyList<T>()
+    private var lastCachedData: ImmutableList<T> = persistentListOf()
 
     // TODO 콜렉트 쪽에서 예외 처리
     // TODO 네트워크 미 연결 시 스낵바나 알림같을 걸 띄우는 게 나을듯
@@ -43,7 +46,8 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
             callbackFlow {
                 val dataCallback = object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
-                        lastCachedData = snapshot.children.map { it.getValue(type)!! }
+                        lastCachedData =
+                            snapshot.children.map { it.getValue(type)!! }.toImmutableList()
                         trySend(element = DataResult.Success(lastCachedData))
                     }
 
@@ -65,7 +69,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
                     ref = null
                 }
             }
-        } ?: flow { emit(DataResult.Success(data = emptyList<T>())) }
+        } ?: flow { emit(DataResult.Success(data = persistentListOf<T>())) }
     }.shareIn(
         scope = appScope,
         started = SharingStarted.WhileSubscribed(5000),

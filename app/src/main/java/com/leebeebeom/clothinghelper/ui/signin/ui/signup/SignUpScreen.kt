@@ -11,10 +11,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.component.CenterDotProgressIndicator
-import com.leebeebeom.clothinghelper.ui.component.HeightSpacer
-import com.leebeebeom.clothinghelper.ui.component.MaxWidthButton
-import com.leebeebeom.clothinghelper.ui.component.StatefulMaxWidthTestFieldWithCancelIcon
+import com.leebeebeom.clothinghelper.ui.component.*
 import com.leebeebeom.clothinghelper.ui.main.component.ToastWrapper
 import com.leebeebeom.clothinghelper.ui.signin.component.GoogleSignInButton
 import com.leebeebeom.clothinghelper.ui.signin.component.Logo
@@ -38,9 +35,13 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
         )
 
         StatefulMaxWidthTestFieldWithCancelIcon(
+            label = R.string.nickname,
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text, imeAction = ImeAction.Next
-            ), onInputChange = state::onNameChange, blockBlank = false, label = R.string.nickname
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
+            ),
+            onInputChange = state::onNameChange,
+            state = rememberMaxWidthTestFieldState(blockBlank = false)
         )
 
         PasswordTextField(

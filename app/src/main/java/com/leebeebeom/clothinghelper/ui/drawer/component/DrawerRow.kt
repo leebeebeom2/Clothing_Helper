@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.drawer.components
+package com.leebeebeom.clothinghelper.ui.drawer.component
 
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.gestures.detectTapGestures

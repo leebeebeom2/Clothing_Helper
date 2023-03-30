@@ -48,7 +48,7 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
     override val allDataNames =
         allDataFlow.mapLatest {
             it.data.groupBy { element -> element.mainCategoryType }
-                .mapValues { mapElement -> mapElement.value.map { element -> element.name } }
+                .mapValues { mapElement -> mapElement.value.map { element -> element.name }.toImmutableList() }
                 .toImmutableMap()
         }
             .distinctUntilChanged()

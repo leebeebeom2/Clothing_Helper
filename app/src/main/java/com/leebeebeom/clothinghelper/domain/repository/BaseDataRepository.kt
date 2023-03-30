@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.SharedFlow
 
 interface BaseDataRepository<T : BaseModel> {
     val allDataFlow: SharedFlow<DataResult<T>>
-    val allDataSizeFlow: SharedFlow<Int>
     suspend fun add(data: T)
     suspend fun push(data: T)
 }

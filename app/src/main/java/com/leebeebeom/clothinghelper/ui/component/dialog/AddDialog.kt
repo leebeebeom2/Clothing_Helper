@@ -1,8 +1,7 @@
-package com.leebeebeom.clothinghelper.ui.main.dialogs
+package com.leebeebeom.clothinghelper.ui.component.dialog
 
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
-import com.leebeebeom.clothinghelper.ui.component.dialog.EditDialog
 import kotlinx.collections.immutable.ImmutableSet
 
 @Composable // skippable

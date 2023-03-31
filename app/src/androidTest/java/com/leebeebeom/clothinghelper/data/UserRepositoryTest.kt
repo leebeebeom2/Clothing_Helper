@@ -61,7 +61,7 @@ class UserRepositoryTest {
 
         userRepository = UserRepositoryImpl(
             appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
-            dispatcher = dispatcher
+            dispatcherIO = dispatcher
         )
         userFlow = userRepository.userFlow
     }
@@ -172,7 +172,7 @@ class RunWithSignInStartTest {
 
         userRepository = UserRepositoryImpl(
             appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
-            dispatcher = dispatcher
+            dispatcherIO = dispatcher
         )
         userFlow = userRepository.userFlow
     }
@@ -201,7 +201,7 @@ class RunWithSignOutStart {
         runBlocking { launch { Firebase.auth.signOut() } }
         userRepository = UserRepositoryImpl(
             appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
-            dispatcher = dispatcher
+            dispatcherIO = dispatcher
         )
         userFlow = userRepository.userFlow
     }

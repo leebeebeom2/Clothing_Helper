@@ -37,7 +37,7 @@ class BaseRepositoryChildTest {
 
     @Before
     fun init() {
-        userRepository = UserRepositoryImpl(appScope = scope, dispatcher = dispatcher)
+        userRepository = UserRepositoryImpl(appScope = scope, dispatcherIO = dispatcher)
         subCategoryPreferenceRepository = SubCategoryPreferencesRepositoryImpl(
             context = ApplicationProvider.getApplicationContext(),
             appScope = scope
@@ -45,7 +45,8 @@ class BaseRepositoryChildTest {
         subCategoryRepository = SubCategoryRepositoryImpl(
             subCategoryPreferencesRepository = subCategoryPreferenceRepository,
             appScope = scope,
-            dispatcher = dispatcher,
+            dispatcherIO = dispatcher,
+            dispatcherDefault = dispatcher,
             userRepository = userRepository
         )
         folderPreferenceRepository = FolderPreferencesRepositoryImpl(
@@ -55,12 +56,14 @@ class BaseRepositoryChildTest {
         folderRepository = FolderRepositoryImpl(
             folderPreferencesRepository = folderPreferenceRepository,
             appScope = scope,
-            dispatcher = dispatcher,
+            dispatcherIO = dispatcher,
+            dispatcherDefault = dispatcher,
             userRepository = userRepository
         )
         todoRepository = TodoRepositoryImpl(
             appScope = scope,
-            dispatcher = dispatcher,
+            dispatcherIO = dispatcher,
+            dispatcherDefault = dispatcher,
             userRepository = userRepository
         )
     }

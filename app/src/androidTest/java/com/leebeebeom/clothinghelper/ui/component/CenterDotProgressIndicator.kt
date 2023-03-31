@@ -1,6 +1,7 @@
 package com.leebeebeom.clothinghelper.ui.component
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -39,7 +40,8 @@ class CenterDotProgressIndicatorTest {
     )
     private val viewModel = SignInViewModel(
         googleSignInUseCase = GoogleSignInUseCase(userRepository),
-        signInUseCase = SignInUseCase(userRepository)
+        signInUseCase = SignInUseCase(userRepository),
+        savedStateHandle = SavedStateHandle()
     )
 
     @Before

@@ -2,7 +2,8 @@ package com.leebeebeom.clothinghelper.ui.main.dialogs
 
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
-import kotlinx.collections.immutable.ImmutableList
+import com.leebeebeom.clothinghelper.ui.component.dialog.EditDialog
+import kotlinx.collections.immutable.ImmutableSet
 
 @Composable // skippable
 fun AddDialog(
@@ -10,7 +11,7 @@ fun AddDialog(
     @StringRes placeHolder: Int,
     @StringRes title: Int,
     @StringRes existNameError: Int,
-    names: () -> ImmutableList<String>,
+    names: () -> ImmutableSet<String>,
     onPositiveButtonClick: (String) -> Unit,
     onDismiss: () -> Unit
 ) {

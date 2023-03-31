@@ -1,5 +1,6 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui.signup
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.SignUpUseCase
@@ -15,11 +16,20 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val SignUpLoadingKey = "sign up loading"
+private const val SignUpToastTextsKey = "sign up toast texts"
+
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     googleSignInUseCase: GoogleSignInUseCase,
-    private val signUpUseCase: SignUpUseCase
-) : GoogleSignInViewModel(googleSignInUseCase = googleSignInUseCase) {
+    private val signUpUseCase: SignUpUseCase,
+    savedStateHandle: SavedStateHandle
+) : GoogleSignInViewModel(
+    googleSignInUseCase = googleSignInUseCase,
+    savedToastTextsKey = SignUpToastTextsKey,
+    savedLoadingKey = SignUpLoadingKey,
+    savedStateHandle = savedStateHandle
+) {
 
     val uiState = combine(
         flow = isLoadingFlow, flow2 = toastTextsFlow
@@ -28,17 +38,18 @@ class SignUpViewModel @Inject constructor(
             isLoading = isLoading, toastTexts = toastTexts
         )
     }.distinctUntilChanged().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
+        scope = viewModelScope, started = SharingStarted.WhileSubscribed(5000),
         initialValue = SignUpUiState()
     )
 
     fun signUpWithEmailAndPassword(
         email: String, name: String, password: String, setEmailError: (Int) -> Unit
     ) {
-        viewModelScope.launch(firebaseAuthErrorHandler(setEmailError = setEmailError,
-            showToast = ::addToastTextAtLast,
-            loadingOff = { setLoading(false) })) {
+        viewModelScope.launch(
+            firebaseAuthErrorHandler(setEmailError = setEmailError,
+                showToast = ::addToastTextAtLast,
+                loadingOff = { setLoading(false) })
+        ) {
             setLoading(true)
             signUpUseCase.signUp(
                 email = email, password = password, name = name.trim()

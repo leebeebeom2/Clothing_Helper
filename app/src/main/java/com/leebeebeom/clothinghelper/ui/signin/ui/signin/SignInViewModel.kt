@@ -1,5 +1,6 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui.signin
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.SignInUseCase
@@ -17,11 +18,20 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val SignInLoadingKey = "sign in loading"
+private const val SignInToastTextsKey = "sign in toast texts"
+
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     googleSignInUseCase: GoogleSignInUseCase,
-    private val signInUseCase: SignInUseCase
-) : GoogleSignInViewModel(googleSignInUseCase = googleSignInUseCase) {
+    private val signInUseCase: SignInUseCase,
+    savedStateHandle: SavedStateHandle
+) : GoogleSignInViewModel(
+    googleSignInUseCase = googleSignInUseCase,
+    savedToastTextsKey = SignInToastTextsKey,
+    savedLoadingKey = SignInLoadingKey,
+    savedStateHandle = savedStateHandle
+) {
 
     val uiState = combine(
         flow = isLoadingFlow,

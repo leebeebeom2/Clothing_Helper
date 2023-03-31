@@ -1,12 +1,12 @@
-package com.leebeebeom.clothinghelper.ui.main.dialogs
+package com.leebeebeom.clothinghelper.ui.component.dialog
 
 import androidx.compose.runtime.Composable
 import com.leebeebeom.clothinghelper.R
-import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableSet
 
 @Composable // skippable
 fun AddSubCategoryDialog(
-    subCategoryNames: () -> ImmutableList<String>,
+    subCategoryNames: () -> ImmutableSet<String>,
     onPositiveButtonClick: (String) -> Unit,
     show: () -> Boolean,
     onDismiss: () -> Unit

@@ -1,6 +1,7 @@
 package com.leebeebeom.clothinghelper.data.repository
 
 import com.leebeebeom.clothinghelper.di.AppScope
+import com.leebeebeom.clothinghelper.di.DispatcherDefault
 import com.leebeebeom.clothinghelper.di.DispatcherIO
 import com.leebeebeom.clothinghelper.domain.model.Todo
 import com.leebeebeom.clothinghelper.domain.repository.DataResult
@@ -19,6 +20,7 @@ import javax.inject.Singleton
 class TodoRepositoryImpl @Inject constructor(
     @AppScope appScope: CoroutineScope,
     @DispatcherIO dispatcher: CoroutineDispatcher,
+    @DispatcherDefault dispatcherDefault: CoroutineDispatcher,
     userRepository: UserRepository,
 ) : BaseDataRepositoryImpl<Todo>(
     refPath = DataBasePath.Todo,
@@ -34,7 +36,7 @@ class TodoRepositoryImpl @Inject constructor(
                     .toImmutableList())
                 is DataResult.Fail -> dataResult
             }
-        }.shareIn(
+        }.flowOn(dispatcherDefault).shareIn(
             scope = appScope,
             started = SharingStarted.WhileSubscribed(5000),
             replay = 1

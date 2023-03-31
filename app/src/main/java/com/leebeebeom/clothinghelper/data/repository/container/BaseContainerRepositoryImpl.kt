@@ -12,6 +12,7 @@ import com.leebeebeom.clothinghelper.domain.repository.DataResult
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableMap
+import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -52,7 +53,7 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
         allDataFlow.mapLatest {
             it.data.groupBy { element -> element.mainCategoryType }
                 .mapValues { mapElement ->
-                    mapElement.value.map { element -> element.name }.toImmutableList()
+                    mapElement.value.map { element -> element.name }.toImmutableSet()
                 }
                 .toImmutableMap()
         }.flowOn(dispatcherDefault)

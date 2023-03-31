@@ -70,7 +70,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
                 }
             }
         } ?: flow { emit(DataResult.Success(data = persistentListOf<T>())) }
-    }.shareIn(
+    }.distinctUntilChanged().shareIn(
         scope = appScope,
         started = SharingStarted.WhileSubscribed(5000),
         replay = 1

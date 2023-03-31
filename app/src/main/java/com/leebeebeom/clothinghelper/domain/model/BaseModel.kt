@@ -1,6 +1,6 @@
 package com.leebeebeom.clothinghelper.domain.model
 
-import com.leebeebeom.clothinghelper.ui.drawer.contents.MainCategoryType
+import com.leebeebeom.clothinghelper.ui.drawer.content.MainCategoryType
 
 abstract class BaseModel {
     abstract val key: String

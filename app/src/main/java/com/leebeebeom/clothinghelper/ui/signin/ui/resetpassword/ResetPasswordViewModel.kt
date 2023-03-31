@@ -1,5 +1,6 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui.resetpassword
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.usecase.user.ResetPasswordUseCase
@@ -15,17 +16,24 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val ResetPasswordLoadingKey = "reset password loading"
+private const val ResetPasswordToastTextsKey = "reset password toast texts"
+
 @HiltViewModel
-class ResetPasswordViewModel @Inject constructor(private val resetPasswordUseCase: ResetPasswordUseCase) :
-    LoadingViewModel(false) {
+class ResetPasswordViewModel @Inject constructor(
+    private val resetPasswordUseCase: ResetPasswordUseCase, savedStateHandle: SavedStateHandle
+) : LoadingViewModel(
+    initialLoading = false,
+    savedToastTextsKey = ResetPasswordToastTextsKey,
+    savedLoadingKey = ResetPasswordLoadingKey,
+    savedStateHandle = savedStateHandle
+) {
 
     val uiState = combine(
-        flow = isLoadingFlow,
-        flow2 = toastTextsFlow
+        flow = isLoadingFlow, flow2 = toastTextsFlow
     ) { isLoading, toastTexts ->
         ResetPasswordUiState(
-            isLoading = isLoading,
-            toastTexts = toastTexts
+            isLoading = isLoading, toastTexts = toastTexts
         )
     }.distinctUntilChanged().stateIn(
         scope = viewModelScope,

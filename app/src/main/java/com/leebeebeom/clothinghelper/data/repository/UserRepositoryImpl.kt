@@ -28,7 +28,7 @@ import javax.inject.Singleton
 @Singleton
 class UserRepositoryImpl @Inject constructor(
     @AppScope private val appScope: CoroutineScope,
-    @DispatcherIO private val dispatcher: CoroutineDispatcher,
+    @DispatcherIO private val dispatcherIO: CoroutineDispatcher,
 ) : UserRepository {
     private val auth = FirebaseAuth.getInstance()
     private var userCallback: UserCallback? = null
@@ -98,7 +98,7 @@ class UserRepositoryImpl @Inject constructor(
     /**
      * 호출 시 로딩 On, 예외 발생 시 로딩 Off
      */
-    private suspend fun withContext(task: suspend () -> Unit) = withContext(dispatcher) { task() }
+    private suspend fun withContext(task: suspend () -> Unit) = withContext(dispatcherIO) { task() }
 
     private fun FirebaseUser?.toUserModel() =
         this?.let { User(email = "$email", name = "$displayName", uid = uid) }

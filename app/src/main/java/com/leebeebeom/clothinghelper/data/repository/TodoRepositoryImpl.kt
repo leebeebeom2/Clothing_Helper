@@ -19,14 +19,14 @@ import javax.inject.Singleton
 @Singleton
 class TodoRepositoryImpl @Inject constructor(
     @AppScope appScope: CoroutineScope,
-    @DispatcherIO dispatcher: CoroutineDispatcher,
+    @DispatcherIO dispatcherIO: CoroutineDispatcher,
     @DispatcherDefault dispatcherDefault: CoroutineDispatcher,
     userRepository: UserRepository,
 ) : BaseDataRepositoryImpl<Todo>(
     refPath = DataBasePath.Todo,
     appScope = appScope,
     type = Todo::class.java,
-    dispatcher = dispatcher,
+    dispatcherIO = dispatcherIO,
     userRepository = userRepository
 ), TodoRepository {
     override val allDataFlow =

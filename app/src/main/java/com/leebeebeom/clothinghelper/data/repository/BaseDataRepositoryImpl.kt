@@ -25,7 +25,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     private var refPath: DataBasePath,
     protected val appScope: CoroutineScope,
     protected val type: Class<T>,
-    private val dispatcher: CoroutineDispatcher,
+    private val dispatcherIO: CoroutineDispatcher,
     userRepository: UserRepository,
 ) : BaseDataRepository<T> {
     private val dbRoot = getDbRoot()
@@ -84,7 +84,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     }
 
     override suspend fun push(data: T) {
-        withContext(dispatcher) { ref!!.child(data.key).setValue(data) }
+        withContext(dispatcherIO) { ref!!.child(data.key).setValue(data) }
     }
 
     protected fun getKey() = ref!!.push().key!!

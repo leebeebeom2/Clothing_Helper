@@ -24,33 +24,39 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
     refPath: DataBasePath,
     appScope: CoroutineScope,
     type: Class<T>,
-    dispatcher: CoroutineDispatcher,
+    dispatcherIO: CoroutineDispatcher,
+    dispatcherDefault: CoroutineDispatcher,
     userRepository: UserRepository,
 ) : BaseContainerRepository<T>, BaseDataRepositoryImpl<T>(
     refPath = refPath,
     appScope = appScope,
     type = type,
-    dispatcher = dispatcher,
+    dispatcherIO = dispatcherIO,
     userRepository = userRepository
 ) {
     final override val allDataFlow =
-        super.allDataFlow.combine(flow = sortFlow, transform = ::getSortedData).shareIn(
-            scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
-        )
+        super.allDataFlow.combine(flow = sortFlow, transform = ::getSortedData)
+            .flowOn(dispatcherDefault)
+            .distinctUntilChanged()
+            .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val allDataSizeFlow = allDataFlow.mapLatest {
         it.data.groupingBy { element -> element.mainCategoryType }.eachCount().toImmutableMap()
-    }.distinctUntilChanged()
+    }.flowOn(dispatcherDefault)
+        .distinctUntilChanged()
         .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val allDataNames =
         allDataFlow.mapLatest {
             it.data.groupBy { element -> element.mainCategoryType }
-                .mapValues { mapElement -> mapElement.value.map { element -> element.name }.toImmutableList() }
+                .mapValues { mapElement ->
+                    mapElement.value.map { element -> element.name }.toImmutableList()
+                }
                 .toImmutableMap()
-        }.distinctUntilChanged()
+        }.flowOn(dispatcherDefault)
+            .distinctUntilChanged()
             .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
     private fun getSortedData(

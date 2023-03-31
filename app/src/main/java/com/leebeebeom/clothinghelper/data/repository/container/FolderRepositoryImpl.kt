@@ -2,6 +2,7 @@ package com.leebeebeom.clothinghelper.data.repository.container
 
 import com.leebeebeom.clothinghelper.data.repository.DataBasePath
 import com.leebeebeom.clothinghelper.di.AppScope
+import com.leebeebeom.clothinghelper.di.DispatcherDefault
 import com.leebeebeom.clothinghelper.di.DispatcherIO
 import com.leebeebeom.clothinghelper.domain.model.Folder
 import com.leebeebeom.clothinghelper.domain.repository.FolderRepository
@@ -17,13 +18,15 @@ import javax.inject.Singleton
 class FolderRepositoryImpl @Inject constructor(
     @FolderPreferencesRepository folderPreferencesRepository: SortPreferenceRepository,
     @AppScope appScope: CoroutineScope,
-    @DispatcherIO dispatcher: CoroutineDispatcher,
+    @DispatcherIO dispatcherIO: CoroutineDispatcher,
+    @DispatcherDefault dispatcherDefault: CoroutineDispatcher,
     userRepository: UserRepository,
 ) : BaseContainerRepositoryImpl<Folder>(
     sortFlow = folderPreferencesRepository.sortFlow,
     refPath = DataBasePath.Folder,
     appScope = appScope,
     type = Folder::class.java,
-    dispatcher = dispatcher,
+    dispatcherIO = dispatcherIO,
+    dispatcherDefault = dispatcherDefault,
     userRepository = userRepository,
 ), FolderRepository

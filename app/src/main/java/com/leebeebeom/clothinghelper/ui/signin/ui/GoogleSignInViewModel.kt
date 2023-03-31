@@ -2,6 +2,7 @@ package com.leebeebeom.clothinghelper.ui.signin.ui
 
 import android.app.Activity
 import androidx.activity.result.ActivityResult
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
@@ -17,8 +18,17 @@ import kotlinx.coroutines.launch
 /**
  * Google 로그인 로직
  */
-abstract class GoogleSignInViewModel(private val googleSignInUseCase: GoogleSignInUseCase) :
-    LoadingViewModel(initialLoading = false) {
+abstract class GoogleSignInViewModel(
+    private val googleSignInUseCase: GoogleSignInUseCase,
+    savedToastTextsKey: String,
+    savedLoadingKey: String,
+    savedStateHandle: SavedStateHandle,
+) : LoadingViewModel(
+    initialLoading = false,
+    savedToastTextsKey = savedToastTextsKey,
+    savedLoadingKey = savedLoadingKey,
+    savedStateHandle = savedStateHandle
+) {
 
     fun signInWithGoogleEmail(
         activityResult: ActivityResult, googleSignInButtonEnable: () -> Unit

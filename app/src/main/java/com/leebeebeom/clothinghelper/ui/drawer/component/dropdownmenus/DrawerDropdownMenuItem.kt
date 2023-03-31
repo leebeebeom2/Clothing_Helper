@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.drawer.content.dropdownmenus
+package com.leebeebeom.clothinghelper.ui.drawer.component.dropdownmenus
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable

@@ -1,9 +1,9 @@
-package com.leebeebeom.clothinghelper.ui.main.dialogs.composables
+package com.leebeebeom.clothinghelper.ui.component.dialog.component
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -18,17 +18,22 @@ import com.leebeebeom.clothinghelper.ui.component.StatefulMaxWidthTestFieldWithC
 
 @Composable
 fun TextFieldDialog(
+    state: TextFieldDialogState,
     @StringRes label: Int,
     @StringRes placeHolder: Int?,
     @StringRes title: Int,
-    initialText: String,
     error: () -> Int?,
-    positiveButtonEnabled: () -> Boolean,
     onPositiveButtonClick: () -> Unit,
     onDismiss: () -> Unit,
-    onInputChange: (String) -> Unit
+    onInputChange: (String) -> Unit,
+    dialogMaxWidthTextFieldState: DialogMaxWidthTextFieldState = rememberDialogMaxWidthTextFieldState(
+        initialText = state.initialText
+    )
 ) {
     DialogRoot(onDismiss = onDismiss) {
+        val localError by remember { derivedStateOf(error) }
+        val positiveButtonEnabled by remember { derivedStateOf { state.input.isNotBlank() && localError == null } }
+
         SingleLineText(
             text = title,
             style = MaterialTheme.typography.h6,
@@ -36,8 +41,7 @@ fun TextFieldDialog(
         )
 
         StatefulMaxWidthTestFieldWithCancelIcon(
-            state = rememberDialogMaxWidthTextFieldState(initialText = initialText),
-            initialText = initialText,
+            state = dialogMaxWidthTextFieldState,
             label = label,
             placeholder = placeHolder,
             error = error,
@@ -48,7 +52,7 @@ fun TextFieldDialog(
         HeightSpacer(dp = 12)
 
         DialogTextButtons(
-            positiveButtonEnabled = positiveButtonEnabled,
+            positiveButtonEnabled = { positiveButtonEnabled },
             onPositiveButtonClick = onPositiveButtonClick,
             onDismiss = onDismiss
         )
@@ -80,3 +84,29 @@ class DialogMaxWidthTextFieldState(initialText: String) : MaxWidthTextFieldState
             restore = { DialogMaxWidthTextFieldState(it[0]) })
     }
 }
+
+@Stable
+interface TextFieldDialogState {
+    val initialText: String
+    val input: String
+}
+
+class MutableTextFieldDialogState(override val initialText: String = "") : TextFieldDialogState {
+    override var input by mutableStateOf(initialText)
+        private set
+
+    fun onInputChange(newInput: String) {
+        input = newInput
+    }
+
+    companion object {
+        val Saver =
+            listSaver(save = { listOf(it.input) }, restore = { MutableTextFieldDialogState(it[0]) })
+    }
+}
+
+@Composable
+fun rememberTextFieldDialogState(initialText: String) =
+    rememberSaveable(saver = MutableTextFieldDialogState.Saver) {
+        MutableTextFieldDialogState(initialText = initialText)
+    }

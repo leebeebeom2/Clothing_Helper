@@ -1,0 +1,156 @@
+package com.leebeebeom.clothinghelper.ui.drawer.content
+
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ContentAlpha
+import androidx.compose.material.LocalContentColor
+import androidx.compose.material.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.dp
+import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.domain.model.SubCategory
+import com.leebeebeom.clothinghelper.ui.component.SingleLineText
+import com.leebeebeom.clothinghelper.ui.drawer.DrawerExpandableState
+import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerExpandIcon
+import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerItemsWrapperWithExpandAnimation
+import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerRow
+import com.leebeebeom.clothinghelper.ui.drawer.component.dropdownmenus.DrawerMainCategoryDropDownMenu
+import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerExpandableStateState
+import com.leebeebeom.clothinghelper.ui.util.AddSubCategory
+import kotlinx.collections.immutable.*
+
+fun LazyListScope.drawerMainCategories(
+    mainCategories: ImmutableList<MainCategory>,
+    onMainCategoryClick: (MainCategoryType) -> Unit,
+    allSubCategories: () -> ImmutableList<SubCategory>,
+    subCategoryNamesMap: () -> ImmutableMap<MainCategoryType, ImmutableSet<String>>,
+    subCategorySizeMap: () -> ImmutableMap<MainCategoryType, Int>,
+    addSubCategory: AddSubCategory,
+    drawerSubCategories: @Composable (subCategories: () -> ImmutableList<SubCategory>, subCategoryNames: () -> ImmutableSet<String>) -> Unit
+) {
+    items(items = mainCategories, key = { it.name }) { mainCategory ->
+        DrawerMainCategory(
+            mainCategory = mainCategory,
+            onMainCategoryClick = onMainCategoryClick,
+            subCategories = allSubCategories,
+            subCategoryNames = subCategoryNamesMap,
+            subCategorySize = subCategorySizeMap,
+            addSubCategory = addSubCategory,
+            drawerSubCategories = drawerSubCategories
+        )
+    }
+}
+
+@Composable
+private fun DrawerMainCategory(
+    mainCategory: MainCategory,
+    onMainCategoryClick: (MainCategoryType) -> Unit,
+    subCategories: () -> ImmutableList<SubCategory>,
+    subCategoryNames: () -> ImmutableMap<MainCategoryType, ImmutableSet<String>>,
+    subCategorySize: () -> ImmutableMap<MainCategoryType, Int>,
+    addSubCategory: AddSubCategory,
+    density: Density = LocalDensity.current,
+    state: DrawerExpandableState = rememberDrawerExpandableStateState(),
+    drawerSubCategories: @Composable (subCategories: () -> ImmutableList<SubCategory>, subCategoryNames: () -> ImmutableSet<String>) -> Unit
+) {
+    val localSubCategorySize by remember {
+        derivedStateOf { subCategorySize().getOrDefault(key = mainCategory.type, defaultValue = 0) }
+    }
+    val localSubCategoryNames by remember {
+        derivedStateOf {
+            subCategoryNames().getOrDefault(
+                key = mainCategory.type,
+                defaultValue = persistentSetOf()
+            )
+        }
+    }
+    val longClickOffset by remember {
+        derivedStateOf {
+            with(density) {
+                DpOffset(
+                    x = state.longClickOffsetX.toDp(),
+                    y = state.longClickOffsetY.toDp() - state.itemHeight.toDp()
+                )
+            }
+        }
+    }
+
+    DrawerRow(
+        modifier = Modifier.heightIn(44.dp),
+        onClick = { onMainCategoryClick(mainCategory.type) },
+        onLongClick = state::onLongClick,
+        onSizeChange = state::onSizeChanged
+    ) {
+        Row(modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+            SingleLineText(
+                modifier = Modifier.padding(start = 8.dp),
+                text = mainCategory.name,
+                style = MaterialTheme.typography.h6
+            )
+            MainCategoryCount(subCategoriesSize = { localSubCategorySize })
+        }
+        DrawerExpandIcon(expanded = { state.expanded },
+            toggleExpand = state::toggleExpand,
+            dataSize = { localSubCategorySize })
+    }
+
+    val localSubCategories by remember {
+        derivedStateOf {
+            subCategories().filter { it.mainCategoryType == mainCategory.type }
+                .toImmutableList()
+        }
+    }
+
+    DrawerItemsWrapperWithExpandAnimation(expand = { state.expanded }) {
+        drawerSubCategories(
+            subCategories = { localSubCategories },
+            subCategoryNames = { localSubCategoryNames }
+        )
+    }
+
+    DrawerMainCategoryDropDownMenu(show = { state.showDropDownMenu },
+        offset = { longClickOffset },
+        onDismiss = state::onDropdownMenuDismiss,
+        subCategoryNames = { localSubCategoryNames },
+        onAddSubCategoryPositiveClick = { name ->
+            addSubCategory(name, mainCategory.type)
+            state.expand()
+        })
+}
+
+@Composable // skippable
+private fun MainCategoryCount(subCategoriesSize: () -> Int) {
+    SingleLineText(
+        modifier = Modifier.padding(start = 4.dp),
+        text = "(${subCategoriesSize()})",
+        style = MaterialTheme.typography.caption.copy(
+            LocalContentColor.current.copy(ContentAlpha.disabled)
+        )
+    )
+}
+
+data class MainCategory(
+    val name: Int, val type: MainCategoryType
+)
+
+enum class MainCategoryType {
+    Top, Bottom, Outer, Etc
+}
+
+fun getMainCategories() = persistentListOf(
+    MainCategory(R.string.top, MainCategoryType.Top),
+    MainCategory(R.string.bottom, MainCategoryType.Bottom),
+    MainCategory(R.string.outer, MainCategoryType.Outer),
+    MainCategory(R.string.etc, MainCategoryType.Etc)
+)

@@ -81,6 +81,35 @@ class DrawerMainCategoryTest {
     }
 
     @Test
+    fun restoreTest() {
+        val expandIcons = rule.onAllNodesWithTag(DrawerExpandIconTag)
+
+        expandIcons[0].performClick()
+
+        rule.onNodeWithText("subCategory 1").assertExists()
+
+        rule.onNodeWithStringRes(R.string.bottom).performTouchInput { longClick() }
+        rule.onNodeWithStringRes(R.string.add_category).performClick()
+
+        rule.onNodeWithStringRes(R.string.category).assertExists()
+
+        restorationTester.emulateSavedInstanceStateRestore()
+
+        rule.onNodeWithStringRes(R.string.category).assertExists()
+
+        rule.onNodeWithStringRes(R.string.cancel).performClick()
+        rule.onNodeWithText("subCategory 1").assertExists()
+
+        expandIcons[0].performClick()
+
+        rule.onNodeWithText("subCategory 1").assertDoesNotExist()
+
+        restorationTester.emulateSavedInstanceStateRestore()
+
+        rule.onNodeWithText("subCategory 1").assertDoesNotExist()
+    }
+
+    @Test
     fun drawerMainCategoryCountTest() {
         rule.onNodeWithText("($TopSubCategorySize)").assertExists()
         rule.onNodeWithText("($BottomSubCategorySize)").assertExists()

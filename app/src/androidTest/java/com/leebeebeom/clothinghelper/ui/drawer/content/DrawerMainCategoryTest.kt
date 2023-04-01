@@ -264,10 +264,10 @@ class DrawerMainCategoryTest {
             subCategories.groupingBy { element -> element.mainCategoryType }.eachCount()
                 .toImmutableMap()
         }
+}
 
-    private fun <T> ImmutableList<T>.getNewList(task: (MutableList<T>) -> Unit): ImmutableList<T> {
-        val mutable = this.toMutableList()
-        task(mutable)
-        return mutable.toImmutableList()
-    }
+fun <T> ImmutableList<T>.getNewList(task: (MutableList<T>) -> Unit): ImmutableList<T> {
+    val mutable = this.toMutableList()
+    task(mutable)
+    return mutable.toImmutableList()
 }

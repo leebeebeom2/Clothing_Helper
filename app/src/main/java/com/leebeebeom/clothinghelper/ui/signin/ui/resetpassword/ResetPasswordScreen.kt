@@ -37,7 +37,7 @@ fun ResetPasswordScreen(
     SignInBaseColumn(modifier = Modifier.testTag(ResetPasswordScreenTag)) {
         Text(
             text = stringResource(id = R.string.reset_password_text),
-            style = MaterialTheme.typography.body2,
+            style = MaterialTheme.typography.body1,
             modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
         )
 

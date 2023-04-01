@@ -29,7 +29,6 @@ abstract class GoogleSignInViewModel(
     savedLoadingKey = savedLoadingKey,
     savedStateHandle = savedStateHandle
 ) {
-
     fun signInWithGoogleEmail(
         activityResult: ActivityResult, googleSignInButtonEnable: () -> Unit
     ) {

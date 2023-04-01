@@ -11,12 +11,12 @@ import com.leebeebeom.clothinghelper.ui.component.SingleLineText
 @Composable // skippable
 fun DrawerCount(
     folderSize: () -> Int,
-    chartSize: () -> Int
+    itemSize: () -> Int
 ) {
     SingleLineText(
         text = stringResource(
-            id = R.string.folders_charts,
-            arrayOf(folderSize(), chartSize())
+            id = R.string.folders_items,
+            folderSize(), itemSize()
         ),
         style = MaterialTheme.typography.caption.copy(
             LocalContentColor.current.copy(ContentAlpha.disabled)

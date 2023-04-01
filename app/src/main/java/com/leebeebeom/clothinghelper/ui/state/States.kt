@@ -6,6 +6,6 @@ interface ToastState {
     val toastTexts: ImmutableList<Int>
 }
 
-interface LoadingState2 {
+interface LoadingState {
     val isLoading: Boolean
 }

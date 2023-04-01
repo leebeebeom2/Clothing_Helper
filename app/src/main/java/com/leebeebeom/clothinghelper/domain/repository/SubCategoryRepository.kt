@@ -7,6 +7,6 @@ import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.coroutines.flow.SharedFlow
 
 interface SubCategoryRepository : BaseContainerRepository<SubCategory> {
-    val allDataNamesMapFlow: SharedFlow<ImmutableMap<MainCategoryType, ImmutableSet<String>>>
-    val allDataSizeMapFlow: SharedFlow<ImmutableMap<MainCategoryType, Int>>
+    val subCategoryNamesMapFlow: SharedFlow<ImmutableMap<MainCategoryType, ImmutableSet<String>>>
+    val subCategorySizeMapFlow: SharedFlow<ImmutableMap<MainCategoryType, Int>>
 }

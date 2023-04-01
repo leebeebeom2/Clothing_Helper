@@ -11,11 +11,8 @@ import com.leebeebeom.clothinghelper.domain.repository.BaseContainerRepository
 import com.leebeebeom.clothinghelper.domain.repository.DataResult
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.collections.immutable.toImmutableMap
-import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 
 
@@ -38,25 +35,6 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
     final override val allDataFlow =
         super.allDataFlow.combine(flow = sortFlow, transform = ::getSortedData)
             .flowOn(dispatcherDefault)
-            .distinctUntilChanged()
-            .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override val allDataSizeFlow = allDataFlow.mapLatest {
-        it.data.groupingBy { element -> element.mainCategoryType }.eachCount().toImmutableMap()
-    }.flowOn(dispatcherDefault)
-        .distinctUntilChanged()
-        .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override val allDataNames =
-        allDataFlow.mapLatest {
-            it.data.groupBy { element -> element.mainCategoryType }
-                .mapValues { mapElement ->
-                    mapElement.value.map { element -> element.name }.toImmutableSet()
-                }
-                .toImmutableMap()
-        }.flowOn(dispatcherDefault)
             .distinctUntilChanged()
             .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 

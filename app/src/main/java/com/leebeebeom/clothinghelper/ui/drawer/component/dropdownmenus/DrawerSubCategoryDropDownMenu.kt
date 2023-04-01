@@ -3,6 +3,7 @@ package com.leebeebeom.clothinghelper.ui.drawer.component.dropdownmenus
 import androidx.compose.material.DropdownMenu
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.unit.DpOffset
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.model.SubCategory
 import com.leebeebeom.clothinghelper.ui.component.dialog.AddFolderDialog
@@ -18,6 +19,7 @@ fun DrawerSubCategoryDropDownMenu(
     folderNames: () -> ImmutableSet<String>,
     show: () -> Boolean,
     onDismiss: () -> Unit,
+    offset: () -> DpOffset,
     onEditSubCategoryPositiveClick: EditSubCategory,
     onAddFolderPositiveClick: AddFolder,
 ) {
@@ -25,7 +27,11 @@ fun DrawerSubCategoryDropDownMenu(
     var showSubCategoryEditDialog by rememberSaveable { mutableStateOf(false) }
     var showAddFolderDialog by rememberSaveable { mutableStateOf(false) }
 
-    DropdownMenu(expanded = show(), onDismissRequest = onDismiss) {
+    DropdownMenu(
+        expanded = show(),
+        onDismissRequest = onDismiss,
+        offset = offset()
+    ) {
         DrawerDropdownMenuItem(
             text = R.string.edit_category,
             onClick = { showSubCategoryEditDialog = true },

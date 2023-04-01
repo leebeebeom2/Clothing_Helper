@@ -46,7 +46,9 @@ private fun EssentialMenu(
         WidthSpacer(dp = 8)
         SingleLineText(
             text = stringResource(id = essentialMenu.name),
-            style = MaterialTheme.typography.subtitle1.copy(letterSpacing = 0.75.sp)
+            style = MaterialTheme.typography.subtitle1.copy(
+                fontSize = 17.sp, letterSpacing = 0.75.sp
+            )
         )
     }
 }

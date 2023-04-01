@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -19,20 +20,25 @@ fun DrawerDropdownMenuItem(
     onClick: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    SingleLineText(
-        text = text,
-        modifier = Modifier
-            .clickable(
-                onClick = {
-                    onClick()
-                    onDismiss()
-                }
-            )
-            .padding(vertical = 10.dp)
-            .padding(start = 12.dp, end = 24.dp)
-            .widthIn(52.dp)
-            .fillMaxSize(),
-        style = MaterialTheme.typography.subtitle2.copy(fontSize = 15.sp),
-        textAlign = TextAlign.Start
-    )
+    Surface(
+        modifier = Modifier.padding(horizontal = 4.dp),
+        shape = MaterialTheme.shapes.small,
+    ) {
+        SingleLineText(
+            text = text,
+            modifier = Modifier
+                .clickable(
+                    onClick = {
+                        onClick()
+                        onDismiss()
+                    }
+                )
+                .padding(vertical = 8.dp)
+                .padding(start = 8.dp, end = 24.dp)
+                .widthIn(52.dp)
+                .fillMaxSize(),
+            style = MaterialTheme.typography.subtitle2.copy(fontSize = 16.sp),
+            textAlign = TextAlign.Start
+        )
+    }
 }

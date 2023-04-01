@@ -1,5 +1,6 @@
 package com.leebeebeom.clothinghelper.ui.drawer.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.component.CustomIconButton
 import com.leebeebeom.clothinghelper.ui.component.SingleLineText
+import com.leebeebeom.clothinghelper.ui.theme.DarkGray
 
 const val SettingIconTag = "setting icon"
 
@@ -25,6 +27,7 @@ fun DrawerHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .background(color = DarkGray)
             .padding(start = 12.dp, end = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

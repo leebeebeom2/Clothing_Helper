@@ -14,7 +14,7 @@ fun AddDialog(
     onPositiveButtonClick: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
-    EditDialog(
+    EditNameDialog(
         label = label,
         placeHolder = placeHolder,
         title = title,

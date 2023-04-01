@@ -10,7 +10,7 @@ import com.leebeebeom.clothinghelper.ui.component.dialog.component.rememberTextF
 import kotlinx.collections.immutable.ImmutableSet
 
 @Composable // skippable
-fun EditDialog(
+fun EditNameDialog(
     @StringRes label: Int,
     @StringRes placeHolder: Int?,
     @StringRes title: Int,

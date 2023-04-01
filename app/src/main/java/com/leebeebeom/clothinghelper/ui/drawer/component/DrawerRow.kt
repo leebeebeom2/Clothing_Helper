@@ -31,7 +31,7 @@ fun DrawerRow(
     onLongClick: (Offset) -> Unit = {},
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     haptic: HapticFeedback = LocalHapticFeedback.current,
-    onSizeChange: (IntSize) -> Unit,
+    onSizeChange: (IntSize) -> Unit = {},
     content: @Composable RowScope.() -> Unit
 ) {
     Row(

@@ -19,7 +19,9 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 
 @Composable // skippable
@@ -29,10 +31,12 @@ fun DrawerRow(
     onLongClick: (Offset) -> Unit = {},
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     haptic: HapticFeedback = LocalHapticFeedback.current,
+    onSizeChange: (IntSize) -> Unit,
     content: @Composable RowScope.() -> Unit
 ) {
     Row(
         modifier = modifier
+            .onSizeChanged(onSizeChange)
             .fillMaxWidth()
             .padding(horizontal = 8.dp)
             .clip(MaterialTheme.shapes.small)

@@ -24,7 +24,9 @@ import kotlinx.collections.immutable.persistentListOf
 fun LazyListScope.drawerEssentialMenus(
     onEssentialMenuClick: (EssentialMenuType) -> Unit, essentialMenus: ImmutableList<EssentialMenu>
 ) {
-    this.items(items = essentialMenus, key = { it.name }) { essentialMenu ->
+    this.items(items = essentialMenus,
+        key = { it.name },
+        contentType = { it.type }) { essentialMenu ->
         EssentialMenu(
             essentialMenu = essentialMenu,
             onClick = { essentialMenuType -> onEssentialMenuClick(essentialMenuType) },
@@ -37,11 +39,9 @@ fun LazyListScope.drawerEssentialMenus(
 private fun EssentialMenu(
     essentialMenu: EssentialMenu, onClick: (EssentialMenuType) -> Unit
 ) {
-    DrawerRow(modifier = Modifier.heightIn(40.dp),
-        onClick = { onClick(essentialMenu.type) }) {
+    DrawerRow(modifier = Modifier.heightIn(40.dp), onClick = { onClick(essentialMenu.type) }) {
         IconWrapper(
-            modifier = Modifier.size(22.dp),
-            drawable = essentialMenu.drawable
+            modifier = Modifier.size(22.dp), drawable = essentialMenu.drawable
         )
         WidthSpacer(dp = 8)
         SingleLineText(

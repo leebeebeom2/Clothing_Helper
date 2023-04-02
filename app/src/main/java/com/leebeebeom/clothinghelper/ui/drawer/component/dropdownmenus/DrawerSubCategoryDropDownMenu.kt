@@ -1,8 +1,11 @@
 package com.leebeebeom.clothinghelper.ui.drawer.component.dropdownmenus
 
 import androidx.compose.material.DropdownMenu
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.DpOffset
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.model.SubCategory
@@ -23,7 +26,6 @@ fun DrawerSubCategoryDropDownMenu(
     onEditSubCategoryPositiveClick: EditSubCategory,
     onAddFolderPositiveClick: AddFolder,
 ) {
-    val localSelectedSubCategory by remember { derivedStateOf(selectedSubCategory) }
     var showSubCategoryEditDialog by rememberSaveable { mutableStateOf(false) }
     var showAddFolderDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -56,6 +58,8 @@ fun DrawerSubCategoryDropDownMenu(
     AddFolderDialog(
         folderNames = folderNames,
         onPositiveButtonClick = {
+            val localSelectedSubCategory = selectedSubCategory()
+
             onAddFolderPositiveClick(
                 localSelectedSubCategory.key,
                 localSelectedSubCategory.key,

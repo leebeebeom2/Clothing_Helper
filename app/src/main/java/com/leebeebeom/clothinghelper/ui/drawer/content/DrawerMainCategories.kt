@@ -39,7 +39,7 @@ fun LazyListScope.drawerMainCategories(
     addSubCategory: AddSubCategory,
     drawerSubCategories: @Composable (filteredSubCategories: () -> ImmutableList<SubCategory>, subCategoryNames: () -> ImmutableSet<String>) -> Unit
 ) {
-    items(items = mainCategories, key = { it.type }) { mainCategory ->
+    items(items = mainCategories, key = { it.name }, contentType = { it.type }) { mainCategory ->
         DrawerMainCategory(
             mainCategory = mainCategory,
             onMainCategoryClick = onMainCategoryClick,

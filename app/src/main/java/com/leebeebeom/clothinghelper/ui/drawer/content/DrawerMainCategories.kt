@@ -16,16 +16,18 @@ import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.model.SubCategory
 import com.leebeebeom.clothinghelper.ui.component.SingleLineText
-import com.leebeebeom.clothinghelper.ui.drawer.DrawerExpandableState
+import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemState
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerExpandIcon
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerItemsWrapperWithExpandAnimation
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerRow
 import com.leebeebeom.clothinghelper.ui.drawer.component.dropdownmenus.DrawerMainCategoryDropDownMenu
-import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerExpandableStateState
+import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemState
 import com.leebeebeom.clothinghelper.ui.util.AddSubCategory
 import kotlinx.collections.immutable.*
 
-@Composable
+// TODO expand 시 마지막 아이템으로 스크롤
+
+@Composable // skippable
 fun DrawerMainCategories(
     mainCategories: ImmutableList<MainCategory>,
     onMainCategoryClick: (MainCategoryType) -> Unit,
@@ -59,7 +61,7 @@ private fun DrawerMainCategory(
     subCategorySize: () -> ImmutableMap<MainCategoryType, Int>,
     addSubCategory: AddSubCategory,
     density: Density = LocalDensity.current,
-    state: DrawerExpandableState = rememberDrawerExpandableStateState(),
+    state: DrawerItemState = rememberDrawerItemState(),
     drawerSubCategories: @Composable (filteredSubCategories: () -> ImmutableList<SubCategory>, subCategoryNames: () -> ImmutableSet<String>) -> Unit
 ) {
     val localSubCategorySize by remember {

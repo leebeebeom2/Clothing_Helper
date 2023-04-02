@@ -3,11 +3,10 @@ package com.leebeebeom.clothinghelper.ui.drawer.content
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -21,18 +20,19 @@ import com.leebeebeom.clothinghelper.ui.theme.Disabled
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-fun LazyListScope.drawerEssentialMenus(
+@Composable
+fun DrawerEssentialMenus(
     onEssentialMenuClick: (EssentialMenuType) -> Unit, essentialMenus: ImmutableList<EssentialMenu>
 ) {
-    this.items(items = essentialMenus,
-        key = { it.name },
-        contentType = { it.type }) { essentialMenu ->
-        EssentialMenu(
-            essentialMenu = essentialMenu,
-            onClick = { essentialMenuType -> onEssentialMenuClick(essentialMenuType) },
-        )
+    essentialMenus.forEach { essentialMenu ->
+        key(essentialMenu.name) {
+            EssentialMenu(
+                essentialMenu = essentialMenu,
+                onClick = { essentialMenuType -> onEssentialMenuClick(essentialMenuType) },
+            )
+        }
     }
-    item { Divider(color = Disabled, modifier = Modifier.padding(vertical = 8.dp)) }
+    Divider(color = Disabled, modifier = Modifier.padding(vertical = 8.dp))
 }
 
 @Composable // skippable

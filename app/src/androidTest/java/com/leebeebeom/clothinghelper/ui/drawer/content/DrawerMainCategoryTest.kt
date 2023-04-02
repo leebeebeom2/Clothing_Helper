@@ -1,7 +1,7 @@
 package com.leebeebeom.clothinghelper.ui.drawer.content
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -11,6 +11,7 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.data.waitTime
 import com.leebeebeom.clothinghelper.domain.model.SubCategory
 import com.leebeebeom.clothinghelper.ui.HiltTestActivity
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerExpandIconTag
@@ -18,6 +19,7 @@ import com.leebeebeom.clothinghelper.ui.onAllNodeWithStringRes
 import com.leebeebeom.clothinghelper.ui.onNodeWithStringRes
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import kotlinx.collections.immutable.*
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -45,8 +47,8 @@ class DrawerMainCategoryTest {
         restorationTester.setContent {
             ClothingHelperTheme {
 
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    drawerMainCategories(
+                Column(modifier = Modifier.fillMaxSize()) {
+                    DrawerMainCategories(
                         mainCategories = getMainCategories(),
                         onMainCategoryClick = {},
                         allSubCategories = { subCategories },
@@ -56,20 +58,24 @@ class DrawerMainCategoryTest {
                             subCategories = subCategories.getNewList {
                                 it.add(SubCategory(name = name, mainCategoryType = parent))
                             }
-                        },
-                        drawerSubCategories = { subCategories, subCategoryNames ->
-                            DrawerSubCategories(
-                                subCategories = subCategories,
-                                subCategoryNames = subCategoryNames,
-                                folderNames = { persistentMapOf() },
-                                folderSize = { persistentMapOf() },
-                                chartSize = { persistentMapOf() },
-                                onSubCategoryClick = {},
-                                editSubCategory = { oldSubCategory, name -> },
-                                addFolder = { parentKey, subCategoryKey, name, mainCategoryType -> }
-                            )
                         }
-                    )
+                    ) { filteredSubCategories, subCategoryNames ->
+                        DrawerSubCategories(
+                            filteredSubCategories = filteredSubCategories,
+                            subCategoryNames = subCategoryNames,
+                            folderNames = { persistentMapOf() },
+                            folderSize = { persistentMapOf() },
+                            chartSize = { persistentMapOf() },
+                            onSubCategoryClick = {},
+                            editSubCategory = { oldSubCategory, name ->
+                                subCategories = subCategories.getNewList {
+                                    it.remove(oldSubCategory)
+                                    it.add(oldSubCategory.copy(name = name))
+                                }
+                            },
+                            addFolder = { parentKey, subCategoryKey, name, mainCategoryType -> }
+                        )
+                    }
                 }
             }
         }
@@ -232,6 +238,36 @@ class DrawerMainCategoryTest {
             rule.onNodeWithText("added subCategory").assertExists()
             expandIcon.performClick()
         }
+    }
+
+    @Test
+    fun existNameErrorTest() {
+        rule.onNodeWithStringRes(R.string.bottom).performTouchInput { longClick() }
+        rule.onNodeWithStringRes(R.string.add_category).performClick()
+        rule.onNodeWithStringRes(R.string.category).performTextInput("added category")
+        rule.onNodeWithStringRes(R.string.error_exist_category_name).assertDoesNotExist()
+        rule.onNodeWithStringRes(R.string.check).performClick()
+
+        rule.onNodeWithStringRes(R.string.bottom).performTouchInput { longClick() }
+        rule.onNodeWithStringRes(R.string.add_category).performClick()
+        rule.onNodeWithStringRes(R.string.category).performTextInput("added category")
+        rule.onNodeWithStringRes(R.string.error_exist_category_name).assertExists()
+        rule.onNodeWithStringRes(R.string.cancel).performClick()
+
+        rule.onNodeWithText("added category").performTouchInput { longClick() }
+        rule.onNodeWithStringRes(R.string.edit_category).performClick()
+        rule.onNodeWithStringRes(R.string.category).performTextInput("added category 1")
+        rule.onNodeWithStringRes(R.string.check).performClick()
+
+        runBlocking { waitTime() }
+        rule.onNodeWithStringRes(R.string.bottom).performTouchInput { longClick() }
+        rule.onNodeWithStringRes(R.string.add_category).performClick()
+        rule.onNodeWithStringRes(R.string.category).performTextInput("added category 1")
+        rule.onNodeWithStringRes(R.string.error_exist_category_name).assertExists()
+
+        // 추가 완료 후 추가 시 에러 출력 확인
+        // 수정 후 추가 시 에러 출력 확인
+
     }
 
     private fun getImmutableSubCategories(): ImmutableList<SubCategory> {

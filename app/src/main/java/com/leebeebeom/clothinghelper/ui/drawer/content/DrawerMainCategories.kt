@@ -3,15 +3,10 @@ package com.leebeebeom.clothinghelper.ui.drawer.content
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -30,7 +25,8 @@ import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerExpandableStateStat
 import com.leebeebeom.clothinghelper.ui.util.AddSubCategory
 import kotlinx.collections.immutable.*
 
-fun LazyListScope.drawerMainCategories(
+@Composable
+fun DrawerMainCategories(
     mainCategories: ImmutableList<MainCategory>,
     onMainCategoryClick: (MainCategoryType) -> Unit,
     allSubCategories: () -> ImmutableList<SubCategory>,
@@ -39,16 +35,18 @@ fun LazyListScope.drawerMainCategories(
     addSubCategory: AddSubCategory,
     drawerSubCategories: @Composable (filteredSubCategories: () -> ImmutableList<SubCategory>, subCategoryNames: () -> ImmutableSet<String>) -> Unit
 ) {
-    items(items = mainCategories, key = { it.name }, contentType = { it.type }) { mainCategory ->
-        DrawerMainCategory(
-            mainCategory = mainCategory,
-            onMainCategoryClick = onMainCategoryClick,
-            allSubCategories = allSubCategories,
-            subCategoryNames = subCategoryNamesMap,
-            subCategorySize = subCategorySizeMap,
-            addSubCategory = addSubCategory,
-            drawerSubCategories = drawerSubCategories
-        )
+    mainCategories.forEach { mainCategory ->
+        key(mainCategory.type) {
+            DrawerMainCategory(
+                mainCategory = mainCategory,
+                onMainCategoryClick = onMainCategoryClick,
+                allSubCategories = allSubCategories,
+                subCategoryNames = subCategoryNamesMap,
+                subCategorySize = subCategorySizeMap,
+                addSubCategory = addSubCategory,
+                drawerSubCategories = drawerSubCategories
+            )
+        }
     }
 }
 
@@ -103,6 +101,15 @@ private fun DrawerMainCategory(
         DrawerExpandIcon(expanded = { state.expanded },
             toggleExpand = state::toggleExpand,
             dataSize = { localSubCategorySize })
+        DrawerMainCategoryDropDownMenu(
+            show = { state.showDropDownMenu },
+            offset = { longClickOffset },
+            onDismiss = state::onDropdownMenuDismiss,
+            subCategoryNames = { localSubCategoryNames },
+            onAddSubCategoryPositiveClick = { name ->
+                addSubCategory(name, mainCategory.type)
+                state.expand()
+            })
     }
 
     val filteredSubCategories by remember {
@@ -116,16 +123,6 @@ private fun DrawerMainCategory(
             subCategoryNames = { localSubCategoryNames }
         )
     }
-
-    DrawerMainCategoryDropDownMenu(
-        show = { state.showDropDownMenu },
-        offset = { longClickOffset },
-        onDismiss = state::onDropdownMenuDismiss,
-        subCategoryNames = { localSubCategoryNames },
-        onAddSubCategoryPositiveClick = { name ->
-            addSubCategory(name, mainCategory.type)
-            state.expand()
-        })
 }
 
 @Composable // skippable

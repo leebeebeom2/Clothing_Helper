@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.domain.model.SubCategory
 import com.leebeebeom.clothinghelper.ui.component.SingleLineText
 import com.leebeebeom.clothinghelper.ui.drawer.DrawerExpandableState
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerExpandIcon
@@ -32,15 +33,17 @@ import kotlinx.collections.immutable.*
 fun LazyListScope.drawerMainCategories(
     mainCategories: ImmutableList<MainCategory>,
     onMainCategoryClick: (MainCategoryType) -> Unit,
+    allSubCategories: () -> ImmutableList<SubCategory>,
     subCategoryNamesMap: () -> ImmutableMap<MainCategoryType, ImmutableSet<String>>,
     subCategorySizeMap: () -> ImmutableMap<MainCategoryType, Int>,
     addSubCategory: AddSubCategory,
-    drawerSubCategories: @Composable (mainCategoryType: MainCategoryType, subCategoryNames: () -> ImmutableSet<String>) -> Unit
+    drawerSubCategories: @Composable (filteredSubCategories: () -> ImmutableList<SubCategory>, subCategoryNames: () -> ImmutableSet<String>) -> Unit
 ) {
     items(items = mainCategories, key = { it.type }) { mainCategory ->
         DrawerMainCategory(
             mainCategory = mainCategory,
             onMainCategoryClick = onMainCategoryClick,
+            allSubCategories = allSubCategories,
             subCategoryNames = subCategoryNamesMap,
             subCategorySize = subCategorySizeMap,
             addSubCategory = addSubCategory,
@@ -53,12 +56,13 @@ fun LazyListScope.drawerMainCategories(
 private fun DrawerMainCategory(
     mainCategory: MainCategory,
     onMainCategoryClick: (MainCategoryType) -> Unit,
+    allSubCategories: () -> ImmutableList<SubCategory>,
     subCategoryNames: () -> ImmutableMap<MainCategoryType, ImmutableSet<String>>,
     subCategorySize: () -> ImmutableMap<MainCategoryType, Int>,
     addSubCategory: AddSubCategory,
     density: Density = LocalDensity.current,
     state: DrawerExpandableState = rememberDrawerExpandableStateState(),
-    drawerSubCategories: @Composable (mainCategoryType: MainCategoryType, subCategoryNames: () -> ImmutableSet<String>) -> Unit
+    drawerSubCategories: @Composable (filteredSubCategories: () -> ImmutableList<SubCategory>, subCategoryNames: () -> ImmutableSet<String>) -> Unit
 ) {
     val localSubCategorySize by remember {
         derivedStateOf { subCategorySize().getOrDefault(key = mainCategory.type, defaultValue = 0) }
@@ -101,14 +105,20 @@ private fun DrawerMainCategory(
             dataSize = { localSubCategorySize })
     }
 
+    val filteredSubCategories by remember {
+        derivedStateOf {
+            allSubCategories().filter { it.mainCategoryType == mainCategory.type }.toImmutableList()
+        }
+    }
     DrawerItemsWrapperWithExpandAnimation(expand = { state.expanded }) {
         drawerSubCategories(
-            mainCategoryType = mainCategory.type,
+            filteredSubCategories = { filteredSubCategories },
             subCategoryNames = { localSubCategoryNames }
         )
     }
 
-    DrawerMainCategoryDropDownMenu(show = { state.showDropDownMenu },
+    DrawerMainCategoryDropDownMenu(
+        show = { state.showDropDownMenu },
         offset = { longClickOffset },
         onDismiss = state::onDropdownMenuDismiss,
         subCategoryNames = { localSubCategoryNames },

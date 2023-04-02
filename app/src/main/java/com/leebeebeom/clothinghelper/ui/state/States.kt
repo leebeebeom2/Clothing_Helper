@@ -2,10 +2,10 @@ package com.leebeebeom.clothinghelper.ui.state
 
 import kotlinx.collections.immutable.ImmutableList
 
-interface ToastState {
+interface ToastUiState {
     val toastTexts: ImmutableList<Int>
 }
 
-interface LoadingState {
+interface LoadingUiState {
     val isLoading: Boolean
 }

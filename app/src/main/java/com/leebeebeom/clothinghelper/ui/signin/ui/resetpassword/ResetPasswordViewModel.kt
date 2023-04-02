@@ -4,6 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.usecase.user.ResetPasswordUseCase
+import com.leebeebeom.clothinghelper.ui.state.LoadingUiState
+import com.leebeebeom.clothinghelper.ui.state.ToastUiState
 import com.leebeebeom.clothinghelper.ui.util.firebaseAuthErrorHandler
 import com.leebeebeom.clothinghelper.ui.viewmodel.LoadingViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -62,6 +64,6 @@ class ResetPasswordViewModel @Inject constructor(
 }
 
 data class ResetPasswordUiState(
-    val isLoading: Boolean = false,
-    val toastTexts: ImmutableList<Int> = persistentListOf()
-)
+    override val isLoading: Boolean = false,
+    override val toastTexts: ImmutableList<Int> = persistentListOf()
+) : ToastUiState, LoadingUiState

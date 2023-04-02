@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.SignUpUseCase
 import com.leebeebeom.clothinghelper.ui.signin.ui.GoogleSignInViewModel
+import com.leebeebeom.clothinghelper.ui.state.LoadingUiState
+import com.leebeebeom.clothinghelper.ui.state.ToastUiState
 import com.leebeebeom.clothinghelper.ui.util.firebaseAuthErrorHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
@@ -59,5 +61,6 @@ class SignUpViewModel @Inject constructor(
 }
 
 data class SignUpUiState(
-    val isLoading: Boolean = false, val toastTexts: ImmutableList<Int> = persistentListOf()
-)
+    override val isLoading: Boolean = false,
+    override val toastTexts: ImmutableList<Int> = persistentListOf()
+) : ToastUiState, LoadingUiState

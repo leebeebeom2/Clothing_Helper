@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.SignInUseCase
 import com.leebeebeom.clothinghelper.ui.signin.ui.GoogleSignInViewModel
-import com.leebeebeom.clothinghelper.ui.state.LoadingState
-import com.leebeebeom.clothinghelper.ui.state.ToastState
+import com.leebeebeom.clothinghelper.ui.state.LoadingUiState
+import com.leebeebeom.clothinghelper.ui.state.ToastUiState
 import com.leebeebeom.clothinghelper.ui.util.firebaseAuthErrorHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
@@ -70,4 +70,4 @@ class SignInViewModel @Inject constructor(
 data class SignInUiState(
     override val isLoading: Boolean = false,
     override val toastTexts: ImmutableList<Int> = persistentListOf(),
-) : ToastState, LoadingState
+) : ToastUiState, LoadingUiState

@@ -9,8 +9,12 @@ import com.leebeebeom.clothinghelper.domain.repository.FolderRepository
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import com.leebeebeom.clothinghelper.domain.repository.preference.FolderPreferencesRepository
 import com.leebeebeom.clothinghelper.domain.repository.preference.SortPreferenceRepository
+import kotlinx.collections.immutable.toImmutableMap
+import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -29,4 +33,22 @@ class FolderRepositoryImpl @Inject constructor(
     dispatcherIO = dispatcherIO,
     dispatcherDefault = dispatcherDefault,
     userRepository = userRepository,
-), FolderRepository
+), FolderRepository {
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val folderNamesMapFlow = allDataFlow.mapLatest {
+        it.data.groupBy { element -> element.parentKey }
+            .mapValues { mapElement ->
+                mapElement.value.map { element -> element.name }.toImmutableSet()
+            }
+            .toImmutableMap()
+    }.flowOn(dispatcherDefault)
+        .distinctUntilChanged()
+        .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val folderSizeMapFlow = allDataFlow.mapLatest {
+        it.data.groupingBy { element -> element.parentKey }.eachCount().toImmutableMap()
+    }.flowOn(dispatcherDefault)
+        .distinctUntilChanged()
+        .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
+}

@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.ui.component.HeightSpacer
 import com.leebeebeom.clothinghelper.ui.component.MaxWidthTextFieldState
 import com.leebeebeom.clothinghelper.ui.component.SingleLineText
-import com.leebeebeom.clothinghelper.ui.component.StatefulMaxWidthTestFieldWithCancelIcon
+import com.leebeebeom.clothinghelper.ui.component.StatefulMaxWidthTextFieldWithCancelIcon
 
 @Composable
 fun TextFieldDialog(
@@ -40,7 +40,7 @@ fun TextFieldDialog(
             modifier = Modifier.padding(start = 4.dp, bottom = 12.dp)
         )
 
-        StatefulMaxWidthTestFieldWithCancelIcon(
+        StatefulMaxWidthTextFieldWithCancelIcon(
             state = dialogMaxWidthTextFieldState,
             label = label,
             placeholder = placeHolder,

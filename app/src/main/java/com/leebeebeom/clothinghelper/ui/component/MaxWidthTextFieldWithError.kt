@@ -33,7 +33,7 @@ import kotlinx.coroutines.delay
 
 @NoLiveLiterals
 @Composable // skippable
-fun StatefulMaxWidthTestFieldWithCancelIcon(
+fun StatefulMaxWidthTextFieldWithCancelIcon(
     @StringRes label: Int? = null,
     @StringRes placeholder: Int? = null,
     error: () -> Int? = { null },
@@ -127,9 +127,9 @@ fun MaxWidthTextFieldWithError(
             focusRequester = focusRequester
         )
         ErrorText(error = error)
+        ShowKeyboard(focusRequester = focusRequester, getFocus = getFocus)
+        TextFieldEmit(textFieldValue = textFieldValue, onInputChange = onInputChange)
     }
-    ShowKeyboard(focusRequester = focusRequester, getFocus = getFocus)
-    TextFieldEmit(textFieldValue = textFieldValue, onInputChange = onInputChange)
 }
 
 @Composable // skippable

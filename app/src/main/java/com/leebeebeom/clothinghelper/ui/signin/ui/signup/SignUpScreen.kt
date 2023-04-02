@@ -34,7 +34,7 @@ fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
             error = { state.emailError }, onEmailChange = state::onEmailChange
         )
 
-        StatefulMaxWidthTestFieldWithCancelIcon(
+        StatefulMaxWidthTextFieldWithCancelIcon(
             label = R.string.nickname,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,

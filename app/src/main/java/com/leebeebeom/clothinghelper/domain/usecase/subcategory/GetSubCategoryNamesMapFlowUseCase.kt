@@ -3,6 +3,6 @@ package com.leebeebeom.clothinghelper.domain.usecase.subcategory
 import com.leebeebeom.clothinghelper.domain.repository.SubCategoryRepository
 import javax.inject.Inject
 
-class GetSubCategoryNamesFlowUseCase @Inject constructor(private val subCategoryRepository: SubCategoryRepository) {
+class GetSubCategoryNamesMapFlowUseCase @Inject constructor(private val subCategoryRepository: SubCategoryRepository) {
     val subCategoryNamesMapFlow get() = subCategoryRepository.subCategoryNamesMapFlow
 }

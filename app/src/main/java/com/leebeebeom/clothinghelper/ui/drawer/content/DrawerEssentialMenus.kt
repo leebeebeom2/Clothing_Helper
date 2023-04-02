@@ -20,7 +20,7 @@ import com.leebeebeom.clothinghelper.ui.theme.Disabled
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-@Composable
+@Composable // skippable
 fun DrawerEssentialMenus(
     onEssentialMenuClick: (EssentialMenuType) -> Unit, essentialMenus: ImmutableList<EssentialMenu>
 ) {

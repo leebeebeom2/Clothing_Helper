@@ -1,6 +1,7 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui
 
 import android.app.Activity
+import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -10,8 +11,8 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
+import com.leebeebeom.clothinghelper.ui.TAG
 import com.leebeebeom.clothinghelper.ui.viewmodel.LoadingViewModel
-import com.leebeebeom.clothinghelper.util.buildConfigLog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 
@@ -41,10 +42,7 @@ abstract class GoogleSignInViewModel(
                 googleSignInButtonEnable()
             }
             else -> {
-                buildConfigLog(
-                    site = "signInWithGoogleEmail",
-                    msg = "resultCode = ${activityResult.resultCode}",
-                )
+                Log.d(TAG, "signInWithGoogleEmail: resultCode: ${activityResult.resultCode}")
                 addToastTextAtLast(R.string.unknown_error)
                 googleSignInButtonEnable()
             }
@@ -53,7 +51,7 @@ abstract class GoogleSignInViewModel(
 
     private fun googleSignIn(activityResult: ActivityResult, googleSignInButtonEnable: () -> Unit) {
         val handler = CoroutineExceptionHandler { _, throwable ->
-            buildConfigLog("GoogleSignInViewModel", "$throwable")
+            Log.d(TAG, "googleSignIn: $throwable")
             addToastTextAtLast(R.string.unknown_error)
             setLoading(false)
             googleSignInButtonEnable()

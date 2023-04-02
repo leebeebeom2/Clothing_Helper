@@ -22,6 +22,7 @@ import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelper.ui.util.getCurrentRoute
 import dagger.hilt.android.AndroidEntryPoint
 
+const val TAG = "태그"
 
 object MainActivityRoutes {
     const val SignInGraphRoute = "sign in graph"

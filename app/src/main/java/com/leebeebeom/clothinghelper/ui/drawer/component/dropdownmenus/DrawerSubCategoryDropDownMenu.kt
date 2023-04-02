@@ -49,9 +49,9 @@ fun DrawerSubCategoryDropDownMenu(
 
     EditSubCategoryDialog(
         show = { showSubCategoryEditDialog },
-        selectedSubCategory = selectedSubCategory,
+        initialName = { selectedSubCategory().name },
         subCategoryNames = subCategoryNames,
-        onPositiveButtonClick = onEditSubCategoryPositiveClick,
+        onPositiveButtonClick = { onEditSubCategoryPositiveClick(selectedSubCategory(), it) },
         onDismiss = { showSubCategoryEditDialog = false }
     )
 

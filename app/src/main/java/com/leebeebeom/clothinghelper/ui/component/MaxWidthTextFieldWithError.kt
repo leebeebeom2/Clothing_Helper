@@ -44,6 +44,7 @@ fun StatefulMaxWidthTextFieldWithCancelIcon(
     onInputChange: (String) -> Unit,
     focusRequester: FocusRequester = remember { FocusRequester() },
     getFocus: Boolean = false,
+    fixedError: Boolean = false,
     state: MaxWidthTextFieldState = rememberMaxWidthTestFieldState()
 ) {
     MaxWidthTextFieldWithError(
@@ -62,7 +63,8 @@ fun StatefulMaxWidthTextFieldWithCancelIcon(
         placeholder = placeholder,
         error = error,
         isVisible = isVisible,
-        getFocus = getFocus
+        getFocus = getFocus,
+        fixedError = fixedError
     )
 }
 
@@ -94,7 +96,8 @@ fun StatefulMaxWidthTextField(
         placeholder = placeholder,
         error = error,
         isVisible = isVisible,
-        getFocus = getFocus
+        getFocus = getFocus,
+        fixedError = false
     )
 }
 
@@ -111,7 +114,8 @@ fun MaxWidthTextFieldWithError(
     trailingIcon: (@Composable () -> Unit)? = null,
     onInputChange: (String) -> Unit,
     focusRequester: FocusRequester = remember { FocusRequester() },
-    getFocus: Boolean
+    getFocus: Boolean,
+    fixedError: Boolean,
 ) {
     Column {
         MaxWidthTextField(
@@ -126,7 +130,7 @@ fun MaxWidthTextFieldWithError(
             onFocusChanged = onFocusChanged,
             focusRequester = focusRequester
         )
-        ErrorText(error = error)
+        ErrorText(error = error, fixedError = fixedError)
         ShowKeyboard(focusRequester = focusRequester, getFocus = getFocus)
         TextFieldEmit(textFieldValue = textFieldValue, onInputChange = onInputChange)
     }
@@ -171,18 +175,32 @@ private fun MaxWidthTextField(
 }
 
 @Composable // skippable
-private fun ErrorText(error: () -> Int?) {
+private fun ErrorText(error: () -> Int?, fixedError: Boolean) {
     val show by remember { derivedStateOf { error() != null } }
 
-    AnimatedVisibility(
-        visible = show, enter = errorIn, exit = errorOut
-    ) {
-        SingleLineText(
-            modifier = Modifier.padding(start = 4.dp, top = 4.dp),
-            text = error(),
-            style = MaterialTheme.typography.caption.copy(color = MaterialTheme.colors.error)
-        )
+    @Composable
+    fun animatedErrorText() {
+        AnimatedVisibility(
+            visible = show, enter = errorIn, exit = errorOut
+        ) {
+            SingleLineText(
+                modifier = Modifier.padding(start = 4.dp, top = 4.dp),
+                text = error(),
+                style = MaterialTheme.typography.caption.copy(color = MaterialTheme.colors.error)
+            )
+        }
     }
+
+    if (fixedError)
+        Box(modifier = Modifier.fillMaxWidth()) {
+            SingleLineText(
+                modifier = Modifier.padding(vertical = 8.dp),
+                text = "",
+                style = MaterialTheme.typography.caption
+            )
+            animatedErrorText()
+        }
+    else animatedErrorText()
 }
 
 @Composable // skippable

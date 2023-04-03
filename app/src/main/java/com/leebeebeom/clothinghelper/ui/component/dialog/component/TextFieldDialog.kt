@@ -11,7 +11,6 @@ import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.leebeebeom.clothinghelper.ui.component.HeightSpacer
 import com.leebeebeom.clothinghelper.ui.component.MaxWidthTextFieldState
 import com.leebeebeom.clothinghelper.ui.component.SingleLineText
 import com.leebeebeom.clothinghelper.ui.component.StatefulMaxWidthTextFieldWithCancelIcon
@@ -48,10 +47,9 @@ fun TextFieldDialog(
             placeholder = placeHolder,
             error = error,
             onInputChange = onInputChange,
-            getFocus = true
+            getFocus = true,
+            fixedError = true
         )
-
-        HeightSpacer(dp = 12)
 
         DialogTextButtons(
             positiveButtonEnabled = { positiveButtonEnabled },

@@ -23,17 +23,21 @@ fun EditNameDialog(
     val state = rememberTextFieldDialogState(initialText = initialName)
     val localNames by remember { derivedStateOf(names) }
     val error by remember {
-        derivedStateOf { if (localNames.contains(state.input.trim())) existNameError else null }
+        derivedStateOf {
+            when {
+                !state.inputChanged -> null
+                localNames.contains(state.input.trim()) -> existNameError
+                else -> null
+            }
+        }
     }
 
-    TextFieldDialog(
-        state = state,
+    TextFieldDialog(state = state,
         label = label,
         placeHolder = placeHolder,
         title = title,
         onPositiveButtonClick = { onPositiveButtonClick(state.input.trim()) },
         onDismiss = onDismiss,
         onInputChange = state::onInputChange,
-        error = { error }
-    )
+        error = { error })
 }

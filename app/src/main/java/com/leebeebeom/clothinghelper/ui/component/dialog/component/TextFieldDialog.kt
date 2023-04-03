@@ -32,7 +32,9 @@ fun TextFieldDialog(
 ) {
     DialogRoot(onDismiss = onDismiss) {
         val localError by remember { derivedStateOf(error) }
-        val positiveButtonEnabled by remember { derivedStateOf { state.input.isNotBlank() && localError == null } }
+        val positiveButtonEnabled by remember {
+            derivedStateOf { state.inputChanged && state.input.isNotBlank() && localError == null }
+        }
 
         SingleLineText(
             text = title,
@@ -89,11 +91,13 @@ class DialogMaxWidthTextFieldState(initialText: String) : MaxWidthTextFieldState
 interface TextFieldDialogState {
     val initialText: String
     val input: String
+    val inputChanged: Boolean
 }
 
 class MutableTextFieldDialogState(override val initialText: String = "") : TextFieldDialogState {
     override var input by mutableStateOf(initialText)
         private set
+    override val inputChanged by derivedStateOf { input != initialText }
 
     fun onInputChange(newInput: String) {
         input = newInput

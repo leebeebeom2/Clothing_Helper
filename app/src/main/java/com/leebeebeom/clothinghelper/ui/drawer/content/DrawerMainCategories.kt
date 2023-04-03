@@ -1,7 +1,6 @@
 package com.leebeebeom.clothinghelper.ui.drawer.content
 
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.LocalContentColor
@@ -9,7 +8,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -25,28 +23,28 @@ import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemState
 import com.leebeebeom.clothinghelper.ui.util.AddSubCategory
 import kotlinx.collections.immutable.*
 
-// TODO expand 시 마지막 아이템으로 스크롤
-
 @Composable // skippable
 fun DrawerMainCategories(
     mainCategories: ImmutableList<MainCategory>,
     onMainCategoryClick: (MainCategoryType) -> Unit,
-    allSubCategories: () -> ImmutableList<SubCategory>,
+    subCategories: () -> ImmutableList<SubCategory>,
     subCategoryNamesMap: () -> ImmutableMap<MainCategoryType, ImmutableSet<String>>,
     subCategorySizeMap: () -> ImmutableMap<MainCategoryType, Int>,
     addSubCategory: AddSubCategory,
-    drawerSubCategories: @Composable (filteredSubCategories: () -> ImmutableList<SubCategory>, subCategoryNames: () -> ImmutableSet<String>) -> Unit
+    density: Density,
+    drawerSubCategories: @Composable (filteredSubCategories: () -> ImmutableList<SubCategory>, filteredSubCategoryNames: () -> ImmutableSet<String>) -> Unit
 ) {
     mainCategories.forEach { mainCategory ->
         key(mainCategory.type) {
             DrawerMainCategory(
                 mainCategory = mainCategory,
                 onMainCategoryClick = onMainCategoryClick,
-                allSubCategories = allSubCategories,
+                subCategories = subCategories,
                 subCategoryNames = subCategoryNamesMap,
                 subCategorySize = subCategorySizeMap,
                 addSubCategory = addSubCategory,
-                drawerSubCategories = drawerSubCategories
+                drawerSubCategories = drawerSubCategories,
+                density = density
             )
         }
     }
@@ -56,18 +54,18 @@ fun DrawerMainCategories(
 private fun DrawerMainCategory(
     mainCategory: MainCategory,
     onMainCategoryClick: (MainCategoryType) -> Unit,
-    allSubCategories: () -> ImmutableList<SubCategory>,
+    subCategories: () -> ImmutableList<SubCategory>,
     subCategoryNames: () -> ImmutableMap<MainCategoryType, ImmutableSet<String>>,
     subCategorySize: () -> ImmutableMap<MainCategoryType, Int>,
     addSubCategory: AddSubCategory,
-    density: Density = LocalDensity.current,
+    density: Density,
     state: DrawerItemState = rememberDrawerItemState(),
-    drawerSubCategories: @Composable (filteredSubCategories: () -> ImmutableList<SubCategory>, subCategoryNames: () -> ImmutableSet<String>) -> Unit
+    drawerSubCategories: @Composable (filteredSubCategories: () -> ImmutableList<SubCategory>, filteredSubCategoryNames: () -> ImmutableSet<String>) -> Unit
 ) {
-    val localSubCategorySize by remember {
+    val childSubCategorySize by remember {
         derivedStateOf { subCategorySize().getOrDefault(key = mainCategory.type, defaultValue = 0) }
     }
-    val localSubCategoryNames by remember {
+    val childSubCategoryNames by remember {
         derivedStateOf {
             subCategoryNames().getOrDefault(
                 key = mainCategory.type,
@@ -87,7 +85,6 @@ private fun DrawerMainCategory(
     }
 
     DrawerRow(
-        modifier = Modifier.heightIn(44.dp),
         onClick = { onMainCategoryClick(mainCategory.type) },
         onLongClick = state::onLongClick,
         onSizeChange = state::onSizeChanged
@@ -98,31 +95,31 @@ private fun DrawerMainCategory(
                 text = mainCategory.name,
                 style = MaterialTheme.typography.h6
             )
-            MainCategoryCount(subCategoriesSize = { localSubCategorySize })
+            MainCategoryCount(subCategoriesSize = { childSubCategorySize })
         }
         DrawerExpandIcon(expanded = { state.expanded },
             toggleExpand = state::toggleExpand,
-            dataSize = { localSubCategorySize })
+            dataSize = { childSubCategorySize })
         DrawerMainCategoryDropDownMenu(
             show = { state.showDropDownMenu },
             offset = { longClickOffset },
             onDismiss = state::onDropdownMenuDismiss,
-            subCategoryNames = { localSubCategoryNames },
+            subCategoryNames = { childSubCategoryNames },
             onAddSubCategoryPositiveClick = { name ->
                 addSubCategory(name, mainCategory.type)
                 state.expand()
             })
     }
 
-    val filteredSubCategories by remember {
+    val childSubCategories by remember {
         derivedStateOf {
-            allSubCategories().filter { it.mainCategoryType == mainCategory.type }.toImmutableList()
+            subCategories().filter { it.mainCategoryType == mainCategory.type }.toImmutableList()
         }
     }
     DrawerItemsWrapperWithExpandAnimation(expand = { state.expanded }) {
         drawerSubCategories(
-            filteredSubCategories = { filteredSubCategories },
-            subCategoryNames = { localSubCategoryNames }
+            filteredSubCategories = { childSubCategories },
+            filteredSubCategoryNames = { childSubCategoryNames }
         )
     }
 }

@@ -5,10 +5,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -26,7 +23,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable // skippable
 fun DrawerRow(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
     onLongClick: (Offset) -> Unit = {},
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
@@ -36,6 +33,7 @@ fun DrawerRow(
 ) {
     Row(
         modifier = modifier
+            .heightIn(48.dp)
             .onSizeChanged(onSizeChange)
             .fillMaxWidth()
             .padding(horizontal = 8.dp)

@@ -9,28 +9,30 @@ import com.leebeebeom.clothinghelper.ui.signin.ui.resetpassword.ResetPasswordScr
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInScreen
 import com.leebeebeom.clothinghelper.ui.signin.ui.signup.SignUpScreen
 
-object SignInGraphRoute {
-    const val SignInScreen = "sign in screen"
-    const val SignUpScreen = "sign up screen"
-    const val ResetPasswordScreen = "reset password screen"
+enum class SignInGraphRoute {
+    SignInScreen, SignUpScreen, ResetPasswordScreen
 }
 
 fun NavGraphBuilder.signInGraph(navController: NavHostController) {
     navigation(
-        startDestination = SignInGraphRoute.SignInScreen,
+        startDestination = SignInGraphRoute.SignInScreen.name,
         route = MainNavRoute.SignInGraph,
     ) {
-        composable(route = SignInGraphRoute.SignInScreen) {
+        composable(route = SignInGraphRoute.SignInScreen.name) {
             SignInScreen(
                 navigateToResetPassword = navController::navigateToResetPassword,
                 navigateToSignUp = navController::navigateToSignUp
             )
         }
-        composable(route = SignInGraphRoute.SignUpScreen) { SignUpScreen() }
-        composable(route = SignInGraphRoute.ResetPasswordScreen) { ResetPasswordScreen(popBackStack = navController::popBackStack) }
+        composable(route = SignInGraphRoute.SignUpScreen.name) { SignUpScreen() }
+        composable(route = SignInGraphRoute.ResetPasswordScreen.name) {
+            ResetPasswordScreen(
+                popBackStack = navController::popBackStack
+            )
+        }
     }
 }
 
-private fun NavHostController.navigateToSignUp() = navigate(SignInGraphRoute.SignUpScreen)
+private fun NavHostController.navigateToSignUp() = navigate(SignInGraphRoute.SignUpScreen.name)
 private fun NavHostController.navigateToResetPassword() =
-    navigate(SignInGraphRoute.ResetPasswordScreen)
+    navigate(SignInGraphRoute.ResetPasswordScreen.name)

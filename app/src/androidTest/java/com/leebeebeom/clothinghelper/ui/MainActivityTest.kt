@@ -1,19 +1,16 @@
 package com.leebeebeom.clothinghelper.ui
 
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onRoot
-import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.swipeRight
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelper.data.SignInEmail
 import com.leebeebeom.clothinghelper.data.SignInPassword
-import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.MainGraphRoute
-import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.SignInGraphRoute
+import com.leebeebeom.clothinghelper.ui.MainNavRoute.MainGraph
+import com.leebeebeom.clothinghelper.ui.MainNavRoute.SignInGraph
 import com.leebeebeom.clothinghelper.ui.drawer.component.SettingIconTag
 import com.leebeebeom.clothinghelper.ui.main.mainScreen.MainScreenTag
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInScreenTag
@@ -46,7 +43,7 @@ class MainActivityTest {
         repeat(2) {
             rule.onNodeWithTag(SignInScreenTag).assertExists()
             rule.onRoot().performTouchInput { swipeRight() }
-            rule.onNodeWithTag(SettingIconTag).assertDoesNotExist()
+            rule.onNodeWithTag(SettingIconTag).assertIsNotDisplayed()
 
             restorationTester.emulateSavedInstanceStateRestore()
         }
@@ -62,11 +59,12 @@ class MainActivityTest {
         }
 
         rule.signOut()
+        rule.onNodeWithTag(SettingIconTag).assertIsNotDisplayed() // drawer automatic close
 
         repeat(2) {
             rule.waitTagExist(SignInScreenTag)
             rule.onRoot().performTouchInput { swipeRight() }
-            rule.onNodeWithTag(SettingIconTag).assertDoesNotExist()
+            rule.onNodeWithTag(SettingIconTag).assertIsNotDisplayed()
 
             restorationTester.emulateSavedInstanceStateRestore()
         }
@@ -127,15 +125,15 @@ class MainActivitySignOutStartTest {
             }
         }
         // 로그인, 로그아웃 시 백스택은 하나여야함.
-        assert(!isBackStackExist(MainGraphRoute))
+        assert(!isBackStackExist(MainGraph))
 
         rule.signIn()
         rule.waitTagExist(MainScreenTag)
-        assert(!isBackStackExist(SignInGraphRoute))
+        assert(!isBackStackExist(SignInGraph))
 
         rule.signOut()
         rule.waitTagExist(SignInScreenTag)
-        assert(!isBackStackExist(MainGraphRoute))
+        assert(!isBackStackExist(MainGraph))
 
         repeat(2) {
             rule.signIn()
@@ -143,6 +141,6 @@ class MainActivitySignOutStartTest {
             rule.signOut()
             rule.waitTagExist(SignInScreenTag)
         }
-        assert(!isBackStackExist(MainGraphRoute))
+        assert(!isBackStackExist(MainGraph))
     }
 }

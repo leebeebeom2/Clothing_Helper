@@ -4,15 +4,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.material.MaterialTheme
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.MainGraphRoute
-import com.leebeebeom.clothinghelper.ui.MainActivityRoutes.SignInGraphRoute
+import com.leebeebeom.clothinghelper.domain.model.User
+import com.leebeebeom.clothinghelper.ui.component.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelper.ui.drawer.Drawer
 import com.leebeebeom.clothinghelper.ui.drawer.content.EssentialMenuType
 import com.leebeebeom.clothinghelper.ui.main.*
@@ -21,12 +22,14 @@ import com.leebeebeom.clothinghelper.ui.signin.ui.signInGraph
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelper.ui.util.getCurrentRoute
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 
 const val TAG = "태그"
 
-object MainActivityRoutes {
-    const val SignInGraphRoute = "sign in graph"
-    const val MainGraphRoute = "main graph"
+object MainNavRoute {
+    const val LoadingScreen = "loading screen"
+    const val SignInGraph = "sign in graph"
+    const val MainGraph = "main graph"
 }
 
 @AndroidEntryPoint
@@ -56,13 +59,49 @@ fun MainNavHost(
             NavHost(
                 modifier = Modifier.padding(paddingValues),
                 navController = navController,
-                startDestination = if (user == null) SignInGraphRoute else MainGraphRoute // no recomposition
+                startDestination = MainNavRoute.LoadingScreen
             ) {
-                signInGraph(navController = navController)
+                composable(route = MainNavRoute.LoadingScreen) {
+                    CenterDotProgressIndicator(
+                        backGround = MaterialTheme.colors.background,
+                        show = { true }
+                    )
+                }
                 mainGraph(navController = navController)
+                signInGraph(navController = navController)
             }
+
         }
     }
+    MainNavHostNavigateWrapper(
+        user = { user },
+        navigateToMainGraph = navController::navigateToMainGraph,
+        navigateToSignInGraph = navController::navigateToSignInGraph
+    )
+}
+
+@Composable
+private fun MainNavHostNavigateWrapper(
+    user: () -> User?,
+    navigateToMainGraph: () -> Unit,
+    navigateToSignInGraph: () -> Unit
+) {
+    val localUser by remember { derivedStateOf(user) }
+
+    LaunchedEffect(key1 = localUser) {
+        delay(500)
+        localUser?.let { navigateToMainGraph() } ?: navigateToSignInGraph()
+    }
+}
+
+private fun NavHostController.navigateToSignInGraph() = navigate(MainNavRoute.SignInGraph) {
+    popUpTo(MainNavRoute.MainGraph) { inclusive = true }
+    launchSingleTop = true
+}
+
+private fun NavHostController.navigateToMainGraph() = navigate(MainNavRoute.MainGraph) {
+    popUpTo(MainNavRoute.SignInGraph) { inclusive = true }
+    launchSingleTop = true
 }
 
 private fun onEssentialMenuClick(navController: NavHostController, type: EssentialMenuType) =
@@ -75,10 +114,10 @@ private fun onEssentialMenuClick(navController: NavHostController, type: Essenti
 
 private fun NavHostController.navigateToMain() {
     if (currentBackStackEntry.getCurrentRoute() != DetailDestination.CategoryRoute.route)
-        navigate(route = MainGraphDestinations.DetailGraphRoute)
+        navigate(route = MainNavRoute.MainGraph)
 }
 
 private fun NavHostController.navigateToSetting() {
     if (currentBackStackEntry.getCurrentRoute() != SettingDestination.Setting.route)
-        navigate(route = MainGraphDestinations.SettingGraphRoute)
+        navigate(route = MainGraphRoute.SettingGraph)
 }

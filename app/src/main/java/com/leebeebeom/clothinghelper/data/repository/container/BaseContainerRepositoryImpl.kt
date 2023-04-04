@@ -10,14 +10,16 @@ import com.leebeebeom.clothinghelper.domain.model.BaseContainerModel
 import com.leebeebeom.clothinghelper.domain.repository.BaseContainerRepository
 import com.leebeebeom.clothinghelper.domain.repository.DataResult
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
-import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Suppress("UNCHECKED_CAST")
-abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
+abstract class BaseContainerRepositoryImpl<T : BaseContainerModel, K>(
     sortFlow: Flow<SortPreferences>,
     refPath: DataBasePath,
     appScope: CoroutineScope,
@@ -25,7 +27,7 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
     dispatcherIO: CoroutineDispatcher,
     dispatcherDefault: CoroutineDispatcher,
     userRepository: UserRepository,
-) : BaseContainerRepository<T>, BaseDataRepositoryImpl<T>(
+) : BaseContainerRepository<T, K>, BaseDataRepositoryImpl<T>(
     refPath = refPath,
     appScope = appScope,
     type = type,
@@ -70,4 +72,28 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel>(
     }
 
     override suspend fun push(data: T) = super.push(data = data.changeEditDate() as T)
+
+    abstract fun groupByKeySelector(element: T): K
+
+    final override val allDataMapFlow =
+        allDataFlow.mapLatest { dataResult ->
+            dataResult.data.groupBy { element -> groupByKeySelector(element) }
+                .mapValues { mapElement -> mapElement.value.toImmutableList() }.toImmutableMap()
+        }.flowOn(dispatcherDefault)
+            .distinctUntilChanged()
+            .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
+
+    override val dataNamesMapFlow = allDataMapFlow.mapLatest { allDataMap ->
+        allDataMap.mapValues { mapElement ->
+            mapElement.value.map { element -> element.name }.toImmutableSet()
+        }.toImmutableMap()
+    }.flowOn(dispatcherDefault)
+        .distinctUntilChanged()
+        .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
+
+    override val dataSizeMapFlow = allDataMapFlow.mapLatest { allDataMap ->
+        allDataMap.mapValues { mapElement -> mapElement.value.size }.toImmutableMap()
+    }.flowOn(dispatcherDefault)
+        .distinctUntilChanged()
+        .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 }

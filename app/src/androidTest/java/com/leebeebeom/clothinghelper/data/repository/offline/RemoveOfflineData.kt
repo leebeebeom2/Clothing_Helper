@@ -3,6 +3,7 @@ package com.leebeebeom.clothinghelper.data.repository.offline
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelper.data.repository.DataBasePath
+import com.leebeebeom.clothinghelper.data.waitTime
 import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -28,4 +29,6 @@ suspend fun TestScope.removeOfflineData(
         .child(databasePath.path)
     ref.child(lastDataList.first().key).removeValue()
     ref.child(lastDataList.last().key).removeValue()
+
+    waitTime(1000)
 }

@@ -13,7 +13,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.HiltTestActivity
 import com.leebeebeom.clothinghelper.ui.component.CancelIconTag
 import com.leebeebeom.clothinghelper.ui.component.StatefulMaxWidthTextField
-import com.leebeebeom.clothinghelper.ui.component.StatefulMaxWidthTestFieldWithCancelIcon
+import com.leebeebeom.clothinghelper.ui.component.StatefulMaxWidthTextFieldWithCancelIcon
 import com.leebeebeom.clothinghelper.ui.onNodeWithStringRes
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import org.junit.Before
@@ -33,7 +33,7 @@ class StatefulMaxWidthTestFieldWithCancelIconTest {
         restorationTester.setContent {
             ClothingHelperTheme {
                 Column(modifier = Modifier.fillMaxSize()) {
-                    StatefulMaxWidthTestFieldWithCancelIcon(
+                    StatefulMaxWidthTextFieldWithCancelIcon(
                         label = R.string.test_text_field,
                         onInputChange = { input = it })
                     StatefulMaxWidthTextField(label = R.string.test_text_field2)

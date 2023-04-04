@@ -5,16 +5,15 @@ import com.leebeebeom.clothinghelper.di.AppScope
 import com.leebeebeom.clothinghelper.di.DispatcherDefault
 import com.leebeebeom.clothinghelper.di.DispatcherIO
 import com.leebeebeom.clothinghelper.domain.model.Folder
+import com.leebeebeom.clothinghelper.domain.model.SubCategory
 import com.leebeebeom.clothinghelper.domain.repository.FolderRepository
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import com.leebeebeom.clothinghelper.domain.repository.preference.FolderPreferencesRepository
 import com.leebeebeom.clothinghelper.domain.repository.preference.SortPreferenceRepository
-import kotlinx.collections.immutable.toImmutableMap
-import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,7 +24,7 @@ class FolderRepositoryImpl @Inject constructor(
     @DispatcherIO dispatcherIO: CoroutineDispatcher,
     @DispatcherDefault dispatcherDefault: CoroutineDispatcher,
     userRepository: UserRepository,
-) : BaseContainerRepositoryImpl<Folder>(
+) : BaseContainerRepositoryImpl<Folder, String>(
     sortFlow = folderPreferencesRepository.sortFlow,
     refPath = DataBasePath.Folder,
     appScope = appScope,
@@ -34,21 +33,48 @@ class FolderRepositoryImpl @Inject constructor(
     dispatcherDefault = dispatcherDefault,
     userRepository = userRepository,
 ), FolderRepository {
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override val folderNamesMapFlow = allDataFlow.mapLatest {
-        it.data.groupBy { element -> element.parentKey }
-            .mapValues { mapElement ->
-                mapElement.value.map { element -> element.name }.toImmutableSet()
-            }
-            .toImmutableMap()
-    }.flowOn(dispatcherDefault)
-        .distinctUntilChanged()
-        .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override val folderSizeMapFlow = allDataFlow.mapLatest {
-        it.data.groupingBy { element -> element.parentKey }.eachCount().toImmutableMap()
-    }.flowOn(dispatcherDefault)
-        .distinctUntilChanged()
-        .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
+    override fun groupByKeySelector(element: Folder) = element.parentKey
+
+    suspend fun init(dispatcher: CoroutineDispatcher, subCategories: List<SubCategory>) =
+        withContext(dispatcher) {
+            subCategories.map { subCategory ->
+                List(subCategory.name.last().digitToInt()) {
+                    Folder(
+                        name = "folder $it",
+                        parentKey = subCategory.key,
+                        subCategoryKey = subCategory.key,
+                        mainCategoryType = subCategory.mainCategoryType
+                    )
+                }.map { async { add(it) } }
+            }.flatten()
+        }
+
+    suspend fun init2(dispatcher: CoroutineDispatcher, folders: List<Folder>) =
+        withContext(dispatcher) {
+            folders.map { folder ->
+                List(folder.name.last().digitToInt()) {
+                    Folder(
+                        name = "folder 1-$it",
+                        parentKey = folder.key,
+                        subCategoryKey = folder.subCategoryKey,
+                        mainCategoryType = folder.mainCategoryType
+                    )
+                }.map { async { add(it) } }
+            }.flatten()
+        }
+
+    suspend fun init3(dispatcher: CoroutineDispatcher, folders: List<Folder>) =
+        withContext(dispatcher) {
+            folders.filter { it.subCategoryKey != it.parentKey }.map { folder ->
+                List(folder.name.last().digitToInt()) {
+                    Folder(
+                        name = "folder 2-$it",
+                        parentKey = folder.key,
+                        subCategoryKey = folder.subCategoryKey,
+                        mainCategoryType = folder.mainCategoryType
+                    )
+                }.map { async { add(it) } }
+            }.flatten()
+        }
 }

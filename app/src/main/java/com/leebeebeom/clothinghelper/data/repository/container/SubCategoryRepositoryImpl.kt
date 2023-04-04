@@ -9,12 +9,12 @@ import com.leebeebeom.clothinghelper.domain.repository.SubCategoryRepository
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import com.leebeebeom.clothinghelper.domain.repository.preference.SortPreferenceRepository
 import com.leebeebeom.clothinghelper.domain.repository.preference.SubCategoryPreferencesRepository
-import kotlinx.collections.immutable.toImmutableMap
-import kotlinx.collections.immutable.toImmutableSet
+import com.leebeebeom.clothinghelper.ui.drawer.content.MainCategoryType
+import com.leebeebeom.clothinghelper.ui.drawer.content.getMainCategories
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,7 +25,7 @@ class SubCategoryRepositoryImpl @Inject constructor(
     @DispatcherIO dispatcherIO: CoroutineDispatcher,
     @DispatcherDefault dispatcherDefault: CoroutineDispatcher,
     userRepository: UserRepository,
-) : BaseContainerRepositoryImpl<SubCategory>(
+) : BaseContainerRepositoryImpl<SubCategory, MainCategoryType>(
     sortFlow = subCategoryPreferencesRepository.sortFlow,
     refPath = DataBasePath.SubCategory,
     appScope = appScope,
@@ -34,22 +34,19 @@ class SubCategoryRepositoryImpl @Inject constructor(
     dispatcherDefault = dispatcherDefault,
     userRepository = userRepository
 ), SubCategoryRepository {
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override val subCategorySizeMapFlow = allDataFlow.mapLatest {
-        it.data.groupingBy { element -> element.mainCategoryType }.eachCount().toImmutableMap()
-    }.flowOn(dispatcherDefault)
-        .distinctUntilChanged()
-        .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override val subCategoryNamesMapFlow =
-        allDataFlow.mapLatest {
-            it.data.groupBy { element -> element.mainCategoryType }
-                .mapValues { mapElement ->
-                    mapElement.value.map { element -> element.name }.toImmutableSet()
-                }
-                .toImmutableMap()
-        }.flowOn(dispatcherDefault)
-            .distinctUntilChanged()
-            .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
+    override fun groupByKeySelector(element: SubCategory) = element.mainCategoryType
+
+    suspend fun init(dispatcher: CoroutineDispatcher) =
+        withContext(dispatcher) {
+            var size = 10
+            getMainCategories().map { mainCategory ->
+                if (mainCategory.type == MainCategoryType.Etc) emptyList<SubCategory>().map { async { } }
+                else List(size--) {
+                    SubCategory(
+                        name = "subCategory $it", mainCategoryType = mainCategory.type
+                    )
+                }.map { async { add(it) } }
+            }.flatten()
+        }
 }

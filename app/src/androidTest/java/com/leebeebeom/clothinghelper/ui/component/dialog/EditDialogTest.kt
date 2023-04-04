@@ -31,7 +31,7 @@ class EditDialogTest {
     @Before
     fun init() {
         restorationTester.setContent {
-            EditDialog(
+            EditNameDialog(
                 label = R.string.test_text_field,
                 placeHolder = null,
                 title = R.string.test_dialog_title,

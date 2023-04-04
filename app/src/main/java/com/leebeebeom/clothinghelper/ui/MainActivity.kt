@@ -21,6 +21,7 @@ import com.leebeebeom.clothinghelper.ui.main.navigateToSizeChartList
 import com.leebeebeom.clothinghelper.ui.main.navigateToSubCategory
 import com.leebeebeom.clothinghelper.ui.setting.SettingGraphRoute
 import com.leebeebeom.clothinghelper.ui.setting.settingGraph
+import com.leebeebeom.clothinghelper.ui.signin.ui.SignInGraphRoute
 import com.leebeebeom.clothinghelper.ui.signin.ui.signInGraph
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelper.ui.util.getCurrentRoute
@@ -85,14 +86,28 @@ private fun MainNavHostNavigateWrapper(
     user()?.let { navigateToMainGraph() } ?: navigateToSignInGraph()
 }
 
-private fun NavHostController.navigateToSignInGraph() = navigate(MainNavRoute.SignInGraph) {
-    popUpTo(MainNavRoute.MainGraph) { inclusive = true }
-    launchSingleTop = true
+private fun NavHostController.navigateToSignInGraph() {
+    val currentRoute = currentBackStackEntry.getCurrentRoute()
+    val signInGraphRoute = currentRoute?.let {
+        kotlin.runCatching { enumValueOf<SignInGraphRoute>(it) }.getOrNull()
+    }
+    if (signInGraphRoute == null)
+        navigate(MainNavRoute.SignInGraph) {
+            popUpTo(MainNavRoute.MainGraph) { inclusive = true }
+            launchSingleTop = true
+        }
 }
 
-private fun NavHostController.navigateToMainGraph() = navigate(MainNavRoute.MainGraph) {
-    popUpTo(MainNavRoute.SignInGraph) { inclusive = true }
-    launchSingleTop = true
+private fun NavHostController.navigateToMainGraph() {
+    val currentRoute = currentBackStackEntry.getCurrentRoute()
+    val signInGraphRoute = currentRoute?.let {
+        kotlin.runCatching { enumValueOf<SignInGraphRoute>(it) }.getOrNull()
+    }
+    if (signInGraphRoute != null)
+        navigate(MainNavRoute.MainGraph) {
+            popUpTo(MainNavRoute.SignInGraph) { inclusive = true }
+            launchSingleTop = true
+        }
 }
 
 private fun onEssentialMenuClick(navController: NavHostController, type: EssentialMenuType) =

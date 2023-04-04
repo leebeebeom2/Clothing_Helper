@@ -98,7 +98,8 @@ class UserRepositoryImpl @Inject constructor(
     /**
      * 호출 시 로딩 On, 예외 발생 시 로딩 Off
      */
-    private suspend fun withContext(task: suspend () -> Unit) = withContext(dispatcherIO) { task() }
+    private suspend inline fun withContext(crossinline task: suspend () -> Unit) =
+        withContext(dispatcherIO) { task() }
 
     private fun FirebaseUser?.toUserModel() =
         this?.let { User(email = "$email", name = "$displayName", uid = uid) }
@@ -107,6 +108,6 @@ class UserRepositoryImpl @Inject constructor(
         operator fun invoke(user: FirebaseUser?)
     }
 
-    private suspend fun callbackFlowEmitWrapper(emit: suspend (UserCallback) -> Unit) =
+    private suspend inline fun callbackFlowEmitWrapper(crossinline emit: suspend (UserCallback) -> Unit) =
         callbackFlowEmit({ userCallback }, flow = userFlow, emit = emit)
 }

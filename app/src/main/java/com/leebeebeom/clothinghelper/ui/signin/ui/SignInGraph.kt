@@ -4,35 +4,33 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.leebeebeom.clothinghelper.ui.MainActivityRoutes
-import com.leebeebeom.clothinghelper.ui.signin.ui.SignInDestinations.ResetPasswordRoute
-import com.leebeebeom.clothinghelper.ui.signin.ui.SignInDestinations.SignInRoute
-import com.leebeebeom.clothinghelper.ui.signin.ui.SignInDestinations.SignUpRoute
+import com.leebeebeom.clothinghelper.ui.MainNavRoute
 import com.leebeebeom.clothinghelper.ui.signin.ui.resetpassword.ResetPasswordScreen
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInScreen
 import com.leebeebeom.clothinghelper.ui.signin.ui.signup.SignUpScreen
 
-object SignInDestinations {
-    const val SignInRoute = "signIn"
-    const val SignUpRoute = "signUp"
-    const val ResetPasswordRoute = "resetPassword"
+object SignInGraphRoute {
+    const val SignInScreen = "sign in screen"
+    const val SignUpScreen = "sign up screen"
+    const val ResetPasswordScreen = "reset password screen"
 }
 
 fun NavGraphBuilder.signInGraph(navController: NavHostController) {
     navigation(
-        startDestination = SignInRoute,
-        route = MainActivityRoutes.SignInGraphRoute,
+        startDestination = SignInGraphRoute.SignInScreen,
+        route = MainNavRoute.SignInGraph,
     ) {
-        composable(route = SignInRoute) {
+        composable(route = SignInGraphRoute.SignInScreen) {
             SignInScreen(
                 navigateToResetPassword = navController::navigateToResetPassword,
                 navigateToSignUp = navController::navigateToSignUp
             )
         }
-        composable(route = SignUpRoute) { SignUpScreen() }
-        composable(route = ResetPasswordRoute) { ResetPasswordScreen(popBackStack = navController::popBackStack) }
+        composable(route = SignInGraphRoute.SignUpScreen) { SignUpScreen() }
+        composable(route = SignInGraphRoute.ResetPasswordScreen) { ResetPasswordScreen(popBackStack = navController::popBackStack) }
     }
 }
 
-private fun NavHostController.navigateToSignUp() = navigate(SignUpRoute)
-private fun NavHostController.navigateToResetPassword() = navigate(ResetPasswordRoute)
+private fun NavHostController.navigateToSignUp() = navigate(SignInGraphRoute.SignUpScreen)
+private fun NavHostController.navigateToResetPassword() =
+    navigate(SignInGraphRoute.ResetPasswordScreen)

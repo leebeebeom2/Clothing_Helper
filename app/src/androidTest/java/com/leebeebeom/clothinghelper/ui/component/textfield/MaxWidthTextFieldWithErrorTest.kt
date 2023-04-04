@@ -88,7 +88,8 @@ class MaxWidthTextFieldWithErrorTest {
                                     keyboardType = KeyboardType.Text, imeAction = ImeAction.Next
                                 ),
                                 onInputChange = { input = it },
-                                getFocus = true
+                                getFocus = true,
+                                fixedError = false
                             )
 
                             state2 = rememberMaxWidthTestFieldState(initialText = input2)
@@ -102,7 +103,8 @@ class MaxWidthTextFieldWithErrorTest {
                                     keyboardType = KeyboardType.Text, imeAction = ImeAction.Done
                                 ),
                                 onInputChange = { input2 = it },
-                                getFocus = false
+                                getFocus = false,
+                                fixedError = false
                             )
 
                             Button(onClick = { navController.navigate(screen2) }) {

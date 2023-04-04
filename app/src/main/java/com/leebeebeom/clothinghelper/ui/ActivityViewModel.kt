@@ -25,5 +25,5 @@ class ActivityViewModel @Inject constructor(getUserUseCase: GetUserUseCase) :
 }
 
 @Composable
-fun activityViewModel(context: Context = LocalContext.current): ActivityViewModel = // TODO 삭제
+fun activityViewModel(context: Context = LocalContext.current): ActivityViewModel =
     hiltViewModel(viewModelStoreOwner = (context as ComponentActivity))

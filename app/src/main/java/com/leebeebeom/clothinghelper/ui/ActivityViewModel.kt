@@ -1,10 +1,5 @@
 package com.leebeebeom.clothinghelper.ui
 
-import android.content.Context
-import androidx.activity.ComponentActivity
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.domain.usecase.user.GetUserUseCase
@@ -23,7 +18,3 @@ class ActivityViewModel @Inject constructor(getUserUseCase: GetUserUseCase) :
             initialValue = getUserUseCase.getUser()
         )
 }
-
-@Composable
-fun activityViewModel(context: Context = LocalContext.current): ActivityViewModel =
-    hiltViewModel(viewModelStoreOwner = (context as ComponentActivity))

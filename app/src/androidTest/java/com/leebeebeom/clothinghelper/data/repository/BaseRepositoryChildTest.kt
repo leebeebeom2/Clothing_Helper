@@ -27,7 +27,7 @@ const val TodoInitialSize = 5
 @OptIn(ExperimentalCoroutinesApi::class)
 class BaseRepositoryChildTest {
     private val dispatcher = StandardTestDispatcher()
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private val scope = TestScope(dispatcher)
     private lateinit var userRepository: UserRepository
     private lateinit var subCategoryPreferenceRepository: SortPreferenceRepository
     private lateinit var subCategoryRepository: SubCategoryRepository
@@ -67,6 +67,34 @@ class BaseRepositoryChildTest {
             userRepository = userRepository
         )
     }
+
+//    @Test
+//    fun initialize() = runTest(dispatcher) {
+//        val ref = Firebase.database.reference.child("bd7L37BOUxcvocP9kaa3HLpC3hs1")
+//        ref.child(DataBasePath.SubCategory.path).removeValue().await()
+//        ref.child(DataBasePath.Folder.path).removeValue().await()
+//        ref.child(DataBasePath.Todo.path).removeValue().await()
+//
+//        userRepository.signIn(email = RepositoryTestEmail, password = SignInPassword)
+//
+//        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+//            subCategoryRepository.allDataFlow.collect()
+//        }
+//        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+//            folderRepository.allDataFlow.collect()
+//        }
+//        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+//            todoRepository.allDataFlow.collect()
+//        }
+//
+//        waitTime(1000)
+//
+//        List(SubCategoryInitialSize) { SubCategory(name = "subCategory test $it") }.map { async { subCategoryRepository.add(it) } }.awaitAll()
+//        List(FolderInitialSize) { Folder(name = "folder test $it") }.map { async { folderRepository.add(it) } }.awaitAll()
+//        List(TodoInitialSize) { Todo(text = "todo test $it") }.map { async { todoRepository.add(it) } }.awaitAll()
+//
+//        waitTime(10000)
+//    }
 
     @Test
     fun crudTest() = runTest(dispatcher) {
@@ -203,12 +231,12 @@ class BaseRepositoryChildTest {
         )
 
         val folders = List(9) {
-                Folder(
-                    name = "$it",
-                    createDate = createdData++,
-                    editDate = createdData++
-                )
-            }.shuffled()
+            Folder(
+                name = "$it",
+                createDate = createdData++,
+                editDate = createdData++
+            )
+        }.shuffled()
 
         containerSortTest(
             userRepository = userRepository,

@@ -5,10 +5,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-suspend fun <T> callbackFlowEmit(
-    callback: () -> T?,
+suspend inline fun <T> callbackFlowEmit(
+    crossinline callback: () -> T?,
     flow: Flow<*>,
-    emit: suspend (callback: T) -> Unit,
+    crossinline emit: suspend (callback: T) -> Unit,
 ) {
     val callback1 = callback()
 

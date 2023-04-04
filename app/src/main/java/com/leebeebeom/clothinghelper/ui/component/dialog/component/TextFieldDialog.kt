@@ -92,8 +92,11 @@ interface TextFieldDialogState {
     val inputChanged: Boolean
 }
 
-class MutableTextFieldDialogState(override val initialText: String = "") : TextFieldDialogState {
-    override var input by mutableStateOf(initialText)
+class MutableTextFieldDialogState(
+    override val initialText: String = "",
+    initialInput: String = initialText
+) : TextFieldDialogState {
+    override var input by mutableStateOf(initialInput)
         private set
     override val inputChanged by derivedStateOf { input != initialText }
 
@@ -103,7 +106,9 @@ class MutableTextFieldDialogState(override val initialText: String = "") : TextF
 
     companion object {
         val Saver =
-            listSaver(save = { listOf(it.input) }, restore = { MutableTextFieldDialogState(it[0]) })
+            listSaver(
+                save = { listOf(it.initialText, it.input) },
+                restore = { MutableTextFieldDialogState(it[0], it[1]) })
     }
 }
 

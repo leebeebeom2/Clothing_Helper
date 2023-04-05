@@ -5,7 +5,6 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.flow.SharedFlow
-import org.checkerframework.checker.units.qual.K
 
 interface BaseDataRepository<T : BaseModel> {
     val allDataFlow: SharedFlow<DataResult<T>>

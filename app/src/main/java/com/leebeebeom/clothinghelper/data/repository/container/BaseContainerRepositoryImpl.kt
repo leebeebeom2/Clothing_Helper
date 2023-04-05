@@ -7,9 +7,7 @@ import com.leebeebeom.clothinghelper.data.repository.preference.Order.Descending
 import com.leebeebeom.clothinghelper.data.repository.preference.Sort.*
 import com.leebeebeom.clothinghelper.data.repository.preference.SortPreferences
 import com.leebeebeom.clothinghelper.domain.model.BaseContainerModel
-import com.leebeebeom.clothinghelper.domain.repository.BaseContainerRepository
-import com.leebeebeom.clothinghelper.domain.repository.DataResult
-import com.leebeebeom.clothinghelper.domain.repository.UserRepository
+import com.leebeebeom.clothinghelper.domain.repository.*
 import kotlinx.collections.immutable.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -75,16 +73,15 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel, K>(
 
     abstract fun groupByKeySelector(element: T): K
 
-    final override val allDataMapFlow =
+    final override val allDataMapFlow: SharedFlow<DataResultMap<K, T>> =
         allDataFlow.mapLatest { dataResult ->
-            dataResult.data.groupBy { element -> groupByKeySelector(element) }
-                .mapValues { mapElement -> mapElement.value.toImmutableList() }.toImmutableMap()
+            dataResult.toMap(::groupByKeySelector)
         }.flowOn(dispatcherDefault)
             .distinctUntilChanged()
             .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
     override val dataNamesMapFlow = allDataMapFlow.mapLatest { allDataMap ->
-        allDataMap.mapValues { mapElement ->
+        allDataMap.data.mapValues { mapElement ->
             mapElement.value.map { element -> element.name }.toImmutableSet()
         }.toImmutableMap()
     }.flowOn(dispatcherDefault)
@@ -92,7 +89,7 @@ abstract class BaseContainerRepositoryImpl<T : BaseContainerModel, K>(
         .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
     override val dataSizeMapFlow = allDataMapFlow.mapLatest { allDataMap ->
-        allDataMap.mapValues { mapElement -> mapElement.value.size }.toImmutableMap()
+        allDataMap.data.mapValues { mapElement -> mapElement.value.size }.toImmutableMap()
     }.flowOn(dispatcherDefault)
         .distinctUntilChanged()
         .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)

@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable // skippable
-fun DrawerContent(content: @Composable () -> Unit) {
+fun DrawerMenus(content: @Composable () -> Unit) {
     val scrollState = rememberScrollState()
     Column(
         modifier = Modifier

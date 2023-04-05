@@ -30,7 +30,7 @@ val Type = Typography(
     ),
     h5 = TextStyle(
         fontWeight = FontWeight.Normal,
-        fontSize = 24.sp,
+        fontSize = 30.sp,
         letterSpacing = 0.sp
     ),
     h6 = TextStyle(

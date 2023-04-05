@@ -22,13 +22,13 @@ const val BUTTON_HEIGHT = 52
 
 @NoLiveLiterals
 @Composable // skippable
-fun MaxWidthButton(
+inline fun MaxWidthButton(
     @StringRes text: Int,
     enabled: () -> Boolean = { true },
     colors: ButtonColors = ButtonDefaults.buttonColors(),
-    icon: @Composable (() -> Unit)? = null,
+    noinline icon: @Composable (() -> Unit)? = null,
     focusManager: FocusManager = LocalFocusManager.current,
-    onClick: () -> Unit,
+    crossinline onClick: () -> Unit,
 ) {
     Button(
         modifier = Modifier

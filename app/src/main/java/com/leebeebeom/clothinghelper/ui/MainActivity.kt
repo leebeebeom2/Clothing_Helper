@@ -1,18 +1,22 @@
 package com.leebeebeom.clothinghelper.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.leebeebeom.clothinghelper.domain.model.User
+import com.leebeebeom.clothinghelper.ui.component.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelper.ui.drawer.Drawer
 import com.leebeebeom.clothinghelper.ui.drawer.content.EssentialMenuType
 import com.leebeebeom.clothinghelper.ui.main.MainGraphRoute
@@ -21,7 +25,6 @@ import com.leebeebeom.clothinghelper.ui.main.navigateToSizeChartList
 import com.leebeebeom.clothinghelper.ui.main.navigateToSubCategory
 import com.leebeebeom.clothinghelper.ui.setting.SettingGraphRoute
 import com.leebeebeom.clothinghelper.ui.setting.settingGraph
-import com.leebeebeom.clothinghelper.ui.signin.ui.SignInGraphRoute
 import com.leebeebeom.clothinghelper.ui.signin.ui.signInGraph
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import com.leebeebeom.clothinghelper.ui.util.getCurrentRoute
@@ -45,14 +48,20 @@ class MainActivity : ComponentActivity() {
 
 @Composable // skippable
 fun MainNavHost(
-    viewModel: ActivityViewModel = hiltViewModel(),
+    viewModel: MainNavViewModel = hiltViewModel(),
     navController: NavHostController = rememberNavController(),
 ) {
-    val user by viewModel.userFlow.collectAsStateWithLifecycle()
-
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle().also {
+        Log.d(TAG, "마지막 값: ${it.value}")
+    }
+    val startDestination by remember {
+        derivedStateOf {
+            uiState.user?.let { MainNavRoute.MainGraph } ?: MainNavRoute.SignInGraph
+        }
+    }
     ClothingHelperTheme {
         Drawer(
-            user = { user },
+            user = { uiState.user },
             navigateToSetting = navController::navigateToSetting,
             onEssentialMenuClick = { onEssentialMenuClick(navController, it) },
             navigateToMain = navController::navigateToSubCategory,
@@ -62,52 +71,18 @@ fun MainNavHost(
             NavHost(
                 modifier = Modifier.padding(paddingValues),
                 navController = navController,
-                startDestination = MainNavRoute.MainGraph
+                startDestination = startDestination
             ) {
                 mainGraph(navController = navController)
                 settingGraph(navController = navController)
                 signInGraph(navController = navController)
             }
-            MainNavHostNavigateWrapper(
-                user = { user },
-                navigateToMainGraph = navController::navigateToMainGraph,
-                navigateToSignInGraph = navController::navigateToSignInGraph
-            )
         }
+        CenterDotProgressIndicator(
+            show = { uiState.isLoading },
+            backGround = MaterialTheme.colors.background
+        )
     }
-}
-
-@Composable
-private fun MainNavHostNavigateWrapper(
-    user: () -> User?,
-    navigateToMainGraph: () -> Unit,
-    navigateToSignInGraph: () -> Unit
-) {
-    user()?.let { navigateToMainGraph() } ?: navigateToSignInGraph()
-}
-
-private fun NavHostController.navigateToSignInGraph() {
-    val currentRoute = currentBackStackEntry.getCurrentRoute()
-    val signInGraphRoute = currentRoute?.let {
-        kotlin.runCatching { enumValueOf<SignInGraphRoute>(it) }.getOrNull()
-    }
-    if (signInGraphRoute == null)
-        navigate(MainNavRoute.SignInGraph) {
-            popUpTo(MainNavRoute.MainGraph) { inclusive = true }
-            launchSingleTop = true
-        }
-}
-
-private fun NavHostController.navigateToMainGraph() {
-    val currentRoute = currentBackStackEntry.getCurrentRoute()
-    val signInGraphRoute = currentRoute?.let {
-        kotlin.runCatching { enumValueOf<SignInGraphRoute>(it) }.getOrNull()
-    }
-    if (signInGraphRoute != null)
-        navigate(MainNavRoute.MainGraph) {
-            popUpTo(MainNavRoute.SignInGraph) { inclusive = true }
-            launchSingleTop = true
-        }
 }
 
 private fun onEssentialMenuClick(navController: NavHostController, type: EssentialMenuType) =

@@ -11,7 +11,7 @@ private val LightColorPalette = lightColors(
     background = WhiteSmoke
 )
 
-@Composable
+@Composable // skippable
 fun ClothingHelperTheme(
     content: @Composable () -> Unit,
 ) {

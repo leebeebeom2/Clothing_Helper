@@ -20,13 +20,13 @@ import androidx.compose.ui.unit.dp
 
 @NoLiveLiterals
 @Composable // skippable
-inline fun MaxWidthButton(
+fun MaxWidthButton(
     @StringRes text: Int,
     enabled: () -> Boolean = { true },
     colors: ButtonColors = ButtonDefaults.buttonColors(),
-    noinline icon: @Composable (() -> Unit)? = null,
+    icon: @Composable (() -> Unit)? = null,
     focusManager: FocusManager = LocalFocusManager.current,
-    crossinline onClick: () -> Unit,
+    onClick: () -> Unit,
 ) {
     Button(
         modifier = Modifier

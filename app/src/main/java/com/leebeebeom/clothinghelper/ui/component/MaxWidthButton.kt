@@ -18,8 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
-const val BUTTON_HEIGHT = 52
-
 @NoLiveLiterals
 @Composable // skippable
 inline fun MaxWidthButton(
@@ -33,7 +31,7 @@ inline fun MaxWidthButton(
     Button(
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(BUTTON_HEIGHT.dp),
+            .heightIn(52.dp),
         onClick = {
             onClick()
             focusManager.clearFocus()

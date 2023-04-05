@@ -8,11 +8,11 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.TAG
 import kotlinx.coroutines.CoroutineExceptionHandler
 
-fun firebaseAuthErrorHandler(
-    setEmailError: (Int) -> Unit,
-    setPasswordError: (Int) -> Unit = {},
-    showToast: ShowToast,
-    loadingOff: () -> Unit
+inline fun firebaseAuthErrorHandler(
+    crossinline setEmailError: (Int) -> Unit,
+    crossinline setPasswordError: (Int) -> Unit = {},
+    crossinline showToast: ShowToast,
+    crossinline loadingOff: () -> Unit
 ) = CoroutineExceptionHandler { _, throwable ->
     setFirebaseAuthError(
         throwable = throwable,
@@ -30,7 +30,7 @@ object FirebaseAuthErrorCode {
     const val ERROR_WRONG_PASSWORD = "ERROR_WRONG_PASSWORD"
 }
 
-private fun setFirebaseAuthError(
+inline fun setFirebaseAuthError(
     throwable: Throwable,
     setEmailError: (error: Int) -> Unit = {},
     setPasswordError: (error: Int) -> Unit = {},
@@ -54,8 +54,9 @@ private fun setFirebaseAuthError(
     }
 }
 
-fun toastHandler(
-    callSite: String, showToast: () -> Unit
+inline fun toastHandler(
+    callSite: String,
+    crossinline showToast: () -> Unit
 ) = CoroutineExceptionHandler { _, throwable ->
     Log.d(TAG, "$callSite: $throwable")
     showToast()

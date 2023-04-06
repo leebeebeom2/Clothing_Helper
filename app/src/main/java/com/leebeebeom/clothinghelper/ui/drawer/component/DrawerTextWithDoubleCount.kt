@@ -11,7 +11,7 @@ import com.leebeebeom.clothinghelper.ui.component.SingleLineText
 
 @Composable
 fun RowScope.DrawerTextWithDoubleCount(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     @StringRes text: Int,
     style: TextStyle,
     folderSize: () -> Int,
@@ -31,7 +31,7 @@ fun RowScope.DrawerTextWithDoubleCount(
 
 @Composable
 fun RowScope.DrawerTextWithDoubleCount(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     text: () -> String,
     style: TextStyle,
     folderSize: () -> Int,

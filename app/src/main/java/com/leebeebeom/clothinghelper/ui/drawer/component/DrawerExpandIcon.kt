@@ -14,12 +14,13 @@ const val DrawerExpandIconTag = "drawer expand icon"
 fun DrawerExpandIcon(
     expanded: () -> Boolean,
     toggleExpand: () -> Unit,
-    dataSize: () -> Int
+    dataSize: (() -> Int)? = null
 ) {
-    val show by remember { derivedStateOf { dataSize() > 0 } }
+    val show by remember { derivedStateOf { dataSize?.let { it() > 0 } ?: true } }
 
-    if (show) ExpandIcon(
-        modifier = Modifier.testTag(DrawerExpandIconTag),
-        isExpanded = expanded, onClick = toggleExpand
-    )
+    if (show)
+        ExpandIcon(
+            modifier = Modifier.testTag(DrawerExpandIconTag),
+            isExpanded = expanded, onClick = toggleExpand
+        )
 }

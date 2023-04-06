@@ -16,7 +16,7 @@ fun DrawerMenus(content: @Composable () -> Unit) {
         modifier = Modifier
             .verticalScroll(scrollState)
             .fillMaxSize()
-            .padding(top = 4.dp, bottom = 40.dp)
+            .padding(bottom = 40.dp)
     ) {
         content()
     }

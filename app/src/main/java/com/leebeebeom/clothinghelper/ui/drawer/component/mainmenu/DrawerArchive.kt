@@ -1,12 +1,9 @@
 package com.leebeebeom.clothinghelper.ui.drawer.component.mainmenu
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerExpandIcon
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerItemsWrapperWithExpandAnimation
@@ -37,7 +34,6 @@ fun DrawerArchive(
         onSizeChange = state::onSizeChanged
     ) {
         DrawerTextWithDoubleCount(
-            modifier = Modifier.padding(vertical = 12.dp),
             text = archive.name,
             style = drawerMainMenuTextStyle(),
             folderSize = { localFoldersSize },

@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.ui.drawer.content
 
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Divider
@@ -39,7 +38,7 @@ fun DrawerEssentialMenus(
 private fun EssentialMenu(
     essentialMenu: EssentialMenu, onClick: (EssentialMenuType) -> Unit
 ) {
-    DrawerRow(modifier = Modifier.heightIn(40.dp), onClick = { onClick(essentialMenu.type) }) {
+    DrawerRow(height = 44.dp, onClick = { onClick(essentialMenu.type) }) {
         IconWrapper(
             modifier = Modifier.size(22.dp), drawable = essentialMenu.drawable
         )
@@ -47,7 +46,7 @@ private fun EssentialMenu(
         SingleLineText(
             text = stringResource(id = essentialMenu.name),
             style = MaterialTheme.typography.subtitle1.copy(
-                fontSize = 17.sp, letterSpacing = 0.75.sp
+                fontSize = 18.sp, letterSpacing = 0.75.sp
             )
         )
     }

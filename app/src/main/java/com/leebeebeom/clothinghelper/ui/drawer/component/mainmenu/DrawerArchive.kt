@@ -10,7 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.ui.component.SingleLineText
 import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemDropdownMenuState
-import com.leebeebeom.clothinghelper.ui.drawer.component.*
+import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerCount
+import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerExpandIcon
+import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerItemsWrapperWithExpandAnimation
+import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerRow
 import com.leebeebeom.clothinghelper.ui.drawer.component.dropdownmenus.DrawerDropdownMenu
 import com.leebeebeom.clothinghelper.ui.drawer.component.dropdownmenus.DrawerDropdownMenuAddFolder
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemDropdownMenuState
@@ -35,7 +38,6 @@ fun DrawerArchive(
         onLongClick = state::onLongClick,
         onSizeChange = state::onSizeChanged
     ) {
-        DrawerInsideRow {
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -44,7 +46,7 @@ fun DrawerArchive(
                 SingleLineText(text = archive.name, style = drawerMainMenuTextStyle())
                 DrawerCount(folderSize = { localFoldersSize }, itemSize = { archiveItemsSize() })
             }
-        }
+
         DrawerExpandIcon(expanded = { state.expanded },
             toggleExpand = state::toggleExpand,
             dataSize = { localFoldersSize })
@@ -56,6 +58,7 @@ fun DrawerArchive(
             folderNames = archiveFolderNames,
             onPositiveButtonClick = { name ->
                 addFolder(archive.type.name, name)
+                state.expand()
             }
         )
     }

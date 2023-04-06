@@ -7,7 +7,7 @@ import kotlinx.collections.immutable.ImmutableSet
 @Composable // skippable
 fun AddFolderDialog(
     folderNames: () -> ImmutableSet<String>,
-    onPositiveButtonClick: (String) -> Unit,
+    onPositiveButtonClick: (name: String) -> Unit,
     show: () -> Boolean,
     onDismiss: () -> Unit
 ) {

@@ -1,7 +1,12 @@
 package com.leebeebeom.clothinghelper.ui.drawer.component.mainmenu
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.util.AddFolder
 import kotlinx.collections.immutable.ImmutableList
@@ -18,23 +23,28 @@ fun DrawerMainMenus(
     subMenus: @Composable (MainMenuType) -> Unit,
     archiveFolders: @Composable () -> Unit
 ) {
-    mainMenus.forEach { mainMenu ->
-        key(mainMenu.type) {
-            if (mainMenu.type != MainMenuType.Archive)
-                DrawerMainMenu(
-                    mainMenu = mainMenu,
-                    onMainMenuClick = onMainMenuClick,
-                    subMenus = subMenus
+    Column(
+        modifier = Modifier.padding(vertical = 4.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        mainMenus.forEach { mainMenu ->
+            key(mainMenu.type) {
+                if (mainMenu.type != MainMenuType.Archive)
+                    DrawerMainMenu(
+                        mainMenu = mainMenu,
+                        onMainMenuClick = onMainMenuClick,
+                        subMenus = subMenus
+                    )
+                else DrawerArchive(
+                    archive = mainMenu,
+                    onArchiveClick = onMainMenuClick,
+                    archiveFoldersSize = archiveFoldersSize,
+                    archiveFolderNames = archiveFolderNames,
+                    archiveItemsSize = { 0 },
+                    addFolder = addFolder,
+                    archiveFolders = archiveFolders,
                 )
-            else DrawerArchive(
-                archive = mainMenu,
-                onArchiveClick = onMainMenuClick,
-                archiveFoldersSize = archiveFoldersSize,
-                archiveFolderNames = archiveFolderNames,
-                archiveItemsSize = { 0 },
-                addFolder = addFolder,
-                archiveFolders = archiveFolders,
-            )
+            }
         }
     }
 }

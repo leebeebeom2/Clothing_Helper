@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.ui.drawer.component.mainmenu
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -8,12 +7,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.leebeebeom.clothinghelper.ui.component.SingleLineText
 import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemDropdownMenuState
-import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerCount
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerExpandIcon
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerItemsWrapperWithExpandAnimation
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerRow
+import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerTextWithDoubleCount
 import com.leebeebeom.clothinghelper.ui.drawer.component.dropdownmenus.DrawerDropdownMenu
 import com.leebeebeom.clothinghelper.ui.drawer.component.dropdownmenus.DrawerDropdownMenuAddFolder
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemDropdownMenuState
@@ -38,14 +36,13 @@ fun DrawerArchive(
         onLongClick = state::onLongClick,
         onSizeChange = state::onSizeChanged
     ) {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(vertical = 12.dp)
-            ) {
-                SingleLineText(text = archive.name, style = drawerMainMenuTextStyle())
-                DrawerCount(folderSize = { localFoldersSize }, itemSize = { archiveItemsSize() })
-            }
+        DrawerTextWithDoubleCount(
+            modifier = Modifier.padding(vertical = 12.dp),
+            text = archive.name,
+            style = drawerMainMenuTextStyle(),
+            folderSize = { localFoldersSize },
+            itemSize = { archiveItemsSize() }
+        )
 
         DrawerExpandIcon(expanded = { state.expanded },
             toggleExpand = state::toggleExpand,

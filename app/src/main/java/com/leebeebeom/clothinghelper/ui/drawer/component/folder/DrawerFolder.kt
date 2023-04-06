@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.ui.drawer.component.folder
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.MaterialTheme
@@ -15,12 +14,11 @@ import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.model.Folder
 import com.leebeebeom.clothinghelper.ui.component.IconWrapper
-import com.leebeebeom.clothinghelper.ui.component.SingleLineText
 import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemDropdownMenuState
-import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerCount
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerExpandIcon
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerItemsWrapperWithExpandAnimation
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerRow
+import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerTextWithDoubleCount
 import com.leebeebeom.clothinghelper.ui.drawer.component.dropdownmenus.DrawerFolderDropDownMenu
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.util.AddFolder
@@ -66,14 +64,14 @@ fun DrawerFolder(
     ) {
         IconWrapper(drawable = R.drawable.ic_folder, modifier = Modifier.size(32.dp))
 
-        Column(
-            Modifier
-                .padding(start = 8.dp)
-                .weight(1f)
-        ) {
-            SingleLineText(text = { folder.name }, style = MaterialTheme.typography.body1)
-            DrawerCount(folderSize = { childFolderSize }, itemSize = { childItemSizeMap })
-        }
+        DrawerTextWithDoubleCount(
+            modifier = Modifier.padding(start = 8.dp),
+            text = { folder.name },
+            style = MaterialTheme.typography.body1,
+            folderSize = { childFolderSize },
+            itemSize = { childItemSizeMap }
+        )
+
         DrawerExpandIcon(expanded = { state.expanded },
             toggleExpand = state::toggleExpand,
             dataSize = { childFolderSize })

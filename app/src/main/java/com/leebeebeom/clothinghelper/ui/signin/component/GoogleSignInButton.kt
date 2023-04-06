@@ -33,7 +33,7 @@ fun GoogleSignInButton(
                 onResult(it) { enabled = true }
             }
         )
-    val gso = rememberedGso()
+    val gso = rememberGso()
     val intent = remember { GoogleSignIn.getClient(context, gso).signInIntent }
 
     MaxWidthButton(text = R.string.starts_with_google_email,
@@ -47,7 +47,7 @@ fun GoogleSignInButton(
 }
 
 @Composable
-private fun rememberedGso(): GoogleSignInOptions {
+private fun rememberGso(): GoogleSignInOptions {
     val clientId = stringResource(id = R.string.default_web_client_id)
 
     return remember {

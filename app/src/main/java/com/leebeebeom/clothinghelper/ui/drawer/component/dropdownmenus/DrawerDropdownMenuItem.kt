@@ -11,14 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.ui.component.SingleLineText
 
 @Composable // skippable
 fun DrawerDropdownMenuItem(
     @StringRes text: Int,
-    onClick: () -> Unit,
-    onDismiss: () -> Unit
+    onClick: () -> Unit
 ) {
     Surface(
         modifier = Modifier.padding(horizontal = 4.dp),
@@ -27,17 +25,12 @@ fun DrawerDropdownMenuItem(
         SingleLineText(
             text = text,
             modifier = Modifier
-                .clickable(
-                    onClick = {
-                        onClick()
-                        onDismiss()
-                    }
-                )
-                .padding(vertical = 8.dp)
-                .padding(start = 8.dp, end = 24.dp)
+                .clickable(onClick = onClick)
+                .padding(vertical = 12.dp)
+                .padding(start = 12.dp, end = 16.dp)
                 .widthIn(52.dp)
                 .fillMaxSize(),
-            style = MaterialTheme.typography.subtitle2.copy(fontSize = 16.sp),
+            style = MaterialTheme.typography.body1,
             textAlign = TextAlign.Start
         )
     }

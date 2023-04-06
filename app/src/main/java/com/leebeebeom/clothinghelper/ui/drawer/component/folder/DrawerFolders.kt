@@ -1,12 +1,12 @@
 package com.leebeebeom.clothinghelper.ui.drawer.component.folder
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import com.leebeebeom.clothinghelper.domain.model.Folder
+import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerItemsColumn
 import com.leebeebeom.clothinghelper.ui.util.*
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
@@ -26,7 +26,7 @@ fun DrawerFolders(
     addFolder: AddFolder,
     editFolder: EditFolder
 ) {
-    Column(modifier = Modifier.background(backgroundColor)) {
+    DrawerItemsColumn(modifier = Modifier.background(backgroundColor)) {
         folders().forEach { folder ->
             DrawerFolder(
                 folder = folder,

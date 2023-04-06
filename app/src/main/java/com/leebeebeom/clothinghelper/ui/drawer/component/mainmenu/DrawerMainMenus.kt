@@ -13,8 +13,8 @@ import kotlinx.collections.immutable.persistentListOf
 fun DrawerMainMenus(
     mainMenus: ImmutableList<MainMenu>,
     onMainMenuClick: (MainMenuType) -> Unit,
-    archiveFolderNames: () -> ImmutableSet<String>,
-    archiveFoldersSize: () -> Int,
+    folderNames: (parentKey: String) -> ImmutableSet<String>,
+    foldersSize: (parentKey: String) -> Int,
     addFolder: AddFolder,
     subMenus: @Composable (MainMenuType) -> Unit,
     archiveFolders: @Composable () -> Unit
@@ -31,8 +31,8 @@ fun DrawerMainMenus(
                 else DrawerArchive(
                     archive = mainMenu,
                     onArchiveClick = onMainMenuClick,
-                    archiveFoldersSize = archiveFoldersSize,
-                    archiveFolderNames = archiveFolderNames,
+                    foldersSize = foldersSize,
+                    folderNames = folderNames,
                     archiveItemsSize = { 0 },
                     addFolder = addFolder,
                     archiveFolders = archiveFolders,

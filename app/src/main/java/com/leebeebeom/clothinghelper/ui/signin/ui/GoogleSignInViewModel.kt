@@ -6,7 +6,6 @@ import androidx.activity.result.ActivityResult
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.leebeebeom.clothinghelper.R
@@ -15,6 +14,7 @@ import com.leebeebeom.clothinghelper.ui.TAG
 import com.leebeebeom.clothinghelper.ui.viewmodel.LoadingViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 /**
  * Google 로그인 로직
@@ -63,9 +63,8 @@ abstract class GoogleSignInViewModel(
         }
     }
 
-    private fun getGoogleCredential(activityResult: ActivityResult): AuthCredential {
-        val account = GoogleSignIn.getSignedInAccountFromIntent(activityResult.data)
-            .getResult(ApiException::class.java)
+    private suspend fun getGoogleCredential(activityResult: ActivityResult): AuthCredential {
+        val account = GoogleSignIn.getSignedInAccountFromIntent(activityResult.data).await()
         return GoogleAuthProvider.getCredential(account.idToken, null)
     }
 }

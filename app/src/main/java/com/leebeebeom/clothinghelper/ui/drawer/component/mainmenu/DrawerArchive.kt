@@ -19,14 +19,14 @@ import kotlinx.collections.immutable.ImmutableSet
 fun DrawerArchive(
     archive: MainMenu,
     onArchiveClick: (MainMenuType) -> Unit,
-    archiveFoldersSize: () -> Int,
-    archiveFolderNames: () -> ImmutableSet<String>,
+    folderNames: (parentKey: String) -> ImmutableSet<String>,
+    foldersSize: (parentKey: String) -> Int,
     archiveItemsSize: () -> Int,
     addFolder: AddFolder,
     state: DrawerItemDropdownMenuState = rememberDrawerItemDropdownMenuState(),
     archiveFolders: @Composable () -> Unit,
 ) {
-    val localFoldersSize by remember { derivedStateOf(archiveFoldersSize) }
+    val localFoldersSize by remember { derivedStateOf { foldersSize(archive.type.name) } }
 
     DrawerRow(
         onClick = { onArchiveClick(archive.type) },
@@ -48,7 +48,7 @@ fun DrawerArchive(
     DrawerDropdownMenu(state = state, onDismiss = state::onDismiss) {
         DrawerDropdownMenuAddFolder(
             onDismiss = state::onDismiss,
-            folderNames = archiveFolderNames,
+            folderNames = { folderNames(archive.type.name) },
             onPositiveButtonClick = { name ->
                 addFolder(archive.type.name, name)
                 state.expand()

@@ -25,7 +25,7 @@ const val SettingIconTag = "setting icon"
 fun DrawerHeader(
     userName: () -> String?,
     userEmail: () -> String?,
-    navigateToSetting: () -> Unit
+    onSettingIconClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -38,7 +38,7 @@ fun DrawerHeader(
         CustomIconButton(
             modifier = Modifier.testTag(SettingIconTag),
             drawable = R.drawable.ic_settings,
-            onClick = navigateToSetting
+            onClick = onSettingIconClick
         )
     }
 }

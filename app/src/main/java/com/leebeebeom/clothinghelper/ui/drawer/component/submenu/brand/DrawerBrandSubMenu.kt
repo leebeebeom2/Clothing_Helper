@@ -2,6 +2,7 @@ package com.leebeebeom.clothinghelper.ui.drawer.component.submenu.brand
 
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerContentWithDoubleCount
 import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.SubMenu
 import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.SubMenuType
@@ -10,6 +11,7 @@ import kotlinx.collections.immutable.ImmutableSet
 
 @Composable
 fun DrawerBrandSubMenu(
+    state: DrawerItemDropdownMenuState,
     subMenu: SubMenu,
     onClick: (SubMenuType) -> Unit,
     folderNames: (parentKey: String) -> ImmutableSet<String>,
@@ -19,6 +21,7 @@ fun DrawerBrandSubMenu(
     folders: @Composable (parentKey: String) -> Unit
 ) {
     DrawerContentWithDoubleCount(
+        state = state,
         key = subMenu.type.name,
         text = subMenu.name,
         textStyle = MaterialTheme.typography.subtitle1,

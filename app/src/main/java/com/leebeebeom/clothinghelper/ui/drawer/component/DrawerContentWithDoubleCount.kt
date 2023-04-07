@@ -66,7 +66,7 @@ fun DrawerContentWithDoubleCount(
             }, show = { showAddDialog }, onDismiss = { showAddDialog = false })
     }
 
-    val draw by remember { derivedStateOf { localFoldersSize > 0 } }
+    val draw by remember(foldersSize) { derivedStateOf { foldersSize(key) > 0 } }
 
     DrawerItemsWrapperWithExpandAnimation(
         expand = { state.expanded },

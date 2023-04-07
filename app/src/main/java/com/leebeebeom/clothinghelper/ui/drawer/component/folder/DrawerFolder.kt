@@ -81,9 +81,8 @@ fun DrawerFolder(
         )
     }
 
-    val draw by remember {
-        derivedStateOf { childFoldersSize > 0 }
-    }
+    val draw by remember(foldersSize) { derivedStateOf { foldersSize(folder.key) > 0 } }
+
     DrawerItemsWrapperWithExpandAnimation(expand = { state.expanded }, draw = { draw }, item = {
         DrawerFolders(
             parentKey = folder.key,

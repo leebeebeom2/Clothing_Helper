@@ -16,7 +16,6 @@ import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.closet.ClothesC
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemState
 import com.leebeebeom.clothinghelper.ui.theme.Black11
-import com.leebeebeom.clothinghelper.ui.theme.Black18
 import com.leebeebeom.clothinghelper.ui.util.AddFolder
 import com.leebeebeom.clothinghelper.ui.util.EditFolder
 import kotlinx.collections.immutable.ImmutableList
@@ -71,7 +70,9 @@ fun DrawerMainMenus(
                                 folderNames = folderNames,
                                 itemsSize = { 0 },
                                 addFolder = addFolder,
-                                folders = { Folders(parentKey = it, backgroundColor = Black18) }
+                                folders = { parentKey, backgroundColor ->
+                                    Folders(parentKey, backgroundColor)
+                                }
                             )
                         }
                     )

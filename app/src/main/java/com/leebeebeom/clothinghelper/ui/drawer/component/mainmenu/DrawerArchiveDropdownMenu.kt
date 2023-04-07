@@ -1,10 +1,9 @@
-package com.leebeebeom.clothinghelper.ui.drawer.component.folder
+package com.leebeebeom.clothinghelper.ui.drawer.component.mainmenu
 
 import androidx.compose.runtime.Composable
 import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.drawer.component.dropdownmenus.DrawerDropdownMenu
 import com.leebeebeom.clothinghelper.ui.drawer.component.dropdownmenus.DrawerDropdownMenuAddFolder
-import com.leebeebeom.clothinghelper.ui.drawer.component.mainmenu.MainMenu
 import com.leebeebeom.clothinghelper.ui.util.AddFolder
 import kotlinx.collections.immutable.ImmutableSet
 

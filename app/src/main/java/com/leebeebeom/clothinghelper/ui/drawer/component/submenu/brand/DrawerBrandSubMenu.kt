@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.drawer.component.submenu
+package com.leebeebeom.clothinghelper.ui.drawer.component.submenu.brand
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
@@ -9,7 +9,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.component.IconWrapper
 import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.drawer.component.*
-import com.leebeebeom.clothinghelper.ui.drawer.component.dropdownmenus.DrawerBrandDropdownMenu
+import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.SubMenu
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.util.AddFolder
 import kotlinx.collections.immutable.ImmutableSet

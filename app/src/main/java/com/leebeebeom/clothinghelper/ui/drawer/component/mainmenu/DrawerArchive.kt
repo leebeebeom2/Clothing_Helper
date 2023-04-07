@@ -9,8 +9,7 @@ import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerExpandIcon
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerItemsWrapperWithExpandAnimation
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerRow
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerTextWithDoubleCount
-import com.leebeebeom.clothinghelper.ui.drawer.component.dropdownmenus.DrawerDropdownMenu
-import com.leebeebeom.clothinghelper.ui.drawer.component.dropdownmenus.DrawerDropdownMenuAddFolder
+import com.leebeebeom.clothinghelper.ui.drawer.component.folder.DrawerArchiveDropdownMenu
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.util.AddFolder
 import kotlinx.collections.immutable.ImmutableSet
@@ -44,16 +43,12 @@ fun DrawerArchive(
             toggleExpand = state::toggleExpand,
             dataSize = { localFoldersSize })
 
-        DrawerDropdownMenu(state = state, onDismiss = state::onDismiss) {
-            DrawerDropdownMenuAddFolder(
-                onDismiss = state::onDismiss,
-                folderNames = { folderNames(archive.type.name) },
-                onPositiveButtonClick = { name ->
-                    addFolder(archive.type.name, name)
-                    state.expand()
-                }
-            )
-        }
+        DrawerArchiveDropdownMenu(
+            state = state,
+            folderNames = folderNames,
+            archive = archive,
+            addFolder = addFolder
+        )
     }
 
     DrawerItemsWrapperWithExpandAnimation(expand = { state.expanded }) { archiveFolders() }

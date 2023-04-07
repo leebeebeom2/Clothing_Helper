@@ -81,43 +81,12 @@ fun DrawerFolder(
         )
     }
 
-    SubFoldersWrapper(
-        childFoldersSize = { childFoldersSize },
-        state = state,
-        parent = { folder },
-        folders = folders,
-        folderNames = folderNames,
-        startPadding = startPadding,
-        backgroundColor = backgroundColor,
-        foldersSize = foldersSize,
-        itemsSize = itemsSize,
-        onFolderClick = onFolderClick,
-        addFolder = addFolder,
-        editFolder = editFolder
-    )
-}
-
-@Composable
-private fun SubFoldersWrapper(
-    childFoldersSize: () -> Int,
-    state: DrawerItemDropdownMenuState,
-    parent: () -> Folder,
-    folders: (parentKey: String) -> ImmutableList<Folder>,
-    folderNames: (parentKey: String) -> ImmutableSet<String>,
-    startPadding: Dp,
-    backgroundColor: Color,
-    foldersSize: (parentKey: String) -> Int,
-    itemsSize: (parentKey: String) -> Int,
-    onFolderClick: (Folder) -> Unit,
-    addFolder: AddFolder,
-    editFolder: EditFolder
-) {
-    val localParent by remember(parent) { derivedStateOf(parent) }
-    val create by remember(childFoldersSize) { derivedStateOf { childFoldersSize() > 0 } }
-
-    if (create) DrawerItemsWrapperWithExpandAnimation(expand = { state.expanded }) {
+    val draw by remember {
+        derivedStateOf { childFoldersSize > 0 }
+    }
+    DrawerItemsWrapperWithExpandAnimation(expand = { state.expanded }, draw = { draw }, item = {
         DrawerFolders(
-            parentKey = localParent.key,
+            parentKey = folder.key,
             folders = folders,
             folderNames = folderNames,
             startPadding = startPadding.plus(12.dp),
@@ -132,5 +101,5 @@ private fun SubFoldersWrapper(
             addFolder = addFolder,
             editFolder = editFolder,
         )
-    }
+    })
 }

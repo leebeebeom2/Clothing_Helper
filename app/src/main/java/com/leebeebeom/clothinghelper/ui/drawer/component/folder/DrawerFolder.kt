@@ -29,9 +29,9 @@ import kotlinx.collections.immutable.ImmutableSet
 fun DrawerFolder(
     parentKey: String,
     folder: Folder,
-    onFolderClick: (Folder) -> Unit,
     startPadding: Dp,
     backgroundColor: Color,
+    onFolderClick: (Folder) -> Unit,
     folders: (parentKey: String) -> ImmutableList<Folder>,
     folderNames: (parentKey: String) -> ImmutableSet<String>,
     foldersSize: (parentKey: String) -> Int,
@@ -52,9 +52,14 @@ fun DrawerFolder(
         onLongClick = state::onLongClick,
         onSizeChange = state::onSizeChanged,
     ) {
-        IconWrapper(drawable = R.drawable.ic_folder, modifier = Modifier.size(30.dp))
+        IconWrapper(
+            drawable = R.drawable.ic_folder,
+            modifier = Modifier
+                .size(30.dp)
+                .padding(end = 8.dp)
+        )
 
-        DrawerTextWithDoubleCount(modifier = Modifier.padding(start = 8.dp),
+        DrawerTextWithDoubleCount(
             text = { folder.name },
             style = MaterialTheme.typography.body2.copy(fontSize = 15.sp),
             folderSize = { childFoldersSize },
@@ -64,7 +69,7 @@ fun DrawerFolder(
             toggleExpand = state::toggleExpand,
             dataSize = { childFoldersSize })
 
-        DrawerFolderDropDownMenu(
+        DrawerDownMenuEditAndAddFolder(
             state = state,
             selectedFolder = { folder },
             onDismiss = state::onDismissDropDownMenu,
@@ -85,7 +90,7 @@ fun DrawerFolder(
         startPadding = startPadding,
         backgroundColor = backgroundColor,
         foldersSize = foldersSize,
-        itemSize = itemsSize,
+        itemsSize = itemsSize,
         onFolderClick = onFolderClick,
         addFolder = addFolder,
         editFolder = editFolder
@@ -102,7 +107,7 @@ private fun SubFoldersWrapper(
     startPadding: Dp,
     backgroundColor: Color,
     foldersSize: (parentKey: String) -> Int,
-    itemSize: (parentKey: String) -> Int,
+    itemsSize: (parentKey: String) -> Int,
     onFolderClick: (Folder) -> Unit,
     addFolder: AddFolder,
     editFolder: EditFolder
@@ -122,7 +127,7 @@ private fun SubFoldersWrapper(
                 blue = backgroundColor.blue + 0.02f
             ),
             foldersSize = foldersSize,
-            itemSize = itemSize,
+            itemsSize = itemsSize,
             onFolderClick = onFolderClick,
             addFolder = addFolder,
             editFolder = editFolder,

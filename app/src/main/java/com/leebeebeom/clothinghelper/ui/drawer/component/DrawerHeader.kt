@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -42,9 +45,12 @@ fun DrawerHeader(
 
 @Composable // skippable
 private fun RowScope.HeaderUserInfo(userName: () -> String?, userEmail: () -> String?) {
+    val localUserName by remember(userName) { derivedStateOf(userName) }
+    val localUserEmail by remember(userEmail) { derivedStateOf(userEmail) }
+
     SingleLineText(
         modifier = Modifier.weight(1f),
         style = MaterialTheme.typography.body1,
-        text = "${userName()}(${userEmail()})"
+        text = "$localUserName($localUserEmail)"
     )
 }

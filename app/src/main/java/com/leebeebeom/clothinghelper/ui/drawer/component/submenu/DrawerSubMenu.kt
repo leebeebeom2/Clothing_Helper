@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.drawer.component.submenu.brand
+package com.leebeebeom.clothinghelper.ui.drawer.component.submenu.submenu
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme

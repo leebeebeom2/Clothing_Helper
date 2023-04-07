@@ -10,6 +10,7 @@ import com.leebeebeom.clothinghelper.ui.component.IconWrapper
 import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.drawer.component.*
 import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.SubMenu
+import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.SubMenuType
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.util.AddFolder
 import kotlinx.collections.immutable.ImmutableSet
@@ -17,7 +18,7 @@ import kotlinx.collections.immutable.ImmutableSet
 @Composable
 fun DrawerBrandSubMenu(
     subMenu: SubMenu,
-    onClick: () -> Unit,
+    onClick: (SubMenuType) -> Unit,
     folderNames: (parentKey: String) -> ImmutableSet<String>,
     foldersSize: (parentKey: String) -> Int,
     itemSize: (parentKey: String) -> Int,
@@ -26,7 +27,7 @@ fun DrawerBrandSubMenu(
     folders: @Composable (parentKey: String) -> Unit
 ) {
     DrawerRow(
-        onClick = onClick,
+        onClick = { onClick(subMenu.type) },
         onLongClick = state::onLongClick,
         onSizeChange = state::onSizeChanged
     ) {

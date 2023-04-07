@@ -22,9 +22,9 @@ fun PasswordTextField(
     error: () -> Int?,
     imeAction: ImeAction,
     onInputChange: (String) -> Unit,
+    focusRequester: FocusRequester = remember { FocusRequester() }
 ) {
     var isVisible by rememberSaveable { mutableStateOf(false) }
-    val focusRequester = remember { FocusRequester() }
 
     StatefulMaxWidthTextField(
         state = rememberMaxWidthTestFieldState(blockBlank = true),
@@ -53,9 +53,11 @@ fun VisibleIcon(
     isVisible: () -> Boolean,
     onClick: () -> Unit
 ) {
+    val localIsVisible by remember(isVisible) { derivedStateOf(isVisible) }
+
     CustomIconButton(
-        modifier = Modifier.testTag(if (isVisible()) InvisibleIconTag else VisibleIconTag),
-        drawable = if (isVisible()) R.drawable.ic_visibility_off else R.drawable.ic_visibility,
+        modifier = Modifier.testTag(if (localIsVisible) InvisibleIconTag else VisibleIconTag),
+        drawable = if (localIsVisible) R.drawable.ic_visibility_off else R.drawable.ic_visibility,
         tint = LocalContentColor.current.copy(0.4f),
         onClick = onClick,
         size = 24.dp

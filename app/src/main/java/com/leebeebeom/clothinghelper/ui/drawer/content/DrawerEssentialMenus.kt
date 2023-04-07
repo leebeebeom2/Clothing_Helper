@@ -24,7 +24,7 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Composable // skippable
 fun DrawerEssentialMenus(
-    onEssentialMenuClick: (EssentialMenuType) -> Unit, essentialMenus: ImmutableList<EssentialMenu>
+    essentialMenus: ImmutableList<EssentialMenu>, onEssentialMenuClick: (EssentialMenuType) -> Unit
 ) {
     Column(modifier = Modifier.padding(vertical = 4.dp)) {
         essentialMenus.forEach { essentialMenu ->

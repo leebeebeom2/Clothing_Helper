@@ -11,15 +11,14 @@ import kotlinx.collections.immutable.ImmutableSet
 fun DrawerArchiveDropdownMenu(
     state: DrawerItemDropdownMenuState,
     folderNames: (parentKey: String) -> ImmutableSet<String>,
-    archive: MainMenu,
     addFolder: AddFolder
 ) {
     DrawerDropdownMenu(state = state, onDismiss = state::onDismissDropDownMenu) {
         DrawerDropdownMenuAddFolder(
             onDismissDropdownMenu = state::onDismissDropDownMenu,
-            folderNames = { folderNames(archive.type.name) },
+            folderNames = { folderNames(MainMenuType.Archive.name) },
             onPositiveButtonClick = { name ->
-                addFolder(archive.type.name, name)
+                addFolder(MainMenuType.Archive.name, name)
             },
             expand = state::expand
         )

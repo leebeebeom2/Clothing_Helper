@@ -9,7 +9,6 @@ import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerExpandIcon
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerItemsWrapperWithExpandAnimation
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerRow
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerTextWithDoubleCount
-import com.leebeebeom.clothinghelper.ui.drawer.component.folder.DrawerArchiveDropdownMenu
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.util.AddFolder
 import kotlinx.collections.immutable.ImmutableSet
@@ -46,7 +45,6 @@ fun DrawerArchive(
         DrawerArchiveDropdownMenu(
             state = state,
             folderNames = folderNames,
-            archive = archive,
             addFolder = addFolder
         )
     }

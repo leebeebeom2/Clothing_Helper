@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.ui.drawer.component.mainmenu
 
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemState
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerExpandIcon
@@ -8,9 +7,6 @@ import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerItemsWrapperWithE
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerRow
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerText
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemState
-
-@Composable
-fun drawerMainMenuTextStyle() = MaterialTheme.typography.h6
 
 @Composable
 fun DrawerMainMenu(

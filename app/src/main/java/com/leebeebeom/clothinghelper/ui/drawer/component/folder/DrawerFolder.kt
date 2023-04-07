@@ -23,38 +23,27 @@ import com.leebeebeom.clothinghelper.ui.drawer.component.dropdownmenus.DrawerFol
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.util.AddFolder
 import com.leebeebeom.clothinghelper.ui.util.EditFolder
-import com.leebeebeom.clothinghelper.ui.util.FoldersMap
-import com.leebeebeom.clothinghelper.ui.util.FoldersSizeMap
-import kotlinx.collections.immutable.*
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableSet
 
 @Composable
 fun DrawerFolder(
+    parentKey: String,
     folder: Folder,
     onFolderClick: (Folder) -> Unit,
     startPadding: Dp,
     backgroundColor: Color,
-    foldersMap: () -> FoldersMap,
-    folderNames: () -> ImmutableSet<String>,
-    folderSizeMap: () -> FoldersSizeMap,
-    folderNamesMap: () -> ImmutableMap<String, ImmutableSet<String>>,
-    itemSize: () -> ImmutableMap<String, Int>,
+    folders: (parentKey: String) -> ImmutableList<Folder>,
+    folderNames: (parentKey: String) -> ImmutableSet<String>,
+    foldersSize: (parentKey: String) -> Int,
+    itemSize: (parentKey: String) -> Int,
     addFolder: AddFolder,
     editFolder: EditFolder,
     state: DrawerItemDropdownMenuState = rememberDrawerItemDropdownMenuState(),
 ) {
-    val childFolderSize by remember {
-        derivedStateOf {
-            folderSizeMap().getOrDefault(key = folder.key, defaultValue = 0)
-        }
-    }
-    val childFolderNames by remember {
-        derivedStateOf {
-            folderNamesMap().getOrDefault(key = folder.key, defaultValue = persistentSetOf())
-        }
-    }
-    val childItemSizeMap by remember {
-        derivedStateOf { itemSize().getOrDefault(key = folder.key, defaultValue = 0) }
-    }
+    val childFolderSize by remember { derivedStateOf { foldersSize(folder.key) } }
+    val childFolderNames by remember { derivedStateOf { folderNames(folder.key) } }
+    val childItemSizeMap by remember { derivedStateOf { itemSize(folder.key) } }
 
     DrawerRow(
         modifier = Modifier.padding(start = startPadding),
@@ -80,7 +69,7 @@ fun DrawerFolder(
             state = state,
             selectedFolder = { folder },
             onDismiss = state::onDismiss,
-            folderNames = folderNames,
+            folderNames = { folderNames(parentKey) },
             childFolderNames = { childFolderNames },
             addFolder = { parentKey, name ->
                 addFolder(parentKey, name)
@@ -90,23 +79,54 @@ fun DrawerFolder(
         )
     }
 
-    DrawerItemsWrapperWithExpandAnimation(expand = { state.expanded }) {
-        DrawerFolders(
-            folders = { foldersMap().getOrDefault(folder.key, persistentListOf()) },
-            folderNames = { childFolderNames },
-            startPadding = startPadding.plus(12.dp),
-            backgroundColor = backgroundColor.copy(
-                red = backgroundColor.red + 0.02f,
-                green = backgroundColor.green + 0.02f,
-                blue = backgroundColor.blue + 0.02f
-            ),
-            foldersMap = foldersMap,
-            foldersSizeMap = folderSizeMap,
-            folderNamesMap = folderNamesMap,
-            itemSizeMap = { persistentMapOf() },
-            onFolderClick = onFolderClick,
-            addFolder = addFolder,
-            editFolder = editFolder,
-        )
-    }
+    SubFoldersWrapper(
+        childFoldersSize = { childFolderSize },
+        state = state,
+        folder = folder,
+        folders = folders,
+        childFolderNames = childFolderNames,
+        startPadding = startPadding,
+        backgroundColor = backgroundColor,
+        foldersSize = foldersSize,
+        itemSize = itemSize,
+        onFolderClick = onFolderClick,
+        addFolder = addFolder,
+        editFolder = editFolder
+    )
+}
+
+@Composable
+private fun SubFoldersWrapper(
+    childFoldersSize: () -> Int,
+    state: DrawerItemDropdownMenuState,
+    folder: Folder,
+    folders: (parentKey: String) -> ImmutableList<Folder>,
+    childFolderNames: ImmutableSet<String>,
+    startPadding: Dp,
+    backgroundColor: Color,
+    foldersSize: (parentKey: String) -> Int,
+    itemSize: (parentKey: String) -> Int,
+    onFolderClick: (Folder) -> Unit,
+    addFolder: AddFolder,
+    editFolder: EditFolder
+) {
+    if (childFoldersSize() != 0)
+        DrawerItemsWrapperWithExpandAnimation(expand = { state.expanded }) {
+            DrawerFolders(
+                parentKey = folder.key,
+                folders = folders,
+                folderNames = { childFolderNames },
+                startPadding = startPadding.plus(12.dp),
+                backgroundColor = backgroundColor.copy(
+                    red = backgroundColor.red + 0.02f,
+                    green = backgroundColor.green + 0.02f,
+                    blue = backgroundColor.blue + 0.02f
+                ),
+                foldersSize = foldersSize,
+                itemSize = itemSize,
+                onFolderClick = onFolderClick,
+                addFolder = addFolder,
+                editFolder = editFolder,
+            )
+        }
 }

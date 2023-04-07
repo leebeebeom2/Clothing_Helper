@@ -1,9 +1,9 @@
 package com.leebeebeom.clothinghelper.ui.drawer.component.mainmenu
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerItemsColumn
 import com.leebeebeom.clothinghelper.ui.util.AddFolder
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
@@ -15,11 +15,12 @@ fun DrawerMainMenus(
     onMainMenuClick: (MainMenuType) -> Unit,
     folderNames: (parentKey: String) -> ImmutableSet<String>,
     foldersSize: (parentKey: String) -> Int,
+    itemsSize: (parentKey: String) -> Int,
     addFolder: AddFolder,
     subMenus: @Composable (MainMenuType) -> Unit,
     archiveFolders: @Composable () -> Unit
 ) {
-    DrawerItemsColumn {
+    Column {
         mainMenus.forEach { mainMenu ->
             key(mainMenu.type) {
                 if (mainMenu.type != MainMenuType.Archive)
@@ -33,7 +34,7 @@ fun DrawerMainMenus(
                     onArchiveClick = onMainMenuClick,
                     foldersSize = foldersSize,
                     folderNames = folderNames,
-                    archiveItemsSize = { 0 },
+                    itemsSize = itemsSize,
                     addFolder = addFolder,
                     archiveFolders = archiveFolders,
                 )

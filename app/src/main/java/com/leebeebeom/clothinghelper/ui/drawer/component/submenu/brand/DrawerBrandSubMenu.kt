@@ -16,7 +16,7 @@ fun DrawerBrandSubMenu(
     onClick: (SubMenuType) -> Unit,
     folderNames: (parentKey: String) -> ImmutableSet<String>,
     foldersSize: (parentKey: String) -> Int,
-    itemSize: (parentKey: String) -> Int,
+    itemsSize: (parentKey: String) -> Int,
     addFolder: AddFolder,
     state: DrawerItemDropdownMenuState = rememberDrawerItemDropdownMenuState(),
     folders: @Composable (parentKey: String) -> Unit
@@ -31,7 +31,7 @@ fun DrawerBrandSubMenu(
             text = subMenu.name,
             style = MaterialTheme.typography.subtitle1,
             folderSize = { foldersSize(subMenu.type.name) },
-            itemsSize = { itemSize(subMenu.type.name) }
+            itemsSize = { itemsSize(subMenu.type.name) }
         )
 
         DrawerExpandIcon(

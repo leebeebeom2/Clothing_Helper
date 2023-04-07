@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.model.Folder
 import com.leebeebeom.clothinghelper.ui.component.IconWrapper
@@ -51,12 +52,12 @@ fun DrawerFolder(
         onLongClick = state::onLongClick,
         onSizeChange = state::onSizeChanged,
     ) {
-        IconWrapper(drawable = R.drawable.ic_folder, modifier = Modifier.size(32.dp))
+        IconWrapper(drawable = R.drawable.ic_folder, modifier = Modifier.size(30.dp))
 
         DrawerTextWithDoubleCount(
             modifier = Modifier.padding(start = 8.dp),
             text = { folder.name },
-            style = MaterialTheme.typography.body1,
+            style = MaterialTheme.typography.body2.copy(fontSize = 15.sp),
             folderSize = { childFolderSize },
             itemSize = { childItemSizeMap }
         )

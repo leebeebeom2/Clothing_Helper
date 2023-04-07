@@ -23,7 +23,7 @@ fun DrawerClothesSubMenu2(
     folders: @Composable (parentKey: String) -> Unit
 ) {
     DrawerContentWithDoubleCount(
-        modifier = Modifier.padding(start = 12.dp),
+        modifier = Modifier.padding(start = 16.dp),
         state = state,
         key = clothesCategory.type.name,
         text = clothesCategory.name,

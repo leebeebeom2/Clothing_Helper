@@ -68,14 +68,12 @@ fun DrawerFolder(
         DrawerFolderDropDownMenu(
             state = state,
             selectedFolder = { folder },
-            onDismiss = state::onDismiss,
+            onDismiss = state::onDismissDropDownMenu,
             folderNames = { folderNames(parentKey) },
             childFolderNames = { childFolderNames },
-            addFolder = { parentKey, name ->
-                addFolder(parentKey, name)
-                state.expand()
-            },
-            editFolder = editFolder
+            addFolder = addFolder,
+            editFolder = editFolder,
+            expand = state::expand
         )
     }
 

@@ -9,7 +9,6 @@ import androidx.compose.ui.text.TextStyle
 import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.drawer.component.dropdownmenus.DrawerDropdownMenu
 import com.leebeebeom.clothinghelper.ui.drawer.component.dropdownmenus.DrawerDropdownMenuAddFolder
-import com.leebeebeom.clothinghelper.ui.drawer.component.mainmenu.MainMenuType
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.util.AddFolder
 import kotlinx.collections.immutable.ImmutableSet
@@ -51,7 +50,7 @@ fun DrawerContentWithDoubleCount(
                 onDismissDropdownMenu = state::onDismissDropDownMenu,
                 folderNames = { folderNames(key) },
                 onPositiveButtonClick = { name ->
-                    addFolder(MainMenuType.Archive.name, name)
+                    addFolder(key, name)
                 },
                 expand = state::expand
             )

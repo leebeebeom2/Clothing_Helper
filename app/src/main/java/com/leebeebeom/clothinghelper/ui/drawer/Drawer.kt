@@ -20,7 +20,7 @@ import com.leebeebeom.clothinghelper.ui.drawer.component.mainmenu.MainMenu
 import com.leebeebeom.clothinghelper.ui.drawer.component.mainmenu.MainMenuType
 import com.leebeebeom.clothinghelper.ui.drawer.component.mainmenu.rememberMainMenus
 import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.SubMenuType
-import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.closet.ClothesCategoryType
+import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.clothes.ClothesCategoryType
 import com.leebeebeom.clothinghelper.ui.drawer.content.*
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.CoroutineScope

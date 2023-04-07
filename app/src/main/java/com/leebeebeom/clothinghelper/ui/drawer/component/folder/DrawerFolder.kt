@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.model.Folder
 import com.leebeebeom.clothinghelper.ui.component.IconWrapper
@@ -61,7 +60,7 @@ fun DrawerFolder(
 
         DrawerTextWithDoubleCount(
             text = { folder.name },
-            style = MaterialTheme.typography.body2.copy(fontSize = 15.sp),
+            style = MaterialTheme.typography.body1,
             foldersSize = { childFoldersSize },
             itemsSize = { childItemsSize })
 

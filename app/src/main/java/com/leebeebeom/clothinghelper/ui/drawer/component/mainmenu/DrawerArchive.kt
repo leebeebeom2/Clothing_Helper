@@ -17,7 +17,7 @@ import kotlinx.collections.immutable.ImmutableSet
 @Composable
 fun DrawerArchive(
     archive: MainMenu,
-    onArchiveClick: (MainMenuType) -> Unit,
+    onClick: (MainMenuType) -> Unit,
     folderNames: (parentKey: String) -> ImmutableSet<String>,
     foldersSize: (parentKey: String) -> Int,
     itemsSize: (parentKey: String) -> Int,
@@ -28,7 +28,7 @@ fun DrawerArchive(
     val localFoldersSize by remember { derivedStateOf { foldersSize(archive.type.name) } }
 
     DrawerRow(
-        onClick = { onArchiveClick(archive.type) },
+        onClick = { onClick(archive.type) },
         onLongClick = state::onLongClick,
         onSizeChange = state::onSizeChanged
     ) {
@@ -36,7 +36,7 @@ fun DrawerArchive(
             text = archive.name,
             style = drawerMainMenuTextStyle(),
             folderSize = { localFoldersSize },
-            itemSize = { itemsSize(archive.type.name) }
+            itemsSize = { itemsSize(archive.type.name) }
         )
 
         DrawerExpandIcon(expanded = { state.expanded },

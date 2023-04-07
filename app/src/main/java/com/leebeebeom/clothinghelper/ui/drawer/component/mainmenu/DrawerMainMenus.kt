@@ -32,7 +32,7 @@ fun DrawerMainMenus(
                     )
                 else DrawerArchive(
                     archive = mainMenu,
-                    onArchiveClick = onMainMenuClick,
+                    onClick = onMainMenuClick,
                     foldersSize = foldersSize,
                     folderNames = folderNames,
                     itemsSize = itemsSize,

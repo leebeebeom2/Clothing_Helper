@@ -18,5 +18,7 @@ fun DrawerMainMenu(
         DrawerText(text = mainMenu.name, style = drawerMainMenuTextStyle())
         DrawerExpandIcon(expanded = { state.expanded }, toggleExpand = state::toggleExpand)
     }
-    DrawerItemsWrapperWithExpandAnimation(expand = { state.expanded }) { subMenus(mainMenu.type) }
+
+    DrawerItemsWrapperWithExpandAnimation(expand = { state.expanded },
+        item = { subMenus(mainMenu.type) })
 }

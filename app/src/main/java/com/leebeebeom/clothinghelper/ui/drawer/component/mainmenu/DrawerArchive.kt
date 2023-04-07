@@ -21,7 +21,7 @@ fun DrawerArchive(
     onArchiveClick: (MainMenuType) -> Unit,
     folderNames: (parentKey: String) -> ImmutableSet<String>,
     foldersSize: (parentKey: String) -> Int,
-    archiveItemsSize: () -> Int,
+    itemsSize: (parentKey: String) -> Int,
     addFolder: AddFolder,
     state: DrawerItemDropdownMenuState = rememberDrawerItemDropdownMenuState(),
     archiveFolders: @Composable () -> Unit,
@@ -37,23 +37,23 @@ fun DrawerArchive(
             text = archive.name,
             style = drawerMainMenuTextStyle(),
             folderSize = { localFoldersSize },
-            itemSize = { archiveItemsSize() }
+            itemSize = { itemsSize(archive.type.name) }
         )
 
         DrawerExpandIcon(expanded = { state.expanded },
             toggleExpand = state::toggleExpand,
             dataSize = { localFoldersSize })
-    }
 
-    DrawerDropdownMenu(state = state, onDismiss = state::onDismiss) {
-        DrawerDropdownMenuAddFolder(
-            onDismiss = state::onDismiss,
-            folderNames = { folderNames(archive.type.name) },
-            onPositiveButtonClick = { name ->
-                addFolder(archive.type.name, name)
-                state.expand()
-            }
-        )
+        DrawerDropdownMenu(state = state, onDismiss = state::onDismiss) {
+            DrawerDropdownMenuAddFolder(
+                onDismiss = state::onDismiss,
+                folderNames = { folderNames(archive.type.name) },
+                onPositiveButtonClick = { name ->
+                    addFolder(archive.type.name, name)
+                    state.expand()
+                }
+            )
+        }
     }
 
     DrawerItemsWrapperWithExpandAnimation(expand = { state.expanded }) { archiveFolders() }

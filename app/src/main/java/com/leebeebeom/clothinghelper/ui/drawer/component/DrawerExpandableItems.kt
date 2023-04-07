@@ -9,12 +9,12 @@ import com.leebeebeom.clothinghelper.ui.util.Anime
 
 @Composable
 fun DrawerItemsWrapperWithExpandAnimation(
-    expand: () -> Boolean,
-    item: @Composable () -> Unit
+    expand: () -> Boolean, item: @Composable () -> Unit, draw: () -> Boolean
 ) {
+    val localDraw by remember(draw) { derivedStateOf(draw) }
     val localExpand by remember(expand) { derivedStateOf(expand) }
 
-    AnimatedVisibility(
+    if (localDraw) AnimatedVisibility(
         visible = localExpand,
         enter = Anime.DrawerList.listExpand,
         exit = Anime.DrawerList.listShrink

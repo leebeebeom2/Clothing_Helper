@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
@@ -15,8 +17,9 @@ import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemState
 import com.leebeebeom.clothinghelper.ui.drawer.component.*
 import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.SubMenu
 import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.SubMenuType
-import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemState
+import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.theme.Black18
+import com.leebeebeom.clothinghelper.ui.theme.BlackA3
 import com.leebeebeom.clothinghelper.ui.util.AddFolder
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
@@ -34,8 +37,8 @@ fun DrawerClothesSubMenu(
     clothesCategories: ImmutableList<ClothesCategory> =
         if (subMenu.type == SubMenuType.Closet) rememberClosetClothesCategory()
         else rememberWishClothesCategory(),
-    state: DrawerItemState = rememberDrawerItemState(),
-    folders: @Composable (parentKey: String) -> Unit
+    state: DrawerItemState,
+    folders: @Composable (parentKey: String, backgroundColor: Color) -> Unit
 ) {
     DrawerRow(onClick = { onClick(subMenu.type) }) {
         DrawerDotIcon()
@@ -52,15 +55,20 @@ fun DrawerClothesSubMenu(
                 .padding(start = 8.dp)
         ) {
             clothesCategories.forEach { clothesCategory ->
-                DrawerClothesSubMenu2(
-                    clothesCategory = clothesCategory,
-                    onClick = onClothesCategoryClick,
-                    foldersSize = foldersSize,
-                    folderNames = folderNames,
-                    itemsSize = itemsSize,
-                    addFolder = addFolder,
-                    folders = folders
-                )
+                key(clothesCategory.type) {
+                    val subState = rememberDrawerItemDropdownMenuState()
+
+                    DrawerClothesSubMenu2(
+                        state = subState,
+                        clothesCategory = clothesCategory,
+                        onClick = onClothesCategoryClick,
+                        foldersSize = foldersSize,
+                        folderNames = folderNames,
+                        itemsSize = itemsSize,
+                        addFolder = addFolder,
+                        folders = { folders(it, BlackA3) }
+                    )
+                }
             }
         }
     }

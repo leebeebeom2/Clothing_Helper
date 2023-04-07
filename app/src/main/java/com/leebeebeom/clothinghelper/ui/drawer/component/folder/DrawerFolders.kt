@@ -23,7 +23,7 @@ fun DrawerFolders(
     startPadding: Dp = 12.dp,
     backgroundColor: Color,
     foldersSize: (parentKey: String) -> Int,
-    itemSize: (parentKey: String) -> Int,
+    itemsSize: (parentKey: String) -> Int,
     onFolderClick: (Folder) -> Unit,
     addFolder: AddFolder,
     editFolder: EditFolder
@@ -42,7 +42,7 @@ fun DrawerFolders(
                     folders = folders,
                     folderNames = folderNames,
                     foldersSize = foldersSize,
-                    itemSize = itemSize,
+                    itemsSize = itemsSize,
                     addFolder = addFolder,
                     editFolder = editFolder,
                     state = state

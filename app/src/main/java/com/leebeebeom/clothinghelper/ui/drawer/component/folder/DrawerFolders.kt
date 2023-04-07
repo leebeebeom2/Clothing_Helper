@@ -1,43 +1,43 @@
 package com.leebeebeom.clothinghelper.ui.drawer.component.folder
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.domain.model.Folder
-import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerItemsColumn
-import com.leebeebeom.clothinghelper.ui.util.*
+import com.leebeebeom.clothinghelper.ui.util.AddFolder
+import com.leebeebeom.clothinghelper.ui.util.EditFolder
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.ImmutableSet
 
 @Composable
 fun DrawerFolders(
-    folders: () -> ImmutableList<Folder>,
-    folderNames: () -> ImmutableSet<String>,
-    startPadding: Dp,
+    parentKey: String,
+    folders: (parentKey: String) -> ImmutableList<Folder>,
+    folderNames: (parentKey: String) -> ImmutableSet<String>,
+    startPadding: Dp = 8.dp,
     backgroundColor: Color,
-    foldersMap: () -> FoldersMap,
-    folderNamesMap: () -> FolderNamesMap,
-    foldersSizeMap: () -> FoldersSizeMap,
-    itemSizeMap: () -> ImmutableMap<String, Int>,
+    foldersSize: (parentKey: String) -> Int,
+    itemSize: (parentKey: String) -> Int,
     onFolderClick: (Folder) -> Unit,
     addFolder: AddFolder,
     editFolder: EditFolder
 ) {
-    DrawerItemsColumn(modifier = Modifier.background(backgroundColor)) {
-        folders().forEach { folder ->
+    Column(modifier = Modifier.background(backgroundColor)) {
+        folders(parentKey).forEach { folder ->
             DrawerFolder(
+                parentKey = parentKey,
                 folder = folder,
                 onFolderClick = onFolderClick,
                 startPadding = startPadding,
                 backgroundColor = backgroundColor,
-                foldersMap = foldersMap,
+                folders = folders,
                 folderNames = folderNames,
-                folderSizeMap = foldersSizeMap,
-                folderNamesMap = folderNamesMap,
-                itemSize = itemSizeMap,
+                foldersSize = foldersSize,
+                itemSize = itemSize,
                 addFolder = addFolder,
                 editFolder = editFolder
             )

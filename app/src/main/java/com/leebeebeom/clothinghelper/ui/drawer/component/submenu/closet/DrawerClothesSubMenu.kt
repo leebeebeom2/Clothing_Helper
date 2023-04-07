@@ -3,11 +3,13 @@ package com.leebeebeom.clothinghelper.ui.drawer.component.submenu.closet
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemState
@@ -36,7 +38,9 @@ fun DrawerClothesSubMenu(
     state: DrawerItemState,
     folders: @Composable (parentKey: String) -> Unit
 ) {
-    DrawerRow(onClick = { onClick(subMenu.type) }) {
+    DrawerRow(
+        Modifier.padding(start = 8.dp),
+        onClick = { onClick(subMenu.type) }) {
         DrawerDotIcon()
         DrawerText(
             text = subMenu.name,

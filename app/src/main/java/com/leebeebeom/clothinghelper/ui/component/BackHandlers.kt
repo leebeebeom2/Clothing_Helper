@@ -1,8 +1,7 @@
-package com.leebeebeom.clothinghelper.ui.components
+package com.leebeebeom.clothinghelper.ui.component
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
@@ -15,11 +14,8 @@ fun SelectModeBackHandler(
 }
 
 @Composable
-fun BlockBacKPressWhenLoading(isLoading: () -> Boolean) {
-    BackHandlerWrapper(enabled = isLoading) {}
-}
-
-@Composable
 fun BackHandlerWrapper(enabled: () -> Boolean, task: () -> Unit) {
-    BackHandler(enabled(), onBack = task)
+    val localEnabled by remember(enabled) { derivedStateOf(enabled) }
+
+    BackHandler(localEnabled, onBack = task)
 }

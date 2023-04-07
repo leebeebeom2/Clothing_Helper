@@ -55,7 +55,7 @@ fun DrawerFolder(
         IconWrapper(
             drawable = R.drawable.ic_folder,
             modifier = Modifier
-                .size(30.dp)
+                .size(36.dp)
                 .padding(end = 8.dp)
         )
 

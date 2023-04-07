@@ -14,6 +14,8 @@ import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.ui.component.MaxWidthTextFieldState
 import com.leebeebeom.clothinghelper.ui.component.SingleLineText
 import com.leebeebeom.clothinghelper.ui.component.StatefulMaxWidthTextFieldWithCancelIcon
+import com.leebeebeom.clothinghelper.ui.theme.Black
+import com.leebeebeom.clothinghelper.ui.theme.WhiteSmoke
 
 @Composable
 fun TextFieldDialog(
@@ -25,37 +27,38 @@ fun TextFieldDialog(
     onPositiveButtonClick: () -> Unit,
     onDismiss: () -> Unit,
     onInputChange: (String) -> Unit,
-    dialogMaxWidthTextFieldState: DialogMaxWidthTextFieldState = rememberDialogMaxWidthTextFieldState(
-        initialText = state.initialText
-    )
+    dialogMaxWidthTextFieldState: DialogMaxWidthTextFieldState =
+        rememberDialogMaxWidthTextFieldState(initialText = state.initialText)
 ) {
-    DialogRoot(onDismiss = onDismiss) {
-        val localError by remember { derivedStateOf(error) }
-        val positiveButtonEnabled by remember {
-            derivedStateOf { state.inputChanged && state.input.isNotBlank() && localError == null }
+    MaterialTheme(colors = MaterialTheme.colors.copy(surface = WhiteSmoke, onSurface = Black)) {
+        DialogRoot(onDismiss = onDismiss) {
+            val localError by remember(error) { derivedStateOf(error) }
+            val positiveButtonEnabled by remember {
+                derivedStateOf { state.inputChanged && state.input.isNotBlank() && localError == null }
+            }
+
+            SingleLineText(
+                text = title,
+                style = MaterialTheme.typography.h6,
+                modifier = Modifier.padding(start = 4.dp, bottom = 12.dp)
+            )
+
+            StatefulMaxWidthTextFieldWithCancelIcon(
+                state = dialogMaxWidthTextFieldState,
+                label = label,
+                placeholder = placeHolder,
+                error = error,
+                onInputChange = onInputChange,
+                getFocus = true,
+                fixedError = true
+            )
+
+            DialogTextButtons(
+                positiveButtonEnabled = { positiveButtonEnabled },
+                onPositiveButtonClick = onPositiveButtonClick,
+                onDismiss = onDismiss
+            )
         }
-
-        SingleLineText(
-            text = title,
-            style = MaterialTheme.typography.h6,
-            modifier = Modifier.padding(start = 4.dp, bottom = 12.dp)
-        )
-
-        StatefulMaxWidthTextFieldWithCancelIcon(
-            state = dialogMaxWidthTextFieldState,
-            label = label,
-            placeholder = placeHolder,
-            error = error,
-            onInputChange = onInputChange,
-            getFocus = true,
-            fixedError = true
-        )
-
-        DialogTextButtons(
-            positiveButtonEnabled = { positiveButtonEnabled },
-            onPositiveButtonClick = onPositiveButtonClick,
-            onDismiss = onDismiss
-        )
     }
 }
 

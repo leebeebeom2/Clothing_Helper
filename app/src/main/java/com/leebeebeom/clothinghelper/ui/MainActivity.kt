@@ -20,7 +20,6 @@ import com.leebeebeom.clothinghelper.ui.drawer.Drawer
 import com.leebeebeom.clothinghelper.ui.drawer.content.EssentialMenuType
 import com.leebeebeom.clothinghelper.ui.main.MainGraphRoute
 import com.leebeebeom.clothinghelper.ui.main.mainGraph
-import com.leebeebeom.clothinghelper.ui.main.navigateToSizeChartList
 import com.leebeebeom.clothinghelper.ui.main.navigateToSubCategory
 import com.leebeebeom.clothinghelper.ui.setting.SettingGraphRoute
 import com.leebeebeom.clothinghelper.ui.setting.settingGraph
@@ -56,12 +55,23 @@ fun MainNavHost(
             uiState.user?.let { MainNavRoute.MainGraph } ?: MainNavRoute.SignInGraph
         }
     }
+
+    fun onEssentialMenuClick(type: EssentialMenuType) =
+        when (type) {
+            EssentialMenuType.MainScreen -> navController.navigateToMain()
+            EssentialMenuType.Favorite -> {} // TODO
+            EssentialMenuType.SeeAll -> {} // TODO
+            EssentialMenuType.Trash -> {} // TODO
+        }
+
     ClothingHelperTheme {
         Drawer(
-            navigateToSetting = navController::navigateToSetting,
-            onEssentialMenuClick = { onEssentialMenuClick(navController, it) },
-            navigateToMain = navController::navigateToSubCategory,
-            navigateToFolder = navController::navigateToSizeChartList
+            onSettingIconClick = navController::navigateToSetting,
+            onEssentialMenuClick = ::onEssentialMenuClick,
+            onMainMenuClick = navController::navigateToSubCategory,
+            onSubMenuClick = {},
+            onClothesCategoryClick = {},
+            onFolderClick = {}
         ) { paddingValues ->
             NavHost(
                 modifier = Modifier.padding(paddingValues),
@@ -79,14 +89,6 @@ fun MainNavHost(
         )
     }
 }
-
-private fun onEssentialMenuClick(navController: NavHostController, type: EssentialMenuType) =
-    when (type) {
-        EssentialMenuType.MainScreen -> navController.navigateToMain()
-        EssentialMenuType.Favorite -> {} // TODO
-        EssentialMenuType.SeeAll -> {} // TODO
-        EssentialMenuType.Trash -> {} // TODO
-    }
 
 private fun NavHostController.navigateToMain() {
     if (currentBackStackEntry.getCurrentRoute() != MainGraphRoute.Dashboard.route)

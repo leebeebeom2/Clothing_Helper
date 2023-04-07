@@ -6,13 +6,12 @@ import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerExpandIcon
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerItemsWrapperWithExpandAnimation
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerRow
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerText
-import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemState
 
 @Composable
 fun DrawerMainMenu(
     mainMenu: MainMenu,
     onMainMenuClick: (MainMenuType) -> Unit,
-    state: DrawerItemState = rememberDrawerItemState(),
+    state: DrawerItemState,
     subMenus: @Composable (MainMenuType) -> Unit,
 ) {
     DrawerRow(onClick = { onMainMenuClick(mainMenu.type) }) {

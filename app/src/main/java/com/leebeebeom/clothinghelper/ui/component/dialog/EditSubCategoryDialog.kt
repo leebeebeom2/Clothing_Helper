@@ -19,7 +19,7 @@ fun EditSubCategoryDialog(
         existNameError = R.string.error_exist_category_name,
         onDismiss = onDismiss,
         onPositiveButtonClick = onPositiveButtonClick,
-        initialName = initialName(),
+        initialName = initialName,
         names = subCategoryNames
     )
 }

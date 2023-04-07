@@ -17,7 +17,7 @@ import kotlinx.collections.immutable.ImmutableSet
 @Composable
 fun DrawerFolders(
     parentKey: String,
-    startPadding: Dp = 12.dp,
+    startPadding: Dp = 16.dp,
     backgroundColor: Color,
     onFolderClick: (Folder) -> Unit,
     folders: (parentKey: String) -> ImmutableList<Folder>,

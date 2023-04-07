@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.drawer.component.submenu.submenu
+package com.leebeebeom.clothinghelper.ui.drawer.component.submenu
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
@@ -7,8 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerContentWithDoubleCount
-import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.SubMenu
-import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.SubMenuType
 import com.leebeebeom.clothinghelper.ui.util.AddFolder
 import kotlinx.collections.immutable.ImmutableSet
 

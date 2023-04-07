@@ -12,7 +12,6 @@ import com.leebeebeom.clothinghelper.ui.drawer.component.folder.getSubBackground
 import com.leebeebeom.clothinghelper.ui.drawer.component.mainmenu.MainMenuType
 import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.clothes.ClothesCategoryType
 import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.clothes.DrawerClothesSubMenu
-import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.submenu.DrawerBrandSubMenu
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemState
 import com.leebeebeom.clothinghelper.ui.theme.Black11

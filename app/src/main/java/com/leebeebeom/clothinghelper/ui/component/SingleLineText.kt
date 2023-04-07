@@ -4,6 +4,9 @@ import androidx.annotation.StringRes
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -15,7 +18,9 @@ fun SingleLineText(
     text: () -> String?,
     style: TextStyle = LocalTextStyle.current
 ) {
-    SingleLineText(text = text(), style = style)
+    val localText by remember(text) { derivedStateOf(text) }
+
+    SingleLineText(text = localText, style = style)
 }
 
 @Composable // skippable

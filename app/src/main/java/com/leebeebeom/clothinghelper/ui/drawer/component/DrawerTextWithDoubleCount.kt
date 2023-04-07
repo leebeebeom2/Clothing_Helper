@@ -14,7 +14,7 @@ fun RowScope.DrawerTextWithDoubleCount(
     modifier: Modifier = Modifier,
     @StringRes text: Int,
     style: TextStyle,
-    folderSize: () -> Int,
+    foldersSize: () -> Int,
     itemsSize: () -> Int,
 ) {
     val localText = stringResource(id = text)
@@ -23,8 +23,8 @@ fun RowScope.DrawerTextWithDoubleCount(
         modifier = modifier,
         text = { localText },
         style = style,
-        folderSize = folderSize,
-        itemSize = itemsSize
+        foldersSize = foldersSize,
+        itemsSize = itemsSize
     )
 }
 
@@ -34,13 +34,13 @@ fun RowScope.DrawerTextWithDoubleCount(
     modifier: Modifier = Modifier,
     text: () -> String,
     style: TextStyle,
-    folderSize: () -> Int,
-    itemSize: () -> Int,
+    foldersSize: () -> Int,
+    itemsSize: () -> Int,
 ) {
     Column(
         modifier = modifier.weight(1f)
     ) {
         SingleLineText(text = text, style = style)
-        DrawerCount(folderSize = folderSize, itemSize = itemSize)
+        DrawerCount(foldersSize = foldersSize, itemsSize = itemsSize)
     }
 }

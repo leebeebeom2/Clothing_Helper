@@ -20,7 +20,7 @@ fun EditFolderDialog(
             existNameError = R.string.error_exist_folder_name,
             onDismiss = onDismiss,
             onPositiveButtonClick = onPositiveButtonClick,
-            initialName = initialName(),
+            initialName = initialName,
             names = folderNames
         )
 }

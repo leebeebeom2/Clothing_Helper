@@ -27,6 +27,6 @@ fun DrawerBrandSubMenu(
         folderNames = folderNames,
         itemsSize = itemsSize,
         addFolder = addFolder,
-        subMenus = { folders(subMenu.type.name) }, addDotIcon = true
+        folders = { folders(subMenu.type.name) }, addDotIcon = true
     )
 }

@@ -7,7 +7,8 @@ import kotlinx.collections.immutable.ImmutableSet
 
 @Composable
 fun DrawerDropdownMenuAddFolder(
-    onDismiss: () -> Unit,
+    onDismissDropdownMenu: () -> Unit,
+    expand: () -> Unit,
     folderNames: () -> ImmutableSet<String>,
     onPositiveButtonClick: (name: String) -> Unit
 ) {
@@ -17,6 +18,7 @@ fun DrawerDropdownMenuAddFolder(
 
     AddFolderDialog(folderNames = folderNames, onPositiveButtonClick = {
         onPositiveButtonClick(it)
-        onDismiss()
+        onDismissDropdownMenu()
+        expand()
     }, show = { showDialog }, onDismiss = { showDialog = false })
 }

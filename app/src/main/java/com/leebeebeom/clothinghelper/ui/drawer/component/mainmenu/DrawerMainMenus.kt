@@ -31,10 +31,9 @@ fun DrawerMainMenus(
                         subMenus = subMenus
                     )
                 else DrawerArchive(
-                    archive = mainMenu,
                     onClick = onMainMenuClick,
-                    foldersSize = foldersSize,
                     folderNames = folderNames,
+                    foldersSize = foldersSize,
                     itemsSize = itemsSize,
                     addFolder = addFolder,
                     archiveFolders = archiveFolders,

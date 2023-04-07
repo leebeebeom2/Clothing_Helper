@@ -1,5 +1,6 @@
 package com.leebeebeom.clothinghelper.ui.drawer.component.mainmenu
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
@@ -44,7 +45,8 @@ fun DrawerMainMenus(
 }
 
 data class MainMenu(
-    val name: Int, val type: MainMenuType
+    @StringRes val name: Int,
+    val type: MainMenuType
 )
 
 enum class MainMenuType {

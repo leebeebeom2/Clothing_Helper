@@ -2,6 +2,7 @@ package com.leebeebeom.clothinghelper.ui.drawer.component.mainmenu
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
@@ -43,6 +44,9 @@ fun DrawerMainMenus(
         }
     }
 }
+
+@Composable
+fun drawerMainMenuTextStyle() = MaterialTheme.typography.h6
 
 data class MainMenu(
     @StringRes val name: Int,

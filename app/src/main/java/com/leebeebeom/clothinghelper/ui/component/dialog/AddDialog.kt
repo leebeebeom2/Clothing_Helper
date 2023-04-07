@@ -22,6 +22,6 @@ fun AddDialog(
         names = names,
         onPositiveButtonClick = onPositiveButtonClick,
         onDismiss = onDismiss,
-        initialName = ""
+        initialName = { "" }
     )
 }

@@ -7,6 +7,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -65,9 +66,12 @@ enum class EssentialMenuType {
     MainScreen, Favorite, SeeAll, Trash
 }
 
-fun getEssentialMenus() = persistentListOf(
-    EssentialMenu(R.string.main_screen, R.drawable.ic_home, EssentialMenuType.MainScreen),
-    EssentialMenu(R.string.favorite, R.drawable.ic_star, EssentialMenuType.Favorite),
-    EssentialMenu(R.string.see_all, R.drawable.ic_list, EssentialMenuType.SeeAll),
-    EssentialMenu(R.string.trash, R.drawable.ic_delete, EssentialMenuType.Trash)
-)
+@Composable
+fun rememberEssentialMenus() = remember {
+    persistentListOf(
+        EssentialMenu(R.string.main_screen, R.drawable.ic_home, EssentialMenuType.MainScreen),
+        EssentialMenu(R.string.favorite, R.drawable.ic_star, EssentialMenuType.Favorite),
+        EssentialMenu(R.string.see_all, R.drawable.ic_list, EssentialMenuType.SeeAll),
+        EssentialMenu(R.string.trash, R.drawable.ic_delete, EssentialMenuType.Trash)
+    )
+}

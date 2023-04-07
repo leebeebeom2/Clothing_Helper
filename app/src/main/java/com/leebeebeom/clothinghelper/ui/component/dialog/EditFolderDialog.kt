@@ -9,7 +9,7 @@ fun EditFolderDialog(
     show: () -> Boolean,
     onDismiss: () -> Unit,
     onPositiveButtonClick: (String) -> Unit,
-    initialName: () -> String,
+    initialName: String,
     folderNames: () -> ImmutableSet<String>
 ) {
     if (show())

@@ -5,6 +5,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerContentWithDoubleCount
 import com.leebeebeom.clothinghelper.ui.util.AddFolder
@@ -26,7 +27,7 @@ fun DrawerBrandSubMenu(
         state = state,
         key = subMenu.type.name,
         text = subMenu.name,
-        textStyle = MaterialTheme.typography.subtitle1,
+        textStyle = MaterialTheme.typography.subtitle1.copy(fontSize = 17.sp),
         onClick = { onClick(subMenu.type) },
         foldersSize = foldersSize,
         folderNames = folderNames,

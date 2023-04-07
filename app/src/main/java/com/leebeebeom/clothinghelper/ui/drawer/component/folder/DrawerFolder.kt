@@ -62,8 +62,8 @@ fun DrawerFolder(
         DrawerTextWithDoubleCount(
             text = { folder.name },
             style = MaterialTheme.typography.body2.copy(fontSize = 15.sp),
-            folderSize = { childFoldersSize },
-            itemSize = { childItemsSize })
+            foldersSize = { childFoldersSize },
+            itemsSize = { childItemsSize })
 
         DrawerExpandIcon(expanded = { state.expanded },
             toggleExpand = state::toggleExpand,

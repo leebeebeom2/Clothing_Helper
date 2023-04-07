@@ -19,8 +19,8 @@ fun EditNameDialog(
     names: () -> ImmutableSet<String>,
     onPositiveButtonClick: (String) -> Unit,
     onDismiss: () -> Unit,
-    initialName: String,
-    state: MutableTextFieldDialogState = rememberTextFieldDialogState(initialText = initialName)
+    initialName: () -> String,
+    state: MutableTextFieldDialogState = rememberTextFieldDialogState(initialText = initialName())
 ) {
     val localNames by remember(names) { derivedStateOf(names) }
     val error by remember {

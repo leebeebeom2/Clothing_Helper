@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.util.AddFolder
 import kotlinx.collections.immutable.ImmutableList
@@ -52,9 +53,12 @@ enum class MainMenuType {
     Brand, Clothe, Outfit, Archive, Top, Bottom, Outer, Etc
 }
 
-fun getMainMenus() = persistentListOf(
-    MainMenu(R.string.brand_cap, MainMenuType.Brand),
-    MainMenu(R.string.clothes_cap, MainMenuType.Clothe),
-    MainMenu(R.string.outfit_cap, MainMenuType.Outfit),
-    MainMenu(R.string.archive_cap, MainMenuType.Archive)
-)
+@Composable
+fun rememberMainMenus() = remember {
+    persistentListOf(
+        MainMenu(R.string.brand_cap, MainMenuType.Brand),
+        MainMenu(R.string.clothes_cap, MainMenuType.Clothe),
+        MainMenu(R.string.outfit_cap, MainMenuType.Outfit),
+        MainMenu(R.string.archive_cap, MainMenuType.Archive)
+    )
+}

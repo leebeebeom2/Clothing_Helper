@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.ui.drawer.component.folder
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
@@ -30,9 +29,7 @@ fun DrawerFolders(
 ) {
     val localFolders by remember(folders) { derivedStateOf { folders(parentKey) } }
 
-    Column(modifier = Modifier
-        .background(backgroundColor)
-        .padding(start = startPadding)) {
+    Column(modifier = Modifier.padding(start = startPadding)) {
         localFolders.forEach { folder ->
             key(folder.key) {
                 val state = rememberDrawerItemDropdownMenuState()

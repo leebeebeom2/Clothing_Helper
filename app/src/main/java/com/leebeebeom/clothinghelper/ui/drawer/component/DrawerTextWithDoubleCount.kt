@@ -15,7 +15,7 @@ fun RowScope.DrawerTextWithDoubleCount(
     @StringRes text: Int,
     style: TextStyle,
     folderSize: () -> Int,
-    itemSize: () -> Int,
+    itemsSize: () -> Int,
 ) {
     val localText = stringResource(id = text)
 
@@ -24,7 +24,7 @@ fun RowScope.DrawerTextWithDoubleCount(
         text = { localText },
         style = style,
         folderSize = folderSize,
-        itemSize = itemSize
+        itemSize = itemsSize
     )
 }
 

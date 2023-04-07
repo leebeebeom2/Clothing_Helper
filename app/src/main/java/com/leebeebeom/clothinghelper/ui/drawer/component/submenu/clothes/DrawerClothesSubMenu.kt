@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.drawer.component.submenu.closet
+package com.leebeebeom.clothinghelper.ui.drawer.component.submenu.clothes
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background

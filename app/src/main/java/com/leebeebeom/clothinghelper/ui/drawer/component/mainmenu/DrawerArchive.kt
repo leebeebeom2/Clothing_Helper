@@ -15,7 +15,7 @@ fun DrawerArchive(
     foldersSize: (parentKey: String) -> Int,
     itemsSize: (parentKey: String) -> Int,
     addFolder: AddFolder,
-    archiveFolders: @Composable () -> Unit,
+    folders: @Composable () -> Unit,
 ) {
     DrawerContentWithDoubleCount(
         key = MainMenuType.Archive.name,
@@ -26,7 +26,7 @@ fun DrawerArchive(
         folderNames = folderNames,
         itemsSize = itemsSize,
         addFolder = addFolder,
-        subMenus = archiveFolders,
+        folders = folders,
         state = state
     )
 }

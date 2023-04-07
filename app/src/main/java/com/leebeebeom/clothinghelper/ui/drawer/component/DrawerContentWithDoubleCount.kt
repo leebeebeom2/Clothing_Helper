@@ -9,7 +9,6 @@ import com.leebeebeom.clothinghelper.ui.component.dialog.AddFolderDialog
 import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.drawer.component.dropdownmenus.DrawerDropdownMenu
 import com.leebeebeom.clothinghelper.ui.drawer.component.dropdownmenus.DrawerDropdownMenuItem
-import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.util.AddFolder
 import kotlinx.collections.immutable.ImmutableSet
 
@@ -24,7 +23,7 @@ fun DrawerContentWithDoubleCount(
     itemsSize: (parentKey: String) -> Int,
     addDotIcon: Boolean = false,
     addFolder: AddFolder,
-    state: DrawerItemDropdownMenuState = rememberDrawerItemDropdownMenuState(),
+    state: DrawerItemDropdownMenuState,
     folders: @Composable () -> Unit
 ) {
     val localFolderNames by remember(folderNames) { derivedStateOf { folderNames(key) } }

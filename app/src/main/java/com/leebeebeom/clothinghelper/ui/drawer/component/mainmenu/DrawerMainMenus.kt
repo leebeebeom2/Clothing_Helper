@@ -7,6 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemDropdownMenuState
+import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemState
 import com.leebeebeom.clothinghelper.ui.util.AddFolder
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
@@ -26,20 +28,28 @@ fun DrawerMainMenus(
     Column {
         mainMenus.forEach { mainMenu ->
             key(mainMenu.type) {
-                if (mainMenu.type != MainMenuType.Archive)
+                if (mainMenu.type != MainMenuType.Archive) {
+                    val state = rememberDrawerItemState()
+
                     DrawerMainMenu(
                         mainMenu = mainMenu,
                         onMainMenuClick = onMainMenuClick,
-                        subMenus = subMenus
+                        subMenus = subMenus,
+                        state = state
                     )
-                else DrawerArchive(
-                    onClick = onMainMenuClick,
-                    folderNames = folderNames,
-                    foldersSize = foldersSize,
-                    itemsSize = itemsSize,
-                    addFolder = addFolder,
-                    archiveFolders = archiveFolders,
-                )
+                } else {
+                    val state = rememberDrawerItemDropdownMenuState()
+
+                    DrawerArchive(
+                        state = state,
+                        onClick = onMainMenuClick,
+                        folderNames = folderNames,
+                        foldersSize = foldersSize,
+                        itemsSize = itemsSize,
+                        addFolder = addFolder,
+                        archiveFolders = archiveFolders,
+                    )
+                }
             }
         }
     }

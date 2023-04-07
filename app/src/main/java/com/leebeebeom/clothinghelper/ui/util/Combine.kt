@@ -4,7 +4,7 @@ package com.leebeebeom.clothinghelper.ui.util
 
 import kotlinx.coroutines.flow.Flow
 
-inline fun <T1, T2, T3, T4, T5, T6, T7, R> combine7(
+inline fun <T1, T2, T3, T4, T5, T6, T7, T8, R> combine8(
     flow: Flow<T1>,
     flow2: Flow<T2>,
     flow3: Flow<T3>,
@@ -12,7 +12,8 @@ inline fun <T1, T2, T3, T4, T5, T6, T7, R> combine7(
     flow5: Flow<T5>,
     flow6: Flow<T6>,
     flow7: Flow<T7>,
-    crossinline transform: suspend (T1, T2, T3, T4, T5, T6, T7) -> R
+    flow8: Flow<T8>,
+    crossinline transform: suspend (T1, T2, T3, T4, T5, T6, T7, T8) -> R
 ): Flow<R> =
     kotlinx.coroutines.flow.combine(
         flow,
@@ -21,7 +22,8 @@ inline fun <T1, T2, T3, T4, T5, T6, T7, R> combine7(
         flow4,
         flow5,
         flow6,
-        flow7
+        flow7,
+        flow8
     ) { args: Array<*> ->
         transform(
             args[0] as T1,
@@ -31,5 +33,6 @@ inline fun <T1, T2, T3, T4, T5, T6, T7, R> combine7(
             args[4] as T5,
             args[5] as T6,
             args[6] as T7,
+            args[7] as T8,
         )
     }

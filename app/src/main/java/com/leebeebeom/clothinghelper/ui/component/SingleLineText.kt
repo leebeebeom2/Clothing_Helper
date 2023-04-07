@@ -15,8 +15,7 @@ import androidx.compose.ui.text.style.TextOverflow
 
 @Composable // skippable
 fun SingleLineText(
-    text: () -> String?,
-    style: TextStyle = LocalTextStyle.current
+    text: () -> String?, style: TextStyle = LocalTextStyle.current
 ) {
     val localText by remember(text) { derivedStateOf(text) }
 

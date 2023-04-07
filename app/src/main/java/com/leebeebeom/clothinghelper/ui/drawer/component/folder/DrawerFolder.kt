@@ -90,11 +90,7 @@ fun DrawerFolder(
             folders = folders,
             folderNames = folderNames,
             startPadding = startPadding.plus(12.dp),
-            backgroundColor = backgroundColor.copy(
-                red = backgroundColor.red + 0.02f,
-                green = backgroundColor.green + 0.02f,
-                blue = backgroundColor.blue + 0.02f
-            ),
+            backgroundColor = getSubBackgroundColor(backgroundColor),
             foldersSize = foldersSize,
             itemsSize = itemsSize,
             onFolderClick = onFolderClick,
@@ -103,3 +99,9 @@ fun DrawerFolder(
         )
     })
 }
+
+fun getSubBackgroundColor(superColor: Color) = superColor.copy(
+    red = superColor.red + 0.02f,
+    green = superColor.green + 0.02f,
+    blue = superColor.blue + 0.02f
+)

@@ -3,6 +3,7 @@ package com.leebeebeom.clothinghelper.ui.drawer.component
 import androidx.annotation.StringRes
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.component.dialog.AddFolderDialog
@@ -14,6 +15,7 @@ import kotlinx.collections.immutable.ImmutableSet
 
 @Composable
 fun DrawerContentWithDoubleCount(
+    modifier: Modifier = Modifier,
     key: String,
     @StringRes text: Int,
     textStyle: TextStyle,
@@ -31,7 +33,10 @@ fun DrawerContentWithDoubleCount(
     val localItemsSize by remember(itemsSize) { derivedStateOf { itemsSize(key) } }
 
     DrawerRow(
-        onClick = onClick, onLongClick = state::onLongClick, onSizeChange = state::onSizeChanged
+        modifier = modifier,
+        onClick = onClick,
+        onLongClick = state::onLongClick,
+        onSizeChange = state::onSizeChanged
     ) {
         if (addDotIcon) DrawerDotIcon()
 

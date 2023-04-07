@@ -12,7 +12,7 @@ import com.leebeebeom.clothinghelper.domain.model.Folder
 import com.leebeebeom.clothinghelper.ui.drawer.component.folder.DrawerFolders
 import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.SubMenuType
 import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.SubMenus
-import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.closet.ClothesCategoryType
+import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.clothes.ClothesCategoryType
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemState
 import com.leebeebeom.clothinghelper.ui.theme.Black11

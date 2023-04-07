@@ -21,7 +21,7 @@ fun ExpandIcon(
     val localIsExpanded by remember(isExpanded) { derivedStateOf(isExpanded) }
 
     val rotate by animateFloatAsState(
-        targetValue = if (localIsExpanded) 0f else 180f,
+        targetValue = if (!localIsExpanded) 0f else 180f,
         animationSpec = rotateSpec
     )
 

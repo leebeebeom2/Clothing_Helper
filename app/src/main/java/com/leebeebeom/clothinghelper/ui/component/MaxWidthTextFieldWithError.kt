@@ -150,6 +150,10 @@ private fun MaxWidthTextField(
     focusManager: FocusManager = LocalFocusManager.current,
     focusRequester: FocusRequester
 ) {
+    val localTextFiledValue by remember(textFieldValue) { derivedStateOf(textFieldValue) }
+    val localError by remember(error) { derivedStateOf(error) }
+    val localIsVisible by remember(isVisible) { derivedStateOf(isVisible) }
+
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
@@ -157,10 +161,10 @@ private fun MaxWidthTextField(
             .onFocusChanged(onFocusChanged = onFocusChanged),
         label = label?.let { { SingleLineText(text = it) } },
         placeholder = placeholder?.let { { SingleLineText(text = it) } },
-        value = textFieldValue(),
+        value = localTextFiledValue,
         onValueChange = onValueChange,
-        isError = error() != null,
-        visualTransformation = if (isVisible()) VisualTransformation.None else PasswordVisualTransformation(),
+        isError = localError != null,
+        visualTransformation = if (localIsVisible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = keyboardOptions,
         keyboardActions = if (keyboardOptions.imeAction == ImeAction.Done) KeyboardActions(onDone = { focusManager.clearFocus() }) else KeyboardActions.Default,
         trailingIcon = { if (trailingIcon != null) trailingIcon() },
@@ -176,7 +180,8 @@ private fun MaxWidthTextField(
 
 @Composable // skippable
 private fun ErrorText(error: () -> Int?, fixedError: Boolean) {
-    val show by remember { derivedStateOf { error() != null } }
+    val localError by remember(error) { derivedStateOf(error) }
+    val show by remember(error) { derivedStateOf { localError != null } }
 
     @Composable
     fun animatedErrorText() {
@@ -185,7 +190,7 @@ private fun ErrorText(error: () -> Int?, fixedError: Boolean) {
         ) {
             SingleLineText(
                 modifier = Modifier.padding(start = 4.dp, top = 4.dp),
-                text = error(),
+                text = localError,
                 style = MaterialTheme.typography.caption.copy(color = MaterialTheme.colors.error)
             )
         }
@@ -210,6 +215,7 @@ private fun ShowKeyboard(
     focusRequester: FocusRequester
 ) {
     var showedKeyboard by rememberSaveable { mutableStateOf(false) }
+
     if (getFocus && !showedKeyboard) {
         LaunchedEffect(key1 = Unit) {
             focusRequester.requestFocus()
@@ -223,10 +229,11 @@ private fun ShowKeyboard(
 
 @Composable // skippable
 private fun TextFieldEmit(textFieldValue: () -> TextFieldValue, onInputChange: (String) -> Unit) {
+    val localTextFiledValue by remember(textFieldValue) { derivedStateOf(textFieldValue) }
     val currentOnInputChange by rememberUpdatedState(newValue = onInputChange)
 
     LaunchedEffect(key1 = textFieldValue) {
-        snapshotFlow { textFieldValue().text.trim() }.collect(currentOnInputChange)
+        snapshotFlow { localTextFiledValue.text.trim() }.collect(currentOnInputChange)
     }
 }
 
@@ -238,8 +245,11 @@ fun TextFieldCancelIcon(
     onValueChange: (TextFieldValue) -> Unit,
     textFieldValue: () -> TextFieldValue,
 ) {
+    val localHasFocus by remember(hasFocus) { derivedStateOf(hasFocus) }
+    val localTextFieldValue by remember(textFieldValue) { derivedStateOf(textFieldValue) }
+
     AnimatedVisibility(
-        visible = hasFocus() && textFieldValue().text.isNotBlank(),
+        visible = localHasFocus && localTextFieldValue.text.isNotBlank(),
         enter = Anime.CancelIcon.fadeIn,
         exit = Anime.CancelIcon.fadeOut,
     ) {

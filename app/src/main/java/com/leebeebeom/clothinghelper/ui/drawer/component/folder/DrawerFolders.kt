@@ -18,7 +18,7 @@ fun DrawerFolders(
     parentKey: String,
     folders: (parentKey: String) -> ImmutableList<Folder>,
     folderNames: (parentKey: String) -> ImmutableSet<String>,
-    startPadding: Dp = 8.dp,
+    startPadding: Dp = 12.dp,
     backgroundColor: Color,
     foldersSize: (parentKey: String) -> Int,
     itemSize: (parentKey: String) -> Int,

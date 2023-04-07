@@ -2,12 +2,14 @@ package com.leebeebeom.clothinghelper.ui.drawer.component.mainmenu
 
 import androidx.compose.runtime.Composable
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerContentWithDoubleCount
 import com.leebeebeom.clothinghelper.ui.util.AddFolder
 import kotlinx.collections.immutable.ImmutableSet
 
 @Composable
 fun DrawerArchive(
+    state: DrawerItemDropdownMenuState,
     onClick: (MainMenuType) -> Unit,
     folderNames: (parentKey: String) -> ImmutableSet<String>,
     foldersSize: (parentKey: String) -> Int,
@@ -24,6 +26,7 @@ fun DrawerArchive(
         folderNames = folderNames,
         itemsSize = itemsSize,
         addFolder = addFolder,
-        subMenus = archiveFolders
+        subMenus = archiveFolders,
+        state = state
     )
 }

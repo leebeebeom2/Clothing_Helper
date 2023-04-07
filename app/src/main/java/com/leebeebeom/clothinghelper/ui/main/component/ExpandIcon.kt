@@ -3,7 +3,9 @@ package com.leebeebeom.clothinghelper.ui.main.component
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.material.LocalContentColor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import com.leebeebeom.clothinghelper.R
@@ -16,13 +18,15 @@ fun ExpandIcon(
     isExpanded: () -> Boolean,
     onClick: () -> Unit
 ) {
+    val localIsExpanded by remember(isExpanded) { derivedStateOf(isExpanded) }
+
     val rotate by animateFloatAsState(
-        targetValue = if (!isExpanded()) 0f else 180f,
+        targetValue = if (localIsExpanded) 0f else 180f,
         animationSpec = rotateSpec
     )
 
     CustomIconButton(
-        modifier = modifier.graphicsLayer { rotationZ = rotate }, // TODO 리컴포지션 테스트
+        modifier = modifier.graphicsLayer { rotationZ = rotate },
         onClick = onClick,
         drawable = R.drawable.ic_expand_more,
         tint = LocalContentColor.current.copy(alpha = 0.6f),

@@ -2,8 +2,7 @@ package com.leebeebeom.clothinghelper.ui.drawer.component.folder
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.key
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
@@ -18,18 +17,20 @@ import kotlinx.collections.immutable.ImmutableSet
 @Composable
 fun DrawerFolders(
     parentKey: String,
-    folders: (parentKey: String) -> ImmutableList<Folder>,
-    folderNames: (parentKey: String) -> ImmutableSet<String>,
     startPadding: Dp = 12.dp,
     backgroundColor: Color,
+    onFolderClick: (Folder) -> Unit,
+    folders: (parentKey: String) -> ImmutableList<Folder>,
+    folderNames: (parentKey: String) -> ImmutableSet<String>,
     foldersSize: (parentKey: String) -> Int,
     itemsSize: (parentKey: String) -> Int,
-    onFolderClick: (Folder) -> Unit,
     addFolder: AddFolder,
     editFolder: EditFolder
 ) {
+    val localFolders by remember(folders) { derivedStateOf { folders(parentKey) } }
+
     Column(modifier = Modifier.background(backgroundColor)) {
-        folders(parentKey).forEach { folder ->
+        localFolders.forEach { folder ->
             key(folder.key) {
                 val state = rememberDrawerItemDropdownMenuState()
 

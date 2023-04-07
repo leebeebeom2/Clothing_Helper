@@ -16,7 +16,7 @@ fun DrawerExpandIcon(
     toggleExpand: () -> Unit,
     dataSize: (() -> Int)? = null
 ) {
-    val show by remember { derivedStateOf { dataSize?.let { it() > 0 } ?: true } }
+    val show by remember(dataSize) { derivedStateOf { dataSize?.let { it() > 0 } ?: true } }
 
     if (show)
         ExpandIcon(

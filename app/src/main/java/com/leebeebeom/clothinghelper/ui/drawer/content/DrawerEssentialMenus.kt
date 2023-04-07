@@ -1,6 +1,5 @@
 package com.leebeebeom.clothinghelper.ui.drawer.content
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -13,6 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.ui.component.HeightSpacer
 import com.leebeebeom.clothinghelper.ui.component.IconWrapper
 import com.leebeebeom.clothinghelper.ui.component.SingleLineText
 import com.leebeebeom.clothinghelper.ui.component.WidthSpacer
@@ -25,10 +25,7 @@ import kotlinx.collections.immutable.persistentListOf
 fun DrawerEssentialMenus(
     onEssentialMenuClick: (EssentialMenuType) -> Unit, essentialMenus: ImmutableList<EssentialMenu>
 ) {
-    Column(
-        modifier = Modifier.padding(vertical = 4.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
+    Column(modifier = Modifier.padding(vertical = 4.dp)) {
         essentialMenus.forEach { essentialMenu ->
             key(essentialMenu.name) {
                 EssentialMenu(
@@ -39,6 +36,7 @@ fun DrawerEssentialMenus(
         }
     }
     Divider(color = Disabled)
+    HeightSpacer(dp = 4)
 }
 
 @Composable // skippable

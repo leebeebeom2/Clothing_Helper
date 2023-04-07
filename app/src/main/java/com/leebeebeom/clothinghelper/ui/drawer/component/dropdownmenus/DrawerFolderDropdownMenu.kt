@@ -10,6 +10,7 @@ import kotlinx.collections.immutable.ImmutableSet
 fun DrawerFolderDropDownMenu(
     state: DrawerDropdownMenuState,
     onDismiss: () -> Unit,
+    expand: () -> Unit,
     folderNames: () -> ImmutableSet<String>,
     childFolderNames: () -> ImmutableSet<String>,
     addFolder: AddFolder,
@@ -25,9 +26,10 @@ fun DrawerFolderDropDownMenu(
         )
 
         DrawerDropdownMenuAddFolder(
-            onDismiss = onDismiss,
+            onDismissDropdownMenu = onDismiss,
             folderNames = childFolderNames,
-            onPositiveButtonClick = { name -> addFolder(selectedFolder().key, name) }
+            onPositiveButtonClick = { name -> addFolder(selectedFolder().key, name) },
+            expand = expand
         )
     }
 }

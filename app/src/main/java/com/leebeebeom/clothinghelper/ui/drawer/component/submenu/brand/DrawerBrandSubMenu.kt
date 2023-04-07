@@ -1,17 +1,9 @@
 package com.leebeebeom.clothinghelper.ui.drawer.component.submenu.brand
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.component.IconWrapper
 import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemDropdownMenuState
-import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerExpandIcon
-import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerItemsWrapperWithExpandAnimation
-import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerRow
-import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerTextWithDoubleCount
+import com.leebeebeom.clothinghelper.ui.drawer.component.*
 import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.SubMenu
 import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.SubMenuType
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemDropdownMenuState
@@ -34,19 +26,19 @@ fun DrawerBrandSubMenu(
         onLongClick = state::onLongClick,
         onSizeChange = state::onSizeChanged
     ) {
-            IconWrapper(modifier = Modifier.padding(end = 8.dp), drawable = R.drawable.ic_dot)
-            DrawerTextWithDoubleCount(
-                text = subMenu.name,
-                style = MaterialTheme.typography.subtitle1,
-                folderSize = { foldersSize(subMenu.type.name) },
-                itemSize = { itemSize(subMenu.type.name) }
-            )
+        DrawerDotIcon()
+        DrawerTextWithDoubleCount(
+            text = subMenu.name,
+            style = MaterialTheme.typography.subtitle1,
+            folderSize = { foldersSize(subMenu.type.name) },
+            itemSize = { itemSize(subMenu.type.name) }
+        )
 
-            DrawerExpandIcon(
-                expanded = { state.expanded },
-                toggleExpand = state::toggleExpand,
-                dataSize = { foldersSize(subMenu.type.name) }
-            )
+        DrawerExpandIcon(
+            expanded = { state.expanded },
+            toggleExpand = state::toggleExpand,
+            dataSize = { foldersSize(subMenu.type.name) }
+        )
 
         DrawerBrandDropdownMenu(
             state = state,

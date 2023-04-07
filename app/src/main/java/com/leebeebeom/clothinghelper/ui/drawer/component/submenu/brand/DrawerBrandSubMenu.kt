@@ -31,7 +31,7 @@ fun DrawerBrandSubMenu(
             text = subMenu.name,
             style = MaterialTheme.typography.subtitle1,
             folderSize = { foldersSize(subMenu.type.name) },
-            itemSize = { itemSize(subMenu.type.name) }
+            itemsSize = { itemSize(subMenu.type.name) }
         )
 
         DrawerExpandIcon(

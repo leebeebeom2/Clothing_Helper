@@ -1,7 +1,6 @@
 package com.leebeebeom.clothinghelper.ui
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
@@ -51,9 +50,7 @@ fun MainNavHost(
     viewModel: MainNavViewModel = hiltViewModel(),
     navController: NavHostController = rememberNavController(),
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle().also {
-        Log.d(TAG, "마지막 값: ${it.value}")
-    }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val startDestination by remember {
         derivedStateOf {
             uiState.user?.let { MainNavRoute.MainGraph } ?: MainNavRoute.SignInGraph
@@ -61,11 +58,9 @@ fun MainNavHost(
     }
     ClothingHelperTheme {
         Drawer(
-            user = { uiState.user },
             navigateToSetting = navController::navigateToSetting,
             onEssentialMenuClick = { onEssentialMenuClick(navController, it) },
             navigateToMain = navController::navigateToSubCategory,
-            navigateToSubCategory = navController::navigateToSizeChartList,
             navigateToFolder = navController::navigateToSizeChartList
         ) { paddingValues ->
             NavHost(

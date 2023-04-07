@@ -5,8 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.NoLiveLiterals
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.leebeebeom.clothinghelper.R
@@ -47,10 +46,12 @@ fun DialogTextButton(
     enabled: () -> Boolean = { true },
     onClick: () -> Unit
 ) {
+    val localEnabled by remember(enabled) { derivedStateOf(enabled) }
+
     TextButton(
         modifier = modifier.fillMaxWidth(),
         onClick = onClick,
-        enabled = enabled()
+        enabled = localEnabled
     ) {
         SingleLineText(
             text = text,

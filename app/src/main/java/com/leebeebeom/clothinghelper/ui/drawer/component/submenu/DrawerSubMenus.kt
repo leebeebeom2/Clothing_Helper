@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.drawer.component.folder.getSubBackgroundColor
 import com.leebeebeom.clothinghelper.ui.drawer.component.mainmenu.MainMenuType
@@ -29,7 +30,7 @@ fun SubMenus(
     foldersSize: (parentKey: String) -> Int,
     itemsSize: (parentKey: String) -> Int,
     addFolder: AddFolder,
-    folders: @Composable (parentKey: String, backgroundColor: Color) -> Unit
+    folders: @Composable (parentKey: String, backgroundColor: Color, basePadding: Dp) -> Unit
 ) {
     val subMenus = when (mainMenuType) {
         MainMenuType.Brand -> getBrandSubMenus()
@@ -49,7 +50,7 @@ fun SubMenus(
                 ) {
                     val state = rememberDrawerItemDropdownMenuState()
 
-                    DrawerBrandSubMenu(
+                    DrawerSubMenu(
                         state = state,
                         subMenu = subMenu,
                         onClick = onSubMenuClick,
@@ -57,7 +58,9 @@ fun SubMenus(
                         foldersSize = foldersSize,
                         itemsSize = itemsSize,
                         addFolder = addFolder,
-                        folders = { folders(it, Black18) }
+                        folders = { parentKey, basePadding ->
+                            folders(parentKey, Black18, basePadding)
+                        }
                     )
                 } else if (subMenu.type == SubMenuType.Closet || subMenu.type == SubMenuType.Wish) {
                     val state = rememberDrawerItemState()
@@ -71,7 +74,9 @@ fun SubMenus(
                         foldersSize = foldersSize,
                         itemsSize = itemsSize,
                         addFolder = addFolder,
-                        folders = { folders(it, getSubBackgroundColor(Black18)) }
+                        folders = { parentKey, basePadding ->
+                            folders(parentKey, getSubBackgroundColor(Black18), basePadding)
+                        }
                     )
                 }
             }

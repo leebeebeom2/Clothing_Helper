@@ -7,6 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.model.Folder
 import com.leebeebeom.clothinghelper.ui.drawer.component.folder.DrawerFolders
@@ -37,7 +39,7 @@ fun DrawerMainMenus(
     editFolder: EditFolder
 ) {
     @Composable
-    fun Folders(parentKey: String, backgroundColor: Color) {
+    fun Folders(parentKey: String, backgroundColor: Color, basePadding: Dp) {
         DrawerFolders(
             parentKey = parentKey,
             folders = folders,
@@ -47,7 +49,8 @@ fun DrawerMainMenus(
             itemsSize = { 0 },
             onFolderClick = onFolderClick,
             addFolder = addFolder,
-            editFolder = editFolder
+            editFolder = editFolder,
+            basePadding = basePadding
         )
     }
 
@@ -70,8 +73,8 @@ fun DrawerMainMenus(
                                 folderNames = folderNames,
                                 itemsSize = { 0 },
                                 addFolder = addFolder,
-                                folders = { parentKey, backgroundColor ->
-                                    Folders(parentKey, backgroundColor)
+                                folders = { parentKey, backgroundColor, basePadding ->
+                                    Folders(parentKey, backgroundColor, basePadding)
                                 }
                             )
                         }
@@ -89,7 +92,8 @@ fun DrawerMainMenus(
                         folders = {
                             Folders(
                                 parentKey = MainMenuType.Archive.name,
-                                backgroundColor = Black11
+                                backgroundColor = Black11,
+                                basePadding = 0.dp
                             )
                         },
                     )

@@ -3,7 +3,9 @@ package com.leebeebeom.clothinghelper.ui.drawer.component.submenu.clothes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemDropdownMenuState
@@ -20,10 +22,11 @@ fun DrawerClothesSubMenu2(
     folderNames: (parentKey: String) -> ImmutableSet<String>,
     itemsSize: (parentKey: String) -> Int,
     addFolder: AddFolder,
-    folders: @Composable (parentKey: String) -> Unit
+    folders: @Composable (parentKey: String, basePadding: Dp) -> Unit
 ) {
+    val startPadding = remember { 16.dp }
     DrawerContentWithDoubleCount(
-        modifier = Modifier.padding(start = 16.dp),
+        modifier = Modifier.padding(start = startPadding),
         state = state,
         key = clothesCategory.type.name,
         text = clothesCategory.name,
@@ -34,6 +37,6 @@ fun DrawerClothesSubMenu2(
         itemsSize = itemsSize,
         addFolder = addFolder,
         addDotIcon = true,
-        folders = { folders(clothesCategory.type.name) }
+        folders = { folders(clothesCategory.type.name, startPadding) }
     )
 }

@@ -28,7 +28,7 @@ import kotlinx.collections.immutable.ImmutableSet
 fun DrawerFolder(
     parentKey: String,
     folder: Folder,
-    startPadding: Dp,
+    basePadding: Dp,
     backgroundColor: Color,
     onFolderClick: (Folder) -> Unit,
     folders: (parentKey: String) -> ImmutableList<Folder>,
@@ -44,6 +44,7 @@ fun DrawerFolder(
     val childFolderNames by remember(folderNames) { derivedStateOf { folderNames(folder.key) } }
     val childFoldersSize by remember(foldersSize) { derivedStateOf { foldersSize(folder.key) } }
     val childItemsSize by remember(itemsSize) { derivedStateOf { itemsSize(folder.key) } }
+    val startPadding = remember { basePadding.plus(12.dp) }
 
     DrawerRow(
         modifier = Modifier.padding(start = startPadding),
@@ -55,7 +56,7 @@ fun DrawerFolder(
             drawable = R.drawable.ic_folder,
             modifier = Modifier
                 .size(36.dp)
-                .padding(end = 8.dp)
+                .padding(end = 6.dp)
         )
 
         DrawerTextWithDoubleCount(
@@ -87,7 +88,7 @@ fun DrawerFolder(
             parentKey = folder.key,
             folders = folders,
             folderNames = folderNames,
-            startPadding = startPadding.plus(12.dp),
+            basePadding = startPadding,
             backgroundColor = getSubBackgroundColor(backgroundColor),
             foldersSize = foldersSize,
             itemsSize = itemsSize,

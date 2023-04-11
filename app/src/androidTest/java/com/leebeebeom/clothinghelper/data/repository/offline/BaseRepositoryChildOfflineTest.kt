@@ -1,18 +1,19 @@
 package com.leebeebeom.clothinghelper.data.repository.offline
 
 import androidx.test.core.app.ApplicationProvider
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import com.leebeebeom.clothinghelper.data.SignInPassword
 import com.leebeebeom.clothinghelper.data.repository.*
-import com.leebeebeom.clothinghelper.data.repository.container.FolderRepositoryImpl
-import com.leebeebeom.clothinghelper.data.repository.container.SubCategoryRepositoryImpl
 import com.leebeebeom.clothinghelper.data.repository.preference.FolderPreferencesRepositoryImpl
-import com.leebeebeom.clothinghelper.data.repository.preference.SubCategoryPreferencesRepositoryImpl
+import com.leebeebeom.clothinghelper.data.waitTime
 import com.leebeebeom.clothinghelper.domain.model.Folder
-import com.leebeebeom.clothinghelper.domain.model.SubCategory
 import com.leebeebeom.clothinghelper.domain.model.Todo
 import com.leebeebeom.clothinghelper.domain.repository.*
 import com.leebeebeom.clothinghelper.isConnectedNetwork
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.*
 import org.junit.Before
 import org.junit.Test
@@ -20,25 +21,14 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class BaseRepositoryChildOfflineTest {
     private val dispatcher = StandardTestDispatcher()
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private val scope = TestScope(dispatcher)
     private lateinit var userRepository: UserRepository
-    private lateinit var subCategoryRepository: SubCategoryRepository
     private lateinit var folderRepository: FolderRepository
     private lateinit var todoRepository: TodoRepository
 
     @Before
-    fun init() {
+    fun init() = runTest(dispatcher) {
         userRepository = UserRepositoryImpl(appScope = scope, dispatcherIO = dispatcher)
-        subCategoryRepository = SubCategoryRepositoryImpl(
-            subCategoryPreferencesRepository = SubCategoryPreferencesRepositoryImpl(
-                context = ApplicationProvider.getApplicationContext(),
-                appScope = scope
-            ),
-            appScope = scope,
-            dispatcherIO = dispatcher,
-            dispatcherDefault = dispatcher,
-            userRepository = userRepository
-        )
         folderRepository = FolderRepositoryImpl(
             folderPreferencesRepository = FolderPreferencesRepositoryImpl(
                 context = ApplicationProvider.getApplicationContext(),
@@ -55,20 +45,24 @@ class BaseRepositoryChildOfflineTest {
             dispatcherDefault = dispatcher,
             userRepository = userRepository
         )
+
+        if (isConnectedNetwork()) {
+            userRepository.signIn(email = RepositoryTestEmail, password = SignInPassword)
+            waitTime()
+
+            initData(
+                userRepository = userRepository,
+                folderRepository = folderRepository,
+                todoRepository = todoRepository
+            )
+            waitTime()
+        }
     }
 
     @Test
-    fun offlineTest1() = runTest(dispatcher) {
-//        userRepository.signIn(email = RepositoryTestEmail, password = SignInPassword)
-//        waitTime()
-
+    fun offlineAddTest() = runTest(dispatcher) {
         assert(!isConnectedNetwork())
 
-        offlineLoadAndAddTest(
-            repository = subCategoryRepository,
-            addDataList = SubCategory(name = "zSub category offline add 1") to SubCategory(name = "zSub category offline add 2"),
-            initialSize = SubCategoryInitialSize
-        )
         offlineLoadAndAddTest(
             repository = folderRepository,
             addDataList = Folder(name = "zFolder offline add 1") to Folder(name = "zFolder offline add 2"),
@@ -85,17 +79,9 @@ class BaseRepositoryChildOfflineTest {
     }
 
     @Test
-    fun offlineTest2() = runTest(dispatcher) {
+    fun offlineEditTest() = runTest(dispatcher) {
         assert(!isConnectedNetwork())
 
-        offlineEditTest(
-            repository = subCategoryRepository,
-            initialSize = SubCategoryInitialSize,
-            getEditData = { it.copy(name = "zSubCategory offline edit test") },
-            editAssert = { edit, edited ->
-                assert(edit.name == edited.name)
-            }
-        )
         offlineEditTest(
             repository = folderRepository,
             initialSize = FolderInitialSize,
@@ -115,34 +101,36 @@ class BaseRepositoryChildOfflineTest {
     }
 
     @Test
-    fun offlineTest3() = runTest(dispatcher) {
+    fun testCheck() = runTest(dispatcher) {
+        assert(!isConnectedNetwork())
+
         // connect network and check the server
-        launch { subCategoryRepository.allDataFlow.collect() }
         launch { folderRepository.allDataFlow.collect() }
         launch { todoRepository.allDataFlow.collect() }
     }
 
     @Test
-    fun removeOfflineData() = runTest(dispatcher) {
+    fun offlineRemoveTest() = runTest(dispatcher) {
         assert(!isConnectedNetwork())
 
-        removeOfflineData(
-            repository = subCategoryRepository,
-            userRepository = userRepository,
-            initialSize = SubCategoryInitialSize,
-            databasePath = DataBasePath.SubCategory
-        )
-        removeOfflineData(
+        offlineRemoveTest(
             repository = folderRepository,
             userRepository = userRepository,
             initialSize = FolderInitialSize,
             databasePath = DataBasePath.Folder
         )
-        removeOfflineData(
+        offlineRemoveTest(
             repository = todoRepository,
             userRepository = userRepository,
             initialSize = TodoInitialSize,
             databasePath = DataBasePath.Todo
         )
+    }
+
+    @Test
+    fun removeData() = runTest(dispatcher) {
+        assert(isConnectedNetwork())
+
+        Firebase.database.reference.child(userRepository.userFlow.first()!!.uid).removeValue()
     }
 }

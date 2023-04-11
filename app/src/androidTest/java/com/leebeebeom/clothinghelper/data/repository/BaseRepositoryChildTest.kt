@@ -53,27 +53,15 @@ class BaseRepositoryChildTest {
             userRepository = userRepository
         )
 
-        userRepository.signIn(email = RepositoryTestEmail, password = SignInPassword)
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            folderRepository.allDataFlow.collect()
-        }
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            todoRepository.allDataFlow.collect()
-        }
-        waitTime()
-
-        listOf(
-            List(FolderInitialSize) { Folder(name = "test folder $it") }.map {
-                async { folderRepository.add(data = it) }
-            },
-            List(TodoInitialSize) { Todo(text = "test todo $it") }.map {
-                async { todoRepository.add(data = it) }
-            }
-        ).flatten().awaitAll()
+        initData(
+            userRepository = userRepository,
+            folderRepository = folderRepository,
+            todoRepository = todoRepository
+        )
     }
 
     @After
-    fun init2() = runTest(dispatcher) {
+    fun removeData() = runTest(dispatcher) {
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { userRepository.userFlow.collect() }
         userRepository.signIn(email = RepositoryTestEmail, password = SignInPassword)
         waitTime()
@@ -189,4 +177,29 @@ class BaseRepositoryChildTest {
         Firebase.database.reference.child(userRepository.userFlow.first()!!.uid).removeValue()
             .await()
     }
+}
+
+@OptIn(ExperimentalCoroutinesApi::class)
+suspend fun TestScope.initData(
+    userRepository: UserRepository,
+    folderRepository: FolderRepository,
+    todoRepository: TodoRepository
+) {
+    userRepository.signIn(email = RepositoryTestEmail, password = SignInPassword)
+    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+        folderRepository.allDataFlow.collect()
+    }
+    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+        todoRepository.allDataFlow.collect()
+    }
+    waitTime()
+
+    listOf(
+        List(FolderInitialSize) { Folder(name = "test folder $it") }.map {
+            coroutineScope { async { folderRepository.add(data = it) } }
+        },
+        List(TodoInitialSize) { Todo(text = "test todo $it") }.map {
+            coroutineScope { async { todoRepository.add(data = it) } }
+        }
+    ).flatten().awaitAll()
 }

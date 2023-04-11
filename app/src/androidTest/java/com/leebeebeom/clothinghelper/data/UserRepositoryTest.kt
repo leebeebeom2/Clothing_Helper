@@ -57,7 +57,10 @@ class UserRepositoryTest {
 
     @Before
     fun init() {
-        Firebase.auth.signOut()
+        runBlocking {
+            Firebase.auth.signOut()
+            delay(1000)
+        }
 
         userRepository = UserRepositoryImpl(
             appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
@@ -198,7 +201,10 @@ class RunWithSignOutStart {
 
     @Before
     fun init() {
-        runBlocking { launch { Firebase.auth.signOut() } }
+        runBlocking {
+            Firebase.auth.signOut()
+            delay(1000)
+        }
         userRepository = UserRepositoryImpl(
             appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
             dispatcherIO = dispatcher

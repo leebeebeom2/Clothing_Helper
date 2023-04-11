@@ -20,8 +20,7 @@ suspend inline fun <T : BaseModel> TestScope.repositoryChangeAccountLoadTest(
     repository: BaseDataRepository<T>,
     userRepository: UserRepository,
     addDataPair: Pair<T, T>,
-    repositoryTestAccountSize: Int,
-    refPath: DataBasePath
+    repositoryTestAccountSize: Int
 ) {
     backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.allDataFlow.collect() }
     userRepository.signOut()
@@ -51,6 +50,5 @@ suspend inline fun <T : BaseModel> TestScope.repositoryChangeAccountLoadTest(
     waitTime()
     assert(repository.allDataFlow.first().data.size == 2)
 
-    Firebase.database.reference.child(userRepository.userFlow.first()!!.uid)
-        .child(refPath.path).removeValue()
+    Firebase.database.reference.child(userRepository.userFlow.first()!!.uid).removeValue()
 }

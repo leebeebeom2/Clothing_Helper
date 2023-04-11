@@ -7,24 +7,22 @@ import com.leebeebeom.clothinghelper.data.SignInPassword
 import com.leebeebeom.clothinghelper.data.repository.preference.Order
 import com.leebeebeom.clothinghelper.data.repository.preference.Sort
 import com.leebeebeom.clothinghelper.data.waitTime
-import com.leebeebeom.clothinghelper.domain.model.BaseContainerModel
+import com.leebeebeom.clothinghelper.domain.model.Folder
 import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
-import com.leebeebeom.clothinghelper.domain.repository.preference.SortPreferenceRepository
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import com.leebeebeom.clothinghelper.domain.repository.preference.FolderPreferenceRepository
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
 
 @OptIn(ExperimentalCoroutinesApi::class)
-suspend fun <T : BaseContainerModel> TestScope.containerSortTest(
+suspend fun TestScope.folderSortTest(
     userRepository: UserRepository,
-    repository: BaseDataRepository<T>,
-    preferencesRepository: SortPreferenceRepository,
-    data: List<T>,
+    repository: BaseDataRepository<Folder>,
+    preferencesRepository: FolderPreferenceRepository,
+    data: List<Folder>,
 ) {
     suspend fun sortInit() {
         preferencesRepository.changeSort(Sort.Name)
@@ -38,8 +36,7 @@ suspend fun <T : BaseContainerModel> TestScope.containerSortTest(
     waitTime()
     assert(repository.allDataFlow.first().data.isEmpty())
 
-    data.forEach { repository.add(it) }
-    advanceUntilIdle()
+    data.map { coroutineScope { async { repository.add(it) } } }.awaitAll()
     waitTime()
     val addedData = repository.allDataFlow.first().data
     assert(addedData.size == data.size)

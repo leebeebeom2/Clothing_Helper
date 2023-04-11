@@ -1,19 +1,16 @@
 package com.leebeebeom.clothinghelper.domain.model
 
 import android.os.Parcelable
-import com.leebeebeom.clothinghelper.ui.drawer.content.MainCategoryType
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Folder(
     override val key: String = "",
-    override val name: String = "",
-    override val parentKey: String = "",
-    override val subCategoryKey: String = "",
-    override val mainCategoryType: MainCategoryType = MainCategoryType.Top,
-    override val createDate: Long = System.currentTimeMillis(),
-    override val editDate: Long = System.currentTimeMillis(),
-) : BaseFolderModel(), Parcelable {
+    val name: String = "",
+    val parentKey: String = "",
+    val createDate: Long = System.currentTimeMillis(),
+    val editDate: Long = System.currentTimeMillis(),
+) : BaseModel(), Parcelable {
     override fun addKey(key: String) = copy(key = key)
-    override fun changeEditDate() = copy(editDate = System.currentTimeMillis())
+    fun changeEditDate() = copy(editDate = System.currentTimeMillis())
 }

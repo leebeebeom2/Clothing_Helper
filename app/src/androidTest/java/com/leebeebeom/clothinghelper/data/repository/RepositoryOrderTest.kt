@@ -2,6 +2,8 @@ package com.leebeebeom.clothinghelper.data.repository
 
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.leebeebeom.clothinghelper.data.SignInEmail
+import com.leebeebeom.clothinghelper.data.SignInPassword
 import com.leebeebeom.clothinghelper.data.waitTime
 import com.leebeebeom.clothinghelper.domain.model.BaseModel
 import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
@@ -20,6 +22,7 @@ suspend inline fun <T : BaseModel> TestScope.repositoryOrderTest(
     initDataList: List<T>,
     assertOrder: (origin: List<T>, new: List<T>) -> Unit
 ) {
+    userRepository.signIn(email = SignInEmail, password = SignInPassword)
     backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.allDataFlow.collect() }
     waitTime()
 

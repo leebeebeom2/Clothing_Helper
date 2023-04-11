@@ -2,7 +2,7 @@ package com.leebeebeom.clothinghelper.data.repository.preference
 
 import androidx.test.core.app.ApplicationProvider
 import com.leebeebeom.clothinghelper.data.waitTime
-import com.leebeebeom.clothinghelper.domain.repository.preference.SortPreferenceRepository
+import com.leebeebeom.clothinghelper.domain.repository.preference.FolderPreferenceRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
@@ -14,14 +14,10 @@ import org.junit.After
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class SortPreferencesRepositoryTest {
+class FolderPreferencesRepositoryTest {
     private val dispatcher = StandardTestDispatcher()
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val folderPreferencesRepository = FolderPreferencesRepositoryImpl(
-        context = ApplicationProvider.getApplicationContext(),
-        appScope = scope
-    )
-    private val subCategoryPreferencesRepository = SubCategoryPreferencesRepositoryImpl(
         context = ApplicationProvider.getApplicationContext(),
         appScope = scope
     )
@@ -30,17 +26,14 @@ class SortPreferencesRepositoryTest {
     fun init() = runTest(dispatcher) {
         folderPreferencesRepository.changeSort(Sort.Name)
         folderPreferencesRepository.changeOrder(Order.Ascending)
-        subCategoryPreferencesRepository.changeSort(Sort.Name)
-        subCategoryPreferencesRepository.changeOrder(Order.Ascending)
     }
 
     @Test
     fun sotFlowTest() = runTest(dispatcher) {
         preferenceSortFlowTest(repository = folderPreferencesRepository)
-        preferenceSortFlowTest(repository = subCategoryPreferencesRepository)
     }
 
-    private suspend fun TestScope.preferenceSortFlowTest(repository: SortPreferenceRepository) {
+    private suspend fun TestScope.preferenceSortFlowTest(repository: FolderPreferenceRepository) {
         val sortFlow = repository.sortFlow
 
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { sortFlow.collect() }

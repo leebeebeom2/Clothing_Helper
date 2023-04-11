@@ -1,18 +1,13 @@
 package com.leebeebeom.clothinghelper.di
 
+import com.leebeebeom.clothinghelper.data.repository.FolderRepositoryImpl
 import com.leebeebeom.clothinghelper.data.repository.TodoRepositoryImpl
 import com.leebeebeom.clothinghelper.data.repository.UserRepositoryImpl
-import com.leebeebeom.clothinghelper.data.repository.container.FolderRepositoryImpl
-import com.leebeebeom.clothinghelper.data.repository.container.SubCategoryRepositoryImpl
 import com.leebeebeom.clothinghelper.data.repository.preference.FolderPreferencesRepositoryImpl
-import com.leebeebeom.clothinghelper.data.repository.preference.SubCategoryPreferencesRepositoryImpl
 import com.leebeebeom.clothinghelper.domain.repository.FolderRepository
-import com.leebeebeom.clothinghelper.domain.repository.SubCategoryRepository
 import com.leebeebeom.clothinghelper.domain.repository.TodoRepository
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
-import com.leebeebeom.clothinghelper.domain.repository.preference.FolderPreferencesRepository
-import com.leebeebeom.clothinghelper.domain.repository.preference.SortPreferenceRepository
-import com.leebeebeom.clothinghelper.domain.repository.preference.SubCategoryPreferencesRepository
+import com.leebeebeom.clothinghelper.domain.repository.preference.FolderPreferenceRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -29,10 +24,6 @@ abstract class RepositoryModule {
 
     @Singleton
     @Binds
-    abstract fun subCategoryRepository(impl: SubCategoryRepositoryImpl): SubCategoryRepository
-
-    @Singleton
-    @Binds
     abstract fun folderRepository(impl: FolderRepositoryImpl): FolderRepository
 
     @Singleton
@@ -41,11 +32,5 @@ abstract class RepositoryModule {
 
     @Singleton
     @Binds
-    @SubCategoryPreferencesRepository
-    abstract fun subCategoryPreferencesRepository(impl: SubCategoryPreferencesRepositoryImpl): SortPreferenceRepository
-
-    @Singleton
-    @Binds
-    @FolderPreferencesRepository
-    abstract fun folderPreferencesRepository(impl: FolderPreferencesRepositoryImpl): SortPreferenceRepository
+    abstract fun folderPreferencesRepository(impl: FolderPreferencesRepositoryImpl): FolderPreferenceRepository
 }

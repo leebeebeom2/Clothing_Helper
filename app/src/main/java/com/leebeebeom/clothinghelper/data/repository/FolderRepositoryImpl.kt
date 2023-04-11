@@ -8,8 +8,7 @@ import com.leebeebeom.clothinghelper.di.DispatcherDefault
 import com.leebeebeom.clothinghelper.di.DispatcherIO
 import com.leebeebeom.clothinghelper.domain.model.Folder
 import com.leebeebeom.clothinghelper.domain.repository.*
-import com.leebeebeom.clothinghelper.domain.repository.preference.FolderPreferencesRepository
-import com.leebeebeom.clothinghelper.domain.repository.preference.SortPreferenceRepository
+import com.leebeebeom.clothinghelper.domain.repository.preference.FolderPreferenceRepository
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.collections.immutable.toImmutableSet
@@ -23,7 +22,7 @@ import javax.inject.Singleton
 @OptIn(ExperimentalCoroutinesApi::class)
 @Singleton
 class FolderRepositoryImpl @Inject constructor(
-    @FolderPreferencesRepository private val folderPreferencesRepository: SortPreferenceRepository,
+    folderPreferencesRepository: FolderPreferenceRepository,
     @AppScope appScope: CoroutineScope,
     @DispatcherIO dispatcherIO: CoroutineDispatcher,
     @DispatcherDefault dispatcherDefault: CoroutineDispatcher,
@@ -36,14 +35,10 @@ class FolderRepositoryImpl @Inject constructor(
     userRepository = userRepository
 ), FolderRepository {
 
-    override val allDataFlow =
-        super.allDataFlow.combine(
-            flow = folderPreferencesRepository.sortFlow,
-            transform = ::getSortedFolder
-        )
-            .flowOn(dispatcherDefault)
-            .distinctUntilChanged()
-            .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
+    override val allDataFlow = super.allDataFlow.combine(
+        flow = folderPreferencesRepository.sortFlow, transform = ::getSortedFolder
+    ).flowOn(dispatcherDefault).distinctUntilChanged()
+        .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
     override suspend fun add(data: Folder) {
         // push override 때문에 editDate 변경 됨
@@ -56,23 +51,20 @@ class FolderRepositoryImpl @Inject constructor(
 
     override val allFoldersMapFlow: SharedFlow<FolderResultMap> =
         allDataFlow.mapLatest { dataResult ->
-            dataResult.toMap { it.parentKey }
-        }.flowOn(dispatcherDefault)
-            .distinctUntilChanged()
+            dataResult.toFolderResultMap { it.parentKey }
+        }.flowOn(dispatcherDefault).distinctUntilChanged()
             .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
     override val folderNamesMapFlow = allFoldersMapFlow.mapLatest { allDataMap ->
         allDataMap.data.mapValues { mapElement ->
             mapElement.value.map { element -> element.name }.toImmutableSet()
         }.toImmutableMap()
-    }.flowOn(dispatcherDefault)
-        .distinctUntilChanged()
+    }.flowOn(dispatcherDefault).distinctUntilChanged()
         .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
     override val foldersSizeMapFlow = allFoldersMapFlow.mapLatest { allDataMap ->
         allDataMap.data.mapValues { mapElement -> mapElement.value.size }.toImmutableMap()
-    }.flowOn(dispatcherDefault)
-        .distinctUntilChanged()
+    }.flowOn(dispatcherDefault).distinctUntilChanged()
         .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
     private fun getSortedFolder(

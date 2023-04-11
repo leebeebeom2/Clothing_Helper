@@ -14,7 +14,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 
 @OptIn(ExperimentalCoroutinesApi::class)
-suspend fun TestScope.removeOfflineData(
+suspend fun TestScope.offlineRemoveTest(
     repository: BaseDataRepository<*>,
     userRepository: UserRepository,
     initialSize: Int,

@@ -32,11 +32,6 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
     private var ref: DatabaseReference? = null
     private var lastCachedData: ImmutableList<T> = persistentListOf()
 
-    // TODO 콜렉트 쪽에서 예외 처리
-    // TODO 네트워크 미 연결 시 스낵바나 알림같을 걸 띄우는 게 나을듯
-    // TODO 미로그인 시 데이터 사용 Any로 변경
-    // TODO 로그인 시 최초 로드 후 원래 데이터 사용 설정으로 변경
-
     /**
      * @throws DatabaseException onCancelled 호출 시 발생
      */

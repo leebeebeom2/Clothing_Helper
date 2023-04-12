@@ -76,8 +76,7 @@ class MaxWidthTextFieldWithErrorTest {
                                 initialText = input,
                                 blockBlank = true
                             )
-                            // blockBlank = true
-                            // getFocus = true
+
                             MaxWidthTextFieldWithError(
                                 textFieldValue = { state.textFieldValue },
                                 onValueChange = state::onValueChange,
@@ -88,7 +87,7 @@ class MaxWidthTextFieldWithErrorTest {
                                     keyboardType = KeyboardType.Text, imeAction = ImeAction.Next
                                 ),
                                 onInputChange = { input = it },
-                                getFocus = true,
+                                showFocus = true,
                                 fixedError = false
                             )
 
@@ -103,7 +102,7 @@ class MaxWidthTextFieldWithErrorTest {
                                     keyboardType = KeyboardType.Text, imeAction = ImeAction.Done
                                 ),
                                 onInputChange = { input2 = it },
-                                getFocus = false,
+                                showFocus = false,
                                 fixedError = false
                             )
 

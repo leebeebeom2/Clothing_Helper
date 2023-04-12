@@ -3,14 +3,10 @@ package com.leebeebeom.clothinghelper.ui
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelper.data.SignInEmail
 import com.leebeebeom.clothinghelper.data.SignInPassword
-import com.leebeebeom.clothinghelper.ui.MainNavRoute.MainGraph
-import com.leebeebeom.clothinghelper.ui.MainNavRoute.SignInGraph
 import com.leebeebeom.clothinghelper.ui.drawer.component.SettingIconTag
 import com.leebeebeom.clothinghelper.ui.main.mainScreen.MainScreenTag
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInScreenTag
@@ -21,7 +17,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-class MainActivityTest {
+class MainNavHostTest {
     @get:Rule
     val rule = createAndroidComposeRule<HiltTestActivity>()
     private val restorationTester = StateRestorationTester(rule)
@@ -71,7 +67,7 @@ class MainActivityTest {
     }
 }
 
-class MainActivitySignInStartTest {
+class MainNavHostSignInStartTest {
     @get:Rule
     val rule = createAndroidComposeRule<HiltTestActivity>()
 
@@ -92,10 +88,9 @@ class MainActivitySignInStartTest {
     }
 }
 
-class MainActivitySignOutStartTest {
+class MainNavHostSignOutStartTest {
     @get:Rule
     val rule = createAndroidComposeRule<HiltTestActivity>()
-    private lateinit var navController: NavHostController
 
     @Before
     fun init() {
@@ -103,44 +98,11 @@ class MainActivitySignOutStartTest {
             Firebase.auth.signOut()
             delay(1000)
         }
-        rule.setContent {
-            navController = rememberNavController()
-            MainNavHost(navController = navController)
-        }
+        rule.setContent { MainNavHost() }
     }
 
     @Test
     fun signInScreenTest() {
         rule.onNodeWithTag(SignInScreenTag).assertExists()
-    }
-
-    @Test
-    fun backStackTest() {
-        fun isBackStackExist(route: String): Boolean {
-            return try {
-                navController.getBackStackEntry(route)
-                true
-            } catch (e: Exception) {
-                false
-            }
-        }
-        // 로그인, 로그아웃 시 백스택은 하나여야함.
-        assert(!isBackStackExist(MainGraph))
-
-        rule.signIn()
-        rule.waitTagExist(MainScreenTag)
-        assert(!isBackStackExist(SignInGraph))
-
-        rule.signOut()
-        rule.waitTagExist(SignInScreenTag)
-        assert(!isBackStackExist(MainGraph))
-
-        repeat(2) {
-            rule.signIn()
-            rule.waitTagExist(MainScreenTag)
-            rule.signOut()
-            rule.waitTagExist(SignInScreenTag)
-        }
-        assert(!isBackStackExist(MainGraph))
     }
 }

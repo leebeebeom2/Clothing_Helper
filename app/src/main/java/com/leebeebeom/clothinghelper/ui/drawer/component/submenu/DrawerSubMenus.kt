@@ -37,11 +37,8 @@ fun SubMenus(
         MainMenuType.Clothe -> getClotheSubMenus()
         MainMenuType.Outfit -> getOutfitSubMenus()
         MainMenuType.Archive -> persistentListOf()
-        MainMenuType.Top -> persistentListOf()
-        MainMenuType.Bottom -> persistentListOf()
-        MainMenuType.Outer -> persistentListOf()
-        MainMenuType.Etc -> persistentListOf()
     }
+    
     Column(modifier = Modifier.background(Black11)) {
         subMenus.forEach { subMenu ->
             key(subMenu.type) {

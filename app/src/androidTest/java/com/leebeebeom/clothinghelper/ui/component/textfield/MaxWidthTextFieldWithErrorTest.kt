@@ -155,6 +155,12 @@ class MaxWidthTextFieldWithErrorTest {
 
         rule.onNodeWithStringRes(R.string.error_invalid_email).assertExists()
         rule.onNodeWithStringRes(R.string.error_wrong_password).assertExists()
+
+        error = null
+        error2 = null
+
+        rule.onNodeWithStringRes(R.string.error_invalid_email).assertDoesNotExist()
+        rule.onNodeWithStringRes(R.string.error_wrong_password).assertDoesNotExist()
     }
 
     @Test

@@ -16,9 +16,7 @@ abstract class LoadingViewModel(
     savedStateHandle: SavedStateHandle,
 ) : ToastViewModel(savedToastTextsKey = savedToastTextsKey, savedStateHandle = savedStateHandle) {
     private var isLoadingState by savedStateHandle.saveable(key = savedLoadingKey) {
-        mutableStateOf(
-            initialLoading
-        )
+        mutableStateOf(initialLoading)
     }
     protected val isLoadingFlow = snapshotFlow { isLoadingState }
     fun setLoading(loading: Boolean) {

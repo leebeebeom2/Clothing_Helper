@@ -20,7 +20,6 @@ import com.leebeebeom.clothinghelper.ui.drawer.Drawer
 import com.leebeebeom.clothinghelper.ui.drawer.content.EssentialMenuType
 import com.leebeebeom.clothinghelper.ui.main.MainGraphRoute
 import com.leebeebeom.clothinghelper.ui.main.mainGraph
-import com.leebeebeom.clothinghelper.ui.main.navigateToSubCategory
 import com.leebeebeom.clothinghelper.ui.setting.SettingGraphRoute
 import com.leebeebeom.clothinghelper.ui.setting.settingGraph
 import com.leebeebeom.clothinghelper.ui.signin.ui.signInGraph
@@ -51,28 +50,23 @@ fun MainNavHost(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val startDestination by remember {
-        derivedStateOf {
-            uiState.user?.let { MainNavRoute.MainGraph } ?: MainNavRoute.SignInGraph
-        }
+        derivedStateOf { uiState.user?.let { MainNavRoute.MainGraph } ?: MainNavRoute.SignInGraph }
     }
 
-    fun onEssentialMenuClick(type: EssentialMenuType) =
-        when (type) {
-            EssentialMenuType.MainScreen -> navController.navigateToMain()
-            EssentialMenuType.Favorite -> {} // TODO
-            EssentialMenuType.SeeAll -> {} // TODO
-            EssentialMenuType.Trash -> {} // TODO
-        }
+    fun onEssentialMenuClick(type: EssentialMenuType) = when (type) {
+        EssentialMenuType.MainScreen -> navController.navigateToMain()
+        EssentialMenuType.Favorite -> {} // TODO
+        EssentialMenuType.SeeAll -> {} // TODO
+        EssentialMenuType.Trash -> {} // TODO
+    }
 
     ClothingHelperTheme {
-        Drawer(
-            onSettingIconClick = navController::navigateToSetting,
+        Drawer(onSettingIconClick = navController::navigateToSetting,
             onEssentialMenuClick = ::onEssentialMenuClick,
-            onMainMenuClick = navController::navigateToSubCategory,
+            onMainMenuClick = {},
             onSubMenuClick = {},
             onClothesCategoryClick = {},
-            onFolderClick = {}
-        ) { paddingValues ->
+            onFolderClick = {}) { paddingValues ->
             NavHost(
                 modifier = Modifier.padding(paddingValues),
                 navController = navController,
@@ -91,11 +85,9 @@ fun MainNavHost(
 }
 
 private fun NavHostController.navigateToMain() {
-    if (currentBackStackEntry.getCurrentRoute() != MainGraphRoute.Dashboard.route)
-        navigate(route = MainNavRoute.MainGraph)
+    if (currentBackStackEntry.getCurrentRoute() != MainGraphRoute.Dashboard.route) navigate(route = MainNavRoute.MainGraph)
 }
 
 private fun NavHostController.navigateToSetting() {
-    if (currentBackStackEntry.getCurrentRoute() != SettingGraphRoute.Setting.route)
-        navigate(route = MainNavRoute.SettingGraph)
+    if (currentBackStackEntry.getCurrentRoute() != SettingGraphRoute.Setting.route) navigate(route = MainNavRoute.SettingGraph)
 }

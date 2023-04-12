@@ -9,10 +9,12 @@ import com.leebeebeom.clothinghelper.ui.signin.ui.resetpassword.ResetPasswordScr
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInScreen
 import com.leebeebeom.clothinghelper.ui.signin.ui.signup.SignUpScreen
 
-object SignInGraphRoute {
-    const val SignInScreen = "sign in"
-    const val SignUpScreen = "sign up"
-    const val ResetPasswordScreen = "reset password"
+sealed class SignInGraphRoute {
+    companion object {
+        const val SignInScreen = "sign in"
+        const val SignUpScreen = "sign up"
+        const val ResetPasswordScreen = "reset password"
+    }
 }
 
 fun NavGraphBuilder.signInGraph(navController: NavHostController) {

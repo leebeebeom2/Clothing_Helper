@@ -33,19 +33,15 @@ fun DrawerClothesSubMenu(
     foldersSize: (parentKey: String) -> Int,
     itemsSize: (parentKey: String) -> Int,
     addFolder: AddFolder,
-    clothesCategories: ImmutableList<ClothesCategory> =
-        if (subMenu.type == SubMenuType.Closet) rememberClosetClothesCategory()
-        else rememberWishClothesCategory(),
+    clothesCategories: ImmutableList<ClothesCategory> = if (subMenu.type == SubMenuType.Closet) rememberClosetClothesCategory()
+    else rememberWishClothesCategory(),
     state: DrawerItemState,
     folders: @Composable (parentKey: String, basePadding: Dp) -> Unit
 ) {
-    DrawerRow(
-        Modifier.padding(start = 8.dp),
-        onClick = { onClick(subMenu.type) }) {
+    DrawerRow(Modifier.padding(start = 8.dp), onClick = { onClick(subMenu.type) }) {
         DrawerDotIcon()
         DrawerText(
-            text = subMenu.name,
-            style = MaterialTheme.typography.subtitle1.copy(fontSize = 18.sp)
+            text = subMenu.name, style = MaterialTheme.typography.subtitle1.copy(fontSize = 18.sp)
         )
         DrawerExpandIcon(expanded = { state.expanded }, toggleExpand = state::toggleExpand)
     }
@@ -72,32 +68,43 @@ fun DrawerClothesSubMenu(
     })
 }
 
-enum class ClothesCategoryType {
-    ClosetTop, ClosetBottom, ClosetOuter, ClosetEtc, WishTop, WishBottom, WishOuter, WishEtc,
+sealed class ClothesCategoryType(val name: String) {
+    sealed class Closet(name: String) : ClothesCategoryType(name) {
+        object Top : Closet("closet top")
+        object Bottom : Closet("closet bottom")
+        object Outer : Closet("closet outer")
+        object Etc : Closet("closet etc")
+    }
+
+    sealed class Wish(name: String) : ClothesCategoryType(name) {
+        object Top : Wish("wish top")
+        object Bottom : Wish("wish bottom")
+        object Outer : Wish("wish outer")
+        object Etc : Wish("wish etc")
+    }
 }
 
 data class ClothesCategory(
-    @StringRes val name: Int,
-    val type: ClothesCategoryType
+    @StringRes val name: Int, val type: ClothesCategoryType
 )
 
 @Composable
 fun rememberClosetClothesCategory() = remember {
     persistentListOf(
-        ClothesCategory(R.string.tops_cap, ClothesCategoryType.ClosetTop),
-        ClothesCategory(R.string.bottoms_cap, ClothesCategoryType.ClosetBottom),
-        ClothesCategory(R.string.outers_cap, ClothesCategoryType.ClosetOuter),
-        ClothesCategory(R.string.etc_cap, ClothesCategoryType.ClosetEtc),
+        ClothesCategory(R.string.tops_cap, ClothesCategoryType.Closet.Top),
+        ClothesCategory(R.string.bottoms_cap, ClothesCategoryType.Closet.Bottom),
+        ClothesCategory(R.string.outers_cap, ClothesCategoryType.Closet.Outer),
+        ClothesCategory(R.string.etc_cap, ClothesCategoryType.Closet.Etc),
     )
 }
 
 @Composable
 fun rememberWishClothesCategory() = remember {
     persistentListOf(
-        ClothesCategory(R.string.tops_cap, ClothesCategoryType.WishTop),
-        ClothesCategory(R.string.bottoms_cap, ClothesCategoryType.WishBottom),
-        ClothesCategory(R.string.outers_cap, ClothesCategoryType.WishOuter),
-        ClothesCategory(R.string.etc_cap, ClothesCategoryType.WishEtc),
+        ClothesCategory(R.string.tops_cap, ClothesCategoryType.Wish.Top),
+        ClothesCategory(R.string.bottoms_cap, ClothesCategoryType.Wish.Bottom),
+        ClothesCategory(R.string.outers_cap, ClothesCategoryType.Wish.Outer),
+        ClothesCategory(R.string.etc_cap, ClothesCategoryType.Wish.Etc),
     )
 }
 

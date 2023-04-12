@@ -34,11 +34,11 @@ fun SubMenus(
 ) {
     val subMenus = when (mainMenuType) {
         MainMenuType.Brand -> getBrandSubMenus()
-        MainMenuType.Clothe -> getClotheSubMenus()
+        MainMenuType.Clothes -> getClotheSubMenus()
         MainMenuType.Outfit -> getOutfitSubMenus()
         MainMenuType.Archive -> persistentListOf()
     }
-    
+
     Column(modifier = Modifier.background(Black11)) {
         subMenus.forEach { subMenu ->
             key(subMenu.type) {

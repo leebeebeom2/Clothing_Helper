@@ -112,7 +112,7 @@ data class MainMenu(
 )
 
 enum class MainMenuType {
-    Brand, Clothe, Outfit, Archive, Top, Bottom, Outer, Etc
+    Brand, Clothe, Outfit, Archive
 }
 
 @Composable

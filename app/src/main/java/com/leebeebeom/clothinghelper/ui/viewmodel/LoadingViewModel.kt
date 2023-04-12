@@ -14,11 +14,12 @@ abstract class LoadingViewModel(
     initialLoading: Boolean,
     savedLoadingKey: String,
     savedStateHandle: SavedStateHandle,
-) : ToastViewModel(
-    savedToastTextsKey = savedToastTextsKey, savedStateHandle = savedStateHandle
-) {
-    private var isLoadingState by savedStateHandle.saveable(key = savedLoadingKey)
-    { mutableStateOf(initialLoading) }
+) : ToastViewModel(savedToastTextsKey = savedToastTextsKey, savedStateHandle = savedStateHandle) {
+    private var isLoadingState by savedStateHandle.saveable(key = savedLoadingKey) {
+        mutableStateOf(
+            initialLoading
+        )
+    }
     protected val isLoadingFlow = snapshotFlow { isLoadingState }
     fun setLoading(loading: Boolean) {
         isLoadingState = loading

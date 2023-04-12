@@ -112,14 +112,14 @@ data class MainMenu(
 )
 
 enum class MainMenuType {
-    Brand, Clothe, Outfit, Archive
+    Brand, Clothes, Outfit, Archive
 }
 
 @Composable
 fun rememberMainMenus() = remember {
     persistentListOf(
         MainMenu(R.string.brand_cap, MainMenuType.Brand),
-        MainMenu(R.string.clothes_cap, MainMenuType.Clothe),
+        MainMenu(R.string.clothes_cap, MainMenuType.Clothes),
         MainMenu(R.string.outfit_cap, MainMenuType.Outfit),
         MainMenu(R.string.archive_cap, MainMenuType.Archive)
     )

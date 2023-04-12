@@ -26,11 +26,11 @@ class SignUpScreenTest {
     val rule = createAndroidComposeRule<HiltTestActivity>()
     private val restorationTester = StateRestorationTester(rule)
     private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-    private lateinit var emailTextField: SemanticsNodeInteraction
-    private lateinit var nameTextField: SemanticsNodeInteraction
-    private lateinit var passwordTextField: SemanticsNodeInteraction
-    private lateinit var passwordConfirmTextField: SemanticsNodeInteraction
-    private lateinit var signUpButton: SemanticsNodeInteraction
+    private val emailTextField by lazy { rule.onNodeWithStringRes(R.string.email) }
+    private val nameTextField by lazy { rule.onNodeWithStringRes(R.string.nickname) }
+    private val passwordTextField by lazy { rule.onNodeWithStringRes(R.string.password) }
+    private val passwordConfirmTextField by lazy { rule.onNodeWithStringRes(R.string.password_confirm) }
+    private val signUpButton by lazy { rule.onNodeWithStringRes(R.string.sign_up) }
 
     @Before
     fun init() {
@@ -39,11 +39,6 @@ class SignUpScreenTest {
             delay(1000)
         }
         restorationTester.setContent { MainNavHost() }
-        emailTextField = rule.onNodeWithStringRes(R.string.email)
-        nameTextField = rule.onNodeWithStringRes(R.string.nickname)
-        passwordTextField = rule.onNodeWithStringRes(R.string.password)
-        passwordConfirmTextField = rule.onNodeWithStringRes(R.string.password_confirm)
-        signUpButton = rule.onNodeWithStringRes(R.string.sign_up)
         device.pressBack()
         rule.onNodeWithStringRes(R.string.sign_up_with_email).performClick()
     }
@@ -71,6 +66,8 @@ class SignUpScreenTest {
                     rule.onAllNodesWithText(getInvisibleText(password.length))
                         .fetchSemanticsNodes().size == 2
                 )
+
+                signUpButton.assertIsNotEnabled()
 
                 restorationTester.emulateSavedInstanceStateRestore()
             }

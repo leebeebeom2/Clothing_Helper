@@ -27,7 +27,7 @@ class GoogleSignInButtonTest {
         rule.setContent {
             Box(modifier = Modifier.fillMaxSize()) {
                 GoogleSignInButton(
-                    onResult = { _, _ -> },
+                    onResult = { _, _ -> }
                 )
             }
         }

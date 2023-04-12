@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.model.Folder
 import com.leebeebeom.clothinghelper.domain.model.User
-import com.leebeebeom.clothinghelper.domain.repository.DataResultMap
 import com.leebeebeom.clothinghelper.domain.usecase.folder.*
 import com.leebeebeom.clothinghelper.domain.usecase.user.GetUserUseCase
 import com.leebeebeom.clothinghelper.ui.util.toastHandler
@@ -41,12 +40,7 @@ class DrawerViewModel @Inject constructor(
         flow4 = toastTextsFlow,
         flow5 = getUserUseCase.userFlow,
     ) { foldersMap, folderNames, folderSize, toastTexts, user ->
-        when { // TODO 현재 무한 순환이며 데이터 발행마다 에러 메세지 나감 설계 미스
-            foldersMap is DataResultMap.Fail -> {
-                // TODO 로그
-                addToastTextAtLast(R.string.error_fail_get_data_by_unknow_error)
-            }
-        }
+        // TODO FolderResultMap.Fail 시 토스트
 
         DrawerUiState(
             isLoading = false,

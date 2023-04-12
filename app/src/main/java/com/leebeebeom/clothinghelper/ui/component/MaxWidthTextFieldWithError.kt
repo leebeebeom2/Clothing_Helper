@@ -63,7 +63,7 @@ fun StatefulMaxWidthTextFieldWithCancelIcon(
         placeholder = placeholder,
         error = error,
         isVisible = isVisible,
-        getFocus = getFocus,
+        showFocus = getFocus,
         fixedError = fixedError
     )
 }
@@ -96,7 +96,7 @@ fun StatefulMaxWidthTextField(
         placeholder = placeholder,
         error = error,
         isVisible = isVisible,
-        getFocus = getFocus,
+        showFocus = getFocus,
         fixedError = false
     )
 }
@@ -114,7 +114,7 @@ fun MaxWidthTextFieldWithError(
     trailingIcon: (@Composable () -> Unit)? = null,
     onInputChange: (String) -> Unit,
     focusRequester: FocusRequester = remember { FocusRequester() },
-    getFocus: Boolean,
+    showFocus: Boolean,
     fixedError: Boolean,
 ) {
     Column {
@@ -131,7 +131,7 @@ fun MaxWidthTextFieldWithError(
             focusRequester = focusRequester
         )
         ErrorText(error = error, fixedError = fixedError)
-        ShowKeyboard(focusRequester = focusRequester, getFocus = getFocus)
+        ShowKeyboard(focusRequester = focusRequester, getFocus = showFocus)
         TextFieldEmit(textFieldValue = textFieldValue, onInputChange = onInputChange)
     }
 }

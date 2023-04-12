@@ -14,10 +14,7 @@ import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
-class MainNavViewModel @Inject constructor(
-    getUserUseCase: GetUserUseCase
-) : ViewModel() {
-
+class MainNavViewModel @Inject constructor(getUserUseCase: GetUserUseCase) : ViewModel() {
     val uiState = getUserUseCase.userFlow.mapLatest {
         MainNavUiState(user = it, isLoading = false)
     }.stateIn(

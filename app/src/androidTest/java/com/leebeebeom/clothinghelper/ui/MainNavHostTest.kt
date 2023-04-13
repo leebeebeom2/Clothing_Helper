@@ -1,14 +1,16 @@
 package com.leebeebeom.clothinghelper.ui
 
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelper.data.SignInEmail
 import com.leebeebeom.clothinghelper.data.SignInPassword
 import com.leebeebeom.clothinghelper.ui.drawer.component.SettingIconTag
-import com.leebeebeom.clothinghelper.ui.main.main.MainScreenTag
+import com.leebeebeom.clothinghelper.ui.main.essentialmenu.main.MainScreenTag
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInScreenTag
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -21,6 +23,8 @@ class MainNavHostTest {
     @get:Rule
     val rule = createAndroidComposeRule<HiltTestActivity>()
     private val restorationTester = StateRestorationTester(rule)
+    private val signInScreen by lazy { rule.onNodeWithTag(SignInScreenTag) }
+    private val settingIcon by lazy { rule.onNodeWithTag(SettingIconTag) }
 
     @Before
     fun init() {
@@ -37,9 +41,9 @@ class MainNavHostTest {
     @Test
     fun restoreTest() {
         repeat(2) {
-            rule.onNodeWithTag(SignInScreenTag).assertExists()
-            rule.onRoot().performTouchInput { swipeRight() }
-            rule.onNodeWithTag(SettingIconTag).assertIsNotDisplayed()
+            signInScreen.assertExists()
+            rule.drawerOpen()
+            settingIcon.assertIsNotDisplayed()
 
             restorationTester.emulateSavedInstanceStateRestore()
         }
@@ -48,19 +52,19 @@ class MainNavHostTest {
 
         repeat(2) {
             rule.waitTagExist(MainScreenTag)
-            rule.onRoot().performTouchInput { swipeRight() }
-            rule.onNodeWithTag(SettingIconTag).assertExists()
+            rule.drawerOpen()
+            settingIcon.assertIsDisplayed()
 
             restorationTester.emulateSavedInstanceStateRestore()
         }
 
         rule.signOut()
-        rule.onNodeWithTag(SettingIconTag).assertIsNotDisplayed() // drawer automatic close
+        settingIcon.assertIsNotDisplayed() // drawer automatic close
 
         repeat(2) {
             rule.waitTagExist(SignInScreenTag)
-            rule.onRoot().performTouchInput { swipeRight() }
-            rule.onNodeWithTag(SettingIconTag).assertIsNotDisplayed()
+            rule.drawerOpen()
+            settingIcon.assertIsNotDisplayed()
 
             restorationTester.emulateSavedInstanceStateRestore()
         }

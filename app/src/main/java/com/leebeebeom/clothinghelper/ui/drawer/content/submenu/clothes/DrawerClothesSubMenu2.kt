@@ -29,6 +29,7 @@ fun DrawerClothesSubMenu2(
         modifier = Modifier.padding(start = startPadding),
         state = state,
         key = clothesCategory.type.name,
+        menuType = clothesCategory.type.toMenuType(),
         text = clothesCategory.name,
         textStyle = MaterialTheme.typography.subtitle1.copy(fontSize = 17.sp),
         onClick = { onClick(clothesCategory.type) },

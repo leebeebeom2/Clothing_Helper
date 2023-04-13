@@ -59,14 +59,10 @@ class SignUpScreenTest {
 
             repeat(2) {
                 rule.waitStringResExist(error)
-                rule.onNodeWithText(email).assertExists()
-                rule.onNodeWithText(SignUpName).assertExists()
-                signUpButton.assertIsNotEnabled()
-                assert(
-                    rule.onAllNodesWithText(getInvisibleText(password.length))
-                        .fetchSemanticsNodes().size == 2
-                )
-
+                emailTextField.assert(hasText(email))
+                nameTextField.assert(hasText(SignUpName))
+                passwordTextField.assert(hasText(getInvisibleText(password.length)))
+                passwordConfirmTextField.assert(hasText(getInvisibleText(password.length)))
                 signUpButton.assertIsNotEnabled()
 
                 restorationTester.emulateSavedInstanceStateRestore()
@@ -173,7 +169,7 @@ class SignUpScreenTest {
 
         repeat(10) {
             emailTextField.performTextInput(" ")
-            rule.onNodeWithText(SignInEmail).assertExists()
+            emailTextField.assert(hasText(SignInEmail))
         }
 
         repeat(10) {

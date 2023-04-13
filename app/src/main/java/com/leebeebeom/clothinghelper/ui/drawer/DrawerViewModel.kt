@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.model.Folder
+import com.leebeebeom.clothinghelper.domain.model.MenuType
 import com.leebeebeom.clothinghelper.domain.model.User
 import com.leebeebeom.clothinghelper.domain.usecase.folder.*
 import com.leebeebeom.clothinghelper.domain.usecase.user.GetUserUseCase
@@ -56,14 +57,13 @@ class DrawerViewModel @Inject constructor(
         initialValue = DrawerUiState()
     )
 
-    fun addFolder(parentKey: String, name: String) {
+    fun addFolder(parentKey: String, name: String, menuType: MenuType) {
         viewModelScope.launch(
             toastHandler(callSite = "DrawerViewModel.addFolder",
                 showToast = { addToastTextAtLast(R.string.error_add_folder_failed) })
         ) {
             addFoldersUseCase.add(
-                parentKey = parentKey,
-                name = name
+                parentKey = parentKey, name = name, menuType = menuType
             )
         }
     }

@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.drawer.component.mainmenu
+package com.leebeebeom.clothinghelper.ui.drawer.content.mainmenu
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
@@ -11,10 +11,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.model.Folder
-import com.leebeebeom.clothinghelper.ui.drawer.component.folder.DrawerFolders
-import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.SubMenuType
-import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.SubMenus
-import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.clothes.ClothesCategoryType
+import com.leebeebeom.clothinghelper.ui.drawer.content.folder.DrawerFolders
+import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.SubMenuType
+import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.SubMenus
+import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.clothes.ClothesCategoryType
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemState
 import com.leebeebeom.clothinghelper.ui.theme.Black11

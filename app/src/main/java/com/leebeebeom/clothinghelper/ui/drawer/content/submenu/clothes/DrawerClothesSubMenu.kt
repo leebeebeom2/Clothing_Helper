@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.drawer.component.submenu.clothes
+package com.leebeebeom.clothinghelper.ui.drawer.content.submenu.clothes
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
@@ -15,8 +15,8 @@ import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemState
 import com.leebeebeom.clothinghelper.ui.drawer.component.*
-import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.SubMenu
-import com.leebeebeom.clothinghelper.ui.drawer.component.submenu.SubMenuType
+import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.SubMenu
+import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.SubMenuType
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.theme.Black18
 import com.leebeebeom.clothinghelper.ui.util.AddFolder

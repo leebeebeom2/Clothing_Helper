@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.drawer.component.submenu
+package com.leebeebeom.clothinghelper.ui.drawer.content.submenu.clothes
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
@@ -14,30 +14,29 @@ import com.leebeebeom.clothinghelper.ui.util.AddFolder
 import kotlinx.collections.immutable.ImmutableSet
 
 @Composable
-fun DrawerSubMenu(
+fun DrawerClothesSubMenu2(
     state: DrawerItemDropdownMenuState,
-    subMenu: SubMenu,
-    onClick: (SubMenuType) -> Unit,
-    folderNames: (parentKey: String) -> ImmutableSet<String>,
+    clothesCategory: ClothesCategory,
+    onClick: (ClothesCategoryType) -> Unit,
     foldersSize: (parentKey: String) -> Int,
+    folderNames: (parentKey: String) -> ImmutableSet<String>,
     itemsSize: (parentKey: String) -> Int,
     addFolder: AddFolder,
     folders: @Composable (parentKey: String, basePadding: Dp) -> Unit
 ) {
-    val startPadding = remember { 8.dp }
-
+    val startPadding = remember { 16.dp }
     DrawerContentWithDoubleCount(
         modifier = Modifier.padding(start = startPadding),
         state = state,
-        key = subMenu.type.name,
-        text = subMenu.name,
+        key = clothesCategory.type.name,
+        text = clothesCategory.name,
         textStyle = MaterialTheme.typography.subtitle1.copy(fontSize = 17.sp),
-        onClick = { onClick(subMenu.type) },
+        onClick = { onClick(clothesCategory.type) },
         foldersSize = foldersSize,
         folderNames = folderNames,
         itemsSize = itemsSize,
         addFolder = addFolder,
-        folders = { folders(subMenu.type.name, startPadding) },
-        addDotIcon = true
+        addDotIcon = true,
+        folders = { folders(clothesCategory.type.name, startPadding) }
     )
 }

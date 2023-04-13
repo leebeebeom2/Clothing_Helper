@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.drawer.component.mainmenu
+package com.leebeebeom.clothinghelper.ui.drawer.content.mainmenu
 
 import androidx.compose.runtime.Composable
 import com.leebeebeom.clothinghelper.R

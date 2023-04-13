@@ -51,7 +51,7 @@ fun DrawerDownMenuEditAndAddFolder(
     AddFolderDialog(
         folderNames = childFolderNames,
         onPositiveButtonClick = { name ->
-            addFolder(localSelectedFolder.key, name)
+            addFolder(localSelectedFolder.key, name, localSelectedFolder.menuType)
             expand()
         }, show = { showAddDialog }, onDismiss = { showAddDialog = false })
 }

@@ -2,6 +2,7 @@ package com.leebeebeom.clothinghelper.ui.drawer.content.mainmenu
 
 import androidx.compose.runtime.Composable
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.domain.model.MenuType
 import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerContentWithDoubleCount
 import com.leebeebeom.clothinghelper.ui.util.AddFolder
@@ -19,6 +20,7 @@ fun DrawerArchive(
 ) {
     DrawerContentWithDoubleCount(
         key = MainMenuType.Archive.name,
+        menuType = MenuType.Archive,
         text = R.string.archive_cap,
         textStyle = drawerMainMenuTextStyle(),
         onClick = { onClick(MainMenuType.Archive) },

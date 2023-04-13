@@ -93,10 +93,9 @@ enum class SubMenuType {
 fun SubMenuType.toMenuType() = when (this) {
     SubMenuType.Brand -> MenuType.Brand
     SubMenuType.Shop -> MenuType.Shop
-    SubMenuType.Closet -> MenuType.ClosetDetail
-    SubMenuType.Wish -> MenuType.WishDetail
     SubMenuType.Ootd -> MenuType.Ootd
     SubMenuType.Reference -> MenuType.Reference
+    else -> throw IllegalStateException()
 }
 
 fun getBrandSubMenus() = persistentListOf(

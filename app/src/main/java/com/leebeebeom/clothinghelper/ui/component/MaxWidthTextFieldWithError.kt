@@ -63,7 +63,7 @@ fun StatefulMaxWidthTextFieldWithCancelIcon(
         placeholder = placeholder,
         error = error,
         isVisible = isVisible,
-        showFocus = getFocus,
+        showKeyboard = getFocus,
         fixedError = fixedError
     )
 }
@@ -96,7 +96,7 @@ fun StatefulMaxWidthTextField(
         placeholder = placeholder,
         error = error,
         isVisible = isVisible,
-        showFocus = getFocus,
+        showKeyboard = getFocus,
         fixedError = false
     )
 }
@@ -114,7 +114,7 @@ fun MaxWidthTextFieldWithError(
     trailingIcon: (@Composable () -> Unit)? = null,
     onInputChange: (String) -> Unit,
     focusRequester: FocusRequester = remember { FocusRequester() },
-    showFocus: Boolean,
+    showKeyboard: Boolean,
     fixedError: Boolean,
 ) {
     Column {
@@ -131,7 +131,7 @@ fun MaxWidthTextFieldWithError(
             focusRequester = focusRequester
         )
         ErrorText(error = error, fixedError = fixedError)
-        ShowKeyboard(focusRequester = focusRequester, getFocus = showFocus)
+        ShowKeyboard(focusRequester = focusRequester, showKeyboard = showKeyboard)
         TextFieldEmit(textFieldValue = textFieldValue, onInputChange = onInputChange)
     }
 }
@@ -210,13 +210,13 @@ private fun ErrorText(error: () -> Int?, fixedError: Boolean) {
 
 @Composable // skippable
 private fun ShowKeyboard(
-    getFocus: Boolean,
+    showKeyboard: Boolean,
     keyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current,
     focusRequester: FocusRequester
 ) {
     var showedKeyboard by rememberSaveable { mutableStateOf(false) }
 
-    if (getFocus && !showedKeyboard) {
+    if (showKeyboard && !showedKeyboard) {
         LaunchedEffect(key1 = Unit) {
             focusRequester.requestFocus()
             delay(100)

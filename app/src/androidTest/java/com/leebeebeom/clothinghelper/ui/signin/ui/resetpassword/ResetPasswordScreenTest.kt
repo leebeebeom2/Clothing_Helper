@@ -56,7 +56,7 @@ class ResetPasswordScreenTest {
 
             repeat(2) {
                 rule.waitStringResExist(error)
-                rule.onNodeWithText(email).assertExists()
+                emailTextField.assert(hasText(email))
                 sendButton.assertIsNotEnabled()
 
                 restorationTester.emulateSavedInstanceStateRestore()
@@ -75,7 +75,7 @@ class ResetPasswordScreenTest {
 
         repeat(10) {
             emailTextField.performTextInput(" ")
-            rule.onNodeWithText(SignInEmail).assertExists()
+            emailTextField.assert(hasText(SignInEmail))
         }
     }
 

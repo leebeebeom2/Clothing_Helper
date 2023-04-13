@@ -46,72 +46,74 @@ class MaxWidthTextFieldWithErrorTest {
     private val restorationTester = StateRestorationTester(rule)
     private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-    private var input = ""
-    private lateinit var state: MaxWidthTextFieldState
-    private var input2 = ""
-    private lateinit var state2: MaxWidthTextFieldState
+    private var textField1input = ""
+    private lateinit var textField1state: MaxWidthTextFieldState
+    private var textField2input = ""
+    private lateinit var textField2state: MaxWidthTextFieldState
     private val testTextField1 by lazy { rule.onNodeWithStringRes(R.string.test_text_field) }
     private val testTextField2 by lazy { rule.onNodeWithStringRes(R.string.test_text_field2) }
     private var error: Int? by mutableStateOf(null)
     private var error2: Int? by mutableStateOf(null)
-    private val screen1 = "screen1"
-    private val screen2 = "screen2"
+    private val screen1Route = "screen1"
+    private val screen2Route = "screen2"
 
     @Before
     fun init() {
         restorationTester.setContent {
             ClothingHelperTheme {
                 val navController = rememberNavController()
+
                 NavHost(
                     navController = navController,
-                    startDestination = screen1,
+                    startDestination = screen1Route,
                 ) {
-                    composable(route = screen1) {
+                    composable(route = screen1Route) {
                         Column(
                             modifier = Modifier.fillMaxSize(),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
-                            state = rememberMaxWidthTestFieldState(
-                                initialText = input,
+                            textField1state = rememberMaxWidthTestFieldState(
+                                initialText = textField1input,
                                 blockBlank = true
                             )
 
                             MaxWidthTextFieldWithError(
-                                textFieldValue = { state.textFieldValue },
-                                onValueChange = state::onValueChange,
-                                onFocusChanged = state::onFocusChanged,
+                                textFieldValue = { textField1state.textFieldValue },
+                                onValueChange = textField1state::onValueChange,
+                                onFocusChanged = textField1state::onFocusChanged,
                                 error = { error },
                                 label = R.string.test_text_field,
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Text, imeAction = ImeAction.Next
                                 ),
-                                onInputChange = { input = it },
-                                showFocus = true,
+                                onInputChange = { textField1input = it },
+                                showKeyboard = true,
                                 fixedError = false
                             )
 
-                            state2 = rememberMaxWidthTestFieldState(initialText = input2)
+                            textField2state =
+                                rememberMaxWidthTestFieldState(initialText = textField2input)
                             MaxWidthTextFieldWithError(
-                                textFieldValue = { state2.textFieldValue },
-                                onValueChange = state2::onValueChange,
-                                onFocusChanged = state2::onFocusChanged,
+                                textFieldValue = { textField2state.textFieldValue },
+                                onValueChange = textField2state::onValueChange,
+                                onFocusChanged = textField2state::onFocusChanged,
                                 error = { error2 },
                                 label = R.string.test_text_field2,
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Text, imeAction = ImeAction.Done
                                 ),
-                                onInputChange = { input2 = it },
-                                showFocus = false,
+                                onInputChange = { textField2input = it },
+                                showKeyboard = false,
                                 fixedError = false
                             )
 
-                            Button(onClick = { navController.navigate(screen2) }) {
+                            Button(onClick = { navController.navigate(screen2Route) }) {
                                 Text(text = "이동")
                             }
                         }
                     }
-                    composable(route = screen2) {
+                    composable(route = screen2Route) {
                         Box(modifier = Modifier.fillMaxSize()) {
                             Button(onClick = navController::popBackStack) {
                                 Text(text = "뒤로 이동")
@@ -131,9 +133,9 @@ class MaxWidthTextFieldWithErrorTest {
 
         repeat(2) {
             testTextField1.performClick()
-            assert(state.textFieldValue.selection == TextRange(state.textFieldValue.text.length))
+            assert(textField1state.textFieldValue.selection == TextRange(textField1state.textFieldValue.text.length))
             testTextField2.performClick()
-            assert(state2.textFieldValue.selection == TextRange(state2.textFieldValue.text.length))
+            assert(textField2state.textFieldValue.selection == TextRange(textField2state.textFieldValue.text.length))
         }
     }
 
@@ -179,16 +181,16 @@ class MaxWidthTextFieldWithErrorTest {
     @Test
     fun inputChangeTest() {
         testTextField1.performTextInput(TestText)
-        assert(input == TestText)
+        assert(textField1input == TestText)
         testTextField2.performTextInput(TestText2)
-        assert(input2 == TestText2)
+        assert(textField2input == TestText2)
     }
 
     @Test
     fun blockBlankTest() {
         testTextField1.performTextInput(TestText)
         repeat(3) { testTextField1.performTextInput(" ") }
-        rule.onNodeWithText(TestText).assertExists()
-        assert(input == TestText)
+        testTextField1.assert(hasText(TestText))
+        assert(textField1input == TestText)
     }
 }

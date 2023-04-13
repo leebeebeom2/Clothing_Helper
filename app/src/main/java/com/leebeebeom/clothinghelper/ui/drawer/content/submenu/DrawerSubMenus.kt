@@ -86,17 +86,17 @@ data class SubMenu(
     @StringRes val name: Int, val type: SubMenuType
 )
 
-fun SubMenu.toMenuType() = when (this.type) {
+enum class SubMenuType {
+    Brand, Shop, Closet, Wish, Ootd, Reference
+}
+
+fun SubMenuType.toMenuType() = when (this) {
     SubMenuType.Brand -> MenuType.Brand
     SubMenuType.Shop -> MenuType.Shop
     SubMenuType.Closet -> MenuType.ClosetDetail
     SubMenuType.Wish -> MenuType.WishDetail
     SubMenuType.Ootd -> MenuType.Ootd
     SubMenuType.Reference -> MenuType.Reference
-}
-
-enum class SubMenuType {
-    Brand, Shop, Closet, Wish, Ootd, Reference
 }
 
 fun getBrandSubMenus() = persistentListOf(

@@ -10,7 +10,12 @@ data class Folder(
     val parentKey: String = "",
     val createDate: Long = System.currentTimeMillis(),
     val editDate: Long = System.currentTimeMillis(),
+    val menuType: MenuType
 ) : BaseModel(), Parcelable {
     override fun addKey(key: String) = copy(key = key)
     fun changeEditDate() = copy(editDate = System.currentTimeMillis())
+}
+
+enum class MenuType {
+    Brand, Shop, ClosetDetail, WishDetail, Ootd, Reference, Archive
 }

@@ -1,13 +1,9 @@
 package com.leebeebeom.clothinghelper.ui.util
 
-import com.leebeebeom.clothinghelper.domain.model.data.Folder
-import com.leebeebeom.clothinghelper.domain.model.data.SubCategory
-import com.leebeebeom.clothinghelper.domain.model.data.SubCategoryParent
+import com.leebeebeom.clothinghelper.domain.model.Folder
+import com.leebeebeom.clothinghelper.domain.model.MenuType
 
-typealias AddSubCategory = (name: String, parent: SubCategoryParent, showToast: ShowToast) -> Unit
-typealias EditSubCategory = (oldSubCategory: SubCategory, name: String, showToast: ShowToast) -> Unit
-
-typealias AddFolder = (parentKey: String, subCategoryKey: String, name: String, parent: SubCategoryParent, showToast: ShowToast) -> Unit
-typealias EditFolder = (oldFolder: Folder, name: String, showToast: ShowToast) -> Unit
+typealias AddFolder = (parentKey: String, name: String, menuType: MenuType) -> Unit
+typealias EditFolder = (oldFolder: Folder, name: String) -> Unit
 
 typealias ShowToast = (toastText: Int) -> Unit

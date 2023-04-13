@@ -19,7 +19,7 @@ abstract class LoadingViewModel(
         mutableStateOf(initialLoading)
     }
     protected val isLoadingFlow = snapshotFlow { isLoadingState }
-    fun setLoading(loading: Boolean) {
+    protected fun setLoading(loading: Boolean) {
         isLoadingState = loading
     }
 }

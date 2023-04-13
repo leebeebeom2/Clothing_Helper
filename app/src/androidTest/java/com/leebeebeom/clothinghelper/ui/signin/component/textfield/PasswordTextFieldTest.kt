@@ -4,11 +4,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.text.input.ImeAction
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.HiltTestActivity
@@ -47,17 +44,17 @@ class PasswordTextFieldTest {
         visibleIcon.assertExists()
 
         passwordTextField.performTextInput(TestText)
-        rule.onNodeWithText(getInvisibleText(TestText.length)).assertExists()
+        passwordTextField.assert(hasText(getInvisibleText(TestText.length)))
 
         visibleIcon.performClick()
 
         visibleIcon.assertDoesNotExist()
         invisibleIcon.assertExists()
-        rule.onNodeWithText(TestText).assertExists()
+        passwordTextField.assert(hasText(TestText))
 
         invisibleIcon.performClick()
         visibleIcon.assertExists()
         invisibleIcon.assertDoesNotExist()
-        rule.onNodeWithText(getInvisibleText(TestText.length)).assertExists()
+        passwordTextField.assert(hasText(getInvisibleText(TestText.length)))
     }
 }

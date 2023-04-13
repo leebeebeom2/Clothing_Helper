@@ -15,7 +15,7 @@ import com.leebeebeom.clothinghelper.data.SignInEmail
 import com.leebeebeom.clothinghelper.data.SignInPassword
 import com.leebeebeom.clothinghelper.ui.*
 import com.leebeebeom.clothinghelper.ui.component.CenterDotProgressIndicatorTag
-import com.leebeebeom.clothinghelper.ui.main.main.MainScreenTag
+import com.leebeebeom.clothinghelper.ui.main.essentialmenu.main.MainScreenTag
 import com.leebeebeom.clothinghelper.ui.signin.ui.resetpassword.ResetPasswordScreenTag
 import com.leebeebeom.clothinghelper.ui.signin.ui.signup.SignUpScreenTag
 import kotlinx.coroutines.delay
@@ -60,8 +60,8 @@ class SignInScreenTest {
 
             repeat(2) {
                 rule.waitStringResExist(error)
-                rule.onNodeWithText(email).assertExists()
-                rule.onNodeWithText(getInvisibleText(password.length)).assertExists()
+                emailTextField.assert(hasText(email))
+                passwordTextField.assert(hasText(getInvisibleText(password.length)))
                 signInButton.assertIsNotEnabled()
 
                 restorationTester.emulateSavedInstanceStateRestore()
@@ -89,8 +89,8 @@ class SignInScreenTest {
         passwordTextField.performTextInput(SignInPassword)
 
         repeat(2) {
-            rule.onNodeWithText(SignInEmail).assertExists()
-            rule.onNodeWithText(getInvisibleText(SignInPassword.length)).assertExists()
+            emailTextField.assert(hasText(SignInEmail))
+            passwordTextField.assert(hasText(getInvisibleText(SignInPassword.length)))
             signInButton.assertIsEnabled()
 
             restorationTester.emulateSavedInstanceStateRestore()
@@ -149,12 +149,12 @@ class SignInScreenTest {
 
         repeat(10) {
             emailTextField.performTextInput(" ")
-            rule.onNodeWithText(SignInEmail).assertExists()
+            emailTextField.assert(hasText(SignInEmail))
         }
 
         repeat(10) {
             passwordTextField.performTextInput(" ")
-            rule.onNodeWithText(getInvisibleText(SignInPassword.length)).assertExists()
+            passwordTextField.assert(hasText(getInvisibleText(SignInPassword.length)))
         }
     }
 }

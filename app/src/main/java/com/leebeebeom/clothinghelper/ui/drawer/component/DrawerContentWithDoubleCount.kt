@@ -6,6 +6,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.domain.model.MenuType
 import com.leebeebeom.clothinghelper.ui.component.dialog.AddFolderDialog
 import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.drawer.component.dropdownmenus.DrawerDropdownMenu
@@ -17,6 +18,7 @@ import kotlinx.collections.immutable.ImmutableSet
 fun DrawerContentWithDoubleCount(
     modifier: Modifier = Modifier,
     key: String,
+    menuType: MenuType,
     @StringRes text: Int,
     textStyle: TextStyle,
     onClick: () -> Unit,
@@ -61,7 +63,7 @@ fun DrawerContentWithDoubleCount(
         AddFolderDialog(
             folderNames = { localFolderNames },
             onPositiveButtonClick = { name ->
-                addFolder(key, name)
+                addFolder(key, name, menuType)
                 state.expand()
             }, show = { showAddDialog }, onDismiss = { showAddDialog = false })
     }

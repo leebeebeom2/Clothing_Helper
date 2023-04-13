@@ -12,7 +12,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.data.*
 import com.leebeebeom.clothinghelper.ui.*
 import com.leebeebeom.clothinghelper.ui.component.CenterDotProgressIndicatorTag
-import com.leebeebeom.clothinghelper.ui.main.main.MainScreenTag
+import com.leebeebeom.clothinghelper.ui.main.essentialmenu.main.MainScreenTag
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -178,18 +178,12 @@ class SignUpScreenTest {
 
         repeat(10) {
             passwordTextField.performTextInput(" ")
-            assert(
-                rule.onAllNodesWithText(getInvisibleText(SignInPassword.length))
-                    .fetchSemanticsNodes().size == 2
-            )
+            passwordTextField.assert(hasText(getInvisibleText(SignInPassword.length)))
         }
 
         repeat(10) {
             passwordConfirmTextField.performTextInput(" ")
-            assert(
-                rule.onAllNodesWithText(getInvisibleText(SignInPassword.length))
-                    .fetchSemanticsNodes().size == 2
-            )
+            passwordConfirmTextField.assert(hasText(getInvisibleText(SignInPassword.length)))
         }
     }
 

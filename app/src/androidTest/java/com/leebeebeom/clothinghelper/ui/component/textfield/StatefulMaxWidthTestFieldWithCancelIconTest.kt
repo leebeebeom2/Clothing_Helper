@@ -3,12 +3,9 @@ package com.leebeebeom.clothinghelper.ui.component.textfield
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTextInput
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.HiltTestActivity
 import com.leebeebeom.clothinghelper.ui.component.CancelIconTag
@@ -26,6 +23,7 @@ class StatefulMaxWidthTestFieldWithCancelIconTest {
     private val restorationTester = StateRestorationTester(rule)
     private val testTextField by lazy { rule.onNodeWithStringRes(R.string.test_text_field) }
     private val testTextField2 by lazy { rule.onNodeWithStringRes(R.string.test_text_field2) }
+    private val cancelIcon by lazy { rule.onNodeWithTag(CancelIconTag) }
     private var input = ""
 
     @Before
@@ -44,24 +42,24 @@ class StatefulMaxWidthTestFieldWithCancelIconTest {
 
     @Test
     fun cancelIconTest() {
-        rule.onNodeWithTag(CancelIconTag).assertDoesNotExist()
+        cancelIcon.assertDoesNotExist()
 
         testTextField.performClick()
-        rule.onNodeWithTag(CancelIconTag).assertDoesNotExist()
+        cancelIcon.assertDoesNotExist()
 
         testTextField.performTextInput(TestText)
         assert(input == TestText)
-        rule.onNodeWithTag(CancelIconTag).assertExists()
+        cancelIcon.assertExists()
 
         testTextField2.performClick()
-        rule.onNodeWithTag(CancelIconTag).assertDoesNotExist()
+        cancelIcon.assertDoesNotExist()
 
         testTextField.performClick()
-        rule.onNodeWithTag(CancelIconTag).assertExists()
+        cancelIcon.assertExists()
 
-        rule.onNodeWithTag(CancelIconTag).performClick()
-        rule.onNodeWithText(TestText).assertDoesNotExist()
+        cancelIcon.performClick()
+        testTextField.assert(!hasText(TestText))
         assert(input == "")
-        rule.onNodeWithTag(CancelIconTag).assertDoesNotExist()
+        cancelIcon.assertDoesNotExist()
     }
 }

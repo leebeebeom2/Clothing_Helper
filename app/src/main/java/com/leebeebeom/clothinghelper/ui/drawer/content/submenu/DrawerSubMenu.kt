@@ -30,6 +30,7 @@ fun DrawerSubMenu(
         modifier = Modifier.padding(start = startPadding),
         state = state,
         key = subMenu.type.name,
+        menuType = subMenu.type.toMenuType(),
         text = subMenu.name,
         textStyle = MaterialTheme.typography.subtitle1.copy(fontSize = 17.sp),
         onClick = { onClick(subMenu.type) },

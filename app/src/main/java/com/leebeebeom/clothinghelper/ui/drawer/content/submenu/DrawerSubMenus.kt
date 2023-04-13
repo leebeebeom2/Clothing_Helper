@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.domain.model.MenuType
 import com.leebeebeom.clothinghelper.ui.drawer.content.folder.getSubBackgroundColor
 import com.leebeebeom.clothinghelper.ui.drawer.content.mainmenu.MainMenuType
 import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.clothes.ClothesCategoryType
@@ -82,9 +83,17 @@ fun SubMenus(
 }
 
 data class SubMenu(
-    @StringRes val name: Int,
-    val type: SubMenuType
+    @StringRes val name: Int, val type: SubMenuType
 )
+
+fun SubMenu.toMenuType() = when (this.type) {
+    SubMenuType.Brand -> MenuType.Brand
+    SubMenuType.Shop -> MenuType.Shop
+    SubMenuType.Closet -> MenuType.ClosetDetail
+    SubMenuType.Wish -> MenuType.WishDetail
+    SubMenuType.Ootd -> MenuType.Ootd
+    SubMenuType.Reference -> MenuType.Reference
+}
 
 enum class SubMenuType {
     Brand, Shop, Closet, Wish, Ootd, Reference

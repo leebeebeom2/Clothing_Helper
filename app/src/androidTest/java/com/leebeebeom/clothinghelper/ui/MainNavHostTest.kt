@@ -8,7 +8,7 @@ import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelper.data.SignInEmail
 import com.leebeebeom.clothinghelper.data.SignInPassword
 import com.leebeebeom.clothinghelper.ui.drawer.component.SettingIconTag
-import com.leebeebeom.clothinghelper.ui.main.mainScreen.MainScreenTag
+import com.leebeebeom.clothinghelper.ui.main.main.MainScreenTag
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInScreenTag
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking

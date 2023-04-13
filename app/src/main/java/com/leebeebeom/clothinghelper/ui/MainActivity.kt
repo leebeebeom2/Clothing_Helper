@@ -15,16 +15,28 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.leebeebeom.clothinghelper.domain.model.Folder
+import com.leebeebeom.clothinghelper.domain.model.MenuType
 import com.leebeebeom.clothinghelper.ui.component.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelper.ui.drawer.Drawer
 import com.leebeebeom.clothinghelper.ui.drawer.content.EssentialMenuType
+import com.leebeebeom.clothinghelper.ui.drawer.content.mainmenu.MainMenuType
+import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.SubMenuType
+import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.clothes.ClothesCategoryType
 import com.leebeebeom.clothinghelper.ui.main.MainGraphRoute
+import com.leebeebeom.clothinghelper.ui.main.brand.BrandGraphRoute
+import com.leebeebeom.clothinghelper.ui.main.clothes.ClothesGraphRoute
+import com.leebeebeom.clothinghelper.ui.main.clothes.closet.ClosetGraphRoute
+import com.leebeebeom.clothinghelper.ui.main.clothes.wish.WishGraphRoute
 import com.leebeebeom.clothinghelper.ui.main.mainGraph
+import com.leebeebeom.clothinghelper.ui.main.outfit.OutfitGraphRoute
 import com.leebeebeom.clothinghelper.ui.setting.SettingGraphRoute
 import com.leebeebeom.clothinghelper.ui.setting.settingGraph
 import com.leebeebeom.clothinghelper.ui.signin.ui.signInGraph
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
+import com.leebeebeom.clothinghelper.ui.util.ParentKeyRoute
 import com.leebeebeom.clothinghelper.ui.util.getCurrentRoute
+import com.leebeebeom.clothinghelper.ui.viewmodel.ParentKey
 import dagger.hilt.android.AndroidEntryPoint
 
 const val TAG = "태그"
@@ -53,41 +65,135 @@ fun MainNavHost(
         derivedStateOf { uiState.user?.let { MainNavRoute.MainGraph } ?: MainNavRoute.SignInGraph }
     }
 
-    fun onEssentialMenuClick(type: EssentialMenuType) = when (type) {
-        EssentialMenuType.MainScreen -> navController.navigateToMain()
-        EssentialMenuType.Favorite -> {} // TODO
-        EssentialMenuType.SeeAll -> {} // TODO
-        EssentialMenuType.Trash -> {} // TODO
-    }
-
     ClothingHelperTheme {
-        Drawer(onSettingIconClick = navController::navigateToSetting,
-            onEssentialMenuClick = ::onEssentialMenuClick,
-            onMainMenuClick = {},
-            onSubMenuClick = {},
-            onClothesCategoryClick = {},
-            onFolderClick = {}) { paddingValues ->
+        Drawer(
+            onSettingIconClick = navController::navigateToSetting,
+            onEssentialMenuClick = navController::onEssentialMenuClick,
+            onMainMenuClick = navController::onMainMenuClick,
+            onSubMenuClick = navController::onSubMenuClick,
+            onClothesCategoryClick = navController::onClothesCategoryClick,
+            onFolderClick = navController::onFolderClick
+        ) { paddingValues ->
             NavHost(
                 modifier = Modifier.padding(paddingValues),
                 navController = navController,
                 startDestination = startDestination
             ) {
-                mainGraph(navController = navController)
-                settingGraph(navController = navController)
                 signInGraph(navController = navController)
+                settingGraph(navController = navController)
+                mainGraph(navController = navController)
             }
         }
         CenterDotProgressIndicator(
-            show = { uiState.isLoading },
-            backGround = MaterialTheme.colors.background
+            show = { uiState.isLoading }, backGround = MaterialTheme.colors.background
         )
     }
 }
 
-private fun NavHostController.navigateToMain() {
-    if (currentBackStackEntry.getCurrentRoute() != MainGraphRoute.Dashboard.route) navigate(route = MainNavRoute.MainGraph)
+private fun NavHostController.navigateToSetting() {
+    navigateOnce(SettingGraphRoute.SettingScreen)
 }
 
-private fun NavHostController.navigateToSetting() {
-    if (currentBackStackEntry.getCurrentRoute() != SettingGraphRoute.Setting.route) navigate(route = MainNavRoute.SettingGraph)
+private fun NavHostController.onEssentialMenuClick(type: EssentialMenuType) {
+    when (type) {
+        EssentialMenuType.MainScreen -> navigateOnce(route = MainGraphRoute.MainScreen)
+        EssentialMenuType.Favorite -> navigateOnce(route = MainGraphRoute.FavoriteScreen)
+        EssentialMenuType.SeeAll -> navigateOnce(route = MainGraphRoute.SeeAllScreen)
+        EssentialMenuType.Trash -> navigateOnce(route = MainGraphRoute.TrashScreen)
+    }
+}
+
+private fun NavHostController.onMainMenuClick(type: MainMenuType) {
+    when (type) {
+        MainMenuType.Brand -> navigateOnce(route = BrandGraphRoute.BrandMainScreen)
+        MainMenuType.Clothes -> navigateOnce(route = ClothesGraphRoute.ClothesScreen)
+        MainMenuType.Outfit -> navigateOnce(route = OutfitGraphRoute.OutfitScreen)
+        MainMenuType.Archive -> navigateOnce(
+            route = MainGraphRoute.ArchiveScreen,
+            parentKey = MainMenuType.Archive.name
+        )
+    }
+}
+
+private fun NavHostController.onSubMenuClick(type: SubMenuType) {
+    when (type) {
+        SubMenuType.Brand -> navigateOnce(
+            route = BrandGraphRoute.BrandScreen,
+            parentKey = SubMenuType.Brand.name
+        )
+        SubMenuType.Shop -> navigateOnce(
+            route = BrandGraphRoute.ShopScreen,
+            parentKey = SubMenuType.Shop.name
+        )
+        SubMenuType.Closet -> navigateOnce(route = ClosetGraphRoute.ClosetScreen)
+        SubMenuType.Wish -> navigateOnce(route = WishGraphRoute.WishScreen)
+        SubMenuType.Ootd -> navigateOnce(
+            route = OutfitGraphRoute.OotdScreen,
+            parentKey = SubMenuType.Ootd.name
+        )
+        SubMenuType.Reference -> navigateOnce(
+            route = OutfitGraphRoute.ReferenceScreen,
+            parentKey = SubMenuType.Reference.name
+        )
+    }
+}
+
+private fun NavHostController.onClothesCategoryClick(type: ClothesCategoryType) {
+    if (currentBackStackEntry?.arguments?.getString(ParentKey) != type.name) {
+        when (type) {
+            is ClothesCategoryType.Closet ->
+                navigateOnce(
+                    route = ClosetGraphRoute.ClosetDetailScreen,
+                    parentKey = type.name
+                )
+            is ClothesCategoryType.Wish ->
+                navigateOnce(
+                    route = WishGraphRoute.WishDetailScreen,
+                    parentKey = type.name
+                )
+        }
+    }
+}
+
+private fun NavHostController.onFolderClick(folder: Folder) {
+    if (currentBackStackEntry?.arguments?.getString(ParentKey) != folder.key)
+        when (folder.menuType) {
+            MenuType.Brand -> navigateOnce(
+                route = BrandGraphRoute.BrandScreen,
+                parentKey = folder.key
+            )
+            MenuType.Shop -> navigateOnce(
+                route = BrandGraphRoute.ShopScreen,
+                parentKey = folder.key
+            )
+            MenuType.ClosetDetail -> navigateOnce(
+                route = ClosetGraphRoute.ClosetDetailScreen,
+                parentKey = folder.key
+            )
+            MenuType.WishDetail -> navigateOnce(
+                route = WishGraphRoute.WishDetailScreen,
+                parentKey = folder.key
+            )
+            MenuType.Ootd -> navigateOnce(
+                route = OutfitGraphRoute.OotdScreen,
+                parentKey = folder.key
+            )
+            MenuType.Reference -> navigateOnce(
+                route = OutfitGraphRoute.ReferenceScreen,
+                parentKey = folder.key
+            )
+            MenuType.Archive -> navigateOnce(
+                route = MainGraphRoute.ArchiveScreen,
+                parentKey = folder.key
+            )
+        }
+}
+
+private fun NavHostController.navigateOnce(route: String) {
+    if (currentBackStackEntry.getCurrentRoute() != route) navigate(route = route)
+}
+
+private fun NavHostController.navigateOnce(route: ParentKeyRoute, parentKey: String) {
+    if (currentBackStackEntry?.arguments?.getString(ParentKey) != parentKey)
+        navigate(route = route.getRouteWithParentKeyRoute(parentKey = parentKey))
 }

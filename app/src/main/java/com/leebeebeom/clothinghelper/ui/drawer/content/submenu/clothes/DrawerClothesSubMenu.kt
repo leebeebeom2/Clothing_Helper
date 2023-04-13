@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.domain.model.MenuType
 import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemState
 import com.leebeebeom.clothinghelper.ui.drawer.component.*
 import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.SubMenu
@@ -82,6 +83,11 @@ sealed class ClothesCategoryType(val name: String) {
         object Outer : Wish("wish outer")
         object Etc : Wish("wish etc")
     }
+}
+
+fun ClothesCategoryType.toMenuType() = when (this) {
+    is ClothesCategoryType.Closet -> MenuType.ClosetDetail
+    is ClothesCategoryType.Wish -> MenuType.WishDetail
 }
 
 data class ClothesCategory(

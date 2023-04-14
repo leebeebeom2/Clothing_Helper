@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
@@ -23,6 +24,8 @@ import com.leebeebeom.clothinghelper.ui.util.AddFolder
 import com.leebeebeom.clothinghelper.ui.util.EditFolder
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
+
+const val DrawerFolderTag = "drawer folder"
 
 @Composable
 fun DrawerFolder(
@@ -47,7 +50,9 @@ fun DrawerFolder(
     val startPadding = remember { basePadding.plus(12.dp) }
 
     DrawerRow(
-        modifier = Modifier.padding(start = startPadding),
+        modifier = Modifier
+            .padding(start = startPadding)
+            .testTag(DrawerFolderTag),
         onClick = { onFolderClick(folder) },
         onLongClick = state::onLongClick,
         onSizeChange = state::onSizeChanged,

@@ -57,7 +57,7 @@ private fun DrawerCount(
     foldersSize: () -> Int, itemsSize: () -> Int
 ) {
     val localFoldersSize by remember(foldersSize) { derivedStateOf(foldersSize) }
-    val localItemsSize by remember(itemsSize) { derivedStateOf(foldersSize) }
+    val localItemsSize by remember(itemsSize) { derivedStateOf(itemsSize) }
 
     SingleLineText(
         text = stringResource(

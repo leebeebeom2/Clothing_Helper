@@ -15,9 +15,9 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import com.leebeebeom.clothinghelper.ui.HiltTestActivity
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
-import com.leebeebeom.clothinghelper.ui.waitTagExist
-import com.leebeebeom.clothinghelper.ui.waitTagNotExist
-import com.leebeebeom.clothinghelper.ui.waitTextExist
+import com.leebeebeom.clothinghelper.waitTagExist
+import com.leebeebeom.clothinghelper.waitTagNotExist
+import com.leebeebeom.clothinghelper.waitTextExist
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

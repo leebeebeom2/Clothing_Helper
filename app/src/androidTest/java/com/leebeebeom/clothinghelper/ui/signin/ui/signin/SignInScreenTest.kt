@@ -8,12 +8,13 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.*
 import com.leebeebeom.clothinghelper.data.InvalidEmail
 import com.leebeebeom.clothinghelper.data.NotFoundEmail
 import com.leebeebeom.clothinghelper.data.SignInEmail
 import com.leebeebeom.clothinghelper.data.SignInPassword
-import com.leebeebeom.clothinghelper.ui.*
+import com.leebeebeom.clothinghelper.ui.HiltTestActivity
+import com.leebeebeom.clothinghelper.ui.MainNavHost
 import com.leebeebeom.clothinghelper.ui.component.CenterDotProgressIndicatorTag
 import com.leebeebeom.clothinghelper.ui.main.essentialmenu.main.MainScreenTag
 import com.leebeebeom.clothinghelper.ui.signin.ui.resetpassword.ResetPasswordScreenTag

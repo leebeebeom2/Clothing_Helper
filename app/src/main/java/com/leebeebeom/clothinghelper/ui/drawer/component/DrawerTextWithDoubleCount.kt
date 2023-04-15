@@ -18,6 +18,7 @@ import com.leebeebeom.clothinghelper.ui.component.SingleLineText
 
 @Composable
 fun RowScope.DrawerTextWithDoubleCount(
+    // skippable
     modifier: Modifier = Modifier,
     @StringRes text: Int,
     style: TextStyle,
@@ -38,31 +39,29 @@ fun RowScope.DrawerTextWithDoubleCount(
 
 @Composable
 fun RowScope.DrawerTextWithDoubleCount(
+    // skippable
     modifier: Modifier = Modifier,
     text: () -> String,
     style: TextStyle,
     foldersSize: () -> Int,
     itemsSize: () -> Int,
 ) {
+    val localFoldersSize by remember(foldersSize) { derivedStateOf(foldersSize) }
+    val localItemsSize by remember(itemsSize) { derivedStateOf(itemsSize) }
+
     Column(
         modifier = modifier.weight(1f)
     ) {
         SingleLineText(text = text, style = style)
-        DrawerCount(foldersSize = foldersSize, itemsSize = itemsSize)
+        SingleLineText(
+            text = stringResource(
+                id = R.string.folders_items, localFoldersSize, localItemsSize
+            ),
+            style = MaterialTheme.typography.caption.copy(
+                LocalContentColor.current.copy(
+                    ContentAlpha.disabled
+                )
+            )
+        )
     }
-}
-
-@Composable // skippable
-private fun DrawerCount(
-    foldersSize: () -> Int, itemsSize: () -> Int
-) {
-    val localFoldersSize by remember(foldersSize) { derivedStateOf(foldersSize) }
-    val localItemsSize by remember(itemsSize) { derivedStateOf(itemsSize) }
-
-    SingleLineText(
-        text = stringResource(
-            id = R.string.folders_items, localFoldersSize, localItemsSize
-        ),
-        style = MaterialTheme.typography.caption.copy(LocalContentColor.current.copy(ContentAlpha.disabled))
-    )
 }

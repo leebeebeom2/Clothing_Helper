@@ -9,9 +9,13 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelper.data.SignInEmail
 import com.leebeebeom.clothinghelper.data.SignInPassword
+import com.leebeebeom.clothinghelper.drawerOpen
+import com.leebeebeom.clothinghelper.signIn
+import com.leebeebeom.clothinghelper.signOut
 import com.leebeebeom.clothinghelper.ui.drawer.component.SettingIconTag
 import com.leebeebeom.clothinghelper.ui.main.essentialmenu.main.MainScreenTag
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInScreenTag
+import com.leebeebeom.clothinghelper.waitTagExist
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await

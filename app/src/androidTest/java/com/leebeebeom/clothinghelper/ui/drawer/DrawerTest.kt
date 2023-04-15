@@ -1,6 +1,7 @@
 package com.leebeebeom.clothinghelper.ui.drawer
 
 import androidx.compose.ui.test.*
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
@@ -45,12 +46,13 @@ const val SignInName = "테스트 유저 1"
 class DrawerTest {
     @get:Rule
     val rule = createAndroidComposeRule<HiltTestActivity>()
+    private val restorationTester = StateRestorationTester(rule)
     private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     private val settingIcon by lazy { rule.onNodeWithTag(SettingIconTag) }
 
     @Before
     fun init() {
-        rule.setContent { MainNavHost() }
+        restorationTester.setContent { MainNavHost() }
         if (Firebase.auth.currentUser == null) rule.signIn()
     }
 
@@ -58,6 +60,22 @@ class DrawerTest {
     fun removeData() {
         val uid = Firebase.auth.currentUser?.uid
         uid?.let { Firebase.database.reference.child(it).removeValue() }
+    }
+
+    @Test
+    fun drawerRestoreTest() {
+        rule.drawerOpen()
+
+        rule.onAllNodesWithTag(DrawerExpandIconTag)[2].performClick()
+        rule.onNodeWithStringRes(R.string.ootd_cap).performTouchInput { longClick() }
+
+        repeat(2) {
+            rule.onNodeWithTag(SettingIconTag).assertIsDisplayed() // drawer open
+            rule.onNodeWithStringRes(R.string.ootd_cap).assertIsDisplayed()
+            rule.onNodeWithStringRes(R.string.dropdown_menu_add_folder).assertIsDisplayed()
+
+            restorationTester.emulateSavedInstanceStateRestore()
+        }
     }
 
     @Test

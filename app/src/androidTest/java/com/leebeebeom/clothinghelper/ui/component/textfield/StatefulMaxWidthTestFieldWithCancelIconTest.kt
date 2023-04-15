@@ -7,11 +7,11 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.onNodeWithStringRes
 import com.leebeebeom.clothinghelper.ui.HiltTestActivity
 import com.leebeebeom.clothinghelper.ui.component.CancelIconTag
 import com.leebeebeom.clothinghelper.ui.component.StatefulMaxWidthTextField
 import com.leebeebeom.clothinghelper.ui.component.StatefulMaxWidthTextFieldWithCancelIcon
-import com.leebeebeom.clothinghelper.ui.onNodeWithStringRes
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import org.junit.Before
 import org.junit.Rule
@@ -21,9 +21,9 @@ class StatefulMaxWidthTestFieldWithCancelIconTest {
     @get:Rule
     val rule = createAndroidComposeRule<HiltTestActivity>()
     private val restorationTester = StateRestorationTester(rule)
-    private val testTextField by lazy { rule.onNodeWithStringRes(R.string.test_text_field) }
-    private val testTextField2 by lazy { rule.onNodeWithStringRes(R.string.test_text_field2) }
-    private val cancelIcon by lazy { rule.onNodeWithTag(CancelIconTag) }
+    private val testTextField = rule.onNodeWithStringRes(R.string.test_text_field)
+    private val testTextField2 = rule.onNodeWithStringRes(R.string.test_text_field2)
+    private val cancelIcon = rule.onNodeWithTag(CancelIconTag)
     private var input = ""
 
     @Before

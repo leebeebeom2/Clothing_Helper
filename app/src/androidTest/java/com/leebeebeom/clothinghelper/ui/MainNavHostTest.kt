@@ -23,8 +23,8 @@ class MainNavHostTest {
     @get:Rule
     val rule = createAndroidComposeRule<HiltTestActivity>()
     private val restorationTester = StateRestorationTester(rule)
-    private val signInScreen by lazy { rule.onNodeWithTag(SignInScreenTag) }
-    private val settingIcon by lazy { rule.onNodeWithTag(SettingIconTag) }
+    private val signInScreen = rule.onNodeWithTag(SignInScreenTag)
+    private val settingIcon = rule.onNodeWithTag(SettingIconTag)
 
     @Before
     fun init() {

@@ -19,7 +19,7 @@ import org.junit.Test
 class GoogleSignInButtonTest {
     @get:Rule
     val rule = createAndroidComposeRule<HiltTestActivity>()
-    private val googleSignInButton by lazy { rule.onNodeWithStringRes(R.string.starts_with_google_email) }
+    private val googleSignInButton = rule.onNodeWithStringRes(R.string.starts_with_google_email)
 
     @Before
     fun init() {

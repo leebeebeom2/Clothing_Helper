@@ -106,10 +106,10 @@ class SignInScreenTest {
     fun navigateTest() {
         rule.onNodeWithStringRes(forgot_password).performClick()
         rule.onNodeWithTag(ResetPasswordScreenTag).assertExists()
-        repeat(2) { device.pressBack() }
+        repeat(3) { device.pressBack() }
         rule.onNodeWithStringRes(sign_up_with_email).performClick()
         rule.onNodeWithTag(SignUpScreenTag).assertExists()
-        repeat(2) { device.pressBack() }
+        repeat(3) { device.pressBack() }
         rule.onNodeWithTag(SignInScreenTag).assertExists()
     }
 

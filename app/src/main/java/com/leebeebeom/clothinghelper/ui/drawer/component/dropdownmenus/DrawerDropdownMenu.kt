@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.ui.theme.BlackA3
 
 @Composable
-fun DrawerDropdownMenu(
+fun DrawerDropdownMenu( // skippable
     state: DrawerDropdownMenuState,
     onDismiss: () -> Unit,
     density: Density = LocalDensity.current,

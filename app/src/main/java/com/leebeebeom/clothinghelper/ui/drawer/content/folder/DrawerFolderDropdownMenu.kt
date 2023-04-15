@@ -1,6 +1,7 @@
 package com.leebeebeom.clothinghelper.ui.drawer.content.folder
 
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.model.Folder
 import com.leebeebeom.clothinghelper.ui.component.dialog.AddFolderDialog
@@ -23,8 +24,8 @@ fun DrawerDownMenuEditAndAddFolder(
     editFolder: EditFolder,
     selectedFolder: () -> Folder
 ) {
-    var showEditDialog by remember { mutableStateOf(false) }
-    var showAddDialog by remember { mutableStateOf(false) }
+    var showEditDialog by rememberSaveable { mutableStateOf(false) }
+    var showAddDialog by rememberSaveable { mutableStateOf(false) }
 
     val localSelectedFolder by remember(selectedFolder) { derivedStateOf(selectedFolder) }
 

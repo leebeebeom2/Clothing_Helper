@@ -6,14 +6,18 @@ import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.R.string.*
 import com.leebeebeom.clothinghelper.data.InvalidEmail
 import com.leebeebeom.clothinghelper.data.NotFoundEmail
 import com.leebeebeom.clothinghelper.data.SendPasswordEmail
 import com.leebeebeom.clothinghelper.data.SignInEmail
-import com.leebeebeom.clothinghelper.ui.*
+import com.leebeebeom.clothinghelper.onNodeWithStringRes
+import com.leebeebeom.clothinghelper.ui.HiltTestActivity
+import com.leebeebeom.clothinghelper.ui.MainNavHost
 import com.leebeebeom.clothinghelper.ui.component.CenterDotProgressIndicatorTag
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInScreenTag
+import com.leebeebeom.clothinghelper.waitStringResExist
+import com.leebeebeom.clothinghelper.waitTagExist
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -24,8 +28,8 @@ class ResetPasswordScreenTest {
     @get:Rule
     val rule = createAndroidComposeRule<HiltTestActivity>()
     private val restorationTester = StateRestorationTester(rule)
-    private lateinit var emailTextField: SemanticsNodeInteraction
-    private lateinit var sendButton: SemanticsNodeInteraction
+    private val emailTextField = rule.onNodeWithStringRes(email)
+    private val sendButton = rule.onNodeWithStringRes(send)
 
     @Before
     fun init() {
@@ -35,11 +39,8 @@ class ResetPasswordScreenTest {
         }
         restorationTester.setContent { MainNavHost() }
 
-        rule.onNodeWithStringRes(R.string.forgot_password).performClick()
+        rule.onNodeWithStringRes(forgot_password).performClick()
         rule.waitTagExist(ResetPasswordScreenTag)
-
-        emailTextField = rule.onNodeWithStringRes(R.string.email)
-        sendButton = rule.onNodeWithStringRes(R.string.send)
     }
 
     @Test
@@ -47,8 +48,7 @@ class ResetPasswordScreenTest {
         sendButton.assertIsNotEnabled()
 
         fun localRestoreTest(
-            email: String,
-            @StringRes error: Int
+            email: String, @StringRes error: Int
         ) {
             emailTextField.performTextInput(email)
             sendButton.performClick()
@@ -65,8 +65,8 @@ class ResetPasswordScreenTest {
             emailTextField.performTextClearance()
         }
 
-        localRestoreTest(email = InvalidEmail, error = R.string.error_invalid_email)
-        localRestoreTest(email = NotFoundEmail, error = R.string.error_user_not_found)
+        localRestoreTest(email = InvalidEmail, error = error_invalid_email)
+        localRestoreTest(email = NotFoundEmail, error = error_user_not_found)
     }
 
     @Test

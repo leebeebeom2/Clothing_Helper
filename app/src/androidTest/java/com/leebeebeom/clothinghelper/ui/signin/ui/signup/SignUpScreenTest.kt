@@ -8,11 +8,16 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.R.string.*
 import com.leebeebeom.clothinghelper.data.*
-import com.leebeebeom.clothinghelper.ui.*
+import com.leebeebeom.clothinghelper.getInvisibleText
+import com.leebeebeom.clothinghelper.onNodeWithStringRes
+import com.leebeebeom.clothinghelper.ui.HiltTestActivity
+import com.leebeebeom.clothinghelper.ui.MainNavHost
 import com.leebeebeom.clothinghelper.ui.component.CenterDotProgressIndicatorTag
 import com.leebeebeom.clothinghelper.ui.main.essentialmenu.main.MainScreenTag
+import com.leebeebeom.clothinghelper.waitStringResExist
+import com.leebeebeom.clothinghelper.waitTagExist
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -26,11 +31,11 @@ class SignUpScreenTest {
     val rule = createAndroidComposeRule<HiltTestActivity>()
     private val restorationTester = StateRestorationTester(rule)
     private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-    private val emailTextField by lazy { rule.onNodeWithStringRes(R.string.email) }
-    private val nameTextField by lazy { rule.onNodeWithStringRes(R.string.nickname) }
-    private val passwordTextField by lazy { rule.onNodeWithStringRes(R.string.password) }
-    private val passwordConfirmTextField by lazy { rule.onNodeWithStringRes(R.string.password_confirm) }
-    private val signUpButton by lazy { rule.onNodeWithStringRes(R.string.sign_up) }
+    private val emailTextField = rule.onNodeWithStringRes(email)
+    private val nameTextField = rule.onNodeWithStringRes(nickname)
+    private val passwordTextField = rule.onNodeWithStringRes(password)
+    private val passwordConfirmTextField = rule.onNodeWithStringRes(password_confirm)
+    private val signUpButton = rule.onNodeWithStringRes(sign_up)
 
     @Before
     fun init() {
@@ -40,7 +45,7 @@ class SignUpScreenTest {
         }
         restorationTester.setContent { MainNavHost() }
         device.pressBack()
-        rule.onNodeWithStringRes(R.string.sign_up_with_email).performClick()
+        rule.onNodeWithStringRes(sign_up_with_email).performClick()
     }
 
     @Test
@@ -79,12 +84,12 @@ class SignUpScreenTest {
         localSignUpRestoreTest(
             email = InvalidEmail,
             password = SignInPassword,
-            error = R.string.error_invalid_email
+            error = error_invalid_email
         )
         localSignUpRestoreTest(
             email = SignInEmail,
             password = SignInPassword,
-            error = R.string.error_email_already_in_use
+            error = error_email_already_in_use
         )
     }
 
@@ -93,44 +98,47 @@ class SignUpScreenTest {
         emailTextField.performTextInput(SignInEmail)
         nameTextField.performTextInput(SignUpName)
 
+        val weakPasswordError = rule.onNodeWithStringRes(error_weak_password)
+        val passwordNotSameError = rule.onNodeWithStringRes(error_password_confirm_not_same)
+
         repeat(5) {
             passwordTextField.performTextInput("1")
-            rule.onNodeWithStringRes(R.string.error_weak_password).assertExists()
-            rule.onNodeWithStringRes(R.string.error_password_confirm_not_same).assertDoesNotExist()
+            weakPasswordError.assertExists()
+            passwordNotSameError.assertDoesNotExist()
             signUpButton.assertIsNotEnabled()
         }
 
         repeat(4) {
             passwordConfirmTextField.performTextInput("1")
-            rule.onNodeWithStringRes(R.string.error_weak_password).assertExists()
-            rule.onNodeWithStringRes(R.string.error_password_confirm_not_same).assertExists()
+            weakPasswordError.assertExists()
+            passwordNotSameError.assertExists()
             signUpButton.assertIsNotEnabled()
         }
 
         passwordConfirmTextField.performTextInput("1")
-        rule.onNodeWithStringRes(R.string.error_weak_password).assertExists()
-        rule.onNodeWithStringRes(R.string.error_password_confirm_not_same).assertDoesNotExist()
+        weakPasswordError.assertExists()
+        passwordNotSameError.assertDoesNotExist()
         signUpButton.assertIsNotEnabled()
 
         passwordTextField.performTextInput("1")
-        rule.onNodeWithStringRes(R.string.error_weak_password).assertDoesNotExist()
-        rule.onNodeWithStringRes(R.string.error_password_confirm_not_same).assertExists()
+        weakPasswordError.assertDoesNotExist()
+        passwordNotSameError.assertExists()
         signUpButton.assertIsNotEnabled()
 
         passwordConfirmTextField.performTextInput("1")
-        rule.onNodeWithStringRes(R.string.error_weak_password).assertDoesNotExist()
-        rule.onNodeWithStringRes(R.string.error_password_confirm_not_same).assertDoesNotExist()
+        weakPasswordError.assertDoesNotExist()
+        passwordNotSameError.assertDoesNotExist()
         signUpButton.assertIsEnabled()
 
         passwordTextField.performTextClearance()
-        rule.onNodeWithStringRes(R.string.error_weak_password).assertDoesNotExist()
-        rule.onNodeWithStringRes(R.string.error_password_confirm_not_same).assertExists()
+        weakPasswordError.assertDoesNotExist()
+        passwordNotSameError.assertExists()
         signUpButton.assertIsNotEnabled()
 
         passwordTextField.performTextInput("111111")
         passwordConfirmTextField.performTextClearance()
-        rule.onNodeWithStringRes(R.string.error_weak_password).assertDoesNotExist()
-        rule.onNodeWithStringRes(R.string.error_password_confirm_not_same).assertDoesNotExist()
+        weakPasswordError.assertDoesNotExist()
+        passwordNotSameError.assertDoesNotExist()
         signUpButton.assertIsNotEnabled()
     }
 

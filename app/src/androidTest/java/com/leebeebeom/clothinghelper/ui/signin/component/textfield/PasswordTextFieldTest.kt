@@ -8,10 +8,10 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.text.input.ImeAction
 import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.getInvisibleText
+import com.leebeebeom.clothinghelper.onNodeWithStringRes
 import com.leebeebeom.clothinghelper.ui.HiltTestActivity
 import com.leebeebeom.clothinghelper.ui.component.textfield.TestText
-import com.leebeebeom.clothinghelper.ui.getInvisibleText
-import com.leebeebeom.clothinghelper.ui.onNodeWithStringRes
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
 import org.junit.Before
 import org.junit.Rule
@@ -20,9 +20,9 @@ import org.junit.Test
 class PasswordTextFieldTest {
     @get:Rule
     val rule = createAndroidComposeRule<HiltTestActivity>()
-    private val passwordTextField by lazy { rule.onNodeWithStringRes(R.string.password) }
-    private val visibleIcon by lazy { rule.onNodeWithTag(VisibleIconTag) }
-    private val invisibleIcon by lazy { rule.onNodeWithTag(InvisibleIconTag) }
+    private val passwordTextField = rule.onNodeWithStringRes(R.string.password)
+    private val visibleIcon = rule.onNodeWithTag(VisibleIconTag)
+    private val invisibleIcon = rule.onNodeWithTag(InvisibleIconTag)
 
     @Before
     fun init() {

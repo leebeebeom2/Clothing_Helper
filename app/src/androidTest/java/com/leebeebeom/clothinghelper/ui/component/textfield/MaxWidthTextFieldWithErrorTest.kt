@@ -23,16 +23,16 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
-import com.leebeebeom.clothinghelper.R
+import com.leebeebeom.clothinghelper.R.string.*
 import com.leebeebeom.clothinghelper.isKeyboardShowing
+import com.leebeebeom.clothinghelper.onNodeWithStringRes
 import com.leebeebeom.clothinghelper.ui.HiltTestActivity
 import com.leebeebeom.clothinghelper.ui.component.MaxWidthTextFieldState
 import com.leebeebeom.clothinghelper.ui.component.MaxWidthTextFieldWithError
 import com.leebeebeom.clothinghelper.ui.component.rememberMaxWidthTestFieldState
-import com.leebeebeom.clothinghelper.ui.onNodeWithStringRes
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
-import com.leebeebeom.clothinghelper.ui.waitStringResExist
-import com.leebeebeom.clothinghelper.ui.waitTextExist
+import com.leebeebeom.clothinghelper.waitStringResExist
+import com.leebeebeom.clothinghelper.waitTextExist
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -50,8 +50,8 @@ class MaxWidthTextFieldWithErrorTest {
     private lateinit var textField1state: MaxWidthTextFieldState
     private var textField2input = ""
     private lateinit var textField2state: MaxWidthTextFieldState
-    private val testTextField1 by lazy { rule.onNodeWithStringRes(R.string.test_text_field) }
-    private val testTextField2 by lazy { rule.onNodeWithStringRes(R.string.test_text_field2) }
+    private val testTextField1 = rule.onNodeWithStringRes(test_text_field)
+    private val testTextField2 = rule.onNodeWithStringRes(test_text_field2)
     private var error: Int? by mutableStateOf(null)
     private var error2: Int? by mutableStateOf(null)
     private val screen1Route = "screen1"
@@ -83,7 +83,7 @@ class MaxWidthTextFieldWithErrorTest {
                                 onValueChange = textField1state::onValueChange,
                                 onFocusChanged = textField1state::onFocusChanged,
                                 error = { error },
-                                label = R.string.test_text_field,
+                                label = test_text_field,
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Text, imeAction = ImeAction.Next
                                 ),
@@ -99,7 +99,7 @@ class MaxWidthTextFieldWithErrorTest {
                                 onValueChange = textField2state::onValueChange,
                                 onFocusChanged = textField2state::onFocusChanged,
                                 error = { error2 },
-                                label = R.string.test_text_field2,
+                                label = test_text_field2,
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Text, imeAction = ImeAction.Done
                                 ),
@@ -152,17 +152,20 @@ class MaxWidthTextFieldWithErrorTest {
 
     @Test
     fun errorTest() {
-        error = R.string.error_invalid_email
-        error2 = R.string.error_wrong_password
+        error = error_invalid_email
+        error2 = error_wrong_password
 
-        rule.onNodeWithStringRes(R.string.error_invalid_email).assertExists()
-        rule.onNodeWithStringRes(R.string.error_wrong_password).assertExists()
+        val error1Node = rule.onNodeWithStringRes(error_invalid_email)
+        val error2Node = rule.onNodeWithStringRes(error_wrong_password)
+
+        error1Node.assertExists()
+        error2Node.assertExists()
 
         error = null
         error2 = null
 
-        rule.onNodeWithStringRes(R.string.error_invalid_email).assertDoesNotExist()
-        rule.onNodeWithStringRes(R.string.error_wrong_password).assertDoesNotExist()
+        error1Node.assertDoesNotExist()
+        error2Node.assertDoesNotExist()
     }
 
     @Test
@@ -173,7 +176,7 @@ class MaxWidthTextFieldWithErrorTest {
         rule.onNodeWithText("이동").performClick()
         rule.waitTextExist("뒤로 이동")
         rule.onNodeWithText("뒤로 이동").performClick()
-        rule.waitStringResExist(R.string.test_text_field)
+        rule.waitStringResExist(test_text_field)
         testTextField1.assertIsNotFocused()
         assert(!isKeyboardShowing())
     }

@@ -14,7 +14,7 @@ import com.leebeebeom.clothinghelper.ui.util.EditFolder
 import kotlinx.collections.immutable.ImmutableSet
 
 @Composable
-fun DrawerDownMenuEditAndAddFolder(
+fun DrawerDownMenuEditAndAddFolder( // skippable
     state: DrawerDropdownMenuState,
     onDismiss: () -> Unit,
     expand: () -> Unit,

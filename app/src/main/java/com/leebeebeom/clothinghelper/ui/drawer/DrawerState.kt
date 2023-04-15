@@ -10,7 +10,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntSize
 import com.leebeebeom.clothinghelper.ui.drawer.component.dropdownmenus.DrawerDropdownMenuState
 
-open class DrawerItemState(initialExpand: Boolean = false) {
+open class DrawerItemState(initialExpand: Boolean = false) { // stable
     var expanded by mutableStateOf(initialExpand)
         private set
 
@@ -35,6 +35,7 @@ fun rememberDrawerItemState() =
     rememberSaveable(saver = DrawerItemState.Saver) { DrawerItemState() }
 
 class DrawerItemDropdownMenuState(
+    // stable
     initialExpand: Boolean = false,
     initialShowDropdownMenu: Boolean = false,
     initialLongClickOffsetX: Float = 0f,

@@ -15,7 +15,7 @@ import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.onNodeWithStringRes
 import com.leebeebeom.clothinghelper.ui.theme.ClothingHelperTheme
-import kotlinx.collections.immutable.persistentSetOf
+import kotlinx.collections.immutable.toImmutableSet
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -25,8 +25,8 @@ class DrawerFolderDropdownMenuTest {
     val rule = createAndroidComposeRule<HiltTestActivity>()
     private val restorationTester = StateRestorationTester(rule)
     private lateinit var state: DrawerItemDropdownMenuState
-    private val folderNames = persistentSetOf("1", "2", "3", "4", "5")
-    private val childFolderNames = persistentSetOf("6", "7", "8", "9", "10")
+    private val folderNames = List(5) { "$it" }.toImmutableSet()
+    private val childFolderNames = List(5) { "${it + 5}" }.toImmutableSet()
     private var addFolder = ""
     private var editFolder = ""
     private val selectedFolder = Folder(name = "이름")

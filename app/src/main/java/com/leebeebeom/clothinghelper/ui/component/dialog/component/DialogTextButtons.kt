@@ -5,7 +5,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TextButton
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NoLiveLiterals
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.leebeebeom.clothinghelper.R
@@ -28,7 +32,7 @@ fun DialogTextButtons(
         )
         DialogTextButton(
             modifier = weightModifier,
-            text = R.string.check,
+            text = R.string.positive,
             enabled = positiveButtonEnabled
         ) {
             onPositiveButtonClick()

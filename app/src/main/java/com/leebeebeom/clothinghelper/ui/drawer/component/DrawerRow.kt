@@ -6,7 +6,11 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NoLiveLiterals
@@ -31,11 +35,12 @@ fun DrawerRow(
     height: Dp = 48.dp,
     onClick: () -> Unit,
     onLongClick: ((Offset) -> Unit)? = null,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    haptic: HapticFeedback = LocalHapticFeedback.current,
     onSizeChange: (IntSize) -> Unit = {},
     content: @Composable RowScope.() -> Unit
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val haptic: HapticFeedback = LocalHapticFeedback.current
+
     val localOnLongClick = remember<(Offset) -> Unit>(onLongClick, haptic) {
         { offset ->
             if (onLongClick != null) {

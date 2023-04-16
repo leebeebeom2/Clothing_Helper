@@ -20,8 +20,8 @@ fun DialogTextButtons(
     positiveButtonEnabled: () -> Boolean,
     onPositiveButtonClick: () -> Unit,
     onDismiss: () -> Unit,
-    positiveButtonColor: Color = Color.Unspecified,
-    cancelButtonColor: Color = MaterialTheme.colors.error,
+    positiveButtonColor: Color,
+    cancelButtonColor: Color,
 ) {
     Row(modifier = Modifier.fillMaxWidth()) {
         val weightModifier = Modifier.weight(1f)

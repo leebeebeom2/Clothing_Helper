@@ -6,5 +6,5 @@ import javax.inject.Inject
 class GetFoldersMapFlowUseCase @Inject constructor(
     private val folderRepository: FolderRepository
 ) {
-    val foldersMapFlow get() = folderRepository.allDataMapFlow
+    val foldersMapFlow get() = folderRepository.allFoldersMapFlow
 }

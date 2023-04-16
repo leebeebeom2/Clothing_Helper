@@ -51,7 +51,7 @@ class FolderRepositoryImpl @Inject constructor(
 
     override val allFoldersMapFlow: SharedFlow<FolderResultMap> =
         allDataFlow.mapLatest { dataResult ->
-            dataResult.toFolderResultMap { it.parentKey }
+            dataResult.toFolderResultMap()
         }.flowOn(dispatcherDefault).distinctUntilChanged()
             .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 

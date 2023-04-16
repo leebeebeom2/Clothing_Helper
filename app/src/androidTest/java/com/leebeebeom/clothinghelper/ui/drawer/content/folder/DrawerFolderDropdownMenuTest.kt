@@ -12,7 +12,9 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.R.string.add_folder
+import com.leebeebeom.clothinghelper.R.string.delete_folder
 import com.leebeebeom.clothinghelper.R.string.dropdown_menu_add_folder
+import com.leebeebeom.clothinghelper.R.string.dropdown_menu_delete
 import com.leebeebeom.clothinghelper.R.string.dropdown_menu_edit
 import com.leebeebeom.clothinghelper.R.string.edit_folder
 import com.leebeebeom.clothinghelper.domain.model.Folder
@@ -38,8 +40,10 @@ class DrawerFolderDropdownMenuTest {
 
     private val dropdownEdit = rule.onNodeWithStringRes(dropdown_menu_edit)
     private val dropdownAddFolder = rule.onNodeWithStringRes(dropdown_menu_add_folder)
+    private val dropdownDelete = rule.onNodeWithStringRes(dropdown_menu_delete)
     private val editTitle = rule.onNodeWithStringRes(edit_folder)
     private val addTitle = rule.onNodeWithStringRes(add_folder)
+    private val deleteTitle = rule.onNodeWithStringRes(delete_folder)
     private val textField = rule.onNodeWithStringRes(R.string.folder)
     private val positiveButton = rule.onNodeWithStringRes(R.string.positive)
     private val cancelButton = rule.onNodeWithStringRes(R.string.cancel)
@@ -66,7 +70,7 @@ class DrawerFolderDropdownMenuTest {
     }
 
     @Test
-    fun folderDropdownMenuTestRestoreTest() {
+    fun folderDropdownMenuRestoreTest() {
         state.onLongClick(Offset.Zero)
 
         repeat(2) {
@@ -93,6 +97,17 @@ class DrawerFolderDropdownMenuTest {
         repeat(2) {
             addTitle.assertExists()
             textField.assert(!hasText(initialName))
+
+            restorationTester.emulateSavedInstanceStateRestore()
+        }
+
+        cancelButton.performClick()
+
+        state.onLongClick(Offset.Zero)
+        dropdownDelete.performClick()
+
+        repeat(2) {
+            deleteTitle.assertExists()
 
             restorationTester.emulateSavedInstanceStateRestore()
         }

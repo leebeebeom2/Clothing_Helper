@@ -35,11 +35,11 @@ class UserRepositoryImpl @Inject constructor(
 
     override val userFlow = callbackFlow {
         if (userCallback == null) userCallback = UserCallback { firebaseUser ->
-            trySend(element = firebaseUser.toUserModel())
+            trySend(firebaseUser.toUserModel())
         }
 
         val authCallback = FirebaseAuth.AuthStateListener { firebaseAuth ->
-            trySend(element = firebaseAuth.currentUser.toUserModel())
+            trySend(firebaseAuth.currentUser.toUserModel())
         }
 
         auth.addAuthStateListener(authCallback)
@@ -80,7 +80,7 @@ class UserRepositoryImpl @Inject constructor(
 
                 user.updateProfile(request).await()
 
-                callbackFlowEmitWrapper { it(user = auth.currentUser) }
+                callbackFlowEmitWrapper { it(auth.currentUser) }
             }
         }
 
@@ -109,5 +109,5 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     private suspend inline fun callbackFlowEmitWrapper(crossinline emit: suspend (UserCallback) -> Unit) =
-        callbackFlowEmit({ userCallback }, flow = userFlow, emit = emit)
+        callbackFlowEmit(callback = { userCallback }, flow = userFlow, emit = emit)
 }

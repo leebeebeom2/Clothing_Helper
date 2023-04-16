@@ -42,29 +42,29 @@ class FolderRepositoryImpl @Inject constructor(
 
     override suspend fun add(data: Folder) {
         // push override 때문에 editDate 변경 됨
-        val dataWithKey = data.addKey(key = getKey())
+        val dataWithKey = data.addKey(getKey())
 
         super.push(dataWithKey)
     }
 
-    override suspend fun push(data: Folder) = super.push(data = data.changeEditDate())
+    override suspend fun push(data: Folder) = super.push(data.changeEditDate())
 
     override val allFoldersMapFlow: SharedFlow<FolderResultMap> =
         allDataFlow.mapLatest { dataResult ->
             dataResult.toFolderResultMap { it.parentKey }
-        }.flowOn(context = dispatcherDefault).distinctUntilChanged()
+        }.flowOn(dispatcherDefault).distinctUntilChanged()
             .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
     override val folderNamesMapFlow = allFoldersMapFlow.mapLatest { allDataMap ->
         allDataMap.data.mapValues { mapElement ->
             mapElement.value.map { element -> element.name }.toImmutableSet()
         }.toImmutableMap()
-    }.flowOn(context = dispatcherDefault).distinctUntilChanged()
+    }.flowOn(dispatcherDefault).distinctUntilChanged()
         .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
     override val foldersSizeMapFlow = allFoldersMapFlow.mapLatest { allDataMap ->
         allDataMap.data.mapValues { mapElement -> mapElement.value.size }.toImmutableMap()
-    }.flowOn(context = dispatcherDefault).distinctUntilChanged()
+    }.flowOn(dispatcherDefault).distinctUntilChanged()
         .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
     private fun getSortedFolder(
@@ -87,7 +87,7 @@ class FolderRepositoryImpl @Inject constructor(
                 else -> allData
             }
 
-            DataResult.Success(data = sortedList.toImmutableList())
+            DataResult.Success(sortedList.toImmutableList())
         }
     }
 }

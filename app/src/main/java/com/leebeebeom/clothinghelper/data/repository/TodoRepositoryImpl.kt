@@ -29,18 +29,14 @@ class TodoRepositoryImpl @Inject constructor(
     dispatcherIO = dispatcherIO,
     userRepository = userRepository
 ), TodoRepository {
-    override val allDataFlow =
-        super.allDataFlow.mapLatest { dataResult ->
-            when (dataResult) {
-                is DataResult.Success -> DataResult.Success(
-                    data = dataResult.data.sortedBy { it.order }.toImmutableList()
-                )
+    override val allDataFlow = super.allDataFlow.mapLatest { dataResult ->
+        when (dataResult) {
+            is DataResult.Success -> DataResult.Success(dataResult.data.sortedBy { it.order }
+                .toImmutableList())
 
-                is DataResult.Fail -> dataResult
-            }
-        }.flowOn(dispatcherDefault).shareIn(
-            scope = appScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            replay = 1
-        )
+            is DataResult.Fail -> dataResult
+        }
+    }.flowOn(dispatcherDefault).shareIn(
+        scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1
+    )
 }

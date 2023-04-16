@@ -6,12 +6,21 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.model.Folder
 import com.leebeebeom.clothinghelper.domain.model.MenuType
 import com.leebeebeom.clothinghelper.domain.model.User
-import com.leebeebeom.clothinghelper.domain.usecase.folder.*
+import com.leebeebeom.clothinghelper.domain.usecase.folder.AddFolderUseCase
+import com.leebeebeom.clothinghelper.domain.usecase.folder.EditFolderNameUseCase
+import com.leebeebeom.clothinghelper.domain.usecase.folder.GetFolderNamesMapFlowUseCase
+import com.leebeebeom.clothinghelper.domain.usecase.folder.GetFoldersMapFlowUseCase
+import com.leebeebeom.clothinghelper.domain.usecase.folder.GetFoldersSizeMapFlowUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.GetUserUseCase
 import com.leebeebeom.clothinghelper.ui.util.toastHandler
 import com.leebeebeom.clothinghelper.ui.viewmodel.ToastViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.*
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.collections.immutable.ImmutableSet
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -24,7 +33,7 @@ private const val DrawerToastTextsKey = "drawer toast texts"
 class DrawerViewModel @Inject constructor(
     getFoldersMapFlowUseCase: GetFoldersMapFlowUseCase,
     getFolderNamesMapFlowUseCase: GetFolderNamesMapFlowUseCase,
-    getFolderSizeMapFlowUseCase: GetFolderSizeMapFlowUseCase,
+    getFoldersSizeMapFlowUseCase: GetFoldersSizeMapFlowUseCase,
     getUserUseCase: GetUserUseCase,
     private val addFoldersUseCase: AddFolderUseCase,
     private val editFolderNameUseCase: EditFolderNameUseCase,
@@ -37,17 +46,17 @@ class DrawerViewModel @Inject constructor(
     val uiState = combine(
         flow = getFoldersMapFlowUseCase.foldersMapFlow,
         flow2 = getFolderNamesMapFlowUseCase.folderNamesMapFlow,
-        flow3 = getFolderSizeMapFlowUseCase.folderSizeMapFolder,
+        flow3 = getFoldersSizeMapFlowUseCase.foldersSizeMapFolder,
         flow4 = toastTextsFlow,
         flow5 = getUserUseCase.userFlow,
-    ) { foldersMap, folderNames, folderSize, toastTexts, user ->
+    ) { foldersMap, folderNames, foldersSize, toastTexts, user ->
         // TODO FolderResultMap.Fail 시 토스트
 
         DrawerUiState(
             isLoading = false,
             foldersMap = foldersMap.data,
             folderNamesMap = folderNames,
-            foldersSizeMap = folderSize,
+            foldersSizeMap = foldersSize,
             toastTexts = toastTexts,
             user = user
         )

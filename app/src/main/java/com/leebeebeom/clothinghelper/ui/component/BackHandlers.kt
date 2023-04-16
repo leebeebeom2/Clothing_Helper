@@ -22,5 +22,5 @@ fun SelectModeBackHandler(
 fun BackHandlerWrapper(enabled: () -> Boolean, task: () -> Unit) {
     val localEnabled by remember(enabled) { derivedStateOf(enabled) }
 
-    BackHandler(localEnabled, onBack = task)
+    BackHandler(enabled = localEnabled, onBack = task)
 }

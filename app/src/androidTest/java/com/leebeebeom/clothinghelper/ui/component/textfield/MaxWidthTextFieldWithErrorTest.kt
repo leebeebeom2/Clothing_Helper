@@ -12,9 +12,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.assertIsNotFocused
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
+import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -23,7 +30,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
-import com.leebeebeom.clothinghelper.R.string.*
+import com.leebeebeom.clothinghelper.R.string.error_invalid_email
+import com.leebeebeom.clothinghelper.R.string.error_wrong_password
+import com.leebeebeom.clothinghelper.R.string.test_text_field
+import com.leebeebeom.clothinghelper.R.string.test_text_field2
 import com.leebeebeom.clothinghelper.isKeyboardShowing
 import com.leebeebeom.clothinghelper.onNodeWithStringRes
 import com.leebeebeom.clothinghelper.ui.HiltTestActivity
@@ -74,8 +84,7 @@ class MaxWidthTextFieldWithErrorTest {
                             verticalArrangement = Arrangement.Center
                         ) {
                             textField1state = rememberMaxWidthTestFieldState(
-                                initialText = textField1input,
-                                blockBlank = true
+                                initialText = textField1input, blockBlank = true
                             )
 
                             MaxWidthTextFieldWithError(

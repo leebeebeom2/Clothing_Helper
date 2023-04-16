@@ -39,7 +39,7 @@ import com.leebeebeom.clothinghelper.ui.util.getCurrentRoute
 import com.leebeebeom.clothinghelper.ui.viewmodel.ParentKey
 import dagger.hilt.android.AndroidEntryPoint
 
-const val TAG = "태그"
+const val Tag = "태그"
 
 object MainNavRoute {
     const val SignInGraph = "sign in graph"

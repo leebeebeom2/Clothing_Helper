@@ -1,14 +1,13 @@
 package com.leebeebeom.clothinghelper.data.repository.offline
 
+import com.leebeebeom.clothinghelper.data.backgroundLaunch
 import com.leebeebeom.clothinghelper.data.waitTime
 import com.leebeebeom.clothinghelper.domain.model.BaseModel
 import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 
 @OptIn(ExperimentalCoroutinesApi::class)
 suspend fun <T : BaseModel> TestScope.offlineEditTest(
@@ -17,7 +16,7 @@ suspend fun <T : BaseModel> TestScope.offlineEditTest(
     getEditData: (T) -> T,
     editAssert: (edit: T, edited: T) -> Unit,
 ) {
-    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.allDataFlow.collect() }
+    backgroundLaunch { repository.allDataFlow.collect() }
     waitTime()
     assert(repository.allDataFlow.first().data.size == initialSize + 2)
 

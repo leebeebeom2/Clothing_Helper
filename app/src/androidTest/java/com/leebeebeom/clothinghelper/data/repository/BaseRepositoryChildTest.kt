@@ -62,12 +62,20 @@ class BaseRepositoryChildTest {
 
     @After
     fun removeData() = runTest(dispatcher) {
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { userRepository.userFlow.collect() }
+        backgroundLaunch { userRepository.userFlow.collect() }
         userRepository.signIn(email = RepositoryTestEmail, password = SignInPassword)
         waitTime()
 
         Firebase.database.reference.child(userRepository.userFlow.first()!!.uid).removeValue()
             .await()
+
+        userRepository.signIn(email = SignInEmail, password = SignInPassword)
+
+        waitTime()
+
+        Firebase.database.reference.child(userRepository.userFlow.first()!!.uid).removeValue()
+            .await()
+
         userRepository.signOut()
     }
 
@@ -167,7 +175,7 @@ class BaseRepositoryChildTest {
 
         val todos = List(9) { Todo(text = "$it", order = it) }.shuffled()
         userRepository.signIn(email = SignInEmail, password = SignInPassword)
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { todoRepository.allDataFlow.collect() }
+        backgroundLaunch { todoRepository.allDataFlow.collect() }
         waitTime()
         todos.map { async { todoRepository.add(it) } }.awaitAll()
         waitTime(1000)
@@ -186,10 +194,10 @@ suspend fun TestScope.initData(
     todoRepository: TodoRepository
 ) {
     userRepository.signIn(email = RepositoryTestEmail, password = SignInPassword)
-    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+    backgroundLaunch {
         folderRepository.allDataFlow.collect()
     }
-    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+    backgroundLaunch {
         todoRepository.allDataFlow.collect()
     }
     waitTime()

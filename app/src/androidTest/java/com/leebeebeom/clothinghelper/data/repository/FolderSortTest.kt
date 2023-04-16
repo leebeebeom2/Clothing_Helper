@@ -1,26 +1,24 @@
 package com.leebeebeom.clothinghelper.data.repository
 
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelper.data.SignInEmail
 import com.leebeebeom.clothinghelper.data.SignInPassword
+import com.leebeebeom.clothinghelper.data.backgroundLaunch
 import com.leebeebeom.clothinghelper.data.repository.preference.Order
 import com.leebeebeom.clothinghelper.data.repository.preference.Sort
 import com.leebeebeom.clothinghelper.data.waitTime
 import com.leebeebeom.clothinghelper.domain.model.Folder
-import com.leebeebeom.clothinghelper.domain.repository.BaseDataRepository
+import com.leebeebeom.clothinghelper.domain.repository.FolderRepository
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import com.leebeebeom.clothinghelper.domain.repository.preference.FolderPreferenceRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 
 @OptIn(ExperimentalCoroutinesApi::class)
 suspend fun TestScope.folderSortTest(
     userRepository: UserRepository,
-    repository: BaseDataRepository<Folder>,
+    repository: FolderRepository,
     preferencesRepository: FolderPreferenceRepository,
     data: List<Folder>,
 ) {
@@ -32,7 +30,7 @@ suspend fun TestScope.folderSortTest(
     sortInit()
 
     userRepository.signIn(email = SignInEmail, password = SignInPassword)
-    backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.allDataFlow.collect() }
+    backgroundLaunch { repository.allDataFlow.collect() }
     waitTime()
     assert(repository.allDataFlow.first().data.isEmpty())
 
@@ -76,6 +74,4 @@ suspend fun TestScope.folderSortTest(
     assert(addedData.sortedBy { it.editDate } == repository.allDataFlow.first().data)  // Sort: EDIT, Order: Ascending
 
     sortInit()
-
-    Firebase.database.reference.child(userRepository.userFlow.first()!!.uid).removeValue()
 }

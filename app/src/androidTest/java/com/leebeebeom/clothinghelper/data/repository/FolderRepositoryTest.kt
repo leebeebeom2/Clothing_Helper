@@ -4,6 +4,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.leebeebeom.clothinghelper.data.SignInPassword
+import com.leebeebeom.clothinghelper.data.backgroundLaunch
 import com.leebeebeom.clothinghelper.data.repository.preference.FolderPreferencesRepositoryImpl
 import com.leebeebeom.clothinghelper.data.waitTime
 import com.leebeebeom.clothinghelper.domain.model.Folder
@@ -15,11 +16,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
@@ -44,7 +43,7 @@ class FolderRepositoryTest {
     @Before
     fun init() = runTest(dispatcher) {
         userRepository.signIn(RepositoryTestEmail, SignInPassword)
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { folderRepository.allDataFlow.collect() }
+        backgroundLaunch { folderRepository.allDataFlow.collect() }
         waitTime()
 
         List(10) { parent ->
@@ -60,7 +59,7 @@ class FolderRepositoryTest {
     @After
     fun removeData() = runTest(dispatcher) {
         userRepository.signIn(RepositoryTestEmail, SignInPassword)
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { userRepository.userFlow.collect() }
+        backgroundLaunch { userRepository.userFlow.collect() }
         waitTime()
 
         Firebase.database.reference.child(userRepository.userFlow.first()!!.uid).removeValue()
@@ -68,10 +67,10 @@ class FolderRepositoryTest {
 
     @Test
     fun folderMapTest() = runTest(dispatcher) {
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { folderRepository.allDataFlow.collect() }
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { folderRepository.allFoldersMapFlow.collect() }
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { folderRepository.folderNamesMapFlow.collect() }
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { folderRepository.foldersSizeMapFlow.collect() }
+        backgroundLaunch { folderRepository.allDataFlow.collect() }
+        backgroundLaunch { folderRepository.allFoldersMapFlow.collect() }
+        backgroundLaunch { folderRepository.folderNamesMapFlow.collect() }
+        backgroundLaunch { folderRepository.foldersSizeMapFlow.collect() }
         waitTime()
 
         val foldersMap = folderRepository.allFoldersMapFlow.first()

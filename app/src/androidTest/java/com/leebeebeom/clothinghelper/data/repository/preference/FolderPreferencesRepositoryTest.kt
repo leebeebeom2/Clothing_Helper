@@ -1,6 +1,7 @@
 package com.leebeebeom.clothinghelper.data.repository.preference
 
 import androidx.test.core.app.ApplicationProvider
+import com.leebeebeom.clothinghelper.data.backgroundLaunch
 import com.leebeebeom.clothinghelper.data.waitTime
 import com.leebeebeom.clothinghelper.domain.repository.preference.FolderPreferenceRepository
 import kotlinx.coroutines.*
@@ -8,7 +9,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Test
@@ -36,7 +36,7 @@ class FolderPreferencesRepositoryTest {
     private suspend fun TestScope.preferenceSortFlowTest(repository: FolderPreferenceRepository) {
         val sortFlow = repository.sortFlow
 
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { sortFlow.collect() }
+        backgroundLaunch { sortFlow.collect() }
 
         assert(sortFlow.first() == SortPreferences()) // initial
 

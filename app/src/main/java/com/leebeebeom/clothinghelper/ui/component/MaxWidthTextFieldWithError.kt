@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.*
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.*
@@ -42,7 +41,6 @@ fun StatefulMaxWidthTextFieldWithCancelIcon(
         keyboardType = KeyboardType.Text, imeAction = ImeAction.Done
     ),
     onInputChange: (String) -> Unit,
-    focusRequester: FocusRequester = remember { FocusRequester() },
     getFocus: Boolean = false,
     fixedError: Boolean = false,
     state: MaxWidthTextFieldState = rememberMaxWidthTestFieldState()
@@ -51,18 +49,17 @@ fun StatefulMaxWidthTextFieldWithCancelIcon(
         textFieldValue = { state.textFieldValue },
         onValueChange = state::onValueChange,
         onFocusChanged = state::onFocusChanged,
+        label = label,
+        placeholder = placeholder,
+        error = error,
+        isVisible = isVisible,
         keyboardOptions = keyboardOptions,
-        onInputChange = onInputChange,
-        focusRequester = focusRequester,
         trailingIcon = {
             TextFieldCancelIcon(hasFocus = { state.hasFocus },
                 onValueChange = state::onValueChange,
                 textFieldValue = { state.textFieldValue })
         },
-        label = label,
-        placeholder = placeholder,
-        error = error,
-        isVisible = isVisible,
+        onInputChange = onInputChange,
         showKeyboard = getFocus,
         fixedError = fixedError
     )
@@ -79,7 +76,6 @@ fun StatefulMaxWidthTextField(
         keyboardType = KeyboardType.Text, imeAction = ImeAction.Done
     ),
     onInputChange: (String) -> Unit = {},
-    focusRequester: FocusRequester = remember { FocusRequester() },
     trailingIcon: @Composable (() -> Unit)? = null,
     getFocus: Boolean = false,
     state: MaxWidthTextFieldState = rememberMaxWidthTestFieldState()
@@ -88,14 +84,13 @@ fun StatefulMaxWidthTextField(
         textFieldValue = { state.textFieldValue },
         onValueChange = state::onValueChange,
         onFocusChanged = state::onFocusChanged,
-        keyboardOptions = keyboardOptions,
-        onInputChange = onInputChange,
-        focusRequester = focusRequester,
-        trailingIcon = trailingIcon,
         label = label,
         placeholder = placeholder,
         error = error,
         isVisible = isVisible,
+        keyboardOptions = keyboardOptions,
+        trailingIcon = trailingIcon,
+        onInputChange = onInputChange,
         showKeyboard = getFocus,
         fixedError = false
     )
@@ -111,12 +106,13 @@ fun MaxWidthTextFieldWithError(
     error: () -> Int? = { null },
     isVisible: () -> Boolean = { true },
     keyboardOptions: KeyboardOptions,
-    trailingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
     onInputChange: (String) -> Unit,
-    focusRequester: FocusRequester = remember { FocusRequester() },
     showKeyboard: Boolean,
     fixedError: Boolean,
 ) {
+    val focusRequester = remember { FocusRequester() }
+
     Column {
         MaxWidthTextField(
             label = label,
@@ -147,9 +143,9 @@ private fun MaxWidthTextField(
     trailingIcon: (@Composable () -> Unit)? = null,
     onValueChange: (TextFieldValue) -> Unit,
     onFocusChanged: (FocusState) -> Unit,
-    focusManager: FocusManager = LocalFocusManager.current,
     focusRequester: FocusRequester
 ) {
+    val focusManager = LocalFocusManager.current
     val localTextFiledValue by remember(textFieldValue) { derivedStateOf(textFieldValue) }
     val localError by remember(error) { derivedStateOf(error) }
     val localIsVisible by remember(isVisible) { derivedStateOf(isVisible) }
@@ -211,9 +207,9 @@ private fun ErrorText(error: () -> Int?, fixedError: Boolean) {
 @Composable // skippable
 private fun ShowKeyboard(
     showKeyboard: Boolean,
-    keyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current,
     focusRequester: FocusRequester
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     var showedKeyboard by rememberSaveable { mutableStateOf(false) }
 
     if (showKeyboard && !showedKeyboard) {

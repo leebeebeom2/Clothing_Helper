@@ -1,9 +1,9 @@
 package com.leebeebeom.clothinghelper.domain.usecase.preference.sort.folder
 
-import com.leebeebeom.clothinghelper.domain.repository.preference.FolderPreferencesRepository
-import com.leebeebeom.clothinghelper.domain.repository.preference.SortPreferenceRepository
-import com.leebeebeom.clothinghelper.domain.usecase.preference.sort.BaseChangeOrderUseCase
+import com.leebeebeom.clothinghelper.data.repository.preference.Order
+import com.leebeebeom.clothinghelper.domain.repository.preference.FolderPreferenceRepository
 import javax.inject.Inject
 
-class ChangeFolderOrderUseCase @Inject constructor(@FolderPreferencesRepository sortPreferenceRepository: SortPreferenceRepository) :
-    BaseChangeOrderUseCase(sortPreferenceRepository)
+class ChangeFolderOrderUseCase @Inject constructor(private val folderPreferenceRepository: FolderPreferenceRepository) {
+    suspend fun changeOrder(order: Order) = folderPreferenceRepository.changeOrder(order)
+}

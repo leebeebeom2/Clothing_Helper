@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.material.ScaffoldState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,17 +22,13 @@ import com.leebeebeom.clothinghelper.ui.component.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerHeader
 import com.leebeebeom.clothinghelper.ui.drawer.content.DrawerEssentialMenus
 import com.leebeebeom.clothinghelper.ui.drawer.content.DrawerMenus
-import com.leebeebeom.clothinghelper.ui.drawer.content.EssentialMenu
 import com.leebeebeom.clothinghelper.ui.drawer.content.EssentialMenuType
 import com.leebeebeom.clothinghelper.ui.drawer.content.mainmenu.DrawerMainMenus
-import com.leebeebeom.clothinghelper.ui.drawer.content.mainmenu.MainMenu
 import com.leebeebeom.clothinghelper.ui.drawer.content.mainmenu.MainMenuType
 import com.leebeebeom.clothinghelper.ui.drawer.content.mainmenu.rememberMainMenus
 import com.leebeebeom.clothinghelper.ui.drawer.content.rememberEssentialMenus
 import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.SubMenuType
 import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.clothes.ClothesCategoryType
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable // skippable
@@ -44,13 +39,14 @@ fun Drawer(
     onSubMenuClick: (SubMenuType) -> Unit,
     onClothesCategoryClick: (ClothesCategoryType) -> Unit,
     onFolderClick: (Folder) -> Unit,
-    scaffoldState: ScaffoldState = rememberScaffoldState(),
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    essentialMenus: ImmutableList<EssentialMenu> = rememberEssentialMenus(),
-    mainMenus: ImmutableList<MainMenu> = rememberMainMenus(),
-    viewModel: DrawerViewModel = hiltViewModel(),
     content: @Composable (PaddingValues) -> Unit
 ) {
+    val scaffoldState = rememberScaffoldState()
+    val coroutineScope = rememberCoroutineScope()
+    val essentialMenus = rememberEssentialMenus()
+    val mainMenus = rememberMainMenus()
+    val viewModel = hiltViewModel<DrawerViewModel>()
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val closeDrawer: () -> Unit = remember(
         key1 = coroutineScope,

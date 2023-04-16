@@ -20,7 +20,8 @@ sealed class DataResult<T>(val data: ImmutableList<T>) {
 
 inline fun DataResult<Folder>.toFolderResultMap(keySelector: (Folder) -> String): FolderResultMap {
     val map =
-        data.groupBy(keySelector).mapValues { mapElement -> mapElement.value.toImmutableList() }
+        data.filter { !it.isDeleted }.groupBy(keySelector)
+            .mapValues { mapElement -> mapElement.value.toImmutableList() }
             .toImmutableMap()
 
     return when (this) {

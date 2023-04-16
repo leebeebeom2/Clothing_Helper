@@ -18,7 +18,11 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.component.*
+import com.leebeebeom.clothinghelper.ui.component.CenterDotProgressIndicator
+import com.leebeebeom.clothinghelper.ui.component.HeightSpacer
+import com.leebeebeom.clothinghelper.ui.component.IconWrapper
+import com.leebeebeom.clothinghelper.ui.component.MaxWidthButton
+import com.leebeebeom.clothinghelper.ui.component.SingleLineText
 import com.leebeebeom.clothinghelper.ui.main.component.ToastWrapper
 import com.leebeebeom.clothinghelper.ui.signin.component.GoogleSignInButton
 import com.leebeebeom.clothinghelper.ui.signin.component.Logo
@@ -34,8 +38,8 @@ const val SignInScreenTag = "sign in screen"
 fun SignInScreen(
     navigateToResetPassword: () -> Unit,
     navigateToSignUp: () -> Unit,
-    viewModel: SignInViewModel = hiltViewModel()
 ) {
+    val viewModel = hiltViewModel<SignInViewModel>()
     val state = rememberSignInScreenState()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

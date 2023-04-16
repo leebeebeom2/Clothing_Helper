@@ -1,13 +1,24 @@
 package com.leebeebeom.clothinghelper.ui.component
 
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.LocalContentColor
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -35,22 +46,22 @@ fun CenterDotProgressIndicator(
             .fillMaxSize()
             // background click block
             .clickable(enabled = false) { }
-            .testTag(CenterDotProgressIndicatorTag)) {
+            .testTag(CenterDotProgressIndicatorTag),
+            contentAlignment = Alignment.Center
+        ) {
             DotProgressIndicator(
-                modifier = Modifier.align(Alignment.Center),
                 size = 8.dp,
                 color = LocalContentColor.current.copy(ContentAlpha.medium)
             )
         }
-        BackHandlerWrapper(enabled = { true }) {}
+        BackHandlerWrapper(enabled = { true }, task = {})
     }
 }
 
 @Composable // skippable
 fun DotProgressIndicator(
-    modifier: Modifier = Modifier,
     size: Dp,
-    color: Color = MaterialTheme.colors.primary.copy(ContentAlpha.disabled),
+    color: Color,
 ) {
     val maxOffset = 4f
     val delayUnit = 300
@@ -58,11 +69,9 @@ fun DotProgressIndicator(
     @Composable
     fun Dot(offset: Float) = Spacer(
         Modifier
-            .size(size)
+            .size(size = size)
             .offset(y = -offset.dp)
-            .background(
-                color = color, shape = CircleShape
-            )
+            .background(color = color, shape = CircleShape)
     )
 
     val infiniteTransition = rememberInfiniteTransition()
@@ -86,12 +95,12 @@ fun DotProgressIndicator(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
-        modifier = modifier.padding(top = maxOffset.dp)
+        modifier = Modifier.padding(top = maxOffset.dp)
     ) {
-        Dot(offset1)
-        Spacer(Modifier.width(4.dp))
-        Dot(offset2)
-        Spacer(Modifier.width(4.dp))
-        Dot(offset3)
+        Dot(offset = offset1)
+        Spacer(modifier = Modifier.width(4.dp))
+        Dot(offset = offset2)
+        Spacer(modifier = Modifier.width(4.dp))
+        Dot(offset = offset3)
     }
 }

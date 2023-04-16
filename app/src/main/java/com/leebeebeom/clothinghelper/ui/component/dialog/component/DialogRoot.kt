@@ -13,10 +13,7 @@ import com.leebeebeom.clothinghelper.ui.component.HeightSpacer
 @Composable // skippable
 fun DialogRoot(onDismiss: () -> Unit, content: @Composable () -> Unit) {
     Dialog(onDismissRequest = onDismiss) {
-        Surface(
-            color = MaterialTheme.colors.surface,
-            shape = MaterialTheme.shapes.medium
-        ) {
+        Surface(shape = MaterialTheme.shapes.medium) {
             Column(
                 modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp)
             ) {

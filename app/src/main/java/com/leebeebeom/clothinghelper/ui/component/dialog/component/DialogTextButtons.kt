@@ -19,7 +19,9 @@ import com.leebeebeom.clothinghelper.ui.component.SingleLineText
 fun DialogTextButtons(
     positiveButtonEnabled: () -> Boolean,
     onPositiveButtonClick: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    positiveButtonColor: Color = Color.Unspecified,
+    cancelButtonColor: Color = MaterialTheme.colors.error,
 ) {
     Row(modifier = Modifier.fillMaxWidth()) {
         val weightModifier = Modifier.weight(1f)
@@ -27,17 +29,18 @@ fun DialogTextButtons(
         DialogTextButton(
             modifier = weightModifier,
             text = R.string.cancel,
-            textColor = MaterialTheme.colors.error,
+            textColor = cancelButtonColor,
             onClick = onDismiss
         )
         DialogTextButton(
             modifier = weightModifier,
             text = R.string.positive,
-            enabled = positiveButtonEnabled
-        ) {
-            onPositiveButtonClick()
-            onDismiss()
-        }
+            textColor = positiveButtonColor,
+            enabled = positiveButtonEnabled,
+            onClick = {
+                onPositiveButtonClick()
+                onDismiss()
+            })
     }
 }
 
@@ -46,7 +49,7 @@ fun DialogTextButtons(
 fun DialogTextButton(
     modifier: Modifier = Modifier,
     @StringRes text: Int,
-    textColor: Color = Color.Unspecified,
+    textColor: Color,
     enabled: () -> Boolean = { true },
     onClick: () -> Unit
 ) {

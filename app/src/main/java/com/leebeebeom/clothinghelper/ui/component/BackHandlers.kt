@@ -6,16 +6,16 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun SelectModeBackHandler(
     isSelectMode: () -> Boolean,
-    selectModeOff: (CoroutineScope) -> Unit
+    selectModeOff: suspend () -> Unit
 ) {
-    val coroutineScope = rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
 
-    BackHandlerWrapper(enabled = isSelectMode, task = { selectModeOff(coroutineScope) })
+    BackHandlerWrapper(enabled = isSelectMode, task = { scope.launch { selectModeOff() } })
 }
 
 @Composable

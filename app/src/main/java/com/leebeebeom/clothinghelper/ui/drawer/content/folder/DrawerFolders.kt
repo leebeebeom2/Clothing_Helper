@@ -28,7 +28,8 @@ fun DrawerFolders( // skippable
     foldersSize: (parentKey: String) -> Int,
     itemsSize: (parentKey: String) -> Int,
     addFolder: AddFolder,
-    editFolder: EditFolder
+    editFolder: EditFolder,
+    deleteFolder: (Folder) -> Unit
 ) {
     val localFolders by remember(folders) { derivedStateOf { folders(parentKey) } }
 
@@ -49,6 +50,7 @@ fun DrawerFolders( // skippable
                     itemsSize = itemsSize,
                     addFolder = addFolder,
                     editFolder = editFolder,
+                    deleteFolder = deleteFolder,
                     state = state
                 )
             }

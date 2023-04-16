@@ -41,7 +41,7 @@ class DrawerFolderDropdownMenuTest {
     private val editTitle = rule.onNodeWithStringRes(edit_folder)
     private val addTitle = rule.onNodeWithStringRes(add_folder)
     private val textField = rule.onNodeWithStringRes(R.string.folder)
-    private val checkButton = rule.onNodeWithStringRes(R.string.check)
+    private val positiveButton = rule.onNodeWithStringRes(R.string.positive)
     private val cancelButton = rule.onNodeWithStringRes(R.string.cancel)
 
     @Before
@@ -58,6 +58,7 @@ class DrawerFolderDropdownMenuTest {
                         childFolderNames = { childFolderNames },
                         addFolder = { _, _, _ -> },
                         editFolder = { _, _ -> },
+                        deleteFolder = {},
                         selectedFolder = { selectedFolder })
                 }
             }
@@ -104,7 +105,7 @@ class DrawerFolderDropdownMenuTest {
 
         dropdownAddFolder.performClick()
         textField.performTextInput("이름")
-        checkButton.performClick()
+        positiveButton.performClick()
 
         assert(state.expanded)
     }

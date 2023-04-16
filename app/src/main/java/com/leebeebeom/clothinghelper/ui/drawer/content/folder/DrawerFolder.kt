@@ -28,7 +28,7 @@ import kotlinx.collections.immutable.ImmutableSet
 const val DrawerFolderTag = "drawer folder"
 
 @Composable
-fun DrawerFolder(
+fun DrawerFolder( // skippable
     parentKey: String,
     folder: Folder,
     basePadding: Dp,

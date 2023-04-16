@@ -36,7 +36,8 @@ fun DrawerMainMenus(
     foldersSize: (parentKey: String) -> Int,
     itemsSize: (parentKey: String) -> Int,
     addFolder: AddFolder,
-    editFolder: EditFolder
+    editFolder: EditFolder,
+    deleteFolder: (Folder) -> Unit
 ) {
     @Composable
     fun Folders(parentKey: String, backgroundColor: Color, basePadding: Dp) {
@@ -50,6 +51,7 @@ fun DrawerMainMenus(
             onFolderClick = onFolderClick,
             addFolder = addFolder,
             editFolder = editFolder,
+            deleteFolder = deleteFolder,
             basePadding = basePadding
         )
     }

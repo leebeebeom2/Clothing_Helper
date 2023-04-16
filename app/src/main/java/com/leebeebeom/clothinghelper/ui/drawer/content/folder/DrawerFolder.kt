@@ -102,6 +102,7 @@ fun DrawerFolder( // skippable
             onFolderClick = onFolderClick,
             addFolder = addFolder,
             editFolder = editFolder,
+            deleteFolder = deleteFolder
         )
     })
 }

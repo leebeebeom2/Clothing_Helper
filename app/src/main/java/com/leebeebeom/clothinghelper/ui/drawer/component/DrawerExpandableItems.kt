@@ -9,7 +9,7 @@ import com.leebeebeom.clothinghelper.ui.util.Anime
 
 @Composable
 fun DrawerItemsWrapperWithExpandAnimation(
-    expand: () -> Boolean, item: @Composable () -> Unit, draw: () -> Boolean = { true }
+    expand: () -> Boolean, draw: () -> Boolean = { true }, item: @Composable () -> Unit
 ) {
     val localDraw by remember(draw) { derivedStateOf(draw) }
     val localExpand by remember(expand) { derivedStateOf(expand) }

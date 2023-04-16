@@ -78,6 +78,7 @@ fun StatefulMaxWidthTextField(
     onInputChange: (String) -> Unit = {},
     trailingIcon: @Composable (() -> Unit)? = null,
     getFocus: Boolean = false,
+    focusRequester: FocusRequester = remember { FocusRequester() },
     state: MaxWidthTextFieldState = rememberMaxWidthTestFieldState()
 ) {
     MaxWidthTextFieldWithError(
@@ -92,7 +93,8 @@ fun StatefulMaxWidthTextField(
         trailingIcon = trailingIcon,
         onInputChange = onInputChange,
         showKeyboard = getFocus,
-        fixedError = false
+        fixedError = false,
+        focusRequester = focusRequester
     )
 }
 
@@ -110,8 +112,8 @@ fun MaxWidthTextFieldWithError(
     onInputChange: (String) -> Unit,
     showKeyboard: Boolean,
     fixedError: Boolean,
+    focusRequester: FocusRequester = remember { FocusRequester() }
 ) {
-    val focusRequester = remember { FocusRequester() }
 
     Column {
         MaxWidthTextField(

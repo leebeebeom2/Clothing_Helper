@@ -1,11 +1,15 @@
 package com.leebeebeom.clothinghelper.ui.drawer.content.mainmenu
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemState
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerExpandIcon
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerItemsWrapperWithExpandAnimation
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerRow
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerText
+
+const val DrawerMainMenuTag = "drawer main menu"
 
 @Composable
 fun DrawerMainMenu(
@@ -14,7 +18,9 @@ fun DrawerMainMenu(
     state: DrawerItemState,
     subMenus: @Composable (MainMenuType) -> Unit,
 ) {
-    DrawerRow(onClick = { onMainMenuClick(mainMenu.type) }) {
+    DrawerRow(
+        modifier = Modifier.testTag(DrawerMainMenuTag),
+        onClick = { onMainMenuClick(mainMenu.type) }) {
         DrawerText(text = mainMenu.name, style = drawerMainMenuTextStyle())
         DrawerExpandIcon(expanded = { state.expanded }, toggleExpand = state::toggleExpand)
     }

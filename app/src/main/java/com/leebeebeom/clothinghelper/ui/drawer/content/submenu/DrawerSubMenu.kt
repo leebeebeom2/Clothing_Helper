@@ -5,6 +5,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -12,6 +13,8 @@ import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerContentWithDoubleCount
 import com.leebeebeom.clothinghelper.ui.util.AddFolder
 import kotlinx.collections.immutable.ImmutableSet
+
+const val DrawerSubMenuTag = "drawer sub menu"
 
 @Composable
 fun DrawerSubMenu(
@@ -27,7 +30,9 @@ fun DrawerSubMenu(
     val startPadding = remember { 8.dp }
 
     DrawerContentWithDoubleCount(
-        modifier = Modifier.padding(start = startPadding),
+        modifier = Modifier
+            .padding(start = startPadding)
+            .testTag(DrawerSubMenuTag),
         state = state,
         key = subMenu.type.name,
         menuType = subMenu.type.toMenuType(),

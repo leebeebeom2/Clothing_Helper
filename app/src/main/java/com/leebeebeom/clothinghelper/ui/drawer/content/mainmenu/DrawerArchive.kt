@@ -1,6 +1,8 @@
 package com.leebeebeom.clothinghelper.ui.drawer.content.mainmenu
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.model.MenuType
 import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemDropdownMenuState
@@ -19,6 +21,7 @@ fun DrawerArchive(
     folders: @Composable () -> Unit,
 ) {
     DrawerContentWithDoubleCount(
+        modifier = Modifier.testTag(DrawerMainMenuTag),
         key = MainMenuType.Archive.name,
         menuType = MenuType.Archive,
         text = R.string.archive_cap,

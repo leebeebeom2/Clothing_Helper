@@ -9,13 +9,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.model.MenuType
 import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemState
-import com.leebeebeom.clothinghelper.ui.drawer.component.*
+import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerDotIcon
+import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerExpandIcon
+import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerItemsWrapperWithExpandAnimation
+import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerRow
+import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerText
+import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.DrawerSubMenuTag
 import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.SubMenu
 import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.SubMenuType
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemDropdownMenuState
@@ -39,7 +45,11 @@ fun DrawerClothesSubMenu(
     state: DrawerItemState,
     folders: @Composable (parentKey: String, basePadding: Dp) -> Unit
 ) {
-    DrawerRow(Modifier.padding(start = 8.dp), onClick = { onClick(subMenu.type) }) {
+    DrawerRow(
+        Modifier
+            .padding(start = 8.dp)
+            .testTag(DrawerSubMenuTag),
+        onClick = { onClick(subMenu.type) }) {
         DrawerDotIcon()
         DrawerText(
             text = subMenu.name, style = MaterialTheme.typography.subtitle1.copy(fontSize = 18.sp)

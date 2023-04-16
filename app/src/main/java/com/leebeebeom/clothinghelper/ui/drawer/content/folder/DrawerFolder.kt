@@ -40,6 +40,7 @@ fun DrawerFolder( // skippable
     itemsSize: (parentKey: String) -> Int,
     addFolder: AddFolder,
     editFolder: EditFolder,
+    deleteFolder: (Folder) -> Unit,
     state: DrawerItemDropdownMenuState
 ) {
     val localFolderNames by remember(folderNames) { derivedStateOf { folderNames(parentKey) } }
@@ -82,6 +83,7 @@ fun DrawerFolder( // skippable
             childFolderNames = { childFolderNames },
             addFolder = addFolder,
             editFolder = editFolder,
+            deleteFolder = deleteFolder,
             expand = state::expand
         )
     }

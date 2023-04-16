@@ -197,7 +197,7 @@ private fun ErrorText(error: () -> Int?, fixedError: Boolean) {
     if (fixedError)
         Box(modifier = Modifier.fillMaxWidth()) {
             SingleLineText(
-                modifier = Modifier.padding(vertical = 8.dp),
+                modifier = Modifier.padding(top = 8.dp),
                 text = "",
                 style = MaterialTheme.typography.caption
             )

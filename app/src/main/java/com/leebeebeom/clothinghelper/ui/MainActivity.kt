@@ -56,10 +56,10 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable // skippable
-fun MainNavHost(
-    viewModel: MainNavViewModel = hiltViewModel(),
-    navController: NavHostController = rememberNavController(),
-) {
+fun MainNavHost() {
+    val viewModel = hiltViewModel<MainNavViewModel>()
+    val navController = rememberNavController()
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val startDestination by remember {
         derivedStateOf { uiState.user?.let { MainNavRoute.MainGraph } ?: MainNavRoute.SignInGraph }
@@ -121,16 +121,19 @@ private fun NavHostController.onSubMenuClick(type: SubMenuType) {
             route = BrandGraphRoute.BrandScreen,
             parentKey = SubMenuType.Brand.name
         )
+
         SubMenuType.Shop -> navigateOnce(
             route = BrandGraphRoute.ShopScreen,
             parentKey = SubMenuType.Shop.name
         )
+
         SubMenuType.Closet -> navigateOnce(route = ClosetGraphRoute.ClosetScreen)
         SubMenuType.Wish -> navigateOnce(route = WishGraphRoute.WishScreen)
         SubMenuType.Ootd -> navigateOnce(
             route = OutfitGraphRoute.OotdScreen,
             parentKey = SubMenuType.Ootd.name
         )
+
         SubMenuType.Reference -> navigateOnce(
             route = OutfitGraphRoute.ReferenceScreen,
             parentKey = SubMenuType.Reference.name
@@ -146,6 +149,7 @@ private fun NavHostController.onClothesCategoryClick(type: ClothesCategoryType) 
                     route = ClosetGraphRoute.ClosetDetailScreen,
                     parentKey = type.name
                 )
+
             is ClothesCategoryType.Wish ->
                 navigateOnce(
                     route = WishGraphRoute.WishDetailScreen,
@@ -162,26 +166,32 @@ private fun NavHostController.onFolderClick(folder: Folder) {
                 route = BrandGraphRoute.BrandScreen,
                 parentKey = folder.key
             )
+
             MenuType.Shop -> navigateOnce(
                 route = BrandGraphRoute.ShopScreen,
                 parentKey = folder.key
             )
+
             MenuType.ClosetDetail -> navigateOnce(
                 route = ClosetGraphRoute.ClosetDetailScreen,
                 parentKey = folder.key
             )
+
             MenuType.WishDetail -> navigateOnce(
                 route = WishGraphRoute.WishDetailScreen,
                 parentKey = folder.key
             )
+
             MenuType.Ootd -> navigateOnce(
                 route = OutfitGraphRoute.OotdScreen,
                 parentKey = folder.key
             )
+
             MenuType.Reference -> navigateOnce(
                 route = OutfitGraphRoute.ReferenceScreen,
                 parentKey = folder.key
             )
+
             MenuType.Archive -> navigateOnce(
                 route = MainGraphRoute.ArchiveScreen,
                 parentKey = folder.key

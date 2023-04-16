@@ -52,19 +52,19 @@ class FolderRepositoryImpl @Inject constructor(
     override val allFoldersMapFlow: SharedFlow<FolderResultMap> =
         allDataFlow.mapLatest { dataResult ->
             dataResult.toFolderResultMap { it.parentKey }
-        }.flowOn(dispatcherDefault).distinctUntilChanged()
+        }.flowOn(context = dispatcherDefault).distinctUntilChanged()
             .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
     override val folderNamesMapFlow = allFoldersMapFlow.mapLatest { allDataMap ->
         allDataMap.data.mapValues { mapElement ->
             mapElement.value.map { element -> element.name }.toImmutableSet()
         }.toImmutableMap()
-    }.flowOn(dispatcherDefault).distinctUntilChanged()
+    }.flowOn(context = dispatcherDefault).distinctUntilChanged()
         .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
     override val foldersSizeMapFlow = allFoldersMapFlow.mapLatest { allDataMap ->
         allDataMap.data.mapValues { mapElement -> mapElement.value.size }.toImmutableMap()
-    }.flowOn(dispatcherDefault).distinctUntilChanged()
+    }.flowOn(context = dispatcherDefault).distinctUntilChanged()
         .shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
     private fun getSortedFolder(
@@ -87,7 +87,7 @@ class FolderRepositoryImpl @Inject constructor(
                 else -> allData
             }
 
-            DataResult.Success(sortedList.toImmutableList())
+            DataResult.Success(data = sortedList.toImmutableList())
         }
     }
 }

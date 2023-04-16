@@ -5,8 +5,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import com.leebeebeom.clothinghelper.ui.component.dialog.component.DialogMaxWidthTextFieldState
 import com.leebeebeom.clothinghelper.ui.component.dialog.component.MutableTextFieldDialogState
 import com.leebeebeom.clothinghelper.ui.component.dialog.component.TextFieldDialog
+import com.leebeebeom.clothinghelper.ui.component.dialog.component.rememberDialogMaxWidthTextFieldState
 import com.leebeebeom.clothinghelper.ui.component.dialog.component.rememberTextFieldDialogState
 import kotlinx.collections.immutable.ImmutableSet
 
@@ -20,7 +22,10 @@ fun EditNameDialog(
     onPositiveButtonClick: (String) -> Unit,
     onDismiss: () -> Unit,
     initialName: () -> String,
-    state: MutableTextFieldDialogState = rememberTextFieldDialogState(initialText = initialName())
+    state: MutableTextFieldDialogState = rememberTextFieldDialogState(initialText = initialName()),
+    dialogMaxWidthTextFieldState: DialogMaxWidthTextFieldState = rememberDialogMaxWidthTextFieldState(
+        initialText = state.initialText
+    )
 ) {
     val localNames by remember(names) { derivedStateOf(names) }
     val error by remember {
@@ -33,12 +38,15 @@ fun EditNameDialog(
         }
     }
 
-    TextFieldDialog(state = state,
+    TextFieldDialog(
+        state = state,
         label = label,
         placeHolder = placeHolder,
         title = title,
         onPositiveButtonClick = { onPositiveButtonClick(state.input.trim()) },
         onDismiss = onDismiss,
         onInputChange = state::onInputChange,
-        error = { error })
+        error = { error },
+        dialogMaxWidthTextFieldState = dialogMaxWidthTextFieldState
+    )
 }

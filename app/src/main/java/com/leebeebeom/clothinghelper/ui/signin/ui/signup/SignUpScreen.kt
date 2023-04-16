@@ -1,9 +1,14 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui.signup
 
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
@@ -11,7 +16,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.component.*
+import com.leebeebeom.clothinghelper.ui.component.CenterDotProgressIndicator
+import com.leebeebeom.clothinghelper.ui.component.HeightSpacer
+import com.leebeebeom.clothinghelper.ui.component.MaxWidthButton
+import com.leebeebeom.clothinghelper.ui.component.StatefulMaxWidthTextFieldWithCancelIcon
+import com.leebeebeom.clothinghelper.ui.component.rememberMaxWidthTestFieldState
 import com.leebeebeom.clothinghelper.ui.main.component.ToastWrapper
 import com.leebeebeom.clothinghelper.ui.signin.component.GoogleSignInButton
 import com.leebeebeom.clothinghelper.ui.signin.component.Logo
@@ -24,7 +33,8 @@ import com.leebeebeom.clothinghelper.ui.signin.state.PasswordState
 const val SignUpScreenTag = "sign up screen"
 
 @Composable // skippable
-fun SignUpScreen(viewModel: SignUpViewModel = hiltViewModel()) {
+fun SignUpScreen() {
+    val viewModel = hiltViewModel<SignUpViewModel>()
     val state = rememberSignUpState()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

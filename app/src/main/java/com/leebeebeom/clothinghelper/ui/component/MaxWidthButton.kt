@@ -8,10 +8,13 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NoLiveLiterals
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -24,9 +27,9 @@ fun MaxWidthButton(
     enabled: () -> Boolean = { true },
     colors: ButtonColors = ButtonDefaults.buttonColors(),
     icon: @Composable (() -> Unit)? = null,
-    focusManager: FocusManager = LocalFocusManager.current,
     onClick: () -> Unit,
 ) {
+    val focusManager = LocalFocusManager.current
     val localEnabled by remember(enabled) { derivedStateOf(enabled) }
 
     Button(

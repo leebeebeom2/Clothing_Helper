@@ -16,7 +16,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-class CustomDialogKtTest {
+class CustomDialogTest {
     @get:Rule
     val rule = createAndroidComposeRule<HiltTestActivity>()
 

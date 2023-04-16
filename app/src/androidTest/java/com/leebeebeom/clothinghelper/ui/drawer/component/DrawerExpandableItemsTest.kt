@@ -47,7 +47,8 @@ class DrawerExpandableItemsTest {
                         foldersSize = { 0 },
                         itemsSize = { 0 },
                         addFolder = { _, _, _ -> },
-                        editFolder = { _, _ -> }
+                        editFolder = { _, _ -> },
+                        deleteFolder = {}
                     )
                 }
             }

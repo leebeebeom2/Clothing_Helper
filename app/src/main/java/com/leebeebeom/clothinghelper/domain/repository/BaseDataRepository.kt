@@ -18,9 +18,9 @@ sealed class DataResult<T>(val data: ImmutableList<T>) {
     class Fail<T>(data: ImmutableList<T>, val exception: Throwable) : DataResult<T>(data)
 }
 
-inline fun DataResult<Folder>.toFolderResultMap(keySelector: (Folder) -> String): FolderResultMap {
+fun DataResult<Folder>.toFolderResultMap(): FolderResultMap {
     val map =
-        data.filter { !it.isDeleted }.groupBy(keySelector)
+        data.filter { !it.isDeleted }.groupBy { it.parentKey }
             .mapValues { mapElement -> mapElement.value.toImmutableList() }
             .toImmutableMap()
 

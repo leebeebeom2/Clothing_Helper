@@ -102,7 +102,8 @@ fun Drawer(
                     foldersSize = uiState::getFoldersSize,
                     itemsSize = { 0 },
                     addFolder = viewModel::addFolder,
-                    editFolder = viewModel::editFolderName
+                    editFolder = viewModel::editFolderName,
+                    deleteFolder = viewModel::deletedFolder
                 )
             }
         }) {

@@ -49,7 +49,7 @@ fun DialogTextButtons(
 fun DialogTextButton(
     modifier: Modifier = Modifier,
     @StringRes text: Int,
-    textColor: Color,
+    textColor: Color = Color.Unspecified,
     enabled: () -> Boolean = { true },
     onClick: () -> Unit
 ) {

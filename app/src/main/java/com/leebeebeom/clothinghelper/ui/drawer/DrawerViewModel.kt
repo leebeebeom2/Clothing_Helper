@@ -7,6 +7,7 @@ import com.leebeebeom.clothinghelper.domain.model.Folder
 import com.leebeebeom.clothinghelper.domain.model.MenuType
 import com.leebeebeom.clothinghelper.domain.model.User
 import com.leebeebeom.clothinghelper.domain.usecase.folder.AddFolderUseCase
+import com.leebeebeom.clothinghelper.domain.usecase.folder.DeleteFolderUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.folder.EditFolderNameUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.folder.GetFolderNamesMapFlowUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.folder.GetFoldersMapFlowUseCase
@@ -37,6 +38,7 @@ class DrawerViewModel @Inject constructor(
     getUserUseCase: GetUserUseCase,
     private val addFoldersUseCase: AddFolderUseCase,
     private val editFolderNameUseCase: EditFolderNameUseCase,
+    private val deleteFolderNameUseCase: DeleteFolderUseCase,
     savedStateHandle: SavedStateHandle
 ) : ToastViewModel(
     savedToastTextsKey = DrawerToastTextsKey,
@@ -83,6 +85,15 @@ class DrawerViewModel @Inject constructor(
                 showToast = { addToastTextAtLast(R.string.error_edit_folder_failed) })
         ) {
             editFolderNameUseCase.editName(oldFolder, name)
+        }
+    }
+
+    fun deletedFolder(folder: Folder) {
+        viewModelScope.launch(
+            toastHandler("DrawerViewModel.deleteFolder",
+                showToast = { addToastTextAtLast(R.string.error_edit_folder_failed) })
+        ) {
+            deleteFolderNameUseCase.delete(folder)
         }
     }
 }

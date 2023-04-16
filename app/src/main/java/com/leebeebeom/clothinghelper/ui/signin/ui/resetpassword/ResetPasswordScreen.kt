@@ -28,9 +28,9 @@ const val ResetPasswordScreenTag = "reset password screen"
 
 @Composable // skippable
 fun ResetPasswordScreen(
-    popBackStack: () -> Unit,
-    viewModel: ResetPasswordViewModel = hiltViewModel()
+    popBackStack: () -> Unit
 ) {
+    val viewModel = hiltViewModel<ResetPasswordViewModel>()
     val state = rememberResetPasswordScreenState()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

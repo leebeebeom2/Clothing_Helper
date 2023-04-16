@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class DeleteFolderUseCase @Inject constructor(private val folderRepository: FolderRepository) {
     suspend fun delete(folder: Folder) {
-        val deletedFolder = folder.copy(isDeleted = true)
+        val deletedFolder = folder.copy(deleted = true)
 
         folderRepository.push(deletedFolder)
     }

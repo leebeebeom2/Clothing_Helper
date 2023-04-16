@@ -6,7 +6,13 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -15,11 +21,15 @@ import com.leebeebeom.clothinghelper.domain.model.User
 import com.leebeebeom.clothinghelper.ui.component.BackHandlerWrapper
 import com.leebeebeom.clothinghelper.ui.component.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerHeader
-import com.leebeebeom.clothinghelper.ui.drawer.content.*
+import com.leebeebeom.clothinghelper.ui.drawer.content.DrawerEssentialMenus
+import com.leebeebeom.clothinghelper.ui.drawer.content.DrawerMenus
+import com.leebeebeom.clothinghelper.ui.drawer.content.EssentialMenu
+import com.leebeebeom.clothinghelper.ui.drawer.content.EssentialMenuType
 import com.leebeebeom.clothinghelper.ui.drawer.content.mainmenu.DrawerMainMenus
 import com.leebeebeom.clothinghelper.ui.drawer.content.mainmenu.MainMenu
 import com.leebeebeom.clothinghelper.ui.drawer.content.mainmenu.MainMenuType
 import com.leebeebeom.clothinghelper.ui.drawer.content.mainmenu.rememberMainMenus
+import com.leebeebeom.clothinghelper.ui.drawer.content.rememberEssentialMenus
 import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.SubMenuType
 import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.clothes.ClothesCategoryType
 import kotlinx.collections.immutable.ImmutableList
@@ -106,7 +116,7 @@ fun Drawer(
 }
 
 @Composable
-fun CloseDrawerWhenUserSignOut(
+fun CloseDrawerWhenUserSignOut( // skippable
     user: () -> User?, closeDrawer: () -> Unit
 ) {
     val localUser by remember(user) { derivedStateOf(user) }

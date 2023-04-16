@@ -5,5 +5,5 @@ import com.leebeebeom.clothinghelper.domain.repository.preference.FolderPreferen
 import javax.inject.Inject
 
 class ChangeFolderOrderUseCase @Inject constructor(private val folderPreferenceRepository: FolderPreferenceRepository) {
-    suspend fun changeOrder(order: Order) = folderPreferenceRepository.changeOrder(order)
+    suspend fun changeOrder(order: Order) = folderPreferenceRepository.changeOrder(order = order)
 }

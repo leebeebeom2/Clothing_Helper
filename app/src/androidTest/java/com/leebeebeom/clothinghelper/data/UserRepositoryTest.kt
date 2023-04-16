@@ -1,5 +1,6 @@
 package com.leebeebeom.clothinghelper.data
 
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.ktx.auth
@@ -8,6 +9,7 @@ import com.leebeebeom.clothinghelper.data.repository.UserRepositoryImpl
 import com.leebeebeom.clothinghelper.domain.model.User
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import com.leebeebeom.clothinghelper.isConnectedNetwork
+import com.leebeebeom.clothinghelper.ui.HiltTestActivity
 import com.leebeebeom.clothinghelper.ui.util.FirebaseAuthErrorCode.ERROR_EMAIL_ALREADY_IN_USE
 import com.leebeebeom.clothinghelper.ui.util.FirebaseAuthErrorCode.ERROR_INVALID_EMAIL
 import com.leebeebeom.clothinghelper.ui.util.FirebaseAuthErrorCode.ERROR_USER_NOT_FOUND
@@ -20,7 +22,9 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.test.*
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+
 
 const val SignInEmail = "1@a.com"
 const val SignUpEmail = "2@a.com"
@@ -33,7 +37,11 @@ const val SendPasswordEmail = "boole92@naver.com"
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class UserRepositoryTest {
+    @get:Rule
+    val rule = createAndroidComposeRule<HiltTestActivity>()
+
     private val dispatcher = StandardTestDispatcher()
+    private val scope = TestScope(dispatcher)
     private lateinit var userRepository: UserRepository
     private lateinit var userFlow: SharedFlow<User?>
 
@@ -63,7 +71,7 @@ class UserRepositoryTest {
         }
 
         userRepository = UserRepositoryImpl(
-            appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
+            appScope = scope,
             dispatcherIO = dispatcher
         )
         userFlow = userRepository.userFlow
@@ -76,7 +84,7 @@ class UserRepositoryTest {
 
     @Test
     fun signInTest() = runTest(dispatcher) {
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { userFlow.collect() }
+        backgroundLaunch { userFlow.collect() }
 
         failRunCatching(errorCode = ERROR_INVALID_EMAIL) { // invalidEmail
             userRepository.signIn(email = InvalidEmail, password = SignInPassword)
@@ -91,6 +99,8 @@ class UserRepositoryTest {
         successRunCatching {
             userRepository.signIn(email = SignInEmail, password = SignInPassword)
         }
+
+        waitTime()
         val signedUser = userFlow.first()
         assert(signedUser != null)
         assert(signedUser?.email == SignInEmail)
@@ -98,7 +108,7 @@ class UserRepositoryTest {
 
     @Test
     fun signUpTest() = runTest(dispatcher) {
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { userFlow.collect() }
+        backgroundLaunch { userFlow.collect() }
 
         failRunCatching(errorCode = ERROR_INVALID_EMAIL) { // invalidEmail
             userRepository.signUp(
@@ -117,6 +127,8 @@ class UserRepositoryTest {
                 email = SignUpEmail, password = SignInPassword, name = SignUpName
             )
         }
+
+        waitTime()
         val signedUser = userFlow.first()
         assert(signedUser?.email == SignUpEmail)
         assert(signedUser?.name == SignUpName)
@@ -126,7 +138,7 @@ class UserRepositoryTest {
 
     @Test
     fun resetPasswordTest() = runTest(dispatcher) {
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { userFlow.collect() }
+        backgroundLaunch { userFlow.collect() }
 
         failRunCatching(errorCode = ERROR_INVALID_EMAIL) { // invalidEmail
             userRepository.sendResetPasswordEmail(email = InvalidEmail)
@@ -164,6 +176,7 @@ class UserRepositoryTest {
 @OptIn(ExperimentalCoroutinesApi::class)
 class RunWithSignInStartTest {
     private val dispatcher = StandardTestDispatcher()
+    private val scope = TestScope(dispatcher)
     private lateinit var userRepository: UserRepository
     private lateinit var userFlow: SharedFlow<User?>
 
@@ -174,7 +187,7 @@ class RunWithSignInStartTest {
         }
 
         userRepository = UserRepositoryImpl(
-            appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
+            appScope = scope,
             dispatcherIO = dispatcher
         )
         userFlow = userRepository.userFlow
@@ -187,8 +200,9 @@ class RunWithSignInStartTest {
 
     @Test
     fun runWithSignIn() = runTest(dispatcher) {
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { userFlow.collect() }
+        backgroundLaunch { userFlow.collect() }
 
+        waitTime()
         assert(userFlow.first()?.email == SignInEmail)
     }
 }
@@ -196,6 +210,8 @@ class RunWithSignInStartTest {
 @OptIn(ExperimentalCoroutinesApi::class)
 class RunWithSignOutStart {
     private val dispatcher = StandardTestDispatcher()
+    private val scope = TestScope(dispatcher)
+
     private lateinit var userRepository: UserRepository
     private lateinit var userFlow: SharedFlow<User?>
 
@@ -206,7 +222,7 @@ class RunWithSignOutStart {
             delay(1000)
         }
         userRepository = UserRepositoryImpl(
-            appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
+            appScope = scope,
             dispatcherIO = dispatcher
         )
         userFlow = userRepository.userFlow
@@ -219,8 +235,9 @@ class RunWithSignOutStart {
 
     @Test
     fun runWithSignOut() = runTest(dispatcher) {
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { userFlow.collect() }
+        backgroundLaunch { userFlow.collect() }
 
+        waitTime()
         assert(userFlow.first() == null)
     }
 }

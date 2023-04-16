@@ -43,11 +43,11 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
                     override fun onDataChange(snapshot: DataSnapshot) {
                         lastCachedData =
                             snapshot.children.map { it.getValue(type)!! }.toImmutableList()
-                        trySend(element = DataResult.Success(lastCachedData))
+                        trySend(DataResult.Success(lastCachedData))
                     }
 
                     override fun onCancelled(error: DatabaseError) {
-                        trySend(element = DataResult.Fail(lastCachedData, error.toException()))
+                        trySend(DataResult.Fail(lastCachedData, error.toException()))
                     }
                 }
 
@@ -64,7 +64,7 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
                     ref = null
                 }
             }
-        } ?: flow { emit(DataResult.Success(data = persistentListOf<T>())) }
+        } ?: flow { emit(DataResult.Success(persistentListOf<T>())) }
     }.distinctUntilChanged().shareIn(
         scope = appScope,
         started = SharingStarted.WhileSubscribed(5000),
@@ -73,9 +73,9 @@ abstract class BaseDataRepositoryImpl<T : BaseModel>(
 
     @Suppress("UNCHECKED_CAST")
     override suspend fun add(data: T) {
-        val dataWithKey = data.addKey(key = getKey()) as T
+        val dataWithKey = data.addKey(getKey()) as T
 
-        push(data = dataWithKey)
+        push(dataWithKey)
     }
 
     override suspend fun push(data: T) {

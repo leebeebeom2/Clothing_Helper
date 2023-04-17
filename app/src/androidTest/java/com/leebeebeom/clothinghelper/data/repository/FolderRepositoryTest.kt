@@ -104,10 +104,31 @@ class FolderRepositoryTest {
             .child(DataBasePath.Folder.path)
             .child(addedFolder.key).removeValue().await()
 
-        foldersMap.data.forEach { (key, value) -> assert(value.size == key.toInt() + 1) }
+        val foldersMap2 = folderRepository.allFoldersMapFlow.first()
+        val folderNamesMap2 = folderRepository.folderNamesMapFlow.first()
+        val foldersSizeMap2 = folderRepository.foldersSizeMapFlow.first()
 
-        folderNamesMap.forEach { (key, value) -> assert(List(key.toInt() + 1) { "parent $key folder $it" }.toImmutableSet() == value) }
+        foldersMap2.data.forEach { (key, value) -> assert(value.size == key.toInt() + 1) }
 
-        foldersSizeMap.forEach { (key, value) -> assert((key.toInt() + 1) == value) }
+        folderNamesMap2.forEach { (key, value) -> assert(List(key.toInt() + 1) { "parent $key folder $it" }.toImmutableSet() == value) }
+
+        foldersSizeMap2.forEach { (key, value) -> assert((key.toInt() + 1) == value) }
+
+        foldersMap2.data.forEach { (_, value) ->
+            val deleteFolder = value.last().copy(deleted = true)
+            folderRepository.push(deleteFolder)
+        }
+
+        waitTime()
+
+        val foldersMap3 = folderRepository.allFoldersMapFlow.first()
+        val folderNamesMap3 = folderRepository.folderNamesMapFlow.first()
+        val foldersSizeMap3 = folderRepository.foldersSizeMapFlow.first()
+
+        foldersMap3.data.forEach { (key, value) -> assert(value.size == key.toInt()) }
+
+        folderNamesMap3.forEach { (key, value) -> assert(List(key.toInt()) { "parent $key folder $it" }.toImmutableSet() == value) }
+
+        foldersSizeMap3.forEach { (key, value) -> assert((key.toInt()) == value) }
     }
 }

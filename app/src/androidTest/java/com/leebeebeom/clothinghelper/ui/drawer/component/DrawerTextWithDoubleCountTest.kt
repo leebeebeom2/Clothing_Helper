@@ -1,4 +1,4 @@
-package com.leebeebeom.clothinghelper.ui.drawer.componenet
+package com.leebeebeom.clothinghelper.ui.drawer.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -15,7 +15,6 @@ import androidx.compose.ui.test.onNodeWithText
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.HiltTestActivity
 import com.leebeebeom.clothinghelper.ui.component.textfield.TestText
-import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerTextWithDoubleCount
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

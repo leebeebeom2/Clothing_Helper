@@ -10,11 +10,10 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MaxWidthCard( // skippable
-    modifier: Modifier = Modifier,
     onClick: () -> Unit,
     content: @Composable () -> Unit
 ) {
-    Card(modifier = modifier.fillMaxWidth(), elevation = 2.dp, onClick = onClick) {
+    Card(modifier = Modifier.fillMaxWidth(), elevation = 2.dp, onClick = onClick) {
         content()
     }
 }

@@ -81,7 +81,10 @@ fun MainNavHost() {
             ) {
                 signInGraph(navController = navController)
                 settingGraph(navController = navController)
-                mainGraph(navController = navController)
+                mainGraph(
+                    navController = navController,
+                    onMainMenuClick = navController::onMainMenuClick
+                )
             }
         }
         CenterDotProgressIndicator(

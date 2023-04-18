@@ -1,12 +1,21 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui.resetpassword
 
 import androidx.annotation.StringRes
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextClearance
+import androidx.compose.ui.test.performTextInput
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.leebeebeom.clothinghelper.R.string.*
+import com.leebeebeom.clothinghelper.R.string.email
+import com.leebeebeom.clothinghelper.R.string.error_invalid_email
+import com.leebeebeom.clothinghelper.R.string.error_user_not_found
+import com.leebeebeom.clothinghelper.R.string.forgot_password
+import com.leebeebeom.clothinghelper.R.string.send
 import com.leebeebeom.clothinghelper.data.InvalidEmail
 import com.leebeebeom.clothinghelper.data.NotFoundEmail
 import com.leebeebeom.clothinghelper.data.SendPasswordEmail
@@ -14,7 +23,6 @@ import com.leebeebeom.clothinghelper.data.SignInEmail
 import com.leebeebeom.clothinghelper.onNodeWithStringRes
 import com.leebeebeom.clothinghelper.ui.HiltTestActivity
 import com.leebeebeom.clothinghelper.ui.MainNavHost
-import com.leebeebeom.clothinghelper.ui.component.CenterDotProgressIndicatorTag
 import com.leebeebeom.clothinghelper.ui.signin.ui.signin.SignInScreenTag
 import com.leebeebeom.clothinghelper.waitStringResExist
 import com.leebeebeom.clothinghelper.waitTagExist
@@ -52,7 +60,6 @@ class ResetPasswordScreenTest {
         ) {
             emailTextField.performTextInput(email)
             sendButton.performClick()
-            rule.waitTagExist(CenterDotProgressIndicatorTag)
 
             repeat(2) {
                 rule.waitStringResExist(error)

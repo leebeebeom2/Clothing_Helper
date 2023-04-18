@@ -115,9 +115,10 @@ class DrawerTest {
     private val brandMain =
         rule.onAllNodesWithTag(DrawerMainMenuTag).filterToOne(hasAnyChild(hasStringRes(brand_cap)))
     private val clothes =
-        rule.onAllNodesWithTag(DrawerMainMenuTag).filterToOne(hasAnyChild(hasStringRes(closet_cap)))
+        rule.onAllNodesWithTag(DrawerMainMenuTag)
+            .filterToOne(hasAnyChild(hasStringRes(clothes_cap)))
     private val outfit =
-        rule.onAllNodesWithTag(DrawerMainMenuTag).filterToOne(hasAnyChild(hasStringRes(outers_cap)))
+        rule.onAllNodesWithTag(DrawerMainMenuTag).filterToOne(hasAnyChild(hasStringRes(outfit_cap)))
     private val archive =
         rule.onAllNodesWithTag(DrawerMainMenuTag)
             .filterToOne(hasAnyChild(hasStringRes(archive_cap)))

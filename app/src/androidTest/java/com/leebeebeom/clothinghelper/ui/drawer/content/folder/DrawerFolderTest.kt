@@ -216,7 +216,7 @@ class DrawerFolderTest {
 
                 2 -> {
                     repeat(2) {
-                        folderSizeCheck(6, 7, 0)
+                        folderSizeCheck(5, 7, 0)
 
                         repeat(2) {
                             rule.onAllNodesWithTag(DrawerExpandIconTag)[0].performClick()

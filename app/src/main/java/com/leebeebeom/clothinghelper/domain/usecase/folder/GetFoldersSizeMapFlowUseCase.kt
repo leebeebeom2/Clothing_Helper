@@ -6,5 +6,5 @@ import javax.inject.Inject
 class GetFoldersSizeMapFlowUseCase @Inject constructor(
     private val folderRepository: FolderRepository
 ) {
-    val foldersSizeMapFolder get() = folderRepository.foldersSizeMapFlow
+    val foldersSizeMap get() = folderRepository.foldersSizeMapFlow
 }

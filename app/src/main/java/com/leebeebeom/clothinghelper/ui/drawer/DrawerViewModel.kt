@@ -50,7 +50,7 @@ class DrawerViewModel @Inject constructor(
     val uiState = combine(
         flow = getFoldersMapFlowUseCase.foldersMapFlow,
         flow2 = getFolderNamesMapFlowUseCase.folderNamesMapFlow,
-        flow3 = getFoldersSizeMapFlowUseCase.foldersSizeMapFolder,
+        flow3 = getFoldersSizeMapFlowUseCase.foldersSizeMapFlow,
         flow4 = toastTextsFlow,
         flow5 = getUserUseCase.userFlow,
     ) { foldersMap, folderNames, foldersSize, toastTexts, user ->

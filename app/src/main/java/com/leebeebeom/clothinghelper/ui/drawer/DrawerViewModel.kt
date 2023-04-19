@@ -13,6 +13,7 @@ import com.leebeebeom.clothinghelper.domain.usecase.folder.GetFolderNamesMapFlow
 import com.leebeebeom.clothinghelper.domain.usecase.folder.GetFoldersMapFlowUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.folder.GetFoldersSizeMapFlowUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.GetUserUseCase
+import com.leebeebeom.clothinghelper.ui.state.FolderState
 import com.leebeebeom.clothinghelper.ui.util.toastHandler
 import com.leebeebeom.clothinghelper.ui.viewmodel.ToastViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +22,6 @@ import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
-import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -100,17 +100,9 @@ class DrawerViewModel @Inject constructor(
 
 data class DrawerUiState(
     val isLoading: Boolean = true,
-    val foldersMap: ImmutableMap<String, ImmutableList<Folder>> = persistentMapOf(),
-    val folderNamesMap: ImmutableMap<String, ImmutableSet<String>> = persistentMapOf(),
-    val foldersSizeMap: ImmutableMap<String, Int> = persistentMapOf(),
     val toastTexts: ImmutableList<Int> = persistentListOf(),
-    val user: User? = null
-) {
-    fun getFolders(key: String) =
-        foldersMap.getOrDefault(key = key, defaultValue = persistentListOf())
-
-    fun getFolderNames(key: String) =
-        folderNamesMap.getOrDefault(key = key, defaultValue = persistentSetOf())
-
-    fun getFoldersSize(key: String) = foldersSizeMap.getOrDefault(key = key, defaultValue = 0)
-}
+    val user: User? = null,
+    override val foldersMap: ImmutableMap<String, ImmutableList<Folder>> = persistentMapOf(),
+    override val folderNamesMap: ImmutableMap<String, ImmutableSet<String>> = persistentMapOf(),
+    override val foldersSizeMap: ImmutableMap<String, Int> = persistentMapOf(),
+) : FolderState

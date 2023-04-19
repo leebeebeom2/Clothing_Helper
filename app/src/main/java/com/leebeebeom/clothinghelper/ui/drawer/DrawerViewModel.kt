@@ -13,7 +13,7 @@ import com.leebeebeom.clothinghelper.domain.usecase.folder.GetFolderNamesMapFlow
 import com.leebeebeom.clothinghelper.domain.usecase.folder.GetFoldersMapFlowUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.folder.GetFoldersSizeMapFlowUseCase
 import com.leebeebeom.clothinghelper.domain.usecase.user.GetUserUseCase
-import com.leebeebeom.clothinghelper.ui.state.FolderState
+import com.leebeebeom.clothinghelper.ui.state.FolderDerivedState
 import com.leebeebeom.clothinghelper.ui.util.toastHandler
 import com.leebeebeom.clothinghelper.ui.viewmodel.ToastViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -105,4 +105,4 @@ data class DrawerUiState(
     override val foldersMap: ImmutableMap<String, ImmutableList<Folder>> = persistentMapOf(),
     override val folderNamesMap: ImmutableMap<String, ImmutableSet<String>> = persistentMapOf(),
     override val foldersSizeMap: ImmutableMap<String, Int> = persistentMapOf(),
-) : FolderState
+) : FolderDerivedState

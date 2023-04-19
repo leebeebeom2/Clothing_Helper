@@ -83,7 +83,8 @@ fun MainNavHost() {
                 settingGraph(navController = navController)
                 mainGraph(
                     navController = navController,
-                    onMainMenuClick = navController::onMainMenuClick
+                    onMainMenuClick = navController::onMainMenuClick,
+                    onSubMenuClick = navController::onSubMenuClick
                 )
             }
         }

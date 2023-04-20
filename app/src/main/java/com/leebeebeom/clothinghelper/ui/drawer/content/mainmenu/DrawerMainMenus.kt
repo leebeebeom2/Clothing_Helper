@@ -121,8 +121,8 @@ enum class MainMenuType {
 fun rememberMainMenus() = remember {
     persistentListOf(
         MainMenu(R.string.brand_cap, MainMenuType.Brand),
-        MainMenu(R.string.clothes_cap, MainMenuType.Clothes),
         MainMenu(R.string.outfit_cap, MainMenuType.Outfit),
+        MainMenu(R.string.clothes_cap, MainMenuType.Clothes),
         MainMenu(R.string.archive_cap, MainMenuType.Archive)
     )
 }

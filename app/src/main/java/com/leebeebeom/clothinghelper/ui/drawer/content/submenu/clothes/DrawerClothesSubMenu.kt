@@ -40,8 +40,7 @@ fun DrawerClothesSubMenu(
     foldersSize: (parentKey: String) -> Int,
     itemsSize: (parentKey: String) -> Int,
     addFolder: AddFolder,
-    clothesCategories: ImmutableList<ClothesCategory> = if (subMenu.type == SubMenuType.Closet) rememberClosetClothesCategory()
-    else rememberWishClothesCategory(),
+    clothesCategories: ImmutableList<ClothesCategory> = rememberClosetCategories(subMenuType = subMenu.type),
     state: DrawerItemState,
     folders: @Composable (parentKey: String, basePadding: Dp) -> Unit
 ) {
@@ -105,22 +104,22 @@ data class ClothesCategory(
 )
 
 @Composable
-fun rememberClosetClothesCategory() = remember {
-    persistentListOf(
-        ClothesCategory(R.string.tops_cap, ClothesCategoryType.Closet.Top),
-        ClothesCategory(R.string.bottoms_cap, ClothesCategoryType.Closet.Bottom),
-        ClothesCategory(R.string.outers_cap, ClothesCategoryType.Closet.Outer),
-        ClothesCategory(R.string.etc_cap, ClothesCategoryType.Closet.Etc),
-    )
-}
+fun rememberClosetCategories(subMenuType: SubMenuType) = remember {
+    when (subMenuType) {
+        SubMenuType.Closet -> persistentListOf(
+            ClothesCategory(R.string.tops_cap, ClothesCategoryType.Closet.Top),
+            ClothesCategory(R.string.bottoms_cap, ClothesCategoryType.Closet.Bottom),
+            ClothesCategory(R.string.outers_cap, ClothesCategoryType.Closet.Outer),
+            ClothesCategory(R.string.etc_cap, ClothesCategoryType.Closet.Etc),
+        )
 
-@Composable
-fun rememberWishClothesCategory() = remember {
-    persistentListOf(
-        ClothesCategory(R.string.tops_cap, ClothesCategoryType.Wish.Top),
-        ClothesCategory(R.string.bottoms_cap, ClothesCategoryType.Wish.Bottom),
-        ClothesCategory(R.string.outers_cap, ClothesCategoryType.Wish.Outer),
-        ClothesCategory(R.string.etc_cap, ClothesCategoryType.Wish.Etc),
-    )
-}
+        SubMenuType.Wish -> persistentListOf(
+            ClothesCategory(R.string.tops_cap, ClothesCategoryType.Wish.Top),
+            ClothesCategory(R.string.bottoms_cap, ClothesCategoryType.Wish.Bottom),
+            ClothesCategory(R.string.outers_cap, ClothesCategoryType.Wish.Outer),
+            ClothesCategory(R.string.etc_cap, ClothesCategoryType.Wish.Etc),
+        )
 
+        else -> throw IllegalStateException()
+    }
+}

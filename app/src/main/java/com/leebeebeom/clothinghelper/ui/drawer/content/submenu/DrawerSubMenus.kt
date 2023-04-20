@@ -34,14 +34,7 @@ fun SubMenus(
     addFolder: AddFolder,
     folders: @Composable (parentKey: String, backgroundColor: Color, basePadding: Dp) -> Unit
 ) {
-    val subMenus = remember {
-        when (mainMenuType) {
-            MainMenuType.Brand -> getBrandSubMenus()
-            MainMenuType.Clothes -> getClotheSubMenus()
-            MainMenuType.Outfit -> getOutfitSubMenus()
-            MainMenuType.Archive -> persistentListOf()
-        }
-    }
+    val subMenus = rememberSubMenus(mainMenuType = mainMenuType)
 
     Column(modifier = Modifier.background(Black11)) {
         subMenus.forEach { subMenu ->
@@ -99,6 +92,16 @@ fun SubMenuType.toMenuType() = when (this) {
     SubMenuType.Ootd -> MenuType.Ootd
     SubMenuType.Reference -> MenuType.Reference
     else -> throw IllegalStateException()
+}
+
+@Composable
+fun rememberSubMenus(mainMenuType: MainMenuType) = remember(mainMenuType) {
+    when (mainMenuType) {
+        MainMenuType.Brand -> getBrandSubMenus()
+        MainMenuType.Clothes -> getClotheSubMenus()
+        MainMenuType.Outfit -> getOutfitSubMenus()
+        MainMenuType.Archive -> persistentListOf()
+    }
 }
 
 fun getBrandSubMenus() = persistentListOf(

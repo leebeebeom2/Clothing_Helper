@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
@@ -33,11 +34,13 @@ fun SubMenus(
     addFolder: AddFolder,
     folders: @Composable (parentKey: String, backgroundColor: Color, basePadding: Dp) -> Unit
 ) {
-    val subMenus = when (mainMenuType) {
-        MainMenuType.Brand -> getBrandSubMenus()
-        MainMenuType.Clothes -> getClotheSubMenus()
-        MainMenuType.Outfit -> getOutfitSubMenus()
-        MainMenuType.Archive -> persistentListOf()
+    val subMenus = remember {
+        when (mainMenuType) {
+            MainMenuType.Brand -> getBrandSubMenus()
+            MainMenuType.Clothes -> getClotheSubMenus()
+            MainMenuType.Outfit -> getOutfitSubMenus()
+            MainMenuType.Archive -> persistentListOf()
+        }
     }
 
     Column(modifier = Modifier.background(Black11)) {

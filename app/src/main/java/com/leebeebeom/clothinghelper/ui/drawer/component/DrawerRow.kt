@@ -32,10 +32,10 @@ import androidx.compose.ui.unit.dp
 @Composable // skippable
 fun DrawerRow(
     modifier: Modifier = Modifier,
-    height: Dp = 48.dp,
     onClick: () -> Unit,
     onLongClick: ((Offset) -> Unit)? = null,
     onSizeChange: (IntSize) -> Unit = {},
+    height: () -> Dp = { 0.dp },
     content: @Composable RowScope.() -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -59,7 +59,7 @@ fun DrawerRow(
     }
 
     Row(modifier = modifier
-        .heightIn(height)
+        .heightIn(height())
         .onSizeChanged(onSizeChange)
         .fillMaxWidth()
         .padding(horizontal = 8.dp)

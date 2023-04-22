@@ -4,9 +4,15 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
@@ -39,6 +45,10 @@ fun DrawerMainMenus(
     editFolder: EditFolder,
     deleteFolder: (Folder) -> Unit
 ) {
+    var height by rememberSaveable { mutableStateOf(0) }
+    val density = LocalDensity.current
+    val heightDp by remember { derivedStateOf { with(density) { height.toDp() } } }
+
     @Composable
     fun Folders(parentKey: String, backgroundColor: Color, basePadding: Dp) {
         DrawerFolders(
@@ -52,7 +62,8 @@ fun DrawerMainMenus(
             addFolder = addFolder,
             editFolder = editFolder,
             deleteFolder = deleteFolder,
-            basePadding = basePadding
+            basePadding = basePadding,
+            height = { heightDp }
         )
     }
 
@@ -77,9 +88,11 @@ fun DrawerMainMenus(
                                 addFolder = addFolder,
                                 folders = { parentKey, backgroundColor, basePadding ->
                                     Folders(parentKey, backgroundColor, basePadding)
-                                }
+                                },
+                                height = { heightDp }
                             )
-                        }
+                        },
+                        height = { heightDp }
                     )
                 } else {
                     val state = rememberDrawerItemDropdownMenuState()
@@ -98,6 +111,7 @@ fun DrawerMainMenus(
                                 basePadding = 0.dp
                             )
                         },
+                        onSizeChange = { height = it }
                     )
                 }
             }

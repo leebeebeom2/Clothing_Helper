@@ -44,12 +44,13 @@ fun DrawerEssentialMenus(
 private fun EssentialMenu(
     essentialMenu: EssentialMenu, onClick: (EssentialMenuType) -> Unit
 ) {
-    DrawerRow(height = 44.dp, onClick = { onClick(essentialMenu.type) }) {
+    DrawerRow(onClick = { onClick(essentialMenu.type) }) {
         IconWrapper(
             modifier = Modifier.size(22.dp), drawable = essentialMenu.drawable
         )
         WidthSpacer(dp = 8)
         SingleLineText(
+            modifier = Modifier.padding(vertical = 4.dp),
             text = stringResource(id = essentialMenu.name),
             style = MaterialTheme.typography.subtitle1.copy(
                 fontSize = 18.sp, letterSpacing = 0.75.sp

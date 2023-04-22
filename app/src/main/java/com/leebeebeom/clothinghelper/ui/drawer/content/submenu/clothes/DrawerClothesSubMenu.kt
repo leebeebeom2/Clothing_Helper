@@ -42,13 +42,15 @@ fun DrawerClothesSubMenu(
     addFolder: AddFolder,
     clothesCategories: ImmutableList<ClothesCategory> = rememberClosetCategories(subMenuType = subMenu.type),
     state: DrawerItemState,
+    height: () -> Dp,
     folders: @Composable (parentKey: String, basePadding: Dp) -> Unit
 ) {
     DrawerRow(
         Modifier
             .padding(start = 8.dp)
             .testTag(DrawerSubMenuTag),
-        onClick = { onClick(subMenu.type) }) {
+        onClick = { onClick(subMenu.type) }, height = height
+    ) {
         DrawerDotIcon()
         DrawerText(
             text = subMenu.name, style = MaterialTheme.typography.subtitle1.copy(fontSize = 18.sp)
@@ -70,7 +72,8 @@ fun DrawerClothesSubMenu(
                         folderNames = folderNames,
                         itemsSize = itemsSize,
                         addFolder = addFolder,
-                        folders = folders
+                        folders = folders,
+                        height = height
                     )
                 }
             }

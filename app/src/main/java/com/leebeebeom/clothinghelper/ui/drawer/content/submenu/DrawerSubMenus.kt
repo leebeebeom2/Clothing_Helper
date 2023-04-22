@@ -32,6 +32,7 @@ fun SubMenus(
     foldersSize: (parentKey: String) -> Int,
     itemsSize: (parentKey: String) -> Int,
     addFolder: AddFolder,
+    height: () -> Dp,
     folders: @Composable (parentKey: String, backgroundColor: Color, basePadding: Dp) -> Unit
 ) {
     val subMenus = rememberSubMenus(mainMenuType = mainMenuType)
@@ -54,7 +55,8 @@ fun SubMenus(
                         addFolder = addFolder,
                         folders = { parentKey, basePadding ->
                             folders(parentKey, Black18, basePadding)
-                        }
+                        },
+                        height = height
                     )
                 } else if (subMenu.type == SubMenuType.Closet || subMenu.type == SubMenuType.Wish) {
                     val state = rememberDrawerItemState()
@@ -70,7 +72,8 @@ fun SubMenus(
                         addFolder = addFolder,
                         folders = { parentKey, basePadding ->
                             folders(parentKey, getSubBackgroundColor(Black18), basePadding)
-                        }
+                        },
+                        height = height
                     )
                 }
             }

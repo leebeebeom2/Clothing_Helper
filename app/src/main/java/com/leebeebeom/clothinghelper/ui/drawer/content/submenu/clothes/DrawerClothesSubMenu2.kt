@@ -24,7 +24,8 @@ fun DrawerClothesSubMenu2(
     folderNames: (parentKey: String) -> ImmutableSet<String>,
     itemsSize: (parentKey: String) -> Int,
     addFolder: AddFolder,
-    folders: @Composable (parentKey: String, basePadding: Dp) -> Unit
+    folders: @Composable (parentKey: String, basePadding: Dp) -> Unit,
+    height: () -> Dp
 ) {
     val startPadding = remember { 16.dp }
     DrawerContentWithDoubleCount(
@@ -42,6 +43,7 @@ fun DrawerClothesSubMenu2(
         itemsSize = itemsSize,
         addFolder = addFolder,
         addDotIcon = true,
-        folders = { folders(clothesCategory.type.name, startPadding) }
+        folders = { folders(clothesCategory.type.name, startPadding) },
+        height = height
     )
 }

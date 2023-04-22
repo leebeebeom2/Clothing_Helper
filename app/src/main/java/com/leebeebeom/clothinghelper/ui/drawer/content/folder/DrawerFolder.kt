@@ -41,6 +41,7 @@ fun DrawerFolder( // skippable
     addFolder: AddFolder,
     editFolder: EditFolder,
     deleteFolder: (Folder) -> Unit,
+    height: () -> Dp,
     state: DrawerItemDropdownMenuState
 ) {
     val localFolderNames by remember(folderNames) { derivedStateOf { folderNames(parentKey) } }
@@ -57,6 +58,7 @@ fun DrawerFolder( // skippable
         onClick = { onFolderClick(folder) },
         onLongClick = state::onLongClick,
         onSizeChange = state::onSizeChanged,
+        height = height
     ) {
         IconWrapper(
             drawable = R.drawable.ic_folder,
@@ -102,7 +104,8 @@ fun DrawerFolder( // skippable
             onFolderClick = onFolderClick,
             addFolder = addFolder,
             editFolder = editFolder,
-            deleteFolder = deleteFolder
+            deleteFolder = deleteFolder,
+            height = height
         )
     })
 }

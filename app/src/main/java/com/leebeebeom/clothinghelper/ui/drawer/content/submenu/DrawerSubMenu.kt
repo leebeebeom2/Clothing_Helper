@@ -25,6 +25,7 @@ fun DrawerSubMenu(
     foldersSize: (parentKey: String) -> Int,
     itemsSize: (parentKey: String) -> Int,
     addFolder: AddFolder,
+    height: () -> Dp,
     folders: @Composable (parentKey: String, basePadding: Dp) -> Unit
 ) {
     val startPadding = remember { 8.dp }
@@ -44,6 +45,7 @@ fun DrawerSubMenu(
         itemsSize = itemsSize,
         addFolder = addFolder,
         folders = { folders(subMenu.type.name, startPadding) },
-        addDotIcon = true
+        addDotIcon = true,
+        height = height
     )
 }

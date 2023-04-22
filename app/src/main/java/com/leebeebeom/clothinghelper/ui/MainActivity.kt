@@ -25,11 +25,11 @@ import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.SubMenuType
 import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.clothes.ClothesCategoryType
 import com.leebeebeom.clothinghelper.ui.main.MainGraphRoute
 import com.leebeebeom.clothinghelper.ui.main.mainGraph
-import com.leebeebeom.clothinghelper.ui.main.menu.brand.BrandGraphRoute
-import com.leebeebeom.clothinghelper.ui.main.menu.clothes.ClothesGraphRoute
-import com.leebeebeom.clothinghelper.ui.main.menu.clothes.closet.ClosetGraphRoute
-import com.leebeebeom.clothinghelper.ui.main.menu.clothes.wish.WishGraphRoute
-import com.leebeebeom.clothinghelper.ui.main.menu.outfit.OutfitGraphRoute
+import com.leebeebeom.clothinghelper.ui.main.mainmenu.brand.BrandGraphRoute
+import com.leebeebeom.clothinghelper.ui.main.mainmenu.clothes.ClothesGraphRoute
+import com.leebeebeom.clothinghelper.ui.main.mainmenu.clothes.closet.ClosetGraphRoute
+import com.leebeebeom.clothinghelper.ui.main.mainmenu.clothes.wish.WishGraphRoute
+import com.leebeebeom.clothinghelper.ui.main.mainmenu.outfit.OutfitGraphRoute
 import com.leebeebeom.clothinghelper.ui.setting.SettingGraphRoute
 import com.leebeebeom.clothinghelper.ui.setting.settingGraph
 import com.leebeebeom.clothinghelper.ui.signin.ui.signInGraph

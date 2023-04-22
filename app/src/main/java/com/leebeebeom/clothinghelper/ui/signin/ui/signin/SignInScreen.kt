@@ -1,10 +1,11 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui.signin
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -12,9 +13,11 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leebeebeom.clothinghelper.R
@@ -54,7 +57,7 @@ fun SignInScreen(
             imeAction = ImeAction.Done
         )
 
-        ForgotPasswordText(navigateToResetPassword = navigateToResetPassword)
+        ForgotPasswordText(onClick = navigateToResetPassword)
 
         val signInButtonClick = remember {
             {
@@ -84,17 +87,17 @@ fun SignInScreen(
 }
 
 @Composable // skippable
-private fun ForgotPasswordText(navigateToResetPassword: () -> Unit) {
-    Box(modifier = Modifier.fillMaxWidth()) {
-        TextButton(
-            modifier = Modifier.align(Alignment.CenterEnd), onClick = navigateToResetPassword
-        ) {
-            SingleLineText(
-                text = R.string.forgot_password,
-                style = MaterialTheme.typography.caption.copy(textDecoration = TextDecoration.Underline)
-            )
-        }
-    }
+private fun ColumnScope.ForgotPasswordText(onClick: () -> Unit) {
+    SingleLineText(
+        modifier = Modifier
+            .padding(3.dp)
+            .clip(RoundedCornerShape(6.dp))
+            .clickable { onClick() }
+            .padding(3.dp)
+            .align(Alignment.End),
+        text = R.string.forgot_password,
+        style = MaterialTheme.typography.caption.copy(textDecoration = TextDecoration.Underline)
+    )
 }
 
 // stable

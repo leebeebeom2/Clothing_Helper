@@ -11,23 +11,20 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import com.leebeebeom.clothinghelper.ui.util.noRippleClickable
+import com.leebeebeom.clothinghelper.ui.util.clearFocus
 
 @Composable // skippable
 fun SignInBaseColumn(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    val focusManager = LocalFocusManager.current
-
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colors.background)
             .verticalScroll(rememberScrollState())
-            .noRippleClickable(onClick = focusManager::clearFocus) // 테스트 불가
+            .clearFocus()
             .padding(horizontal = 40.dp)
             .padding(bottom = 40.dp), verticalArrangement = Arrangement.Center
     ) {

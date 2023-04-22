@@ -10,7 +10,7 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.usecase.user.GoogleSignInUseCase
-import com.leebeebeom.clothinghelper.ui.TAG
+import com.leebeebeom.clothinghelper.ui.Tag
 import com.leebeebeom.clothinghelper.ui.viewmodel.LoadingViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
@@ -42,7 +42,7 @@ abstract class GoogleSignInViewModel(
                 googleSignInButtonEnable()
             }
             else -> {
-                Log.d(TAG, "signInWithGoogleEmail: resultCode: ${activityResult.resultCode}")
+                Log.d(Tag, "signInWithGoogleEmail: resultCode: ${activityResult.resultCode}")
                 addToastTextAtLast(R.string.unknown_error)
                 googleSignInButtonEnable()
             }
@@ -51,7 +51,7 @@ abstract class GoogleSignInViewModel(
 
     private fun googleSignIn(activityResult: ActivityResult, googleSignInButtonEnable: () -> Unit) {
         val handler = CoroutineExceptionHandler { _, throwable ->
-            Log.d(TAG, "googleSignIn: $throwable")
+            Log.d(Tag, "googleSignIn: $throwable")
             addToastTextAtLast(R.string.unknown_error)
             setLoading(false)
             googleSignInButtonEnable()

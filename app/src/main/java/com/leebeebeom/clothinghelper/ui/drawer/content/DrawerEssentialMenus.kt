@@ -44,7 +44,7 @@ fun DrawerEssentialMenus(
 private fun EssentialMenu(
     essentialMenu: EssentialMenu, onClick: (EssentialMenuType) -> Unit
 ) {
-    DrawerRow(onClick = { onClick(essentialMenu.type) }) {
+    DrawerRow(onClick = { onClick(essentialMenu.type) }, height = { 44.dp }) {
         IconWrapper(
             modifier = Modifier.size(22.dp), drawable = essentialMenu.drawable
         )

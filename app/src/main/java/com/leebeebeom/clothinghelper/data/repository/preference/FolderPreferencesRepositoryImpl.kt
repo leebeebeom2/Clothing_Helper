@@ -59,5 +59,5 @@ data class SortPreferences(
     val order: Order = Order.Ascending,
 )
 
-private const val FOLDER = "folder preferences"
-private val Context.folderDatastore by preferencesDataStore(name = FOLDER)
+private const val FolderDatastoreKey = "folder data store"
+private val Context.folderDatastore by preferencesDataStore(name = FolderDatastoreKey)

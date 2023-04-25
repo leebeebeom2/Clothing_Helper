@@ -15,6 +15,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
 import com.leebeebeom.clothinghelper.domain.model.Folder
 import com.leebeebeom.clothinghelper.domain.model.User
 import com.leebeebeom.clothinghelper.ui.component.BackHandlerWrapper
@@ -39,6 +40,7 @@ fun Drawer(
     onSubMenuClick: (SubMenuType) -> Unit,
     onClothesCategoryClick: (ClothesCategoryType) -> Unit,
     onFolderClick: (Folder) -> Unit,
+    currentBackStack: () -> NavBackStackEntry?,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val scaffoldState = rememberScaffoldState()
@@ -77,7 +79,8 @@ fun Drawer(
                     onEssentialMenuClick = {
                         closeDrawer()
                         onEssentialMenuClick(it)
-                    }, essentialMenus = essentialMenus
+                    }, essentialMenus = essentialMenus,
+                    currentBackStack = currentBackStack
                 )
                 DrawerMainMenus(
                     mainMenus = mainMenus,
@@ -103,7 +106,8 @@ fun Drawer(
                     itemsSize = { 0 },
                     addFolder = viewModel::addFolder,
                     editFolder = viewModel::editFolderName,
-                    deleteFolder = viewModel::deletedFolder
+                    deleteFolder = viewModel::deletedFolder,
+                    currentBackStack = currentBackStack
                 )
             }
         }) {

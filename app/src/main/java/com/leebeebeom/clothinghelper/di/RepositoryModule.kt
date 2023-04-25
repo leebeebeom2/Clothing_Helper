@@ -4,10 +4,12 @@ import com.leebeebeom.clothinghelper.data.repository.FolderRepositoryImpl
 import com.leebeebeom.clothinghelper.data.repository.TodoRepositoryImpl
 import com.leebeebeom.clothinghelper.data.repository.UserRepositoryImpl
 import com.leebeebeom.clothinghelper.data.repository.preference.FolderPreferencesRepositoryImpl
+import com.leebeebeom.clothinghelper.data.repository.preference.MainScreenPreferencesRepositoryImpl
 import com.leebeebeom.clothinghelper.domain.repository.FolderRepository
 import com.leebeebeom.clothinghelper.domain.repository.TodoRepository
 import com.leebeebeom.clothinghelper.domain.repository.UserRepository
 import com.leebeebeom.clothinghelper.domain.repository.preference.FolderPreferenceRepository
+import com.leebeebeom.clothinghelper.domain.repository.preference.MainScreenPreferencesRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -33,4 +35,8 @@ abstract class RepositoryModule {
     @Singleton
     @Binds
     abstract fun folderPreferencesRepository(impl: FolderPreferencesRepositoryImpl): FolderPreferenceRepository
+
+    @Singleton
+    @Binds
+    abstract fun mainScreenPreferencesRepository(impl: MainScreenPreferencesRepositoryImpl): MainScreenPreferencesRepository
 }

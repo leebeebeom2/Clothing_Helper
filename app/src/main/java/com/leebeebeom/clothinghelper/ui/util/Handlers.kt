@@ -5,7 +5,7 @@ import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuthException
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.TAG
+import com.leebeebeom.clothinghelper.ui.Tag
 import kotlinx.coroutines.CoroutineExceptionHandler
 
 inline fun firebaseAuthErrorHandler(
@@ -49,7 +49,7 @@ inline fun setFirebaseAuthError(
         is FirebaseNetworkException -> showToast(R.string.network_error)
         else -> {
             showToast(R.string.unknown_error)
-            Log.d(TAG, "setFirebaseAuthError: $throwable")
+            Log.d(Tag, "setFirebaseAuthError: $throwable")
         }
     }
 }
@@ -58,6 +58,6 @@ inline fun toastHandler(
     callSite: String,
     crossinline showToast: () -> Unit
 ) = CoroutineExceptionHandler { _, throwable ->
-    Log.d(TAG, "$callSite: $throwable")
+    Log.d(Tag, "$callSite: $throwable")
     showToast()
 }

@@ -6,25 +6,31 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavBackStackEntry
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.component.HeightSpacer
 import com.leebeebeom.clothinghelper.ui.component.IconWrapper
 import com.leebeebeom.clothinghelper.ui.component.SingleLineText
 import com.leebeebeom.clothinghelper.ui.component.WidthSpacer
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerRow
+import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerBackgroundColor
+import com.leebeebeom.clothinghelper.ui.main.MainGraphRoute
 import com.leebeebeom.clothinghelper.ui.theme.Disabled
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable // skippable
 fun DrawerEssentialMenus(
-    essentialMenus: ImmutableList<EssentialMenu>, onEssentialMenuClick: (EssentialMenuType) -> Unit
+    essentialMenus: ImmutableList<EssentialMenu>,
+    onEssentialMenuClick: (EssentialMenuType) -> Unit,
+    currentBackStack: () -> NavBackStackEntry?
 ) {
     Column(modifier = Modifier.padding(vertical = 4.dp)) {
         essentialMenus.forEach { essentialMenu ->
@@ -32,6 +38,7 @@ fun DrawerEssentialMenus(
                 EssentialMenu(
                     essentialMenu = essentialMenu,
                     onClick = { essentialMenuType -> onEssentialMenuClick(essentialMenuType) },
+                    currentBackStack = currentBackStack
                 )
             }
         }
@@ -42,9 +49,26 @@ fun DrawerEssentialMenus(
 
 @Composable // skippable
 private fun EssentialMenu(
-    essentialMenu: EssentialMenu, onClick: (EssentialMenuType) -> Unit
+    essentialMenu: EssentialMenu,
+    onClick: (EssentialMenuType) -> Unit,
+    currentBackStack: () -> NavBackStackEntry?
 ) {
-    DrawerRow(onClick = { onClick(essentialMenu.type) }, height = { 44.dp }) {
+    val route = when (essentialMenu.type) {
+        EssentialMenuType.MainScreen -> MainGraphRoute.MainScreen
+        EssentialMenuType.Favorite -> MainGraphRoute.FavoriteScreen
+        EssentialMenuType.SeeAll -> MainGraphRoute.SeeAllScreen
+        EssentialMenuType.Trash -> MainGraphRoute.TrashScreen
+    }
+
+    val backgroundColor by rememberDrawerBackgroundColor(
+        currentBackstack = currentBackStack,
+        route = route
+    )
+
+    DrawerRow(
+        backgroundColor = { backgroundColor },
+        onClick = { onClick(essentialMenu.type) },
+        height = { 44.dp }) {
         IconWrapper(
             modifier = Modifier.size(22.dp), drawable = essentialMenu.drawable
         )

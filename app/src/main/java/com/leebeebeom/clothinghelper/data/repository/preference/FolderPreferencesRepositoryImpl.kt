@@ -2,18 +2,12 @@ package com.leebeebeom.clothinghelper.data.repository.preference
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.leebeebeom.clothinghelper.di.AppScope
 import com.leebeebeom.clothinghelper.domain.repository.preference.FolderPreferenceRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.shareIn
-import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,22 +16,20 @@ class FolderPreferencesRepositoryImpl @Inject constructor(
     @ApplicationContext context: Context,
     @AppScope appScope: CoroutineScope,
 ) : FolderPreferenceRepository {
-    private val folderSortDataStore = context.folderSortDatastore
+    private val folderDataStore = context.folderDatastore
 
-    override val sortFlow = folderSortDataStore.data.catch {
-        if (it is IOException) emit(emptyPreferences()) else throw it
-    }.map {
+    override val sortFlow = folderDataStore.getFlow(appScope) {
         val sort = it[SortPreferenceKeys.sort] ?: Sort.Name.name
         val order = it[SortPreferenceKeys.order] ?: Order.Ascending.name
         SortPreferences(sort = enumValueOf(sort), order = enumValueOf(order))
-    }.shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
+    }
 
     override suspend fun changeSort(sort: Sort) {
-        folderSortDataStore.edit { it[SortPreferenceKeys.sort] = sort.name }
+        folderDataStore.edit { it[SortPreferenceKeys.sort] = sort.name }
     }
 
     override suspend fun changeOrder(order: Order) {
-        folderSortDataStore.edit { it[SortPreferenceKeys.order] = order.name }
+        folderDataStore.edit { it[SortPreferenceKeys.order] = order.name }
     }
 
     private object SortPreferenceKeys {
@@ -59,5 +51,5 @@ data class SortPreferences(
     val order: Order = Order.Ascending,
 )
 
-private const val FolderSortDatastoreKey = "folder data store"
-private val Context.folderSortDatastore by preferencesDataStore(name = FolderSortDatastoreKey)
+private const val FolderDatastoreKey = "folder data store"
+private val Context.folderDatastore by preferencesDataStore(name = FolderDatastoreKey)

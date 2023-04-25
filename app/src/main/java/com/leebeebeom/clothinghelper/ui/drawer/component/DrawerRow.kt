@@ -18,7 +18,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
@@ -32,6 +34,7 @@ import androidx.compose.ui.unit.dp
 @Composable // skippable
 fun DrawerRow(
     modifier: Modifier = Modifier,
+    backgroundColor: () -> Color = { Color.Transparent },
     onClick: () -> Unit,
     onLongClick: ((Offset) -> Unit)? = null,
     onSizeChange: (IntSize) -> Unit = {},
@@ -64,6 +67,7 @@ fun DrawerRow(
         .fillMaxWidth()
         .padding(horizontal = 8.dp)
         .clip(MaterialTheme.shapes.small)
+        .drawBehind { drawRect(backgroundColor()) }
         .indication(interactionSource = interactionSource, LocalIndication.current)
         .pointerInput(Unit) {
             detectTapGestures(

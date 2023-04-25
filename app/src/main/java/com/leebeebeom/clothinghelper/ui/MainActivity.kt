@@ -14,6 +14,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.leebeebeom.clothinghelper.domain.model.Folder
 import com.leebeebeom.clothinghelper.domain.model.MenuType
@@ -59,6 +60,7 @@ class MainActivity : ComponentActivity() {
 fun MainNavHost() {
     val viewModel = hiltViewModel<MainNavViewModel>()
     val navController = rememberNavController()
+    val currentBackStack by navController.currentBackStackEntryAsState()
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val startDestination by remember {
@@ -72,7 +74,8 @@ fun MainNavHost() {
             onMainMenuClick = navController::onMainMenuClick,
             onSubMenuClick = navController::onSubMenuClick,
             onClothesCategoryClick = navController::onClothesCategoryClick,
-            onFolderClick = navController::onFolderClick
+            onFolderClick = navController::onFolderClick,
+            currentBackStack = { currentBackStack }
         ) { paddingValues ->
             NavHost(
                 modifier = Modifier.padding(paddingValues),

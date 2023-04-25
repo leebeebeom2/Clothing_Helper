@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import com.leebeebeom.clothinghelper.R
@@ -23,6 +24,7 @@ import kotlinx.collections.immutable.ImmutableSet
 @Composable
 fun DrawerContentWithDoubleCount(
     modifier: Modifier = Modifier,
+    backgroundColor: () -> Color = { Color.Transparent },
     key: String,
     menuType: MenuType,
     @StringRes text: Int,
@@ -43,6 +45,7 @@ fun DrawerContentWithDoubleCount(
 
     DrawerRow(
         modifier = modifier,
+        backgroundColor = backgroundColor,
         onClick = onClick,
         onLongClick = state::onLongClick,
         onSizeChange = state::onSizeChanged,

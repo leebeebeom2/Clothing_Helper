@@ -22,9 +22,9 @@ class FolderPreferencesRepositoryImpl @Inject constructor(
     @ApplicationContext context: Context,
     @AppScope appScope: CoroutineScope,
 ) : FolderPreferenceRepository {
-    private val fodlerSortDataStore = context.folderSortDatastore
+    private val folderSortDataStore = context.folderSortDatastore
 
-    override val sortFlow = fodlerSortDataStore.data.catch {
+    override val sortFlow = folderSortDataStore.data.catch {
         if (it is IOException) emit(emptyPreferences()) else throw it
     }.map {
         val sort = it[SortPreferenceKeys.sort] ?: Sort.Name.name
@@ -33,11 +33,11 @@ class FolderPreferencesRepositoryImpl @Inject constructor(
     }.shareIn(scope = appScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
     override suspend fun changeSort(sort: Sort) {
-        fodlerSortDataStore.edit { it[SortPreferenceKeys.sort] = sort.name }
+        folderSortDataStore.edit { it[SortPreferenceKeys.sort] = sort.name }
     }
 
     override suspend fun changeOrder(order: Order) {
-        fodlerSortDataStore.edit { it[SortPreferenceKeys.order] = order.name }
+        folderSortDataStore.edit { it[SortPreferenceKeys.order] = order.name }
     }
 
     private object SortPreferenceKeys {

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -16,6 +17,7 @@ import androidx.compose.ui.unit.sp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.model.MenuType
 import com.leebeebeom.clothinghelper.ui.drawer.DrawerItemState
+import com.leebeebeom.clothinghelper.ui.drawer.OpenWhenNavigateToChild
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerDotIcon
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerExpandIcon
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerItemsWrapperWithExpandAnimation
@@ -24,38 +26,97 @@ import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerText
 import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.DrawerSubMenuTag
 import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.SubMenu
 import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.SubMenuType
+import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerCurrentPositionBackgroundColor
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemDropdownMenuState
+import com.leebeebeom.clothinghelper.ui.main.mainmenu.clothes.closet.ClosetGraphRoute
+import com.leebeebeom.clothinghelper.ui.main.mainmenu.clothes.wish.WishGraphRoute
 import com.leebeebeom.clothinghelper.ui.theme.Black18
 import com.leebeebeom.clothinghelper.ui.util.AddFolder
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.ImmutableSet
+import com.leebeebeom.clothinghelper.ui.util.CurrentBackStack
+import com.leebeebeom.clothinghelper.ui.util.DeleteFolder
+import com.leebeebeom.clothinghelper.ui.util.EditFolder
+import com.leebeebeom.clothinghelper.ui.util.FolderNames
+import com.leebeebeom.clothinghelper.ui.util.Folders
+import com.leebeebeom.clothinghelper.ui.util.FoldersSize
+import com.leebeebeom.clothinghelper.ui.util.ItemsSize
+import com.leebeebeom.clothinghelper.ui.util.OnClothesCategoryClick
+import com.leebeebeom.clothinghelper.ui.util.OnFolderClick
+import com.leebeebeom.clothinghelper.ui.util.OnSubMenuClick
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun DrawerClothesSubMenu(
     subMenu: SubMenu,
-    onClick: (SubMenuType) -> Unit,
-    onClothesCategoryClick: (ClothesCategoryType) -> Unit,
-    folderNames: (parentKey: String) -> ImmutableSet<String>,
-    foldersSize: (parentKey: String) -> Int,
-    itemsSize: (parentKey: String) -> Int,
+    onSubMenuClick: OnSubMenuClick,
+    onFolderClick: OnFolderClick,
+    onClothesCategoryClick: OnClothesCategoryClick,
+    folders: Folders,
+    folderNames: FolderNames,
+    foldersSize: FoldersSize,
+    itemsSize: ItemsSize,
     addFolder: AddFolder,
-    clothesCategories: ImmutableList<ClothesCategory> = rememberClosetCategories(subMenuType = subMenu.type),
+    editFolder: EditFolder,
+    deleteFolder: DeleteFolder,
     state: DrawerItemState,
     height: () -> Dp,
-    folders: @Composable (parentKey: String, basePadding: Dp) -> Unit
+    toggleExpand: () -> Unit,
+    currentBackStack: CurrentBackStack,
+    expand: () -> Unit
 ) {
+    val route = remember(subMenu) {
+        when (subMenu.type) {
+            SubMenuType.Closet -> ClosetGraphRoute.ClosetScreen
+            SubMenuType.Wish -> WishGraphRoute.WishScreen
+            else -> throw IllegalStateException()
+        }
+    }
+    val backgroundColor by rememberDrawerCurrentPositionBackgroundColor(
+        currentBackStack = currentBackStack,
+        route = route
+    )
+
+    val childParentKeys = remember(subMenu.type) {
+        when (subMenu.type) {
+            SubMenuType.Closet -> listOf(
+                ClothesCategoryType.Closet.Top,
+                ClothesCategoryType.Closet.Bottom,
+                ClothesCategoryType.Closet.Outer,
+                ClothesCategoryType.Closet.Etc,
+            )
+
+            SubMenuType.Wish -> listOf(
+                ClothesCategoryType.Wish.Top,
+                ClothesCategoryType.Wish.Bottom,
+                ClothesCategoryType.Wish.Outer,
+                ClothesCategoryType.Wish.Etc,
+            )
+
+            else -> throw IllegalStateException()
+        }
+    }
+
+    childParentKeys.forEach {
+        OpenWhenNavigateToChild(
+            currentBackStack = currentBackStack,
+            childParentKey = it.name,
+            expand = expand
+        )
+    }
+
+    val clothesCategories = rememberClosetCategories(subMenuType = subMenu.type)
+
     DrawerRow(
         Modifier
             .padding(start = 8.dp)
             .testTag(DrawerSubMenuTag),
-        onClick = { onClick(subMenu.type) }, height = height
+        currentPositionBackgroundColor = { backgroundColor },
+        onClick = { onSubMenuClick(subMenu.type) }, height = height
     ) {
         DrawerDotIcon()
         DrawerText(
             text = subMenu.name, style = MaterialTheme.typography.subtitle1.copy(fontSize = 18.sp)
         )
-        DrawerExpandIcon(expanded = { state.expanded }, toggleExpand = state::toggleExpand)
+        DrawerExpandIcon(expanded = { state.expanded }, toggleExpand = toggleExpand)
     }
 
     DrawerItemsWrapperWithExpandAnimation(expand = { state.expanded }, item = {
@@ -73,7 +134,16 @@ fun DrawerClothesSubMenu(
                         itemsSize = itemsSize,
                         addFolder = addFolder,
                         folders = folders,
-                        height = height
+                        height = height,
+                        onLongClick = subState::onLongClick,
+                        onSizeChanged = subState::onSizeChanged,
+                        toggleExpand = subState::toggleExpand,
+                        onDismissDropdownMenu = subState::onDismissDropdownMenu,
+                        expand = subState::expand,
+                        currentBackStack = currentBackStack,
+                        onFolderClick = onFolderClick,
+                        editFolder = editFolder,
+                        deleteFolder = deleteFolder
                     )
                 }
             }

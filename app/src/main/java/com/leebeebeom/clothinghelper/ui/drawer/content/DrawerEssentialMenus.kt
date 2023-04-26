@@ -52,11 +52,13 @@ private fun EssentialMenu(
     onClick: (EssentialMenuType) -> Unit,
     currentBackStack: CurrentBackStack
 ) {
-    val route = when (essentialMenu.type) {
-        EssentialMenuType.MainScreen -> MainGraphRoute.MainScreen
-        EssentialMenuType.Favorite -> MainGraphRoute.FavoriteScreen
-        EssentialMenuType.SeeAll -> MainGraphRoute.SeeAllScreen
-        EssentialMenuType.Trash -> MainGraphRoute.TrashScreen
+    val route = remember {
+        when (essentialMenu.type) {
+            EssentialMenuType.MainScreen -> MainGraphRoute.MainScreen
+            EssentialMenuType.Favorite -> MainGraphRoute.FavoriteScreen
+            EssentialMenuType.SeeAll -> MainGraphRoute.SeeAllScreen
+            EssentialMenuType.Trash -> MainGraphRoute.TrashScreen
+        }
     }
 
     val backgroundColor by rememberDrawerCurrentPositionBackgroundColor(

@@ -11,64 +11,45 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.domain.model.Folder
-import com.leebeebeom.clothinghelper.ui.drawer.content.folder.DrawerFolders
-import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.SubMenuType
-import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.SubMenus
-import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.clothes.ClothesCategoryType
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemState
-import com.leebeebeom.clothinghelper.ui.theme.Black11
 import com.leebeebeom.clothinghelper.ui.util.AddFolder
+import com.leebeebeom.clothinghelper.ui.util.CurrentBackStack
+import com.leebeebeom.clothinghelper.ui.util.DeleteFolder
 import com.leebeebeom.clothinghelper.ui.util.EditFolder
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.ImmutableSet
+import com.leebeebeom.clothinghelper.ui.util.FolderNames
+import com.leebeebeom.clothinghelper.ui.util.Folders
+import com.leebeebeom.clothinghelper.ui.util.FoldersSize
+import com.leebeebeom.clothinghelper.ui.util.ItemsSize
+import com.leebeebeom.clothinghelper.ui.util.OnClothesCategoryClick
+import com.leebeebeom.clothinghelper.ui.util.OnFolderClick
+import com.leebeebeom.clothinghelper.ui.util.OnMainMenuClick
+import com.leebeebeom.clothinghelper.ui.util.OnSubMenuClick
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable // skippable
 fun DrawerMainMenus(
-    mainMenus: ImmutableList<MainMenu>,
-    onMainMenuClick: (MainMenuType) -> Unit,
-    onSubMenuClick: (SubMenuType) -> Unit,
-    onClothesCategoryClick: (ClothesCategoryType) -> Unit,
-    onFolderClick: (Folder) -> Unit,
-    folders: (parentKey: String) -> ImmutableList<Folder>,
-    folderNames: (parentKey: String) -> ImmutableSet<String>,
-    foldersSize: (parentKey: String) -> Int,
-    itemsSize: (parentKey: String) -> Int,
+    onMainMenuClick: OnMainMenuClick,
+    onSubMenuClick: OnSubMenuClick,
+    onClothesCategoryClick: OnClothesCategoryClick,
+    onFolderClick: OnFolderClick,
+    folders: Folders,
+    folderNames: FolderNames,
+    foldersSize: FoldersSize,
+    itemsSize: ItemsSize,
     addFolder: AddFolder,
     editFolder: EditFolder,
-    deleteFolder: (Folder) -> Unit
+    deleteFolder: DeleteFolder,
+    currentBackStack: CurrentBackStack
 ) {
     var height by rememberSaveable { mutableStateOf(0) }
     val density = LocalDensity.current
-    val heightDp by remember { derivedStateOf { with(density) { height.toDp() } } }
-
-    @Composable
-    fun Folders(parentKey: String, backgroundColor: Color, basePadding: Dp) {
-        DrawerFolders(
-            parentKey = parentKey,
-            folders = folders,
-            folderNames = folderNames,
-            backgroundColor = backgroundColor,
-            foldersSize = foldersSize,
-            itemsSize = { 0 },
-            onFolderClick = onFolderClick,
-            addFolder = addFolder,
-            editFolder = editFolder,
-            deleteFolder = deleteFolder,
-            basePadding = basePadding,
-            height = { heightDp }
-        )
-    }
+    val heightDp by remember(density) { derivedStateOf { with(density) { height.toDp() } } }
 
     Column {
-        mainMenus.forEach { mainMenu ->
+        rememberMainMenus().forEach { mainMenu ->
             key(mainMenu.type) {
                 if (mainMenu.type != MainMenuType.Archive) {
                     val state = rememberDrawerItemState()
@@ -77,22 +58,20 @@ fun DrawerMainMenus(
                         mainMenu = mainMenu,
                         onMainMenuClick = onMainMenuClick,
                         state = state,
-                        subMenus = { mainMenuType ->
-                            SubMenus(
-                                mainMenuType = mainMenuType,
-                                onSubMenuClick = onSubMenuClick,
-                                onClothesCategoryClick = onClothesCategoryClick,
-                                foldersSize = foldersSize,
-                                folderNames = folderNames,
-                                itemsSize = { 0 },
-                                addFolder = addFolder,
-                                folders = { parentKey, backgroundColor, basePadding ->
-                                    Folders(parentKey, backgroundColor, basePadding)
-                                },
-                                height = { heightDp }
-                            )
-                        },
-                        height = { heightDp }
+                        height = { heightDp },
+                        currentBackStack = currentBackStack,
+                        toggleExpand = state::toggleExpand,
+                        expand = state::expand,
+                        onSubMenuClick = onSubMenuClick,
+                        onClothesCategoryClick = onClothesCategoryClick,
+                        onFolderClick = onFolderClick,
+                        folders = folders,
+                        folderNames = folderNames,
+                        foldersSize = foldersSize,
+                        itemsSize = itemsSize,
+                        addFolder = addFolder,
+                        editFolder = editFolder,
+                        deleteFolder = deleteFolder
                     )
                 } else {
                     val state = rememberDrawerItemDropdownMenuState()
@@ -100,18 +79,21 @@ fun DrawerMainMenus(
                     DrawerArchive(
                         state = state,
                         onClick = onMainMenuClick,
+                        onFolderClick = onFolderClick,
                         folderNames = folderNames,
                         foldersSize = foldersSize,
                         itemsSize = itemsSize,
                         addFolder = addFolder,
-                        folders = {
-                            Folders(
-                                parentKey = MainMenuType.Archive.name,
-                                backgroundColor = Black11,
-                                basePadding = 0.dp
-                            )
-                        },
-                        onSizeChange = { height = it }
+                        folders = folders,
+                        onSizeChanged = { height = it },
+                        currentBackStack = currentBackStack,
+                        onLongClick = state::onLongClick,
+                        onChildSizeChange = state::onSizeChanged,
+                        toggleExpand = state::toggleExpand,
+                        onDismissDropdownMenu = state::onDismissDropdownMenu,
+                        expand = state::expand,
+                        deleteFolder = deleteFolder,
+                        editFolder = editFolder
                     )
                 }
             }

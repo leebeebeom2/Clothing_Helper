@@ -70,7 +70,7 @@ fun DrawerClothesSubMenu(
             else -> throw IllegalStateException()
         }
     }
-    val backgroundColor by rememberDrawerCurrentPositionBackgroundColor(
+    val currentPositionBackgroundColor by rememberDrawerCurrentPositionBackgroundColor(
         currentBackStack = currentBackStack,
         route = route
     )
@@ -109,7 +109,7 @@ fun DrawerClothesSubMenu(
         Modifier
             .padding(start = 8.dp)
             .testTag(DrawerSubMenuTag),
-        currentPositionBackgroundColor = { backgroundColor },
+        currentPositionBackgroundColor = { currentPositionBackgroundColor },
         onClick = { onSubMenuClick(subMenu.type) }, height = height
     ) {
         DrawerDotIcon()

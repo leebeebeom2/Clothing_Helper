@@ -61,13 +61,13 @@ private fun EssentialMenu(
         }
     }
 
-    val backgroundColor by rememberDrawerCurrentPositionBackgroundColor(
+    val currentPositionBackgroundColor by rememberDrawerCurrentPositionBackgroundColor(
         currentBackStack = currentBackStack,
         route = route
     )
 
     DrawerRow(
-        currentPositionBackgroundColor = { backgroundColor },
+        currentPositionBackgroundColor = { currentPositionBackgroundColor },
         onClick = { onClick(essentialMenu.type) },
         height = { 44.dp }) {
         IconWrapper(

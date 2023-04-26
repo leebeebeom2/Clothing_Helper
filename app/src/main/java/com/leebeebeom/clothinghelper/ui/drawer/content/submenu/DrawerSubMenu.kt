@@ -50,7 +50,7 @@ fun DrawerSubMenu(
     onDismissDropdownMenu: () -> Unit,
     expand: () -> Unit
 ) {
-    val backgroundColor by rememberDrawerCurrentPositionBackgroundColorWithArg(
+    val currentPositionBackgroundColor by rememberDrawerCurrentPositionBackgroundColorWithArg(
         currentBackStack = currentBackStack,
         parentKey = subMenu.type.name
     )
@@ -68,7 +68,7 @@ fun DrawerSubMenu(
         modifier = Modifier
             .padding(start = startPadding)
             .testTag(DrawerSubMenuTag),
-        currentPositionBackgroundColor = { backgroundColor },
+        currentPositionBackgroundColor = { currentPositionBackgroundColor },
         state = state,
         subFoldersParentKey = subMenu.type.name,
         menuType = subMenu.type.toMenuType(),

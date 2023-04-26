@@ -45,7 +45,7 @@ fun DrawerArchive(
     onDismissDropdownMenu: () -> Unit,
     expand: () -> Unit
 ) {
-    val backgroundColor by rememberDrawerCurrentPositionBackgroundColorWithArg(
+    val currentPositionBackgroundColor by rememberDrawerCurrentPositionBackgroundColorWithArg(
         currentBackStack = currentBackStack,
         parentKey = MainMenuType.Archive.name
     )
@@ -61,7 +61,7 @@ fun DrawerArchive(
         modifier = Modifier
             .testTag(DrawerMainMenuTag)
             .onSizeChanged { onSizeChanged(it.height) },
-        currentPositionBackgroundColor = { backgroundColor },
+        currentPositionBackgroundColor = { currentPositionBackgroundColor },
         subFoldersParentKey = MainMenuType.Archive.name,
         menuType = MenuType.Archive,
         text = R.string.archive_cap,

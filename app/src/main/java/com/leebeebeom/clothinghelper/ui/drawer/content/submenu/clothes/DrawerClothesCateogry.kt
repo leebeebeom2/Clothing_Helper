@@ -50,7 +50,7 @@ fun DrawerClothesCategory(
     expand: () -> Unit,
     currentBackStack: CurrentBackStack
 ) {
-    val backgroundColor by rememberDrawerCurrentPositionBackgroundColorWithArg(
+    val currentPositionBackgroundColor by rememberDrawerCurrentPositionBackgroundColorWithArg(
         currentBackStack = currentBackStack, parentKey = clothesCategory.type.name
     )
 
@@ -67,7 +67,7 @@ fun DrawerClothesCategory(
         modifier = Modifier
             .padding(start = startPadding)
             .testTag(DrawerSubMenuTag),
-        currentPositionBackgroundColor = { backgroundColor },
+        currentPositionBackgroundColor = { currentPositionBackgroundColor },
         state = state,
         subFoldersParentKey = clothesCategory.type.name,
         menuType = clothesCategory.type.toMenuType(),

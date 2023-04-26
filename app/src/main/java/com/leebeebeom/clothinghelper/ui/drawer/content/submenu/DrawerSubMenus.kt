@@ -7,56 +7,68 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.domain.model.MenuType
-import com.leebeebeom.clothinghelper.ui.drawer.content.folder.getSubBackgroundColor
 import com.leebeebeom.clothinghelper.ui.drawer.content.mainmenu.MainMenuType
-import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.clothes.ClothesCategoryType
 import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.clothes.DrawerClothesSubMenu
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemDropdownMenuState
 import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerItemState
 import com.leebeebeom.clothinghelper.ui.theme.Black11
-import com.leebeebeom.clothinghelper.ui.theme.Black18
 import com.leebeebeom.clothinghelper.ui.util.AddFolder
-import kotlinx.collections.immutable.ImmutableSet
+import com.leebeebeom.clothinghelper.ui.util.CurrentBackStack
+import com.leebeebeom.clothinghelper.ui.util.DeleteFolder
+import com.leebeebeom.clothinghelper.ui.util.EditFolder
+import com.leebeebeom.clothinghelper.ui.util.FolderNames
+import com.leebeebeom.clothinghelper.ui.util.Folders
+import com.leebeebeom.clothinghelper.ui.util.FoldersSize
+import com.leebeebeom.clothinghelper.ui.util.ItemsSize
+import com.leebeebeom.clothinghelper.ui.util.OnClothesCategoryClick
+import com.leebeebeom.clothinghelper.ui.util.OnFolderClick
+import com.leebeebeom.clothinghelper.ui.util.OnSubMenuClick
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun SubMenus(
     mainMenuType: MainMenuType,
-    onSubMenuClick: (SubMenuType) -> Unit,
-    onClothesCategoryClick: (ClothesCategoryType) -> Unit,
-    folderNames: (parentKey: String) -> ImmutableSet<String>,
-    foldersSize: (parentKey: String) -> Int,
-    itemsSize: (parentKey: String) -> Int,
+    onSubMenuClick: OnSubMenuClick,
+    onClothesCategoryClick: OnClothesCategoryClick,
+    onFolderClick: OnFolderClick,
+    folders: Folders,
+    folderNames: FolderNames,
+    foldersSize: FoldersSize,
+    itemsSize: ItemsSize,
     addFolder: AddFolder,
+    editFolder: EditFolder,
+    deleteFolder: DeleteFolder,
     height: () -> Dp,
-    folders: @Composable (parentKey: String, backgroundColor: Color, basePadding: Dp) -> Unit
+    currentBackStack: CurrentBackStack
 ) {
-    val subMenus = rememberSubMenus(mainMenuType = mainMenuType)
-
     Column(modifier = Modifier.background(Black11)) {
-        subMenus.forEach { subMenu ->
+        rememberSubMenus(mainMenuType = mainMenuType).forEach { subMenu ->
             key(subMenu.type) {
-                if (subMenu.type == SubMenuType.Brand || subMenu.type == SubMenuType.Shop ||
-                    subMenu.type == SubMenuType.Ootd || subMenu.type == SubMenuType.Reference
-                ) {
+                if (subMenu.type == SubMenuType.Brand || subMenu.type == SubMenuType.Shop || subMenu.type == SubMenuType.Ootd || subMenu.type == SubMenuType.Reference) {
                     val state = rememberDrawerItemDropdownMenuState()
 
                     DrawerSubMenu(
                         state = state,
                         subMenu = subMenu,
                         onClick = onSubMenuClick,
+                        onFolderClick = onFolderClick,
+                        folders = folders,
                         folderNames = folderNames,
                         foldersSize = foldersSize,
                         itemsSize = itemsSize,
                         addFolder = addFolder,
-                        folders = { parentKey, basePadding ->
-                            folders(parentKey, Black18, basePadding)
-                        },
-                        height = height
+                        editFolder = editFolder,
+                        deleteFolder = deleteFolder,
+                        height = height,
+                        currentBackStack = currentBackStack,
+                        onLongClick = state::onLongClick,
+                        onSizeChanged = state::onSizeChanged,
+                        toggleExpand = state::toggleExpand,
+                        expand = state::expand,
+                        onDismissDropdownMenu = state::onDismissDropdownMenu,
                     )
                 } else if (subMenu.type == SubMenuType.Closet || subMenu.type == SubMenuType.Wish) {
                     val state = rememberDrawerItemState()
@@ -64,16 +76,20 @@ fun SubMenus(
                     DrawerClothesSubMenu(
                         state = state,
                         subMenu = subMenu,
-                        onClick = onSubMenuClick,
+                        onSubMenuClick = onSubMenuClick,
                         onClothesCategoryClick = onClothesCategoryClick,
                         folderNames = folderNames,
                         foldersSize = foldersSize,
                         itemsSize = itemsSize,
                         addFolder = addFolder,
-                        folders = { parentKey, basePadding ->
-                            folders(parentKey, getSubBackgroundColor(Black18), basePadding)
-                        },
-                        height = height
+                        folders = folders,
+                        height = height,
+                        toggleExpand = state::toggleExpand,
+                        currentBackStack = currentBackStack,
+                        expand = state::expand,
+                        editFolder = editFolder,
+                        deleteFolder = deleteFolder,
+                        onFolderClick = onFolderClick
                     )
                 }
             }

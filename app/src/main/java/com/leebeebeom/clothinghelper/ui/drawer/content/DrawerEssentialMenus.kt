@@ -13,27 +13,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavBackStackEntry
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.component.HeightSpacer
 import com.leebeebeom.clothinghelper.ui.component.IconWrapper
 import com.leebeebeom.clothinghelper.ui.component.SingleLineText
 import com.leebeebeom.clothinghelper.ui.component.WidthSpacer
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerRow
-import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerBackgroundColor
+import com.leebeebeom.clothinghelper.ui.drawer.rememberDrawerCurrentPositionBackgroundColor
 import com.leebeebeom.clothinghelper.ui.main.MainGraphRoute
 import com.leebeebeom.clothinghelper.ui.theme.Disabled
-import kotlinx.collections.immutable.ImmutableList
+import com.leebeebeom.clothinghelper.ui.util.CurrentBackStack
+import com.leebeebeom.clothinghelper.ui.util.OnEssentialMenuClick
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable // skippable
 fun DrawerEssentialMenus(
-    essentialMenus: ImmutableList<EssentialMenu>,
-    onEssentialMenuClick: (EssentialMenuType) -> Unit,
-    currentBackStack: () -> NavBackStackEntry?
+    onEssentialMenuClick: OnEssentialMenuClick,
+    currentBackStack: CurrentBackStack
 ) {
     Column(modifier = Modifier.padding(vertical = 4.dp)) {
-        essentialMenus.forEach { essentialMenu ->
+        rememberEssentialMenus().forEach { essentialMenu ->
             key(essentialMenu.name) {
                 EssentialMenu(
                     essentialMenu = essentialMenu,
@@ -51,7 +50,7 @@ fun DrawerEssentialMenus(
 private fun EssentialMenu(
     essentialMenu: EssentialMenu,
     onClick: (EssentialMenuType) -> Unit,
-    currentBackStack: () -> NavBackStackEntry?
+    currentBackStack: CurrentBackStack
 ) {
     val route = when (essentialMenu.type) {
         EssentialMenuType.MainScreen -> MainGraphRoute.MainScreen
@@ -60,13 +59,13 @@ private fun EssentialMenu(
         EssentialMenuType.Trash -> MainGraphRoute.TrashScreen
     }
 
-    val backgroundColor by rememberDrawerBackgroundColor(
-        currentBackstack = currentBackStack,
+    val backgroundColor by rememberDrawerCurrentPositionBackgroundColor(
+        currentBackStack = currentBackStack,
         route = route
     )
 
     DrawerRow(
-        backgroundColor = { backgroundColor },
+        currentPositionBackgroundColor = { backgroundColor },
         onClick = { onClick(essentialMenu.type) },
         height = { 44.dp }) {
         IconWrapper(

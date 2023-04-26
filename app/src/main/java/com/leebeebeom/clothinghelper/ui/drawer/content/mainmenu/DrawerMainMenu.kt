@@ -70,11 +70,13 @@ fun DrawerMainMenu(
         route = route
     )
 
-    val childRoutes = when (mainMenu.type) {
-        MainMenuType.Brand -> listOf(SubMenuType.Brand.name, SubMenuType.Shop.name)
-        MainMenuType.Clothes -> listOf(ClosetGraphRoute.ClosetScreen, WishGraphRoute.WishScreen)
-        MainMenuType.Outfit -> listOf(SubMenuType.Ootd.name, SubMenuType.Reference.name)
-        else -> throw IllegalStateException()
+    val childRoutes = remember(mainMenu) {
+        when (mainMenu.type) {
+            MainMenuType.Brand -> listOf(SubMenuType.Brand.name, SubMenuType.Shop.name)
+            MainMenuType.Clothes -> listOf(ClosetGraphRoute.ClosetScreen, WishGraphRoute.WishScreen)
+            MainMenuType.Outfit -> listOf(SubMenuType.Ootd.name, SubMenuType.Reference.name)
+            else -> throw IllegalStateException()
+        }
     }
 
     childRoutes.forEach {

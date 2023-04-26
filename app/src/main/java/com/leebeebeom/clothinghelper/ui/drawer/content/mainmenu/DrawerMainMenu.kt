@@ -2,6 +2,7 @@ package com.leebeebeom.clothinghelper.ui.drawer.content.mainmenu
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Dp
@@ -55,11 +56,13 @@ fun DrawerMainMenu(
     toggleExpand: () -> Unit,
     expand: () -> Unit,
 ) {
-    val route = when (mainMenu.type) {
-        MainMenuType.Brand -> BrandGraphRoute.BrandMainScreen
-        MainMenuType.Clothes -> ClothesGraphRoute.ClothesScreen
-        MainMenuType.Outfit -> OutfitGraphRoute.OutfitScreen
-        else -> throw IllegalStateException()
+    val route = remember(mainMenu) {
+        when (mainMenu.type) {
+            MainMenuType.Brand -> BrandGraphRoute.BrandMainScreen
+            MainMenuType.Clothes -> ClothesGraphRoute.ClothesScreen
+            MainMenuType.Outfit -> OutfitGraphRoute.OutfitScreen
+            else -> throw IllegalStateException()
+        }
     }
 
     val currentPositionBackgroundColor by rememberDrawerCurrentPositionBackgroundColor(

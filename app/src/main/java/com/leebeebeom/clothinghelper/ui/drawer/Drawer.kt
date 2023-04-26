@@ -15,38 +15,32 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavBackStackEntry
-import com.leebeebeom.clothinghelper.domain.model.Folder
 import com.leebeebeom.clothinghelper.domain.model.User
 import com.leebeebeom.clothinghelper.ui.component.BackHandlerWrapper
 import com.leebeebeom.clothinghelper.ui.component.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelper.ui.drawer.component.DrawerHeader
-import com.leebeebeom.clothinghelper.ui.drawer.content.DrawerEssentialMenus
 import com.leebeebeom.clothinghelper.ui.drawer.content.DrawerMenus
-import com.leebeebeom.clothinghelper.ui.drawer.content.EssentialMenuType
-import com.leebeebeom.clothinghelper.ui.drawer.content.mainmenu.DrawerMainMenus
-import com.leebeebeom.clothinghelper.ui.drawer.content.mainmenu.MainMenuType
-import com.leebeebeom.clothinghelper.ui.drawer.content.mainmenu.rememberMainMenus
-import com.leebeebeom.clothinghelper.ui.drawer.content.rememberEssentialMenus
-import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.SubMenuType
-import com.leebeebeom.clothinghelper.ui.drawer.content.submenu.clothes.ClothesCategoryType
+import com.leebeebeom.clothinghelper.ui.util.CurrentBackStack
+import com.leebeebeom.clothinghelper.ui.util.OnClothesCategoryClick
+import com.leebeebeom.clothinghelper.ui.util.OnEssentialMenuClick
+import com.leebeebeom.clothinghelper.ui.util.OnFolderClick
+import com.leebeebeom.clothinghelper.ui.util.OnMainMenuClick
+import com.leebeebeom.clothinghelper.ui.util.OnSubMenuClick
 import kotlinx.coroutines.launch
 
 @Composable // skippable
 fun Drawer(
     onSettingIconClick: () -> Unit,
-    onEssentialMenuClick: (essentialMenu: EssentialMenuType) -> Unit,
-    onMainMenuClick: (MainMenuType) -> Unit,
-    onSubMenuClick: (SubMenuType) -> Unit,
-    onClothesCategoryClick: (ClothesCategoryType) -> Unit,
-    onFolderClick: (Folder) -> Unit,
-    currentBackStack: () -> NavBackStackEntry?,
+    onEssentialMenuClick: OnEssentialMenuClick,
+    onMainMenuClick: OnMainMenuClick,
+    onSubMenuClick: OnSubMenuClick,
+    onClothesCategoryClick: OnClothesCategoryClick,
+    onFolderClick: OnFolderClick,
+    currentBackStack: CurrentBackStack,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
-    val essentialMenus = rememberEssentialMenus()
-    val mainMenus = rememberMainMenus()
     val viewModel = hiltViewModel<DrawerViewModel>()
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -73,43 +67,22 @@ fun Drawer(
                     closeDrawer()
                     onSettingIconClick()
                 })
-
-            DrawerMenus {
-                DrawerEssentialMenus(
-                    onEssentialMenuClick = {
-                        closeDrawer()
-                        onEssentialMenuClick(it)
-                    }, essentialMenus = essentialMenus,
-                    currentBackStack = currentBackStack
-                )
-                DrawerMainMenus(
-                    mainMenus = mainMenus,
-                    onMainMenuClick = {
-                        closeDrawer()
-                        onMainMenuClick(it)
-                    },
-                    onSubMenuClick = {
-                        closeDrawer()
-                        onSubMenuClick(it)
-                    },
-                    onClothesCategoryClick = {
-                        closeDrawer()
-                        onClothesCategoryClick(it)
-                    },
-                    onFolderClick = {
-                        closeDrawer()
-                        onFolderClick(it)
-                    },
-                    folders = uiState::getFolders,
-                    folderNames = uiState::getFolderNames,
-                    foldersSize = uiState::getFoldersSize,
-                    itemsSize = { 0 },
-                    addFolder = viewModel::addFolder,
-                    editFolder = viewModel::editFolderName,
-                    deleteFolder = viewModel::deletedFolder,
-                    currentBackStack = currentBackStack
-                )
-            }
+            DrawerMenus(
+                closeDrawer = closeDrawer,
+                onEssentialMenuClick = onEssentialMenuClick,
+                onMainMenuClick = onMainMenuClick,
+                onSubMenuClick = onSubMenuClick,
+                onClothesCategoryClick = onClothesCategoryClick,
+                onFolderClick = onFolderClick,
+                folders = uiState::getFolders,
+                folderNames = uiState::getFolderNames,
+                foldersSize = uiState::getFoldersSize,
+                itemsSize = { 0 },
+                addFolder = viewModel::addFolder,
+                editFolder = viewModel::editFolderName,
+                deleteFolder = viewModel::deletedFolder,
+                currentBackStack = currentBackStack
+            )
         }) {
         content(it)
         BackHandlerWrapper(enabled = { scaffoldState.drawerState.isOpen }, task = closeDrawer)

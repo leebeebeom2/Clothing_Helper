@@ -30,7 +30,7 @@ import com.leebeebeom.clothinghelper.ui.util.ItemsSize
 import com.leebeebeom.clothinghelper.ui.util.OnFolderClick
 
 @Composable
-fun DrawerClothesSubMenu2(
+fun DrawerClothesCategory(
     state: DrawerDropdownMenuState,
     clothesCategory: ClothesCategory,
     onClick: (ClothesCategoryType) -> Unit,

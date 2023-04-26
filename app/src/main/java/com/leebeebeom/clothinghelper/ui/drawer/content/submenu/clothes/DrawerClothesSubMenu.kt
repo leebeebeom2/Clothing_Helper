@@ -125,7 +125,7 @@ fun DrawerClothesSubMenu(
                 key(clothesCategory.type) {
                     val subState = rememberDrawerItemDropdownMenuState()
 
-                    DrawerClothesSubMenu2(
+                    DrawerClothesCategory(
                         state = subState,
                         clothesCategory = clothesCategory,
                         onClick = onClothesCategoryClick,

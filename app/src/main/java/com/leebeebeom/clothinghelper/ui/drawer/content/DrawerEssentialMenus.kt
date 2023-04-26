@@ -52,7 +52,7 @@ private fun EssentialMenu(
     onClick: (EssentialMenuType) -> Unit,
     currentBackStack: CurrentBackStack
 ) {
-    val route = remember {
+    val route = remember(essentialMenu) {
         when (essentialMenu.type) {
             EssentialMenuType.MainScreen -> MainGraphRoute.MainScreen
             EssentialMenuType.Favorite -> MainGraphRoute.FavoriteScreen

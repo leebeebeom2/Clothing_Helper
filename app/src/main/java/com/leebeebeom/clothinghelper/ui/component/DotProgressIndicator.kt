@@ -58,7 +58,7 @@ fun CenterDotProgressIndicator(
     }
 }
 
-@Composable // skippable
+@Composable
 fun DotProgressIndicator(
     size: Dp,
     color: Color,

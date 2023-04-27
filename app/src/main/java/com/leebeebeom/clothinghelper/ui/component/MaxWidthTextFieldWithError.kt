@@ -223,7 +223,7 @@ private fun ShowKeyboard(
 
 @Composable
 private fun TextFieldEmit(textFieldValue: () -> TextFieldValue, onInputChange: (String) -> Unit) {
-    val currentOnInputChange by rememberUpdatedState(newValue = onInputChange) // key랑 차이가 뭐임?
+    val currentOnInputChange by rememberUpdatedState(newValue = onInputChange)
 
     LaunchedEffect(key1 = textFieldValue) {
         snapshotFlow { textFieldValue().text.trim() }.collect(currentOnInputChange)

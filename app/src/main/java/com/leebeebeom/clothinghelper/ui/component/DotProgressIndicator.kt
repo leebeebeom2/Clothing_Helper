@@ -21,9 +21,7 @@ import androidx.compose.material.ContentAlpha
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,9 +37,7 @@ fun CenterDotProgressIndicator(
     backGround: Color = Disabled,
     show: () -> Boolean,
 ) {
-    val localShow by remember(show) { derivedStateOf(show) }
-
-    if (localShow) Surface(color = backGround) {
+    if (show()) Surface(color = backGround) {
         Box(modifier = Modifier
             .fillMaxSize()
             // background click block

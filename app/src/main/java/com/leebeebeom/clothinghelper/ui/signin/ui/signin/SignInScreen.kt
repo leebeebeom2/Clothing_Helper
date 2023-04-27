@@ -86,7 +86,7 @@ fun SignInScreen(
     ToastWrapper(toastTexts = { uiState.toastTexts }, toastShown = viewModel::removeFirstToastText)
 }
 
-@Composable // skippable
+@Composable
 private fun ColumnScope.ForgotPasswordText(onClick: () -> Unit) {
     SingleLineText(
         modifier = Modifier

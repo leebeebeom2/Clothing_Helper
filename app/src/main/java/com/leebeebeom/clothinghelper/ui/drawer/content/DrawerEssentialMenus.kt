@@ -40,6 +40,7 @@ fun LazyListScope.drawerEssentialMenus(
             currentBackStack = currentBackStack
         )
     }
+
     item(key = "divider", contentType = "divider") {
         HeightSpacer(dp = 8)
         Divider(color = Disabled)

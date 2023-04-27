@@ -28,12 +28,15 @@ import com.leebeebeom.clothinghelper.ui.theme.VeryDarkGray
 import com.leebeebeom.clothinghelper.ui.util.Anime
 import com.leebeebeom.clothinghelper.ui.util.Anime.Error.errorIn
 import com.leebeebeom.clothinghelper.ui.util.Anime.Error.errorOut
+import com.leebeebeom.clothinghelper.ui.util.OnFocusChanged
+import com.leebeebeom.clothinghelper.ui.util.OnValueChange
 import kotlinx.coroutines.delay
 
 @NoLiveLiterals
 @Composable
-fun StatefulMaxWidthTextFieldWithCancelIcon(
-    @StringRes label: Int? = null,
+fun MaxWidthTextFieldWithErrorAndCancelIcon(
+    state: MaxWidthTextFieldState,
+    @StringRes label: Int,
     @StringRes placeholder: Int? = null,
     error: () -> Int? = { null },
     isVisible: () -> Boolean = { true },
@@ -43,12 +46,13 @@ fun StatefulMaxWidthTextFieldWithCancelIcon(
     onInputChange: (String) -> Unit,
     getFocus: Boolean = false,
     fixedError: Boolean = false,
-    state: MaxWidthTextFieldState = rememberMaxWidthTestFieldState()
+    onValueChange: OnValueChange,
+    onFocusChanged: OnFocusChanged
 ) {
     MaxWidthTextFieldWithError(
-        textFieldValue = { state.textFieldValue },
-        onValueChange = state::onValueChange,
-        onFocusChanged = state::onFocusChanged,
+        state = state,
+        onValueChange = onValueChange,
+        onFocusChanged = onFocusChanged,
         label = label,
         placeholder = placeholder,
         error = error,
@@ -56,7 +60,7 @@ fun StatefulMaxWidthTextFieldWithCancelIcon(
         keyboardOptions = keyboardOptions,
         trailingIcon = {
             TextFieldCancelIcon(hasFocus = { state.hasFocus },
-                onValueChange = state::onValueChange,
+                onValueChange = onValueChange,
                 textFieldValue = { state.textFieldValue })
         },
         onInputChange = onInputChange,
@@ -67,8 +71,9 @@ fun StatefulMaxWidthTextFieldWithCancelIcon(
 
 @NoLiveLiterals
 @Composable
-fun StatefulMaxWidthTextField(
-    @StringRes label: Int? = null,
+fun MaxWidthTextFieldWithError(
+    state: MaxWidthTextFieldState,
+    @StringRes label: Int,
     @StringRes placeholder: Int? = null,
     error: () -> Int? = { null },
     isVisible: () -> Boolean = { true },
@@ -78,13 +83,14 @@ fun StatefulMaxWidthTextField(
     onInputChange: (String) -> Unit = {},
     trailingIcon: @Composable (() -> Unit)? = null,
     getFocus: Boolean = false,
-    focusRequester: FocusRequester = remember { FocusRequester() },
-    state: MaxWidthTextFieldState = rememberMaxWidthTestFieldState()
+    focusRequester: FocusRequester,
+    onValueChange: OnValueChange,
+    onFocusChanged: OnFocusChanged
 ) {
     MaxWidthTextFieldWithError(
-        textFieldValue = { state.textFieldValue },
-        onValueChange = state::onValueChange,
-        onFocusChanged = state::onFocusChanged,
+        state = state,
+        onValueChange = onValueChange,
+        onFocusChanged = onFocusChanged,
         label = label,
         placeholder = placeholder,
         error = error,
@@ -100,15 +106,15 @@ fun StatefulMaxWidthTextField(
 
 @Composable
 fun MaxWidthTextFieldWithError(
-    textFieldValue: () -> TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit,
-    onFocusChanged: (FocusState) -> Unit,
-    @StringRes label: Int?,
-    @StringRes placeholder: Int? = null,
-    error: () -> Int? = { null },
-    isVisible: () -> Boolean = { true },
+    state: MaxWidthTextFieldState,
+    onValueChange: OnValueChange,
+    onFocusChanged: OnFocusChanged,
+    @StringRes label: Int,
+    @StringRes placeholder: Int?,
+    error: () -> Int?,
+    isVisible: () -> Boolean,
     keyboardOptions: KeyboardOptions,
-    trailingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)?,
     onInputChange: (String) -> Unit,
     showKeyboard: Boolean,
     fixedError: Boolean,
@@ -118,7 +124,7 @@ fun MaxWidthTextFieldWithError(
         MaxWidthTextField(
             label = label,
             placeholder = placeholder,
-            textFieldValue = textFieldValue,
+            textFieldValue = { state.textFieldValue },
             error = error,
             isVisible = isVisible,
             keyboardOptions = keyboardOptions,
@@ -129,13 +135,13 @@ fun MaxWidthTextFieldWithError(
         )
         ErrorText(error = error, fixedError = fixedError)
         ShowKeyboard(focusRequester = focusRequester, showKeyboard = showKeyboard)
-        TextFieldEmit(textFieldValue = textFieldValue, onInputChange = onInputChange)
+        TextFieldEmit(textFieldValue = { state.textFieldValue }, onInputChange = onInputChange)
     }
 }
 
 @Composable
 private fun MaxWidthTextField(
-    @StringRes label: Int?,
+    @StringRes label: Int,
     @StringRes placeholder: Int?,
     textFieldValue: () -> TextFieldValue,
     error: () -> Int?,
@@ -153,7 +159,7 @@ private fun MaxWidthTextField(
             .fillMaxWidth()
             .focusRequester(focusRequester)
             .onFocusChanged(onFocusChanged = onFocusChanged),
-        label = label?.let { { SingleLineText(text = it) } },
+        label = { SingleLineText(text = label) },
         placeholder = placeholder?.let { { SingleLineText(text = it) } },
         value = textFieldValue(),
         onValueChange = onValueChange,
@@ -235,7 +241,7 @@ const val CancelIconTag = "cancel Icon"
 @Composable
 fun TextFieldCancelIcon(
     hasFocus: () -> Boolean,
-    onValueChange: (TextFieldValue) -> Unit,
+    onValueChange: OnValueChange,
     textFieldValue: () -> TextFieldValue,
 ) {
     AnimatedVisibility(
@@ -256,18 +262,25 @@ fun TextFieldCancelIcon(
 @Composable
 fun rememberMaxWidthTestFieldState(
     initialText: String = "", blockBlank: Boolean = false
-) = rememberSaveable(saver = MaxWidthTextFieldState.Saver) {
-    MaxWidthTextFieldState(
+) = rememberSaveable(saver = MutableMaxWidthTextFieldState.Saver) {
+    MutableMaxWidthTextFieldState(
         initialTextFieldValue = TextFieldValue(initialText), blockBlank = blockBlank
     )
 }
 
-open class MaxWidthTextFieldState(
-    initialTextFieldValue: TextFieldValue, private val blockBlank: Boolean
-) {
-    var textFieldValue by mutableStateOf(initialTextFieldValue)
+@Stable
+interface MaxWidthTextFieldState {
+    val textFieldValue: TextFieldValue
+    val hasFocus: Boolean
+}
+
+open class MutableMaxWidthTextFieldState(
+    initialTextFieldValue: TextFieldValue,
+    private val blockBlank: Boolean
+) : MaxWidthTextFieldState {
+    override var textFieldValue by mutableStateOf(initialTextFieldValue)
         protected set
-    var hasFocus by mutableStateOf(false)
+    override var hasFocus by mutableStateOf(false)
         protected set
 
     fun onValueChange(value: TextFieldValue) {
@@ -276,15 +289,16 @@ open class MaxWidthTextFieldState(
 
     open fun onFocusChanged(focusState: FocusState) {
         hasFocus = focusState.hasFocus
-        if (focusState.hasFocus) {
-            textFieldValue = textFieldValue.copy(
-                text = textFieldValue.text, selection = TextRange(textFieldValue.text.length)
-            )
-        }
+
+        if (!focusState.hasFocus) return
+
+        textFieldValue = textFieldValue.copy(
+            text = textFieldValue.text, selection = TextRange(textFieldValue.text.length)
+        )
     }
 
     companion object {
-        val Saver = listSaver<MaxWidthTextFieldState, Any>(save = {
+        val Saver = listSaver<MutableMaxWidthTextFieldState, Any>(save = {
             listOf(
                 it.textFieldValue.text,
                 it.textFieldValue.selection.start,
@@ -292,7 +306,7 @@ open class MaxWidthTextFieldState(
                 it.blockBlank
             )
         }, restore = {
-            MaxWidthTextFieldState(
+            MutableMaxWidthTextFieldState(
                 initialTextFieldValue = TextFieldValue(
                     it[0] as String, TextRange(it[1] as Int, it[2] as Int)
                 ), blockBlank = it[3] as Boolean

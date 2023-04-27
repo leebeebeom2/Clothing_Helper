@@ -23,7 +23,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.component.MaxWidthButton
 
-@Composable // skippable
+@Composable
 fun GoogleSignInButton(
     onResult: (ActivityResult, googleSignInButtonEnable: () -> Unit) -> Unit
 ) {

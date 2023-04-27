@@ -41,6 +41,7 @@ fun LazyListScope.drawerEssentialMenus(
         )
     }
     item(key = "divider", contentType = "divider") {
+        HeightSpacer(dp = 8)
         Divider(color = Disabled)
         HeightSpacer(dp = 4)
     }

@@ -1,15 +1,16 @@
 package com.leebeebeom.clothinghelper.ui.drawer.content
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,26 +25,25 @@ import com.leebeebeom.clothinghelper.ui.main.MainGraphRoute
 import com.leebeebeom.clothinghelper.ui.theme.Disabled
 import com.leebeebeom.clothinghelper.ui.util.CurrentBackStack
 import com.leebeebeom.clothinghelper.ui.util.OnEssentialMenuClick
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-@Composable // skippable
-fun DrawerEssentialMenus(
+fun LazyListScope.drawerEssentialMenus(
+    essentialMenus: ImmutableList<EssentialMenu>,
     onEssentialMenuClick: OnEssentialMenuClick,
     currentBackStack: CurrentBackStack
 ) {
-    Column(modifier = Modifier.padding(vertical = 4.dp)) {
-        rememberEssentialMenus().forEach { essentialMenu ->
-            key(essentialMenu.name) {
-                EssentialMenu(
-                    essentialMenu = essentialMenu,
-                    onClick = { essentialMenuType -> onEssentialMenuClick(essentialMenuType) },
-                    currentBackStack = currentBackStack
-                )
-            }
-        }
+    items(items = essentialMenus, key = { it.type }, contentType = { it.type }) {
+        EssentialMenu(
+            essentialMenu = it,
+            onClick = { essentialMenuType -> onEssentialMenuClick(essentialMenuType) },
+            currentBackStack = currentBackStack
+        )
     }
-    Divider(color = Disabled)
-    HeightSpacer(dp = 4)
+    item(key = "divider", contentType = "divider") {
+        Divider(color = Disabled)
+        HeightSpacer(dp = 4)
+    }
 }
 
 @Composable // skippable
@@ -62,11 +62,10 @@ private fun EssentialMenu(
     }
 
     val currentPositionBackgroundColor by rememberDrawerCurrentPositionBackgroundColor(
-        currentBackStack = currentBackStack,
-        route = route
+        currentBackStack = currentBackStack, route = route, backgroundColor = Color.Black
     )
 
-    DrawerRow(
+    DrawerRow(modifier = Modifier.padding(start = 0.dp),
         currentPositionBackgroundColor = { currentPositionBackgroundColor },
         onClick = { onClick(essentialMenu.type) },
         height = { 44.dp }) {

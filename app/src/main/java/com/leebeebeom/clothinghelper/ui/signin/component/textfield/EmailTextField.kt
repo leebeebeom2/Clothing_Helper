@@ -8,7 +8,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.component.StatefulMaxWidthTextFieldWithCancelIcon
 import com.leebeebeom.clothinghelper.ui.component.rememberMaxWidthTestFieldState
 
-@Composable // skippable
+@Composable
 fun EmailTextField(
     error: () -> Int?,
     imeAction: ImeAction = ImeAction.Next,

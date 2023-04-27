@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.component.HeightSpacer
 
-@Composable // skippable
+@Composable
 fun Logo() {
     HeightSpacer(dp = 40)
     Image(

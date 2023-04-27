@@ -34,7 +34,7 @@ import com.leebeebeom.clothinghelper.ui.theme.Disabled
 
 const val CenterDotProgressIndicatorTag = "center dot progress indicator"
 
-@Composable // skippable
+@Composable
 fun CenterDotProgressIndicator(
     backGround: Color = Disabled,
     show: () -> Boolean,

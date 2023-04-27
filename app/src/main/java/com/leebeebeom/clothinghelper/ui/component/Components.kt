@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
-fun AnimatedIconWrapper( // skippable
+fun AnimatedIconWrapper(
     modifier: Modifier = Modifier,
     @DrawableRes drawable: Int,
     atEnd: () -> Boolean,
@@ -38,7 +38,7 @@ fun AnimatedIconWrapper( // skippable
     )
 }
 
-@Composable // skippable
+@Composable
 fun IconWrapper(
     modifier: Modifier = Modifier,
     @DrawableRes drawable: Int,
@@ -52,12 +52,12 @@ fun IconWrapper(
     )
 }
 
-@Composable // skippable
+@Composable
 fun HeightSpacer(dp: Int) {
     Spacer(modifier = Modifier.height(dp.dp))
 }
 
-@Composable // skippable
+@Composable
 fun WidthSpacer(dp: Int) {
     Spacer(modifier = Modifier.width(dp.dp))
 }

@@ -10,6 +10,7 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NoLiveLiterals
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -27,15 +28,20 @@ fun MaxWidthButton(
     onClick: () -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
+    val onClickWithClearFocus = remember {
+        {
+            onClick()
+            focusManager.clearFocus()
+        }
+    }
 
     Button(
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(52.dp),
-        onClick = {
-            onClick()
-            focusManager.clearFocus()
-        }, colors = colors, enabled = enabled()
+        onClick = onClickWithClearFocus,
+        colors = colors,
+        enabled = enabled()
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically

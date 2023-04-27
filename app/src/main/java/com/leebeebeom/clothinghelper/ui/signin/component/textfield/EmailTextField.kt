@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.leebeebeom.clothinghelper.R
-import com.leebeebeom.clothinghelper.ui.component.StatefulMaxWidthTextFieldWithCancelIcon
+import com.leebeebeom.clothinghelper.ui.component.MaxWidthTextFieldWithErrorAndCancelIcon
 import com.leebeebeom.clothinghelper.ui.component.rememberMaxWidthTestFieldState
 
 @Composable
@@ -16,7 +16,7 @@ fun EmailTextField(
 ) {
     val state = rememberMaxWidthTestFieldState(blockBlank = true)
 
-    StatefulMaxWidthTextFieldWithCancelIcon(
+    MaxWidthTextFieldWithErrorAndCancelIcon(
         state = state,
         label = R.string.email,
         placeholder = R.string.email_place_holder,

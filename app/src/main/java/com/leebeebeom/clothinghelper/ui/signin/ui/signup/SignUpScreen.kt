@@ -32,7 +32,7 @@ import com.leebeebeom.clothinghelper.ui.signin.state.PasswordState
 
 const val SignUpScreenTag = "sign up screen"
 
-@Composable // skippable
+@Composable
 fun SignUpScreen() {
     val viewModel = hiltViewModel<SignUpViewModel>()
     val state = rememberSignUpState()
@@ -90,7 +90,6 @@ fun SignUpScreen() {
     ToastWrapper(toastTexts = { uiState.toastTexts }, toastShown = viewModel::removeFirstToastText)
 }
 
-// stable
 class SignUpScreenState(
     initialEmail: String = "",
     initialEmailError: Int? = null,

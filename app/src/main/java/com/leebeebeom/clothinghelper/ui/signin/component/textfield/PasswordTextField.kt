@@ -4,7 +4,6 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.LocalContentColor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,7 +20,7 @@ import com.leebeebeom.clothinghelper.ui.component.CustomIconButton
 import com.leebeebeom.clothinghelper.ui.component.StatefulMaxWidthTextField
 import com.leebeebeom.clothinghelper.ui.component.rememberMaxWidthTestFieldState
 
-@Composable // skippable
+@Composable
 fun PasswordTextField(
     @StringRes label: Int = R.string.password,
     error: () -> Int?,
@@ -53,16 +52,14 @@ fun PasswordTextField(
 const val VisibleIconTag = "visible icon"
 const val InvisibleIconTag = "invisible icon"
 
-@Composable // skippable
+@Composable
 fun VisibleIcon(
     isVisible: () -> Boolean,
     onClick: () -> Unit
 ) {
-    val localIsVisible by remember(isVisible) { derivedStateOf(isVisible) }
-
     CustomIconButton(
-        modifier = Modifier.testTag(if (localIsVisible) InvisibleIconTag else VisibleIconTag),
-        drawable = if (localIsVisible) R.drawable.ic_visibility_off else R.drawable.ic_visibility,
+        modifier = Modifier.testTag(if (isVisible()) InvisibleIconTag else VisibleIconTag),
+        drawable = if (isVisible()) R.drawable.ic_visibility_off else R.drawable.ic_visibility,
         tint = LocalContentColor.current.copy(0.4f),
         onClick = onClick,
         size = 24.dp

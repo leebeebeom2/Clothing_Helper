@@ -1,15 +1,21 @@
 package com.leebeebeom.clothinghelper.ui.drawer.content
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import com.leebeebeom.clothinghelper.ui.drawer.content.mainmenu.DrawerMainMenus
+import com.leebeebeom.clothinghelper.ui.drawer.content.mainmenu.drawerMainMenus
+import com.leebeebeom.clothinghelper.ui.drawer.content.mainmenu.rememberMainMenus
 import com.leebeebeom.clothinghelper.ui.util.AddFolder
 import com.leebeebeom.clothinghelper.ui.util.CurrentBackStack
 import com.leebeebeom.clothinghelper.ui.util.DeleteFolder
@@ -43,22 +49,30 @@ fun DrawerMenus(
     deleteFolder: DeleteFolder,
     currentBackStack: CurrentBackStack
 ) {
-    Column(
+    val essentialMenus = rememberEssentialMenus()
+    val mainMenus = rememberMainMenus()
+
+    var mainMenuHeight by rememberSaveable { mutableStateOf(0) }
+    val density = LocalDensity.current
+    val mainMenuHeightDp by remember(density) { derivedStateOf { with(density) { mainMenuHeight.toDp() } } }
+
+    LazyColumn(
         modifier = Modifier
             .testTag(DrawerTag)
-            .verticalScroll(rememberScrollState())
-            .fillMaxSize()
-            .padding(bottom = 40.dp)
+            .fillMaxSize(),
+        contentPadding = PaddingValues(bottom = 40.dp)
     ) {
-        DrawerEssentialMenus(
+        drawerEssentialMenus(
             onEssentialMenuClick = {
                 closeDrawer()
                 onEssentialMenuClick(it)
             },
-            currentBackStack = currentBackStack
+            currentBackStack = currentBackStack,
+            essentialMenus = essentialMenus
         )
 
-        DrawerMainMenus(
+        drawerMainMenus(
+            mainMenus = mainMenus,
             onMainMenuClick = {
                 closeDrawer()
                 onMainMenuClick(it)
@@ -82,7 +96,9 @@ fun DrawerMenus(
             addFolder = addFolder,
             editFolder = editFolder,
             deleteFolder = deleteFolder,
-            currentBackStack = currentBackStack
+            currentBackStack = currentBackStack,
+            height = { mainMenuHeightDp },
+            onSizeChanged = { mainMenuHeight = it }
         )
     }
 }

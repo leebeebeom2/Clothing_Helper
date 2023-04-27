@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.leebeebeom.clothinghelper.ui.util.clearFocus
 
-@Composable // skippable
+@Composable
 fun SignInBaseColumn(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,

@@ -26,8 +26,7 @@ fun SignInBaseColumn(
             .verticalScroll(rememberScrollState())
             .clearFocus()
             .padding(horizontal = 40.dp)
-            .padding(bottom = 40.dp), verticalArrangement = Arrangement.Center
-    ) {
-        content()
-    }
+            .padding(bottom = 40.dp), verticalArrangement = Arrangement.Center,
+        content = content
+    )
 }

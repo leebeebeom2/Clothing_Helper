@@ -14,13 +14,17 @@ fun EmailTextField(
     imeAction: ImeAction = ImeAction.Next,
     onEmailChange: (String) -> Unit,
 ) {
+    val state = rememberMaxWidthTestFieldState(blockBlank = true)
+
     StatefulMaxWidthTextFieldWithCancelIcon(
-        state = rememberMaxWidthTestFieldState(blockBlank = true),
+        state = state,
         label = R.string.email,
         placeholder = R.string.email_place_holder,
         error = error,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = imeAction),
         onInputChange = onEmailChange,
-        getFocus = true
+        getFocus = true,
+        onValueChange = state::onValueChange,
+        onFocusChanged = state::onFocusChanged
     )
 }

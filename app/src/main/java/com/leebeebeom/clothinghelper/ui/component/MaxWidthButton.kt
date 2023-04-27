@@ -10,9 +10,6 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NoLiveLiterals
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -21,7 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @NoLiveLiterals
-@Composable // skippable
+@Composable
 fun MaxWidthButton(
     @StringRes text: Int,
     enabled: () -> Boolean = { true },
@@ -30,7 +27,6 @@ fun MaxWidthButton(
     onClick: () -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
-    val localEnabled by remember(enabled) { derivedStateOf(enabled) }
 
     Button(
         modifier = Modifier
@@ -39,7 +35,7 @@ fun MaxWidthButton(
         onClick = {
             onClick()
             focusManager.clearFocus()
-        }, colors = colors, enabled = localEnabled
+        }, colors = colors, enabled = enabled()
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically

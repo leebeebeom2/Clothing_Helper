@@ -15,7 +15,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.component.HeightSpacer
 import com.leebeebeom.clothinghelper.ui.component.SingleLineText
 
-@Composable // skippable
+@Composable
 fun OrDivider() {
     HeightSpacer(dp = 12)
     Row(verticalAlignment = Alignment.CenterVertically) {

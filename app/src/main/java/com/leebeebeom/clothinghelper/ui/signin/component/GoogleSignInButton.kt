@@ -30,23 +30,26 @@ fun GoogleSignInButton(
     val context = LocalContext.current
     var enabled by rememberSaveable { mutableStateOf(true) }
     val launcher: ManagedActivityResultLauncher<Intent, ActivityResult> =
-        rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.StartActivityForResult(),
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult(),
             onResult = {
                 onResult(it) { enabled = true }
-            }
-        )
+            })
     val gso = rememberGso()
     val intent = remember { GoogleSignIn.getClient(context, gso).signInIntent }
+    val onClickWithLanch = remember {
+        {
+            enabled = false
+            launcher.launch(intent)
+        }
+    }
 
-    MaxWidthButton(text = R.string.starts_with_google_email,
+    MaxWidthButton(
+        text = R.string.starts_with_google_email,
         enabled = { enabled },
         colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
         icon = { GoogleIcon() },
-        onClick = {
-            enabled = false
-            launcher.launch(intent)
-        })
+        onClick = onClickWithLanch
+    )
 }
 
 @Composable

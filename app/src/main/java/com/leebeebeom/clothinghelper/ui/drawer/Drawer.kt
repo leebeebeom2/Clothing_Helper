@@ -28,7 +28,7 @@ import com.leebeebeom.clothinghelper.ui.util.OnMainMenuClick
 import com.leebeebeom.clothinghelper.ui.util.OnSubMenuClick
 import kotlinx.coroutines.launch
 
-@Composable // skippable
+@Composable
 fun Drawer(
     onSettingIconClick: () -> Unit,
     onEssentialMenuClick: OnEssentialMenuClick,
@@ -90,7 +90,7 @@ fun Drawer(
 }
 
 @Composable
-fun CloseDrawerWhenUserSignOut( // skippable
+fun CloseDrawerWhenUserSignOut(
     user: () -> User?, closeDrawer: () -> Unit
 ) {
     val localUser by remember(user) { derivedStateOf(user) }

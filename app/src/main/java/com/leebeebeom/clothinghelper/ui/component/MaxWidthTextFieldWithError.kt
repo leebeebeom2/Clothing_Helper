@@ -31,7 +31,7 @@ import com.leebeebeom.clothinghelper.ui.util.Anime.Error.errorOut
 import kotlinx.coroutines.delay
 
 @NoLiveLiterals
-@Composable // skippable
+@Composable
 fun StatefulMaxWidthTextFieldWithCancelIcon(
     @StringRes label: Int? = null,
     @StringRes placeholder: Int? = null,
@@ -66,7 +66,7 @@ fun StatefulMaxWidthTextFieldWithCancelIcon(
 }
 
 @NoLiveLiterals
-@Composable // skippable
+@Composable
 fun StatefulMaxWidthTextField(
     @StringRes label: Int? = null,
     @StringRes placeholder: Int? = null,
@@ -98,7 +98,7 @@ fun StatefulMaxWidthTextField(
     )
 }
 
-@Composable // skippable
+@Composable
 fun MaxWidthTextFieldWithError(
     textFieldValue: () -> TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
@@ -114,7 +114,6 @@ fun MaxWidthTextFieldWithError(
     fixedError: Boolean,
     focusRequester: FocusRequester = remember { FocusRequester() }
 ) {
-
     Column {
         MaxWidthTextField(
             label = label,
@@ -134,7 +133,7 @@ fun MaxWidthTextFieldWithError(
     }
 }
 
-@Composable // skippable
+@Composable
 private fun MaxWidthTextField(
     @StringRes label: Int?,
     @StringRes placeholder: Int?,
@@ -148,9 +147,6 @@ private fun MaxWidthTextField(
     focusRequester: FocusRequester
 ) {
     val focusManager = LocalFocusManager.current
-    val localTextFiledValue by remember(textFieldValue) { derivedStateOf(textFieldValue) }
-    val localError by remember(error) { derivedStateOf(error) }
-    val localIsVisible by remember(isVisible) { derivedStateOf(isVisible) }
 
     OutlinedTextField(
         modifier = Modifier
@@ -159,10 +155,10 @@ private fun MaxWidthTextField(
             .onFocusChanged(onFocusChanged = onFocusChanged),
         label = label?.let { { SingleLineText(text = it) } },
         placeholder = placeholder?.let { { SingleLineText(text = it) } },
-        value = localTextFiledValue,
+        value = textFieldValue(),
         onValueChange = onValueChange,
-        isError = localError != null,
-        visualTransformation = if (localIsVisible) VisualTransformation.None else PasswordVisualTransformation(),
+        isError = error() != null,
+        visualTransformation = if (isVisible()) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = keyboardOptions,
         keyboardActions = if (keyboardOptions.imeAction == ImeAction.Done) KeyboardActions(onDone = { focusManager.clearFocus() }) else KeyboardActions.Default,
         trailingIcon = { if (trailingIcon != null) trailingIcon() },
@@ -176,10 +172,9 @@ private fun MaxWidthTextField(
     )
 }
 
-@Composable // skippable
+@Composable
 private fun ErrorText(error: () -> Int?, fixedError: Boolean) {
-    val localError by remember(error) { derivedStateOf(error) }
-    val show by remember(error) { derivedStateOf { localError != null } }
+    val show by remember(error) { derivedStateOf { error() != null } }
 
     @Composable
     fun animatedErrorText() {
@@ -188,7 +183,7 @@ private fun ErrorText(error: () -> Int?, fixedError: Boolean) {
         ) {
             SingleLineText(
                 modifier = Modifier.padding(start = 4.dp, top = 4.dp),
-                text = localError,
+                text = error(),
                 style = MaterialTheme.typography.caption.copy(color = MaterialTheme.colors.error)
             )
         }
@@ -206,7 +201,8 @@ private fun ErrorText(error: () -> Int?, fixedError: Boolean) {
     else animatedErrorText()
 }
 
-@Composable // skippable
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
 private fun ShowKeyboard(
     showKeyboard: Boolean,
     focusRequester: FocusRequester
@@ -225,29 +221,25 @@ private fun ShowKeyboard(
 
 }
 
-@Composable // skippable
+@Composable
 private fun TextFieldEmit(textFieldValue: () -> TextFieldValue, onInputChange: (String) -> Unit) {
-    val localTextFiledValue by remember(textFieldValue) { derivedStateOf(textFieldValue) }
-    val currentOnInputChange by rememberUpdatedState(newValue = onInputChange)
+    val currentOnInputChange by rememberUpdatedState(newValue = onInputChange) // key랑 차이가 뭐임?
 
     LaunchedEffect(key1 = textFieldValue) {
-        snapshotFlow { localTextFiledValue.text.trim() }.collect(currentOnInputChange)
+        snapshotFlow { textFieldValue().text.trim() }.collect(currentOnInputChange)
     }
 }
 
 const val CancelIconTag = "cancel Icon"
 
-@Composable // skippable
+@Composable
 fun TextFieldCancelIcon(
     hasFocus: () -> Boolean,
     onValueChange: (TextFieldValue) -> Unit,
     textFieldValue: () -> TextFieldValue,
 ) {
-    val localHasFocus by remember(hasFocus) { derivedStateOf(hasFocus) }
-    val localTextFieldValue by remember(textFieldValue) { derivedStateOf(textFieldValue) }
-
     AnimatedVisibility(
-        visible = localHasFocus && localTextFieldValue.text.isNotBlank(),
+        visible = hasFocus() && textFieldValue().text.isNotBlank(),
         enter = Anime.CancelIcon.fadeIn,
         exit = Anime.CancelIcon.fadeOut,
     ) {
@@ -270,7 +262,6 @@ fun rememberMaxWidthTestFieldState(
     )
 }
 
-// stable
 open class MaxWidthTextFieldState(
     initialTextFieldValue: TextFieldValue, private val blockBlank: Boolean
 ) {

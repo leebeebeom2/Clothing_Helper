@@ -26,7 +26,7 @@ import com.leebeebeom.clothinghelper.ui.signin.state.EmailState
 
 const val ResetPasswordScreenTag = "reset password screen"
 
-@Composable // skippable
+@Composable
 fun ResetPasswordScreen(
     popBackStack: () -> Unit
 ) {
@@ -67,7 +67,6 @@ fun ResetPasswordScreen(
     ToastWrapper(toastTexts = { uiState.toastTexts }, toastShown = viewModel::removeFirstToastText)
 }
 
-// stable
 class ResetPasswordScreenState(
     initialEmail: String = "",
     initialEmailError: Int? = null

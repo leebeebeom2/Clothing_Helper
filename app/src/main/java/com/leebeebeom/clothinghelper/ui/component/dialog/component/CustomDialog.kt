@@ -14,8 +14,9 @@ import com.leebeebeom.clothinghelper.ui.theme.WhiteSmoke
 
 @Composable
 fun CustomDialog(
-    onDismiss: () -> Unit,
     @StringRes title: Int,
+    @StringRes positiveButtonText: Int,
+    onDismiss: () -> Unit,
     content: @Composable () -> Unit,
     positiveButtonEnabled: () -> Boolean = { true },
     onPositiveButtonClick: () -> Unit,
@@ -24,7 +25,6 @@ fun CustomDialog(
 ) {
     MaterialTheme(colors = MaterialTheme.colors.copy(surface = WhiteSmoke, onSurface = Black)) {
         DialogRoot(onDismiss = onDismiss) {
-
             SingleLineText(
                 text = title,
                 style = MaterialTheme.typography.h6,
@@ -34,6 +34,7 @@ fun CustomDialog(
             content()
 
             DialogTextButtons(
+                positiveButtonText = positiveButtonText,
                 positiveButtonEnabled = positiveButtonEnabled,
                 onPositiveButtonClick = onPositiveButtonClick,
                 onDismiss = onDismiss,

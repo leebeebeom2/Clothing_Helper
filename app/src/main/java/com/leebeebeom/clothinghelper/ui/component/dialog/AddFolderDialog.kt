@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import com.leebeebeom.clothinghelper.R
 import kotlinx.collections.immutable.ImmutableSet
 
-@Composable // skippable
+@Composable
 fun AddFolderDialog(
     folderNames: () -> ImmutableSet<String>,
     onPositiveButtonClick: (name: String) -> Unit,

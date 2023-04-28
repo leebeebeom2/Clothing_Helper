@@ -5,27 +5,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import com.leebeebeom.clothinghelper.ui.component.dialog.component.DialogMaxWidthTextFieldState
+import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.component.dialog.component.MutableTextFieldDialogState
 import com.leebeebeom.clothinghelper.ui.component.dialog.component.TextFieldDialog
-import com.leebeebeom.clothinghelper.ui.component.dialog.component.rememberDialogMaxWidthTextFieldState
 import com.leebeebeom.clothinghelper.ui.component.dialog.component.rememberTextFieldDialogState
 import kotlinx.collections.immutable.ImmutableSet
 
-@Composable // skippable
+@Composable
 fun EditNameDialog(
     @StringRes label: Int,
     @StringRes placeHolder: Int?,
     @StringRes title: Int,
     @StringRes existNameError: Int,
+    @StringRes positiveButtonText: Int = R.string.edit,
     names: () -> ImmutableSet<String>,
     onPositiveButtonClick: (String) -> Unit,
     onDismiss: () -> Unit,
     initialName: () -> String,
-    state: MutableTextFieldDialogState = rememberTextFieldDialogState(initialText = initialName()),
-    dialogMaxWidthTextFieldState: DialogMaxWidthTextFieldState = rememberDialogMaxWidthTextFieldState(
-        initialText = state.initialText
-    )
+    state: MutableTextFieldDialogState = rememberTextFieldDialogState(initialText = initialName())
 ) {
     val localNames by remember(names) { derivedStateOf(names) }
     val error by remember {
@@ -47,6 +44,6 @@ fun EditNameDialog(
         onDismiss = onDismiss,
         onInputChange = state::onInputChange,
         error = { error },
-        dialogMaxWidthTextFieldState = dialogMaxWidthTextFieldState
+        positiveButtonText = positiveButtonText
     )
 }

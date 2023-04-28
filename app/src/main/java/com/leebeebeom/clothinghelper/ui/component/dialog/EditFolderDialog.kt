@@ -5,7 +5,7 @@ import com.leebeebeom.clothinghelper.R
 import kotlinx.collections.immutable.ImmutableSet
 
 @Composable
-fun EditFolderDialog( // skippable
+fun EditFolderDialog(
     show: () -> Boolean,
     onDismiss: () -> Unit,
     onPositiveButtonClick: (String) -> Unit,

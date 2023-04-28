@@ -1,7 +1,6 @@
 package com.leebeebeom.clothinghelper.ui.signin.ui
 
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.leebeebeom.clothinghelper.ui.MainNavRoute
@@ -17,26 +16,24 @@ sealed class SignInGraphRoute {
     }
 }
 
-fun NavGraphBuilder.signInGraph(navController: NavHostController) {
+fun NavGraphBuilder.signInGraph(
+    navigateToResetPassword: () -> Unit,
+    navigateToSignUp: () -> Unit,
+    popBackStack: () -> Unit
+) {
     navigation(
         startDestination = SignInGraphRoute.SignInScreen,
         route = MainNavRoute.SignInGraph,
     ) {
         composable(route = SignInGraphRoute.SignInScreen) {
             SignInScreen(
-                navigateToResetPassword = navController::navigateToResetPassword,
-                navigateToSignUp = navController::navigateToSignUp
+                onForgotPasswordClick = navigateToResetPassword,
+                onSignUpWithEmailClick = navigateToSignUp
             )
         }
         composable(route = SignInGraphRoute.SignUpScreen) { SignUpScreen() }
         composable(route = SignInGraphRoute.ResetPasswordScreen) {
-            ResetPasswordScreen(
-                popBackStack = navController::popBackStack
-            )
+            ResetPasswordScreen(onEmailSendSuccess = popBackStack)
         }
     }
 }
-
-private fun NavHostController.navigateToSignUp() = navigate(SignInGraphRoute.SignUpScreen)
-private fun NavHostController.navigateToResetPassword() =
-    navigate(SignInGraphRoute.ResetPasswordScreen)

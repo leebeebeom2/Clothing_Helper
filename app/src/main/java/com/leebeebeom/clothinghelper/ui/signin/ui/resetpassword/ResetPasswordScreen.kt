@@ -28,7 +28,7 @@ const val ResetPasswordScreenTag = "reset password screen"
 
 @Composable
 fun ResetPasswordScreen(
-    popBackStack: () -> Unit
+    onEmailSendSuccess: () -> Unit
 ) {
     val viewModel = hiltViewModel<ResetPasswordViewModel>()
     val state = rememberResetPasswordScreenState()
@@ -52,7 +52,7 @@ fun ResetPasswordScreen(
                 viewModel.sendResetPasswordEmail(
                     email = state.email,
                     setEmailError = state::setEmailError,
-                    popBackStack = popBackStack
+                    onEmailSendSuccess = onEmailSendSuccess
                 )
             }
         }

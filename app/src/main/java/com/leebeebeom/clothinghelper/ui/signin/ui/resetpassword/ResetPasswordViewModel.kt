@@ -46,7 +46,7 @@ class ResetPasswordViewModel @Inject constructor(
     fun sendResetPasswordEmail(
         email: String,
         setEmailError: (Int) -> Unit,
-        popBackStack: () -> Unit
+        onEmailSendSuccess: () -> Unit
     ) {
         viewModelScope.launch(
             firebaseAuthErrorHandler(
@@ -58,7 +58,7 @@ class ResetPasswordViewModel @Inject constructor(
             setLoading(true)
             resetPasswordUseCase.sendResetPasswordEmail(email = email)
             addToastTextAtLast(R.string.email_send_complete)
-            popBackStack()
+            onEmailSendSuccess()
         }
     }
 }

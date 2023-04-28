@@ -28,6 +28,7 @@ fun DeleteFolderDialog(
         CustomDialog(
             onDismiss = onDismiss,
             title = R.string.delete_folder,
+            positiveButtonText = R.string.delete,
             content = {
                 Column(
                     modifier = Modifier

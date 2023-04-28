@@ -15,8 +15,9 @@ import androidx.compose.ui.graphics.Color
 import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.component.SingleLineText
 
-@Composable // skippable
+@Composable
 fun DialogTextButtons(
+    @StringRes positiveButtonText: Int = R.string.positive,
     positiveButtonEnabled: () -> Boolean,
     onPositiveButtonClick: () -> Unit,
     onDismiss: () -> Unit,
@@ -34,7 +35,7 @@ fun DialogTextButtons(
         )
         DialogTextButton(
             modifier = weightModifier,
-            text = R.string.positive,
+            text = positiveButtonText,
             textColor = positiveButtonColor,
             enabled = positiveButtonEnabled,
             onClick = {
@@ -45,7 +46,7 @@ fun DialogTextButtons(
 }
 
 @NoLiveLiterals
-@Composable // skippable
+@Composable
 fun DialogTextButton(
     modifier: Modifier = Modifier,
     @StringRes text: Int,

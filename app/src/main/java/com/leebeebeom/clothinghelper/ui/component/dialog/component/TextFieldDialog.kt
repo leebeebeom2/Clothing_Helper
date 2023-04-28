@@ -13,39 +13,42 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
-import com.leebeebeom.clothinghelper.ui.component.MaxWidthTextFieldState
-import com.leebeebeom.clothinghelper.ui.component.StatefulMaxWidthTextFieldWithCancelIcon
+import com.leebeebeom.clothinghelper.ui.component.MaxWidthTextFieldWithErrorAndCancelIcon
+import com.leebeebeom.clothinghelper.ui.component.MutableMaxWidthTextFieldState
 
 @Composable
 fun TextFieldDialog(
     state: TextFieldDialogState,
     @StringRes label: Int,
-    @StringRes placeHolder: Int?,
+    @StringRes placeHolder: Int? = null,
     @StringRes title: Int,
+    @StringRes positiveButtonText: Int,
     error: () -> Int?,
     onPositiveButtonClick: () -> Unit,
     onDismiss: () -> Unit,
-    onInputChange: (String) -> Unit,
-    dialogMaxWidthTextFieldState: DialogMaxWidthTextFieldState =
-        rememberDialogMaxWidthTextFieldState(initialText = state.initialText)
+    onInputChange: (String) -> Unit
 ) {
     val localError by remember(error) { derivedStateOf(error) }
     val positiveButtonEnabled by remember {
         derivedStateOf { state.inputChanged && state.input.isNotBlank() && localError == null }
     }
+    val textFieldState = rememberDialogMaxWidthTextFieldState(initialText = state.initialText)
 
     CustomDialog(
         onDismiss = onDismiss,
         title = title,
+        positiveButtonText = positiveButtonText,
         content = {
-            StatefulMaxWidthTextFieldWithCancelIcon(
-                state = dialogMaxWidthTextFieldState,
+            MaxWidthTextFieldWithErrorAndCancelIcon(
+                state = textFieldState,
                 label = label,
                 placeholder = placeHolder,
                 error = error,
                 onInputChange = onInputChange,
                 getFocus = true,
-                fixedError = true
+                fixedError = true,
+                onValueChange = textFieldState::onValueChange,
+                onFocusChanged = textFieldState::onFocusChanged
             )
         },
         onPositiveButtonClick = onPositiveButtonClick,
@@ -61,7 +64,7 @@ fun rememberDialogMaxWidthTextFieldState(initialText: String) =
         )
     }
 
-class DialogMaxWidthTextFieldState(initialText: String) : MaxWidthTextFieldState( // stable
+class DialogMaxWidthTextFieldState(initialText: String) : MutableMaxWidthTextFieldState(
     initialTextFieldValue = TextFieldValue(initialText), blockBlank = false
 ) {
     override fun onFocusChanged(focusState: FocusState) {

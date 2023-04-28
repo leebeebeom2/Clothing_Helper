@@ -19,7 +19,7 @@ import com.leebeebeom.clothinghelper.R
 import com.leebeebeom.clothinghelper.ui.component.CenterDotProgressIndicator
 import com.leebeebeom.clothinghelper.ui.component.HeightSpacer
 import com.leebeebeom.clothinghelper.ui.component.MaxWidthButton
-import com.leebeebeom.clothinghelper.ui.component.StatefulMaxWidthTextFieldWithCancelIcon
+import com.leebeebeom.clothinghelper.ui.component.MaxWidthTextFieldWithErrorAndCancelIcon
 import com.leebeebeom.clothinghelper.ui.component.rememberMaxWidthTestFieldState
 import com.leebeebeom.clothinghelper.ui.main.component.ToastWrapper
 import com.leebeebeom.clothinghelper.ui.signin.component.GoogleSignInButton
@@ -44,14 +44,17 @@ fun SignUpScreen() {
             error = { state.emailError }, onEmailChange = state::onEmailChange
         )
 
-        StatefulMaxWidthTextFieldWithCancelIcon(
+        val nickNameTextFieldState = rememberMaxWidthTestFieldState(blockBlank = false)
+
+        MaxWidthTextFieldWithErrorAndCancelIcon(
             label = R.string.nickname,
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next
+                keyboardType = KeyboardType.Text, imeAction = ImeAction.Next
             ),
             onInputChange = state::onNameChange,
-            state = rememberMaxWidthTestFieldState(blockBlank = false)
+            state = nickNameTextFieldState,
+            onValueChange = nickNameTextFieldState::onValueChange,
+            onFocusChanged = nickNameTextFieldState::onFocusChanged
         )
 
         PasswordTextField(

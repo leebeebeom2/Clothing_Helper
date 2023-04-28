@@ -37,10 +37,10 @@ import com.leebeebeom.clothinghelper.ui.signin.state.PasswordState
 
 const val SignInScreenTag = "sign in screen"
 
-@Composable // skippable
+@Composable
 fun SignInScreen(
-    navigateToResetPassword: () -> Unit,
-    navigateToSignUp: () -> Unit,
+    onForgotPasswordClick: () -> Unit,
+    onSignUpWithEmailClick: () -> Unit,
 ) {
     val viewModel = hiltViewModel<SignInViewModel>()
     val state = rememberSignInScreenState()
@@ -57,7 +57,7 @@ fun SignInScreen(
             imeAction = ImeAction.Done
         )
 
-        ForgotPasswordText(onClick = navigateToResetPassword)
+        ForgotPasswordText(onClick = onForgotPasswordClick)
 
         val signInButtonClick = remember {
             {
@@ -76,7 +76,7 @@ fun SignInScreen(
         )
         OrDivider()
         MaxWidthButton(text = R.string.sign_up_with_email,
-            onClick = navigateToSignUp,
+            onClick = onSignUpWithEmailClick,
             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
             icon = { IconWrapper(drawable = R.drawable.ic_email) })
         HeightSpacer(dp = 12)
@@ -100,7 +100,6 @@ private fun ColumnScope.ForgotPasswordText(onClick: () -> Unit) {
     )
 }
 
-// stable
 class SignInScreenState(
     initialEmail: String = "",
     initialEmailError: Int? = null,
@@ -114,7 +113,7 @@ class SignInScreenState(
 ) {
     companion object {
         val Saver = listSaver<SignInScreenState, Any?>(save = {
-            arrayListOf(it.email, it.emailError, it.password, it.passwordError)
+            listOf(it.email, it.emailError, it.password, it.passwordError)
         }, restore = {
             SignInScreenState(
                 it[0] as String,
